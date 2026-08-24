@@ -1,18 +1,9 @@
-version=wip35-v70
+version=wip35-v71
 === /tmp/script-0.js ===
 exit=0
 === /tmp/script-1.js ===
-/tmp/script-1.js:71
-function expenseMonthly(rows){const m=new Map();rows.forEach(r=>{const k=String(r.event_date||'').slice(0,7);if(k)m.set(k,num(m.get(k))+num(r.amount))});return [...m.entries()].map(([month_key,total])=>({month_key,total})).sort((a,b)=>a.month_key.localeCompare(b.month_key))}\nfunction expenseYearly(rows){const m=new Map();rows.forEach(r=>{const k=String(r.event_date||'').slice(0,4);if(k)m.set(k,num(m.get(k))+num(r.amount))});return [...m.entries()].map(([year,total])=>({year,total})).sort((a,b)=>a.year.localeCompare(b.year))}
-                                                                                                                                                                                                                                                                                   ^
-
-SyntaxError: Invalid or unexpected token
-    at wrapSafe (node:internal/modules/cjs/loader:1713:18)
-    at checkSyntax (node:internal/main/check_syntax:78:3)
-
-Node.js v22.23.2
-exit=1
+exit=0
 cdn=absent
 future_rsu_flow_column=absent
 fgts_flow_column=absent
-publish=blocked
+publish=ready
