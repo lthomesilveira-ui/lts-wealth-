@@ -1,15 +1,6 @@
-version=wip35-v90
+version=wip35-v91
 exit=0
-/tmp/script-1.js:153
-function financiamentos(){const cs=D.commitments?.commitments||[],sch=D.commitment_schedules?.contracts||[];return `<div class="grid3">${cs.map(x=>{const paid=Math.max(0,num(x.total_events)-num(x.remaining_events)),future=num(x.remaining_scheduled_outflow||x.remaining_economic_outflow),sid=x.id==='cipo_396'?'CIPÓ 396':x.id,sc=sch.find(c=>c.id===sid),next=(sc?.schedule||[]).find(e=>String(e.state)==='scheduled');return `<div class="card"><div class="mut">${esc(x.type)}</div><div class="title" style="margin-top:6px">${esc(x.label)}</div><div class="item"><span>Parcelas / eventos</span><b>${paid} pagas · ${x.remaining_events??'—'} abertas</b></div>${x.installment?`<div class="item"><span>Parcela</span><b>${brl(x.installment)}</b></div>`:''}<div class="item"><span>Total do cronograma</span><b>${brl(x.schedule_amount)}</b></div><div class="item"><span>Total futuro</span><b>${brl(future)}</b></div>${x.id==='coopharma'?'<div class="item"><span>Tratamento no Fluxo</span><b>Descontado do salário líquido</b></div>':'}<div class="item"><span>Próximo evento</span><b>${next?fmt(next.date)+' · '+brl(next.amount):'—'}</b></div><div class="item"><span>Última</span><b>${fmt(x.last_date)}</b></div><div class="item"><span>Saldo devedor contratual atual</span><b>${(sch.find(c=>c.id===sid)?.current_documentary_debt_balance)==null?'—':brl(sch.find(c=>c.id===sid).current_documentary_debt_balance)}</b></div><button class="btn ghost findetail" data-fin="${esc(sid)}" style="margin-top:9px">Ver cronograma</button></div>`}).join('')}</div>${financingDetail()}<div class="section notice">Cronograma e fluxo permanecem separados do saldo devedor. Saldo contratual só aparece quando há posição documental; nunca é inferido pela soma das parcelas.</div>`}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-SyntaxError: Missing } in template expression
-    at wrapSafe (node:internal/modules/cjs/loader:1713:18)
-    at checkSyntax (node:internal/main/check_syntax:78:3)
-
-Node.js v22.23.2
-exit=1
+exit=0
 technical_flow_footer=absent
 technical_main_footer=absent
 technical_source_render=absent
@@ -17,4 +8,4 @@ split_historical=absent
 split_future=absent
 old_d30=absent
 cdn=absent
-publish=blocked
+publish=ready
