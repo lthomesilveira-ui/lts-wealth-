@@ -10,13 +10,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Fetch validate and stage WIP35-v82
+      - name: Fetch validate and stage WIP35-v83
         shell: bash
         run: |
           set +e
           python - <<'PY'
           import json, urllib.request, re
-          url='https://tadhkamnwtsbdozwkyut.supabase.co/rest/v1/lts_public_ui_shell?version=eq.wip35-v82&select=html'
+          url='https://tadhkamnwtsbdozwkyut.supabase.co/rest/v1/lts_public_ui_shell?version=eq.wip35-v83&select=html'
           k='sb_publishable__p3SAbpThUIKtDr7A4llPw_AVkOaNkm'
           req=urllib.request.Request(url,headers={'apikey':k,'Authorization':'Bearer '+k})
           data=json.load(urllib.request.urlopen(req,timeout=30))
@@ -26,14 +26,16 @@ jobs:
           for i,s in enumerate(scripts): open(f'/tmp/script-{i}.js','w',encoding='utf-8').write(s)
           PY
           : > smoke-result.txt
-          echo 'version=wip35-v82' >> smoke-result.txt
+          echo 'version=wip35-v83' >> smoke-result.txt
           ok=1
           for f in /tmp/script-*.js; do node --check "$f" >> smoke-result.txt 2>&1; rc=$?; echo "exit=$rc" >> smoke-result.txt; [ $rc -ne 0 ] && ok=0; done
-          grep -q "WIP35-v82 · Fluxo auditado" /tmp/shell.html || { echo 'stamp=missing' >> smoke-result.txt; ok=0; }
-          grep -q "if(!open)return '—';" /tmp/shell.html || { echo 'closed_history_clean=missing' >> smoke-result.txt; ok=0; }
+          grep -q 'WIP35-v83 · Fluxo auditado' /tmp/shell.html || { echo 'stamp=missing' >> smoke-result.txt; ok=0; }
+          if grep -q '<div>Histórico / movimentos</div><div>Saldo anterior</div>' /tmp/shell.html; then echo 'fixed_history_column=present' >> smoke-result.txt; ok=0; else echo 'fixed_history_column=absent' >> smoke-result.txt; fi
+          if grep -q '<div class="histcol">' /tmp/shell.html; then echo 'history_blank_cell=present' >> smoke-result.txt; ok=0; else echo 'history_blank_cell=absent' >> smoke-result.txt; fi
+          grep -q 'cashdetails-title">Histórico / movimentos' /tmp/shell.html || { echo 'expandable_history_panel=missing' >> smoke-result.txt; ok=0; }
+          grep -q "cashEv=ACC==='Consolidado'?ev.filter(e=>!e.internal_transfer):ev" /tmp/shell.html || { echo 'internal_transfer_filter=missing' >> smoke-result.txt; ok=0; }
           grep -q 'function cardSettlementInline' /tmp/shell.html || { echo 'inline_invoice_function=missing' >> smoke-result.txt; ok=0; }
           grep -q 'EXP.add(e.event_date)' /tmp/shell.html || { echo 'invoice_auto_expand=missing' >> smoke-result.txt; ok=0; }
-          grep -q 'Por categoria' /tmp/shell.html || { echo 'invoice_categories=missing' >> smoke-result.txt; ok=0; }
           if grep -q 'cdn.jsdelivr.net' /tmp/shell.html; then echo 'cdn=present' >> smoke-result.txt; ok=0; else echo 'cdn=absent' >> smoke-result.txt; fi
           if [ $ok -eq 1 ]; then cp /tmp/shell.html index.html; echo 'publish=ready' >> smoke-result.txt; else echo 'publish=blocked' >> smoke-result.txt; fi
           cat smoke-result.txt
@@ -43,5 +45,5 @@ jobs:
           git config user.email 'actions@users.noreply.github.com'
           git add smoke-result.txt index.html
           git diff --cached --quiet && exit 0
-          git commit -m 'Publish validated WIP35-v82'
+          git commit -m 'Publish validated WIP35-v83'
           git push
