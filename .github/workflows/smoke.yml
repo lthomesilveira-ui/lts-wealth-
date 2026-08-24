@@ -29,7 +29,7 @@ jobs:
           echo 'version=wip35-v86' >> smoke-result.txt
           ok=1
           for f in /tmp/script-*.js; do node --check "$f" >> smoke-result.txt 2>&1; rc=$?; echo "exit=$rc" >> smoke-result.txt; [ $rc -ne 0 ] && ok=0; done
-          grep -q 'WIP35-v86 · Fluxo auditado' /tmp/shell.html || { echo 'stamp=missing' >> smoke-result.txt; ok=0; }
+          grep -q 'WIP35-v86 · Fluxo visual QA' /tmp/shell.html || { echo 'stamp=missing' >> smoke-result.txt; ok=0; }
           grep -q 'Histórico bancário' /tmp/shell.html || { echo 'historical_section=missing' >> smoke-result.txt; ok=0; }
           grep -q 'Hoje e projeção de caixa' /tmp/shell.html || { echo 'current_future_section=missing' >> smoke-result.txt; ok=0; }
           grep -q 'flow-v86-visual' /tmp/shell.html || { echo 'visual_css=missing' >> smoke-result.txt; ok=0; }
