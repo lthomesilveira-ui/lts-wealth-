@@ -10,14 +10,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Fetch validate and stage WIP35-v89
+      - name: Fetch validate and stage WIP35-v90
         shell: bash
         run: |
           set +e
+          K=$(grep -o 'sb_publishable_[A-Za-z0-9_-]*' index.html | head -1)
+          if [ -z "$K" ]; then echo 'publishable_key=missing'; exit 1; fi
+          export LTS_PUBLIC_KEY="$K"
           python - <<'PY'
-          import json, urllib.request, re
-          url='https://tadhkamnwtsbdozwkyut.supabase.co/rest/v1/lts_public_ui_shell?version=eq.wip35-v89&select=html'
-          k='sb_publishable__p3SAbpThUIKtDr7A4llPw_AVkOaNkm'
+          import json, urllib.request, re, os
+          url='https://tadhkamnwtsbdozwkyut.supabase.co/rest/v1/lts_public_ui_shell?version=eq.wip35-v90&select=html'
+          k=os.environ['LTS_PUBLIC_KEY']
           req=urllib.request.Request(url,headers={'apikey':k,'Authorization':'Bearer '+k})
           data=json.load(urllib.request.urlopen(req,timeout=30)); h=data[0]['html']
           open('/tmp/shell.html','w',encoding='utf-8').write(h)
@@ -26,24 +29,28 @@ jobs:
           print('shell bytes',len(h),'inline scripts',len(scripts))
           PY
           : > smoke-result.txt
-          echo 'version=wip35-v89' >> smoke-result.txt
+          echo 'version=wip35-v90' >> smoke-result.txt
           ok=1
           for f in /tmp/script-*.js; do node --check "$f" >> smoke-result.txt 2>&1; rc=$?; echo "exit=$rc" >> smoke-result.txt; [ $rc -ne 0 ] && ok=0; done
-          grep -q 'WIP35-v89 · Fluxo UX' /tmp/shell.html || { echo 'stamp=missing' >> smoke-result.txt; ok=0; }
-          grep -q "const BUILD='WIP35-v89 · Browser RPC v1 · Flow UX + card review'" /tmp/shell.html || { echo 'internal_stamp=missing' >> smoke-result.txt; ok=0; }
+          grep -q 'WIP35-v90 · Fluxo financeiro' /tmp/shell.html || { echo 'stamp=missing' >> smoke-result.txt; ok=0; }
+          grep -q "const BUILD='WIP35-v90 · Browser RPC v1 · Dynamic FGTS RSU payroll'" /tmp/shell.html || { echo 'internal_stamp=missing' >> smoke-result.txt; ok=0; }
           [ "$(grep -o 'function fluxo()' /tmp/shell.html | wc -l)" -eq 1 ] || { echo 'single_fluxo_function=failed' >> smoke-result.txt; ok=0; }
-          [ "$(grep -o 'function cardSettlementInline(day)' /tmp/shell.html | wc -l)" -eq 1 ] || { echo 'single_cardinline_function=failed' >> smoke-result.txt; ok=0; }
-          [ "$(grep -o 'function atualizacoes()' /tmp/shell.html | wc -l)" -eq 1 ] || { echo 'single_updates_function=failed' >> smoke-result.txt; ok=0; }
-          grep -q 'flow-v89-ux' /tmp/shell.html || { echo 'ux_css=missing' >> smoke-result.txt; ok=0; }
+          [ "$(grep -o 'function flowVals' /tmp/shell.html | wc -l)" -eq 1 ] || { echo 'single_flowvals_function=failed' >> smoke-result.txt; ok=0; }
           grep -q '.fx87-head{position:sticky!important;top:0!important' /tmp/shell.html || { echo 'sticky_header=missing' >> smoke-result.txt; ok=0; }
           grep -q '.fx89-detail-entry{grid-column:3' /tmp/shell.html || { echo 'detail_entry_alignment=missing' >> smoke-result.txt; ok=0; }
           grep -q '.fx89-detail-exit{grid-column:4' /tmp/shell.html || { echo 'detail_exit_alignment=missing' >> smoke-result.txt; ok=0; }
+          grep -q 'entradas_operacionais' /tmp/shell.html || { echo 'net_operational_entries=missing' >> smoke-result.txt; ok=0; }
+          grep -q 'Salário líquido' /tmp/shell.html || { echo 'net_salary_label=missing' >> smoke-result.txt; ok=0; }
+          grep -q 'consignado Coopharma' /tmp/shell.html || { echo 'coopharma_note=missing' >> smoke-result.txt; ok=0; }
+          grep -q 'Financiamentos e Empréstimos' /tmp/shell.html || { echo 'financing_loans_nav=missing' >> smoke-result.txt; ok=0; }
+          grep -q 'Descontado do salário líquido' /tmp/shell.html || { echo 'coopharma_financing_treatment=missing' >> smoke-result.txt; ok=0; }
+          grep -q 'Versão WIP35-v90' /tmp/shell.html || { echo 'clean_footer_version=missing' >> smoke-result.txt; ok=0; }
           grep -q 'if(!CARDDETAILFULL)' /tmp/shell.html || { echo 'compact_invoice_default=missing' >> smoke-result.txt; ok=0; }
           grep -q 'Acessar fatura completa' /tmp/shell.html || { echo 'full_invoice_action=missing' >> smoke-result.txt; ok=0; }
           grep -q 'Revisar classificação' /tmp/shell.html || { echo 'classification_action=missing' >> smoke-result.txt; ok=0; }
-          grep -q 'Classificação de faturas' /tmp/shell.html || { echo 'updates_classification_queue=missing' >> smoke-result.txt; ok=0; }
-          grep -q 'cardclass-save' /tmp/shell.html || { echo 'classification_save_handler=missing' >> smoke-result.txt; ok=0; }
-          grep -q "document.querySelector('.fx87-scroll')||document.querySelector('.mscroll')" /tmp/shell.html || { echo 'scroll_preserve=missing' >> smoke-result.txt; ok=0; }
+          if grep -q 'Conta corrente → D0/D1' /tmp/shell.html; then echo 'technical_flow_footer=present' >> smoke-result.txt; ok=0; else echo 'technical_flow_footer=absent' >> smoke-result.txt; fi
+          if grep -q 'FIX86 é piso' /tmp/shell.html; then echo 'technical_main_footer=present' >> smoke-result.txt; ok=0; else echo 'technical_main_footer=absent' >> smoke-result.txt; fi
+          if grep -q 'e.category||e.source' /tmp/shell.html; then echo 'technical_source_render=present' >> smoke-result.txt; ok=0; else echo 'technical_source_render=absent' >> smoke-result.txt; fi
           if grep -q 'Histórico bancário' /tmp/shell.html; then echo 'split_historical=present' >> smoke-result.txt; ok=0; else echo 'split_historical=absent' >> smoke-result.txt; fi
           if grep -q 'Hoje e projeção de caixa' /tmp/shell.html; then echo 'split_future=present' >> smoke-result.txt; ok=0; else echo 'split_future=absent' >> smoke-result.txt; fi
           if grep -q 'Liquidez D+30</div>' /tmp/shell.html; then echo 'old_d30=present' >> smoke-result.txt; ok=0; else echo 'old_d30=absent' >> smoke-result.txt; fi
@@ -56,5 +63,5 @@ jobs:
           git config user.email 'actions@users.noreply.github.com'
           git add smoke-result.txt index.html
           git diff --cached --quiet && exit 0
-          git commit -m 'Publish validated WIP35-v89'
+          git commit -m 'Publish validated WIP35-v90'
           git push
