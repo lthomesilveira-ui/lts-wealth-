@@ -1,0 +1,40 @@
+name: LTS browser smoke
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch published shell
+        env:
+          SUPABASE_KEY: sb_publishable__p3SAbpThUIKtDr7A4llPw_AVkOaNkm
+        run: |
+          python - <<'PY'
+          import json, urllib.request
+          url='https://tadhkamnwtsbdozwkyut.supabase.co/rest/v1/lts_public_ui_shell?version=eq.wip35-v67&select=html'
+          k='sb_publishable__p3SAbpThUIKtDr7A4llPw_AVkOaNkm'
+          req=urllib.request.Request(url,headers={'apikey':k,'Authorization':'Bearer '+k})
+          data=json.load(urllib.request.urlopen(req,timeout=30))
+          open('/tmp/shell.html','w',encoding='utf-8').write(data[0]['html'])
+          print('shell bytes',len(data[0]['html']))
+          PY
+      - name: Extract and syntax-check inline JavaScript
+        run: |
+          python - <<'PY'
+          import re
+          h=open('/tmp/shell.html',encoding='utf-8').read()
+          scripts=re.findall(r'<script(?:\s[^>]*)?>(.*?)</script>',h,re.I|re.S)
+          print('inline scripts',len(scripts))
+          for i,s in enumerate(scripts):
+              open(f'/tmp/script-{i}.js','w',encoding='utf-8').write(s)
+          PY
+          for f in /tmp/script-*.js; do echo "checking $f"; node --check "$f"; done
+      - name: Verify boot contracts
+        run: |
+          grep -q "WIP35-v67" /tmp/shell.html
+          grep -q "window.supabase" /tmp/shell.html
+          grep -q "load();" /tmp/shell.html
+          if grep -q "cdn.jsdelivr.net" /tmp/shell.html; then echo 'external CDN still present'; exit 1; fi
