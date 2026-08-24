@@ -1,12 +1,12 @@
-version=wip35-v79
+version=wip35-v81
 === /tmp/script-0.js ===
 exit=0
 === /tmp/script-1.js ===
 exit=0
 cdn=absent
+old_drawer_call=absent
 yellow_notice=absent
 realized_badge=absent
-post_anchor_badge=absent
 relative_balance_ui=absent
 future_rsu_flow_column=absent
 fgts_flow_column=absent
