@@ -1,7 +1,18 @@
-version=wip35-v68
+version=wip35-v69
 === /tmp/script-0.js ===
 exit=0
 === /tmp/script-1.js ===
-exit=0
-cdn=absent
-publish=ready
+/tmp/script-1.js:33
+function isCardSettlement(e){const d=String(e.description||e.description_raw||'').toLowerCase();return num(e.signed_amount)<0&&(d.includes('aeternum')||d.includes('mastercard')||d.includes('visa infinite')||d.includes('cartão c6')||d.includes('cartao c6')||d.includes('c6master'))}\nasync function openCardSettlement(e){CARDDETAILLOADING=true;CARDDETAIL={event:e};render();const {data,error}=await S.rpc('lts_browser_card_settlement_detail_v1',{p_event_date:e.event_date,p_description:e.description||e.description_raw||'',p_amount:Math.abs(num(e.signed_amount)),p_account:e.account||null});CARDDETAILLOADING=false;CARDDETAIL=error?{event:e,error:error.message||String(error)}:{event:e,...(data||{})};render()}
+                                                                                                                                                                                                                                                                                         ^
+
+SyntaxError: Invalid or unexpected token
+    at wrapSafe (node:internal/modules/cjs/loader:1713:18)
+    at checkSyntax (node:internal/main/check_syntax:78:3)
+
+Node.js v22.23.2
+exit=1
+cdn=present
+future_rsu_flow_column=absent
+fgts_flow_column=absent
+publish=blocked
