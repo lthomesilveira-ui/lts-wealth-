@@ -1,8 +1,6 @@
-version=wip35-v84
+version=wip35-v85
 exit=0
 exit=0
-fixed_history_column=absent
-history_blank_cell=absent
 old_d30_header=absent
 cdn=absent
 publish=ready
