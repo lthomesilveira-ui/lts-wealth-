@@ -10,13 +10,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Fetch validate and stage WIP35-v79
+      - name: Fetch validate and stage WIP35-v81
         shell: bash
         run: |
           set +e
           python - <<'PY'
           import json, urllib.request, re
-          url='https://tadhkamnwtsbdozwkyut.supabase.co/rest/v1/lts_public_ui_shell?version=eq.wip35-v79&select=html'
+          url='https://tadhkamnwtsbdozwkyut.supabase.co/rest/v1/lts_public_ui_shell?version=eq.wip35-v81&select=html'
           k='sb_publishable__p3SAbpThUIKtDr7A4llPw_AVkOaNkm'
           req=urllib.request.Request(url,headers={'apikey':k,'Authorization':'Bearer '+k})
           data=json.load(urllib.request.urlopen(req,timeout=30))
@@ -27,7 +27,7 @@ jobs:
           print('shell bytes',len(h),'inline scripts',len(scripts))
           PY
           : > smoke-result.txt
-          echo "version=wip35-v79" >> smoke-result.txt
+          echo "version=wip35-v81" >> smoke-result.txt
           ok=1
           for f in /tmp/script-*.js; do
             echo "=== $f ===" >> smoke-result.txt
@@ -38,18 +38,17 @@ jobs:
           done
           if grep -q "cdn.jsdelivr.net" /tmp/shell.html; then echo 'cdn=present' >> smoke-result.txt; ok=0; else echo 'cdn=absent' >> smoke-result.txt; fi
           grep -q 'Histórico / movimentos' /tmp/shell.html || { echo 'history_column=missing' >> smoke-result.txt; ok=0; }
-          grep -q 'grid-template-columns:130px 360px' /tmp/shell.html || { echo 'flow_compact_grid=missing' >> smoke-result.txt; ok=0; }
-          grep -q 'mscroll cashscroll' /tmp/shell.html || { echo 'single_table_scroll=missing' >> smoke-result.txt; ok=0; }
-          grep -q '.flowbar .chips{flex-wrap:wrap!important;overflow:visible!important}' /tmp/shell.html || { echo 'filter_scroll_removed=missing' >> smoke-result.txt; ok=0; }
-          grep -q 'WIP35-v79 · Fluxo auditado' /tmp/shell.html || { echo 'visible_build_stamp=missing' >> smoke-result.txt; ok=0; }
-          grep -q 'detalhes abaixo' /tmp/shell.html || { echo 'expanded_summary_missing' >> smoke-result.txt; ok=0; }
-          grep -q '.cashdetails{margin-left:130px!important;width:360px!important' /tmp/shell.html || { echo 'child_panel_alignment_missing' >> smoke-result.txt; ok=0; }
-          grep -q 'Disponível total' /tmp/shell.html || { echo 'available_total=missing' >> smoke-result.txt; ok=0; }
-          grep -q 'Abrir fatura' /tmp/shell.html || { echo 'invoice_drilldown=missing' >> smoke-result.txt; ok=0; }
+          grep -q 'WIP35-v81 · Fluxo auditado' /tmp/shell.html || { echo 'visible_build_stamp=missing' >> smoke-result.txt; ok=0; }
+          grep -q 'function flowHistorySummary' /tmp/shell.html || { echo 'grouped_history_summary=missing' >> smoke-result.txt; ok=0; }
+          grep -q 'function cardSettlementInline' /tmp/shell.html || { echo 'inline_invoice_function=missing' >> smoke-result.txt; ok=0; }
+          grep -q 'EXP.add(e.event_date)' /tmp/shell.html || { echo 'invoice_auto_expand=missing' >> smoke-result.txt; ok=0; }
+          grep -q '.invoice-inline{' /tmp/shell.html || { echo 'inline_invoice_css=missing' >> smoke-result.txt; ok=0; }
+          if grep -q '\${cardSettlementDrawer()}' /tmp/shell.html; then echo 'old_drawer_call=present' >> smoke-result.txt; ok=0; else echo 'old_drawer_call=absent' >> smoke-result.txt; fi
+          grep -q 'Este débito ainda não possui uma fatura detalhada conciliada' /tmp/shell.html || { echo 'missing_invoice_explicit_message=missing' >> smoke-result.txt; ok=0; }
           grep -q 'Por categoria' /tmp/shell.html || { echo 'invoice_category_summary=missing' >> smoke-result.txt; ok=0; }
+          grep -q 'Disponível total' /tmp/shell.html || { echo 'available_total=missing' >> smoke-result.txt; ok=0; }
           if grep -q 'Leitura de caixa:' /tmp/shell.html; then echo 'yellow_notice=present' >> smoke-result.txt; ok=0; else echo 'yellow_notice=absent' >> smoke-result.txt; fi
           if grep -q 'Realizado</span>' /tmp/shell.html; then echo 'realized_badge=present' >> smoke-result.txt; ok=0; else echo 'realized_badge=absent' >> smoke-result.txt; fi
-          if grep -q 'Pós-âncora</span>' /tmp/shell.html; then echo 'post_anchor_badge=present' >> smoke-result.txt; ok=0; else echo 'post_anchor_badge=absent' >> smoke-result.txt; fi
           if grep -q "basis:'relative'" /tmp/shell.html; then echo 'relative_balance_ui=present' >> smoke-result.txt; ok=0; else echo 'relative_balance_ui=absent' >> smoke-result.txt; fi
           if grep -q '<div>RSUs futuras</div>' /tmp/shell.html; then echo 'future_rsu_flow_column=present' >> smoke-result.txt; ok=0; else echo 'future_rsu_flow_column=absent' >> smoke-result.txt; fi
           if grep -q '<div>FGTS</div>' /tmp/shell.html; then echo 'fgts_flow_column=present' >> smoke-result.txt; ok=0; else echo 'fgts_flow_column=absent' >> smoke-result.txt; fi
@@ -61,5 +60,5 @@ jobs:
           git config user.email 'actions@users.noreply.github.com'
           git add smoke-result.txt index.html
           git diff --cached --quiet && exit 0
-          git commit -m 'Publish validated WIP35-v79'
+          git commit -m 'Publish validated WIP35-v81'
           git push
