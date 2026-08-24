@@ -10,13 +10,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Fetch validate and stage WIP35-v84
+      - name: Fetch validate and stage WIP35-v85
         shell: bash
         run: |
           set +e
           python - <<'PY'
           import json, urllib.request, re
-          url='https://tadhkamnwtsbdozwkyut.supabase.co/rest/v1/lts_public_ui_shell?version=eq.wip35-v84&select=html'
+          url='https://tadhkamnwtsbdozwkyut.supabase.co/rest/v1/lts_public_ui_shell?version=eq.wip35-v85&select=html'
           k='sb_publishable__p3SAbpThUIKtDr7A4llPw_AVkOaNkm'
           req=urllib.request.Request(url,headers={'apikey':k,'Authorization':'Bearer '+k})
           data=json.load(urllib.request.urlopen(req,timeout=30))
@@ -26,21 +26,20 @@ jobs:
           for i,s in enumerate(scripts): open(f'/tmp/script-{i}.js','w',encoding='utf-8').write(s)
           PY
           : > smoke-result.txt
-          echo 'version=wip35-v84' >> smoke-result.txt
+          echo 'version=wip35-v85' >> smoke-result.txt
           ok=1
           for f in /tmp/script-*.js; do node --check "$f" >> smoke-result.txt 2>&1; rc=$?; echo "exit=$rc" >> smoke-result.txt; [ $rc -ne 0 ] && ok=0; done
-          grep -q 'WIP35-v84 · Fluxo auditado' /tmp/shell.html || { echo 'stamp=missing' >> smoke-result.txt; ok=0; }
-          if grep -q '<div>Histórico / movimentos</div><div>Saldo anterior</div>' /tmp/shell.html; then echo 'fixed_history_column=present' >> smoke-result.txt; ok=0; else echo 'fixed_history_column=absent' >> smoke-result.txt; fi
-          if grep -q '<div class="histcol">' /tmp/shell.html; then echo 'history_blank_cell=present' >> smoke-result.txt; ok=0; else echo 'history_blank_cell=absent' >> smoke-result.txt; fi
-          grep -q 'grid-template-columns:128px 112px 92px 92px 112px 110px 122px 106px 122px 100px 126px' /tmp/shell.html || { echo 'ladder_grid=missing' >> smoke-result.txt; ok=0; }
-          grep -q 'Saldo após D0/D1' /tmp/shell.html || { echo 'balance_after_d01=missing' >> smoke-result.txt; ok=0; }
-          grep -q 'Saldo após RSU' /tmp/shell.html || { echo 'balance_after_rsu=missing' >> smoke-result.txt; ok=0; }
-          grep -q 'Saldo após FGTS' /tmp/shell.html || { echo 'balance_after_fgts=missing' >> smoke-result.txt; ok=0; }
+          grep -q 'WIP35-v85 · Fluxo auditado' /tmp/shell.html || { echo 'stamp=missing' >> smoke-result.txt; ok=0; }
+          grep -q 'Histórico bancário' /tmp/shell.html || { echo 'historical_section=missing' >> smoke-result.txt; ok=0; }
+          grep -q 'Hoje e projeção' /tmp/shell.html || { echo 'current_future_section=missing' >> smoke-result.txt; ok=0; }
+          grep -q 'recurso → saldo' /tmp/shell.html || { echo 'grouped_coverage=missing' >> smoke-result.txt; ok=0; }
+          grep -q '.mrow.bankrow{grid-template-columns:136px 160px 140px 140px 160px!important' /tmp/shell.html || { echo 'bank_grid=missing' >> smoke-result.txt; ok=0; }
+          grep -q '.mrow.coverrow{grid-template-columns:132px 138px 112px 112px 138px' /tmp/shell.html || { echo 'coverage_grid=missing' >> smoke-result.txt; ok=0; }
+          grep -q 'cover-balance' /tmp/shell.html || { echo 'balance_step=missing' >> smoke-result.txt; ok=0; }
           grep -q "e.source!=='economic_withholding'" /tmp/shell.html || { echo 'withholding_cash_filter=missing' >> smoke-result.txt; ok=0; }
           grep -q '!e.internal_transfer' /tmp/shell.html || { echo 'internal_transfer_filter=missing' >> smoke-result.txt; ok=0; }
           grep -q 'cashdetails-title">Histórico / movimentos' /tmp/shell.html || { echo 'expandable_history_panel=missing' >> smoke-result.txt; ok=0; }
           grep -q 'function cardSettlementInline' /tmp/shell.html || { echo 'inline_invoice_function=missing' >> smoke-result.txt; ok=0; }
-          grep -q '.cashrow .bal{background:#f4f6f8' /tmp/shell.html || { echo 'balance_shading=missing' >> smoke-result.txt; ok=0; }
           if grep -q 'Liquidez D+30</div>' /tmp/shell.html; then echo 'old_d30_header=present' >> smoke-result.txt; ok=0; else echo 'old_d30_header=absent' >> smoke-result.txt; fi
           if grep -q 'cdn.jsdelivr.net' /tmp/shell.html; then echo 'cdn=present' >> smoke-result.txt; ok=0; else echo 'cdn=absent' >> smoke-result.txt; fi
           if [ $ok -eq 1 ]; then cp /tmp/shell.html index.html; echo 'publish=ready' >> smoke-result.txt; else echo 'publish=blocked' >> smoke-result.txt; fi
@@ -51,5 +50,5 @@ jobs:
           git config user.email 'actions@users.noreply.github.com'
           git add smoke-result.txt index.html
           git diff --cached --quiet && exit 0
-          git commit -m 'Publish validated WIP35-v84'
+          git commit -m 'Publish validated WIP35-v85'
           git push
