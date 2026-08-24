@@ -1,6 +1,7 @@
-version=wip35-v85
+version=wip35-v86
 exit=0
 exit=0
+stamp=missing
 old_d30_header=absent
 cdn=absent
-publish=ready
+publish=blocked
