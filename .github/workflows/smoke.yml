@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Fetch published shell and syntax-check
+      - name: Fetch patch validate and stage direct shell
         shell: bash
         run: |
           set +e
@@ -21,25 +21,32 @@ jobs:
           req=urllib.request.Request(url,headers={'apikey':k,'Authorization':'Bearer '+k})
           data=json.load(urllib.request.urlopen(req,timeout=30))
           h=data[0]['html']
+          h=h.replace("?'pos':'}\">","?'pos':''}\">")
+          h=h.replace("?'neg':'}\">","?'neg':''}\">")
+          h=h.replace("WIP35-v67 · self-contained auth/RPC · recovery","WIP35-v68 · syntax-repaired direct shell")
           open('/tmp/shell.html','w',encoding='utf-8').write(h)
           scripts=re.findall(r'<script(?:\s[^>]*)?>(.*?)</script>',h,re.I|re.S)
           for i,s in enumerate(scripts): open(f'/tmp/script-{i}.js','w',encoding='utf-8').write(s)
           print('shell bytes',len(h),'inline scripts',len(scripts))
           PY
           : > smoke-result.txt
-          echo "version=wip35-v67" >> smoke-result.txt
+          echo "version=wip35-v68" >> smoke-result.txt
+          ok=1
           for f in /tmp/script-*.js; do
             echo "=== $f ===" >> smoke-result.txt
             node --check "$f" >> smoke-result.txt 2>&1
-            echo "exit=$?" >> smoke-result.txt
+            rc=$?
+            echo "exit=$rc" >> smoke-result.txt
+            [ $rc -ne 0 ] && ok=0
           done
-          if grep -q "cdn.jsdelivr.net" /tmp/shell.html; then echo 'cdn=present' >> smoke-result.txt; else echo 'cdn=absent' >> smoke-result.txt; fi
+          if grep -q "cdn.jsdelivr.net" /tmp/shell.html; then echo 'cdn=present' >> smoke-result.txt; ok=0; else echo 'cdn=absent' >> smoke-result.txt; fi
+          if [ $ok -eq 1 ]; then cp /tmp/shell.html index.html; echo 'publish=ready' >> smoke-result.txt; else echo 'publish=blocked' >> smoke-result.txt; fi
           cat smoke-result.txt
-      - name: Commit smoke result
+      - name: Commit validated shell and result
         run: |
           git config user.name 'lts-smoke-bot'
           git config user.email 'actions@users.noreply.github.com'
-          git add smoke-result.txt
+          git add smoke-result.txt index.html
           git diff --cached --quiet && exit 0
-          git commit -m 'Record LTS smoke result'
+          git commit -m 'Publish syntax-checked LTS shell'
           git push
