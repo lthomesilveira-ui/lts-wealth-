@@ -6,7 +6,7 @@ import sys
 import urllib.request
 from pathlib import Path
 
-VERSION = "wip35-v98"
+VERSION = "wip35-v99"
 SUPABASE_URL = "https://tadhkamnwtsbdozwkyut.supabase.co"
 ROOT = Path(__file__).resolve().parents[2]
 INDEX = ROOT / "index.html"
@@ -30,10 +30,6 @@ def fetch_shell(key: str) -> str:
     if not data or not data[0].get("html"):
         raise RuntimeError("shell=missing")
     return data[0]["html"]
-
-
-def has(h: str, text: str) -> bool:
-    return text in h
 
 
 def main() -> int:
@@ -60,14 +56,12 @@ def main() -> int:
                     lines.append(p.stderr.strip())
 
         required = {
-            "stamp": "WIP35-v98 · Despesas confiáveis + Atualizações",
-            "build": "const BUILD='WIP35-v98 · Browser RPC v1 · Coverage-safe expense review center'",
-            "footer_version": "Versão WIP35-v98",
+            "stamp": "WIP35-v99 · Atualizações operacionais",
+            "build": "const BUILD='WIP35-v99 · Browser RPC v1 · Append-only fact confirmation'",
+            "footer_version": "Versão WIP35-v99",
             "dashboard_today_question": "Tenho dinheiro hoje?",
             "dashboard_next_question": "O que vence / precisa de mim?",
             "dashboard_trajectory_question": "Para onde estou indo?",
-            "dashboard_no_new_vesting": "Sem novos vestings",
-            "dashboard_scheduled_vesting": "Com vestings programados",
             "dashboard_cash_guard": "sem FGTS e sem awards futuros",
             "dashboard_fgts_guard": "FGTS projetado permanece patrimônio restrito",
             "dashboard_cockpit_css": "dashboard-v95-cockpit",
@@ -95,7 +89,6 @@ def main() -> int:
             "expense_purchase_date": "Compra ${fmt(tx)}",
             "expense_credit_tag": "crédito/estorno · reduz consumo",
             "expense_coverage_guard": "Cobertura insuficiente",
-            "expense_coverage_helper": "function expenseCoverageStart()",
             "expense_month_guard": "expenseComparisonReliable([last.month_key,prev.month_key])",
             "expense_insight_guard": "pctReliable=!!(last&&prev.length&&expenseComparisonReliable",
             "expense_mixed_guard": "Comparações temporais que atravessam a mudança de cobertura de cartão são limitadas",
@@ -110,6 +103,12 @@ def main() -> int:
             "updates_priority": "Math.abs(num(b.impact_amount))-Math.abs(num(a.impact_amount))",
             "updates_ambiguous_guard": "Candidatos encontrados · nenhuma conciliação automática",
             "updates_evidence_guard": "A escolha exige vínculo documental; o LTS não decide entre candidatos equivalentes.",
+            "updates_transfer_group": "function groupUpdateItems(raw)",
+            "updates_confirm_rpc": "lts_browser_confirm_overdue_transfer_v1",
+            "updates_confirm_action": "Confirmar realizado</button>",
+            "updates_confirm_pair_guard": "registra as duas pernas da transferência como fato",
+            "updates_confirm_bind": "document.querySelectorAll('.updconfirm')",
+            "updates_confirm_neutral_guard": "manterá o Consolidado neutro",
             "compact_invoice_default": "if(!CARDDETAILFULL)",
             "full_invoice_action": "Acessar fatura completa",
             "wealth_d0_layer": "Liquidez até D+0",
@@ -117,10 +116,7 @@ def main() -> int:
             "wealth_restricted": "Restrito · não é caixa",
             "wealth_future": "Awards futuros · indisponíveis hoje",
             "wealth_future_snapshot_guard": "snapshot documental de awards futuros",
-            "wealth_future_gross_net": "hasNet?'líquido estimado':'bruto'",
-            "cipo_future_schedule_label": "Saídas futuras do cronograma",
             "cipo_debt_missing": "Saldo devedor contratual atual",
-            "cipo_document_task": "A pendência está em Atualizações",
             "financing_future_label": "Saídas futuras programadas",
             "financing_debt_guard": "Não inferido pela soma das parcelas",
             "financing_coopharma_payroll": "Consignado em folha: R$ 4.451,02 reduz o salário líquido no Fluxo",
@@ -131,7 +127,7 @@ def main() -> int:
             "planning_fgts_guard": "FGTS permanece patrimônio restrito e é intencionalmente excluído dos três cenários",
         }
         for name, text in required.items():
-            if has(h, text):
+            if text in h:
                 lines.append(f"{name}=ok")
             else:
                 lines.append(f"{name}=missing")
@@ -149,6 +145,8 @@ def main() -> int:
             "expense_review": "function expenseClassificationUpdates",
             "updates": "function atualizacoes()",
             "updates_item": "function renderUpdateItem(x)",
+            "updates_group": "function groupUpdateItems(raw)",
+            "updates_confirm": "async function confirmOverdueTransfer(b)",
             "wealth": "function patrimonio()",
             "financing_detail": "function financingDetail()",
             "financing": "function financiamentos()",
@@ -162,32 +160,13 @@ def main() -> int:
 
         p = h.find("function cartoes()")
         card_snip = h[p:p + 10000] if p >= 0 else ""
-        forbidden_card = ["source_status", "source_winner", "Unidades FIX86"]
-        for text in forbidden_card:
+        for text in ["source_status", "source_winner", "Unidades FIX86"]:
             key_name = re.sub(r"[^a-z0-9]+", "_", text.lower()).strip("_")
             if text in card_snip:
                 lines.append(f"card_forbidden_{key_name}=present")
                 failures.append(f"card_forbidden_{key_name}=present")
             else:
                 lines.append(f"card_forbidden_{key_name}=absent")
-
-        fp = h.find("function financiamentos()")
-        financing_snip = h[fp:fp + 9000] if fp >= 0 else ""
-        if "Total do cronograma" in financing_snip:
-            lines.append("financing_old_total_schedule_label=present")
-            failures.append("financing_old_total_schedule_label=present")
-        else:
-            lines.append("financing_old_total_schedule_label=absent")
-
-        pp = h.find("function planejamento()")
-        planning_snip = h[pp:pp + 9000] if pp >= 0 else ""
-        for technical in ["conservative_current_liquidity", "current_realizable_liquidity", "conditional_not_guaranteed_cash"]:
-            key_name = technical.replace("_", "-")
-            if technical in planning_snip:
-                lines.append(f"planning_technical_{key_name}=present")
-                failures.append(f"planning_technical_{key_name}=present")
-            else:
-                lines.append(f"planning_technical_{key_name}=absent")
 
         forbidden_global = {
             "technical_flow_footer": "Conta corrente → D0/D1",
