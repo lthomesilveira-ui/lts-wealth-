@@ -1,5 +1,4 @@
 import json
-import os
 import re
 import shutil
 import subprocess
@@ -7,7 +6,7 @@ import sys
 import urllib.request
 from pathlib import Path
 
-VERSION = "wip35-v96"
+VERSION = "wip35-v97"
 SUPABASE_URL = "https://tadhkamnwtsbdozwkyut.supabase.co"
 ROOT = Path(__file__).resolve().parents[2]
 INDEX = ROOT / "index.html"
@@ -61,9 +60,9 @@ def main() -> int:
                     lines.append(p.stderr.strip())
 
         required = {
-            "stamp": "WIP35-v96 · Cartões operacionais",
-            "build": "const BUILD='WIP35-v96 · Browser RPC v1 · Card human states'",
-            "footer_version": "Versão WIP35-v96",
+            "stamp": "WIP35-v97 · Patrimônio + Planejamento",
+            "build": "const BUILD='WIP35-v97 · Browser RPC v1 · Wealth debt planning semantics'",
+            "footer_version": "Versão WIP35-v97",
             "dashboard_today_question": "Tenho dinheiro hoje?",
             "dashboard_next_question": "O que vence / precisa de mim?",
             "dashboard_trajectory_question": "Para onde estou indo?",
@@ -101,6 +100,23 @@ def main() -> int:
             "safe_suggestion_action": "Confirmar sugestão",
             "compact_invoice_default": "if(!CARDDETAILFULL)",
             "full_invoice_action": "Acessar fatura completa",
+            "wealth_d0_layer": "Liquidez até D+0",
+            "wealth_d3_layer": "Liquidez realizável até D+3",
+            "wealth_restricted": "Restrito · não é caixa",
+            "wealth_future": "Awards futuros · indisponíveis hoje",
+            "wealth_future_snapshot_guard": "snapshot documental de awards futuros",
+            "wealth_future_gross_net": "hasNet?'líquido estimado':'bruto'",
+            "cipo_future_schedule_label": "Saídas futuras do cronograma",
+            "cipo_debt_missing": "Saldo devedor contratual atual",
+            "cipo_document_task": "A pendência está em Atualizações",
+            "financing_future_label": "Saídas futuras programadas",
+            "financing_debt_guard": "Não inferido pela soma das parcelas",
+            "financing_coopharma_payroll": "Consignado em folha: R$ 4.451,02 reduz o salário líquido no Fluxo",
+            "planning_d0_human": "Só caixa + D+0",
+            "planning_d3_human": "Incluindo ativos já disponíveis D+3",
+            "planning_vesting_human": "Se os vestings de novembro ocorrerem",
+            "planning_fgts_zero": "FGTS nos cenários de caixa",
+            "planning_fgts_guard": "FGTS permanece patrimônio restrito e é intencionalmente excluído dos três cenários",
         }
         for name, text in required.items():
             if has(h, text):
@@ -118,6 +134,10 @@ def main() -> int:
             "expense_tx": "function expenseTx",
             "expense_review": "function expenseClassificationUpdates",
             "updates": "function atualizacoes()",
+            "wealth": "function patrimonio()",
+            "financing_detail": "function financingDetail()",
+            "financing": "function financiamentos()",
+            "planning": "function planejamento()",
         }
         for name, text in exact_once.items():
             n = h.count(text)
@@ -135,6 +155,24 @@ def main() -> int:
                 failures.append(f"card_forbidden_{key_name}=present")
             else:
                 lines.append(f"card_forbidden_{key_name}=absent")
+
+        fp = h.find("function financiamentos()")
+        financing_snip = h[fp:fp + 9000] if fp >= 0 else ""
+        if "Total do cronograma" in financing_snip:
+            lines.append("financing_old_total_schedule_label=present")
+            failures.append("financing_old_total_schedule_label=present")
+        else:
+            lines.append("financing_old_total_schedule_label=absent")
+
+        pp = h.find("function planejamento()")
+        planning_snip = h[pp:pp + 9000] if pp >= 0 else ""
+        for technical in ["conservative_current_liquidity", "current_realizable_liquidity", "conditional_not_guaranteed_cash"]:
+            key_name = technical.replace("_", "-")
+            if technical in planning_snip:
+                lines.append(f"planning_technical_{key_name}=present")
+                failures.append(f"planning_technical_{key_name}=present")
+            else:
+                lines.append(f"planning_technical_{key_name}=absent")
 
         forbidden_global = {
             "technical_flow_footer": "Conta corrente → D0/D1",
