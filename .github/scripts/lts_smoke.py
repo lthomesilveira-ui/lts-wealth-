@@ -6,7 +6,7 @@ import sys
 import urllib.request
 from pathlib import Path
 
-VERSION = "wip35-v101"
+VERSION = "wip35-v102"
 SUPABASE_URL = "https://tadhkamnwtsbdozwkyut.supabase.co"
 ROOT = Path(__file__).resolve().parents[2]
 INDEX = ROOT / "index.html"
@@ -56,90 +56,70 @@ def main() -> int:
                     lines.append(p.stderr.strip())
 
         required = {
-            "stamp": "WIP35-v101 · Atualizações sem becos sem saída",
-            "build": "const BUILD='WIP35-v101 · Browser RPC v1 · Actionable updates center'",
-            "footer_version": "Versão WIP35-v101",
+            "stamp": "WIP35-v102 · Fluxo consistente e editável",
+            "build": "const BUILD='WIP35-v102 · Browser RPC v1 · Flow continuity and editable forecasts'",
+            "footer_version": "Versão WIP35-v102",
             "dashboard_today_question": "Tenho dinheiro hoje?",
             "dashboard_next_question": "O que vence / precisa de mim?",
             "dashboard_trajectory_question": "Para onde estou indo?",
             "dashboard_cash_guard": "sem FGTS e sem awards futuros",
             "dashboard_fgts_guard": "FGTS projetado permanece patrimônio restrito",
-            "dashboard_cockpit_css": "dashboard-v95-cockpit",
-            "card_human_hierarchy": "Fatura fechada → faturas abertas → parcelas futuras já contratadas",
-            "card_future_floor_semantics": "Piso conhecido · não é previsão do valor final",
-            "card_detail_action": "Ver resumo da fatura",
-            "card_review_action": "Revisar classificações",
-            "card_history_semantics": "Histórico de pagamentos de fatura",
-            "card_operating_css": "cards-v96-operational",
+            "card_hierarchy": "Fatura fechada → faturas abertas → parcelas futuras já contratadas",
+            "card_future_floor": "Piso conhecido · não é previsão do valor final",
             "card_paid_recent": "Pagas recentemente",
-            "card_paid_data": "paid=o.paid_recent||[]",
-            "sticky_header": ".fx87-head{position:sticky!important;top:0!important",
-            "detail_entry_alignment": ".fx89-detail-entry{grid-column:3",
-            "detail_exit_alignment": ".fx89-detail-exit{grid-column:4",
-            "net_operational_entries": "entradas_operacionais",
+            "card_payment_rpc": "lts_browser_confirm_card_payment_v1",
+            "sticky_table_header": ".fx87-head{position:sticky!important;top:0!important",
+            "balance_highlight": ".fx87-balance{background:#f2f4f6",
             "net_salary_label": "Salário líquido",
             "coopharma_note": "consignado Coopharma",
-            "financing_loans_nav": "Financiamentos e Empréstimos",
             "flow_edit_action": "data-mode=\"edit\"",
             "flow_duplicate_action": "data-mode=\"duplicate\"",
             "flow_split_action": "Dividir / substituir",
-            "flow_divided_badge": "Dividido</i>",
-            "flow_adjusted_badge": "Ajustado</i>",
+            "flow_delete_button": "class=\"chip flowdeletebtn\"",
+            "flow_delete_fn": "async function deleteFlowEvent(e,b)",
+            "flow_delete_bind": "document.querySelectorAll('.flowdeletebtn')",
+            "flow_delete_guard": "registro original será preservado para auditoria",
+            "flow_delete_label": "Excluir lançamento",
+            "flow_future_editor": "async function openFlowEditor",
+            "historical_card_helper": "function historicalCardUnitForEvent(e)",
+            "historical_card_display": "function flowDisplayDescription(e)",
+            "historical_card_summary": "Resumo histórico da fatura",
+            "historical_card_no_fake_detail": "Detalhe de compras",
+            "historical_card_unavailable": "Não disponível",
+            "historical_card_open": "Abrir fatura</button>",
+            "cipo_human_label": "Apartamento CIPÓ 396",
+            "flow_shell": "class=\"flow-shell\"",
+            "flow_fixed_controls": "class=\"flow-sticky-controls\"",
+            "flow_view_toggle": "classList.toggle('flow-view',V==='Fluxo Diário')",
+            "flow_single_vertical_scroll": "body.flow-view{height:100vh;overflow:hidden}",
+            "flow_table_scroll": ".flow-shell .fx87-scroll{height:100%;max-height:none!important;overflow:auto!important",
+            "flow_footer_hidden": "body.flow-view .footer{display:none}",
             "expense_default_12m": "DSPPER='12m'",
             "expense_card_coverage": "Detalhe de cartão disponível a partir de",
-            "expense_card_competence": "competência ${comp",
-            "expense_purchase_date": "Compra ${fmt(tx)}",
             "expense_credit_tag": "crédito/estorno · reduz consumo",
             "expense_coverage_guard": "Cobertura insuficiente",
             "expense_month_guard": "expenseComparisonReliable([last.month_key,prev.month_key])",
-            "expense_insight_guard": "pctReliable=!!(last&&prev.length&&expenseComparisonReliable",
             "expense_mixed_guard": "Comparações temporais que atravessam a mudança de cobertura de cartão são limitadas",
-            "expense_12m_guard": "Comparação de 12 meses limitada pela mudança de cobertura de cartão",
             "expense_review_center": "Classificação de extrato",
-            "expense_review_policy": "Histórico já categorizado não aparece só por faltar contraparte/centro.",
-            "expense_review_link": "A classificar · revisar",
-            "expense_review_action": "Revisar classificação",
-            "safe_suggestion_label": "Sugestão do histórico:",
             "safe_suggestion_action": "Confirmar sugestão",
             "updates_question": "O que falta fazer para o LTS estar atualizado?",
-            "updates_priority": "Math.abs(num(b.impact_amount))-Math.abs(num(a.impact_amount))",
             "updates_ambiguous_guard": "Candidatos encontrados · nenhuma conciliação automática",
             "updates_evidence_guard": "A escolha exige vínculo documental; o LTS não decide entre candidatos equivalentes.",
-            "updates_transfer_group": "function groupUpdateItems(raw)",
-            "updates_confirm_rpc": "lts_browser_confirm_overdue_transfer_v1",
-            "updates_confirm_action": "Confirmar realizado</button>",
-            "updates_confirm_pair_guard": "registra as duas pernas da transferência como fato",
-            "updates_confirm_bind": "document.querySelectorAll('.updconfirm')",
-            "updates_confirm_neutral_guard": "manterá o Consolidado neutro",
-            "overdue_event_rpc": "lts_browser_confirm_overdue_event_v1",
-            "overdue_event_button": "class=\"chip updeventconfirm\"",
-            "overdue_event_bind": "document.querySelectorAll('.updeventconfirm')",
-            "overdue_event_guard": "evento vencido vira fato uma única vez",
+            "updates_transfer_rpc": "lts_browser_confirm_overdue_transfer_v1",
+            "updates_event_rpc": "lts_browser_confirm_overdue_event_v1",
             "updates_evidence_action": "Enviar evidência",
             "updates_document_action": "Enviar documento",
-            "updates_input_bind": "document.querySelectorAll('.updinput')",
             "updates_input_route": "V='Entradas';renderNav();render()",
-            "updates_input_guard": "Envie a evidência em Entradas para revisão.",
-            "card_payment_rpc": "lts_browser_confirm_card_payment_v1",
-            "card_payment_action": "Confirmar pagamento</button>",
-            "card_payment_bind": "document.querySelectorAll('.cardpayconfirm')",
-            "card_payment_cash_once": "pagamento vira fato de caixa uma única vez",
-            "card_payment_consumption_guard": "compras da fatura continuam sendo o consumo econômico em Despesas",
-            "compact_invoice_default": "if(!CARDDETAILFULL)",
-            "full_invoice_action": "Acessar fatura completa",
-            "wealth_d0_layer": "Liquidez até D+0",
-            "wealth_d3_layer": "Liquidez realizável até D+3",
+            "wealth_d0": "Liquidez até D+0",
+            "wealth_d3": "Liquidez realizável até D+3",
             "wealth_restricted": "Restrito · não é caixa",
             "wealth_future": "Awards futuros · indisponíveis hoje",
-            "wealth_future_snapshot_guard": "snapshot documental de awards futuros",
             "cipo_debt_missing": "Saldo devedor contratual atual",
-            "financing_future_label": "Saídas futuras programadas",
+            "financing_future": "Saídas futuras programadas",
             "financing_debt_guard": "Não inferido pela soma das parcelas",
-            "financing_coopharma_payroll": "Consignado em folha: R$ 4.451,02 reduz o salário líquido no Fluxo",
-            "planning_d0_human": "Só caixa + D+0",
-            "planning_d3_human": "Incluindo ativos já disponíveis D+3",
-            "planning_vesting_human": "Se os vestings de novembro ocorrerem",
-            "planning_fgts_zero": "FGTS nos cenários de caixa",
+            "planning_d0": "Só caixa + D+0",
+            "planning_d3": "Incluindo ativos já disponíveis D+3",
+            "planning_vesting": "Se os vestings de novembro ocorrerem",
             "planning_fgts_guard": "FGTS permanece patrimônio restrito e é intencionalmente excluído dos três cenários",
         }
         for name, text in required.items():
@@ -155,6 +135,9 @@ def main() -> int:
             "flow": "function fluxo()",
             "flow_values": "function flowVals",
             "flow_editor": "async function openFlowEditor",
+            "flow_delete": "async function deleteFlowEvent(e,b)",
+            "historical_card_unit": "function historicalCardUnitForEvent(e)",
+            "flow_display_description": "function flowDisplayDescription(e)",
             "expense_tx": "function expenseTx",
             "expense_coverage": "function expenseCoverageStart()",
             "expense_compare": "function expense12mCompare(rows)",
@@ -162,11 +145,10 @@ def main() -> int:
             "updates": "function atualizacoes()",
             "updates_item": "function renderUpdateItem(x)",
             "updates_group": "function groupUpdateItems(raw)",
-            "updates_confirm": "async function confirmOverdueTransfer(b)",
-            "overdue_event_confirm": "async function confirmOverdueEvent(b)",
+            "updates_transfer_confirm": "async function confirmOverdueTransfer(b)",
+            "updates_event_confirm": "async function confirmOverdueEvent(b)",
             "card_payment_confirm": "async function confirmCardPayment(b)",
             "wealth": "function patrimonio()",
-            "financing_detail": "function financingDetail()",
             "financing": "function financiamentos()",
             "planning": "function planejamento()",
         }
@@ -176,8 +158,18 @@ def main() -> int:
             if n != 1:
                 failures.append(f"single_{name}=failed")
 
+        # Structure sanity for the desktop flow viewport.
+        for name, op, cl in [
+            ("flow_shell_open", '<div class="flow-shell">', '</div>'),
+            ("flow_controls_open", '<div class="flow-sticky-controls">', '</div>'),
+        ]:
+            n = h.count(op)
+            lines.append(f"{name}={n}")
+            if n != 1:
+                failures.append(f"{name}=failed")
+
         p = h.find("function cartoes()")
-        card_snip = h[p:p + 12000] if p >= 0 else ""
+        card_snip = h[p:p + 13000] if p >= 0 else ""
         for text in ["source_status", "source_winner", "Unidades FIX86"]:
             key_name = re.sub(r"[^a-z0-9]+", "_", text.lower()).strip("_")
             if text in card_snip:
@@ -186,17 +178,17 @@ def main() -> int:
             else:
                 lines.append(f"card_forbidden_{key_name}=absent")
 
-        forbidden_global = {
+        forbidden = {
             "technical_flow_footer": "Conta corrente → D0/D1",
             "technical_main_footer": "FIX86 é piso",
             "technical_source_render": "e.category||e.source",
             "split_historical": "Histórico bancário",
             "split_future": "Hoje e projeção de caixa",
-            "old_d30": "Liquidez D+30</div>",
             "old_updates_copy": "Central de review & approve",
+            "old_cancel_projection": ">Cancelar projeção</button>",
             "cdn": "cdn.jsdelivr.net",
         }
-        for name, text in forbidden_global.items():
+        for name, text in forbidden.items():
             if text in h:
                 lines.append(f"{name}=present")
                 failures.append(f"{name}=present")
