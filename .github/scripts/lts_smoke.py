@@ -6,7 +6,7 @@ import sys
 import urllib.request
 from pathlib import Path
 
-VERSION = "wip35-v100"
+VERSION = "wip35-v101"
 SUPABASE_URL = "https://tadhkamnwtsbdozwkyut.supabase.co"
 ROOT = Path(__file__).resolve().parents[2]
 INDEX = ROOT / "index.html"
@@ -56,9 +56,9 @@ def main() -> int:
                     lines.append(p.stderr.strip())
 
         required = {
-            "stamp": "WIP35-v100 · Pagamentos e confirmações",
-            "build": "const BUILD='WIP35-v100 · Browser RPC v1 · Operational payment confirmation'",
-            "footer_version": "Versão WIP35-v100",
+            "stamp": "WIP35-v101 · Atualizações sem becos sem saída",
+            "build": "const BUILD='WIP35-v101 · Browser RPC v1 · Actionable updates center'",
+            "footer_version": "Versão WIP35-v101",
             "dashboard_today_question": "Tenho dinheiro hoje?",
             "dashboard_next_question": "O que vence / precisa de mim?",
             "dashboard_trajectory_question": "Para onde estou indo?",
@@ -111,6 +111,15 @@ def main() -> int:
             "updates_confirm_pair_guard": "registra as duas pernas da transferência como fato",
             "updates_confirm_bind": "document.querySelectorAll('.updconfirm')",
             "updates_confirm_neutral_guard": "manterá o Consolidado neutro",
+            "overdue_event_rpc": "lts_browser_confirm_overdue_event_v1",
+            "overdue_event_button": "class=\"chip updeventconfirm\"",
+            "overdue_event_bind": "document.querySelectorAll('.updeventconfirm')",
+            "overdue_event_guard": "evento vencido vira fato uma única vez",
+            "updates_evidence_action": "Enviar evidência",
+            "updates_document_action": "Enviar documento",
+            "updates_input_bind": "document.querySelectorAll('.updinput')",
+            "updates_input_route": "V='Entradas';renderNav();render()",
+            "updates_input_guard": "Envie a evidência em Entradas para revisão.",
             "card_payment_rpc": "lts_browser_confirm_card_payment_v1",
             "card_payment_action": "Confirmar pagamento</button>",
             "card_payment_bind": "document.querySelectorAll('.cardpayconfirm')",
@@ -154,6 +163,7 @@ def main() -> int:
             "updates_item": "function renderUpdateItem(x)",
             "updates_group": "function groupUpdateItems(raw)",
             "updates_confirm": "async function confirmOverdueTransfer(b)",
+            "overdue_event_confirm": "async function confirmOverdueEvent(b)",
             "card_payment_confirm": "async function confirmCardPayment(b)",
             "wealth": "function patrimonio()",
             "financing_detail": "function financingDetail()",
