@@ -6,7 +6,7 @@ import sys
 import urllib.request
 from pathlib import Path
 
-VERSION = "wip35-v99"
+VERSION = "wip35-v100"
 SUPABASE_URL = "https://tadhkamnwtsbdozwkyut.supabase.co"
 ROOT = Path(__file__).resolve().parents[2]
 INDEX = ROOT / "index.html"
@@ -56,9 +56,9 @@ def main() -> int:
                     lines.append(p.stderr.strip())
 
         required = {
-            "stamp": "WIP35-v99 · Atualizações operacionais",
-            "build": "const BUILD='WIP35-v99 · Browser RPC v1 · Append-only fact confirmation'",
-            "footer_version": "Versão WIP35-v99",
+            "stamp": "WIP35-v100 · Pagamentos e confirmações",
+            "build": "const BUILD='WIP35-v100 · Browser RPC v1 · Operational payment confirmation'",
+            "footer_version": "Versão WIP35-v100",
             "dashboard_today_question": "Tenho dinheiro hoje?",
             "dashboard_next_question": "O que vence / precisa de mim?",
             "dashboard_trajectory_question": "Para onde estou indo?",
@@ -71,6 +71,8 @@ def main() -> int:
             "card_review_action": "Revisar classificações",
             "card_history_semantics": "Histórico de pagamentos de fatura",
             "card_operating_css": "cards-v96-operational",
+            "card_paid_recent": "Pagas recentemente",
+            "card_paid_data": "paid=o.paid_recent||[]",
             "sticky_header": ".fx87-head{position:sticky!important;top:0!important",
             "detail_entry_alignment": ".fx89-detail-entry{grid-column:3",
             "detail_exit_alignment": ".fx89-detail-exit{grid-column:4",
@@ -109,6 +111,11 @@ def main() -> int:
             "updates_confirm_pair_guard": "registra as duas pernas da transferência como fato",
             "updates_confirm_bind": "document.querySelectorAll('.updconfirm')",
             "updates_confirm_neutral_guard": "manterá o Consolidado neutro",
+            "card_payment_rpc": "lts_browser_confirm_card_payment_v1",
+            "card_payment_action": "Confirmar pagamento</button>",
+            "card_payment_bind": "document.querySelectorAll('.cardpayconfirm')",
+            "card_payment_cash_once": "pagamento vira fato de caixa uma única vez",
+            "card_payment_consumption_guard": "compras da fatura continuam sendo o consumo econômico em Despesas",
             "compact_invoice_default": "if(!CARDDETAILFULL)",
             "full_invoice_action": "Acessar fatura completa",
             "wealth_d0_layer": "Liquidez até D+0",
@@ -147,6 +154,7 @@ def main() -> int:
             "updates_item": "function renderUpdateItem(x)",
             "updates_group": "function groupUpdateItems(raw)",
             "updates_confirm": "async function confirmOverdueTransfer(b)",
+            "card_payment_confirm": "async function confirmCardPayment(b)",
             "wealth": "function patrimonio()",
             "financing_detail": "function financingDetail()",
             "financing": "function financiamentos()",
@@ -159,7 +167,7 @@ def main() -> int:
                 failures.append(f"single_{name}=failed")
 
         p = h.find("function cartoes()")
-        card_snip = h[p:p + 10000] if p >= 0 else ""
+        card_snip = h[p:p + 12000] if p >= 0 else ""
         for text in ["source_status", "source_winner", "Unidades FIX86"]:
             key_name = re.sub(r"[^a-z0-9]+", "_", text.lower()).strip("_")
             if text in card_snip:
