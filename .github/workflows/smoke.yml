@@ -1,7 +1,7 @@
 name: LTS browser smoke
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   workflow_dispatch:
 permissions:
   contents: write
@@ -10,92 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Fetch validate and stage WIP35-v96
-        shell: bash
-        run: |
-          set +e
-          K=$(grep -o 'sb_publishable_[A-Za-z0-9_-]*' index.html | head -1)
-          if [ -z "$K" ]; then echo 'publishable_key=missing'; exit 1; fi
-          export LTS_PUBLIC_KEY="$K"
-          python - <<'PY'
-          import json, urllib.request, re, os
-          url='https://tadhkamnwtsbdozwkyut.supabase.co/rest/v1/lts_public_ui_shell?version=eq.wip35-v96&select=html'
-          k=os.environ['LTS_PUBLIC_KEY']
-          req=urllib.request.Request(url,headers={'apikey':k,'Authorization':'Bearer '+k})
-          data=json.load(urllib.request.urlopen(req,timeout=30)); h=data[0]['html']
-          open('/tmp/shell.html','w',encoding='utf-8').write(h)
-          scripts=re.findall(r'<script(?:\s[^>]*)?>(.*?)</script>',h,re.I|re.S)
-          for i,s in enumerate(scripts): open(f'/tmp/script-{i}.js','w',encoding='utf-8').write(s)
-          print('shell bytes',len(h),'inline scripts',len(scripts))
-          PY
-          : > smoke-result.txt
-          echo 'version=wip35-v96' >> smoke-result.txt
-          ok=1
-          for f in /tmp/script-*.js; do node --check "$f" >> smoke-result.txt 2>&1; rc=$?; echo "exit=$rc" >> smoke-result.txt; [ $rc -ne 0 ] && ok=0; done
-          grep -q 'WIP35-v96 · Cartões operacionais' /tmp/shell.html || { echo 'stamp=missing' >> smoke-result.txt; ok=0; }
-          grep -q "const BUILD='WIP35-v96 · Browser RPC v1 · Card human states'" /tmp/shell.html || { echo 'internal_stamp=missing' >> smoke-result.txt; ok=0; }
-          grep -q 'Versão WIP35-v96' /tmp/shell.html || { echo 'footer_version=missing' >> smoke-result.txt; ok=0; }
-          [ "$(grep -o 'function dashboard()' /tmp/shell.html | wc -l)" -eq 1 ] || { echo 'single_dashboard_function=failed' >> smoke-result.txt; ok=0; }
-          [ "$(grep -o 'function cartoes()' /tmp/shell.html | wc -l)" -eq 1 ] || { echo 'single_cards_function=failed' >> smoke-result.txt; ok=0; }
-          [ "$(grep -o 'function fluxo()' /tmp/shell.html | wc -l)" -eq 1 ] || { echo 'single_fluxo_function=failed' >> smoke-result.txt; ok=0; }
-          [ "$(grep -o 'function flowVals' /tmp/shell.html | wc -l)" -eq 1 ] || { echo 'single_flowvals_function=failed' >> smoke-result.txt; ok=0; }
-          [ "$(grep -o 'async function openFlowEditor' /tmp/shell.html | wc -l)" -eq 1 ] || { echo 'single_flow_editor_function=failed' >> smoke-result.txt; ok=0; }
-          [ "$(grep -o 'function expenseTx' /tmp/shell.html | wc -l)" -eq 1 ] || { echo 'single_expense_tx=failed' >> smoke-result.txt; ok=0; }
-          [ "$(grep -o 'function expenseClassificationUpdates' /tmp/shell.html | wc -l)" -eq 1 ] || { echo 'single_expense_review=failed' >> smoke-result.txt; ok=0; }
-          [ "$(grep -o 'function atualizacoes()' /tmp/shell.html | wc -l)" -eq 1 ] || { echo 'single_updates_function=failed' >> smoke-result.txt; ok=0; }
-          grep -q 'Tenho dinheiro hoje?' /tmp/shell.html || { echo 'dashboard_today_question=missing' >> smoke-result.txt; ok=0; }
-          grep -q 'O que vence / precisa de mim?' /tmp/shell.html || { echo 'dashboard_next_question=missing' >> smoke-result.txt; ok=0; }
-          grep -q 'Para onde estou indo?' /tmp/shell.html || { echo 'dashboard_trajectory_question=missing' >> smoke-result.txt; ok=0; }
-          grep -q 'Sem novos vestings' /tmp/shell.html || { echo 'dashboard_no_new_vesting=missing' >> smoke-result.txt; ok=0; }
-          grep -q 'Com vestings programados' /tmp/shell.html || { echo 'dashboard_scheduled_vesting=missing' >> smoke-result.txt; ok=0; }
-          grep -q 'sem FGTS e sem awards futuros' /tmp/shell.html || { echo 'dashboard_cash_guard=missing' >> smoke-result.txt; ok=0; }
-          grep -q 'FGTS projetado permanece patrimônio restrito' /tmp/shell.html || { echo 'dashboard_fgts_guard=missing' >> smoke-result.txt; ok=0; }
-          grep -q 'dashboard-v95-cockpit' /tmp/shell.html || { echo 'dashboard_cockpit_css=missing' >> smoke-result.txt; ok=0; }
-          grep -q 'Fatura fechada → faturas abertas → parcelas futuras já contratadas' /tmp/shell.html || { echo 'card_human_hierarchy=missing' >> smoke-result.txt; ok=0; }
-          grep -q 'Piso conhecido · não é previsão do valor final' /tmp/shell.html || { echo 'card_future_floor_semantics=missing' >> smoke-result.txt; ok=0; }
-          grep -q 'Ver resumo da fatura' /tmp/shell.html || { echo 'card_detail_action=missing' >> smoke-result.txt; ok=0; }
-          grep -q 'Revisar classificações' /tmp/shell.html || { echo 'card_review_action=missing' >> smoke-result.txt; ok=0; }
-          grep -q 'Histórico de pagamentos de fatura' /tmp/shell.html || { echo 'card_history_semantics=missing' >> smoke-result.txt; ok=0; }
-          grep -q 'cards-v96-operational' /tmp/shell.html || { echo 'card_operating_css=missing' >> smoke-result.txt; ok=0; }
-          CARD_SNIP=$(python - <<'PY'
-h=open('/tmp/shell.html',encoding='utf-8').read(); p=h.find('function cartoes()'); print(h[p:p+10000])
-PY
-)
-          if printf '%s' "$CARD_SNIP" | grep -q 'source_status'; then echo 'card_source_status=present' >> smoke-result.txt; ok=0; else echo 'card_source_status=absent' >> smoke-result.txt; fi
-          if printf '%s' "$CARD_SNIP" | grep -q 'source_winner'; then echo 'card_source_winner=present' >> smoke-result.txt; ok=0; else echo 'card_source_winner=absent' >> smoke-result.txt; fi
-          if printf '%s' "$CARD_SNIP" | grep -q 'Unidades FIX86'; then echo 'card_fix86_units=present' >> smoke-result.txt; ok=0; else echo 'card_fix86_units=absent' >> smoke-result.txt; fi
-          grep -q '.fx87-head{position:sticky!important;top:0!important' /tmp/shell.html || { echo 'sticky_header=missing' >> smoke-result.txt; ok=0; }
-          grep -q '.fx89-detail-entry{grid-column:3' /tmp/shell.html || { echo 'detail_entry_alignment=missing' >> smoke-result.txt; ok=0; }
-          grep -q '.fx89-detail-exit{grid-column:4' /tmp/shell.html || { echo 'detail_exit_alignment=missing' >> smoke-result.txt; ok=0; }
-          grep -q 'entradas_operacionais' /tmp/shell.html || { echo 'net_operational_entries=missing' >> smoke-result.txt; ok=0; }
-          grep -q 'Salário líquido' /tmp/shell.html || { echo 'net_salary_label=missing' >> smoke-result.txt; ok=0; }
-          grep -q 'consignado Coopharma' /tmp/shell.html || { echo 'coopharma_note=missing' >> smoke-result.txt; ok=0; }
-          grep -q 'Financiamentos e Empréstimos' /tmp/shell.html || { echo 'financing_loans_nav=missing' >> smoke-result.txt; ok=0; }
-          grep -q 'data-mode="edit"' /tmp/shell.html || { echo 'flow_edit_action=missing' >> smoke-result.txt; ok=0; }
-          grep -q 'data-mode="duplicate"' /tmp/shell.html || { echo 'flow_duplicate_action=missing' >> smoke-result.txt; ok=0; }
-          grep -q 'Dividir / substituir' /tmp/shell.html || { echo 'flow_split_action=missing' >> smoke-result.txt; ok=0; }
-          grep -q 'Dividido</i>' /tmp/shell.html || { echo 'flow_divided_badge=missing' >> smoke-result.txt; ok=0; }
-          grep -q 'Ajustado</i>' /tmp/shell.html || { echo 'flow_adjusted_badge=missing' >> smoke-result.txt; ok=0; }
-          grep -Fq "DSPPER='12m'" /tmp/shell.html || { echo 'expense_default_12m=missing' >> smoke-result.txt; ok=0; }
-          grep -q 'Detalhe de cartão disponível de' /tmp/shell.html || { echo 'expense_card_coverage=missing' >> smoke-result.txt; ok=0; }
-          grep -q 'competência ${comp' /tmp/shell.html || { echo 'expense_card_competence=missing' >> smoke-result.txt; ok=0; }
-          grep -q 'crédito/estorno' /tmp/shell.html || { echo 'expense_credit_tag=missing' >> smoke-result.txt; ok=0; }
-          grep -q 'Cobertura insuficiente' /tmp/shell.html || { echo 'expense_coverage_guard=missing' >> smoke-result.txt; ok=0; }
-          grep -q 'Classificação de extrato' /tmp/shell.html || { echo 'expense_review_center=missing' >> smoke-result.txt; ok=0; }
-          grep -q 'Histórico já categorizado não aparece só por faltar contraparte/centro.' /tmp/shell.html || { echo 'expense_review_policy=missing' >> smoke-result.txt; ok=0; }
-          grep -q 'Sugestão do histórico:' /tmp/shell.html || { echo 'safe_suggestion_label=missing' >> smoke-result.txt; ok=0; }
-          grep -q 'Confirmar sugestão' /tmp/shell.html || { echo 'safe_suggestion_action=missing' >> smoke-result.txt; ok=0; }
-          grep -q 'if(!CARDDETAILFULL)' /tmp/shell.html || { echo 'compact_invoice_default=missing' >> smoke-result.txt; ok=0; }
-          grep -q 'Acessar fatura completa' /tmp/shell.html || { echo 'full_invoice_action=missing' >> smoke-result.txt; ok=0; }
-          if grep -q 'Conta corrente → D0/D1' /tmp/shell.html; then echo 'technical_flow_footer=present' >> smoke-result.txt; ok=0; else echo 'technical_flow_footer=absent' >> smoke-result.txt; fi
-          if grep -q 'FIX86 é piso' /tmp/shell.html; then echo 'technical_main_footer=present' >> smoke-result.txt; ok=0; else echo 'technical_main_footer=absent' >> smoke-result.txt; fi
-          if grep -q 'e.category||e.source' /tmp/shell.html; then echo 'technical_source_render=present' >> smoke-result.txt; ok=0; else echo 'technical_source_render=absent' >> smoke-result.txt; fi
-          if grep -q 'Histórico bancário' /tmp/shell.html; then echo 'split_historical=present' >> smoke-result.txt; ok=0; else echo 'split_historical=absent' >> smoke-result.txt; fi
-          if grep -q 'Hoje e projeção de caixa' /tmp/shell.html; then echo 'split_future=present' >> smoke-result.txt; ok=0; else echo 'split_future=absent' >> smoke-result.txt; fi
-          if grep -q 'Liquidez D+30</div>' /tmp/shell.html; then echo 'old_d30=present' >> smoke-result.txt; ok=0; else echo 'old_d30=absent' >> smoke-result.txt; fi
-          if grep -q 'cdn.jsdelivr.net' /tmp/shell.html; then echo 'cdn=present' >> smoke-result.txt; ok=0; else echo 'cdn=absent' >> smoke-result.txt; fi
-          if [ $ok -eq 1 ]; then cp /tmp/shell.html index.html; echo 'publish=ready' >> smoke-result.txt; else echo 'publish=blocked' >> smoke-result.txt; fi
-          cat smoke-result.txt
+      - name: Validate and stage WIP35-v96
+        run: python .github/scripts/lts_smoke.py
       - name: Commit validated shell and result
         run: |
           git config user.name 'lts-smoke-bot'
