@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Fetch validate and stage WIP35-v95
+      - name: Fetch validate and stage WIP35-v96
         shell: bash
         run: |
           set +e
@@ -19,7 +19,7 @@ jobs:
           export LTS_PUBLIC_KEY="$K"
           python - <<'PY'
           import json, urllib.request, re, os
-          url='https://tadhkamnwtsbdozwkyut.supabase.co/rest/v1/lts_public_ui_shell?version=eq.wip35-v95&select=html'
+          url='https://tadhkamnwtsbdozwkyut.supabase.co/rest/v1/lts_public_ui_shell?version=eq.wip35-v96&select=html'
           k=os.environ['LTS_PUBLIC_KEY']
           req=urllib.request.Request(url,headers={'apikey':k,'Authorization':'Bearer '+k})
           data=json.load(urllib.request.urlopen(req,timeout=30)); h=data[0]['html']
@@ -29,13 +29,14 @@ jobs:
           print('shell bytes',len(h),'inline scripts',len(scripts))
           PY
           : > smoke-result.txt
-          echo 'version=wip35-v95' >> smoke-result.txt
+          echo 'version=wip35-v96' >> smoke-result.txt
           ok=1
           for f in /tmp/script-*.js; do node --check "$f" >> smoke-result.txt 2>&1; rc=$?; echo "exit=$rc" >> smoke-result.txt; [ $rc -ne 0 ] && ok=0; done
-          grep -q 'WIP35-v95 · Dashboard cockpit' /tmp/shell.html || { echo 'stamp=missing' >> smoke-result.txt; ok=0; }
-          grep -q "const BUILD='WIP35-v95 · Browser RPC v1 · Dashboard flow-consistent'" /tmp/shell.html || { echo 'internal_stamp=missing' >> smoke-result.txt; ok=0; }
-          grep -q 'Versão WIP35-v95' /tmp/shell.html || { echo 'footer_version=missing' >> smoke-result.txt; ok=0; }
+          grep -q 'WIP35-v96 · Cartões operacionais' /tmp/shell.html || { echo 'stamp=missing' >> smoke-result.txt; ok=0; }
+          grep -q "const BUILD='WIP35-v96 · Browser RPC v1 · Card human states'" /tmp/shell.html || { echo 'internal_stamp=missing' >> smoke-result.txt; ok=0; }
+          grep -q 'Versão WIP35-v96' /tmp/shell.html || { echo 'footer_version=missing' >> smoke-result.txt; ok=0; }
           [ "$(grep -o 'function dashboard()' /tmp/shell.html | wc -l)" -eq 1 ] || { echo 'single_dashboard_function=failed' >> smoke-result.txt; ok=0; }
+          [ "$(grep -o 'function cartoes()' /tmp/shell.html | wc -l)" -eq 1 ] || { echo 'single_cards_function=failed' >> smoke-result.txt; ok=0; }
           [ "$(grep -o 'function fluxo()' /tmp/shell.html | wc -l)" -eq 1 ] || { echo 'single_fluxo_function=failed' >> smoke-result.txt; ok=0; }
           [ "$(grep -o 'function flowVals' /tmp/shell.html | wc -l)" -eq 1 ] || { echo 'single_flowvals_function=failed' >> smoke-result.txt; ok=0; }
           [ "$(grep -o 'async function openFlowEditor' /tmp/shell.html | wc -l)" -eq 1 ] || { echo 'single_flow_editor_function=failed' >> smoke-result.txt; ok=0; }
@@ -50,6 +51,19 @@ jobs:
           grep -q 'sem FGTS e sem awards futuros' /tmp/shell.html || { echo 'dashboard_cash_guard=missing' >> smoke-result.txt; ok=0; }
           grep -q 'FGTS projetado permanece patrimônio restrito' /tmp/shell.html || { echo 'dashboard_fgts_guard=missing' >> smoke-result.txt; ok=0; }
           grep -q 'dashboard-v95-cockpit' /tmp/shell.html || { echo 'dashboard_cockpit_css=missing' >> smoke-result.txt; ok=0; }
+          grep -q 'Fatura fechada → faturas abertas → parcelas futuras já contratadas' /tmp/shell.html || { echo 'card_human_hierarchy=missing' >> smoke-result.txt; ok=0; }
+          grep -q 'Piso conhecido · não é previsão do valor final' /tmp/shell.html || { echo 'card_future_floor_semantics=missing' >> smoke-result.txt; ok=0; }
+          grep -q 'Ver resumo da fatura' /tmp/shell.html || { echo 'card_detail_action=missing' >> smoke-result.txt; ok=0; }
+          grep -q 'Revisar classificações' /tmp/shell.html || { echo 'card_review_action=missing' >> smoke-result.txt; ok=0; }
+          grep -q 'Histórico de pagamentos de fatura' /tmp/shell.html || { echo 'card_history_semantics=missing' >> smoke-result.txt; ok=0; }
+          grep -q 'cards-v96-operational' /tmp/shell.html || { echo 'card_operating_css=missing' >> smoke-result.txt; ok=0; }
+          CARD_SNIP=$(python - <<'PY'
+h=open('/tmp/shell.html',encoding='utf-8').read(); p=h.find('function cartoes()'); print(h[p:p+10000])
+PY
+)
+          if printf '%s' "$CARD_SNIP" | grep -q 'source_status'; then echo 'card_source_status=present' >> smoke-result.txt; ok=0; else echo 'card_source_status=absent' >> smoke-result.txt; fi
+          if printf '%s' "$CARD_SNIP" | grep -q 'source_winner'; then echo 'card_source_winner=present' >> smoke-result.txt; ok=0; else echo 'card_source_winner=absent' >> smoke-result.txt; fi
+          if printf '%s' "$CARD_SNIP" | grep -q 'Unidades FIX86'; then echo 'card_fix86_units=present' >> smoke-result.txt; ok=0; else echo 'card_fix86_units=absent' >> smoke-result.txt; fi
           grep -q '.fx87-head{position:sticky!important;top:0!important' /tmp/shell.html || { echo 'sticky_header=missing' >> smoke-result.txt; ok=0; }
           grep -q '.fx89-detail-entry{grid-column:3' /tmp/shell.html || { echo 'detail_entry_alignment=missing' >> smoke-result.txt; ok=0; }
           grep -q '.fx89-detail-exit{grid-column:4' /tmp/shell.html || { echo 'detail_exit_alignment=missing' >> smoke-result.txt; ok=0; }
@@ -88,5 +102,5 @@ jobs:
           git config user.email 'actions@users.noreply.github.com'
           git add smoke-result.txt index.html
           git diff --cached --quiet && exit 0
-          git commit -m 'Publish validated WIP35-v95'
+          git commit -m 'Publish validated WIP35-v96'
           git push
