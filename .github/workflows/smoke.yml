@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Fetch validate and stage WIP35-v92
+      - name: Fetch validate and stage WIP35-v93
         shell: bash
         run: |
           set +e
@@ -19,7 +19,7 @@ jobs:
           export LTS_PUBLIC_KEY="$K"
           python - <<'PY'
           import json, urllib.request, re, os
-          url='https://tadhkamnwtsbdozwkyut.supabase.co/rest/v1/lts_public_ui_shell?version=eq.wip35-v92&select=html'
+          url='https://tadhkamnwtsbdozwkyut.supabase.co/rest/v1/lts_public_ui_shell?version=eq.wip35-v93&select=html'
           k=os.environ['LTS_PUBLIC_KEY']
           req=urllib.request.Request(url,headers={'apikey':k,'Authorization':'Bearer '+k})
           data=json.load(urllib.request.urlopen(req,timeout=30)); h=data[0]['html']
@@ -29,14 +29,15 @@ jobs:
           print('shell bytes',len(h),'inline scripts',len(scripts))
           PY
           : > smoke-result.txt
-          echo 'version=wip35-v92' >> smoke-result.txt
+          echo 'version=wip35-v93' >> smoke-result.txt
           ok=1
           for f in /tmp/script-*.js; do node --check "$f" >> smoke-result.txt 2>&1; rc=$?; echo "exit=$rc" >> smoke-result.txt; [ $rc -ne 0 ] && ok=0; done
-          grep -q 'WIP35-v92 · Edição no Fluxo' /tmp/shell.html || { echo 'stamp=missing' >> smoke-result.txt; ok=0; }
-          grep -q "const BUILD='WIP35-v92 · Browser RPC v1 · Flow edit duplicate split'" /tmp/shell.html || { echo 'internal_stamp=missing' >> smoke-result.txt; ok=0; }
+          grep -q 'WIP35-v93 · Edição + revisão guiada' /tmp/shell.html || { echo 'stamp=missing' >> smoke-result.txt; ok=0; }
+          grep -q "const BUILD='WIP35-v93 · Browser RPC v1 · Flow edit + safe suggestions'" /tmp/shell.html || { echo 'internal_stamp=missing' >> smoke-result.txt; ok=0; }
           [ "$(grep -o 'function fluxo()' /tmp/shell.html | wc -l)" -eq 1 ] || { echo 'single_fluxo_function=failed' >> smoke-result.txt; ok=0; }
           [ "$(grep -o 'function flowVals' /tmp/shell.html | wc -l)" -eq 1 ] || { echo 'single_flowvals_function=failed' >> smoke-result.txt; ok=0; }
           [ "$(grep -o 'async function openFlowEditor' /tmp/shell.html | wc -l)" -eq 1 ] || { echo 'single_flow_editor_function=failed' >> smoke-result.txt; ok=0; }
+          [ "$(grep -o 'function flowAdjustmentBadge' /tmp/shell.html | wc -l)" -eq 1 ] || { echo 'single_flow_adjustment_badge=failed' >> smoke-result.txt; ok=0; }
           grep -q '.fx87-head{position:sticky!important;top:0!important' /tmp/shell.html || { echo 'sticky_header=missing' >> smoke-result.txt; ok=0; }
           grep -q '.fx89-detail-entry{grid-column:3' /tmp/shell.html || { echo 'detail_entry_alignment=missing' >> smoke-result.txt; ok=0; }
           grep -q '.fx89-detail-exit{grid-column:4' /tmp/shell.html || { echo 'detail_exit_alignment=missing' >> smoke-result.txt; ok=0; }
@@ -45,7 +46,7 @@ jobs:
           grep -q 'consignado Coopharma' /tmp/shell.html || { echo 'coopharma_note=missing' >> smoke-result.txt; ok=0; }
           grep -q 'Financiamentos e Empréstimos' /tmp/shell.html || { echo 'financing_loans_nav=missing' >> smoke-result.txt; ok=0; }
           grep -q 'Descontado do salário líquido' /tmp/shell.html || { echo 'coopharma_financing_treatment=missing' >> smoke-result.txt; ok=0; }
-          grep -q 'Versão WIP35-v92' /tmp/shell.html || { echo 'clean_footer_version=missing' >> smoke-result.txt; ok=0; }
+          grep -q 'Versão WIP35-v93' /tmp/shell.html || { echo 'clean_footer_version=missing' >> smoke-result.txt; ok=0; }
           grep -q 'data-mode="edit"' /tmp/shell.html || { echo 'flow_edit_action=missing' >> smoke-result.txt; ok=0; }
           grep -q 'data-mode="duplicate"' /tmp/shell.html || { echo 'flow_duplicate_action=missing' >> smoke-result.txt; ok=0; }
           grep -q 'Dividir / substituir' /tmp/shell.html || { echo 'flow_split_action=missing' >> smoke-result.txt; ok=0; }
@@ -53,6 +54,11 @@ jobs:
           grep -q 'bindFlowEditor();' /tmp/shell.html || { echo 'flow_editor_bind=missing' >> smoke-result.txt; ok=0; }
           grep -q 'As partes podem somar outro valor' /tmp/shell.html || { echo 'split_difference_contract=missing' >> smoke-result.txt; ok=0; }
           grep -q 'lts_browser_flow_mutate_v1' /tmp/shell.html || { echo 'flow_mutation_rpc=missing' >> smoke-result.txt; ok=0; }
+          grep -q 'Dividido</i>' /tmp/shell.html || { echo 'flow_divided_badge=missing' >> smoke-result.txt; ok=0; }
+          grep -q 'Ajustado</i>' /tmp/shell.html || { echo 'flow_adjusted_badge=missing' >> smoke-result.txt; ok=0; }
+          grep -q 'Sugestão do histórico:' /tmp/shell.html || { echo 'safe_suggestion_label=missing' >> smoke-result.txt; ok=0; }
+          grep -q 'Confirmar sugestão' /tmp/shell.html || { echo 'safe_suggestion_action=missing' >> smoke-result.txt; ok=0; }
+          grep -Fq "sug===c?'selected':''" /tmp/shell.html || { echo 'safe_suggestion_preselect=missing' >> smoke-result.txt; ok=0; }
           grep -q 'if(!CARDDETAILFULL)' /tmp/shell.html || { echo 'compact_invoice_default=missing' >> smoke-result.txt; ok=0; }
           grep -q 'Acessar fatura completa' /tmp/shell.html || { echo 'full_invoice_action=missing' >> smoke-result.txt; ok=0; }
           grep -q 'Revisar classificação' /tmp/shell.html || { echo 'classification_action=missing' >> smoke-result.txt; ok=0; }
@@ -71,5 +77,5 @@ jobs:
           git config user.email 'actions@users.noreply.github.com'
           git add smoke-result.txt index.html
           git diff --cached --quiet && exit 0
-          git commit -m 'Publish validated WIP35-v92'
+          git commit -m 'Publish validated WIP35-v93'
           git push
