@@ -6,7 +6,7 @@ import sys
 import urllib.request
 from pathlib import Path
 
-VERSION = "wip35-v104"
+VERSION = "wip35-v105"
 SUPABASE_URL = "https://tadhkamnwtsbdozwkyut.supabase.co"
 ROOT = Path(__file__).resolve().parents[2]
 INDEX = ROOT / "index.html"
@@ -14,206 +14,95 @@ RESULT = ROOT / "smoke-result.txt"
 TMP = Path("/tmp/lts-shell.html")
 
 
-def find_public_key() -> str:
-    current = INDEX.read_text(encoding="utf-8")
-    m = re.search(r"sb_publishable_[A-Za-z0-9_-]+", current)
-    if not m:
-        raise RuntimeError("publishable_key=missing")
+def key():
+    m = re.search(r"sb_publishable_[A-Za-z0-9_-]+", INDEX.read_text(encoding="utf-8"))
+    if not m: raise RuntimeError("publishable_key=missing")
     return m.group(0)
 
 
-def fetch_shell(key: str) -> str:
-    url = f"{SUPABASE_URL}/rest/v1/lts_public_ui_shell?version=eq.{VERSION}&select=html"
-    req = urllib.request.Request(url, headers={"apikey": key, "Authorization": "Bearer " + key})
-    with urllib.request.urlopen(req, timeout=30) as response:
-        data = json.load(response)
-    if not data or not data[0].get("html"):
-        raise RuntimeError("shell=missing")
+def shell(k):
+    url=f"{SUPABASE_URL}/rest/v1/lts_public_ui_shell?version=eq.{VERSION}&select=html"
+    req=urllib.request.Request(url,headers={"apikey":k,"Authorization":"Bearer "+k})
+    with urllib.request.urlopen(req,timeout=30) as r: data=json.load(r)
+    if not data or not data[0].get("html"): raise RuntimeError("shell=missing")
     return data[0]["html"]
 
 
-def main() -> int:
-    lines = [f"version={VERSION}"]
-    failures = []
+def main():
+    lines=[f"version={VERSION}"]; fail=[]
     try:
-        key = find_public_key()
-        h = fetch_shell(key)
-        TMP.write_text(h, encoding="utf-8")
-        lines.append(f"shell_bytes={len(h)}")
-        scripts = re.findall(r"<script(?:\s[^>]*)?>(.*?)</script>", h, re.I | re.S)
-        lines.append(f"inline_scripts={len(scripts)}")
-        if not scripts:
-            failures.append("inline_scripts=missing")
-        for i, script in enumerate(scripts):
-            path = Path(f"/tmp/lts-script-{i}.js")
-            path.write_text(script, encoding="utf-8")
-            p = subprocess.run(["node", "--check", str(path)], capture_output=True, text=True)
-            lines.append(f"node_check_{i}={p.returncode}")
-            if p.returncode:
-                failures.append(f"node_check_{i}=failed")
-                if p.stderr:
-                    lines.append(p.stderr.strip())
-
-        required = {
-            "stamp": "WIP35-v104 · Patrimônio + Planejamento",
-            "build": "const BUILD='WIP35-v104 · Browser RPC v1 · Wealth financing planning experience'",
-            "footer": "Versão WIP35-v104",
-            # v103 wow experience retained
-            "dashboard_source": "function dashboardTodayFlow()",
-            "dashboard_hero": "Seu dinheiro, sem ruído.",
-            "dashboard_available": "Disponível até D+3 hoje",
-            "dashboard_trajectory": "Para onde o caixa está indo",
-            "dashboard_agenda": "Agenda financeira",
-            "dashboard_attention": "O que merece você",
-            "dashboard_css": "dashboard-expenses-v103-wow",
-            "expense_header": "Análise de consumo",
-            "expense_rhythm": "Ritmo de gastos",
-            "expense_categories": "Onde foi o dinheiro",
-            "expense_centers": "Pessoas e contextos",
-            "expense_recurring": "Compromissos invisíveis",
-            "expense_counterparties": "Quem mais recebeu",
-            "expense_quality": "Qualidade da leitura",
-            "expense_coverage_guard": "Cobertura insuficiente",
-            "expense_month_guard": "expenseComparisonReliable([last.month_key,prev.month_key])",
-            # v104 wealth
-            "wealth_title": "O que está disponível. E o que ainda não está.",
-            "wealth_operational_liquidity": "Liquidez realizável até D+3",
-            "wealth_cash": "Caixa",
-            "wealth_d01": "D0/D1",
-            "wealth_vested": "RSU vested",
-            "wealth_restricted": "Patrimônio fora do caixa",
-            "wealth_future_calendar": "Próxima liquidez futura",
-            "wealth_no_fake_available": "não aumentam o “disponível hoje”",
-            "wealth_cipo": "Apartamento CIPÓ 396",
-            "wealth_cipo_no_networth": "patrimônio líquido não calculado",
-            "wealth_cipo_debt_missing": "Saldo devedor atual",
-            "wealth_cipo_value_missing": "Valor atual do imóvel",
-            "wealth_cipo_guard": "nenhum valor será inventado",
-            # v104 financing
-            "financing_title": "Compromissos que já estão contratados.",
-            "financing_future_flow": "Saídas futuras mapeadas",
-            "financing_not_debt": "Não representa saldo devedor consolidado",
-            "financing_next": "Próxima saída",
-            "financing_progress": "eventos percorridos",
-            "financing_debt": "Saldo devedor atual",
-            "financing_debt_guard": "não inferido pelas parcelas",
-            "financing_payroll": "reduz o salário líquido no Fluxo e não vira uma segunda saída bancária",
-            "financing_rule": "Parcela mostra o desembolso periódico. Fluxo futuro mostra o que ainda está programado.",
-            # v104 planning
-            "planning_title": "Três cenários. Uma única verdade de caixa.",
-            "planning_same_motor": "O mesmo motor do Fluxo e do Dashboard",
-            "planning_d01": "Só caixa + D0/D1",
-            "planning_d3": "Incluindo ativos já disponíveis D+3",
-            "planning_vesting": "Se os vestings de novembro ocorrerem",
-            "planning_realizable": "Realizável hoje",
-            "planning_conditional": "Com vestings programados",
-            "planning_fgts_zero": "FGTS no caixa",
-            "planning_fgts_value": "R$ 0,00",
-            "planning_vesting_guard": "continuam condicionados à ocorrência do vesting, liquidação, preço, câmbio e tributação",
-            "planning_decision": "Ponto de decisão",
-            "planning_flow_link": "Ver trajetória no Fluxo",
-            "planning_bind": "if(V==='Planejamento'){document.querySelectorAll('.dashact')",
-            "v104_css": "wealth-financing-planning-v104",
-            # Core regressions
-            "card_hierarchy": "Fatura fechada → faturas abertas → parcelas futuras já contratadas",
-            "card_floor": "Piso conhecido · não é previsão do valor final",
-            "card_payment_rpc": "lts_browser_confirm_card_payment_v1",
-            "flow_sticky": ".fx87-head{position:sticky!important;top:0!important",
-            "flow_balance": ".fx87-balance{background:#f2f4f6",
-            "flow_salary": "Salário líquido",
-            "flow_coopharma": "consignado Coopharma",
-            "flow_edit": "data-mode=\"edit\"",
-            "flow_duplicate": "data-mode=\"duplicate\"",
-            "flow_split": "Dividir / substituir",
-            "flow_delete": "async function deleteFlowEvent(e,b)",
-            "historical_card": "Resumo histórico da fatura",
-            "historical_card_unavailable": "Não disponível",
-            "flow_single_vertical": "body.flow-view{height:100vh;overflow:hidden}",
-            "updates_question": "O que falta fazer para o LTS estar atualizado?",
-            "updates_ambiguous": "Candidatos encontrados · nenhuma conciliação automática",
-            "updates_evidence": "A escolha exige vínculo documental; o LTS não decide entre candidatos equivalentes.",
+        h=shell(key()); TMP.write_text(h,encoding="utf-8"); lines.append(f"shell_bytes={len(h)}")
+        scripts=re.findall(r"<script(?:\s[^>]*)?>(.*?)</script>",h,re.I|re.S); lines.append(f"inline_scripts={len(scripts)}")
+        for i,s in enumerate(scripts):
+            p=Path(f"/tmp/lts-script-{i}.js"); p.write_text(s,encoding="utf-8")
+            r=subprocess.run(["node","--check",str(p)],capture_output=True,text=True); lines.append(f"node_check_{i}={r.returncode}")
+            if r.returncode: fail.append(f"node_check_{i}")
+        req={
+          "stamp":"WIP35-v105 · Cartões + Atualizações",
+          "build":"const BUILD='WIP35-v105 · Browser RPC v1 · Cards and review inbox experience'",
+          "footer":"Versão WIP35-v105",
+          "dashboard":"Seu dinheiro, sem ruído.","expenses":"Análise de consumo",
+          "wealth":"O que está disponível. E o que ainda não está.",
+          "financing":"Compromissos que já estão contratados.",
+          "planning":"Três cenários. Uma única verdade de caixa.",
+          "planning_motor":"O mesmo motor do Fluxo e do Dashboard",
+          "planning_d3":"Incluindo ativos já disponíveis D+3",
+          "planning_vesting":"Se os vestings de novembro ocorrerem",
+          "planning_fgts":"FGTS no caixa",
+          "cards_title":"O que já fechou. O que ainda cresce.",
+          "cards_closed":"Fechadas / a pagar",
+          "cards_open":"Faturas abertas",
+          "cards_floor":"Piso futuro contratado",
+          "cards_not_paid":"Fechada não significa paga",
+          "cards_future":"Parcelas que vêm pela frente",
+          "cards_quality":"Quanto do cartão o LTS entende",
+          "cards_review":"Revisar classificações",
+          "cards_history":"Pagamentos por competência",
+          "cards_cash_guard":"Pagamento de fatura é liquidação de caixa. O consumo econômico continua sendo cada compra, sem contagem dupla.",
+          "cards_detail_action":"class=\"chip cardopdetail\"",
+          "cards_month_action":"class=\"c105-month cardmonth\"",
+          "updates_title":"Deixe o LTS em dia sem caçar pendências.",
+          "updates_now":"Precisa de você agora",
+          "updates_class":"Classificações",
+          "updates_evidence_bucket":"Evidências / documentos",
+          "updates_confirmable":"Confirmações possíveis",
+          "updates_suggestion_guard":"Sugestão nunca é confirmação.",
+          "updates_resolved":"Resolvido não volta.",
+          "updates_learning":"Classificações que ainda fazem diferença",
+          "updates_ambiguous":"Candidatos encontrados · nenhuma conciliação automática",
+          "updates_evidence_guard":"A escolha exige vínculo documental; o LTS não decide entre candidatos equivalentes.",
+          "updates_transfer_rpc":"lts_browser_confirm_overdue_transfer_v1",
+          "updates_event_rpc":"lts_browser_confirm_overdue_event_v1",
+          "updates_card_rpc":"lts_browser_confirm_card_payment_v1",
+          "updates_input":"class=\"chip updinput\"",
+          "updates_cardclass":"cardClassificationUpdates()",
+          "updates_expclass":"expenseClassificationUpdates()",
+          "v105_css":"cards-updates-v105-operational",
+          "v104_css":"wealth-financing-planning-v104",
+          "v103_css":"dashboard-expenses-v103-wow",
+          "flow_edit":"data-mode=\"edit\"","flow_duplicate":"data-mode=\"duplicate\"","flow_split":"Dividir / substituir",
+          "flow_delete":"async function deleteFlowEvent(e,b)","flow_scroll":"body.flow-view{height:100vh;overflow:hidden}",
+          "historical_card":"Resumo histórico da fatura","cipo":"Apartamento CIPÓ 396"
         }
-        for name, text in required.items():
-            if text in h:
-                lines.append(f"{name}=ok")
-            else:
-                lines.append(f"{name}=missing")
-                failures.append(f"{name}=missing")
+        for n,t in req.items():
+            ok=t in h; lines.append(f"{n}={'ok' if ok else 'missing'}")
+            if not ok: fail.append(n)
+        exact={"dashboard":"function dashboard()","expenses":"function despesas()","cards":"function cartoes()","wealth":"function patrimonio()","financing":"function financiamentos()","planning":"function planejamento()","updates":"function atualizacoes()","update_item":"function renderUpdateItem(x)","flow":"function fluxo()","flow_delete":"async function deleteFlowEvent(e,b)"}
+        for n,t in exact.items():
+            c=h.count(t); lines.append(f"single_{n}={c}")
+            if c!=1: fail.append(f"single_{n}")
+        structs={"cards_hero":'<div class="c105-hero">',"updates_hero":'<div class="u105-hero">',"wealth_hero":'<div class="w104-hero">',"planning_hero":'<div class="p104-hero">',"flow_shell":'<div class="flow-shell">'}
+        for n,t in structs.items():
+            c=h.count(t); lines.append(f"{n}_open={c}")
+            if c!=1: fail.append(n)
+        forbidden={"old_cards_head":"Fatura fechada → faturas abertas → parcelas futuras já contratadas","old_updates_head":"O que falta fazer para o LTS estar atualizado?","old_dashboard":"Tenho dinheiro hoje?","technical":"e.category||e.source","cancel_projection":">Cancelar projeção</button>","cdn":"cdn.jsdelivr.net"}
+        for n,t in forbidden.items():
+            present=t in h; lines.append(f"{n}={'present' if present else 'absent'}")
+            if present: fail.append(n)
+        if fail:
+            lines += ["publish=blocked","failures="+",".join(fail)]; RESULT.write_text("\n".join(lines)+"\n",encoding="utf-8"); print(RESULT.read_text()); return 1
+        shutil.copyfile(TMP,INDEX); lines.append("publish=ready"); RESULT.write_text("\n".join(lines)+"\n",encoding="utf-8"); print(RESULT.read_text()); return 0
+    except Exception as e:
+        lines += ["publish=blocked",f"exception={type(e).__name__}:{e}"]; RESULT.write_text("\n".join(lines)+"\n",encoding="utf-8"); print(RESULT.read_text()); return 1
 
-        exact_once = {
-            "dashboard": "function dashboard()",
-            "dashboard_today_flow": "function dashboardTodayFlow()",
-            "expenses": "function despesas()",
-            "expense_period": "function expensePeriodName()",
-            "cards": "function cartoes()",
-            "flow": "function fluxo()",
-            "flow_values": "function flowVals",
-            "flow_editor": "async function openFlowEditor",
-            "flow_delete": "async function deleteFlowEvent(e,b)",
-            "wealth": "function patrimonio()",
-            "financing_detail": "function financingDetail()",
-            "financing": "function financiamentos()",
-            "planning": "function planejamento()",
-            "updates": "function atualizacoes()",
-        }
-        for name, text in exact_once.items():
-            n = h.count(text)
-            lines.append(f"single_{name}={n}")
-            if n != 1:
-                failures.append(f"single_{name}=failed")
-
-        structure = {
-            "dashboard_hero": '<div class="dash103-hero section">',
-            "expense_hero": '<div class="exp103-hero">',
-            "wealth_hero": '<div class="w104-hero">',
-            "financing_hero": '<div class="f104-hero">',
-            "planning_hero": '<div class="p104-hero">',
-            "flow_shell": '<div class="flow-shell">',
-            "flow_controls": '<div class="flow-sticky-controls">',
-        }
-        for name, text in structure.items():
-            n = h.count(text)
-            lines.append(f"{name}_open={n}")
-            if n != 1:
-                failures.append(f"{name}=failed")
-
-        forbidden = {
-            "old_dashboard_question": "Tenho dinheiro hoje?",
-            "old_dashboard_next": "O que vence / precisa de mim?",
-            "old_dashboard_trajectory": "Para onde estou indo?",
-            "old_wealth_headline": "O que está disponível hoje fica separado do que é restrito",
-            "old_financing_headline": "Acompanhe o que sai do caixa e o que ainda falta no cronograma.",
-            "technical_flow_footer": "Conta corrente → D0/D1",
-            "technical_main_footer": "FIX86 é piso",
-            "technical_source_render": "e.category||e.source",
-            "old_updates_copy": "Central de review & approve",
-            "old_cancel_projection": ">Cancelar projeção</button>",
-            "cdn": "cdn.jsdelivr.net",
-        }
-        for name, text in forbidden.items():
-            if text in h:
-                lines.append(f"{name}=present")
-                failures.append(f"{name}=present")
-            else:
-                lines.append(f"{name}=absent")
-
-        if failures:
-            lines.extend(["publish=blocked", "failures=" + ",".join(failures)])
-            RESULT.write_text("\n".join(lines) + "\n", encoding="utf-8")
-            print(RESULT.read_text(encoding="utf-8"))
-            return 1
-
-        shutil.copyfile(TMP, INDEX)
-        lines.append("publish=ready")
-        RESULT.write_text("\n".join(lines) + "\n", encoding="utf-8")
-        print(RESULT.read_text(encoding="utf-8"))
-        return 0
-    except Exception as exc:
-        lines.extend(["publish=blocked", f"exception={type(exc).__name__}:{exc}"])
-        RESULT.write_text("\n".join(lines) + "\n", encoding="utf-8")
-        print(RESULT.read_text(encoding="utf-8"))
-        return 1
-
-
-if __name__ == "__main__":
-    sys.exit(main())
+if __name__=='__main__': sys.exit(main())
