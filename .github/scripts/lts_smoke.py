@@ -6,7 +6,7 @@ import sys
 import urllib.request
 from pathlib import Path
 
-VERSION = "wip35-v97"
+VERSION = "wip35-v98"
 SUPABASE_URL = "https://tadhkamnwtsbdozwkyut.supabase.co"
 ROOT = Path(__file__).resolve().parents[2]
 INDEX = ROOT / "index.html"
@@ -60,9 +60,9 @@ def main() -> int:
                     lines.append(p.stderr.strip())
 
         required = {
-            "stamp": "WIP35-v97 · Patrimônio + Planejamento",
-            "build": "const BUILD='WIP35-v97 · Browser RPC v1 · Wealth debt planning semantics'",
-            "footer_version": "Versão WIP35-v97",
+            "stamp": "WIP35-v98 · Despesas confiáveis + Atualizações",
+            "build": "const BUILD='WIP35-v98 · Browser RPC v1 · Coverage-safe expense review center'",
+            "footer_version": "Versão WIP35-v98",
             "dashboard_today_question": "Tenho dinheiro hoje?",
             "dashboard_next_question": "O que vence / precisa de mim?",
             "dashboard_trajectory_question": "Para onde estou indo?",
@@ -90,14 +90,26 @@ def main() -> int:
             "flow_divided_badge": "Dividido</i>",
             "flow_adjusted_badge": "Ajustado</i>",
             "expense_default_12m": "DSPPER='12m'",
-            "expense_card_coverage": "Detalhe de cartão disponível de",
+            "expense_card_coverage": "Detalhe de cartão disponível a partir de",
             "expense_card_competence": "competência ${comp",
-            "expense_credit_tag": "crédito/estorno",
+            "expense_purchase_date": "Compra ${fmt(tx)}",
+            "expense_credit_tag": "crédito/estorno · reduz consumo",
             "expense_coverage_guard": "Cobertura insuficiente",
+            "expense_coverage_helper": "function expenseCoverageStart()",
+            "expense_month_guard": "expenseComparisonReliable([last.month_key,prev.month_key])",
+            "expense_insight_guard": "pctReliable=!!(last&&prev.length&&expenseComparisonReliable",
+            "expense_mixed_guard": "Comparações temporais que atravessam a mudança de cobertura de cartão são limitadas",
+            "expense_12m_guard": "Comparação de 12 meses limitada pela mudança de cobertura de cartão",
             "expense_review_center": "Classificação de extrato",
             "expense_review_policy": "Histórico já categorizado não aparece só por faltar contraparte/centro.",
+            "expense_review_link": "A classificar · revisar",
+            "expense_review_action": "Revisar classificação",
             "safe_suggestion_label": "Sugestão do histórico:",
             "safe_suggestion_action": "Confirmar sugestão",
+            "updates_question": "O que falta fazer para o LTS estar atualizado?",
+            "updates_priority": "Math.abs(num(b.impact_amount))-Math.abs(num(a.impact_amount))",
+            "updates_ambiguous_guard": "Candidatos encontrados · nenhuma conciliação automática",
+            "updates_evidence_guard": "A escolha exige vínculo documental; o LTS não decide entre candidatos equivalentes.",
             "compact_invoice_default": "if(!CARDDETAILFULL)",
             "full_invoice_action": "Acessar fatura completa",
             "wealth_d0_layer": "Liquidez até D+0",
@@ -132,8 +144,11 @@ def main() -> int:
             "flow_values": "function flowVals",
             "flow_editor": "async function openFlowEditor",
             "expense_tx": "function expenseTx",
+            "expense_coverage": "function expenseCoverageStart()",
+            "expense_compare": "function expense12mCompare(rows)",
             "expense_review": "function expenseClassificationUpdates",
             "updates": "function atualizacoes()",
+            "updates_item": "function renderUpdateItem(x)",
             "wealth": "function patrimonio()",
             "financing_detail": "function financingDetail()",
             "financing": "function financiamentos()",
@@ -181,6 +196,7 @@ def main() -> int:
             "split_historical": "Histórico bancário",
             "split_future": "Hoje e projeção de caixa",
             "old_d30": "Liquidez D+30</div>",
+            "old_updates_copy": "Central de review & approve",
             "cdn": "cdn.jsdelivr.net",
         }
         for name, text in forbidden_global.items():
