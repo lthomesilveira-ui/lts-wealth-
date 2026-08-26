@@ -6,7 +6,7 @@ import sys
 import urllib.request
 from pathlib import Path
 
-VERSION = "wip35-v106"
+VERSION = "wip35-v107"
 SUPABASE_URL = "https://tadhkamnwtsbdozwkyut.supabase.co"
 ROOT = Path(__file__).resolve().parents[2]
 INDEX = ROOT / "index.html"
@@ -38,10 +38,15 @@ def main():
             r=subprocess.run(["node","--check",str(p)],capture_output=True,text=True); lines.append(f"node_check_{i}={r.returncode}")
             if r.returncode: fail.append(f"node_check_{i}")
         req={
-          "stamp":"WIP35-v106 · Fluxo reconciliado",
-          "build":"const BUILD='WIP35-v106 · Browser RPC v1 · Reconciled daily flow continuity'",
-          "footer":"Versão WIP35-v106",
+          "stamp":"WIP35-v107 · Fluxo semântico",
+          "build":"const BUILD='WIP35-v107 · Browser RPC v1 · Semantic classified cash history'",
+          "footer":"Versão WIP35-v107",
           "flow_rpc_v3":"lts_browser_flow_v3",
+          "flow_semantic_title":"function flowSemanticTitle(e)",
+          "flow_semantic_meta":"function flowSemanticMeta(e)",
+          "flow_semantic_use":"desc=flowSemanticTitle(e)",
+          "flow_raw_secondary":"Extrato: ",
+          "card_semantic_title":"function cardSemanticTitle(p)",
           "dashboard":"Seu dinheiro, sem ruído.","expenses":"Análise de consumo",
           "wealth":"O que está disponível. E o que ainda não está.",
           "financing":"Compromissos que já estão contratados.",
@@ -88,7 +93,7 @@ def main():
         for n,t in req.items():
             ok=t in h; lines.append(f"{n}={'ok' if ok else 'missing'}")
             if not ok: fail.append(n)
-        exact={"dashboard":"function dashboard()","expenses":"function despesas()","cards":"function cartoes()","wealth":"function patrimonio()","financing":"function financiamentos()","planning":"function planejamento()","updates":"function atualizacoes()","update_item":"function renderUpdateItem(x)","flow":"function fluxo()","flow_delete":"async function deleteFlowEvent(e,b)"}
+        exact={"dashboard":"function dashboard()","expenses":"function despesas()","cards":"function cartoes()","wealth":"function patrimonio()","financing":"function financiamentos()","planning":"function planejamento()","updates":"function atualizacoes()","update_item":"function renderUpdateItem(x)","flow":"function fluxo()","flow_delete":"async function deleteFlowEvent(e,b)","flow_semantic_title":"function flowSemanticTitle(e)","card_semantic_title":"function cardSemanticTitle(p)"}
         for n,t in exact.items():
             c=h.count(t); lines.append(f"single_{n}={c}")
             if c!=1: fail.append(f"single_{n}")
