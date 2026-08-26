@@ -6,7 +6,7 @@ import sys
 import urllib.request
 from pathlib import Path
 
-VERSION = "wip35-v105"
+VERSION = "wip35-v106"
 SUPABASE_URL = "https://tadhkamnwtsbdozwkyut.supabase.co"
 ROOT = Path(__file__).resolve().parents[2]
 INDEX = ROOT / "index.html"
@@ -38,9 +38,10 @@ def main():
             r=subprocess.run(["node","--check",str(p)],capture_output=True,text=True); lines.append(f"node_check_{i}={r.returncode}")
             if r.returncode: fail.append(f"node_check_{i}")
         req={
-          "stamp":"WIP35-v105 · Cartões + Atualizações",
-          "build":"const BUILD='WIP35-v105 · Browser RPC v1 · Cards and review inbox experience'",
-          "footer":"Versão WIP35-v105",
+          "stamp":"WIP35-v106 · Fluxo reconciliado",
+          "build":"const BUILD='WIP35-v106 · Browser RPC v1 · Reconciled daily flow continuity'",
+          "footer":"Versão WIP35-v106",
+          "flow_rpc_v3":"lts_browser_flow_v3",
           "dashboard":"Seu dinheiro, sem ruído.","expenses":"Análise de consumo",
           "wealth":"O que está disponível. E o que ainda não está.",
           "financing":"Compromissos que já estão contratados.",
@@ -95,7 +96,7 @@ def main():
         for n,t in structs.items():
             c=h.count(t); lines.append(f"{n}_open={c}")
             if c!=1: fail.append(n)
-        forbidden={"old_cards_head":"Fatura fechada → faturas abertas → parcelas futuras já contratadas","old_updates_head":"O que falta fazer para o LTS estar atualizado?","old_dashboard":"Tenho dinheiro hoje?","technical":"e.category||e.source","cancel_projection":">Cancelar projeção</button>","cdn":"cdn.jsdelivr.net"}
+        forbidden={"flow_rpc_v2":"lts_browser_flow_v2","old_cards_head":"Fatura fechada → faturas abertas → parcelas futuras já contratadas","old_updates_head":"O que falta fazer para o LTS estar atualizado?","old_dashboard":"Tenho dinheiro hoje?","technical":"e.category||e.source","cancel_projection":">Cancelar projeção</button>","cdn":"cdn.jsdelivr.net"}
         for n,t in forbidden.items():
             present=t in h; lines.append(f"{n}={'present' if present else 'absent'}")
             if present: fail.append(n)
