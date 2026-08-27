@@ -4,6 +4,7 @@ on:
     branches: [main]
     paths:
       - '.github/scripts/lts_smoke.py'
+      - '.github/scripts/lts_smoke_fresh.py'
       - '.github/workflows/smoke.yml'
   workflow_dispatch:
 permissions:
@@ -16,7 +17,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Validate Wealth candidate shell
         id: validate
-        run: python .github/scripts/lts_smoke.py
+        run: python .github/scripts/lts_smoke_fresh.py
       - name: Persist failed smoke diagnostics
         if: failure() && steps.validate.outcome == 'failure'
         run: |
