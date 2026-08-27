@@ -6,7 +6,7 @@ import sys
 import urllib.request
 from pathlib import Path
 
-VERSION = "wip35-v110"
+VERSION = "wip35-v111"
 SUPABASE_URL = "https://tadhkamnwtsbdozwkyut.supabase.co"
 ROOT = Path(__file__).resolve().parents[2]
 INDEX = ROOT / "index.html"
@@ -49,9 +49,9 @@ def main():
                 fail.append(f"node_check_{i}")
 
         req = {
-            "stamp": "WIP35-v110 · Despesas Caixa × Consumo",
-            "build": "const BUILD='WIP35-v110 · Browser RPC v1 · Expenses dual lens'",
-            "footer": "Versão WIP35-v110",
+            "stamp": "WIP35-v111 · Cartões por cartão",
+            "build": "const BUILD='WIP35-v111 · Browser RPC v1 · Cards by card cockpit'",
+            "footer": "Versão WIP35-v111",
             "flow_rpc_v3": "lts_browser_flow_v3",
             "flow_semantic_title": "function flowSemanticTitle(e)",
             "flow_semantic_meta": "function flowSemanticMeta(e)",
@@ -76,6 +76,20 @@ def main():
             "expenses_consumption": "Consumo econômico",
             "expenses_transfer_guard": "Transferências próprias continuam visíveis para explicar a movimentação bancária, mas são excluídas do gasto.",
             "expenses_card_guard": "pagamento de fatura não duplica compra",
+            "cards_title": "Cada cartão em um lugar.",
+            "cards_css": "cards-v111-by-card-cockpit",
+            "cards_models": "function card111Models(o)",
+            "cards_overdue": "Vencida · confirmar pagamento",
+            "cards_open": "Aberta · ainda cresce",
+            "cards_detail_summary": "Última competência com compras detalhadas",
+            "cards_future": "Calendário de parcelas futuras",
+            "cards_history": "Liquidação das faturas",
+            "cards_quality": "Quanto o LTS entende",
+            "cards_floor_guard": "Piso conhecido não é previsão final da fatura.",
+            "cards_cash_guard": "Pagamento de fatura é liquidação de caixa. Cada compra aparece uma única vez em Despesas",
+            "cards_detail_action": "class=\"chip cardopdetail\"",
+            "cards_month_action": "class=\"c111-hm cardmonth\"",
+            "cards_detail_anchor": "CARDDETAIL?cardSettlementInline(CARDDETAIL.event?.event_date):''",
             "dashboard": "Seu dinheiro, sem ruído.",
             "wealth": "O que está disponível. E o que ainda não está.",
             "financing": "Compromissos que já estão contratados.",
@@ -84,18 +98,6 @@ def main():
             "planning_d3": "Incluindo ativos já disponíveis D+3",
             "planning_vesting": "Se os vestings de novembro ocorrerem",
             "planning_fgts": "FGTS no caixa",
-            "cards_title": "O que já fechou. O que ainda cresce.",
-            "cards_closed": "Fechadas / a pagar",
-            "cards_open": "Faturas abertas",
-            "cards_floor": "Piso futuro contratado",
-            "cards_not_paid": "Fechada não significa paga",
-            "cards_future": "Parcelas que vêm pela frente",
-            "cards_quality": "Quanto do cartão o LTS entende",
-            "cards_review": "Revisar classificações",
-            "cards_history": "Pagamentos por competência",
-            "cards_cash_guard": "Pagamento de fatura é liquidação de caixa. O consumo econômico continua sendo cada compra, sem contagem dupla.",
-            "cards_detail_action": "class=\"chip cardopdetail\"",
-            "cards_month_action": "class=\"c105-month cardmonth\"",
             "updates_title": "Deixe o LTS em dia sem caçar pendências.",
             "updates_now": "Precisa de você agora",
             "updates_class": "Classificações",
@@ -134,6 +136,8 @@ def main():
             "expenses": "function despesas()",
             "expense_loader": "async function loadExpenseDual(a,b)",
             "cards": "function cartoes()",
+            "card_models": "function card111Models(o)",
+            "card_detail_summary": "function card111Detail(name)",
             "wealth": "function patrimonio()",
             "financing": "function financiamentos()",
             "planning": "function planejamento()",
@@ -155,7 +159,8 @@ def main():
                 fail.append(f"single_{n}")
 
         structs = {
-            "cards_hero": '<div class="c105-hero">',
+            "cards_summary": '<div class="c111-summary">',
+            "cards_grid": '<div class="section c111-cards">',
             "updates_hero": '<div class="u105-hero">',
             "wealth_hero": '<div class="w104-hero">',
             "planning_hero": '<div class="p104-hero">',
@@ -170,13 +175,14 @@ def main():
 
         forbidden = {
             "flow_rpc_v2": "lts_browser_flow_v2",
-            "old_v109_footer": "Versão WIP35-v109",
+            "old_v110_footer": "Versão WIP35-v110",
             "old_flow_raw_meta": "bits.push('Extrato: '+raw)",
-            "old_cards_head": "Fatura fechada → faturas abertas → parcelas futuras já contratadas",
+            "old_cards_title": "O que já fechou. O que ainda cresce.",
             "old_updates_head": "O que falta fazer para o LTS estar atualizado?",
             "old_dashboard": "Tenho dinheiro hoje?",
             "expense_since_2023_button": 'data-dper="2023"',
             "expense_since_2013_button": 'data-dper="2013"',
+            "cards_null_detail_anchor": "cardSettlementInline(null)",
             "technical": "e.category||e.source",
             "cancel_projection": ">Cancelar projeção</button>",
             "cdn": "cdn.jsdelivr.net",
@@ -187,10 +193,11 @@ def main():
             if present:
                 fail.append(n)
 
-        css_count = h.count("expenses-v110-dual-lens")
-        lines.append(f"expenses_v110_css_count={css_count}")
-        if css_count != 1:
-            fail.append("expenses_v110_css_count")
+        for marker in ["expenses-v110-dual-lens", "cards-v111-by-card-cockpit"]:
+            c = h.count(marker)
+            lines.append(f"css_{marker}={c}")
+            if c != 1:
+                fail.append(f"css_{marker}")
 
         if fail:
             lines += ["publish=blocked", "failures=" + ",".join(fail)]
