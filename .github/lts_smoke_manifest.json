@@ -100,7 +100,7 @@
     "safe_batch_button_count": {"marker": "class=\"btn ghost safe121-submit\"", "expected": 1},
     "safe_checkbox_template_count": {"marker": "class=\"safe121-pick\"", "expected": 1},
     "safe_batch_binding_count": {"marker": "document.querySelectorAll('.safe121-submit').forEach(b=>b.onclick=()=>confirmSafeCardSuggestions(b))", "expected": 1},
-    "open_detail_template_count": {"marker": "c122-open-detail", "expected": 1}
+    "open_detail_template_count": {"marker": "c111-detail c122-open-detail", "expected": 1}
   },
   "forbidden": {
     "old_v121_footer": "Versão WIP35-v121",
