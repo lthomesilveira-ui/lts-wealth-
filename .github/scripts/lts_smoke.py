@@ -6,7 +6,7 @@ import sys
 import urllib.request
 from pathlib import Path
 
-VERSION = "wip35-v118"
+VERSION = "wip35-v119"
 SUPABASE_URL = "https://tadhkamnwtsbdozwkyut.supabase.co"
 ROOT = Path(__file__).resolve().parents[2]
 INDEX = ROOT / "index.html"
@@ -49,9 +49,9 @@ def main():
                 fail.append(f"node_check_{i}")
 
         req = {
-            "stamp": "WIP35-v118 · Cartões operacionais",
-            "build": "const BUILD='WIP35-v118 · Browser RPC v1 · Operational cards'",
-            "footer": "Versão WIP35-v118",
+            "stamp": "WIP35-v119 · CIPÓ contextual",
+            "build": "const BUILD='WIP35-v119 · Browser RPC v1 · Contextual CIPÓ evidence'",
+            "footer": "Versão WIP35-v119",
             "seven_main_tabs": "const main=['Dashboard','Atualizações','Fluxo Diário','Despesas','Cartões','Patrimônio','Planejamento']",
             "updates_title": "O que precisa de você, num único lugar.",
             "updates_actions": "Ações pendentes",
@@ -75,11 +75,17 @@ def main():
             "cards_action_css": "cards-v118-operational-actions",
             "cards_payment_helper": "function card118PaymentUpdate(m)",
             "cards_payment_action": "Confirmar pagamento",
-            "cards_payment_inline_guard": "a liquidação entra no caixa uma única vez. As compras continuam em Despesas sem duplicação.",
             "cards_payment_binding": "document.querySelectorAll('.cardpayconfirm').forEach(b=>b.onclick=()=>confirmCardPayment(b))",
             "cards_cash_consumption_guard": "Caixa ≠ consumo",
             "wealth": "O que é seu hoje. Sem somar o que ainda não é.",
             "financing": "O que já está contratado. E o que ainda precisa ser confirmado.",
+            "cipo_css": "cipo-document-v119",
+            "cipo_task_fn": "function cipo119Task()",
+            "cipo_open_fn": "function openUpdateContext(id)",
+            "cipo_action": "Enviar posição Bradesco",
+            "cipo_task_id": "document_cipo_current_debt_balance",
+            "cipo_binding": "document.querySelectorAll('.cipo119doc').forEach(b=>b.onclick=()=>openUpdateContext(b.dataset.update))",
+            "cipo_guard": "Saldo devedor atual",
             "planning_title": "Quanto tempo seu caixa aguenta?",
             "dashboard_title": "Sua vida financeira, em uma tela.",
             "new_category": "+ Nova categoria",
@@ -107,6 +113,8 @@ def main():
             "cards": "function cartoes()",
             "cards_payment_helper": "function card118PaymentUpdate(m)",
             "cards_model": "function card111Card(m)",
+            "cipo_task": "function cipo119Task()",
+            "cipo_open": "function openUpdateContext(id)",
             "wealth": "function patrimonio()",
             "financing": "function financiamentos()",
             "planning": "function planejamento()",
@@ -133,14 +141,25 @@ def main():
             "updates-actionable-v116",
             "expenses-v117-insight-layer",
             "cards-v118-operational-actions",
+            "cipo-document-v119",
         ]:
             c = h.count(marker)
             lines.append(f"css_{marker}={c}")
             if c != 1:
                 fail.append(f"css_{marker}")
 
+        cipo_actions = h.count("Enviar posição Bradesco")
+        cipo_bindings = h.count("document.querySelectorAll('.cipo119doc').forEach(b=>b.onclick=()=>openUpdateContext(b.dataset.update))")
+        lines.append(f"cipo_action_count={cipo_actions}")
+        lines.append(f"cipo_binding_count={cipo_bindings}")
+        if cipo_actions != 2:
+            fail.append("cipo_action_count")
+        if cipo_bindings != 2:
+            fail.append("cipo_binding_count")
+
         forbidden = {
-            "old_v117_footer": "Versão WIP35-v117",
+            "old_v118_footer": "Versão WIP35-v118",
+            "literal_backslash_n_function": r"\nfunction openUpdateContext",
             "old_document_rpc": "lts_browser_register_document_v1",
             "old_structured_rpc": "lts_browser_register_structured_text_v1",
             "flow_rpc_v2": "lts_browser_flow_v2",
