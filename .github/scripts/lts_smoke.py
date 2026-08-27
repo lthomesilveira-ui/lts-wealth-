@@ -6,7 +6,7 @@ import sys
 import urllib.request
 from pathlib import Path
 
-VERSION = "wip35-v117"
+VERSION = "wip35-v118"
 SUPABASE_URL = "https://tadhkamnwtsbdozwkyut.supabase.co"
 ROOT = Path(__file__).resolve().parents[2]
 INDEX = ROOT / "index.html"
@@ -49,9 +49,9 @@ def main():
                 fail.append(f"node_check_{i}")
 
         req = {
-            "stamp": "WIP35-v117 · Despesas com leitura executiva",
-            "build": "const BUILD='WIP35-v117 · Browser RPC v1 · Expense insight layer'",
-            "footer": "Versão WIP35-v117",
+            "stamp": "WIP35-v118 · Cartões operacionais",
+            "build": "const BUILD='WIP35-v118 · Browser RPC v1 · Operational cards'",
+            "footer": "Versão WIP35-v118",
             "seven_main_tabs": "const main=['Dashboard','Atualizações','Fluxo Diário','Despesas','Cartões','Patrimônio','Planejamento']",
             "updates_title": "O que precisa de você, num único lugar.",
             "updates_actions": "Ações pendentes",
@@ -71,11 +71,13 @@ def main():
             "expenses_concentration": "Concentração do consumo",
             "expenses_recurring": "Padrões recorrentes observados",
             "expenses_coverage_guard": "Comparação temporal protegida",
-            "expenses_card_detail_coverage": "Detalhamento de cartão",
-            "expenses_no_future_claim": "observação histórica · não obrigação futura",
-            "expenses_analysis_fn": "function exp117Analysis(rows,j)",
-            "expenses_coverage_fn": "function exp117CoverageCard(a)",
             "cards": "Cada cartão em um lugar.",
+            "cards_action_css": "cards-v118-operational-actions",
+            "cards_payment_helper": "function card118PaymentUpdate(m)",
+            "cards_payment_action": "Confirmar pagamento",
+            "cards_payment_inline_guard": "a liquidação entra no caixa uma única vez. As compras continuam em Despesas sem duplicação.",
+            "cards_payment_binding": "document.querySelectorAll('.cardpayconfirm').forEach(b=>b.onclick=()=>confirmCardPayment(b))",
+            "cards_cash_consumption_guard": "Caixa ≠ consumo",
             "wealth": "O que é seu hoje. Sem somar o que ainda não é.",
             "financing": "O que já está contratado. E o que ainda precisa ser confirmado.",
             "planning_title": "Quanto tempo seu caixa aguenta?",
@@ -103,6 +105,8 @@ def main():
             "expense_center_rows": "function exp117CenterRows(xs,total)",
             "expense_coverage_card": "function exp117CoverageCard(a)",
             "cards": "function cartoes()",
+            "cards_payment_helper": "function card118PaymentUpdate(m)",
+            "cards_model": "function card111Card(m)",
             "wealth": "function patrimonio()",
             "financing": "function financiamentos()",
             "planning": "function planejamento()",
@@ -128,6 +132,7 @@ def main():
             "updates-input-context-v115",
             "updates-actionable-v116",
             "expenses-v117-insight-layer",
+            "cards-v118-operational-actions",
         ]:
             c = h.count(marker)
             lines.append(f"css_{marker}={c}")
@@ -135,7 +140,7 @@ def main():
                 fail.append(f"css_{marker}")
 
         forbidden = {
-            "old_v116_footer": "Versão WIP35-v116",
+            "old_v117_footer": "Versão WIP35-v117",
             "old_document_rpc": "lts_browser_register_document_v1",
             "old_structured_rpc": "lts_browser_register_structured_text_v1",
             "flow_rpc_v2": "lts_browser_flow_v2",
