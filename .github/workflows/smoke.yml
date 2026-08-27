@@ -10,6 +10,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Validate canonical Health surface
+        run: |
+          test -s health/index.html
+          test -s health/app.js
+          test -s health/styles.css
+          node --check health/app.js
+          grep -q './styles.css' health/index.html
+          grep -q './app.js' health/index.html
+          grep -q 'health_workout_sets' health/app.js
+          grep -q "status:'uploaded'" health/app.js
+          grep -q 'nutrition_date' health/app.js
+          grep -q 'apple_health' health/app.js
+          grep -q 'polar' health/app.js
+          ! grep -q "status:'received'" health/app.js
       - name: Validate candidate shell
         run: python .github/scripts/lts_smoke.py
       - name: Commit validated shell and result
