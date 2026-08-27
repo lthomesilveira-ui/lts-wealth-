@@ -26,8 +26,21 @@ jobs:
           grep -q 'polar' health/app.js
           ! grep -q "status:'received'" health/app.js
       - name: Validate candidate shell
+        id: validate
         run: python .github/scripts/lts_smoke.py
+      - name: Persist failed smoke diagnostics
+        if: failure() && steps.validate.outcome == 'failure'
+        run: |
+          git config user.name 'lts-smoke-bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add smoke-result.txt
+          if ! git diff --cached --quiet; then
+            VERSION=$(head -n 1 smoke-result.txt | cut -d= -f2)
+            git commit -m "Record blocked ${VERSION} smoke"
+            git push
+          fi
       - name: Commit validated shell and result
+        if: success()
         run: |
           git config user.name 'lts-smoke-bot'
           git config user.email 'actions@users.noreply.github.com'
@@ -38,6 +51,7 @@ jobs:
             git push
           fi
       - name: Deploy validated main
+        if: success()
         env:
           GH_TOKEN: ${{ github.token }}
         run: gh workflow run pages.yml --ref main
