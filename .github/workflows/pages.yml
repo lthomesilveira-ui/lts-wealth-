@@ -1,5 +1,6 @@
 name: Deploy LTS Wealth to GitHub Pages
 
+# Deployment trigger: validated WIP35-v115 shell is already on main.
 on:
   push:
     branches: ["main"]
