@@ -6,7 +6,7 @@ import sys
 import urllib.request
 from pathlib import Path
 
-VERSION = "wip35-v111"
+VERSION = "wip35-v112"
 SUPABASE_URL = "https://tadhkamnwtsbdozwkyut.supabase.co"
 ROOT = Path(__file__).resolve().parents[2]
 INDEX = ROOT / "index.html"
@@ -49,81 +49,48 @@ def main():
                 fail.append(f"node_check_{i}")
 
         req = {
-            "stamp": "WIP35-v111 · Cartões por cartão",
-            "build": "const BUILD='WIP35-v111 · Browser RPC v1 · Cards by card cockpit'",
-            "footer": "Versão WIP35-v111",
+            "stamp": "WIP35-v112 · Patrimônio e compromissos confiáveis",
+            "build": "const BUILD='WIP35-v112 · Browser RPC v1 · Trust first wealth and financing'",
+            "footer": "Versão WIP35-v112",
             "flow_rpc_v3": "lts_browser_flow_v3",
-            "flow_semantic_title": "function flowSemanticTitle(e)",
-            "flow_semantic_meta": "function flowSemanticMeta(e)",
-            "flow_last5_button": "data-p=\"Últimos 5 dias\"",
-            "flow_edit_unreconciled": "function flowCanEdit(e)",
-            "card_semantic_title": "function cardSemanticTitle(p)",
-            "card_focus": "function focusCardDetail(day)",
-            "new_category_button": "+ Nova categoria",
-            "new_category_function": "async function addNewCategory(b)",
-            "new_category_rpc": "lts_browser_category_create_v1",
-            "category_alpha": "localeCompare(String(b),'pt-BR',{sensitivity:'base'})",
-            "classification_responsive": "updates-v109-layout",
-            "merchant_suggestion": "Sugestão por estabelecimento identificado",
-            "merchant_field": "merchant_name",
-            "merchant_confidence": "enrichment_confidence",
-            "suggestion_guard": "Nada vira regra sem sua confirmação.",
+            "flow_last5": "data-p=\"Últimos 5 dias\"",
+            "flow_edit": "function flowCanEdit(e)",
+            "flow_semantic": "function flowSemanticTitle(e)",
             "expenses_title": "Para onde foi o dinheiro?",
             "expenses_rpc": "lts_browser_expense_dual_lens_v1",
             "expenses_css": "expenses-v110-dual-lens",
             "expenses_tabs": "tabs=['Visão','Caixa','Consumo','Detalhes']",
-            "expenses_cash": "Saídas de caixa relevantes",
-            "expenses_consumption": "Consumo econômico",
-            "expenses_transfer_guard": "Transferências próprias continuam visíveis para explicar a movimentação bancária, mas são excluídas do gasto.",
-            "expenses_card_guard": "pagamento de fatura não duplica compra",
             "cards_title": "Cada cartão em um lugar.",
             "cards_css": "cards-v111-by-card-cockpit",
             "cards_models": "function card111Models(o)",
             "cards_overdue": "Vencida · confirmar pagamento",
-            "cards_open": "Aberta · ainda cresce",
-            "cards_detail_summary": "Última competência com compras detalhadas",
+            "cards_detail": "Última competência com compras detalhadas",
             "cards_future": "Calendário de parcelas futuras",
-            "cards_history": "Liquidação das faturas",
-            "cards_quality": "Quanto o LTS entende",
-            "cards_floor_guard": "Piso conhecido não é previsão final da fatura.",
-            "cards_cash_guard": "Pagamento de fatura é liquidação de caixa. Cada compra aparece uma única vez em Despesas",
-            "cards_detail_action": "class=\"chip cardopdetail\"",
-            "cards_month_action": "class=\"c111-hm cardmonth\"",
-            "cards_detail_anchor": "CARDDETAIL?cardSettlementInline(CARDDETAIL.event?.event_date):''",
-            "dashboard": "Seu dinheiro, sem ruído.",
-            "wealth": "O que está disponível. E o que ainda não está.",
-            "financing": "Compromissos que já estão contratados.",
+            "wealth_css": "wealth-financing-v112-trust-first",
+            "wealth_title": "O que é seu hoje. Sem somar o que ainda não é.",
+            "wealth_liquidity": "Liquidez realizável até D+3",
+            "wealth_total_unknown": "Patrimônio líquido total",
+            "wealth_not_calculated": "Não calculado",
+            "wealth_cipo_current_value": "Valor atual do imóvel",
+            "wealth_cipo_debt": "Saldo devedor atual",
+            "wealth_cipo_rows": "desembolsos em revisão · sem somar como custo patrimonial",
+            "wealth_cipo_guard": "não chama a soma deles de “valor investido”",
+            "financing_title": "O que já está contratado. E o que ainda precisa ser confirmado.",
+            "financing_coopharma": "Coopharma · próxima folha",
+            "financing_volvo": "Volvo · próxima parcela",
+            "financing_parents": "Pai e Mãe · início previsto",
+            "financing_cipo_review": "CIPÓ 396",
+            "financing_cipo_warning": "Cronograma CIPÓ está em revisão e não representa saldo devedor atual.",
+            "financing_debt_guard": "Saldo devedor atual",
+            "financing_payroll_guard": "não existe uma segunda saída bancária",
+            "financing_parents_balloon": "Maior saída prevista:",
             "planning": "Três cenários. Uma única verdade de caixa.",
-            "planning_motor": "O mesmo motor do Fluxo e do Dashboard",
-            "planning_d3": "Incluindo ativos já disponíveis D+3",
-            "planning_vesting": "Se os vestings de novembro ocorrerem",
-            "planning_fgts": "FGTS no caixa",
+            "dashboard": "Seu dinheiro, sem ruído.",
             "updates_title": "Deixe o LTS em dia sem caçar pendências.",
-            "updates_now": "Precisa de você agora",
-            "updates_class": "Classificações",
-            "updates_evidence_bucket": "Evidências / documentos",
-            "updates_confirmable": "Confirmações possíveis",
-            "updates_suggestion_guard": "Sugestão nunca é confirmação.",
-            "updates_resolved": "Resolvido não volta.",
-            "updates_learning": "Classificações que ainda fazem diferença",
-            "updates_ambiguous": "Candidatos encontrados · nenhuma conciliação automática",
-            "updates_evidence_guard": "A escolha exige vínculo documental; o LTS não decide entre candidatos equivalentes.",
-            "updates_transfer_rpc": "lts_browser_confirm_overdue_transfer_v1",
-            "updates_event_rpc": "lts_browser_confirm_overdue_event_v1",
-            "updates_card_rpc": "lts_browser_confirm_card_payment_v1",
-            "updates_input": "class=\"chip updinput\"",
-            "updates_cardclass": "cardClassificationUpdates()",
-            "updates_expclass": "expenseClassificationUpdates()",
-            "v105_css": "cards-updates-v105-operational",
-            "v104_css": "wealth-financing-planning-v104",
-            "v103_css": "dashboard-expenses-v103-wow",
-            "flow_edit": "data-mode=\"edit\"",
-            "flow_duplicate": "data-mode=\"duplicate\"",
-            "flow_split": "Dividir / substituir",
-            "flow_delete": "async function deleteFlowEvent(e,b)",
-            "flow_scroll": "body.flow-view{height:100vh;overflow:hidden}",
+            "new_category": "+ Nova categoria",
+            "merchant_suggestion": "Sugestão por estabelecimento identificado",
+            "suggestion_guard": "Nada vira regra sem sua confirmação.",
             "historical_card": "Resumo histórico da fatura",
-            "cipo": "Apartamento CIPÓ 396",
         }
         for n, t in req.items():
             ok = t in h
@@ -134,23 +101,17 @@ def main():
         exact = {
             "dashboard": "function dashboard()",
             "expenses": "function despesas()",
-            "expense_loader": "async function loadExpenseDual(a,b)",
             "cards": "function cartoes()",
-            "card_models": "function card111Models(o)",
-            "card_detail_summary": "function card111Detail(name)",
             "wealth": "function patrimonio()",
             "financing": "function financiamentos()",
+            "financing_detail": "function financingDetail()",
             "planning": "function planejamento()",
             "updates": "function atualizacoes()",
-            "update_item": "function renderUpdateItem(x)",
             "flow": "function fluxo()",
-            "flow_delete": "async function deleteFlowEvent(e,b)",
-            "flow_semantic_title": "function flowSemanticTitle(e)",
-            "flow_semantic_meta": "function flowSemanticMeta(e)",
             "flow_can_edit": "function flowCanEdit(e)",
-            "card_semantic_title": "function cardSemanticTitle(p)",
-            "card_focus": "function focusCardDetail(day)",
-            "new_category": "async function addNewCategory(b)",
+            "expense_loader": "async function loadExpenseDual(a,b)",
+            "card_models": "function card111Models(o)",
+            "new_category_fn": "async function addNewCategory(b)",
         }
         for n, t in exact.items():
             c = h.count(t)
@@ -159,13 +120,13 @@ def main():
                 fail.append(f"single_{n}")
 
         structs = {
-            "cards_summary": '<div class="c111-summary">',
-            "cards_grid": '<div class="section c111-cards">',
-            "updates_hero": '<div class="u105-hero">',
-            "wealth_hero": '<div class="w104-hero">',
-            "planning_hero": '<div class="p104-hero">',
-            "flow_shell": '<div class="flow-shell">',
             "expenses_hero": '<div class="exp110-hero">',
+            "cards_summary": '<div class="c111-summary">',
+            "wealth_hero": '<div class="w112-hero">',
+            "financing_hero": '<div class="f112-hero">',
+            "planning_hero": '<div class="p104-hero">',
+            "updates_hero": '<div class="u105-hero">',
+            "flow_shell": '<div class="flow-shell">',
         }
         for n, t in structs.items():
             c = h.count(t)
@@ -175,11 +136,11 @@ def main():
 
         forbidden = {
             "flow_rpc_v2": "lts_browser_flow_v2",
-            "old_v110_footer": "Versão WIP35-v110",
-            "old_flow_raw_meta": "bits.push('Extrato: '+raw)",
-            "old_cards_title": "O que já fechou. O que ainda cresce.",
-            "old_updates_head": "O que falta fazer para o LTS estar atualizado?",
-            "old_dashboard": "Tenho dinheiro hoje?",
+            "old_v111_footer": "Versão WIP35-v111",
+            "old_wealth_title": "O que está disponível. E o que ainda não está.",
+            "old_financing_title": "Compromissos que já estão contratados.",
+            "old_cipo_historical_money_label": "Saídas históricas rastreadas",
+            "old_cipo_future_money_label": "Cronograma futuro",
             "expense_since_2023_button": 'data-dper="2023"',
             "expense_since_2013_button": 'data-dper="2013"',
             "cards_null_detail_anchor": "cardSettlementInline(null)",
@@ -193,7 +154,7 @@ def main():
             if present:
                 fail.append(n)
 
-        for marker in ["expenses-v110-dual-lens", "cards-v111-by-card-cockpit"]:
+        for marker in ["expenses-v110-dual-lens", "cards-v111-by-card-cockpit", "wealth-financing-v112-trust-first"]:
             c = h.count(marker)
             lines.append(f"css_{marker}={c}")
             if c != 1:
