@@ -6,7 +6,7 @@ import sys
 import urllib.request
 from pathlib import Path
 
-VERSION = "wip35-v114"
+VERSION = "wip35-v115"
 SUPABASE_URL = "https://tadhkamnwtsbdozwkyut.supabase.co"
 ROOT = Path(__file__).resolve().parents[2]
 INDEX = ROOT / "index.html"
@@ -50,9 +50,9 @@ def main():
                 fail.append(f"node_check_{i}")
 
         req = {
-            "stamp": "WIP35-v114 · Cockpit financeiro",
-            "build": "const BUILD='WIP35-v114 · Browser RPC v1 · Certified cockpit'",
-            "footer": "Versão WIP35-v114",
+            "stamp": "WIP35-v115 · Entradas contextuais",
+            "build": "const BUILD='WIP35-v115 · Browser RPC v1 · Contextual evidence handoff'",
+            "footer": "Versão WIP35-v115",
             "seven_main_tabs": "const main=['Dashboard','Atualizações','Fluxo Diário','Despesas','Cartões','Patrimônio','Planejamento']",
             "work_center_title": "O que precisa de você, num único lugar.",
             "work_binding": "document.querySelectorAll('.u113-go')",
@@ -69,12 +69,17 @@ def main():
             "financing_parents": "Pai e Mãe · início previsto",
             "financing_cipo": "Cronograma CIPÓ está em revisão e não representa saldo devedor atual.",
             "dashboard_title": "Sua vida financeira, em uma tela.",
-            "dashboard_kicker": "Tesouraria pessoal · ${fmt(today())}",
             "dashboard_css": "dashboard-planning-v114-cockpit",
             "planning_title": "Quanto tempo seu caixa aguenta?",
             "planning_truth": "Planejamento · mesma verdade do Fluxo",
-            "planning_fgts": "não entra em nenhum cenário de caixa",
-            "planning_conditional": "Inclui vestings programados",
+            "input_context_css": "updates-input-context-v115",
+            "input_context_title": "Evidência para conciliação",
+            "input_context_guard": "Nada é conciliado, classificado ou lançado apenas pelo upload.",
+            "input_document_v2": "lts_browser_register_document_v2",
+            "input_text_v2": "lts_browser_register_structured_text_v2",
+            "input_task_payload": "p_task_context:inputTaskContext()",
+            "input_pending_binding": "INPUTCTX=(D.updates?.items||[]).find",
+            "dashboard_actionable_count": "actionable_count??D.updates?.pending_count",
             "new_category": "+ Nova categoria",
             "merchant": "Sugestão por estabelecimento identificado",
             "merchant_guard": "Nada vira regra sem sua confirmação.",
@@ -98,6 +103,8 @@ def main():
             "config": "function config()",
             "ledger": "function lancamentos()",
             "inputs": "function entradas()",
+            "input_context": "function inputContextBanner()",
+            "input_task_context": "function inputTaskContext()",
             "diagnostic": "function diagnostico()",
         }
         for n, t in exact.items():
@@ -112,6 +119,7 @@ def main():
             "wealth-financing-v112-trust-first",
             "navigation-updates-v113",
             "dashboard-planning-v114-cockpit",
+            "updates-input-context-v115",
         ]:
             c = h.count(marker)
             lines.append(f"css_{marker}={c}")
@@ -119,7 +127,9 @@ def main():
                 fail.append(f"css_{marker}")
 
         forbidden = {
-            "old_v113_footer": "Versão WIP35-v113",
+            "old_v114_footer": "Versão WIP35-v114",
+            "old_document_rpc": "lts_browser_register_document_v1",
+            "old_structured_rpc": "lts_browser_register_structured_text_v1",
             "old_dashboard_title": "Seu dinheiro, sem ruído.",
             "old_planning_title": "Três cenários. Uma única verdade de caixa.",
             "flow_rpc_v2": "lts_browser_flow_v2",
