@@ -6,7 +6,7 @@ import sys
 import urllib.request
 from pathlib import Path
 
-VERSION = "wip35-v119"
+VERSION = "wip35-v120"
 SUPABASE_URL = "https://tadhkamnwtsbdozwkyut.supabase.co"
 ROOT = Path(__file__).resolve().parents[2]
 INDEX = ROOT / "index.html"
@@ -49,9 +49,9 @@ def main():
                 fail.append(f"node_check_{i}")
 
         req = {
-            "stamp": "WIP35-v119 · CIPÓ contextual",
-            "build": "const BUILD='WIP35-v119 · Browser RPC v1 · Contextual CIPÓ evidence'",
-            "footer": "Versão WIP35-v119",
+            "stamp": "WIP35-v120 · Conciliação explícita",
+            "build": "const BUILD='WIP35-v120 · Browser RPC v1 · Explicit reconciliation choice'",
+            "footer": "Versão WIP35-v120",
             "seven_main_tabs": "const main=['Dashboard','Atualizações','Fluxo Diário','Despesas','Cartões','Patrimônio','Planejamento']",
             "updates_title": "O que precisa de você, num único lugar.",
             "updates_actions": "Ações pendentes",
@@ -86,6 +86,12 @@ def main():
             "cipo_task_id": "document_cipo_current_debt_balance",
             "cipo_binding": "document.querySelectorAll('.cipo119doc').forEach(b=>b.onclick=()=>openUpdateContext(b.dataset.update))",
             "cipo_guard": "Saldo devedor atual",
+            "reconciliation_css": "reconciliation-choice-v120",
+            "reconciliation_fn": "function confirmReconciliationCandidate(b)",
+            "reconciliation_rpc": "lts_browser_confirm_reconciliation_candidate_v1",
+            "reconciliation_action": "Usar este crédito",
+            "reconciliation_binding": "document.querySelectorAll('.recon120-use').forEach(b=>b.onclick=()=>confirmReconciliationCandidate(b))",
+            "reconciliation_guard": "Nenhuma nova entrada é criada e nenhum valor realizado é alterado.",
             "planning_title": "Quanto tempo seu caixa aguenta?",
             "dashboard_title": "Sua vida financeira, em uma tela.",
             "new_category": "+ Nova categoria",
@@ -103,6 +109,7 @@ def main():
             "updates": "function atualizacoes()",
             "update_action": "function updateIsAction(x)",
             "update_info": "function renderUpdateInfo(x)",
+            "reconciliation_confirm": "function confirmReconciliationCandidate(b)",
             "dashboard": "function dashboard()",
             "flow": "function fluxo()",
             "expenses": "function despesas()",
@@ -142,6 +149,7 @@ def main():
             "expenses-v117-insight-layer",
             "cards-v118-operational-actions",
             "cipo-document-v119",
+            "reconciliation-choice-v120",
         ]:
             c = h.count(marker)
             lines.append(f"css_{marker}={c}")
@@ -150,16 +158,25 @@ def main():
 
         cipo_actions = h.count("Enviar posição Bradesco")
         cipo_bindings = h.count("document.querySelectorAll('.cipo119doc').forEach(b=>b.onclick=()=>openUpdateContext(b.dataset.update))")
+        recon_actions = h.count("Usar este crédito")
+        recon_bindings = h.count("document.querySelectorAll('.recon120-use').forEach(b=>b.onclick=()=>confirmReconciliationCandidate(b))")
         lines.append(f"cipo_action_count={cipo_actions}")
         lines.append(f"cipo_binding_count={cipo_bindings}")
+        lines.append(f"reconciliation_action_template_count={recon_actions}")
+        lines.append(f"reconciliation_binding_count={recon_bindings}")
         if cipo_actions != 2:
             fail.append("cipo_action_count")
         if cipo_bindings != 2:
             fail.append("cipo_binding_count")
+        if recon_actions != 1:
+            fail.append("reconciliation_action_template_count")
+        if recon_bindings != 1:
+            fail.append("reconciliation_binding_count")
 
         forbidden = {
-            "old_v118_footer": "Versão WIP35-v118",
-            "literal_backslash_n_function": r"\nfunction openUpdateContext",
+            "old_v119_footer": "Versão WIP35-v119",
+            "literal_backslash_n_open": r"\nfunction openUpdateContext",
+            "literal_backslash_n_reconciliation": r"\nfunction confirmReconciliationCandidate",
             "old_document_rpc": "lts_browser_register_document_v1",
             "old_structured_rpc": "lts_browser_register_structured_text_v1",
             "flow_rpc_v2": "lts_browser_flow_v2",
