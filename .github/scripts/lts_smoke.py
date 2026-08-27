@@ -6,7 +6,7 @@ import sys
 import urllib.request
 from pathlib import Path
 
-VERSION = "wip35-v116"
+VERSION = "wip35-v117"
 SUPABASE_URL = "https://tadhkamnwtsbdozwkyut.supabase.co"
 ROOT = Path(__file__).resolve().parents[2]
 INDEX = ROOT / "index.html"
@@ -49,27 +49,32 @@ def main():
                 fail.append(f"node_check_{i}")
 
         req = {
-            "stamp": "WIP35-v116 · Central por ação",
-            "build": "const BUILD='WIP35-v116 · Browser RPC v1 · Actionable updates center'",
-            "footer": "Versão WIP35-v116",
+            "stamp": "WIP35-v117 · Despesas com leitura executiva",
+            "build": "const BUILD='WIP35-v117 · Browser RPC v1 · Expense insight layer'",
+            "footer": "Versão WIP35-v117",
             "seven_main_tabs": "const main=['Dashboard','Atualizações','Fluxo Diário','Despesas','Cartões','Patrimônio','Planejamento']",
             "updates_title": "O que precisa de você, num único lugar.",
             "updates_actions": "Ações pendentes",
             "updates_info": "Informações e proteções do LTS",
-            "updates_no_action": "Sem ação necessária",
-            "updates_action_fn": "function updateIsAction(x)",
-            "updates_info_fn": "function renderUpdateInfo(x)",
             "updates_css": "updates-actionable-v116",
             "generic_context_clear": "INPUTCTX=null;V=b.dataset.v",
             "dashboard_actionable_count": "actionable_count??D.updates?.pending_count",
             "input_context_css": "updates-input-context-v115",
             "input_document_v2": "lts_browser_register_document_v2",
             "input_text_v2": "lts_browser_register_structured_text_v2",
-            "input_task_payload": "p_task_context:inputTaskContext()",
             "flow": "lts_browser_flow_v3",
             "flow_last5": "data-p=\"Últimos 5 dias\"",
             "expenses": "Para onde foi o dinheiro?",
             "expense_rpc": "lts_browser_expense_dual_lens_v1",
+            "expenses_four_tabs": "tabs=['Visão','Caixa','Consumo','Detalhes']",
+            "expenses_insight_css": "expenses-v117-insight-layer",
+            "expenses_concentration": "Concentração do consumo",
+            "expenses_recurring": "Padrões recorrentes observados",
+            "expenses_coverage_guard": "Comparação temporal protegida",
+            "expenses_card_detail_coverage": "Detalhamento de cartão",
+            "expenses_no_future_claim": "observação histórica · não obrigação futura",
+            "expenses_analysis_fn": "function exp117Analysis(rows,j)",
+            "expenses_coverage_fn": "function exp117CoverageCard(a)",
             "cards": "Cada cartão em um lugar.",
             "wealth": "O que é seu hoje. Sem somar o que ainda não é.",
             "financing": "O que já está contratado. E o que ainda precisa ser confirmado.",
@@ -93,6 +98,10 @@ def main():
             "dashboard": "function dashboard()",
             "flow": "function fluxo()",
             "expenses": "function despesas()",
+            "expense_analysis": "function exp117Analysis(rows,j)",
+            "expense_recurring_rows": "function exp117RecurringRows(xs)",
+            "expense_center_rows": "function exp117CenterRows(xs,total)",
+            "expense_coverage_card": "function exp117CoverageCard(a)",
             "cards": "function cartoes()",
             "wealth": "function patrimonio()",
             "financing": "function financiamentos()",
@@ -118,6 +127,7 @@ def main():
             "dashboard-planning-v114-cockpit",
             "updates-input-context-v115",
             "updates-actionable-v116",
+            "expenses-v117-insight-layer",
         ]:
             c = h.count(marker)
             lines.append(f"css_{marker}={c}")
@@ -125,7 +135,7 @@ def main():
                 fail.append(f"css_{marker}")
 
         forbidden = {
-            "old_v115_footer": "Versão WIP35-v115",
+            "old_v116_footer": "Versão WIP35-v116",
             "old_document_rpc": "lts_browser_register_document_v1",
             "old_structured_rpc": "lts_browser_register_structured_text_v1",
             "flow_rpc_v2": "lts_browser_flow_v2",
