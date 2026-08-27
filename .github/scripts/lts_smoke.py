@@ -6,7 +6,7 @@ import sys
 import urllib.request
 from pathlib import Path
 
-VERSION = "wip35-v109"
+VERSION = "wip35-v110"
 SUPABASE_URL = "https://tadhkamnwtsbdozwkyut.supabase.co"
 ROOT = Path(__file__).resolve().parents[2]
 INDEX = ROOT / "index.html"
@@ -49,20 +49,16 @@ def main():
                 fail.append(f"node_check_{i}")
 
         req = {
-            "stamp": "WIP35-v109 · Fluxo + classificação inteligente",
-            "build": "const BUILD='WIP35-v109 · Browser RPC v1 · Flow actions + smart classification'",
-            "footer": "Versão WIP35-v109",
+            "stamp": "WIP35-v110 · Despesas Caixa × Consumo",
+            "build": "const BUILD='WIP35-v110 · Browser RPC v1 · Expenses dual lens'",
+            "footer": "Versão WIP35-v110",
             "flow_rpc_v3": "lts_browser_flow_v3",
             "flow_semantic_title": "function flowSemanticTitle(e)",
             "flow_semantic_meta": "function flowSemanticMeta(e)",
-            "flow_semantic_use": "desc=flowSemanticTitle(e)",
             "flow_last5_button": "data-p=\"Últimos 5 dias\"",
-            "flow_last5_handler": "const m=p.match(/^(Últimos|Próximos) (5|30|60|90) dias$/);",
             "flow_edit_unreconciled": "function flowCanEdit(e)",
-            "flow_edit_unreconciled_use": "flowCanEdit(e)?",
             "card_semantic_title": "function cardSemanticTitle(p)",
             "card_focus": "function focusCardDetail(day)",
-            "card_focus_scroll": "scrollIntoView({behavior:'smooth',block:'start'})",
             "new_category_button": "+ Nova categoria",
             "new_category_function": "async function addNewCategory(b)",
             "new_category_rpc": "lts_browser_category_create_v1",
@@ -72,8 +68,15 @@ def main():
             "merchant_field": "merchant_name",
             "merchant_confidence": "enrichment_confidence",
             "suggestion_guard": "Nada vira regra sem sua confirmação.",
+            "expenses_title": "Para onde foi o dinheiro?",
+            "expenses_rpc": "lts_browser_expense_dual_lens_v1",
+            "expenses_css": "expenses-v110-dual-lens",
+            "expenses_tabs": "tabs=['Visão','Caixa','Consumo','Detalhes']",
+            "expenses_cash": "Saídas de caixa relevantes",
+            "expenses_consumption": "Consumo econômico",
+            "expenses_transfer_guard": "Transferências próprias continuam visíveis para explicar a movimentação bancária, mas são excluídas do gasto.",
+            "expenses_card_guard": "pagamento de fatura não duplica compra",
             "dashboard": "Seu dinheiro, sem ruído.",
-            "expenses": "Análise de consumo",
             "wealth": "O que está disponível. E o que ainda não está.",
             "financing": "Compromissos que já estão contratados.",
             "planning": "Três cenários. Uma única verdade de caixa.",
@@ -129,6 +132,7 @@ def main():
         exact = {
             "dashboard": "function dashboard()",
             "expenses": "function despesas()",
+            "expense_loader": "async function loadExpenseDual(a,b)",
             "cards": "function cartoes()",
             "wealth": "function patrimonio()",
             "financing": "function financiamentos()",
@@ -156,6 +160,7 @@ def main():
             "wealth_hero": '<div class="w104-hero">',
             "planning_hero": '<div class="p104-hero">',
             "flow_shell": '<div class="flow-shell">',
+            "expenses_hero": '<div class="exp110-hero">',
         }
         for n, t in structs.items():
             c = h.count(t)
@@ -165,11 +170,13 @@ def main():
 
         forbidden = {
             "flow_rpc_v2": "lts_browser_flow_v2",
-            "old_v108_footer": "Versão WIP35-v108",
+            "old_v109_footer": "Versão WIP35-v109",
             "old_flow_raw_meta": "bits.push('Extrato: '+raw)",
             "old_cards_head": "Fatura fechada → faturas abertas → parcelas futuras já contratadas",
             "old_updates_head": "O que falta fazer para o LTS estar atualizado?",
             "old_dashboard": "Tenho dinheiro hoje?",
+            "expense_since_2023_button": 'data-dper="2023"',
+            "expense_since_2013_button": 'data-dper="2013"',
             "technical": "e.category||e.source",
             "cancel_projection": ">Cancelar projeção</button>",
             "cdn": "cdn.jsdelivr.net",
@@ -179,6 +186,11 @@ def main():
             lines.append(f"{n}={'present' if present else 'absent'}")
             if present:
                 fail.append(n)
+
+        css_count = h.count("expenses-v110-dual-lens")
+        lines.append(f"expenses_v110_css_count={css_count}")
+        if css_count != 1:
+            fail.append("expenses_v110_css_count")
 
         if fail:
             lines += ["publish=blocked", "failures=" + ",".join(fail)]
