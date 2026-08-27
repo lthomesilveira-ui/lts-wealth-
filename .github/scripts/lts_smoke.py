@@ -6,7 +6,7 @@ import sys
 import urllib.request
 from pathlib import Path
 
-VERSION = "wip35-v115"
+VERSION = "wip35-v116"
 SUPABASE_URL = "https://tadhkamnwtsbdozwkyut.supabase.co"
 ROOT = Path(__file__).resolve().parents[2]
 INDEX = ROOT / "index.html"
@@ -38,7 +38,6 @@ def main():
         h = shell(key())
         TMP.write_text(h, encoding="utf-8")
         lines.append(f"shell_bytes={len(h)}")
-
         scripts = re.findall(r"<script(?:\s[^>]*)?>(.*?)</script>", h, re.I | re.S)
         lines.append(f"inline_scripts={len(scripts)}")
         for i, s in enumerate(scripts):
@@ -50,36 +49,32 @@ def main():
                 fail.append(f"node_check_{i}")
 
         req = {
-            "stamp": "WIP35-v115 · Entradas contextuais",
-            "build": "const BUILD='WIP35-v115 · Browser RPC v1 · Contextual evidence handoff'",
-            "footer": "Versão WIP35-v115",
+            "stamp": "WIP35-v116 · Central por ação",
+            "build": "const BUILD='WIP35-v116 · Browser RPC v1 · Actionable updates center'",
+            "footer": "Versão WIP35-v116",
             "seven_main_tabs": "const main=['Dashboard','Atualizações','Fluxo Diário','Despesas','Cartões','Patrimônio','Planejamento']",
-            "work_center_title": "O que precisa de você, num único lugar.",
-            "work_binding": "document.querySelectorAll('.u113-go')",
-            "nav_css": "navigation-updates-v113",
+            "updates_title": "O que precisa de você, num único lugar.",
+            "updates_actions": "Ações pendentes",
+            "updates_info": "Informações e proteções do LTS",
+            "updates_no_action": "Sem ação necessária",
+            "updates_action_fn": "function updateIsAction(x)",
+            "updates_info_fn": "function renderUpdateInfo(x)",
+            "updates_css": "updates-actionable-v116",
+            "generic_context_clear": "INPUTCTX=null;V=b.dataset.v",
+            "dashboard_actionable_count": "actionable_count??D.updates?.pending_count",
+            "input_context_css": "updates-input-context-v115",
+            "input_document_v2": "lts_browser_register_document_v2",
+            "input_text_v2": "lts_browser_register_structured_text_v2",
+            "input_task_payload": "p_task_context:inputTaskContext()",
             "flow": "lts_browser_flow_v3",
             "flow_last5": "data-p=\"Últimos 5 dias\"",
             "expenses": "Para onde foi o dinheiro?",
             "expense_rpc": "lts_browser_expense_dual_lens_v1",
             "cards": "Cada cartão em um lugar.",
-            "cards_css": "cards-v111-by-card-cockpit",
             "wealth": "O que é seu hoje. Sem somar o que ainda não é.",
-            "wealth_css": "wealth-financing-v112-trust-first",
             "financing": "O que já está contratado. E o que ainda precisa ser confirmado.",
-            "financing_parents": "Pai e Mãe · início previsto",
-            "financing_cipo": "Cronograma CIPÓ está em revisão e não representa saldo devedor atual.",
-            "dashboard_title": "Sua vida financeira, em uma tela.",
-            "dashboard_css": "dashboard-planning-v114-cockpit",
             "planning_title": "Quanto tempo seu caixa aguenta?",
-            "planning_truth": "Planejamento · mesma verdade do Fluxo",
-            "input_context_css": "updates-input-context-v115",
-            "input_context_title": "Evidência para conciliação",
-            "input_context_guard": "Nada é conciliado, classificado ou lançado apenas pelo upload.",
-            "input_document_v2": "lts_browser_register_document_v2",
-            "input_text_v2": "lts_browser_register_structured_text_v2",
-            "input_task_payload": "p_task_context:inputTaskContext()",
-            "input_pending_binding": "INPUTCTX=(D.updates?.items||[]).find",
-            "dashboard_actionable_count": "actionable_count??D.updates?.pending_count",
+            "dashboard_title": "Sua vida financeira, em uma tela.",
             "new_category": "+ Nova categoria",
             "merchant": "Sugestão por estabelecimento identificado",
             "merchant_guard": "Nada vira regra sem sua confirmação.",
@@ -93,6 +88,8 @@ def main():
         exact = {
             "render_nav": "function renderNav()",
             "updates": "function atualizacoes()",
+            "update_action": "function updateIsAction(x)",
+            "update_info": "function renderUpdateInfo(x)",
             "dashboard": "function dashboard()",
             "flow": "function fluxo()",
             "expenses": "function despesas()",
@@ -120,6 +117,7 @@ def main():
             "navigation-updates-v113",
             "dashboard-planning-v114-cockpit",
             "updates-input-context-v115",
+            "updates-actionable-v116",
         ]:
             c = h.count(marker)
             lines.append(f"css_{marker}={c}")
@@ -127,11 +125,9 @@ def main():
                 fail.append(f"css_{marker}")
 
         forbidden = {
-            "old_v114_footer": "Versão WIP35-v114",
+            "old_v115_footer": "Versão WIP35-v115",
             "old_document_rpc": "lts_browser_register_document_v1",
             "old_structured_rpc": "lts_browser_register_structured_text_v1",
-            "old_dashboard_title": "Seu dinheiro, sem ruído.",
-            "old_planning_title": "Três cenários. Uma única verdade de caixa.",
             "flow_rpc_v2": "lts_browser_flow_v2",
             "old_nav_map": "N.innerHTML=NAV.map((x,i)=>",
             "expense_since_2023": 'data-dper="2023"',
