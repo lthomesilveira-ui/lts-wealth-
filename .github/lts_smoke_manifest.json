@@ -1,19 +1,21 @@
 {
-  "version": "wip35-v121",
+  "version": "wip35-v122",
   "required": {
-    "stamp": "WIP35-v121 · Revisão segura em lote",
-    "build": "const BUILD='WIP35-v121 · Browser RPC v1 · Safe classification batch'",
-    "footer": "Versão WIP35-v121",
-    "seven_main_tabs": "const main=['Dashboard','Atualizações','Fluxo Diário','Despesas','Cartões','Patrimônio','Planejamento']",
+    "stamp": "WIP35-v122 · Fluxo e planejamento em foco",
+    "build": "const BUILD='WIP35-v122 · Fluxo semântico + planejamento consolidado'",
+    "footer": "Versão WIP35-v122",
+    "six_main_tabs": "const main=['Atualizações','Fluxo Diário','Despesas','Cartões','Patrimônio','Planejamento']",
     "updates_title": "O que precisa de você, num único lugar.",
     "updates_actions": "Ações pendentes",
     "updates_info": "Informações e proteções do LTS",
     "generic_context_clear": "INPUTCTX=null;V=b.dataset.v",
-    "dashboard_actionable_count": "actionable_count??D.updates?.pending_count",
     "input_document_v2": "lts_browser_register_document_v2",
     "input_text_v2": "lts_browser_register_structured_text_v2",
     "flow": "lts_browser_flow_v3",
     "flow_last5": "data-p=\"Últimos 5 dias\"",
+    "flow_semantic_advance": "Adiantamento Quinzenal",
+    "flow_semantic_iptu": "IPTU · CIPÓ 396",
+    "flow_semantic_reimbursement": "Reembolso plano de saúde",
     "expenses": "Para onde foi o dinheiro?",
     "expense_rpc": "lts_browser_expense_dual_lens_v1",
     "expenses_four_tabs": "tabs=['Visão','Caixa','Consumo','Detalhes']",
@@ -23,6 +25,8 @@
     "cards": "Cada cartão em um lugar.",
     "cards_payment_action": "Confirmar pagamento",
     "cards_cash_consumption_guard": "Caixa ≠ consumo",
+    "cards_instruments": "C6 Carbon · instrumentos",
+    "cards_open_detail": "Itens documentados da fatura aberta",
     "wealth": "O que é seu hoje. Sem somar o que ainda não é.",
     "financing": "O que já está contratado. E o que ainda precisa ser confirmado.",
     "cipo_action": "Enviar posição Bradesco",
@@ -35,7 +39,8 @@
     "safe_batch_guard": "O lote só aceita itens que o backend ainda reconheça como sugestão segura",
     "safe_batch_evidence": "incluir no lote seguro",
     "planning_title": "Quanto tempo seu caixa aguenta?",
-    "dashboard_title": "Sua vida financeira, em uma tela.",
+    "planning_first_negative_amount": "first_negative_balance",
+    "planning_executive": "Visão executiva",
     "new_category": "+ Nova categoria",
     "merchant": "Sugestão por estabelecimento identificado",
     "merchant_guard": "Nada vira regra sem sua confirmação."
@@ -84,7 +89,8 @@
     "cards-v118-operational-actions",
     "cipo-document-v119",
     "reconciliation-choice-v120",
-    "safe-classification-batch-v121"
+    "safe-classification-batch-v121",
+    "flow-planning-v122"
   ],
   "counts": {
     "cipo_action_count": {"marker": "Enviar posição Bradesco", "expected": 2},
@@ -93,10 +99,12 @@
     "reconciliation_binding_count": {"marker": "document.querySelectorAll('.recon120-use').forEach(b=>b.onclick=()=>confirmReconciliationCandidate(b))", "expected": 1},
     "safe_batch_button_count": {"marker": "class=\"btn ghost safe121-submit\"", "expected": 1},
     "safe_checkbox_template_count": {"marker": "class=\"safe121-pick\"", "expected": 1},
-    "safe_batch_binding_count": {"marker": "document.querySelectorAll('.safe121-submit').forEach(b=>b.onclick=()=>confirmSafeCardSuggestions(b))", "expected": 1}
+    "safe_batch_binding_count": {"marker": "document.querySelectorAll('.safe121-submit').forEach(b=>b.onclick=()=>confirmSafeCardSuggestions(b))", "expected": 1},
+    "open_detail_template_count": {"marker": "c122-open-detail", "expected": 1}
   },
   "forbidden": {
-    "old_v120_footer": "Versão WIP35-v120",
+    "old_v121_footer": "Versão WIP35-v121",
+    "dashboard_in_primary_nav": "const main=['Dashboard','Atualizações','Fluxo Diário','Despesas','Cartões','Patrimônio','Planejamento']",
     "literal_backslash_n_open": "\\nfunction openUpdateContext",
     "literal_backslash_n_reconciliation": "\\nfunction confirmReconciliationCandidate",
     "literal_backslash_n_safe": "\\nfunction confirmSafeCardSuggestions",
@@ -109,6 +117,7 @@
     "cards_null_detail": "cardSettlementInline(null)",
     "old_wealth_title": "O que está disponível. E o que ainda não está.",
     "old_financing_title": "Compromissos que já estão contratados.",
+    "old_c6_single_instrument_label": "C6 Carbon final 8304",
     "technical": "e.category||e.source",
     "cdn": "cdn.jsdelivr.net"
   }
