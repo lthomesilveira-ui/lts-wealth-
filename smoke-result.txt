@@ -1,5 +1,5 @@
-version=wip35-v124
-shell_bytes=298299
+version=wip35-v125
+shell_bytes=298291
 inline_scripts=2
 node_check_0=0
 node_check_1=0
@@ -98,6 +98,7 @@ open_cycle_ui_count=1
 expense_bar_function_count=1
 expense_meaning_function_count=1
 flow_unclassified_binding_count=1
+old_v124_footer=absent
 old_v123_footer=absent
 old_v122_footer=absent
 old_v121_footer=absent
