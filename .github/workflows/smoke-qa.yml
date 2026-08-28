@@ -1,0 +1,21 @@
+name: LTS browser candidate QA
+on:
+  push:
+    branches: [qa/wip35-v126-smoke]
+    paths:
+      - '.github/lts_smoke_manifest.json'
+      - '.github/scripts/lts_smoke_engine.py'
+      - '.github/workflows/smoke-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate candidate shell without publishing
+        run: python .github/scripts/lts_smoke_engine.py
+      - name: Confirm no candidate commit or deploy
+        if: success()
+        run: echo 'Candidate validated only; no commit and no deploy.'
