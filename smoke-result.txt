@@ -65,7 +65,7 @@ css_expense-clarity-v124=1
 css_reports-worklist-v130=1
 css_reports-worklist-v131=1
 css_updates-worklist-v132=1
-css_updates-v132-controls=4
+css_<style id="updates-v132-controls-css">=1
 updates_checklist_count=3
 planning_ladder_count=1
 wealth_cipo_count=1
@@ -94,5 +94,4 @@ flow_rpc_v2=absent
 old_add_part_binding=absent
 old_double_withholding=absent
 cdn=absent
-publish=blocked
-failures=css_updates-v132-controls
+publish=ready
