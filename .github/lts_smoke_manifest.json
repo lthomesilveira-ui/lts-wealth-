@@ -1,9 +1,9 @@
 {
-  "version": "wip35-v123",
+  "version": "wip35-v124",
   "required": {
-    "stamp": "WIP35-v123 · Fluxo e planejamento em foco",
-    "build": "const BUILD='WIP35-v123 · Fluxo legível + cartões detalhados'",
-    "footer": "Versão WIP35-v123",
+    "stamp": "WIP35-v124 · Clareza financeira e classificação",
+    "build": "const BUILD='WIP35-v124 · Consumo claro + fluxo classificado'",
+    "footer": "Versão WIP35-v124",
     "six_main_tabs": "const main=['Atualizações','Fluxo Diário','Despesas','Cartões','Patrimônio','Planejamento']",
     "updates_title": "O que precisa de você, num único lugar.",
     "flow": "lts_browser_flow_v3",
@@ -14,9 +14,13 @@
     "flow_semantic_cofrinho": "Resgate Cofrinho Itaú",
     "flow_semantic_card_insurance": "Seguro cartão Itaú",
     "flow_internal_transfer": "Transferência própria ·",
+    "flow_unclassified_action": "A classificar · revisar",
     "expenses": "Para onde foi o dinheiro?",
     "expense_rpc": "lts_browser_expense_dual_lens_v1",
     "expenses_four_tabs": "tabs=['Visão','Caixa','Consumo','Detalhes']",
+    "expense_clarity": "function exp124Meaning(j,a,trans)",
+    "expense_category_bars": "function exp124CategoryBars(j,limit=7)",
+    "expense_consumption_primary": "Compras e despesas, sem duplicar pagamento de fatura.",
     "cards": "Cada cartão em um lugar.",
     "cards_cash_consumption_guard": "Caixa ≠ consumo",
     "cards_instruments": "C6 Carbon · instrumentos",
@@ -55,6 +59,8 @@
     "new_category": "function addNewCategory(b)",
     "expenses": "function despesas()",
     "expense_analysis": "function exp117Analysis(rows,j)",
+    "expense_category_bars": "function exp124CategoryBars(j,limit=7)",
+    "expense_meaning": "function exp124Meaning(j,a,trans)",
     "cards": "function cartoes()",
     "cards_model": "function card111Card(m)",
     "wealth": "function patrimonio()",
@@ -79,7 +85,8 @@
     "reconciliation-choice-v120",
     "safe-classification-batch-v121",
     "flow-planning-v122",
-    "category-inline-v123"
+    "category-inline-v123",
+    "expense-clarity-v124"
   ],
   "counts": {
     "cipo_action_count": {"marker": "Enviar posição Bradesco", "expected": 2},
@@ -91,9 +98,13 @@
     "safe_batch_binding_count": {"marker": "document.querySelectorAll('.safe121-submit').forEach(b=>b.onclick=()=>confirmSafeCardSuggestions(b))", "expected": 1},
     "open_detail_template_count": {"marker": "c111-detail c122-open-detail", "expected": 1},
     "new_category_function_count": {"marker": "function addNewCategory(b)", "expected": 1},
-    "open_cycle_ui_count": {"marker": "Fatura aberta · itens conhecidos", "expected": 1}
+    "open_cycle_ui_count": {"marker": "Fatura aberta · itens conhecidos", "expected": 1},
+    "expense_bar_function_count": {"marker": "function exp124CategoryBars", "expected": 1},
+    "expense_meaning_function_count": {"marker": "function exp124Meaning", "expected": 1},
+    "flow_unclassified_binding_count": {"marker": "document.querySelectorAll('.flow-unclassified-link')", "expected": 1}
   },
   "forbidden": {
+    "old_v123_footer": "Versão WIP35-v123",
     "old_v122_footer": "Versão WIP35-v122",
     "old_v121_footer": "Versão WIP35-v121",
     "dashboard_in_primary_nav": "const main=['Dashboard','Atualizações','Fluxo Diário','Despesas','Cartões','Patrimônio','Planejamento']",
