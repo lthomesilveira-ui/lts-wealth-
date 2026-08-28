@@ -63,7 +63,7 @@
     "reports-worklist-v130",
     "reports-worklist-v131",
     "updates-worklist-v132",
-    "updates-v132-controls"
+    "<style id=\"updates-v132-controls-css\">"
   ],
   "counts": {
     "updates_checklist_count": {"marker": "Checklist para deixar o LTS em dia.", "expected": 3},
