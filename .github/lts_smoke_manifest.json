@@ -1,8 +1,8 @@
 {
-  "version": "wip35-v134",
+  "version": "wip35-v135",
   "required": {
-    "stamp": "WIP35-v134",
-    "build": "const BUILD='WIP35-v134 · Relatórios executivos'",
+    "stamp": "WIP35-v135",
+    "build": "const BUILD='WIP35-v135 · Relatórios executivos'",
     "six_main_tabs": "const main=['Atualizações','Fluxo Diário','Despesas','Cartões','Patrimônio','Planejamento']",
     "flow": "lts_browser_flow_v3",
     "flow_next30": "data-p=\"Próximos 30 dias\"",
@@ -35,10 +35,16 @@
     "updates_future_group": "Cobertura futura",
     "updates_card_cycles_group": "Faturas a atualizar",
     "expense_exec_rpc": "lts_browser_expense_executive_v3",
-    "expense_exec_heading": "Quanto você gastou — e com o quê.",
+    "expense_exec_heading": "Quanto você gastou — e como isso evoluiu.",
     "expense_exec_history": "Desde 2013",
-    "expense_exec_latest_fact": "último fato realizado",
-    "expense_data_quality": "Qualidade dos dados e pendências de cobertura",
+    "expense_monthly": ">Mês a mês<",
+    "expense_yearly": ">Ano a ano<",
+    "expense_month_drill_v2": "lts_browser_expense_month_detail_v2",
+    "expense_category_coverage": "Cobertura de categorias · 6 meses",
+    "expense_transaction_coverage": "individualizado",
+    "expense_allocation_label": "composição histórica da fatura",
+    "expense_fallback_label": "fatura consolidada sem composição",
+    "expense_data_quality": "Cobertura do histórico",
     "wealth_exec_heading": "Quanto você tem, quanto deve e quanto é seu.",
     "wealth_cipo": "CIPÓ 396 · cobertura duplex",
     "wealth_volvo": "Volvo XC40 · 2019/2020",
@@ -49,7 +55,8 @@
     "reports_css": "reports-v129",
     "reports_js": "reports-v129-js",
     "reports_v131_js": "reports-v131-js",
-    "executive_v134_js": "executive-reports-v134-js"
+    "executive_v134_js": "executive-reports-v134-js",
+    "expense_v135_js": "expense-month-year-v135-js"
   },
   "exact": {
     "render_nav": "function renderNav()",
@@ -71,27 +78,93 @@
     "updates-worklist-v132",
     "<style id=\"updates-v132-controls-css\">",
     "<style id=\"updates-v133-document-css\">",
-    "<style id=\"executive-reports-v134-css\">"
+    "<style id=\"executive-reports-v134-css\">",
+    "<style id=\"expense-month-year-v135-css\">"
   ],
   "counts": {
-    "updates_checklist_count": {"marker": "Checklist para deixar o LTS em dia.", "expected": 3},
-    "reports_v131_js_count": {"marker": "<script id=\"reports-v131-js\">", "expected": 1},
-    "updates_v132_js_count": {"marker": "<script id=\"updates-v132-js\">", "expected": 1},
-    "updates_v132_controls_js_count": {"marker": "<script id=\"updates-v132-controls-js\">", "expected": 1},
-    "updates_v133_document_js_count": {"marker": "<script id=\"updates-v133-document-js\">", "expected": 1},
-    "executive_v134_js_count": {"marker": "<script id=\"executive-reports-v134-js\">", "expected": 1},
-    "classification_save_v134_js_count": {"marker": "<script id=\"classification-save-v134-js\">", "expected": 1},
-    "expense_exec_heading_count": {"marker": "Quanto você gastou — e com o quê.", "expected": 1},
-    "wealth_exec_heading_count": {"marker": "Quanto você tem, quanto deve e quanto é seu.", "expected": 1},
-    "planning_exec_heading_count": {"marker": "Até quando sua liquidez aguenta.", "expected": 1},
-    "ledger_ui_count": {"marker": "Checar se um lançamento está considerado", "expected": 1},
-    "invoice_ui_count": {"marker": "Atualizar valor da fatura", "expected": 1},
-    "flow_default30_count": {"marker": "z0.setDate(z0.getDate()+29)", "expected": 1},
-    "flow_add_part_binding_count": {"marker": "document.getElementById('flowPartAdd').onclick=flowPartAdd", "expected": 1},
-    "flow_salary_semantics_count": {"marker": "amount_semantics:d.amount_semantics||'event_amount'", "expected": 1},
-    "classification_create_apply_count": {"marker": "Categoria criada; aplicando classificação…", "expected": 1}
+    "updates_checklist_count": {
+      "marker": "Checklist para deixar o LTS em dia.",
+      "expected": 3
+    },
+    "reports_v131_js_count": {
+      "marker": "<script id=\"reports-v131-js\">",
+      "expected": 1
+    },
+    "updates_v132_js_count": {
+      "marker": "<script id=\"updates-v132-js\">",
+      "expected": 1
+    },
+    "updates_v132_controls_js_count": {
+      "marker": "<script id=\"updates-v132-controls-js\">",
+      "expected": 1
+    },
+    "updates_v133_document_js_count": {
+      "marker": "<script id=\"updates-v133-document-js\">",
+      "expected": 1
+    },
+    "executive_v134_js_count": {
+      "marker": "<script id=\"executive-reports-v134-js\">",
+      "expected": 1
+    },
+    "classification_save_v134_js_count": {
+      "marker": "<script id=\"classification-save-v134-js\">",
+      "expected": 1
+    },
+    "expense_v135_js_count": {
+      "marker": "<script id=\"expense-month-year-v135-js\">",
+      "expected": 1
+    },
+    "expense_v135_css_count": {
+      "marker": "<style id=\"expense-month-year-v135-css\">",
+      "expected": 1
+    },
+    "expense_exec_heading_count": {
+      "marker": "Quanto você gastou — e como isso evoluiu.",
+      "expected": 1
+    },
+    "expense_quality_heading_count": {
+      "marker": "Cobertura do histórico",
+      "expected": 1
+    },
+    "expense_month_drill_v2_count": {
+      "marker": "lts_browser_expense_month_detail_v2",
+      "expected": 1
+    },
+    "wealth_exec_heading_count": {
+      "marker": "Quanto você tem, quanto deve e quanto é seu.",
+      "expected": 1
+    },
+    "planning_exec_heading_count": {
+      "marker": "Até quando sua liquidez aguenta.",
+      "expected": 1
+    },
+    "ledger_ui_count": {
+      "marker": "Checar se um lançamento está considerado",
+      "expected": 1
+    },
+    "invoice_ui_count": {
+      "marker": "Atualizar valor da fatura",
+      "expected": 1
+    },
+    "flow_default30_count": {
+      "marker": "z0.setDate(z0.getDate()+29)",
+      "expected": 1
+    },
+    "flow_add_part_binding_count": {
+      "marker": "document.getElementById('flowPartAdd').onclick=flowPartAdd",
+      "expected": 1
+    },
+    "flow_salary_semantics_count": {
+      "marker": "amount_semantics:d.amount_semantics||'event_amount'",
+      "expected": 1
+    },
+    "classification_create_apply_count": {
+      "marker": "Categoria criada; aplicando classificação…",
+      "expected": 1
+    }
   },
   "forbidden": {
+    "old_v134_build_stamp": "const BUILD='WIP35-v134 · Relatórios executivos'",
     "old_v133_build_stamp": "const BUILD='WIP35-v133 · Relatórios executivos'",
     "old_v132_build_stamp": "const BUILD='WIP35-v132 · Relatórios executivos'",
     "old_v131_build_stamp": "const BUILD='WIP35-v131 · Relatórios executivos'",
@@ -99,6 +172,7 @@
     "old_active_expense_renderer": "function despesas(){const st=expenseDualState()",
     "dashboard_in_primary_nav": "const main=['Dashboard','Atualizações','Fluxo Diário','Despesas','Cartões','Patrimônio','Planejamento']",
     "old_card_detail_rpc": "lts_browser_card_settlement_detail_v1",
+    "old_expense_month_drill_rpc": "lts_browser_expense_month_detail_v1",
     "old_category_prompt": "prompt('Nome da nova categoria')",
     "old_window_category_prompt": "window.prompt('Nome da nova categoria')",
     "flow_rpc_v2": "lts_browser_flow_v2",
