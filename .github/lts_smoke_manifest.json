@@ -55,7 +55,7 @@
     "updates_checklist_count": {"marker":"Checklist para deixar o LTS em dia.","expected":1},
     "planning_ladder_count": {"marker":"De onde vem o dinheiro — e quando cada camada acaba.","expected":1},
     "wealth_cipo_count": {"marker":"CIPÓ 396 · cobertura duplex","expected":1},
-    "reports_v131_js_count": {"marker":"reports-v131-js","expected":1},
+    "reports_v131_js_count": {"marker":"<script id=\"reports-v131-js\">","expected":1},
     "expense_total_renderer_count": {"marker":"function despesas(){const st=expenseTotal131State()","expected":1},
     "flow_default30_count": {"marker":"z0.setDate(z0.getDate()+29)","expected":1},
     "flow_add_part_binding_count": {"marker":"document.getElementById('flowPartAdd').onclick=flowPartAdd","expected":1},
