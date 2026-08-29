@@ -11,8 +11,9 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 - [x] Classification save regression patched with explicit error feedback; write path protected from the previous heavy/full refresh behavior.
 - [x] Assisted classification UX shows confidence, recurrence/installment evidence, research/evidence and exact user decision needed.
 - [x] Category selector widened/responsive to avoid truncating long category names.
-- [ ] Document lifecycle status: received → interpreted → reconciled → decision needed → resolved.
-- [ ] Resolved items must disappear immediately and reliably after write/refresh.
+- [x] WIP35-v137 isolated candidate adds explicit lifecycle vocabulary: Recebido → Interpretado → Reconciliado → Decisão necessária → Resolvido, without inferring completed state from absence in the active queue.
+- [~] Persist full document lifecycle status per document/item in backend instead of UI-only possible-stage vocabulary.
+- [~] Resolved items must disappear immediately and reliably after write/refresh; existing effective-operation guardrails remain green but full per-document lifecycle persistence is still open.
 
 ## 2. Despesas
 - [x] Main definition includes effective spending/commitments and avoids duplicate card bill settlement, own transfers and non-expense asset movements.
@@ -29,7 +30,8 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 - [x] Recent documentary bridge closes the direct-account gap after the legacy realized checkpoint; only bank-evidenced facts are included.
 - [x] Historical signed-value corrections/reversals are applied analytically without rewriting raw cash history; permanent QA protects the documented source refs.
 - [x] Historical expense total remains invariant at R$ 8,623,752.53 after the 2026-08-29 recovery batch 2.
-- [~] Extend drilldown from category/rank/trend interactions to original transaction where merchant-level evidence exists.
+- [x] WIP35-v137 isolated candidate makes category ranking and 12-month category trend interactive: click opens an evidence-backed category focus, then month drilldown delegates to the existing certified month-detail RPC. No merchant/purchase is fabricated when evidence does not exist.
+- [~] Extend drilldown further where merchant-level evidence exists across the whole selected range, not only via monthly category focus.
 - [~] Continue reducing unclassified/unassigned history without changing total economics.
 - [~] Recover more historical card cycles only where invoice/category composition closes exactly.
 - [ ] CIPÓ historical reconciliation by rubric/year against source spreadsheet without inference.
@@ -79,6 +81,7 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 - [~] Mastercard Itaú 2025 Jan/Feb/Jul/Oct remain candidate-only until complete category lists are recovered and independently summed.
 - [ ] Mastercard Itaú 2025 Sep remains blocked: matrix R$ 26,582.10 vs ledger R$ 26,558.28; Crédito -R$0.13 does not explain the full delta.
 - [ ] Mastercard Itaú 2025 Dec remains blocked: matrix R$ 14,062.17 vs ledger R$ 13,195.37; large signed/reversal delta unresolved.
+- [~] Mastercard Itaú 2024 pending exact-recovery ledger identities: Jan evento_base:1829 R$53,652.87; Feb:1871 R$58,667.61; Apr:1966 R$47,802.70; Jun:2061 R$48,393.80; Jul:2104 R$51,947.18; Nov:2281 R$45,259.24.
 - [~] History/evolution per card, future installments, category composition and merchant drilldown.
 - [x] Actual/open bill is distinguished from known-installment projection in Atualizações.
 - [~] Continue semantic classification of remaining unclassified purchases.
@@ -105,12 +108,13 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 ## 9. Data quality / reconciliation
 - [x] FIX86 canonical gates retained.
 - [x] Projection bridge uses frozen baseline with explained deltas; current max residue ~R$ 0.019 below R$ 0.03 tolerance.
-- [x] Core financial regression 15/15 remains green after historical recovery batch 2.
+- [x] Core financial regression 15/15 remains green after WIP35-v137 candidate creation.
 - [x] Expense v9 permanent QA protects total invariance and historical allocation replacement; latest run 19/19 with 34/34 certified cycles closing.
 - [x] Expense v10 latest run 18/18 PASS.
 - [x] Wealth QA 18/18 and Planning QA 23/23 are permanent.
 - [x] WIP35-v136 specific QA 32/32.
 - [x] WIP35-v136 smoke: 11/11 inline scripts passed Node parser; all required/forbidden checks green.
+- [x] WIP35-v137 isolated candidate static smoke 12/12 + Node parser PASS; no direct RPC/write path added.
 - [~] Modernize stale legacy regression expectations as architecture evolves rather than forcing current models to old bugs.
 - [~] Reduce historical card aggregate fallback as documentary detail is recovered.
 
@@ -142,23 +146,29 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 - [x] WIP35-v136 rebuilt Patrimônio and Planejamento around user questions instead of technical diagnostics.
 - [x] Main Patrimônio view separates market, debt, equity and liquidity; methodology remains secondary.
 - [x] Main Planejamento view explains liquidity layers, gap episodes, drivers and recovery.
-- [~] Add richer interactions/drilldowns instead of more explanatory cards.
+- [x] WIP35-v137 isolated candidate adds richer Despesas interactions and explicit Atualizações lifecycle/workflow framing.
 - [~] Consistent desktop/mobile behavior still requires real authenticated visual verification.
-- [ ] Empty states and decision states must be actionable across all tabs.
+- [~] Continue replacing explanatory-only cards with evidence-backed interaction where the backend supports it.
+- [ ] Empty states and decision states must be actionable across all remaining tabs.
 
 ## 14. Release / homologation
 - [x] Candidate-shell smoke pipeline preserves previous public version on failure.
 - [x] WIP35-v135 published after expense-specific QA and smoke.
 - [x] WIP35-v136 published after backend payload v36, Wealth 18/18, Planning 23/23, candidate QA 32/32, financial regression 15/15, projection bridge green, 11/11 Node parser checks, smoke `publish=ready` and GitHub Pages success.
-- [x] WIP35-v136 is the current public canonical baseline for the next material candidate.
+- [x] WIP35-v136 remains current public canonical baseline/fallback.
+- [x] WIP35-v137 isolated candidate created at `wip35-v137-candidate.html`; candidate commit `31d604e8...` received successful GitHub Pages build/deployment run 33265232777.
+- [x] WIP35-v137 candidate static QA 12/12, Node parser, expense v9 19/19, expense v10 18/18 and core financial regression 15/15 are green.
+- [~] WIP35-v137 is ready for user inspection as an isolated candidate; do not replace public `index.html` before homologation.
 - [ ] Real authenticated visual E2E and multimodal certification remain explicitly unclaimed/pending.
-- [ ] Next homologation should again be a material package, not a microbuild.
 
 ## 15. Backup / continuity
 - [x] `PROJECT_MASTER_BACKLOG.md` remains the canonical persistent list of open work.
 - [x] `HISTORICAL_RECOVERY_LOG.md` persists historical-recovery evidence, guardrails, certified/blocked cycles and next work outside chat memory; batch 2 includes Mastercard Mar/2025.
 - [x] `backups/historical-recovery-2026-08-29.json` preserves the first versioned recovery checkpoint.
 - [x] `backups/historical-recovery-2026-08-29-batch2.json` preserves the immutable 34-cycle checkpoint after Mastercard Mar/2025 certification.
+- [x] `backups/mastercard-itau-pending-ledger-map-2026-08-29.json` persists the exact ledger identities for pending Mastercard 2024 recovery.
+- [x] `backups/wip35-v137-candidate-smoke-2026-08-29.txt` persists candidate smoke, financial gates and guardrails.
+- [x] `NEXT_HOMOLOGATION_GATE.md` is synchronized to WIP35-v137 user-look readiness.
 - [x] Supabase `public.lts_card_historical_category_allocation` retains the row-level certified category-allocation evidence.
 - [~] Update recovery log + immutable snapshot + master backlog after each material historical-recovery batch.
 - [ ] Add automated periodic repository/data snapshot workflow only after validating that it does not expose credentials or private raw documents.
