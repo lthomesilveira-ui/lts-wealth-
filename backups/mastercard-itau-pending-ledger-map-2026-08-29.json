@@ -1,0 +1,21 @@
+{
+  "snapshot_as_of": "2026-08-29",
+  "purpose": "Exact current ledger identities for unresolved Mastercard Itaú historical cycles. Evidence map only; does not certify categories.",
+  "mastercard_itau_2024_pending": {
+    "2024-01": {"ledger_source":"evento_base:1829","ledger_total":53652.87},
+    "2024-02": {"ledger_source":"evento_base:1871","ledger_total":58667.61},
+    "2024-04": {"ledger_source":"evento_base:1966","ledger_total":47802.70},
+    "2024-06": {"ledger_source":"evento_base:2061","ledger_total":48393.80},
+    "2024-07": {"ledger_source":"evento_base:2104","ledger_total":51947.18},
+    "2024-11": {"ledger_source":"evento_base:2281","ledger_total":45259.24}
+  },
+  "mastercard_itau_2024_certified": {
+    "2024-03": 48608.73,
+    "2024-05": 47358.81,
+    "2024-08": 44330.94,
+    "2024-09": 44952.78,
+    "2024-10": 45492.11,
+    "2024-12": 37268.73
+  },
+  "guardrail": "Pending cycles remain aggregate fallback until complete signed category evidence closes exactly to these ledger identities; do not infer missing reversals or categories."
+}
