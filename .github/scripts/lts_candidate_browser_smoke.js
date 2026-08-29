@@ -43,7 +43,14 @@ async function collect(page,url){
     if(!window.S)window.S={};
     window.S.rpc=async()=>({data:null,error:null});
   });
-  await page.waitForTimeout(2200);
+  // Re-emit the outer lifecycle signal after readiness. In the real app this
+  // is driven by the frame/auth boot; here it only lets the candidate wiring
+  // prove that it attaches once the minimum contract exists.
+  await page.mainFrame().evaluate(()=>{
+    const shell=document.getElementById('shell');
+    if(shell)shell.dispatchEvent(new Event('load'));
+  });
+  await page.waitForTimeout(2600);
 
   const innerState=await f.evaluate(()=>({
     candidate:window.LTS_CANDIDATE||null,
@@ -54,7 +61,7 @@ async function collect(page,url){
   const injectionsOk=!!innerState.css137&&!!innerState.css138&&!!innerState.css139&&String(innerState.candidate||'').includes('v139');
   const newErrors=candidateErrors.filter(e=>!inherited.has(e));
   const body=await page.locator('body').innerText().catch(()=> '');
-  const result={pass:chainOk&&bootNewErrors.length===0&&injectionsOk&&newErrors.length===0,chain,chainOk,injectionsOk,innerState,baselineErrors,candidateErrors,bootNewErrors,newErrors,topBodyChars:body.length,readinessMode:'neutral synthetic payload + local RPC no-op + render no-op; not authenticated E2E'};
+  const result={pass:chainOk&&bootNewErrors.length===0&&injectionsOk&&newErrors.length===0,chain,chainOk,injectionsOk,innerState,baselineErrors,candidateErrors,bootNewErrors,newErrors,topBodyChars:body.length,readinessMode:'neutral synthetic payload + local RPC no-op + render no-op + lifecycle signal; not authenticated E2E'};
   fs.writeFileSync('candidate-browser-smoke-result.json',JSON.stringify(result,null,2));
   console.log(JSON.stringify(result,null,2));
   await browser.close();
