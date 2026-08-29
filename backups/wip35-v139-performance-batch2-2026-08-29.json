@@ -1,0 +1,60 @@
+{
+  "checkpoint": "wip35-v139-performance-batch2",
+  "date": "2026-08-29",
+  "public_fallback": "wip35-v136/index.html unchanged",
+  "candidate": "wip35-v139 isolated",
+  "semantic_matching": {
+    "baseline_5224_rows_ms": 2652,
+    "optimized_5224_rows_ms": 314,
+    "row_parity": "5224/5224 exact; 0 missing; 0 differences",
+    "semantic_queue_base_before_ms": 2452,
+    "semantic_queue_base_after_ms": 879,
+    "ambiguous_exact_key_preserved": "cartão c6master -> legacy selection path"
+  },
+  "planning": {
+    "projection_year_audit": "single-pass exact JSON parity",
+    "planning_executive_before_ms": 9841,
+    "planning_executive_after_ms": 3965,
+    "planning_executive_json_parity": true,
+    "planning_qa": "23/23 PASS"
+  },
+  "operational_refresh": {
+    "before_ms": 24656,
+    "after_planning_optimization_ms": 18772,
+    "small_write_operational_refresh_callers_remaining": 0,
+    "global_refresh_reserved_for": ["browser_product_daily/global refresh", "health gate"]
+  },
+  "write_refreshes": {
+    "manual_invoice": {
+      "targeted_modules": ["flow", "card_history", "card_obligations", "planning", "planning_ladder", "planning_executive", "dashboard", "card_operating", "updates"],
+      "parity_vs_full": true,
+      "full_ms": 18702,
+      "targeted_ms": 16733
+    },
+    "confirmation": {
+      "economic_invariant": "fact confirmation changes source/confidence only when source_ref/date/amount already match",
+      "targeted_modules": ["card_operating", "updates"],
+      "parity_vs_full": true,
+      "full_ms": 18830,
+      "targeted_ms": 2933,
+      "writers": ["confirm_card_payment", "confirm_overdue_event", "confirm_overdue_transfer"]
+    }
+  },
+  "gates": {
+    "expense_v9": "19/19 PASS",
+    "expense_v10": "18/18 PASS",
+    "core_financial": "15/15 PASS",
+    "planning": "23/23 PASS",
+    "operational_cache_health": "PASS",
+    "expense_history_total_brl": 8623752.53
+  },
+  "security": {
+    "browser_flow_v4": "authenticated=true; anon=false",
+    "real_authenticated_visual_e2e": "not performed / not claimed"
+  },
+  "historical_recovery": {
+    "file_library_status": "technical retrieval failures persisted",
+    "mastercard_new_cycles_certified_in_this_batch": 0,
+    "guardrail": "no category, merchant, reversal or purchase inferred"
+  }
+}
