@@ -2,18 +2,40 @@
 
 Status legend: [x] concluded, [~] in progress, [ ] open.
 
+## 0A. Execução pós-homologação — WIP35-v138 candidate
+- [x] Despesas: raiz do `canceling statement due to statement timeout` diagnosticada. A leitura v10 levava ~29,2s porque reconstruía repetidamente o universo efetivo histórico.
+- [x] Despesas: criada `lts_expense_effective_read_cache` derivada exatamente de `lts_expense_total_rows_v5`; checkpoint atual 3.767 linhas / R$ 8.623.752,53.
+- [x] Despesas: novo read model cacheado `lts_expense_executive_report_v12_cached` + browser RPC `lts_browser_expense_executive_v4`; benchmark ~0,20s no ano atual versus ~29,2s anterior, com deltas R$0,00 em total selecionado, conta, cartões, financiamento, imóvel e histórico.
+- [x] Despesas: QA permanente `lts_expense_effective_read_cache_qa_v1` PASS: 3.767/3.767, R$8.623.752,53, 0 missing, 0 extra, 0 mismatch.
+- [~] Despesas: v138 já usa o RPC rápido na candidata; ainda falta validar o carregamento autenticado real no navegador antes de encerrar o incidente de homologação.
+- [x] Fluxo Diário: removida recomputação desnecessária desde a âncora para períodos exclusivamente futuros; paridade de 30 dias provada com delta máximo R$0,00.
+- [x] Fluxo Diário: criada `lts_daily_flow_full_query_v6` para evitar cálculo futuro duplicado; próximos 30 dias passaram de ~5,58s para ~2,81s mantendo 30/30 dias e 13/13 eventos idênticos à v5.
+- [x] Fluxo Diário: QA permanente `lts_flow_future_fast_path_qa_v1` PASS com threshold 5s e comparação v5=v6.
+- [x] Classificação: corrigido bug de refresh que ainda procurava `lts-product-fix86-v35`; refresh rápido agora atualiza o payload atual v36.
+- [x] Classificação: `lts_browser_semantic_feedback_v1` agora atualiza incrementalmente apenas as linhas afetadas do cache de Despesas, sem rebuild completo dos 13 anos.
+- [x] Atualizações/classificação: medição real = 48 grupos pendentes, 62 opções disponíveis para todos, 9 com sugestão baseada em evidência e 0 auto-classificáveis seguros; v138 diferencia sugestão real de ausência de evidência sem fabricar categoria.
+- [x] Atualizações/classificação: v138 recoloca confiança em `%` somente quando existe `suggestion_confidence` real e expõe sinal curto de histórico/evidência; justificativa detalhada fica recolhida.
+- [~] Classificação: teste SQL em `ROLLBACK` do RPC browser foi bloqueado corretamente pelo guardrail de autenticação; write E2E autenticado real continua pendente e não é alegado como testado.
+- [x] Cartões: novo cockpit v138 implementado sobre dados existentes de `card_operating`/`card_history`: faturas abertas, próxima pressão, parcelas contratadas, classificação pendente, agenda por cartão, histórico 12m e drilldown existente. Limite não é exibido sem evidência documental.
+- [x] Planejamento: novo cockpit v138 implementado sobre `planning_executive`/`planning_ladder`: primeiro gap, pior ponto, buffer, FGTS D+30, linha temporal das camadas, episódios negativos, principais saídas, recuperações e transição v131 recolhida.
+- [x] WIP35-v138 consolidada em `wip35-v138-candidate.html` + `wip35-v138-cockpits.js`; parser/smoke estático local verde e cockpit sem novos writes/RPCs financeiros.
+- [x] GitHub Pages publicou a v138 consolidada com sucesso no run 33268994790, head `3781639c...`.
+- [x] Gates após as mudanças: Despesas v9 19/19, v10 18/18, core financeiro 15/15, cache QA PASS e Flow fast-path QA PASS.
+- [~] WIP35-v138 permanece candidata isolada. `index.html`/v136 continua fallback; não promover antes de QA autenticado/material e nova homologação.
+- [ ] Real authenticated visual E2E continua pendente/não alegado.
+
 ## 0. Homologação V135 → V137 — feedback visual 2026-08-29
-- [ ] CRÍTICO: Despesas falhou ao carregar na homologação real com `canceling statement due to statement timeout`. Não considerar a aba homologável até corrigir performance/query e testar o caminho real de carregamento.
-- [ ] CRÍTICO: o usuário não considera Planejamento v136/v137 um cockpit executivo nem aderente ao layout/ambição previamente desenhados. Reprojetar a aba como cockpit visual de decisão, reduzindo relatório textual, premissas longas e explicações empilhadas na tela principal.
-- [ ] CRÍTICO: Cartões v136/v137 foi rejeitada visualmente como relatório genérico. Reprojetar como cockpit de cartões/faturas, com hierarquia visual, leitura imediata de exposição, vencimentos, evolução, parcelas futuras, composição e drilldown; não tratar os cards/gráfico atuais como entrega final.
+- [ ] CRÍTICO ORIGINAL: Despesas falhou ao carregar na homologação real com `canceling statement due to statement timeout`. Correção backend/candidata registrada em 0A; homologação real ainda pendente.
+- [ ] CRÍTICO ORIGINAL: o usuário não considera Planejamento v136/v137 um cockpit executivo nem aderente ao layout/ambição previamente desenhados. Redesign v138 implementado; ainda não homologado visualmente.
+- [ ] CRÍTICO ORIGINAL: Cartões v136/v137 foi rejeitada visualmente como relatório genérico. Redesign v138 implementado; ainda não homologado visualmente.
 - [~] Atualizações melhorou materialmente na percepção do usuário, mas ainda requer homologação funcional e redução de densidade textual.
-- [ ] Atualizações / identificação: restaurar/expor de forma direta o percentual de confiança da sugestão quando houver score real, sem fabricar confiança quando o backend não a fornecer.
-- [ ] Atualizações / identificação: mostrar de forma curta e evidente se há histórico comparável para o lançamento/merchant e qual é a evidência histórica disponível; preservar distinção entre `há histórico`, `não encontrado` e `não verificado`.
-- [ ] Atualizações / cobertura: corrigir o caso em que opções/sugestões de classificação aparecem apenas para os primeiros itens da fila; todos os itens elegíveis devem receber opções ou uma explicação explícita baseada em evidência de por que não há sugestão.
-- [ ] Atualizações / texto: reduzir texto principal e empurrar metodologia/evidência longa para expansão secundária, mantendo ação, confiança, histórico e decisão necessária na primeira leitura.
-- [ ] A homologação efetiva do usuário parte da V135; portanto Patrimônio e Planejamento v136 e as mudanças v137 ainda não estão aprovadas só porque passaram QA técnico.
-- [ ] Não pedir nova homologação até haver pacote visual material de report tabs + Despesas carregando sem timeout + cobertura de sugestões em Atualizações + parser/smoke/gates verdes.
-- [ ] Real authenticated visual E2E continua não realizado/não alegado. O feedback fotográfico do usuário é evidência de falha visual real e deve prevalecer sobre smoke estático.
+- [~] Atualizações / identificação: v138 restaura percentual de confiança quando há score real; validar na próxima homologação.
+- [~] Atualizações / identificação: v138 mostra sinal curto de histórico/evidência; validar distinção encontrado / não encontrado / não verificado no uso real.
+- [~] Atualizações / cobertura: backend confirmou 62 opções para todos os 48 itens; v138 mostra explicitamente os 39 sem sugestão segura e os 9 com sugestão baseada em evidência.
+- [~] Atualizações / texto: v138 reduz texto principal e recolhe metodologia/evidência longa; validar densidade final na próxima homologação.
+- [ ] A homologação efetiva do usuário parte da V135; portanto Patrimônio, Planejamento v136 e mudanças v137/v138 não ficam aprovadas só porque passaram QA técnico.
+- [ ] Não pedir nova homologação até concluir os gates autenticados possíveis, parser/smoke/gates e manter fallback seguro.
+- [ ] Real authenticated visual E2E continua não realizado/não alegado. O feedback fotográfico do usuário prevalece sobre smoke estático.
 
 ## 1. Atualizações / Central de manutenção
 - [x] Checklist-first layout and reduced dead space.
@@ -22,13 +44,12 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 - [x] Manual card bill update by card + competence + amount.
 - [x] Direct document upload inside Atualizações published in WIP35-v134.
 - [x] Classification save regression patched with explicit error feedback; write path protected from the previous heavy/full refresh behavior.
-- [x] Assisted classification backend/UI already carries confidence, recurrence/installment evidence, research/evidence and exact user decision needed where available; homologation requires making confidence/history direct again and ensuring coverage across all eligible items.
+- [x] Assisted classification backend/UI carries confidence, recurrence/installment evidence, research/evidence and exact user decision needed where available.
 - [x] Category selector widened/responsive to avoid truncating long category names.
 - [x] WIP35-v137 isolated candidate adds explicit lifecycle vocabulary: Recebido → Interpretado → Reconciliado → Decisão necessária → Resolvido, without inferring completed state from absence in the active queue.
-- [ ] Reduce primary-copy density: action first; confidence/history/decision immediately visible; detailed rationale collapsible.
-- [ ] Ensure classification suggestion/options are generated/rendered for every eligible active item, not only the first items; distinguish no suggestion because evidence is insufficient from a rendering/coverage bug.
-- [ ] Restore direct confidence percentage only from real score/evidence fields; never derive a percentage from visual order or arbitrary heuristic.
-- [ ] Restore direct historical-match signal per item: comparable history found / no comparable history found / not checked, with source/count when available.
+- [x] WIP35-v138 candidate makes action/confidence/history/decision the primary classification reading and keeps detailed rationale collapsible.
+- [x] WIP35-v138 candidate renders category options for every eligible card-classification item and explicit evidence-based no-suggestion state when appropriate.
+- [x] WIP35-v138 candidate shows direct confidence percentage only from real score/evidence fields.
 - [~] Persist full document lifecycle status per document/item in backend instead of UI-only possible-stage vocabulary.
 - [~] Resolved items must disappear immediately and reliably after write/refresh; existing effective-operation guardrails remain green but full per-document lifecycle persistence is still open.
 
@@ -48,7 +69,8 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 - [x] Historical signed-value corrections/reversals are applied analytically without rewriting raw cash history; permanent QA protects the documented source refs.
 - [x] Historical expense total remains invariant at R$ 8,623,752.53 after the 2026-08-29 recovery batch 2.
 - [x] WIP35-v137 isolated candidate makes category ranking and 12-month category trend interactive: click opens an evidence-backed category focus, then month drilldown delegates to the existing certified month-detail RPC. No merchant/purchase is fabricated when evidence does not exist.
-- [ ] Fix real browser timeout observed in homologation before any next user review; performance must be tested against the actual authenticated expense load, not only QA RPCs/static parser.
+- [x] Backend timeout architecture fixed with effective read cache + v12 cached executive report; browser candidate v138 wired to `lts_browser_expense_executive_v4`.
+- [~] Real authenticated browser load must still be validated before marking the homologation timeout fully closed.
 - [~] Extend drilldown further where merchant-level evidence exists across the whole selected range, not only via monthly category focus.
 - [~] Continue reducing unclassified/unassigned history without changing total economics.
 - [~] Recover more historical card cycles only where invoice/category composition closes exactly.
@@ -88,7 +110,8 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 - [x] Old v131 12/01/2027 baseline is preserved and explained by a counterfactual: without Volvo first gap 10/01; without Volvo + IPVA it returns exactly to 12/01.
 - [x] FGTS remains emergency contingency with ~30-day lead time; request-by date for first gap is 09/12/2026 and it does not cover the full current horizon.
 - [x] Permanent planning QA 23/23 protects numeric parity, episodes, FGTS semantics and transition explanation.
-- [ ] REDESIGN: current v136/v137 visual presentation rejected in real homologation; replace report-like stacked narrative with the intended executive cockpit, while preserving the certified backend semantics.
+- [x] REDESIGN candidate v138: cockpit visual com first gap, worst point/buffer, FGTS D+30, timeline de camadas/gaps, episódios, drivers e recovery; sem novas premissas financeiras.
+- [~] Redesign ainda depende de homologação visual real; não marcar aprovado por smoke estático.
 - [ ] Decision scenarios only after explicit financial assumptions are confirmed by user.
 
 ## 6. Cartões
@@ -98,7 +121,8 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 - [x] 34 historical category-allocation cycles are now certified exact in Supabase after the 2026-08-29 recovery batch 2.
 - [x] Visa Infinite Itaú 2025 is 12/12 certified exact with signed evidence where reversals/credits exist.
 - [x] Mastercard Itaú 2025 certified months currently include Mar, Apr, May, Jun, Aug and Nov. Mar closes exactly at R$ 37,905.32 from 28 nonzero categories / 67 source occurrences with original signed Crédito = 0; Nov closes at R$ 5,883.96 after preserving original signed Crédito -R$0.01.
-- [ ] REDESIGN: current v136/v137 Cards presentation rejected in real homologation as generic/report-like; build an executive cards cockpit rather than iterating the current KPI-card + bar-chart layout.
+- [x] REDESIGN candidate v138: cockpit com exposição aberta, próxima saída, parcelas contratadas, classificação pendente, agenda de faturas, histórico 12m e drilldown existente; não inventa limite.
+- [~] Redesign ainda depende de homologação visual real.
 - [~] Mastercard Itaú 2025 Jan/Feb/Jul/Oct remain candidate-only until complete category lists are recovered and independently summed.
 - [ ] Mastercard Itaú 2025 Sep remains blocked: matrix R$ 26,582.10 vs ledger R$ 26,558.28; Crédito -R$0.13 does not explain the full delta.
 - [ ] Mastercard Itaú 2025 Dec remains blocked: matrix R$ 14,062.17 vs ledger R$ 13,195.37; large signed/reversal delta unresolved.
@@ -113,6 +137,9 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 - [x] Flow v12 is the canonical operational basis used by the current Planning ladder.
 - [x] Updated Aeternum obligation affects forward flow and projection bridge.
 - [x] Documentary bridge to Despesas does not duplicate card bill settlement or own transfers.
+- [x] Future-only read path optimized in v6: 30-day engine ~2.81s vs ~5.58s v5 with exact day/event parity.
+- [x] Permanent `lts_flow_future_fast_path_qa_v1` requires v5=v6 and latency <5s for 30-day future read.
+- [~] Real authenticated browser retest remains pending before marking the user-observed timeout fully closed.
 - [~] Maintain visually distinct balance/sum rows and regression coverage as modules evolve.
 - [ ] Final real authenticated visual E2E.
 
@@ -120,8 +147,11 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 - [x] User-confirmed rules have priority; safe auto-classification guarded.
 - [x] People names are not researched invasively on public internet.
 - [x] Save error UX patched and classification refresh reduced from prior heavy/full behavior.
+- [x] Refresh version mismatch v35→v36 corrected.
+- [x] Save path incrementally patches affected Despesas cache rows rather than rebuilding all history.
 - [x] Confidence + recurrence/installment + evidence shown in Atualizações where data exists.
-- [ ] Ensure confidence/history/suggestion presentation is consistently available for all eligible update items rather than only early queue entries.
+- [x] v138 presents confidence/history/suggestion consistently and category options for all eligible card review items; no suggestion is fabricated for the 39 groups without evidence.
+- [~] Real authenticated write/refresh click path still requires validation; SQL session impersonation was correctly blocked by auth guardrail.
 - [~] Research merchant/vendor before asking user when appropriate.
 - [~] Propagate confirmed identical/history-safe classifications.
 - [~] Resolve taxonomy conflicts without re-asking already-resolved decisions.
@@ -130,15 +160,16 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 ## 9. Data quality / reconciliation
 - [x] FIX86 canonical gates retained.
 - [x] Projection bridge uses frozen baseline with explained deltas; current max residue ~R$ 0.019 below R$ 0.03 tolerance.
-- [x] Core financial regression 15/15 remains green after WIP35-v137 candidate creation.
+- [x] Core financial regression 15/15 remains green after WIP35-v138 performance/flow changes.
 - [x] Expense v9 permanent QA protects total invariance and historical allocation replacement; latest run 19/19 with 34/34 certified cycles closing.
 - [x] Expense v10 latest run 18/18 PASS.
 - [x] Wealth QA 18/18 and Planning QA 23/23 are permanent.
 - [x] WIP35-v136 specific QA 32/32.
 - [x] WIP35-v136 smoke: 11/11 inline scripts passed Node parser; all required/forbidden checks green.
 - [x] WIP35-v137 isolated candidate static smoke 12/12 + Node parser PASS; no direct RPC/write path added.
-- [ ] Add a performance/load gate for Despesas because static/QA gates did not catch the real browser statement timeout.
-- [ ] Add Atualizações coverage QA: every eligible classification item must expose suggestion/options or an explicit evidence-based no-suggestion state; confidence/history signals must map to real backend evidence.
+- [x] Despesas performance/load architecture gate added through exact cache QA; cached executive read benchmark ~0.20s vs ~29.2s old path.
+- [x] Flow future performance/parity gate added: `lts_flow_future_fast_path_qa_v1` PASS.
+- [x] Atualizações coverage measured: 48/48 items have category options, 9 evidence-backed suggestions, 39 explicit no-suggestion cases, 0 unsafe auto-classification.
 - [~] Modernize stale legacy regression expectations as architecture evolves rather than forcing current models to old bugs.
 - [~] Reduce historical card aggregate fallback as documentary detail is recovered.
 
@@ -161,7 +192,10 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 ## 12. Performance
 - [x] Heavy classification refresh identified and fast/targeted classification patch introduced.
 - [x] Payload v36 can patch Planning/Wealth without forcing unrelated modules to rebuild.
-- [ ] CRÍTICO: eliminate Despesas statement timeout observed in real browser homologation.
+- [x] Despesas heavy browser read replaced in v138 candidate by exact-parity cache-backed read (~0.20s backend benchmark).
+- [x] Fluxo future path reduced from ~5.58s to ~2.81s with exact parity gate.
+- [x] Semantic classification save now patches affected expense-cache rows incrementally.
+- [~] Real authenticated browser latency still needs final verification before user retest.
 - [~] Reduce refresh latency further and patch only affected modules.
 - [ ] Avoid full rebuild for small actions in all write workflows.
 
@@ -169,9 +203,8 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 - [x] Despesas primary screen uses executive/user-facing language and explicit period context when it loads.
 - [x] WIP35-v135 added month/year/rolling-window history and drilldown.
 - [x] Backend models for Patrimônio/Planejamento were rebuilt around user questions in v136; visual presentation is not homologated.
-- [ ] CRÍTICO: redesign report tabs as coherent executive cockpits. Planejamento and Cartões current layouts are explicitly rejected by user homologation.
-- [~] Atualizações direction is positively received, but reduce copy density and restore direct confidence/history signals with full eligible-item coverage.
-- [~] WIP35-v137 isolated candidate adds richer Despesas interactions and explicit Atualizações lifecycle/workflow framing, but candidate is not approved due current homologation failures.
+- [x] WIP35-v138 candidate implements materially new Cartões and Planejamento cockpits instead of the rejected report-like layouts.
+- [x] WIP35-v138 candidate reduces Atualizações classification copy density and restores direct confidence/history signals with complete option coverage.
 - [~] Consistent desktop/mobile behavior still requires real authenticated visual verification.
 - [~] Continue replacing explanatory-only cards with evidence-backed interaction where the backend supports it.
 - [ ] Empty states and decision states must be actionable across all remaining tabs.
@@ -183,8 +216,10 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 - [x] WIP35-v136 remains current public canonical baseline/fallback only.
 - [x] WIP35-v137 isolated candidate created at `wip35-v137-candidate.html`; candidate commit `31d604e8...` received successful GitHub Pages build/deployment run 33265232777.
 - [x] WIP35-v137 candidate static QA 12/12, Node parser, expense v9 19/19, expense v10 18/18 and core financial regression 15/15 are green.
-- [ ] WIP35-v137 FAILED real user homologation gate on 2026-08-29: Despesas statement timeout plus Planejamento/Cartões visual rejection; Atualizações direction improved but remains incomplete. Do not promote to index.
-- [ ] Next candidate must include material report-tab redesign, real Despesas load/performance validation, and consistent Atualizações classification coverage before asking user to inspect again.
+- [x] WIP35-v137 FAILED real user homologation gate on 2026-08-29: Despesas statement timeout plus Planejamento/Cartões visual rejection; Atualizações direction improved but remained incomplete. Do not promote to index.
+- [x] WIP35-v138 isolated candidate created and consolidated with performance/classification/cockpit package; Pages run 33268994790 success on head `3781639c...`.
+- [x] WIP35-v138 static scripts parse; financial gates remain green; v136 index remains untouched.
+- [~] WIP35-v138 is NOT yet promoted and should not be sent for another user look until remaining authenticated checks are exhausted and checkpoint is complete.
 - [ ] Real authenticated visual E2E and multimodal certification remain explicitly unclaimed/pending.
 
 ## 15. Backup / continuity
@@ -194,6 +229,7 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 - [x] `backups/historical-recovery-2026-08-29-batch2.json` preserves the immutable 34-cycle checkpoint after Mastercard Mar/2025 certification.
 - [x] `backups/mastercard-itau-pending-ledger-map-2026-08-29.json` persists the exact ledger identities for pending Mastercard 2024 recovery.
 - [x] `backups/wip35-v137-candidate-smoke-2026-08-29.txt` persists candidate smoke, financial gates and guardrails.
-- [x] 2026-08-29 real homologation failures and Atualizações feedback are persisted in this master backlog; they must not depend on chat memory.
+- [x] `HOMOLOGATION_V135_V137_INCIDENTS_2026-08-29.md` persists real homologation failures and execution response.
+- [~] Create immutable WIP35-v138 performance/cockpit checkpoint after this batch and keep master backlog synchronized.
 - [~] Update recovery log + immutable snapshot + master backlog after each material historical-recovery batch.
 - [ ] Add automated periodic repository/data snapshot workflow only after validating that it does not expose credentials or private raw documents.
