@@ -10,19 +10,20 @@ Purpose: persistent recovery/evidence log so historical reconstruction does not 
 - If source evidence is incomplete, the cycle remains blocked.
 - Mastercard Itaú evidence must come from `Cartão Itaú`; `Cartão Itaú VISA` is a separate source and must never be mixed.
 
-## Canonical state — 2026-08-29
+## Canonical state — 2026-08-29 / recovery batch 2
 - Public baseline/fallback: WIP35-v136. No new public build from this recovery batch.
 - Historical expense total: R$ 8,623,752.53, invariant after category recovery.
-- Certified historical category-allocation cycles: 33.
-- Expense v9 QA: 19/19 PASS, 33/33 certified cycles close.
+- Certified historical category-allocation cycles: 34.
+- Expense v9 QA: 19/19 PASS, 34/34 certified cycles close.
 - Expense v10 QA: 18/18 PASS.
 - Core financial regression: 15/15 PASS.
-- Projection bridge: PASS; max absolute residue approximately R$ 0.0193, below R$ 0.03 tolerance.
-- Operational cache health: PASS/green.
+- Projection bridge remains PASS through the core suite; max absolute residue approximately R$ 0.0193, below R$ 0.03 tolerance.
+- Operational cache health remains PASS/green through the core suite.
 - Real authenticated visual E2E: pending/unclaimed.
 
 ## Mastercard Itaú — 2025
 ### Certified
+- 2025-03 — R$ 37,905.32. Complete `LTS Wealth fix85 CANDIDATO.html` Cartão Itaú matrix recovered: 28 nonzero categories / 67 source occurrences sum exactly to the ledger fallback `evento_base:2547`. Original `Cartão Itaú` signed Crédito series = 0. Zero-valued legacy categories were not inserted because they have no economic contribution. No purchase/merchant invented; cash ledger unchanged.
 - 2025-04 — R$ 34,559.66. Legacy category matrix absolute total R$ 34,560.02; original `Cartão Itaú` signed Crédito = -R$0.18. Signed category sum closes exactly. No purchase/merchant invented.
 - 2025-05 — R$ 28,105.02. Legacy matrix closes exactly to ledger.
 - 2025-06 — R$ 33,817.15. Legacy category matrix absolute total R$ 33,818.05; original signed Crédito = -R$0.45. Signed category sum closes exactly.
@@ -32,7 +33,6 @@ Purpose: persistent recovery/evidence log so historical reconstruction does not 
 ### Candidate but not yet certified
 - 2025-01 — legacy `Cartão Itaú` matrix total R$ 38,636.48; ledger R$ 38,635.88; original signed Crédito series maps to -R$0.30, which explains the R$0.60 sign-loss difference. Still blocked until full category list is recovered and independently summed.
 - 2025-02 — legacy matrix total R$ 37,939.80 equals ledger; original signed Crédito = 0. Still blocked until full category list is recovered and independently summed.
-- 2025-03 — legacy matrix total R$ 37,905.32 equals ledger; original signed Crédito = 0. Still blocked until full category list is recovered and independently summed.
 - 2025-07 — legacy matrix total R$ 33,870.67; ledger R$ 33,870.17; original signed Crédito = -R$0.25, consistent with a R$0.50 sign-loss difference. Still blocked until the entire category tail and counts are recovered.
 - 2025-10 — legacy matrix total R$ 16,086.02 equals ledger; original signed Crédito = +R$0.03. Still blocked until the full category list is recovered and independently summed.
 
@@ -54,8 +54,8 @@ Purpose: persistent recovery/evidence log so historical reconstruction does not 
 - Planning first real gap remains 08/01/2027 under current evidence; FGTS R$17,509.05 is D+30 contingency, not immediate liquidity.
 
 ## Next evidence work
-1. Recover complete 2025 Mastercard category tails for Jan/Feb/Mar/Jul/Oct and independently sum before any insert.
+1. Recover complete 2025 Mastercard category tails for Jan/Feb/Jul/Oct and independently sum before any insert.
 2. Keep Sep/Dec blocked until true signed reversals are identified.
 3. Rerun v9/v10/core regression/projection bridge/operational health after every material insert batch.
-4. Then continue Mastercard Itaú 2024 pending months, followed by 2023, by evidence/impact.
-5. Update this log and `PROJECT_MASTER_BACKLOG.md` after every material recovery batch.
+4. Continue Mastercard Itaú 2024 pending months, followed by 2023, by evidence/impact when 2025 source retrieval is blocked.
+5. Update this log, immutable recovery snapshot and `PROJECT_MASTER_BACKLOG.md` after every material recovery batch.
