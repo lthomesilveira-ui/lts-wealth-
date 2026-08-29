@@ -1,6 +1,6 @@
-version=wip35-v135
-shell_bytes=431904
-inline_scripts=10
+version=wip35-v136
+shell_bytes=447805
+inline_scripts=11
 node_check_0=0
 node_check_1=0
 node_check_2=0
@@ -11,6 +11,7 @@ node_check_6=0
 node_check_7=0
 node_check_8=0
 node_check_9=0
+node_check_10=0
 stamp=ok
 build=ok
 six_main_tabs=ok
@@ -58,15 +59,18 @@ expense_data_quality=ok
 wealth_exec_heading=ok
 wealth_cipo=ok
 wealth_volvo=ok
-wealth_cipo_tail=ok
+wealth_own_ask_guardrail=ok
+wealth_volvo_debt_guardrail=ok
 planning_exec_heading=ok
 planning_liquidity_ladder=ok
 planning_fgts=ok
+planning_transition=ok
 reports_css=ok
 reports_js=ok
 reports_v131_js=ok
 executive_v134_js=ok
 expense_v135_js=ok
+wealth_planning_v136_js=ok
 single_render_nav=1
 single_flow=1
 single_flow_add_part=1
@@ -86,6 +90,7 @@ css_<style id="updates-v132-controls-css">=1
 css_<style id="updates-v133-document-css">=1
 css_<style id="executive-reports-v134-css">=1
 css_<style id="expense-month-year-v135-css">=1
+css_<style id="wealth-planning-v136-css">=1
 updates_checklist_count=3
 reports_v131_js_count=1
 updates_v132_js_count=1
@@ -98,14 +103,21 @@ expense_v135_css_count=1
 expense_exec_heading_count=1
 expense_quality_heading_count=1
 expense_month_drill_v2_count=1
+wealth_v136_js_count=1
+wealth_v136_css_count=1
 wealth_exec_heading_count=1
+wealth_cipo_heading_count=1
+wealth_volvo_heading_count=1
 planning_exec_heading_count=1
+planning_transition_count=1
+planning_fgts_count=1
 ledger_ui_count=1
 invoice_ui_count=1
 flow_default30_count=1
 flow_add_part_binding_count=1
 flow_salary_semantics_count=1
 classification_create_apply_count=1
+old_v135_build_stamp=absent
 old_v134_build_stamp=absent
 old_v133_build_stamp=absent
 old_v132_build_stamp=absent
