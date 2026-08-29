@@ -2,6 +2,14 @@
 
 Status legend: [x] concluded, [~] in progress, [ ] open.
 
+## 0. Homologação V135 → V137 — feedback visual 2026-08-29
+- [ ] CRÍTICO: Despesas falhou ao carregar na homologação real com `canceling statement due to statement timeout`. Não considerar a aba homologável até corrigir performance/query e testar o caminho real de carregamento.
+- [ ] CRÍTICO: o usuário não considera Planejamento v136/v137 um cockpit executivo nem aderente ao layout/ambição previamente desenhados. Reprojetar a aba como cockpit visual de decisão, reduzindo relatório textual, premissas longas e explicações empilhadas na tela principal.
+- [ ] CRÍTICO: Cartões v136/v137 foi rejeitada visualmente como relatório genérico. Reprojetar como cockpit de cartões/faturas, com hierarquia visual, leitura imediata de exposição, vencimentos, evolução, parcelas futuras, composição e drilldown; não tratar os cards/gráfico atuais como entrega final.
+- [ ] A homologação efetiva do usuário parte da V135; portanto Patrimônio e Planejamento v136 e as mudanças v137 ainda não estão aprovadas só porque passaram QA técnico.
+- [ ] Não pedir nova homologação até haver pacote visual material de report tabs + Despesas carregando sem timeout e parser/smoke/gates verdes.
+- [ ] Real authenticated visual E2E continua não realizado/não alegado. O feedback fotográfico do usuário é evidência de falha visual real e deve prevalecer sobre smoke estático.
+
 ## 1. Atualizações / Central de manutenção
 - [x] Checklist-first layout and reduced dead space.
 - [x] Ledger check: verify whether a transaction is considered and whether it enters Despesas.
@@ -31,6 +39,7 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 - [x] Historical signed-value corrections/reversals are applied analytically without rewriting raw cash history; permanent QA protects the documented source refs.
 - [x] Historical expense total remains invariant at R$ 8,623,752.53 after the 2026-08-29 recovery batch 2.
 - [x] WIP35-v137 isolated candidate makes category ranking and 12-month category trend interactive: click opens an evidence-backed category focus, then month drilldown delegates to the existing certified month-detail RPC. No merchant/purchase is fabricated when evidence does not exist.
+- [ ] Fix real browser timeout observed in homologation before any next user review; performance must be tested against the actual authenticated expense load, not only QA RPCs/static parser.
 - [~] Extend drilldown further where merchant-level evidence exists across the whole selected range, not only via monthly category focus.
 - [~] Continue reducing unclassified/unassigned history without changing total economics.
 - [~] Recover more historical card cycles only where invoice/category composition closes exactly.
@@ -48,7 +57,7 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 - [ ] Documentary representation of post-2029 contractual tail without fabricating TR-dependent installments.
 
 ## 4. Patrimônio
-- [x] WIP35-v136 executive view answers: how much I have, owe and net worth today.
+- [x] WIP35-v136 backend/read model answers: how much I have, owe and net worth today.
 - [x] Backend `wealth_executive` read model separates market estimates, documentary debt, equity, liquidity, restricted contingency and future awards.
 - [x] Net worth central R$ 3.572.800,64 with analytical market range R$ 2.947.800,64–R$ 4.202.800,64 at current evidence.
 - [x] CIPÓ central market estimate R$ 5.2m, range R$ 4.6–5.8m; own R$ 5.9m asking price explicitly excluded as independent comparable.
@@ -57,27 +66,30 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 - [x] Volvo current financed balance uses R$ 110,492.81; R$ 173,185.80 future payment schedule is never treated as current debt.
 - [x] Liquid assets, restricted FGTS, illiquid assets and future awards are separated.
 - [x] Permanent wealth QA 18/18 protects valuation/debt semantics and recalculation idempotency.
+- [~] Visual homologation remains pending because user's effective baseline is V135; do not mark v136 presentation approved.
 - [~] Refine Volvo market value when trim/km evidence becomes available.
 - [ ] Net-worth history when evidence coverage permits.
 
 ## 5. Planejamento
 - [x] Liquidity ladder: cash → D0/D1 → vested RSU D3 → scheduled vestings conditional → FGTS D+30.
 - [x] Planning ladder now explicitly uses the same Flow v12 basis; 366-day parity against prior ladder had zero numeric delta.
-- [x] WIP35-v136 executive report explains when cash becomes negative, amount, causes and recovery.
+- [x] Backend/read model explains first gap, amount, causes and recovery.
 - [x] Current first real gap is 08/01/2027; worst modeled gap in the current horizon is R$ -21,046.80.
 - [x] Three negative episodes are explained with their key outflows and recovery inflows.
 - [x] Old v131 12/01/2027 baseline is preserved and explained by a counterfactual: without Volvo first gap 10/01; without Volvo + IPVA it returns exactly to 12/01.
 - [x] FGTS remains emergency contingency with ~30-day lead time; request-by date for first gap is 09/12/2026 and it does not cover the full current horizon.
 - [x] Permanent planning QA 23/23 protects numeric parity, episodes, FGTS semantics and transition explanation.
+- [ ] REDESIGN: current v136/v137 visual presentation rejected in real homologation; replace report-like stacked narrative with the intended executive cockpit, while preserving the certified backend semantics.
 - [ ] Decision scenarios only after explicit financial assumptions are confirmed by user.
 
 ## 6. Cartões
-- [x] Card/invoice operating view and manual cycle amount update.
+- [x] Card/invoice operating backend and manual cycle amount update.
 - [x] Aeternum Sep/2026 updated from Bradesco open statement dated 28/08/2026 to R$ 17,967.48; 64 documentary lines reconcile to zero delta.
 - [x] C6 recovered production detail: 347 rows / R$ 58,727.98.
 - [x] 34 historical category-allocation cycles are now certified exact in Supabase after the 2026-08-29 recovery batch 2.
 - [x] Visa Infinite Itaú 2025 is 12/12 certified exact with signed evidence where reversals/credits exist.
 - [x] Mastercard Itaú 2025 certified months currently include Mar, Apr, May, Jun, Aug and Nov. Mar closes exactly at R$ 37,905.32 from 28 nonzero categories / 67 source occurrences with original signed Crédito = 0; Nov closes at R$ 5,883.96 after preserving original signed Crédito -R$0.01.
+- [ ] REDESIGN: current v136/v137 Cards presentation rejected in real homologation as generic/report-like; build an executive cards cockpit rather than iterating the current KPI-card + bar-chart layout.
 - [~] Mastercard Itaú 2025 Jan/Feb/Jul/Oct remain candidate-only until complete category lists are recovered and independently summed.
 - [ ] Mastercard Itaú 2025 Sep remains blocked: matrix R$ 26,582.10 vs ledger R$ 26,558.28; Crédito -R$0.13 does not explain the full delta.
 - [ ] Mastercard Itaú 2025 Dec remains blocked: matrix R$ 14,062.17 vs ledger R$ 13,195.37; large signed/reversal delta unresolved.
@@ -115,6 +127,7 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 - [x] WIP35-v136 specific QA 32/32.
 - [x] WIP35-v136 smoke: 11/11 inline scripts passed Node parser; all required/forbidden checks green.
 - [x] WIP35-v137 isolated candidate static smoke 12/12 + Node parser PASS; no direct RPC/write path added.
+- [ ] Add a performance/load gate for Despesas because static/QA gates did not catch the real browser statement timeout.
 - [~] Modernize stale legacy regression expectations as architecture evolves rather than forcing current models to old bugs.
 - [~] Reduce historical card aggregate fallback as documentary detail is recovered.
 
@@ -137,16 +150,16 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 ## 12. Performance
 - [x] Heavy classification refresh identified and fast/targeted classification patch introduced.
 - [x] Payload v36 can patch Planning/Wealth without forcing unrelated modules to rebuild.
+- [ ] CRÍTICO: eliminate Despesas statement timeout observed in real browser homologation.
 - [~] Reduce refresh latency further and patch only affected modules.
 - [ ] Avoid full rebuild for small actions in all write workflows.
 
 ## 13. UX / executive quality
-- [x] Despesas primary screen uses executive/user-facing language and explicit period context.
+- [x] Despesas primary screen uses executive/user-facing language and explicit period context when it loads.
 - [x] WIP35-v135 added month/year/rolling-window history and drilldown.
-- [x] WIP35-v136 rebuilt Patrimônio and Planejamento around user questions instead of technical diagnostics.
-- [x] Main Patrimônio view separates market, debt, equity and liquidity; methodology remains secondary.
-- [x] Main Planejamento view explains liquidity layers, gap episodes, drivers and recovery.
-- [x] WIP35-v137 isolated candidate adds richer Despesas interactions and explicit Atualizações lifecycle/workflow framing.
+- [x] Backend models for Patrimônio/Planejamento were rebuilt around user questions in v136; visual presentation is not homologated.
+- [ ] CRÍTICO: redesign report tabs as coherent executive cockpits. Planejamento and Cartões current layouts are explicitly rejected by user homologation.
+- [~] WIP35-v137 isolated candidate adds richer Despesas interactions and explicit Atualizações lifecycle/workflow framing, but candidate is not approved due current homologation failures.
 - [~] Consistent desktop/mobile behavior still requires real authenticated visual verification.
 - [~] Continue replacing explanatory-only cards with evidence-backed interaction where the backend supports it.
 - [ ] Empty states and decision states must be actionable across all remaining tabs.
@@ -154,11 +167,12 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 ## 14. Release / homologation
 - [x] Candidate-shell smoke pipeline preserves previous public version on failure.
 - [x] WIP35-v135 published after expense-specific QA and smoke.
-- [x] WIP35-v136 published after backend payload v36, Wealth 18/18, Planning 23/23, candidate QA 32/32, financial regression 15/15, projection bridge green, 11/11 Node parser checks, smoke `publish=ready` and GitHub Pages success.
-- [x] WIP35-v136 remains current public canonical baseline/fallback.
+- [x] WIP35-v136 backend/data package passed prior technical gates, but its report-tab visual presentation is not user-approved.
+- [x] WIP35-v136 remains current public canonical baseline/fallback only.
 - [x] WIP35-v137 isolated candidate created at `wip35-v137-candidate.html`; candidate commit `31d604e8...` received successful GitHub Pages build/deployment run 33265232777.
 - [x] WIP35-v137 candidate static QA 12/12, Node parser, expense v9 19/19, expense v10 18/18 and core financial regression 15/15 are green.
-- [~] WIP35-v137 is ready for user inspection as an isolated candidate; do not replace public `index.html` before homologation.
+- [ ] WIP35-v137 FAILED real user homologation gate on 2026-08-29: Despesas statement timeout plus Planejamento/Cartões visual rejection. Do not promote to index.
+- [ ] Next candidate must include material report-tab redesign and real Despesas load/performance validation before asking user to inspect again.
 - [ ] Real authenticated visual E2E and multimodal certification remain explicitly unclaimed/pending.
 
 ## 15. Backup / continuity
@@ -168,7 +182,6 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 - [x] `backups/historical-recovery-2026-08-29-batch2.json` preserves the immutable 34-cycle checkpoint after Mastercard Mar/2025 certification.
 - [x] `backups/mastercard-itau-pending-ledger-map-2026-08-29.json` persists the exact ledger identities for pending Mastercard 2024 recovery.
 - [x] `backups/wip35-v137-candidate-smoke-2026-08-29.txt` persists candidate smoke, financial gates and guardrails.
-- [x] `NEXT_HOMOLOGATION_GATE.md` is synchronized to WIP35-v137 user-look readiness.
-- [x] Supabase `public.lts_card_historical_category_allocation` retains the row-level certified category-allocation evidence.
+- [x] 2026-08-29 real homologation failures are persisted in this master backlog; they must not depend on chat memory.
 - [~] Update recovery log + immutable snapshot + master backlog after each material historical-recovery batch.
 - [ ] Add automated periodic repository/data snapshot workflow only after validating that it does not expose credentials or private raw documents.
