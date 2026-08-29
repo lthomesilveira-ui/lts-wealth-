@@ -2,6 +2,24 @@
 
 Status legend: [x] concluded, [~] in progress, [ ] open.
 
+## 0C. Performance + Atualizações batch 3 — WIP35-v139 — 2026-08-29
+- [x] Save de classificação passou a usar refresh por escopo: card-only quando só há linhas de cartão, semantic-only quando só há extrato, ambos quando a descrição existe nas duas fontes.
+- [x] Benchmark do refresh por escopo: card-only ~0,66s; semantic-only ~1,75s. O helper interno não é exposto ao browser.
+- [x] QA permanente `lts_classification_cache_consistency_qa_v1` criado e PASS 5/5: payload v36 presente, card pending live/cache 48=48, semantic pending live/cache 0=0, RPC browser authenticated-only e helper interno não exposto.
+- [x] RPC `lts_browser_semantic_feedback_v1` permanece `authenticated=true / anon=false`; helper `lts_refresh_product_read_cache_classification_scope_v1` permanece bloqueado para `anon` e `authenticated`.
+- [x] `lts_browser_product_v1` auditado: same-day cache hit não chama refresh global; o refresh amplo de ~18,8s fica restrito à inicialização/virada de dia/cache stale.
+- [x] Atualizações: fila atual auditada com 12 itens, dos quais 10 acionáveis e 2 informativos/guardrails (`own_transfer_unpaired`, `aeternum_estimator`).
+- [x] WIP35-v139 candidata agora mostra somente os 10 acionáveis na fila principal; os 2 informativos ficam recolhidos em `Contexto / monitoramento`, sem alterar seus IDs/status.
+- [x] Lifecycle visual de Atualizações compactado: Recebido › Interpretado › Reconciliado › Decisão necessária › Resolvido em uma linha, removendo os cinco cards grandes/texto metodológico da primeira leitura.
+- [x] Override v139 preserva handlers originais dos itens acionáveis e adiciona zero novo write financeiro.
+- [x] Parser Node + smoke estático da camada v139 de Atualizações: 7/7 PASS.
+- [x] GitHub Pages publicou o commit `b888d94f...` com sucesso no run 33272658255; `index.html`/v136 continua intocado.
+- [x] Expense effective cache revalidado após o batch: 3.767/3.767, R$8.623.752,53 dos dois lados, 0 missing/extra/mismatch.
+- [x] Core financeiro permaneceu 15/15 PASS após as mudanças de classificação/refresh; operational health permaneceu PASS.
+- [x] Checkpoint imutável `backups/wip35-v139-performance-updates-batch3-2026-08-29.json` persistido, commit `50542528...`.
+- [~] Real authenticated browser/write click-path E2E continua pendente/não alegado.
+- [~] Visual dos novos cockpits e da Central compacta ainda depende de homologação real do usuário; não promover para `index.html` antes disso.
+
 ## 0B. Performance batch 2 — WIP35-v139 — 2026-08-29
 - [x] Matcher semântico otimizado sem mudança econômica: 5.224/5.224 linhas com paridade integral, 0 faltantes e 0 diferenças em qualquer coluna.
 - [x] Benchmark do matcher semântico caiu de ~2,65s para ~0,314s no universo atual; a chave ambígua `cartão c6master` preserva explicitamente o caminho legado.
@@ -47,18 +65,18 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 - [x] WIP35-v139 criada na branch `qa/wip35-v139-smoke`, commit `560515e8...`, herdando v138 e redirecionando apenas as leituras futuras de Fluxo para `lts_browser_flow_v4`.
 - [x] Checkpoint imutável `backups/wip35-v139-progress-2026-08-29.json` criado fora do chat.
 - [x] Gates antes da v139: Despesas v9 19/19, v10 18/18, core financeiro 15/15, expense-cache QA PASS e Flow future-cache QA v2 PASS.
-- [~] WIP35-v139 permanece candidata isolada em branch de QA. `index.html`/v136 continua fallback; não promover antes de parser/smoke/gates finais e homologação.
+- [x] WIP35-v139 está disponível apenas como candidata isolada no Pages; `index.html`/v136 continua fallback e não foi promovido.
 - [ ] Real authenticated visual E2E continua pendente/não alegado.
 
 ## 0. Homologação V135 → V137 — feedback visual 2026-08-29
 - [ ] CRÍTICO ORIGINAL: Despesas falhou ao carregar na homologação real com `canceling statement due to statement timeout`. Correção backend/candidata registrada em 0A; homologação real ainda pendente.
 - [ ] CRÍTICO ORIGINAL: o usuário não considera Planejamento v136/v137 um cockpit executivo nem aderente ao layout/ambição previamente desenhados. Redesign v138 implementado; ainda não homologado visualmente.
 - [ ] CRÍTICO ORIGINAL: Cartões v136/v137 foi rejeitada visualmente como relatório genérico. Redesign v138 implementado; ainda não homologado visualmente.
-- [~] Atualizações melhorou materialmente na percepção do usuário, mas ainda requer homologação funcional e redução de densidade textual.
-- [~] Atualizações / identificação: v138 restaura percentual de confiança quando há score real; validar na próxima homologação.
-- [~] Atualizações / identificação: v138 mostra sinal curto de histórico/evidência; validar distinção encontrado / não encontrado / não verificado no uso real.
-- [~] Atualizações / cobertura: backend confirmou 62 opções para todos os 48 itens; v138 mostra explicitamente os 39 sem sugestão segura e os 9 com sugestão baseada em evidência.
-- [~] Atualizações / texto: v138 reduz texto principal e recolhe metodologia/evidência longa; validar densidade final na próxima homologação.
+- [~] Atualizações melhorou materialmente na percepção do usuário, mas ainda requer homologação funcional; densidade textual foi reduzida novamente na v139.
+- [~] Atualizações / identificação: v138/v139 restaura percentual de confiança quando há score real; validar na próxima homologação.
+- [~] Atualizações / identificação: v138/v139 mostra sinal curto de histórico/evidência; validar distinção encontrado / não encontrado / não verificado no uso real.
+- [~] Atualizações / cobertura: backend confirmou 62 opções para todos os 48 itens; v138/v139 mostra explicitamente os 39 sem sugestão segura e os 9 com sugestão baseada em evidência.
+- [x] Atualizações / texto: v139 compacta workflow e separa 10 ações de 2 itens informativos; validar percepção final na próxima homologação.
 - [ ] A homologação efetiva do usuário parte da V135; portanto Patrimônio, Planejamento v136 e mudanças v137/v138/v139 não ficam aprovadas só porque passaram QA técnico.
 - [ ] Não pedir nova homologação até concluir os gates autenticados possíveis, parser/smoke/gates e manter fallback seguro.
 - [ ] Real authenticated visual E2E continua não realizado/não alegado. O feedback fotográfico do usuário prevalece sobre smoke estático.
@@ -78,8 +96,9 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 - [x] WIP35-v138 candidate makes action/confidence/history/decision the primary classification reading and keeps detailed rationale collapsible.
 - [x] WIP35-v138 candidate renders category options for every eligible card-classification item and explicit evidence-based no-suggestion state when appropriate.
 - [x] WIP35-v138 candidate shows direct confidence percentage only from real score/evidence fields.
+- [x] WIP35-v139 candidate compacta lifecycle em uma linha e apresenta 10 ações na fila principal; 2 itens informativos/guardrails ficam recolhidos em `Contexto / monitoramento` sem alteração de status.
+- [x] Save de classificação usa refresh por escopo e mantém cache live/card/semantic em paridade; QA permanente 5/5 PASS.
 - [~] Resolved items must disappear immediately and reliably after authenticated write/refresh; backend patch + lifecycle are implemented, but real authenticated click-path validation is still pending.
-- [~] Current Central shows 12 visible items / 10 actionable; continue removing informational density and only surface decisions needed in the active horizon.
 
 ## 2. Despesas
 - [x] Main definition includes effective spending/commitments and avoids duplicate card bill settlement, own transfers and non-expense asset movements.
@@ -170,7 +189,7 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 - [x] Cached 33-day slice benchmark ~13ms versus ~4.59s direct v12 in current test.
 - [x] `lts_browser_flow_v4` is authenticated-only and used only by candidate v139; public v136 remains on prior RPC path.
 - [x] Flow mutations invalidate the future cache; no stale financial edit is silently served.
-- [~] Candidate v139 branch smoke + authenticated browser retest remain pending before marking the user-observed latency fully closed.
+- [~] Candidate v139 parser/smoke is green; authenticated browser retest remains pending before marking the user-observed latency fully closed.
 - [~] Maintain visually distinct balance/sum rows and regression coverage as modules evolve.
 - [ ] Final real authenticated visual E2E.
 
@@ -182,6 +201,9 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 - [x] Save path incrementally patches affected Despesas cache rows rather than rebuilding all history.
 - [x] Confidence + recurrence/installment + evidence shown in Atualizações where data exists.
 - [x] v138/v139 present confidence/history/suggestion consistently and category options for all eligible card review items; no suggestion is fabricated for the 39 groups without evidence.
+- [x] Matcher principal otimizado com paridade integral 5.224/5.224; benchmark ~2,65s → ~0,314s.
+- [x] Save de classificação usa refresh por escopo; card-only ~0,66s, semantic-only ~1,75s.
+- [x] QA `classification-cache-consistency-qa-v1` PASS 5/5 protege paridade live/cache e exposição segura dos RPCs.
 - [~] Real authenticated write/refresh click path still requires validation; SQL session impersonation was correctly blocked by auth guardrail.
 - [~] Research merchant/vendor before asking user when appropriate.
 - [~] Propagate confirmed identical/history-safe classifications.
@@ -191,7 +213,7 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 ## 9. Data quality / reconciliation
 - [x] FIX86 canonical gates retained.
 - [x] Projection bridge uses frozen baseline with explained deltas; current max residue ~R$ 0.019 below R$ 0.03 tolerance.
-- [x] Core financial regression 15/15 remains green after WIP35-v138 performance/flow changes.
+- [x] Core financial regression 15/15 remains green after WIP35-v139 performance/classification changes.
 - [x] Expense v9 permanent QA protects total invariance and historical allocation replacement; latest run 19/19 with 34/34 certified cycles closing.
 - [x] Expense v10 latest run 18/18 PASS.
 - [x] Wealth QA 18/18 and Planning QA 23/23 are permanent.
@@ -203,6 +225,8 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 - [x] Flow cache gate `lts_flow_future_read_cache_qa_v2` PASS after rejecting and fixing the naive slice that altered `liq_d30`.
 - [x] Atualizações coverage measured: 48/48 items have category options, 9 evidence-backed suggestions, 39 explicit no-suggestion cases, 0 unsafe auto-classification.
 - [x] Performance batch 2 revalidated expense v9 19/19, expense v10 18/18, core 15/15, Planning 23/23 and operational health PASS after semantic/planning/write refresh changes.
+- [x] Classification cache consistency QA 5/5 PASS; expense cache revalidated 3.767/3.767 and R$8.623.752,53 after batch 3.
+- [x] WIP35-v139 Updates compact layer: Node parser PASS + static smoke 7/7; no new financial write path.
 - [~] Modernize stale legacy regression expectations as architecture evolves rather than forcing current models to old bugs.
 - [~] Reduce historical card aggregate fallback as documentary detail is recovered.
 
@@ -234,6 +258,8 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 - [x] Planejamento executivo reduzido de ~9,84s para ~3,96s via single-pass live, sem cache e com JSON integral idêntico.
 - [x] Confirmações operacionais reduzidas de refresh ~18,8s para ~2,93s por patch dirigido, com invariância econômica comprovada.
 - [x] Nenhum pequeno write permanece acoplado ao refresh operacional amplo; atualização manual de fatura usa refresh financeiro dirigido.
+- [x] Save de classificação evita recomputar cartões+extrato sempre: refresh card-only ~0,66s e semantic-only ~1,75s.
+- [x] Same-day `lts_browser_product_v1` é cache hit e não executa o refresh amplo; custo ~18,8s fica restrito à virada de dia/cache stale.
 - [~] Refresh global ainda ~18,8s e pode ser otimizado adicionalmente apenas com paridade comprovada.
 - [~] Real authenticated browser latency still needs final verification before user retest.
 - [ ] Evitar recomputação global também na inicialização diária sem criar risco de cache velho em fontes não cobertas por invalidação universal.
@@ -244,6 +270,7 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 - [x] Backend models for Patrimônio/Planejamento were rebuilt around user questions in v136; visual presentation is not homologated.
 - [x] WIP35-v138/v139 candidate implements materially new Cartões and Planejamento cockpits instead of the rejected report-like layouts.
 - [x] WIP35-v138/v139 candidate reduces Atualizações classification copy density and restores direct confidence/history signals with complete option coverage.
+- [x] WIP35-v139 compacta ainda mais Atualizações: fila principal só com 10 ações, 2 informativos recolhidos e lifecycle em uma linha.
 - [~] Consistent desktop/mobile behavior still requires real authenticated visual verification.
 - [~] Continue replacing explanatory-only cards with evidence-backed interaction where the backend supports it.
 - [ ] Empty states and decision states must be actionable across all remaining tabs.
@@ -260,6 +287,7 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 - [x] WIP35-v138 static scripts parse; financial gates remain green; v136 index remains untouched.
 - [x] WIP35-v139 isolated candidate created on `qa/wip35-v139-smoke` with Flow cache integration + operational lifecycle backend checkpoint; commit `560515e8...`.
 - [x] WIP35-v139 isolated file was later copied to main for Pages serving without changing `index.html`; Pages run 33270135266 succeeded on commit `c233adf6...`.
+- [x] WIP35-v139 Updates compact candidate published on commit `b888d94f...`; Pages run 33272658255 SUCCESS; Node parser + static smoke 7/7 PASS.
 - [~] WIP35-v139 remains candidate-only and is NOT promoted to `index.html`.
 - [ ] Real authenticated visual E2E and multimodal certification remain explicitly unclaimed/pending.
 
@@ -273,5 +301,6 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 - [x] `HOMOLOGATION_V135_V137_INCIDENTS_2026-08-29.md` persists real homologation failures and execution response.
 - [x] `backups/wip35-v139-progress-2026-08-29.json` persists performance metrics, Flow cache parity, lifecycle state, gates and still-unclaimed tests for this round.
 - [x] `backups/wip35-v139-performance-batch2-2026-08-29.json` persists semantic/planning/write performance changes and post-change gates; commit `5ff36ece...`.
+- [x] `backups/wip35-v139-performance-updates-batch3-2026-08-29.json` persists scoped classification refresh, compact Updates, QA and release evidence; commit `50542528...`.
 - [~] Update recovery log + immutable snapshot + master backlog after each material historical-recovery batch.
 - [ ] Add automated periodic repository/data snapshot workflow only after validating that it does not expose credentials or private raw documents.
