@@ -1,0 +1,59 @@
+{
+  "checkpoint": "wip35-v139-updates-priority-batch5-2026-08-29",
+  "date": "2026-08-29",
+  "public_fallback": "WIP35-v136 index.html unchanged",
+  "candidate": {
+    "file": "wip35-v139-candidate.html",
+    "commit": "41350cf8b9b7799c576fc89e467732df02184d4e",
+    "promoted_to_index": false,
+    "authenticated_visual_e2e_claimed": false
+  },
+  "updates_priority": {
+    "backend_total_items": 12,
+    "backend_actionable_items": 10,
+    "backend_informational_items": 2,
+    "candidate_near_actions": 6,
+    "candidate_far_future_coverage": 4,
+    "candidate_context_items": 2,
+    "far_future_ids": [
+      "coverage_salary_2030",
+      "coverage_salary_2031",
+      "coverage_ipva_2030",
+      "coverage_ipva_2031"
+    ],
+    "near_action_ids": [
+      "coverage_ipva_2027",
+      "maintenance_bank_bradesco",
+      "maintenance_bank_c6",
+      "card_cycle_c6_carbon_grupo_7873_8304_2026_10",
+      "card_cycle_personnalite_black_pontos_final_5546_2026_10",
+      "card_cycle_visa_aeternum_2026_10"
+    ],
+    "informational_ids": [
+      "own_transfer_unpaired",
+      "aeternum_estimator"
+    ],
+    "guardrail": "This is presentation prioritization only. No backend item status is changed, resolved, deleted or financially reclassified by the candidate grouping."
+  },
+  "candidate_gates": {
+    "candidate_smoke_run": 33273432454,
+    "candidate_smoke_status": "success",
+    "pages_run": 33273431772,
+    "pages_status": "success",
+    "node_parser": "PASS via read-only candidate CI",
+    "direct_financial_write_added": false,
+    "index_assignment_added": false
+  },
+  "financial_data_gates": {
+    "expense_cache": "PASS 3767/3767 R$8623752.53 zero mismatch",
+    "classification_cache": "5/5 PASS card 48=48 semantic 0=0",
+    "core": "15/15 PASS",
+    "operational_health": "PASS v14"
+  },
+  "open_guardrails": [
+    "WIP35-v136 remains public fallback until user homologation.",
+    "Real authenticated visual E2E remains pending and is not claimed.",
+    "Current same-day document cache self-heal still requires a real authenticated product load.",
+    "Historical Mastercard recovery remains evidence-blocked where complete documentary composition is unavailable."
+  ]
+}
