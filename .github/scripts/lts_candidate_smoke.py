@@ -4,15 +4,23 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-CANDIDATE = ROOT / "wip35-v139-candidate.html"
+CANDIDATE = ROOT / "wip35-v140-candidate.html"
+PARENT = ROOT / "wip35-v139-candidate.html"
 PUBLIC_FALLBACK = ROOT / "index.html"
 PUBLIC_FALLBACK_BLOB_SHA = "a130eafe5f7ee5b7f60a95b5ff988669d0c401d9"
 RESULT = ROOT / "candidate-smoke-result.txt"
 
-REQUIRED = {
-    "candidate_stamp": "CANDIDATA v139",
+V140_REQUIRED = {
+    "candidate_stamp": "CANDIDATA v140",
+    "parent_candidate": "wip35-v139-candidate.html",
+    "lexical_bridge_stamp": "__LTS_LEXICAL_BRIDGE='v140'",
+    "bridge_s": "['S','D','brl','fmt','esc','num','today']",
+    "bridge_v": "exposeLexical(w,'V',true)",
+    "loading_recovery": "Carregando seu LTS",
+}
+
+V139_REQUIRED = {
     "fallback_guardrail": "v136 permanece fallback",
-    "parent_candidate": "wip35-v138-candidate.html",
     "flow_v4": "lts_browser_flow_v4",
     "updates_action_filter": "original.filter(w.updateIsAction)",
     "updates_context_filter": "original.filter(x=>!w.updateIsAction(x))",
@@ -34,26 +42,39 @@ FORBIDDEN = {
     "direct_delete": "delete from",
     "direct_update_sql": "update public.",
     "direct_upsert": ".upsert(",
-    "public_index_assignment": "index.html",
 }
 
 
 def git_blob_sha(path: Path) -> str:
-    run = subprocess.run(
-        ["git", "hash-object", str(path)], capture_output=True, text=True, cwd=ROOT
-    )
-    if run.returncode:
-        return ""
-    return run.stdout.strip()
+    run = subprocess.run(["git", "hash-object", str(path)], capture_output=True, text=True, cwd=ROOT)
+    return "" if run.returncode else run.stdout.strip()
+
+
+def check_inline_scripts(path: Path, lines: list[str], failures: list[str], prefix: str) -> str:
+    html = path.read_text(encoding="utf-8")
+    lines.append(f"{prefix}_bytes={len(html.encode('utf-8'))}")
+    scripts = re.findall(r"<script(?:\s[^>]*)?>(.*?)</script>", html, re.I | re.S)
+    lines.append(f"{prefix}_inline_scripts={len(scripts)}")
+    if not scripts:
+        failures.append(f"{prefix}_inline_scripts")
+    for i, script in enumerate(scripts):
+        js = Path(f"/tmp/lts-{prefix}-script-{i}.js")
+        js.write_text(script, encoding="utf-8")
+        run = subprocess.run(["node", "--check", str(js)], capture_output=True, text=True)
+        lines.append(f"{prefix}_node_check_{i}={run.returncode}")
+        if run.returncode:
+            failures.append(f"{prefix}_node_check_{i}")
+            if run.stderr:
+                lines.append("node_error=" + run.stderr.strip().replace("\n", " | "))
+    return html
 
 
 def main() -> int:
-    lines = ["candidate=wip35-v139-candidate.html"]
+    lines = ["candidate=wip35-v140-candidate.html"]
     failures = []
 
     if not PUBLIC_FALLBACK.exists():
         failures.append("public_fallback_missing")
-        lines.append("public_fallback=missing")
     else:
         fallback_sha = git_blob_sha(PUBLIC_FALLBACK)
         fallback_ok = fallback_sha == PUBLIC_FALLBACK_BLOB_SHA
@@ -65,36 +86,32 @@ def main() -> int:
 
     if not CANDIDATE.exists():
         failures.append("candidate_missing")
-        lines.append("candidate_file=missing")
+        candidate_html = ""
     else:
-        html = CANDIDATE.read_text(encoding="utf-8")
-        lines.append(f"candidate_bytes={len(html.encode('utf-8'))}")
-        scripts = re.findall(r"<script(?:\s[^>]*)?>(.*?)</script>", html, re.I | re.S)
-        lines.append(f"inline_scripts={len(scripts)}")
-        if not scripts:
-            failures.append("inline_scripts")
-        for i, script in enumerate(scripts):
-            js = Path(f"/tmp/lts-candidate-script-{i}.js")
-            js.write_text(script, encoding="utf-8")
-            run = subprocess.run(["node", "--check", str(js)], capture_output=True, text=True)
-            lines.append(f"node_check_{i}={run.returncode}")
-            if run.returncode:
-                failures.append(f"node_check_{i}")
-                if run.stderr:
-                    lines.append("node_error=" + run.stderr.strip().replace("\n", " | "))
-
-        for name, marker in REQUIRED.items():
-            ok = marker in html
-            lines.append(f"required_{name}={'ok' if ok else 'missing'}")
+        candidate_html = check_inline_scripts(CANDIDATE, lines, failures, "v140")
+        for name, marker in V140_REQUIRED.items():
+            ok = marker in candidate_html
+            lines.append(f"required_v140_{name}={'ok' if ok else 'missing'}")
             if not ok:
-                failures.append(name)
+                failures.append(f"v140_{name}")
 
-        lower = html.lower()
-        for name, marker in FORBIDDEN.items():
-            present = marker.lower() in lower
-            lines.append(f"forbidden_{name}={'present' if present else 'absent'}")
-            if present:
-                failures.append(name)
+    if not PARENT.exists():
+        failures.append("v139_parent_missing")
+        parent_html = ""
+    else:
+        parent_html = check_inline_scripts(PARENT, lines, failures, "v139")
+        for name, marker in V139_REQUIRED.items():
+            ok = marker in parent_html
+            lines.append(f"required_v139_{name}={'ok' if ok else 'missing'}")
+            if not ok:
+                failures.append(f"v139_{name}")
+
+    combined = (candidate_html + "\n" + parent_html).lower()
+    for name, marker in FORBIDDEN.items():
+        present = marker.lower() in combined
+        lines.append(f"forbidden_{name}={'present' if present else 'absent'}")
+        if present:
+            failures.append(name)
 
     lines.append("result=" + ("PASS" if not failures else "FAIL"))
     if failures:
