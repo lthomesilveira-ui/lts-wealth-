@@ -5,6 +5,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 CANDIDATE = ROOT / "wip35-v139-candidate.html"
+PUBLIC_FALLBACK = ROOT / "index.html"
+PUBLIC_FALLBACK_BLOB_SHA = "a130eafe5f7ee5b7f60a95b5ff988669d0c401d9"
 RESULT = ROOT / "candidate-smoke-result.txt"
 
 REQUIRED = {
@@ -36,9 +38,31 @@ FORBIDDEN = {
 }
 
 
+def git_blob_sha(path: Path) -> str:
+    run = subprocess.run(
+        ["git", "hash-object", str(path)], capture_output=True, text=True, cwd=ROOT
+    )
+    if run.returncode:
+        return ""
+    return run.stdout.strip()
+
+
 def main() -> int:
     lines = ["candidate=wip35-v139-candidate.html"]
     failures = []
+
+    if not PUBLIC_FALLBACK.exists():
+        failures.append("public_fallback_missing")
+        lines.append("public_fallback=missing")
+    else:
+        fallback_sha = git_blob_sha(PUBLIC_FALLBACK)
+        fallback_ok = fallback_sha == PUBLIC_FALLBACK_BLOB_SHA
+        lines.append(f"public_fallback_blob_sha={fallback_sha}")
+        lines.append(f"public_fallback_expected_sha={PUBLIC_FALLBACK_BLOB_SHA}")
+        lines.append(f"public_fallback_v136={'ok' if fallback_ok else 'changed'}")
+        if not fallback_ok:
+            failures.append("public_fallback_v136")
+
     if not CANDIDATE.exists():
         failures.append("candidate_missing")
         lines.append("candidate_file=missing")
