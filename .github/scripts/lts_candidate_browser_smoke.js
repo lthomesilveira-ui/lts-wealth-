@@ -12,13 +12,8 @@ async function collect(page,url){
   return errors;
 }
 
-(async()=>{
-  const browser=await chromium.launch({headless:true});
-  const baseline=await browser.newPage({viewport:{width:1440,height:1000}});
-  const baselineErrors=await collect(baseline,'http://127.0.0.1:8765/index.html?candidate-smoke-baseline');
-  await baseline.close();
-
-  const page=await browser.newPage({viewport:{width:1440,height:1000}});
+async function runCandidate(browser,viewport,label,baselineErrors){
+  const page=await browser.newPage({viewport});
   const candidateErrors=[];
   const onPage=e=>candidateErrors.push(`pageerror:${e.message}`);
   const onConsole=m=>{if(m.type()==='error')candidateErrors.push(`console:${m.text()}`)};
@@ -34,18 +29,14 @@ async function collect(page,url){
   const bootNewErrors=candidateErrors.filter(e=>!inherited.has(e));
 
   // No financial data is fabricated here. This only supplies the minimum
-  // readiness contract that exists after authentication: a payload object,
-  // render callback and RPC surface. RPC is a local no-op and never calls a
-  // backend. This is an installation smoke, not authenticated E2E.
+  // readiness contract that exists after authentication. RPC is a local no-op
+  // and never calls a backend. This is installation smoke, not authenticated E2E.
   await f.evaluate(()=>{
     if(!window.D)window.D={updates:{items:[],documents:{items:[]}},card_classification_review:{category_options:[]},semantic_review:{items:[]}};
     window.render=()=>{};
     if(!window.S)window.S={};
     window.S.rpc=async()=>({data:null,error:null});
   });
-  // Re-emit the outer lifecycle signal after readiness. In the real app this
-  // is driven by the frame/auth boot; here it only lets the candidate wiring
-  // prove that it attaches once the minimum contract exists.
   await page.mainFrame().evaluate(()=>{
     const shell=document.getElementById('shell');
     if(shell)shell.dispatchEvent(new Event('load'));
@@ -56,12 +47,30 @@ async function collect(page,url){
     candidate:window.LTS_CANDIDATE||null,
     css137:!!document.getElementById('wip35-v137-candidate-css'),
     css138:!!document.getElementById('wip35-v138-cockpit-css'),
-    css139:!!document.getElementById('wip35-v139-updates-css')||!!document.getElementById('wip35-v139-evidence-css')
-  })).catch(()=>({candidate:null,css137:false,css138:false,css139:false}));
+    css139:!!document.getElementById('wip35-v139-updates-css')||!!document.getElementById('wip35-v139-evidence-css'),
+    viewportWidth:document.documentElement.clientWidth,
+    bodyScrollWidth:document.body?document.body.scrollWidth:0,
+    rootScrollWidth:document.documentElement.scrollWidth
+  })).catch(()=>({candidate:null,css137:false,css138:false,css139:false,viewportWidth:0,bodyScrollWidth:0,rootScrollWidth:0}));
   const injectionsOk=!!innerState.css137&&!!innerState.css138&&!!innerState.css139&&String(innerState.candidate||'').includes('v139');
   const newErrors=candidateErrors.filter(e=>!inherited.has(e));
-  const body=await page.locator('body').innerText().catch(()=> '');
-  const result={pass:chainOk&&bootNewErrors.length===0&&injectionsOk&&newErrors.length===0,chain,chainOk,injectionsOk,innerState,baselineErrors,candidateErrors,bootNewErrors,newErrors,topBodyChars:body.length,readinessMode:'neutral synthetic payload + local RPC no-op + render no-op + lifecycle signal; not authenticated E2E'};
+  const rootOverflow=Math.max(innerState.bodyScrollWidth||0,innerState.rootScrollWidth||0)-(innerState.viewportWidth||0);
+  // Large tables may scroll inside their own containers; the document root itself must not overflow materially.
+  const rootWidthOk=rootOverflow<=2;
+  const result={label,viewport,pass:chainOk&&bootNewErrors.length===0&&injectionsOk&&newErrors.length===0&&rootWidthOk,chain,chainOk,injectionsOk,innerState,rootWidthOk,rootOverflow,baselineErrors,candidateErrors,bootNewErrors,newErrors,readinessMode:'neutral synthetic payload + local RPC no-op + render no-op + lifecycle signal; not authenticated E2E'};
+  await page.close();
+  return result;
+}
+
+(async()=>{
+  const browser=await chromium.launch({headless:true});
+  const baseline=await browser.newPage({viewport:{width:1440,height:1000}});
+  const baselineErrors=await collect(baseline,'http://127.0.0.1:8765/index.html?candidate-smoke-baseline');
+  await baseline.close();
+
+  const desktop=await runCandidate(browser,{width:1440,height:1000},'desktop',baselineErrors);
+  const mobile=await runCandidate(browser,{width:390,height:844},'mobile-390x844',baselineErrors);
+  const result={pass:desktop.pass&&mobile.pass,baselineErrors,desktop,mobile,importantLimit:'Non-authenticated browser composition/readiness smoke only; not authenticated visual E2E or user homologation.'};
   fs.writeFileSync('candidate-browser-smoke-result.json',JSON.stringify(result,null,2));
   console.log(JSON.stringify(result,null,2));
   await browser.close();
