@@ -42,6 +42,7 @@ html,body{margin:0;width:100%;height:100%;background:#f5f6f8}#shell{border:0;wid
       const st=d.createElement('style');st.id='wip35-v139-updates-css';st.textContent=`
         .u139-flowline{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-top:9px;color:var(--mut);font-size:8px;font-weight:850}.u139-flowline span{background:#f2f5f8;border:1px solid #e3e8ed;border-radius:999px;padding:4px 7px}.u139-flowline span.active{background:#fff7e8;border-color:#d8c5a2;color:#735727}.u139-flowline i{font-style:normal;color:#a2acb6}
         .u139-context{margin:10px 0 2px;border:1px solid #e1e6eb;border-radius:12px;background:#fafbfd;padding:9px 11px}.u139-context summary{cursor:pointer;font-size:9px;font-weight:850;color:var(--mut)}.u139-context-list{display:grid;gap:6px;margin-top:8px}.u139-context-item{display:flex;justify-content:space-between;gap:10px;align-items:center;padding-top:6px;border-top:1px solid #e8ecf0}.u139-context-item:first-child{border-top:0;padding-top:0}.u139-context-item b{font-size:9px}.u139-context-item span{font-size:7px;color:var(--mut);text-transform:uppercase;font-weight:850}
+        .u139-changes{margin:10px 0;border:1px solid #cfe3d8;border-radius:12px;background:#f6fbf8;padding:9px 11px}.u139-changes>span{display:block;font-size:7px;text-transform:uppercase;font-weight:900;color:#5a7a68;margin-bottom:5px}.u139-change{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;padding:6px 0;border-top:1px solid #dfebe4}.u139-change:first-of-type{border-top:0;padding-top:0}.u139-change b{font-size:9px;line-height:1.35}.u139-change strong{font-size:10px;white-space:nowrap}.u139-change small{display:block;font-size:7px;color:var(--mut);margin-top:2px}.u139-change details{margin-top:4px}.u139-change summary{cursor:pointer;font-size:7px;color:#668274}.u139-change .detail{font-size:7px;color:var(--mut);line-height:1.4;margin-top:4px}
         .u137-flow{padding:11px 12px!important;margin:10px 0!important}.u137-flowhead h3{font-size:13px!important;margin-top:2px!important}.u137-flowhead p{display:none!important}.u137-steps{display:none!important}.u137-live{margin-top:7px!important}
       `;d.head.appendChild(st);
     }
@@ -56,6 +57,25 @@ html,body{margin:0;width:100%;height:100%;background:#f5f6f8}#shell{border:0;wid
       };
     }
 
+    w.u139DocumentChanges=function(){
+      const docs=w.D?.updates?.documents?.items||[];
+      const changed=[];
+      docs.forEach(doc=>{
+        const cs=doc?.change_summary;
+        if(!cs||cs.changed!==true)return;
+        (cs.entries||[]).forEach(e=>changed.push({doc,e}));
+      });
+      if(!changed.length)return '';
+      const rows=changed.slice(0,6).map(({doc,e})=>{
+        const where=e.account_or_card|| (e.target_type==='document_card_purchase'?'Cartão':'Conta');
+        const label=[where,e.date?w.fmt(e.date):'',e.category||''].filter(Boolean).join(' · ');
+        const effect=e.effect_type==='card_purchase_no_bank_cash_effect'?'Compra documentada; efeito de caixa ocorre pela fatura.':'Evento aplicado ao fluxo.';
+        const detail=[e.description,e.counterparty?`Contraparte: ${e.counterparty}`:'',e.cost_center?`Centro de custo: ${e.cost_center}`:'',effect].filter(Boolean).map(w.esc).join(' · ');
+        return `<div class="u139-change"><div><b>Aplicado: ${w.esc(label)}</b><small>${w.esc(doc.phase_label||'Resolvido')}</small><details><summary>Ver detalhe</summary><div class="detail">${detail}</div></details></div><strong>${w.brl(e.amount)}</strong></div>`;
+      }).join('');
+      return `<div class="u139-changes"><span>O que mudou</span>${rows}</div>`;
+    };
+
     if(typeof w.atualizacoes==='function'&&typeof w.updateIsAction==='function'){
       const baseUpdates=w.atualizacoes;
       w.atualizacoes=function(){
@@ -64,17 +84,19 @@ html,body{margin:0;width:100%;height:100%;background:#f5f6f8}#shell{border:0;wid
         const original=u.items,actions=original.filter(w.updateIsAction),context=original.filter(x=>!w.updateIsAction(x));
         let h='';
         try{u.items=actions;h=baseUpdates()}finally{u.items=original}
+        const anchor='<div class="u113-actions">';
+        const changes=w.u139DocumentChanges();
+        if(changes)h=h.includes(anchor)?h.replace(anchor,changes+anchor):h+changes;
         if(context.length){
           const rows=context.map(x=>`<div class="u139-context-item"><b>${w.esc(x.title||x.id||'Informação')}</b><span>${w.esc(x.status||x.type||'informativo')}</span></div>`).join('');
           const block=`<details class="u139-context"><summary>Contexto / monitoramento · ${context.length} item(ns)</summary><div class="u139-context-list">${rows}</div></details>`;
-          const anchor='<div class="u113-actions">';
           h=h.includes(anchor)?h.replace(anchor,block+anchor):h+block;
         }
         return h;
       };
     }
 
-    w.LTS_CANDIDATE='wip35-v139-flow-cache-lifecycle-updates-compact';
+    w.LTS_CANDIDATE='wip35-v139-flow-cache-lifecycle-updates-compact-change-summary';
     try{w.render()}catch(e){}
   }
   function wire(){
