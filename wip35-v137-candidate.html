@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>LTS Wealth · WIP35-v137 candidate</title>
+<style>
+html,body{margin:0;width:100%;height:100%;background:#f5f6f8}#app{border:0;width:100%;height:100%;display:block}
+#candidateBadge{position:fixed;right:10px;bottom:10px;z-index:99999;background:#102B50;color:#fff;border:1px solid rgba(255,255,255,.22);border-radius:999px;padding:6px 9px;font:700 10px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;box-shadow:0 4px 18px rgba(0,0,0,.14);pointer-events:none}
+</style>
+</head>
+<body>
+<iframe id="app" src="./index.html?v137-candidate"></iframe>
+<div id="candidateBadge">CANDIDATA v137 · baseline v136 preservada</div>
+<script>
+(function(){
+  const frame=document.getElementById('app');
+  frame.addEventListener('load',()=>{
+    const w=frame.contentWindow,d=w.document;
+    if(!w||!d)return;
+    const css=d.createElement('style');
+    css.id='wip35-v137-candidate-css';
+    css.textContent=`
+      .ex137-focus{border:1px solid #cbd8e6;background:#f8fbff;border-radius:16px;padding:14px;box-shadow:var(--shadow);margin-bottom:2px}
+      .ex137-focushead{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.ex137-focushead h3{margin:3px 0 0;font-size:15px}.ex137-focushead p{margin:4px 0 0;color:var(--mut);font-size:9px}
+      .ex137-series{display:grid;grid-template-columns:repeat(12,minmax(48px,1fr));gap:5px;align-items:end;margin-top:12px;overflow:auto;padding-bottom:4px}.ex137-month{border:1px solid var(--bd);background:#fff;border-radius:10px;padding:7px 5px;text-align:center;cursor:pointer;color:var(--ink);min-width:48px}.ex137-month:hover{border-color:#b8935a;background:#fffaf2}.ex137-month b{display:block;font-size:9px}.ex137-month span{display:block;font-size:7px;color:var(--mut);margin-top:3px}.ex137-month i{display:block;width:100%;background:var(--nv);border-radius:5px 5px 2px 2px;margin:6px 0 4px;min-height:2px}
+      .ex135-rankrow.ex137-click,.ex135-trend.ex137-click{cursor:pointer;border-radius:9px;padding-left:7px;padding-right:7px}.ex135-rankrow.ex137-click:hover,.ex135-trend.ex137-click:hover{background:#f7f9fb}.ex137-hint{font-size:8px;color:var(--mut);margin-top:2px}
+      .u137-flow{background:#fff;border:1px solid var(--bd);border-radius:16px;padding:14px;box-shadow:var(--shadow);margin:14px 0}.u137-flowhead{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.u137-flowhead h3{margin:3px 0 0;font-size:15px}.u137-flowhead p{margin:4px 0 0;font-size:9px;color:var(--mut);max-width:720px}.u137-steps{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-top:11px}.u137-step{border:1px solid var(--bd);border-radius:11px;padding:9px;background:#fafbfd;min-width:0}.u137-step span{display:block;font-size:8px;text-transform:uppercase;color:var(--mut);font-weight:850}.u137-step b{display:block;font-size:11px;margin-top:4px}.u137-step.active{border-color:#d8c5a2;background:#fffaf2}.u137-live{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}.u137-live span{font-size:8px;padding:4px 7px;border-radius:999px;background:#eef2f6;color:var(--mut);font-weight:800}
+      @media(max-width:820px){.u137-steps{grid-template-columns:1fr}.ex137-series{grid-template-columns:repeat(12,58px)}.ex137-focushead,.u137-flowhead{flex-direction:column}}
+    `;
+    d.head.appendChild(css);
+
+    function escJs(s){return JSON.stringify(String(s==null?'':s))}
+    w.ex137FocusCategory=function(name){const s=w.EX135||(w.EX135={});s.focusCategory=String(name||'');if(w.V==='Despesas')w.render()};
+    w.ex137ClearCategory=function(){const s=w.EX135||(w.EX135={});s.focusCategory=null;if(w.V==='Despesas')w.render()};
+    w.ex137CategoryLens=function(){
+      const s=w.EX135||{},name=s.focusCategory;if(!name||!s.data)return '';
+      const trend=(s.data.category_trends_12m||[]).find(x=>String(x.name)===String(name));
+      const series=trend?.series||[];
+      const mx=Math.max(1,...series.map(x=>Math.abs(w.num(x.total))));
+      const months=series.map(x=>`<button class="ex137-month" onclick="ex135OpenMonth('${String(x.month).slice(0,10)}',${escJs(name)})" title="Abrir ${w.esc(w.ex135MonthLabel(x.month,true))} em ${w.esc(name)}"><b>${w.esc(w.ex135MonthLabel(x.month))}</b><i style="height:${Math.max(2,Math.round(Math.abs(w.num(x.total))/mx*42))}px"></i><span>${w.brl(x.total)}</span></button>`).join('');
+      return `<div class="ex137-focus"><div class="ex137-focushead"><div><span class="ex135-eye">Categoria em foco</span><h3>${w.esc(w.ex135HumanCategory(name))}</h3><p>${series.length?'Escolha um mês para abrir somente os lançamentos documentados dessa categoria.':'Esta categoria não tem série mensal suficiente na janela atual; nenhum detalhe será fabricado.'}</p></div><button class="chip" onclick="ex137ClearCategory()">Limpar foco</button></div>${series.length?`<div class="ex137-series">${months}</div>`:''}</div>`;
+    };
+
+    if(typeof w.ex135Rank==='function'){
+      w.ex135Rank=function(xs,knownTotal,limit=12){const a=(xs||[]).slice(0,limit),mx=Math.max(1,...a.map(x=>Math.abs(w.num(x.total))));return `<div class="ex135-rank">${a.map((x,i)=>{const sh=knownTotal?100*w.num(x.total)/knownTotal:0;return `<div class="ex135-rankrow ex137-click" onclick="ex137FocusCategory(${escJs(x.name)})"><div><b>${i+1}. ${w.esc(w.ex135HumanCategory(x.name))}</b><small>${sh.toFixed(1)}% do valor com categoria conhecida</small><div class="ex137-hint">Abrir evolução e meses documentados</div><div class="ex135-bar"><i style="width:${Math.max(1,Math.round(Math.abs(w.num(x.total))/mx*100))}%"></i></div></div><strong>${w.brl(x.total)}</strong></div>`}).join('')||'<div class="empty">Sem categorias detalhadas neste período.</div>'}</div>`};
+    }
+    if(typeof w.ex135Trends==='function'){
+      w.ex135Trends=function(xs){return `<div class="ex135-trends">${(xs||[]).map(x=>{const ss=x.series||[],mx=Math.max(1,...ss.map(z=>Math.abs(w.num(z.total))));return `<div class="ex135-trend ex137-click" onclick="ex137FocusCategory(${escJs(x.name)})"><div class="ex135-trendname"><b>${w.esc(w.ex135HumanCategory(x.name))}</b><small>últimos 12 meses · toque para detalhar</small></div><div class="ex135-trendtotal">${w.brl(x.total)}</div><div class="ex135-spark" title="${w.esc(x.name)} · evolução mensal">${ss.map(z=>`<i title="${w.ex135MonthLabel(z.month)} · ${w.brl(z.total)}" style="height:${Math.max(2,Math.round(Math.abs(w.num(z.total))/mx*100))}%"></i>`).join('')}</div></div>`}).join('')||'<div class="empty">Sem série categorizada suficiente.</div>'}</div>`};
+    }
+    if(typeof w.despesas==='function'){
+      const baseDespesas=w.despesas;
+      w.despesas=function(){let h=baseDespesas();const lens=w.ex137CategoryLens();if(lens&&h.includes('<div class="ex135-hero">'))h=h.replace('<div class="ex135-hero">',lens+'<div class="ex135-hero">');return h};
+    }
+
+    w.u137Lifecycle=function(){
+      const u=w.D?.updates||{},items=(u.items||[]).slice(),actions=typeof w.updateIsAction==='function'?items.filter(w.updateIsAction):items;
+      const evidence=actions.filter(x=>['document_request','reconciliation'].includes(String(x.type))).length;
+      const confirm=actions.filter(x=>['overdue_transfer_review','overdue_event_review','card_payment_review'].includes(String(x.type))).length;
+      const decision=Math.max(0,actions.length-evidence-confirm);
+      return `<div class="u137-flow"><div class="u137-flowhead"><div><span class="w104-eye">Fluxo de trabalho</span><h3>Do documento à resolução, sem pular etapa.</h3><p>Estas são as etapas possíveis. O LTS só considera uma etapa concluída quando existe status/evidência explícita; ausência na fila não é usada para inventar um estado.</p></div><span class="u105-num">${actions.length} ativa(s)</span></div><div class="u137-steps"><div class="u137-step"><span>1 · Recebido</span><b>Documento / dado</b></div><div class="u137-step"><span>2 · Interpretado</span><b>Leitura estruturada</b></div><div class="u137-step"><span>3 · Reconciliado</span><b>Vínculo comprovado</b></div><div class="u137-step active"><span>4 · Decisão necessária</span><b>${actions.length} na fila ativa</b></div><div class="u137-step"><span>5 · Resolvido</span><b>Sai da fila após refresh</b></div></div><div class="u137-live"><span>${evidence} aguardam evidência/conciliação</span><span>${confirm} permitem confirmação explícita</span><span>${decision} dependem de outra decisão explícita</span></div></div>`;
+    };
+    if(typeof w.atualizacoes==='function'){
+      const baseUpdates=w.atualizacoes;
+      w.atualizacoes=function(){let h=baseUpdates();const flow=w.u137Lifecycle();const anchor='<div class="u113-actions">';return h.includes(anchor)?h.replace(anchor,flow+anchor):flow+h};
+    }
+    w.LTS_CANDIDATE='wip35-v137-expense-updates-interaction';
+    if(typeof w.render==='function')w.render();
+  });
+})();
+</script>
+</body>
+</html>
