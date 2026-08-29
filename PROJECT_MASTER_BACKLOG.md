@@ -106,6 +106,7 @@ This is the canonical persistent list of project work. Completed-batch evidence 
 - [x] User-confirmed rules have priority; unsafe auto-classification is blocked; people names are not researched invasively.
 - [x] Matcher optimized ~2.65s → ~0.314s over 5,224 rows with zero output differences.
 - [x] Scoped save refresh: card-only ~0.66s; semantic-only ~1.75s; cache consistency QA 5/5 PASS.
+- [x] Latest classification refresh benchmark ~1.60s, payload remains v36, followed by cache consistency 5/5 PASS.
 - [x] 26 economically effective unclassified card lines were checked against exact normalized history and active rules; no safe automatic rule exists.
 - [~] Real authenticated save → cache → UI click path remains pending.
 - [~] Research merchant/vendor evidence where appropriate; propagate only confirmed identical/history-safe classifications.
@@ -126,14 +127,15 @@ This is the canonical persistent list of project work. Completed-batch evidence 
 - [x] Despesas ~29.2s → ~0.20s; Flow future ~4.59s → ~13ms; semantic matcher ~2.65s → ~0.314s; Planning ~9.84s → ~3.96s.
 - [x] Confirmation writes ~18.8s → ~2.93s; manual invoice update uses targeted financial refresh.
 - [x] Same-day browser product cache hit avoids global refresh.
-- [x] Fast readiness v3 now completes 15/15 in ~133.9ms and checks all 48 browser RPCs for anon denial.
+- [x] Permanent latency QA v1 added: Despesas cache <1500ms, Flow 33d <1000ms, classification queue <5000ms.
+- [x] Candidate fast readiness v4 combines materialized freshness + universal browser ACL + latency; latest run 18/18 PASS in ~1.59s total.
 - [~] Global stale/day-rollover refresh remains ~18.8s. Dashboard/Flow/scenario layers still have duplicated computation; optimize only with full parity because current chain mixes legacy/current semantics.
 - [ ] Do not trade correctness for a faster daily refresh; universal invalidation/freshness must be proven before using cached Flow inside all internal planning/dashboard paths.
 - [~] Final real authenticated browser latency remains pending.
 
 ## 12. Data quality / regression gates
 - [x] Expense v9 19/19 PASS; Expense v10 18/18 PASS; core financial regression 15/15 PASS after latest Chromium/readiness fixes.
-- [x] Candidate fast readiness v3 15/15 PASS; 48 browser RPCs checked; anon exposure = 0.
+- [x] Candidate fast readiness v4 18/18 PASS; includes latency QA 3/3 and universal ACL for 48 browser RPCs; anon exposure = 0.
 - [x] Planning 23/23 PASS; Wealth 18/18 PASS; expense cache exact; classification cache 5/5; lifecycle 17/17; Flow cache PASS.
 - [x] Documentary expense lens QA 4/4; card-history coverage QA 5/5.
 - [x] Chromium candidate smoke run 33276722702 PASS: chain/injections green, zero errors.
@@ -151,12 +153,14 @@ This is the canonical persistent list of project work. Completed-batch evidence 
 ## 14. Open Finance
 - [x] Provider-neutral private staging exists with connection, sync-run and staging tables; RLS is enabled and browser has no direct policies.
 - [x] Staging unique key protects idempotency by user/provider/resource/provider-record-id.
-- [x] External lifecycle fields added for provider `created/updated/deleted` behavior; provider deletion is staged evidence and never silently deletes canonical LTS history.
-- [x] `lts_open_finance_architecture_qa_v2` PASS 10/10.
+- [x] External lifecycle fields exist for provider `created/updated/deleted` behavior; provider deletion is staged evidence and never silently deletes canonical LTS history.
+- [x] `lts_open_finance_stage_record_v2` now ingests `source_event_type`, `provider_updated_at` and `provider_deleted_at`; writer is service-role-only.
+- [x] Synthetic transactional lifecycle proof passed and rolled back completely: one idempotent staging identity survived create/snapshot/update/delete sequence inside the transaction; update changed staged amount/hash; delete stayed `promotion_status=pending` and only set deletion evidence.
+- [x] `lts_open_finance_architecture_qa_v3` PASS 14/14.
 - [x] Provider research persisted in `OPEN_FINANCE_PROVIDER_RESEARCH_2026-08-29.md`: Pluggy is current first sandbox candidate; Belvo benchmark; Klavi alternative requiring deeper institution-level validation.
 - [x] Official current evidence shows Pluggy supports Itaú, Bradesco and C6 accounts/transactions/credit cards and documents bank-specific installment inconsistency; LTS must normalize/reconcile rather than blindly trust installment metadata.
 - [x] No provider account, bank consent, token, credential or commercial commitment has been created.
-- [~] Next technical step is sandbox adapter proof using provider-neutral contract; do not connect real banks yet.
+- [~] Remaining sandbox step requires a real provider sandbox account/token or equivalent external credential; do not create/connect without user decision if terms/consent/commercial commitment are involved.
 - [~] Confirm production pricing/support/SLA before any provider choice.
 - [ ] Real provider connection, consent or paid production plan requires explicit user decision before execution.
 
@@ -172,6 +176,6 @@ This is the canonical persistent list of project work. Completed-batch evidence 
 
 ## 16. Backup / continuity
 - [x] `PROJECT_MASTER_BACKLOG.md` is canonical; historical/release evidence also remains in `HISTORICAL_RECOVERY_LOG.md`, homologation incident log and `NEXT_HOMOLOGATION_GATE.md`.
-- [x] Latest immutable checkpoints include batch 8 `backups/wip35-v139-auth-open-finance-batch8-2026-08-29.json` and batch 9 `backups/wip35-v139-browser-smoke-batch9-2026-08-29.json`.
+- [x] Latest immutable checkpoints include batch 9 `backups/wip35-v139-browser-smoke-batch9-2026-08-29.json` and batch 10 `backups/wip35-v139-readiness-open-finance-batch10-2026-08-29.json`.
 - [x] No user manual save is currently required.
 - [ ] Add automated periodic repository/data snapshot only after proving credentials/private documents cannot leak into artifacts or logs.
