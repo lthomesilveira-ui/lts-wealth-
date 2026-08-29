@@ -20,6 +20,11 @@ REQUIRED = {
     "document_change_payload": "change_summary",
     "document_change_heading": "O que mudou",
     "card_cash_guardrail": "Compra documentada; efeito de caixa ocorre pela fatura.",
+    "expense_documentary_rpc": "lts_browser_expense_merchant_drilldown_v1",
+    "card_history_coverage_rpc": "lts_browser_card_history_coverage_v1",
+    "analytics_stamp": "LTS_CANDIDATE_ANALYTICS",
+    "merchant_documentary_guardrail": "Merchant só aparece quando existe compra individual estruturada",
+    "card_history_no_fabrication_guardrail": "agregado nunca vira compra/merchant fictício",
 }
 
 FORBIDDEN = {
