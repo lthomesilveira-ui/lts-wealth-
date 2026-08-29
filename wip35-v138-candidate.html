@@ -23,6 +23,11 @@ html,body{margin:0;width:100%;height:100%;background:#f5f6f8}#shell{border:0;wid
       if(!inner)return;
       const w=inner.contentWindow,d=inner.contentDocument;
       if(!w||!d||appliedWindow===w||typeof w.render!=='function')return;
+      if(!w.__v138RenderGuard){
+        const baseRender=w.render;
+        w.render=function(...args){if(!w.D)return;return baseRender.apply(this,args)};
+        w.__v138RenderGuard=true;
+      }
       appliedWindow=w;
       const css=d.createElement('style');
       css.id='wip35-v138-candidate-css';
