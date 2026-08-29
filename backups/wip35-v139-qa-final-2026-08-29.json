@@ -1,0 +1,45 @@
+{
+  "project": "LTS Wealth",
+  "date": "2026-08-29",
+  "public_fallback": "WIP35-v136",
+  "candidate": "WIP35-v139",
+  "candidate_main_commit": "c233adf68b0335f269b5d9022e9cfc763ba615ca",
+  "pages": {
+    "workflow_run": 33270135266,
+    "status": "completed",
+    "conclusion": "success",
+    "head_sha": "c233adf68b0335f269b5d9022e9cfc763ba615ca",
+    "served_file_http_probe": "not independently verified because runtime DNS/network could not resolve the Pages host"
+  },
+  "gates": {
+    "expense_v9": "19/19 PASS",
+    "expense_v10": "18/18 PASS",
+    "core_financial": "15/15 PASS",
+    "expense_effective_cache": "PASS 3767/3767, total 8623752.53, 0 missing/extra/mismatch",
+    "flow_future_cache_v2": "PASS 30/30 days and 13/13 events exact",
+    "browser_flow_v4": "PASS authenticated execute=true, anon execute=false"
+  },
+  "performance": {
+    "expense_old_ms_approx": 29200,
+    "expense_cached_ms_approx": 200,
+    "flow_v12_33d_ms_approx": 4586,
+    "flow_cached_33d_ms_approx": 13.1
+  },
+  "security_fix": {
+    "finding": "browser_flow_v4 initially inherited PostgreSQL PUBLIC execute, making anon execute true",
+    "action": "revoked PUBLIC and anon, granted authenticated only",
+    "post_fix_qa": "PASS"
+  },
+  "updates_lifecycle": {
+    "table": "lts_update_lifecycle_event",
+    "patch": "lts_patch_updates_resolved_item_v1 v2 lifecycle",
+    "rollback_qa": "PASS with zero residual QA rows"
+  },
+  "release_guardrails": [
+    "index.html was not changed",
+    "WIP35-v136 remains public fallback",
+    "no authenticated visual E2E is claimed",
+    "no user visual homologation of v139 is claimed",
+    "no manual file save is required from the user"
+  ]
+}
