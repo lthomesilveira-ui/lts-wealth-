@@ -8,10 +8,11 @@ This is the canonical persistent list of project work. Completed-batch evidence 
 - [x] Public `index.html` remains WIP35-v136 fallback. User visual baseline remains effectively v135; v136 was not separately homologated.
 - [x] WIP35-v137 failed real homologation and must never be promoted.
 - [x] v138/v139 contain materially redesigned Cartões/Planejamento plus Despesas/Atualizações improvements.
-- [x] Latest material candidate: `wip35-v139-candidate.html`, commit `71853adfcbb40f06509a539eb359a85f19b6b3f3`.
-- [x] Candidate-only read-only CI run 33275122675 SUCCESS on exact SHA `71853adf...`.
-- [x] Pages run 33275122077 SUCCESS on the same exact SHA.
-- [x] Auth→RPC transactional checks now pass for Despesas executive, documentary counterparty lens, card-history coverage, Flow v4, document lifecycle v2 and product cache v36; this is not visual E2E.
+- [x] Latest effective candidate chain: `wip35-v139-candidate.html` on commit `3459b8138a63eba5417a48439da4b46195c4d084`.
+- [x] Chromium candidate-smoke run 33276722702 SUCCESS: chain v139→v138→v137→v136 correct, v137/v138/v139 injection stamps present, zero browser errors/new errors.
+- [x] Browser smoke uses neutral synthetic readiness only after clean boot; it is explicitly not authenticated visual E2E.
+- [x] Auth→RPC transactional checks pass for Despesas executive, documentary counterparty lens, card-history coverage, Flow v4, document lifecycle v2 and product cache v36; this is not visual E2E.
+- [x] Public fallback v136 blob guard remained unchanged through Chromium fixes.
 - [ ] Real authenticated visual E2E remains pending/unclaimed.
 - [ ] Do not ask user for basic QA; next user look only after maximum available checks are exhausted.
 - [ ] Do not promote candidate to `index.html` before user homologation.
@@ -24,7 +25,8 @@ This is the canonical persistent list of project work. Completed-batch evidence 
 - [x] Atualizações now shows 6 near actions, 4 far-future coverage items collapsed, and 2 informational items collapsed as context.
 - [x] Workflow line is compact: Recebido › Interpretado › Reconciliado › Decisão necessária › Resolvido.
 - [x] Classification shows real confidence/history evidence and all 62 category choices; current 48 groups = 9 evidence-backed suggestions, 0 safe auto-applications.
-- [~] Visual approval of Despesas, Cartões, Planejamento, Atualizações and Patrimônio remains pending; user has not tested the latest hours of work.
+- [x] Chromium found premature render defects in v137/v138; both are now guarded until inner payload readiness.
+- [~] Visual approval of Despesas, Cartões, Planejamento, Atualizações and Patrimônio remains pending; user has not tested the latest material candidate.
 
 ## 2. Atualizações / maintenance center
 - [x] Checklist-first maintenance, direct upload, bank/card/financing/salary/IPVA checks and manual invoice update exist.
@@ -40,6 +42,8 @@ This is the canonical persistent list of project work. Completed-batch evidence 
 - [x] Month/year/rolling comparisons, category rankings/trends and month drilldown exist.
 - [x] Documentary range lens is implemented: structured card merchants and cash counterparties are separate; category-only/recovered/aggregate card history never becomes fabricated merchant detail.
 - [x] Documentary counterparty QA current contract PASS 4/4.
+- [x] Expense v9 rerun after Chromium/readiness changes: 19/19 PASS.
+- [x] Expense v10 rerun after Chromium/readiness changes: 18/18 PASS.
 - [~] Real authenticated visual/browser retest of Despesas remains pending even though auth→RPC path passes.
 - [~] Reduce remaining unclassified/unassigned data only with evidence. Current 26 economically effective August card lines are genuine human-review gaps.
 - [~] Continue exact historical card recovery where documents exist.
@@ -50,6 +54,7 @@ This is the canonical persistent list of project work. Completed-batch evidence 
 - [x] Future cache slice preserves range-sensitive `liq_d30`; 30/30 days and 13/13 events matched v12; 33-day backend read ~13ms versus ~4.59s direct.
 - [x] Browser Flow v4 auth-only; Flow mutator invalidates future cache.
 - [x] Auth→RPC Flow v4 test under simulated authenticated JWT returned successfully.
+- [x] Chromium candidate boot now completes with zero browser errors/new errors before synthetic readiness.
 - [~] Real authenticated visual/browser retest of the user-observed timeout remains pending.
 - [~] Keep balance/sum rows visually distinct across further UI changes.
 - [ ] Final authenticated visual E2E.
@@ -74,7 +79,7 @@ This is the canonical persistent list of project work. Completed-batch evidence 
 - [ ] Mastercard Itaú 2025 Sep blocked: matrix R$26,582.10 vs ledger R$26,558.28; credit evidence does not close delta.
 - [ ] Mastercard Itaú 2025 Dec blocked: matrix R$14,062.17 vs ledger R$13,195.37; credit evidence does not close delta.
 - [~] Mastercard Itaú 2024 pending: Jan `evento_base:1829` R$53,652.87; Feb `1871` R$58,667.61; Apr `1966` R$47,802.70; Jun `2061` R$48,393.80; Jul `2104` R$51,947.18; Nov `2281` R$45,259.24.
-- [~] File Library retrieval failed technically on three targeted retries in the latest recovery round; this is not evidence absence and authorizes no inference.
+- [~] File Library briefly returned the workbook again, but targeted recovery on the `Cartão Itaú` sheet then failed technically; this is not evidence absence and authorizes no inference.
 - [~] Continue per-card history/evolution, future installments and merchant/category drilldown only where evidence supports it.
 - [~] Visual homologation of latest cockpit/coverage lens remains pending.
 - [ ] Never certify a historical cycle from total/reference alone; complete signed composition must close to the cent.
@@ -121,22 +126,24 @@ This is the canonical persistent list of project work. Completed-batch evidence 
 - [x] Despesas ~29.2s → ~0.20s; Flow future ~4.59s → ~13ms; semantic matcher ~2.65s → ~0.314s; Planning ~9.84s → ~3.96s.
 - [x] Confirmation writes ~18.8s → ~2.93s; manual invoice update uses targeted financial refresh.
 - [x] Same-day browser product cache hit avoids global refresh.
+- [x] Fast readiness v3 now completes 15/15 in ~133.9ms and checks all 48 browser RPCs for anon denial.
 - [~] Global stale/day-rollover refresh remains ~18.8s. Dashboard/Flow/scenario layers still have duplicated computation; optimize only with full parity because current chain mixes legacy/current semantics.
 - [ ] Do not trade correctness for a faster daily refresh; universal invalidation/freshness must be proven before using cached Flow inside all internal planning/dashboard paths.
-- [~] Final real browser latency remains pending.
+- [~] Final real authenticated browser latency remains pending.
 
 ## 12. Data quality / regression gates
-- [x] Expense v9 19/19 PASS; Expense v10 18/18 PASS; core financial regression 15/15 PASS.
+- [x] Expense v9 19/19 PASS; Expense v10 18/18 PASS; core financial regression 15/15 PASS after latest Chromium/readiness fixes.
+- [x] Candidate fast readiness v3 15/15 PASS; 48 browser RPCs checked; anon exposure = 0.
 - [x] Planning 23/23 PASS; Wealth 18/18 PASS; expense cache exact; classification cache 5/5; lifecycle 17/17; Flow cache PASS.
 - [x] Documentary expense lens QA 4/4; card-history coverage QA 5/5.
-- [x] Latest candidate CI + Pages both PASS on exact current SHA `71853adf...`.
+- [x] Chromium candidate smoke run 33276722702 PASS: chain/injections green, zero errors.
 - [x] Auth→RPC layer successfully exercised transactionally for current browser surfaces; checkpoint explicitly says this is not visual E2E.
 - [~] Keep gates updated when architecture versions change; never weaken semantics to make a gate green.
 
 ## 13. Historical recovery / evidence gaps
 - [x] Canonical effective history: 3,767 rows; 3,449 with recovered category detail; 34 certified category-allocation cycles.
 - [x] Remaining aggregate fallback: 318 rows / R$2,714,803.16; does not need to reach zero before visual homologation.
-- [~] File Library service remains technically unavailable for targeted Mastercard recovery after repeated retries.
+- [~] File Library service remains intermittently unavailable for targeted Mastercard recovery.
 - [~] Retry only when retrieval service becomes available; continue other work meanwhile.
 - [~] Keep `HISTORICAL_RECOVERY_LOG.md` and immutable snapshots synchronized after every material exact-recovery batch.
 - [ ] Raw historical cash is never rewritten by analytic recovery; signed credits/reversals must remain documentary.
@@ -165,6 +172,6 @@ This is the canonical persistent list of project work. Completed-batch evidence 
 
 ## 16. Backup / continuity
 - [x] `PROJECT_MASTER_BACKLOG.md` is canonical; historical/release evidence also remains in `HISTORICAL_RECOVERY_LOG.md`, homologation incident log and `NEXT_HOMOLOGATION_GATE.md`.
-- [x] Latest immutable checkpoints: batch 7 `backups/wip35-v139-documentary-lenses-batch7-2026-08-29.json` and batch 8 `backups/wip35-v139-auth-open-finance-batch8-2026-08-29.json`.
+- [x] Latest immutable checkpoints include batch 8 `backups/wip35-v139-auth-open-finance-batch8-2026-08-29.json` and batch 9 `backups/wip35-v139-browser-smoke-batch9-2026-08-29.json`.
 - [x] No user manual save is currently required.
 - [ ] Add automated periodic repository/data snapshot only after proving credentials/private documents cannot leak into artifacts or logs.
