@@ -5,28 +5,42 @@ Purpose: define the minimum evidence-backed package required before asking the u
 ## Current public baseline
 - WIP35-v136 remains the canonical public fallback at `index.html`.
 - WIP35-v139 is served only as isolated candidate `wip35-v139-candidate.html`; it does not replace `index.html`.
-- Latest v139 candidate UI commit: `d374eb152fff0cbb9644a674ae28527681a75f21`.
-- GitHub Pages deployment for that exact commit succeeded on run 33273116737.
+- Latest material v139 candidate commit: `71853adfcbb40f06509a539eb359a85f19b6b3f3`.
+- Candidate-only read-only CI run 33275122675 succeeded on that exact SHA.
+- GitHub Pages run 33275122077 succeeded on that exact SHA.
 - Real authenticated visual E2E remains pending/unclaimed.
 
 ## Current data-recovery position — 2026-08-29
-- Historical expense total: R$ 8,623,752.53 invariant.
+- Historical expense total: R$8,623,752.53 invariant.
 - Certified historical category-allocation cycles: 34.
 - Historical effective rows: 3,767.
 - Rows with recovered category detail: 3,449.
-- Remaining card aggregate fallback rows: 318, totaling R$ 2,714,803.16.
+- Remaining card aggregate fallback rows: 318, totaling R$2,714,803.16.
+- Visa Infinite Itaú 2025: 12/12 certified.
 - Mastercard Itaú 2025 certified: Mar, Apr, May, Jun, Aug, Nov.
 - Mastercard Itaú 2025 candidate only: Jan, Feb, Jul, Oct.
 - Mastercard Itaú 2025 blocked: Sep, Dec.
 - Mastercard Itaú 2024 pending ledger identities: Jan/1829/R$53,652.87; Feb/1871/R$58,667.61; Apr/1966/R$47,802.70; Jun/2061/R$48,393.80; Jul/2104/R$51,947.18; Nov/2281/R$45,259.24.
-- File Library retrieval is currently failing technically; no cycle may be promoted without complete documentary evidence.
+- C6 Aug/2024 retains a R$66.70 individual-detail gap; category total remains certified.
+- File Library retrieval remains technically unreliable; no cycle may be promoted without complete documentary evidence.
 
 ## WIP35-v139 package
 ### Despesas
 - Uses cache-backed `lts_browser_expense_executive_v4` in candidate path.
 - Historical total remains invariant and expense cache QA closes 3,767/3,767 rows with zero mismatch.
 - Category ranking/trends remain interactive and month drilldown delegates to certified month-detail logic.
-- No merchant/purchase is fabricated when documentary detail does not exist.
+- Documentary range lens is now wired into the candidate. Card merchants appear only from structured individual card purchases; recovered category-only rows and aggregate invoices never become fabricated merchants.
+- Cash counterparties are shown separately from card merchants so banks/financial counterparties are not presented as shops.
+- Current documentary-lens QA: 4/4 PASS.
+- Example 2023→29/08/2026: 289 structured card-merchant rows / R$66,200.29 (~2.6% card-merchant coverage), while R$821,898.39 category-only certified, R$58,727.98 recovered-category C6 and aggregate fallback remain distinct evidence levels.
+
+### Cartões
+- Candidate cockpit presents open exposure, next outflow, contracted installments, classification pending, bill agenda, 12M history and existing drilldown.
+- New dynamic historical-coverage lens reads evidence directly from the DB rather than a hardcoded month list.
+- Current summary: 34 certified cycles, 553 category-allocation rows totaling R$821,898.39; 318 aggregate-fallback rows totaling R$2,714,803.16.
+- C6 recovered purchase detail is shown separately by year: 2024 = 8 months/151 rows/R$21,657.14; 2025 = 12/157/R$24,560.95; 2026 = 6/39/R$12,509.89.
+- Card-history coverage QA: 5/5 PASS; browser RPC authenticated-only and internal helper not exposed to browser roles.
+- Historical validation is still not 100% complete; pending/blocked Mastercard cycles remain explicitly open.
 
 ### Fluxo
 - Candidate future reads use authenticated-only `lts_browser_flow_v4`.
@@ -36,58 +50,64 @@ Purpose: define the minimum evidence-backed package required before asking the u
 - `lts_browser_flow_v4` is authenticated=true / anon=false.
 
 ### Atualizações / classificação / writes
-- Main queue now presents only 10 actionable items; 2 informational/guardrail items are moved to collapsed `Contexto / monitoramento` without changing status.
+- Primary queue now contains 6 near actions. Four 2030/2031 coverage items are collapsed under future coverage; 2 informational/guardrail items are collapsed under context/monitoring without changing backend status.
 - Lifecycle visual is compacted to one line: Recebido › Interpretado › Reconciliado › Decisão necessária › Resolvido.
-- Classification confidence/history remains evidence-backed; 48/48 card review groups have category options, 9 have evidence-backed suggestions and 39 remain explicit no-suggestion states.
+- Classification confidence/history remains evidence-backed; 48/48 card review groups have category options, 9 have evidence-backed suggestions and 0 are safe for auto-application.
+- The 26 economically effective unclassified August card lines were audited against exact normalized history and active rules; they are genuine review gaps, not a technical cache/rule miss.
 - Semantic matcher was optimized with 5,224/5,224 exact row parity; benchmark ~0.314 s versus ~2.65 s old path.
 - Classification save uses scoped refresh: card-only ~0.66 s, semantic-only ~1.75 s.
-- Permanent classification cache QA: 5/5 PASS; live/cache card groups 48=48 and semantic groups 0=0.
-- Confirmation writes are economically invariant and now use targeted refresh (`card_operating` + `updates`), ~2.93 s versus ~18.83 s full refresh with exact affected-block parity.
+- Permanent classification cache QA: 5/5 PASS.
+- Confirmation writes use targeted refresh, ~2.93 s versus ~18.83 s full refresh with exact affected-block parity.
 - Manual invoice update uses a financial targeted refresh; affected 9 modules are exact-parity versus full refresh.
 - No small browser write remains coupled to the global operational refresh.
 
 ### Document lifecycle / Inputs
-- Document lifecycle read model is now `document-lifecycle-v2-change-summary`.
+- Document lifecycle read model is `document-lifecycle-v2-change-summary`.
 - `document-change-summary-v1` derives only from targets actually applied; lifecycle/reconciliation state by itself never creates a financial write.
-- Multi-entry documents are summarized from `lts_input_entry_application`; legacy/simple applied documents use the actual `applied_target/applied_id` target as fallback.
+- Multi-entry documents are summarized from `lts_input_entry_application`; legacy/simple applied documents use the actual target as fallback.
 - Documented card purchase is explicitly distinguished from bank cash effect before invoice reconciliation.
-- Existing lifecycle v1 vs v2 parity: same summary and same inbox_id/phase state.
-- Lifecycle QA: 17/17 PASS, including RLS/auth, applied→resolved mapping and presence of change summary for known applied targets.
-- Current verified resolved document now has an auditable change summary based on its actual applied financial event.
-- `lts_browser_product_v1` performs a one-time Updates-only schema self-heal when a same-day cache still lacks `document-change-summary-v1`; it does not trigger a global financial refresh for this migration.
-- Operational health upgraded to v14: current cached lifecycle-v1 is accepted during transition; once v2 is present the gate requires `document-change-summary-v1`.
-- Candidate v139 renders a compact `O que mudou` line for applied documents, with details collapsed; internal IDs are not shown in the main reading.
+- Lifecycle QA: 17/17 PASS.
+- Candidate renders compact `O que mudou` for applied documents with detail collapsed and no internal IDs in primary reading.
+- `lts_browser_product_v1` has an Updates-only same-day schema self-heal; authenticated visual validation of this path remains pending.
 
 ### Planejamento
-- Planning executive is now live single-pass, without relying on the future Flow cache internally.
-- JSON output is exactly equal to the prior implementation in the tested annual horizon.
+- Planning executive is live single-pass, without relying on the future Flow cache internally.
+- JSON output is exactly equal to prior implementation in tested annual horizon.
 - Benchmark ~3.96 s versus ~9.84 s before optimization.
 - Planning QA: 23/23 PASS.
-- First gap, worst gap, three episodes, FGTS D+30 and v131 counterfactual remain unchanged.
+- First gap 08/01/2027, worst gap R$-21,046.80, three episodes, FGTS D+30 and v131 counterfactual remain unchanged.
+
+### CIPÓ reconciliation status
+- Reconciliation v4 currently reports 12 exact components, 32 pending, 1 divergent, 1 unresolved and 6 source-only; existing QA remains green.
+- Consórcio Itaú source R$19,508.10 versus raw ledger R$19,811.70 remains unresolved. Raw composition exposes an overlap signal involving R$151.80 but does not prove which row is invalid; no suppression is authorized.
+- Condomínio source `Pago` R$115,867.108 is not reproduced by any tested raw cutoff. Exact duplicate early ledger rows exist, but deduplicating them still leaves a closest tested gap of R$1,312.268; duplicates alone do not authorize correction.
 
 ### Candidate / financial gates
 - Expense v9: 19/19 PASS.
 - Expense v10: 18/18 PASS.
-- Core financial regression: 15/15 PASS after document lifecycle/health changes.
+- Core financial regression: 15/15 PASS after latest documentary-lens/card-history work; expense total remains R$8,623,752.53.
 - Planning QA: 23/23 PASS.
 - Classification cache consistency: 5/5 PASS.
 - Document lifecycle QA: 17/17 PASS.
 - Operational cache health v14: PASS.
-- Expense read cache: 3,767/3,767, R$ 8,623,752.53 on both sides, zero missing/extra/mismatch.
-- Permanent candidate smoke is now isolated/read-only in `.github/workflows/candidate-smoke.yml`; it has contents-read permission only and never modifies `index.html` or triggers promotion.
-- Candidate CI run 33273277469: SUCCESS. Artifact 9720729260 confirms `inline_scripts=1`, `node_check_0=0`, all required v139/Flow/Updates/document-summary markers present and all forbidden direct write/index markers absent.
-- Exact smoke evidence persisted in `backups/wip35-v139-candidate-smoke-ci-2026-08-29.txt`.
-- Immutable data/architecture evidence also remains in `backups/wip35-v139-performance-batch2-2026-08-29.json`, `backups/wip35-v139-performance-updates-batch3-2026-08-29.json`, and `backups/wip35-v139-document-lifecycle-batch4-2026-08-29.json`.
+- Expense read cache: 3,767/3,767, R$8,623,752.53 on both sides, zero missing/extra/mismatch.
+- Documentary expense merchant/counterparty QA: 4/4 PASS.
+- Card-history coverage QA: 5/5 PASS.
+- Candidate CI run 33275122675: SUCCESS on SHA `71853adf...`.
+- Pages run 33275122077: SUCCESS on the same SHA.
+- Latest immutable checkpoint: `backups/wip35-v139-documentary-lenses-batch7-2026-08-29.json`, commit `b58b2693...`.
+- Public v136 fallback remains untouched.
 
 ## Minimum package before next user look
 1. Despesas critical timeout architecture fixed and financial gates green. **Status: technically green; real authenticated browser retest still pending.**
-2. Cartões and Planejamento materially redesigned from rejected report-like layouts. **Status: implemented in v138/v139; visual approval pending.**
+2. Cartões and Planejamento materially redesigned from rejected report-like layouts. **Status: implemented; visual approval pending.**
 3. Atualizações lifecycle/actionability materially clearer, classification cache protected and post-document change summary visible. **Status: implemented; authenticated click-path validation pending.**
 4. Fluxo candidate future latency materially reduced with exact financial parity. **Status: implemented; authenticated browser retest pending.**
-5. Inputs/document lifecycle must tell the user what actually changed after an applied document. **Status: backend/read model implemented and candidate UI wired; next authenticated load performs Updates-only cache schema self-heal.**
-6. Parser/static smoke for the effective isolated candidate must remain green after any candidate-file change. **Status: GREEN via read-only CI run 33273277469 and persisted artifact evidence.**
-7. Public v136 fallback remains untouched. **Status: preserved.**
-8. Do not claim authenticated visual E2E unless actually performed. **Status: pending/unclaimed.**
+5. Inputs/document lifecycle tells what actually changed after an applied document. **Status: backend + candidate UI implemented; authenticated validation pending.**
+6. Despesas range-level documentary merchant/counterparty lens and Cartões historical evidence coverage must not fabricate missing history. **Status: implemented; dedicated QAs 4/4 and 5/5 green.**
+7. Parser/static smoke for the effective isolated candidate must remain green after any candidate change. **Status: GREEN via candidate-only read-only CI run 33275122675.**
+8. Public v136 fallback remains untouched. **Status: preserved.**
+9. Do not claim authenticated visual E2E unless actually performed. **Status: pending/unclaimed.**
 
 ## Current readiness assessment
 - Backend/data safety: GREEN.
@@ -96,16 +116,19 @@ Purpose: define the minimum evidence-backed package required before asking the u
 - Flow cache parity/security: GREEN.
 - Classification cache consistency: GREEN.
 - Document lifecycle/change-summary backend: GREEN.
+- Documentary expense lens: GREEN by backend QA; visual authenticated check pending.
+- Card-history coverage lens: GREEN by backend QA; visual authenticated check pending.
 - Small-write performance architecture: materially improved.
-- Latest candidate Pages deployment: GREEN.
-- Final candidate parser/static smoke: GREEN via read-only CI.
-- Historical recovery: continues in parallel; current File Library failure is technical and does not authorize inference.
+- Latest candidate Pages deployment: GREEN on exact current candidate SHA.
+- Final candidate parser/static smoke: GREEN via read-only CI on exact current candidate SHA.
+- Historical card recovery: INCOMPLETE by design where source evidence is insufficient; no inference permitted.
+- CIPÓ Condomínio/Consórcio documentary gaps: OPEN and explicitly preserved.
 - Real authenticated visual E2E: PENDING.
 - Visual homologation of Cartões/Planejamento/Atualizações/Despesas candidate: PENDING.
 - Publish readiness for replacing `index.html`: NOT AUTHORIZED / NOT DONE.
 
 ## Trigger to ask user to look again
-Do not ask the user to perform basic QA. The next look should happen only after the maximum available authenticated/browser checks are exhausted for the v139 isolated candidate and no data/financial gate regression exists.
+Do not ask the user to perform basic QA. The next look should happen only after the maximum available authenticated/browser checks are exhausted for the isolated candidate and no data/financial gate regression exists.
 
 Until then:
 - continue backend/performance/recovery/UX work autonomously;
