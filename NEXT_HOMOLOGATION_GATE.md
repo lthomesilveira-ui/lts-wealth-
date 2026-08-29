@@ -74,9 +74,10 @@ Purpose: define the minimum evidence-backed package required before asking the u
 - Document lifecycle QA: 17/17 PASS.
 - Operational cache health v14: PASS.
 - Expense read cache: 3,767/3,767, R$ 8,623,752.53 on both sides, zero missing/extra/mismatch.
-- WIP35-v139 compact Updates layer before document-summary addition had Node parser + static smoke 7/7 PASS.
-- Latest document-summary candidate change has repository-content smoke + Pages SUCCESS, but Node parser could not be rerun in this runtime because the container cannot resolve GitHub; do not mark the final parser gate complete yet.
-- Immutable evidence: `backups/wip35-v139-performance-batch2-2026-08-29.json`, `backups/wip35-v139-performance-updates-batch3-2026-08-29.json`, and `backups/wip35-v139-document-lifecycle-batch4-2026-08-29.json`.
+- Permanent candidate smoke is now isolated/read-only in `.github/workflows/candidate-smoke.yml`; it has contents-read permission only and never modifies `index.html` or triggers promotion.
+- Candidate CI run 33273277469: SUCCESS. Artifact 9720729260 confirms `inline_scripts=1`, `node_check_0=0`, all required v139/Flow/Updates/document-summary markers present and all forbidden direct write/index markers absent.
+- Exact smoke evidence persisted in `backups/wip35-v139-candidate-smoke-ci-2026-08-29.txt`.
+- Immutable data/architecture evidence also remains in `backups/wip35-v139-performance-batch2-2026-08-29.json`, `backups/wip35-v139-performance-updates-batch3-2026-08-29.json`, and `backups/wip35-v139-document-lifecycle-batch4-2026-08-29.json`.
 
 ## Minimum package before next user look
 1. Despesas critical timeout architecture fixed and financial gates green. **Status: technically green; real authenticated browser retest still pending.**
@@ -84,7 +85,7 @@ Purpose: define the minimum evidence-backed package required before asking the u
 3. Atualizações lifecycle/actionability materially clearer, classification cache protected and post-document change summary visible. **Status: implemented; authenticated click-path validation pending.**
 4. Fluxo candidate future latency materially reduced with exact financial parity. **Status: implemented; authenticated browser retest pending.**
 5. Inputs/document lifecycle must tell the user what actually changed after an applied document. **Status: backend/read model implemented and candidate UI wired; next authenticated load performs Updates-only cache schema self-heal.**
-6. Parser/static smoke for the effective isolated candidate must remain green after any candidate-file change. **Status: repository/static structure + Pages green; Node parser for the latest `d374eb15...` change remains pending because local GitHub resolution is unavailable.**
+6. Parser/static smoke for the effective isolated candidate must remain green after any candidate-file change. **Status: GREEN via read-only CI run 33273277469 and persisted artifact evidence.**
 7. Public v136 fallback remains untouched. **Status: preserved.**
 8. Do not claim authenticated visual E2E unless actually performed. **Status: pending/unclaimed.**
 
@@ -97,14 +98,14 @@ Purpose: define the minimum evidence-backed package required before asking the u
 - Document lifecycle/change-summary backend: GREEN.
 - Small-write performance architecture: materially improved.
 - Latest candidate Pages deployment: GREEN.
-- Final candidate Node parser after latest UI change: PENDING.
+- Final candidate parser/static smoke: GREEN via read-only CI.
 - Historical recovery: continues in parallel; current File Library failure is technical and does not authorize inference.
 - Real authenticated visual E2E: PENDING.
 - Visual homologation of Cartões/Planejamento/Atualizações/Despesas candidate: PENDING.
 - Publish readiness for replacing `index.html`: NOT AUTHORIZED / NOT DONE.
 
 ## Trigger to ask user to look again
-Do not ask the user to perform basic QA. The next look should happen only after the maximum available authenticated/browser checks are exhausted for the v139 isolated candidate, the final candidate parser/smoke gate is complete, and no data/financial gate regression exists.
+Do not ask the user to perform basic QA. The next look should happen only after the maximum available authenticated/browser checks are exhausted for the v139 isolated candidate and no data/financial gate regression exists.
 
 Until then:
 - continue backend/performance/recovery/UX work autonomously;
