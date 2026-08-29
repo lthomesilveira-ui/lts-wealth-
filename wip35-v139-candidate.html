@@ -131,5 +131,77 @@ html,body{margin:0;width:100%;height:100%;background:#f5f6f8}#shell{border:0;wid
   setInterval(install,1200);
 })();
 </script>
+<script>
+(function(){
+  const shell=document.getElementById('shell');
+  let wired=null;
+  function deepest(){
+    try{
+      const d1=shell.contentDocument,f1=d1&&d1.getElementById('shell');
+      const d2=f1&&f1.contentDocument,f2=d2&&d2.getElementById('app');
+      if(!f2)return null;
+      return {w:f2.contentWindow,d:f2.contentDocument};
+    }catch(e){return null}
+  }
+  function install(){
+    const z=deepest();if(!z||!z.w||wired===z.w)return;
+    const w=z.w,d=z.d;if(!w.S||typeof w.S.rpc!=='function'||typeof w.render!=='function')return;
+    wired=w;
+    if(d&&!d.getElementById('wip35-v139-evidence-css')){
+      const st=d.createElement('style');st.id='wip35-v139-evidence-css';st.textContent=`
+        .e139-panel{background:#fff;border:1px solid var(--bd);border-radius:18px;padding:14px;box-shadow:var(--shadow);margin-top:12px}.e139-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:10px}.e139-head span{font-size:8px;text-transform:uppercase;font-weight:900;color:var(--mut)}.e139-head h3{margin:3px 0 0;font-size:14px}.e139-head small{font-size:8px;color:var(--mut);max-width:330px;text-align:right;line-height:1.4}.e139-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px}.e139-kpi{border:1px solid #e3e8ed;border-radius:12px;padding:10px;background:#fafbfd}.e139-kpi span{display:block;font-size:7px;text-transform:uppercase;font-weight:900;color:var(--mut)}.e139-kpi b{display:block;font-size:15px;margin-top:5px}.e139-kpi small{display:block;font-size:7px;color:var(--mut);margin-top:3px;line-height:1.35}.e139-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.e139-box{border:1px solid #e3e8ed;border-radius:13px;padding:11px}.e139-box h4{margin:0 0 7px;font-size:11px}.e139-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:9px;padding:7px 0;border-top:1px solid #edf0f3}.e139-row:first-of-type{border-top:0}.e139-row b{font-size:9px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.e139-row span{display:block;font-size:7px;color:var(--mut);margin-top:2px}.e139-row strong{font-size:9px;white-space:nowrap}.e139-history{overflow:auto}.e139-hrow{display:grid;grid-template-columns:minmax(150px,1.5fr) 55px 80px 80px 100px;gap:7px;align-items:center;min-width:600px;padding:7px 0;border-top:1px solid #edf0f3;font-size:8px}.e139-hrow.head{border-top:0;color:var(--mut);font-size:7px;text-transform:uppercase;font-weight:900}.e139-hrow b{font-size:9px}.e139-note{font-size:8px;color:var(--mut);line-height:1.45;margin-top:8px}.e139-loading{font-size:9px;color:var(--mut)}
+        @media(max-width:820px){.e139-kpis{grid-template-columns:1fr 1fr}.e139-grid{grid-template-columns:1fr}.e139-head{flex-direction:column}.e139-head small{text-align:left}.e139-hrow{min-width:540px}}
+        @media(max-width:520px){.e139-kpis{grid-template-columns:1fr}}
+      `;d.head.appendChild(st);
+    }
+    const E=w.EX139EVIDENCE||(w.EX139EVIDENCE={expense:{key:null,loading:false,error:null,data:null},history:{loading:false,error:null,data:null,loaded:false}});
+    function range(){
+      try{return typeof w.ex135Range==='function'?w.ex135Range(w.EX135?.rangeKey||'ytd'):{from:'2023-01-01',to:w.today(),label:'Período'}}catch(e){return {from:'2023-01-01',to:w.today(),label:'Período'}}
+    }
+    function ensureExpense(){
+      const r=range(),key=r.from+'|'+r.to,s=E.expense;
+      if(s.key===key&&(s.loading||s.data||s.error))return;
+      s.key=key;s.loading=true;s.error=null;s.data=null;
+      w.S.rpc('lts_browser_expense_merchant_drilldown_v1',{p_from:r.from,p_to:r.to,p_category:null,p_limit:10}).then(({data,error})=>{if(error||!data)throw Error(error?.message||'Lente documental indisponível');s.data=data}).catch(e=>{s.error=String(e?.message||e)}).finally(()=>{s.loading=false;if(w.V==='Despesas')w.render()});
+    }
+    function ensureHistory(){
+      const s=E.history;if(s.loaded||s.loading)return;s.loading=true;s.error=null;
+      w.S.rpc('lts_browser_card_history_coverage_v1',{}).then(({data,error})=>{if(error||!data)throw Error(error?.message||'Cobertura histórica indisponível');s.data=data;s.loaded=true}).catch(e=>{s.error=String(e?.message||e)}).finally(()=>{s.loading=false;if(w.V==='Cartões')w.render()});
+    }
+    function rows(xs,type){
+      return (xs||[]).slice(0,10).map(x=>`<div class="e139-row"><div><b>${w.esc(type==='card'?x.merchant:x.counterparty)}</b><span>${w.num(x.rows)} lançamento(s) · ${w.fmt(x.first_date)} → ${w.fmt(x.last_date)}</span></div><strong>${w.brl(x.amount)}</strong></div>`).join('')||'<div class="empty">Sem detalhe individual documentado neste período.</div>';
+    }
+    function expenseBlock(){
+      const s=E.expense;if(s.loading)return `<div class="e139-panel"><div class="e139-loading">Carregando contrapartes documentadas…</div></div>`;
+      if(s.error)return `<details class="e139-panel"><summary>Contrapartes documentadas indisponíveis</summary><div class="e139-note">${w.esc(s.error)}</div></details>`;
+      const j=s.data;if(!j)return '';
+      const q=j.summary||{};
+      return `<div class="e139-panel"><div class="e139-head"><div><span>Rastreabilidade do período</span><h3>Merchants de cartão e contrapartes de conta — sem inventar detalhe</h3></div><small>Merchant só aparece quando existe compra individual estruturada. Histórico recuperado apenas por categoria e fatura agregada ficam fora deste ranking.</small></div><div class="e139-kpis"><div class="e139-kpi"><span>Merchant de cartão documentado</span><b>${w.num(q.card_merchant_coverage_pct).toFixed(1)}%</b><small>${w.brl(q.card_merchant_amount)} em ${w.num(q.card_merchant_rows)} linha(s)</small></div><div class="e139-kpi"><span>Contraparte de conta</span><b>${w.num(q.cash_counterparty_coverage_pct).toFixed(0)}%</b><small>${w.brl(q.cash_counterparty_amount)} em ${w.num(q.cash_counterparty_rows)} linha(s)</small></div><div class="e139-kpi"><span>Cartão só por categoria</span><b>${w.brl(q.card_category_only_amount)}</b><small>categoria certificada, sem merchant individual</small></div><div class="e139-kpi"><span>Fatura ainda agregada</span><b>${w.brl(q.card_aggregate_fallback_amount)}</b><small>total preservado; composição ainda não recuperada</small></div></div><div class="e139-grid"><div class="e139-box"><h4>Merchants de cartão documentados</h4>${rows(j.card_merchants,'card')}</div><div class="e139-box"><h4>Contrapartes de conta documentadas</h4>${rows(j.cash_counterparties,'cash')}</div></div><div class="e139-note">Cobertura não é confundida com qualidade: ausência de merchant individual não altera o total econômico nem autoriza inferir estabelecimento.</div></div>`;
+    }
+    function historyBlock(){
+      const s=E.history;if(s.loading)return `<div class="e139-panel"><div class="e139-loading">Carregando cobertura histórica dos cartões…</div></div>`;
+      if(s.error)return `<details class="e139-panel"><summary>Cobertura histórica indisponível</summary><div class="e139-note">${w.esc(s.error)}</div></details>`;
+      const j=s.data;if(!j)return '';
+      const q=j.summary||{},recent=(j.by_instrument_year||[]).filter(x=>w.num(x.year)>=2024),c6=j.c6_recovered_detail||[];
+      const hr=recent.map(x=>`<div class="e139-hrow"><b>${w.esc(x.origin_name)}</b><span>${w.num(x.year)}</span><span>${w.num(x.certified_months)} mês(es)</span><span>${w.num(x.aggregate_months)} mês(es)</span><strong>${w.brl(x.aggregate_amount)}</strong></div>`).join('');
+      const c6r=c6.map(x=>`<div class="e139-row"><div><b>C6 · ${w.num(x.year)}</b><span>${w.num(x.recovered_months)} mês(es) · ${w.num(x.recovered_rows)} linha(s) recuperadas</span></div><strong>${w.brl(x.recovered_amount)}</strong></div>`).join('');
+      return `<div class="e139-panel"><div class="e139-head"><div><span>Cobertura histórica</span><h3>O que já está certificado — e o que ainda é agregado</h3></div><small>Estado lido diretamente das tabelas de evidência; não é uma lista manual.</small></div><div class="e139-kpis"><div class="e139-kpi"><span>Ciclos certificados</span><b>${w.num(q.certified_cycles)}</b><small>${w.num(q.allocation_rows)} linhas de alocação por categoria</small></div><div class="e139-kpi"><span>Valor com categoria certificada</span><b>${w.brl(q.certified_amount)}</b><small>fecha ao ledger nos ciclos certificados</small></div><div class="e139-kpi"><span>Fallback agregado</span><b>${w.num(q.aggregate_fallback_rows)} linhas</b><small>${w.brl(q.aggregate_fallback_amount)} ainda sem composição individual/categorial suficiente</small></div><div class="e139-kpi"><span>Regra</span><b>Sem inferência</b><small>agregado nunca vira compra/merchant fictício</small></div></div><div class="e139-grid"><div class="e139-box e139-history"><div class="e139-hrow head"><span>Instrumento</span><span>Ano</span><span>Certificado</span><span>Agregado</span><span>Valor agregado</span></div>${hr}</div><div class="e139-box"><h4>C6 · detalhe documental recuperado</h4>${c6r||'<div class="empty">Sem detalhe recuperado.</div>'}<div class="e139-note">Detalhe recuperado e alocação categorial são níveis de evidência diferentes e não são somados como se fossem a mesma coisa.</div></div></div></div>`;
+    }
+    if(typeof w.despesas==='function'){
+      const base=w.despesas;
+      w.despesas=function(){ensureExpense();return base()+expenseBlock()};
+    }
+    if(typeof w.cartoes==='function'){
+      const base=w.cartoes;
+      w.cartoes=function(){ensureHistory();return base()+historyBlock()};
+    }
+    w.LTS_CANDIDATE_ANALYTICS='v139-documentary-counterparty-card-history';
+    try{w.render()}catch(e){}
+  }
+  function wire(){setTimeout(install,280)}
+  shell.addEventListener('load',wire);
+  setInterval(install,1300);
+})();
+</script>
 </body>
 </html>
