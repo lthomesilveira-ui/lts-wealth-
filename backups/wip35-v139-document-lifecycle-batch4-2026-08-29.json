@@ -1,0 +1,62 @@
+{
+  "checkpoint": "wip35-v139-document-lifecycle-batch4-2026-08-29",
+  "date": "2026-08-29",
+  "public_fallback": "WIP35-v136 index.html unchanged",
+  "document_lifecycle": {
+    "report_version": "document-lifecycle-v2-change-summary",
+    "change_summary_version": "document-change-summary-v1",
+    "write_behavior_changed": false,
+    "phase_summary_equal_to_v1": true,
+    "inbox_phase_identity_equal_to_v1": true,
+    "qa": "17/17 PASS"
+  },
+  "change_summary": {
+    "source_policy": "only actually applied targets are summarized",
+    "supported_targets": ["financial_event", "document_card_purchase", "multi-entry via lts_input_entry_application"],
+    "card_purchase_guardrail": "documented card purchase is not treated as bank cash effect before invoice reconciliation",
+    "current_resolved_document_verified": true,
+    "current_resolved_document_effect": {
+      "target_type": "financial_event",
+      "date": "2026-08-28",
+      "amount_brl": -202.50,
+      "category": "Educação",
+      "cost_center": "Benjamin",
+      "counterparty": "Escolinha das Acácias",
+      "account": "Itaú",
+      "status": "active"
+    }
+  },
+  "browser_read": {
+    "browser_document_lifecycle_rpc_same_name": true,
+    "returns_v2_additive_contract": true,
+    "browser_product_self_heal": "same-day cache missing document-change-summary-v1 triggers updates-only schema patch once",
+    "api_version": 38,
+    "global_financial_refresh_required_for_schema_heal": false
+  },
+  "health": {
+    "version": "operational-cache-health-v14-document-change-summary",
+    "pass": true,
+    "transition_policy": "accept current cached lifecycle-v1; once cache self-heals to v2 require document-change-summary-v1",
+    "controls_relaxed": false
+  },
+  "financial_gates": {
+    "core": "15/15 PASS",
+    "expense_v9": "19/19 PASS (latest batch state)",
+    "expense_v10": "18/18 PASS (latest batch state)",
+    "planning": "23/23 PASS (latest batch state)",
+    "classification_cache": "5/5 PASS",
+    "expense_cache": "PASS 3767/3767 R$8623752.53"
+  },
+  "cache_transition": {
+    "current_cache_document_lifecycle_version": "document-lifecycle-v1",
+    "current_cache_document_change_summary_version": "",
+    "reason": "manual updates-only refresh call was blocked by tool safety before execution",
+    "next_authenticated_product_load": "self-heals only Updates schema then returns to normal same-day cache hits"
+  },
+  "open_guardrails": [
+    "WIP35-v136 remains public fallback until user homologation.",
+    "No authenticated visual E2E is claimed.",
+    "No document lifecycle/read-model state creates financial writes by itself.",
+    "Historical Mastercard cycles remain blocked where complete documentary evidence is unavailable."
+  ]
+}
