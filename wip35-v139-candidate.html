@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>LTS Wealth · WIP35-v139 candidate</title>
+<style>
+html,body{margin:0;width:100%;height:100%;background:#f5f6f8}#shell{border:0;width:100%;height:100%;display:block}#badge{position:fixed;right:10px;bottom:10px;z-index:999999;background:#102B50;color:#fff;border:1px solid rgba(255,255,255,.22);border-radius:999px;padding:6px 9px;font:700 10px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;box-shadow:0 4px 18px rgba(0,0,0,.14);pointer-events:none}
+</style>
+</head>
+<body>
+<iframe id="shell" src="./wip35-v138-candidate.html?v139-parent"></iframe>
+<div id="badge">CANDIDATA v139 · v136 permanece fallback</div>
+<script>
+(function(){
+  const shell=document.getElementById('shell');
+  let wired=null;
+  function deepest(){
+    try{
+      const v138doc=shell.contentDocument;
+      const v138shell=v138doc&&v138doc.getElementById('shell');
+      const v137doc=v138shell&&v138shell.contentDocument;
+      const app=v137doc&&v137doc.getElementById('app');
+      if(!app)return null;
+      return {w:app.contentWindow,d:app.contentDocument,app};
+    }catch(e){return null}
+  }
+  function install(){
+    const z=deepest();if(!z||!z.w||wired===z.w)return;
+    const w=z.w; if(!w.S||typeof w.S.rpc!=='function'||typeof w.render!=='function')return;
+    wired=w;
+    const originalRpc=w.S.rpc.bind(w.S);
+    w.S.rpc=function(name,args){
+      const n=String(name||'');
+      if((n==='lts_browser_flow_v1'||n==='lts_browser_flow_v2'||n==='lts_browser_flow_v3')&&args&&args.p_from&&args.p_to){
+        return originalRpc('lts_browser_flow_v4',args);
+      }
+      return originalRpc(name,args);
+    };
+    w.LTS_CANDIDATE='wip35-v139-flow-cache-lifecycle';
+    try{w.render()}catch(e){}
+  }
+  function wire(){
+    try{
+      const v138doc=shell.contentDocument,v138shell=v138doc&&v138doc.getElementById('shell');
+      if(v138shell){v138shell.addEventListener('load',()=>setTimeout(install,220));const v137doc=v138shell.contentDocument,app=v137doc&&v137doc.getElementById('app');if(app)app.addEventListener('load',()=>setTimeout(install,180));}
+    }catch(e){}
+    setTimeout(install,250);
+  }
+  shell.addEventListener('load',()=>setTimeout(wire,120));
+  setInterval(install,1200);
+})();
+</script>
+</body>
+</html>
