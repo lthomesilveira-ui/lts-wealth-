@@ -10,10 +10,11 @@ This is the canonical persistent list of project work. Detailed evidence for com
 - [x] WIP35-v138 introduced materially redesigned Cartões/Planejamento cockpits plus Despesas/Atualizações improvements while preserving v136 fallback.
 - [x] WIP35-v139 is served only as isolated candidate `wip35-v139-candidate.html`; public `index.html` remains untouched.
 - [x] Latest v139 UI commit `d374eb152fff0cbb9644a674ae28527681a75f21` was published successfully by GitHub Pages run 33273116737.
-- [x] v139 compact Updates layer before the latest document-summary addition passed Node parser + static smoke 7/7.
-- [~] Latest `d374eb15...` document-summary UI change has repository/static checks + Pages success, but its Node parser could not be rerun in the current runtime because the container cannot resolve GitHub. Do not mark final parser gate complete yet.
+- [x] Permanent read-only candidate CI created in `.github/workflows/candidate-smoke.yml` + `.github/scripts/lts_candidate_smoke.py`; it has contents-read permission only, does not modify `index.html`, does not commit shells and does not trigger candidate promotion.
+- [x] Candidate CI run 33273277469 SUCCESS. Artifact 9720729260 confirms one inline script, `node_check_0=0`, all required v139/Flow/Updates/document-summary guardrails present and all forbidden direct write/index markers absent.
+- [x] Exact CI evidence persisted at `backups/wip35-v139-candidate-smoke-ci-2026-08-29.txt`, commit `e1f2221b...`.
 - [ ] Real authenticated visual E2E remains pending and must not be claimed before it is actually performed.
-- [ ] Do not ask the user to homologate again until final candidate parser/smoke + maximum available authenticated/browser checks are exhausted and all financial/data gates remain green.
+- [ ] Do not ask the user to homologate again until maximum available authenticated/browser checks are exhausted and all financial/data gates remain green.
 - [ ] Do not promote any candidate to `index.html` before user homologation.
 
 ## 1. Real homologation feedback V135 → V137/V139
@@ -162,8 +163,8 @@ This is the canonical persistent list of project work. Detailed evidence for com
 - [x] Document lifecycle/change-summary QA: 17/17 PASS.
 - [x] Operational cache health upgraded to v14 and PASS; transitional cache-v1 is accepted, while lifecycle-v2 requires `document-change-summary-v1`.
 - [x] Flow cache QA v2 PASS; browser Flow v4 auth-only.
+- [x] Permanent read-only candidate smoke CI PASS on run 33273277469; current v139 inline JavaScript passed Node parser and all required/forbidden candidate checks.
 - [~] Modernize stale string/version expectations when architecture advances, but never weaken semantic/financial guardrails merely to make a gate green.
-- [~] Final candidate Node parser after `d374eb15...` remains pending due runtime GitHub-resolution limitation.
 
 ## 13. Historical recovery / evidence gaps
 - [x] Canonical historical effective rows: 3,767; recovered category-detail rows: 3,449; certified category-allocation cycles: 34.
@@ -204,5 +205,6 @@ This is the canonical persistent list of project work. Detailed evidence for com
   - `backups/wip35-v139-performance-batch2-2026-08-29.json`
   - `backups/wip35-v139-performance-updates-batch3-2026-08-29.json`
   - `backups/wip35-v139-document-lifecycle-batch4-2026-08-29.json`
+  - `backups/wip35-v139-candidate-smoke-ci-2026-08-29.txt`
 - [x] No user manual save is currently required.
 - [ ] Add automated periodic repository/data snapshot workflow only after proving that it cannot expose credentials or private raw documents.
