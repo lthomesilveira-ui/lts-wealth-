@@ -1,0 +1,74 @@
+{
+  "project": "LTS Wealth",
+  "checkpoint_date": "2026-08-29",
+  "public_fallback": "WIP35-v136",
+  "candidate": "WIP35-v139",
+  "candidate_branch": "qa/wip35-v139-smoke",
+  "candidate_commit": "560515e829a2fc2ebdab6de009ce93914895ac1e",
+  "expense": {
+    "history_total_brl": 8623752.53,
+    "effective_cache_rows": 3767,
+    "cache_qa": "PASS",
+    "cached_executive_backend_ms_approx": 200,
+    "previous_backend_ms_approx": 29200,
+    "financial_delta_brl": 0.00
+  },
+  "flow": {
+    "canonical_engine": "lts_daily_flow_fix86_v12",
+    "previous_33d_backend_ms_approx": 4586,
+    "future_cache_refresh_731d_ms": 3272.5,
+    "future_cached_slice_33d_ms_approx": 13.1,
+    "cache_qa_v2": {
+      "pass": true,
+      "days_equal": true,
+      "events_equal": true,
+      "sample_days": 30,
+      "sample_events": 13
+    },
+    "browser_candidate_rpc": "lts_browser_flow_v4",
+    "cache_invalidation": "browser flow mutation deletes user future cache before next read"
+  },
+  "updates": {
+    "visible_items": 12,
+    "actionable_items": 10,
+    "classification_pending_groups": 48,
+    "category_options": 62,
+    "evidence_backed_suggestions": 9,
+    "safe_auto_classifications": 0,
+    "operational_lifecycle_table": "lts_update_lifecycle_event",
+    "resolved_patch_version": "updates_resolution_fast_patch_v2_lifecycle",
+    "rollback_qa_residual_rows": 0
+  },
+  "cards": {
+    "cockpit_candidate": "v138 inherited by v139",
+    "open_cycles_brl": 28516.67,
+    "contracted_installment_floor_brl": 43989.34,
+    "pending_classification_value_brl": 8876.77
+  },
+  "planning": {
+    "cockpit_candidate": "v138 inherited by v139",
+    "first_real_gap_date": "2027-01-08",
+    "worst_balance_brl": -21046.80,
+    "fgts_brl": 17509.05,
+    "fgts_request_by": "2026-12-09",
+    "negative_episode_count": 3
+  },
+  "gates_last_green": {
+    "expense_v9": "19/19",
+    "expense_v10": "18/18",
+    "core_financial": "15/15",
+    "expense_cache_qa": "PASS",
+    "flow_future_cache_qa_v2": "PASS"
+  },
+  "unclaimed": [
+    "real authenticated visual E2E",
+    "user visual homologation of v138/v139",
+    "authenticated classification write click-path"
+  ],
+  "guardrails": [
+    "No financial amount, merchant, historical purchase or classification was invented.",
+    "WIP35-v136 remains the public fallback.",
+    "The flow cache materializes the output of canonical v12 and is invalidated on flow edits.",
+    "No candidate is promoted to index before parser/smoke/gates and user homologation."
+  ]
+}
