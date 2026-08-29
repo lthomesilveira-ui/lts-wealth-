@@ -2,6 +2,23 @@
 
 Status legend: [x] concluded, [~] in progress, [ ] open.
 
+## 0B. Performance batch 2 — WIP35-v139 — 2026-08-29
+- [x] Matcher semântico otimizado sem mudança econômica: 5.224/5.224 linhas com paridade integral, 0 faltantes e 0 diferenças em qualquer coluna.
+- [x] Benchmark do matcher semântico caiu de ~2,65s para ~0,314s no universo atual; a chave ambígua `cartão c6master` preserva explicitamente o caminho legado.
+- [x] Fila semântica base caiu de ~2,45s para ~0,88s; contador atual de pendências bancárias semânticas permanece 0 sem hardcode.
+- [x] Auditoria de projeção plurianual foi reescrita single-pass com JSON integral exatamente igual ao modelo anterior.
+- [x] Planejamento executivo foi reescrito para reutilizar um único Flow por execução; benchmark ~9,84s → ~3,96s com JSON integral exatamente igual.
+- [x] Planning QA após promoção single-pass: 23/23 PASS; primeiro gap, episódios, FGTS D+30, contrafactual v131 e pior gap preservados.
+- [x] Refresh operacional amplo caiu de ~24,66s para ~18,77s após as otimizações; continua reservado para inicialização/refresh global, não para pequenos writes.
+- [x] Atualização manual de fatura passou a usar refresh dirigido; 9 módulos afetados fecharam paridade exata contra refresh amplo. Benchmark atual ~16,73s vs ~18,70s amplo.
+- [x] Confirmações de pagamento/evento/transferência foram provadas economicamente invariantes: `lts_fact_confirmation` só muda source/confidence quando source_ref/data/valor já coincidem.
+- [x] Refresh mínimo de confirmação atualiza somente `card_operating` + `updates`, com paridade exata contra refresh amplo e benchmark ~2,93s vs ~18,83s.
+- [x] `confirm_card_payment`, `confirm_overdue_event` e `confirm_overdue_transfer` agora usam o refresh mínimo; nenhum pequeno write continua chamando o refresh operacional amplo.
+- [x] Gates pós-batch: Despesas v9 19/19, Despesas v10 18/18, core 15/15, Planning 23/23, operational cache health PASS.
+- [x] Checkpoint imutável `backups/wip35-v139-performance-batch2-2026-08-29.json` persistido fora do chat, commit `5ff36ece...`.
+- [~] Refresh global ainda ~18,8s; continuar reduzindo apenas onde houver paridade comprovada, sem usar cache futuro em Planejamento até invalidação ser universal.
+- [~] Real authenticated browser/write E2E e homologação visual continuam pendentes/não alegados.
+
 ## 0A. Execução pós-homologação — WIP35-v138/v139 candidates
 - [x] Despesas: raiz do `canceling statement due to statement timeout` diagnosticada. A leitura v10 levava ~29,2s porque reconstruía repetidamente o universo efetivo histórico.
 - [x] Despesas: criada `lts_expense_effective_read_cache` derivada exatamente de `lts_expense_total_rows_v5`; checkpoint atual 3.767 linhas / R$ 8.623.752,53.
@@ -102,7 +119,7 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 - [x] WIP35-v136 backend/read model answers: how much I have, owe and net worth today.
 - [x] Backend `wealth_executive` read model separates market estimates, documentary debt, equity, liquidity, restricted contingency and future awards.
 - [x] Net worth central R$ 3.572.800,64 with analytical market range R$ 2.947.800,64–R$ 4.202.800,64 at current evidence.
-- [x] CIPÓ central market estimate R$ 5.2m, range R$ 4.6–5.8m; own R$ 5.9m asking price explicitly excluded as independent comparable.
+- [x] CIPÓ central market estimate R$ 5.2m, range 4.6–5.8m; own R$ 5.9m asking price explicitly excluded as independent comparable.
 - [x] CIPÓ equity central R$ 3.420.094,50 and historical purchase+reform kept separate from market value/tax basis.
 - [x] Volvo XC40 provisional market central R$ 170k, range R$ 145–200k; trim/km uncertainty explicit.
 - [x] Volvo current financed balance uses R$ 110,492.81; R$ 173,185.80 future payment schedule is never treated as current debt.
@@ -185,7 +202,7 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 - [x] Flow first future performance/parity gate `lts_flow_future_fast_path_qa_v1` remains available.
 - [x] Flow cache gate `lts_flow_future_read_cache_qa_v2` PASS after rejecting and fixing the naive slice that altered `liq_d30`.
 - [x] Atualizações coverage measured: 48/48 items have category options, 9 evidence-backed suggestions, 39 explicit no-suggestion cases, 0 unsafe auto-classification.
-- [~] Re-run full financial suite after v139 branch static smoke before moving candidate file to main.
+- [x] Performance batch 2 revalidated expense v9 19/19, expense v10 18/18, core 15/15, Planning 23/23 and operational health PASS after semantic/planning/write refresh changes.
 - [~] Modernize stale legacy regression expectations as architecture evolves rather than forcing current models to old bugs.
 - [~] Reduce historical card aggregate fallback as documentary detail is recovered.
 
@@ -213,9 +230,13 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 - [x] Fluxo future canonical slice reduced from ~4.59s direct v12 to ~13ms cached in current 33-day benchmark with exact day/event parity.
 - [x] Semantic classification save now patches affected expense-cache rows incrementally.
 - [x] Flow cache refresh is separated from read latency and invalidated on edits.
+- [x] Matcher semântico principal reduzido de ~2,65s para ~0,314s em 5.224 linhas com paridade integral.
+- [x] Planejamento executivo reduzido de ~9,84s para ~3,96s via single-pass live, sem cache e com JSON integral idêntico.
+- [x] Confirmações operacionais reduzidas de refresh ~18,8s para ~2,93s por patch dirigido, com invariância econômica comprovada.
+- [x] Nenhum pequeno write permanece acoplado ao refresh operacional amplo; atualização manual de fatura usa refresh financeiro dirigido.
+- [~] Refresh global ainda ~18,8s e pode ser otimizado adicionalmente apenas com paridade comprovada.
 - [~] Real authenticated browser latency still needs final verification before user retest.
-- [~] Reduce refresh latency further and patch only affected modules.
-- [ ] Avoid full rebuild for small actions in all write workflows.
+- [ ] Evitar recomputação global também na inicialização diária sem criar risco de cache velho em fontes não cobertas por invalidação universal.
 
 ## 13. UX / executive quality
 - [x] Despesas primary screen uses executive/user-facing language and explicit period context when it loads.
@@ -238,7 +259,8 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 - [x] WIP35-v138 isolated candidate created and consolidated with performance/classification/cockpit package; Pages deployment succeeded while index remained v136.
 - [x] WIP35-v138 static scripts parse; financial gates remain green; v136 index remains untouched.
 - [x] WIP35-v139 isolated candidate created on `qa/wip35-v139-smoke` with Flow cache integration + operational lifecycle backend checkpoint; commit `560515e8...`.
-- [~] WIP35-v139 is NOT promoted. Complete branch parser/smoke + full gates before copying the isolated candidate to main.
+- [x] WIP35-v139 isolated file was later copied to main for Pages serving without changing `index.html`; Pages run 33270135266 succeeded on commit `c233adf6...`.
+- [~] WIP35-v139 remains candidate-only and is NOT promoted to `index.html`.
 - [ ] Real authenticated visual E2E and multimodal certification remain explicitly unclaimed/pending.
 
 ## 15. Backup / continuity
@@ -250,5 +272,6 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 - [x] `backups/wip35-v137-candidate-smoke-2026-08-29.txt` persists candidate smoke, financial gates and guardrails.
 - [x] `HOMOLOGATION_V135_V137_INCIDENTS_2026-08-29.md` persists real homologation failures and execution response.
 - [x] `backups/wip35-v139-progress-2026-08-29.json` persists performance metrics, Flow cache parity, lifecycle state, gates and still-unclaimed tests for this round.
+- [x] `backups/wip35-v139-performance-batch2-2026-08-29.json` persists semantic/planning/write performance changes and post-change gates; commit `5ff36ece...`.
 - [~] Update recovery log + immutable snapshot + master backlog after each material historical-recovery batch.
 - [ ] Add automated periodic repository/data snapshot workflow only after validating that it does not expose credentials or private raw documents.
