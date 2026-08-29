@@ -24,10 +24,11 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 - [x] Rankings and trends show the period explicitly.
 - [x] Monthly drilldown v2 reaches the rows forming the month.
 - [x] Category-known coverage and individual transaction/merchant detail are shown as different levels.
-- [x] Certified historical card category allocation replaces 9 technical aggregates with R$0 economic delta; last-6-month category-known coverage increased without inventing merchants.
+- [x] Certified historical card category allocation replaces technical aggregates with R$0 economic delta and without inventing merchants.
 - [x] Technical coverage diagnostics moved to collapsible Data Quality area.
 - [x] Recent documentary bridge closes the direct-account gap after the legacy realized checkpoint; only bank-evidenced facts are included.
 - [x] Historical signed-value corrections/reversals are applied analytically without rewriting raw cash history; permanent QA protects the documented source refs.
+- [x] Historical expense total remains invariant at R$ 8,623,752.53 after the 2026-08-29 recovery batch.
 - [~] Extend drilldown from category/rank/trend interactions to original transaction where merchant-level evidence exists.
 - [~] Continue reducing unclassified/unassigned history without changing total economics.
 - [~] Recover more historical card cycles only where invoice/category composition closes exactly.
@@ -72,7 +73,12 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 - [x] Card/invoice operating view and manual cycle amount update.
 - [x] Aeternum Sep/2026 updated from Bradesco open statement dated 28/08/2026 to R$ 17,967.48; 64 documentary lines reconcile to zero delta.
 - [x] C6 recovered production detail: 347 rows / R$ 58,727.98.
-- [x] 9 additional historical category-allocation cycles certified with R$0 delta to their aggregates.
+- [x] 33 historical category-allocation cycles are now certified exact in Supabase after the 2026-08-29 recovery batch.
+- [x] Visa Infinite Itaú 2025 is 12/12 certified exact with signed evidence where reversals/credits exist.
+- [x] Mastercard Itaú 2025 certified months currently include Apr, May, Jun, Aug and Nov; Nov closes to R$ 5,883.96 after preserving original signed Crédito -R$0.01.
+- [~] Mastercard Itaú 2025 Jan/Feb/Mar/Jul/Oct remain candidate-only until complete category lists are recovered and independently summed.
+- [ ] Mastercard Itaú 2025 Sep remains blocked: matrix R$ 26,582.10 vs ledger R$ 26,558.28; Crédito -R$0.13 does not explain the full delta.
+- [ ] Mastercard Itaú 2025 Dec remains blocked: matrix R$ 14,062.17 vs ledger R$ 13,195.37; large signed/reversal delta unresolved.
 - [~] History/evolution per card, future installments, category composition and merchant drilldown.
 - [x] Actual/open bill is distinguished from known-installment projection in Atualizações.
 - [~] Continue semantic classification of remaining unclassified purchases.
@@ -99,8 +105,9 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 ## 9. Data quality / reconciliation
 - [x] FIX86 canonical gates retained.
 - [x] Projection bridge uses frozen baseline with explained deltas; current max residue ~R$ 0.019 below R$ 0.03 tolerance.
-- [x] Core financial regression 15/15 remains green after payload v36.
-- [x] Expense v9 permanent QA protects total invariance and historical allocation replacement.
+- [x] Core financial regression 15/15 remains green after the historical recovery batch.
+- [x] Expense v9 permanent QA protects total invariance and historical allocation replacement; latest run 19/19 with 33/33 certified cycles closing.
+- [x] Expense v10 latest run 18/18 PASS.
 - [x] Wealth QA 18/18 and Planning QA 23/23 are permanent.
 - [x] WIP35-v136 specific QA 32/32.
 - [x] WIP35-v136 smoke: 11/11 inline scripts passed Node parser; all required/forbidden checks green.
@@ -146,3 +153,11 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 - [x] WIP35-v136 is the current public canonical baseline for the next material candidate.
 - [ ] Real authenticated visual E2E and multimodal certification remain explicitly unclaimed/pending.
 - [ ] Next homologation should again be a material package, not a microbuild.
+
+## 15. Backup / continuity
+- [x] `PROJECT_MASTER_BACKLOG.md` remains the canonical persistent list of open work.
+- [x] `HISTORICAL_RECOVERY_LOG.md` created on 29/08/2026 to persist historical-recovery evidence, guardrails, certified/blocked cycles and next work outside chat memory.
+- [x] `backups/historical-recovery-2026-08-29.json` created as versioned recovery snapshot; row-level authoritative allocations remain in Supabase.
+- [x] Supabase `public.lts_card_historical_category_allocation` retains the row-level certified category-allocation evidence.
+- [~] Update recovery log + snapshot + master backlog after each material historical-recovery batch.
+- [ ] Add automated periodic repository/data snapshot workflow only after validating that it does not expose credentials or private raw documents.
