@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>LTS Wealth · WIP35-v141 candidate</title>
+<style>
+html,body{margin:0;width:100%;height:100%;background:#f5f6f8}#shell{border:0;width:100%;height:100%;display:block}#badge{position:fixed;right:10px;bottom:10px;z-index:999999;background:#102B50;color:#fff;border:1px solid rgba(255,255,255,.22);border-radius:999px;padding:6px 9px;font:700 10px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;box-shadow:0 4px 18px rgba(0,0,0,.14);pointer-events:none}
+</style>
+</head>
+<body>
+<iframe id="shell" src="./wip35-v140-candidate.html?v141-parent"></iframe>
+<div id="badge">CANDIDATA v141 · pacote de homologação</div>
+<script>
+(function(){
+  const shell=document.getElementById('shell'),badge=document.getElementById('badge');
+  let wired=null;
+  function chain(){
+    try{
+      const d140=shell.contentDocument,f139=d140&&d140.getElementById('shell');
+      const d139=f139&&f139.contentDocument,f138=d139&&d139.getElementById('shell');
+      const d138=f138&&f138.contentDocument,f137=d138&&d138.getElementById('shell');
+      const d137=f137&&f137.contentDocument,app=d137&&d137.getElementById('app');
+      if(!app)return null;
+      return {w:app.contentWindow,d:app.contentDocument,docs:[d140,d139,d138,d137]};
+    }catch(e){return null}
+  }
+  function hideInnerBadges(docs){
+    (docs||[]).forEach(d=>{try{['badge','candidateBadge'].forEach(id=>{const x=d&&d.getElementById(id);if(x)x.style.display='none'})}catch(e){}});
+  }
+  function install(){
+    const z=chain();if(!z||!z.w)return;
+    const w=z.w,d=z.d;hideInnerBadges(z.docs);
+    if(w.__LTS_LEXICAL_BRIDGE!=='v140')return;
+    if(wired!==w){
+      wired=w;
+      if(d&&!d.getElementById('wip35-v141-ui-css')){
+        const st=d.createElement('style');st.id='wip35-v141-ui-css';st.textContent=`
+          .u141-mainthead{display:flex;justify-content:space-between;gap:12px;align-items:flex-end;margin:16px 0 8px}.u141-mainthead h2{font-size:19px;margin:4px 0}.u141-mainthead p{font-size:9px;color:var(--mut);margin:0}.u141-count{min-width:34px;height:34px;border-radius:999px;background:#fff5df;color:#765b2b;display:grid;place-items:center;font-size:11px;font-weight:900}.u141-collapsed{margin-top:8px;border:1px solid var(--bd);border-radius:13px;background:#f8fafc;padding:9px 11px}.u141-collapsed summary{cursor:pointer;font-size:9px;font-weight:850;color:#617083}.u141-mini{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;padding:7px 0;border-top:1px solid #e7ebef}.u141-mini:first-child{border-top:0}.u141-mini b{font-size:9px}.u141-mini span{font-size:8px;color:var(--mut);text-align:right}.u141-note{font-size:8px;color:var(--mut);line-height:1.45;margin-top:7px}
+          @media(max-width:700px){.u141-mainthead{align-items:flex-start}.u141-mini{grid-template-columns:1fr}.u141-mini span{text-align:left}}
+        `;d.head.appendChild(st);
+      }
+      w.u141FarFuture=function(x){
+        const id=String(x?.id||''),m=id.match(/^coverage_(?:salary|ipva)_(\d{4})$/);if(!m)return false;
+        const year=Number(m[1]),nowYear=Number((typeof w.today==='function'?w.today():new Date().toISOString().slice(0,10)).slice(0,4));
+        return Number.isFinite(year)&&year>nowYear+1;
+      };
+      w.u132Maintenance=function(){
+        const all=w.D?.updates?.maintenance_checks||[];if(!all.length)return '';
+        const actionable=all.filter(x=>x.actionable),near=actionable.filter(x=>!w.u141FarFuture(x)),future=actionable.filter(w.u141FarFuture),healthy=all.filter(x=>!x.actionable);
+        const data=near.filter(x=>x.group==='Dados a atualizar'),coverage=near.filter(x=>x.group==='Cobertura futura');
+        const groups=(typeof w.u132MaintGroup==='function'?w.u132MaintGroup('Dados a atualizar',data)+w.u132MaintGroup('Cobertura próxima',coverage):'');
+        const futureRows=future.map(x=>`<div class="u141-mini"><b>${w.esc(x.label||x.id||'Cobertura futura')}</b><span>${w.esc(x.status||'revisar')}</span></div>`).join('');
+        const healthyRows=healthy.map(x=>`<div class="u141-mini"><b>${w.esc(x.label||x.id||'Check')}</b><span>${w.esc(x.status||'ok')}</span></div>`).join('');
+        return `<div class="u141-mainthead"><div><span class="w104-eye">Integridade do LTS</span><h2>O que realmente precisa de atualização</h2><p>Primeiro o que exige ação agora. Cobertura distante e checks OK ficam recolhidos, sem desaparecer da auditoria.</p></div><span class="u141-count">${near.length}</span></div><div class="u132-maint">${groups||'<div class="empty">Nenhuma manutenção próxima exige ação.</div>'}</div>${future.length?`<details class="u141-collapsed"><summary>Cobertura futura distante · ${future.length} item(ns)</summary>${futureRows}<div class="u141-note">Nenhum valor é criado automaticamente. Esses itens permanecem apenas como lembrete de cobertura.</div></details>`:''}${healthy.length?`<details class="u141-collapsed"><summary>Checks já cobertos / acompanhados · ${healthy.length}</summary>${healthyRows}</details>`:''}`;
+      };
+      w.LTS_CANDIDATE_UI='wip35-v141-updates-focus-version-hygiene';
+    }
+    let ready=false;try{ready=!!w.D}catch(e){}
+    if(ready){
+      try{const label=d.querySelector('.brand small');if(label)label.textContent='WIP35-v141 · candidata para homologação';}catch(e){}
+      try{d.querySelectorAll('.footer').forEach(x=>x.textContent='Candidata WIP35-v141 · fallback público v136 preservado');}catch(e){}
+      badge.textContent='CANDIDATA v141 · pronta para homologação';
+      try{if(w.V==='Atualizações'&&typeof w.render==='function')w.render()}catch(e){console.error('v141 updates render failed',e)}
+    }
+  }
+  function wire(){setTimeout(install,40)}
+  shell.addEventListener('load',wire);
+  setInterval(install,350);
+})();
+</script>
+</body>
+</html>
