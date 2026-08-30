@@ -9,7 +9,7 @@ Purpose: persistent evidence/recovery log so historical reconstruction never dep
 - Payment/reference equality alone is insufficient for category certification.
 - Signed credits/reversals remain documentary evidence; they are not silently normalized away.
 - Mastercard Itaú evidence must come from `Cartão Itaú`; Visa evidence is a distinct source.
-- Retrieval failure is a technical blockage, never evidence absence.
+- Retrieval failure is a technical blockage, never evidence absence; partial snippets are not complete composition.
 - Fragmented settlements are never collapsed into one invoice without documentary proof.
 
 ## Canonical state — 2026-08-30 / global recovery inventory
@@ -25,7 +25,7 @@ Purpose: persistent evidence/recovery log so historical reconstruction never dep
 - Expense v9 19/19 PASS; Expense v10 18/18 PASS; core financial 15/15 PASS.
 - Historical effective parity v2: **2,030 days / 147 months exact** through 2025; timeline 57/57; zero technical leak/overlap.
 - FIX86 transversal guardrails v4: **10/10 PASS**.
-- Extended heavy gate v8: **240/240 PASS across 17 suites**.
+- Extended heavy gate v9: **248/248 PASS across 19 suites**.
 - Real authenticated visual E2E remains pending/unclaimed.
 
 ## Mastercard Itaú — 2025
@@ -76,7 +76,7 @@ Complete `Cartão Itaú` category matrices plus signed Crédito/reversal evidenc
 - Aug — partial documentary candidate; signed closure still incomplete.
 - Sep — partial documentary candidate; unresolved amount currently R$1.54.
 - Nov — partial documentary candidate; unresolved amount currently R$2.74.
-- Dec — arithmetic sign evidence is promising (known Crédito -R$0.04), but complete category tail was not independently recovered; no certification until full tail closes.
+- Dec — `Cartão Itaú` source rows were re-found in File Library and confirm documentary category lines exist for Dec/2022, including installment/category rows. Retrieval still truncates before the complete signed tail; known Crédito -R$0.04 is promising but no certification until the entire composition is independently recovered and summed.
 
 ## Mastercard Itaú — 2021
 - 12 ledger-only monthly totals, **R$116,458.47** total.
@@ -98,6 +98,7 @@ Complete `Cartão Itaú` category matrices plus signed Crédito/reversal evidenc
 - Current inventory: **31 blocks / 314 rows / R$2,650,846.36**.
 - **7 blocks** are explicitly tracked by the Mastercard validation registry; **24 blocks** remain aggregate-only documentary gaps.
 - P1 aggregate-only blocks: Visa 2017 **R$126,681.76** and Visa Infinite Itaú 2024 **R$112,253.01**.
+- File Library recheck found the source workbook and independently confirms the 12 monthly Visa 2017 settlement totals. It also confirms Visa Infinite Itaú monthly settlement totals for Feb–Dec/2024. These are payment/settlement layers, not complete category matrices, so both P1 blocks remain aggregate-only.
 - The inventory is internal/read-only and does not create category, merchant, purchase or competence facts.
 - QA v1 **5/5 PASS** guarantees inventory/cache parity, Mastercard tracking and explicit visibility of high-value non-registry gaps.
 
@@ -121,18 +122,18 @@ Complete `Cartão Itaú` category matrices plus signed Crédito/reversal evidenc
 ## FIX86 / historical invariants permanently gated
 - `lts_effective_history_qa_v2`: dynamic current-contract parity, not obsolete hard-coded row counts.
 - `lts_fix86_legacy_guardrails_qa_v4`: frozen projection baseline; stale/superado anchors excluded; Inbox preapproval zero write; approval-only document application; documented-only nonrecursive card estimates; read-only scenarios; append-only Flow mutations; core-owned no-double-count; CIPÓ core parity.
-- Heavy gate v8 incorporates historical registry through 2019, global all-instrument fallback inventory and FIX86 guardrails without duplicating the expensive core suite.
+- Heavy gate v9 incorporates historical registry through 2019, global all-instrument fallback inventory, document-outcome contracts and FIX86 guardrails without duplicating the expensive core suite.
 
 ## Retrieval state
-- File Library intermittently returned valuable 2022 source matrices/signed credit evidence and then resumed instability.
-- Latest 2019–2021 targeted retrieval failed before returning content.
+- File Library is intermittent but responded again in the latest targeted pass.
+- Latest successful evidence: Dec/2022 `Cartão Itaú` category rows exist but returned snippet is incomplete; Visa 2017 and Visa Infinite Itaú 2024 settlement series were recovered but category matrices were not.
 - Current `fatura`, `legacy_namespace` card objects and searchable staging do not contain an independent historical category matrix for 2019–2021.
 - Retrieval failure never changes cycle status. Do not hammer repeated failing retrieval; resume from the exact blocker when service is healthy.
 
 ## Next evidence work
 1. Recover complete 2022 Dec tail, then May/Aug/Sep/Nov signed closures; Jan–Mar require proof of fragmented settlement composition.
 2. Recover a complete independent 2023 Mastercard matrix; R$496,689.05 remains the largest single older fallback block.
-3. Search documentary sources for Visa 2017 and Visa Infinite Itaú 2024 P1 gaps without inferring from neighboring years.
+3. Recover category composition, not just settlements, for Visa 2017 and Visa Infinite Itaú 2024 P1 gaps.
 4. Continue 2025 Jan/Feb/Jul/Oct tails and keep Sep/Dec blocked until genuine reversal evidence closes.
 5. Recover 2024 Jan/Feb/Apr/Jun/Jul/Nov Mastercard category matrices; payment identity remains insufficient.
 6. Resume 2019–2021 only from independent documentary category evidence; fragmented ledger patterns must never be collapsed by inference.
