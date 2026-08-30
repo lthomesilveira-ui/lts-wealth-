@@ -16,7 +16,7 @@ on:
       - 'wip35-v142-ux.js'
       - 'wip35-v142-planning-bridge-v2.js'
       - 'wip35-v142-dashboard-cockpit.js'
-      - 'wip35-v142-liquidity-ui.js'
+      - 'wip35-v142-liquidity-ui-v2.js'
       - '.github/scripts/lts_candidate_smoke.py'
       - '.github/scripts/lts_candidate_browser_smoke.js'
       - '.github/workflows/candidate-smoke.yml'
@@ -63,13 +63,13 @@ jobs:
           PY
       - name: Validate reviewed liquidity UI layer
         run: |
-          node --check wip35-v142-liquidity-ui.js
+          node --check wip35-v142-liquidity-ui-v2.js
           python - <<'PY'
           from pathlib import Path
           html=Path('wip35-v142-candidate.html').read_text(encoding='utf-8')
-          js=Path('wip35-v142-liquidity-ui.js').read_text(encoding='utf-8')
-          required_html=['wip35-v142-liquidity-ui.js?v142-liquidity-ui-v1']
-          required_js=['LTS_V142_LIQUIDITY_UI','reviewed-preview-confirm-v1','lts_browser_liquidity_movement_options_v1','lts_browser_preview_liquidity_movement_v1','lts_browser_apply_liquidity_movement_v1','Resgate e aplicação movem valor entre banco e ativo. Não são renda nem gasto.','Nada é gravado enquanto você estiver nesta etapa.','Este clique é a aprovação explícita que autoriza a gravação.','Fluxo, Planejamento, Dashboard, Patrimônio e cache futuro foram atualizados']
+          js=Path('wip35-v142-liquidity-ui-v2.js').read_text(encoding='utf-8')
+          required_html=['wip35-v142-liquidity-ui-v2.js?v142-liquidity-ui-v2']
+          required_js=['LTS_V142_LIQUIDITY_UI','reviewed-preview-confirm-v2','__LTS_V142_PARSE_AMOUNT_SELFTEST','fiveMil','decimalPtBr','lts_browser_liquidity_movement_options_v1','lts_browser_preview_liquidity_movement_v1','lts_browser_apply_liquidity_movement_v1','Resgate e aplicação movem valor entre banco e ativo. Não são renda nem gasto.','Nada é gravado enquanto você estiver nesta etapa.','Este clique é a aprovação explícita que autoriza a gravação.','Fluxo, Planejamento, Dashboard, Patrimônio e cache futuro foram atualizados']
           forbidden=['insert into','delete from','update public.','.upsert(']
           missing=[x for x in required_html if x not in html]+[x for x in required_js if x not in js]
           leaked=[x for x in forbidden if x.lower() in js.lower()]
