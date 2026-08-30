@@ -5,6 +5,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 CANDIDATE = ROOT / "wip35-v142-candidate.html"
+CANDIDATE_JS = ROOT / "wip35-v142-ux.js"
 PARENT = ROOT / "wip35-v141-candidate.html"
 GRANDPARENT = ROOT / "wip35-v140-candidate.html"
 GREATGRANDPARENT = ROOT / "wip35-v139-candidate.html"
@@ -12,14 +13,23 @@ PUBLIC_FALLBACK = ROOT / "index.html"
 PUBLIC_FALLBACK_BLOB_SHA = "a130eafe5f7ee5b7f60a95b5ff988669d0c401d9"
 RESULT = ROOT / "candidate-smoke-result.txt"
 
-V142_REQUIRED = {
+V142_HTML_REQUIRED = {
     "candidate_stamp": "CANDIDATA v142",
     "parent_candidate": "wip35-v141-candidate.html",
-    "ux_stamp": "LTS_CANDIDATE_UX='v142-quick-planning-wealth-density-recovery'",
+    "external_ux_layer": "wip35-v142-ux.js?v142-ux-v2",
+    "internal_validation_copy": "validação interna",
+}
+
+V142_JS_REQUIRED = {
+    "ux_stamp": "LTS_CANDIDATE_UX='v142-quick-planning-wealth-density-recovery-v2'",
+    "version_guard": "Object.defineProperty(w,'__LTS_TOP_CANDIDATE_VERSION'",
     "quick_input": "Lançamento rápido",
     "quick_interpreter": "u142QuickInterpret",
-    "planning_override": "w.planejamento=function()",
-    "wealth_override": "w.patrimonio=function()",
+    "liquidity_guard": "nunca será tratado como renda ou gasto",
+    "planning_renderer": "u142PlanningAuditRenderer",
+    "planning_audit_copy": "ponte Excel → motor em auditoria",
+    "wealth_renderer": "u142WealthExecutiveRenderer",
+    "wealth_v2_rpc": "lts_browser_wealth_executive_v2",
     "updates_compaction": ".u132-classrow{display:grid!important",
     "v142_css": "wip35-v142-ux-css",
 }
@@ -77,35 +87,39 @@ def git_blob_sha(path: Path) -> str:
     return "" if run.returncode else run.stdout.strip()
 
 
-def check_inline_scripts(path: Path, lines: list[str], failures: list[str], prefix: str) -> str:
+def node_check(text: str, label: str, lines: list[str], failures: list[str]):
+    js = Path(f"/tmp/lts-{label}.js")
+    js.write_text(text, encoding="utf-8")
+    run = subprocess.run(["node", "--check", str(js)], capture_output=True, text=True)
+    lines.append(f"{label}_node_check={run.returncode}")
+    if run.returncode:
+        failures.append(f"{label}_node_check")
+        if run.stderr:
+            lines.append("node_error=" + run.stderr.strip().replace("\n", " | "))
+
+
+def check_inline_scripts(path: Path, lines: list[str], failures: list[str], prefix: str, require_inline: bool = True) -> str:
     html = path.read_text(encoding="utf-8")
     lines.append(f"{prefix}_bytes={len(html.encode('utf-8'))}")
     scripts = re.findall(r"<script(?:\s[^>]*)?>(.*?)</script>", html, re.I | re.S)
     lines.append(f"{prefix}_inline_scripts={len(scripts)}")
-    if not scripts:
+    if require_inline and not scripts:
         failures.append(f"{prefix}_inline_scripts")
     for i, script in enumerate(scripts):
-        js = Path(f"/tmp/lts-{prefix}-script-{i}.js")
-        js.write_text(script, encoding="utf-8")
-        run = subprocess.run(["node", "--check", str(js)], capture_output=True, text=True)
-        lines.append(f"{prefix}_node_check_{i}={run.returncode}")
-        if run.returncode:
-            failures.append(f"{prefix}_node_check_{i}")
-            if run.stderr:
-                lines.append("node_error=" + run.stderr.strip().replace("\n", " | "))
+        node_check(script, f"{prefix}_script_{i}", lines, failures)
     return html
 
 
-def require_markers(html: str, markers: dict, lines: list[str], failures: list[str], prefix: str):
+def require_markers(text: str, markers: dict, lines: list[str], failures: list[str], prefix: str):
     for name, marker in markers.items():
-        ok = marker in html
+        ok = marker in text
         lines.append(f"required_{prefix}_{name}={'ok' if ok else 'missing'}")
         if not ok:
             failures.append(f"{prefix}_{name}")
 
 
 def main() -> int:
-    lines = ["candidate=wip35-v142-candidate.html"]
+    lines = ["candidate=wip35-v142-candidate.html", "candidate_js=wip35-v142-ux.js"]
     failures = []
 
     if not PUBLIC_FALLBACK.exists():
@@ -120,8 +134,25 @@ def main() -> int:
             failures.append("public_fallback_v136")
 
     htmls=[]
+    if not CANDIDATE.exists():
+        failures.append("v142_missing")
+        v142_html=''
+    else:
+        v142_html=check_inline_scripts(CANDIDATE,lines,failures,'v142',require_inline=False)
+        require_markers(v142_html,V142_HTML_REQUIRED,lines,failures,'v142_html')
+    htmls.append(v142_html)
+
+    if not CANDIDATE_JS.exists():
+        failures.append("v142_js_missing")
+        v142_js=''
+    else:
+        v142_js=CANDIDATE_JS.read_text(encoding='utf-8')
+        lines.append(f"v142_js_bytes={len(v142_js.encode('utf-8'))}")
+        node_check(v142_js,'v142_external_js',lines,failures)
+        require_markers(v142_js,V142_JS_REQUIRED,lines,failures,'v142_js')
+    htmls.append(v142_js)
+
     for path,prefix,markers in [
-        (CANDIDATE,'v142',V142_REQUIRED),
         (PARENT,'v141',V141_REQUIRED),
         (GRANDPARENT,'v140',V140_REQUIRED),
         (GREATGRANDPARENT,'v139',V139_REQUIRED),
