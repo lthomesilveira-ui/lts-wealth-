@@ -27,17 +27,7 @@ html,body{margin:0;width:100%;height:100%;background:#f5f6f8}#shell{border:0;wid
   function exposeLexical(w,name,mutable){
     const current=Object.getOwnPropertyDescriptor(w,name);
     if(current&&!current.configurable)return false;
-    Object.defineProperty(w,name,{
-      configurable:true,
-      enumerable:false,
-      get(){try{return w.eval(name)}catch(e){return undefined}},
-      set(v){
-        if(!mutable)return;
-        w.__lts_v140_set=v;
-        try{w.eval(name+'=window.__lts_v140_set')}catch(e){}
-        try{delete w.__lts_v140_set}catch(e){}
-      }
-    });
+    Object.defineProperty(w,name,{configurable:true,enumerable:false,get(){try{return w.eval(name)}catch(e){return undefined}},set(v){if(!mutable)return;w.__lts_v140_set=v;try{w.eval(name+'=window.__lts_v140_set')}catch(e){}try{delete w.__lts_v140_set}catch(e){}}});
     return true;
   }
   function install(){
@@ -49,33 +39,23 @@ html,body{margin:0;width:100%;height:100%;background:#f5f6f8}#shell{border:0;wid
       w.__LTS_LEXICAL_BRIDGE='v140';
       bridgedWindow=w;
     }
-    let ready=false;
-    try{ready=!!w.D}catch(e){}
+    try{
+      if(w.S&&typeof w.S.rpc==='function'&&!w.S.__lts_v140_flow_v4_bridge){
+        const originalRpc=w.S.rpc.bind(w.S);
+        w.S.rpc=function(name,args){const n=String(name||'');if((n==='lts_browser_flow_v1'||n==='lts_browser_flow_v2'||n==='lts_browser_flow_v3')&&args&&args.p_from&&args.p_to)return originalRpc('lts_browser_flow_v4',args);return originalRpc(name,args)};
+        w.S.__lts_v140_flow_v4_bridge=true;
+      }
+    }catch(e){}
+    let ready=false;try{ready=!!w.D}catch(e){}
     if(ready){
-      try{
-        const label=d&&d.querySelector('.brand small');
-        if(label)label.textContent='WIP35-v140 · candidata para homologação';
-      }catch(e){}
+      try{const label=d&&d.querySelector('.brand small');if(label)label.textContent='WIP35-v140 · candidata para homologação'}catch(e){}
       try{w.LTS_CANDIDATE='wip35-v140-lexical-bridge-auth-boot'}catch(e){}
-      try{
-        const app=d&&d.getElementById('app');
-        const txt=String(app&&app.innerText||'');
-        if(/Carregando seu LTS/i.test(txt)){
-          if(typeof w.renderNav==='function')w.renderNav();
-          if(typeof w.render==='function')w.render();
-        }
-      }catch(e){console.error('v140 recovery render failed',e)}
+      try{const app=d&&d.getElementById('app'),txt=String(app&&app.innerText||'');if(/Carregando seu LTS/i.test(txt)){if(typeof w.renderNav==='function')w.renderNav();if(typeof w.render==='function')w.render()}}catch(e){console.error('v140 recovery render failed',e)}
     }
   }
-  function wire(){
-    try{
-      const d139=shell.contentDocument,f138=d139&&d139.getElementById('shell');
-      if(f138){f138.addEventListener('load',()=>setTimeout(install,40));const d138=f138.contentDocument,f137=d138&&d138.getElementById('shell');if(f137){f137.addEventListener('load',()=>setTimeout(install,40));const d137=f137.contentDocument,app=d137&&d137.getElementById('app');if(app)app.addEventListener('load',()=>setTimeout(install,20));}}
-    }catch(e){}
-    setTimeout(install,40);
-  }
+  function wire(){try{const d139=shell.contentDocument,f138=d139&&d139.getElementById('shell');if(f138){f138.addEventListener('load',()=>setTimeout(install,40));const d138=f138.contentDocument,f137=d138&&d138.getElementById('shell');if(f137){f137.addEventListener('load',()=>setTimeout(install,40));const d137=f137.contentDocument,app=d137&&d137.getElementById('app');if(app)app.addEventListener('load',()=>setTimeout(install,20));}}}catch(e){}setTimeout(install,40)}
   shell.addEventListener('load',()=>setTimeout(wire,20));
-  setInterval(install,180);
+  setInterval(install,120);
 })();
 </script>
 </body>
