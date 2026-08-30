@@ -28,9 +28,10 @@ Purpose: minimum evidence-backed package before asking the user to inspect a can
 - Candidate UI extension QA 6/6; shared-Flow exact parity 6/6; backup snapshot 13/13; CIPÓ documentary coverage 6/6.
 - Dynamic card-history coverage QA v2: **8/8 PASS**.
 - Historical validation registry QA v4: **16/16 PASS**, **68 open Mastercard cycles 2019–2025** tracked internally.
+- Global historical fallback inventory QA v1: **5/5 PASS**; 31 instrument×year blocks, 314 fallback rows / R$2,650,846.36; 24 aggregate-only documentary gaps remain explicit.
 - Effective-history QA v2: **PASS — 2,030 days / 147 months exact**.
 - FIX86 legacy/transversal guardrails QA v4: **10/10 PASS**.
-- Extended heavy pre-homologation gate **v7 = 235/235 PASS across 16 suites**.
+- Extended heavy pre-homologation gate **v8 = 240/240 PASS across 17 suites**.
 
 ## Performance / refresh
 - Despesas cache read ~0.1s; Flow cached 33d ~10ms; classification queue within guard.
@@ -61,6 +62,7 @@ Purpose: minimum evidence-backed package before asking the user to inspect a can
 - 3 open cycles; 153 historical monthly points.
 - Certified historical allocation: **38 cycles / 650 rows / R$885,855.19**.
 - Aggregate fallback: **314 rows / R$2,650,846.36**.
+- Global inventory: **31 instrument×year fallback blocks**; 7 registry-tracked, 24 aggregate-only. Two non-Mastercard P1 blocks are explicit: Visa 2017 R$126,681.76 and Visa Infinite Itaú 2024 R$112,253.01. Priority is diagnostic only.
 - Visa Infinite Itaú 2025 = 12/12 certified.
 - Mastercard 2025: Mar/Apr/May/Jun/Aug/Nov certified; Jan/Feb/Jul/Oct candidate-partial; Sep/Dec documentary-blocked.
 - Mastercard 2024: Mar/May/Aug/Sep/Oct/Dec certified; Jan/Feb/Apr/Jun/Jul/Nov settlement proven but composition missing.
@@ -104,7 +106,7 @@ Purpose: minimum evidence-backed package before asking the user to inspect a can
 4. Visible v141 ownership/current extension + Flow UX marker — GREEN.
 5. Pages same verified candidate head — GREEN.
 6. Readiness/core/ACL/current financial gates — GREEN.
-7. Historical/FIX86 contracts — GREEN; heavy v7 235/235.
+7. Historical/FIX86/global fallback contracts — GREEN; heavy v8 240/240.
 8. Material v141 UX package — IMPLEMENTED; user approval pending.
 9. Historical/classification/CIPÓ unresolved items explicit/non-promoted — GREEN as guardrail.
 10. Real authenticated visual E2E — PENDING / NOT CLAIMED.
