@@ -18,7 +18,11 @@ V141_REQUIRED = {
     "future_collapse": "Cobertura futura distante",
     "healthy_collapse": "Checks já cobertos / acompanhados",
     "version_hygiene": "fallback público v136 preservado",
-    "ui_stamp": "LTS_CANDIDATE_UI='wip35-v141-updates-focus-version-hygiene'",
+    "ui_stamp": "LTS_CANDIDATE_UI='wip35-v141-updates-cipo-backup-shared-flow'",
+    "cipo_documentary_coverage": "card_documentary_coverage",
+    "cipo_non_promoting_copy": "Cobertura documental não significa conciliação concluída",
+    "backup_status_rpc": "lts_browser_backup_status_v1",
+    "backup_private_copy": "O snapshot completo fica privado no backend",
 }
 
 V140_REQUIRED = {
