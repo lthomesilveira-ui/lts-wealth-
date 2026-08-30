@@ -1,0 +1,49 @@
+{
+  "checkpoint": "wip35-v141-document-outcomes-global-history-batch17-2026-08-30",
+  "date": "2026-08-30",
+  "public_fallback": {"version":"WIP35-v136","index_blob":"a130eafe5f7ee5b7f60a95b5ff988669d0c401d9","promoted":false},
+  "candidate": {
+    "version":"WIP35-v141",
+    "verified_candidate_head":"3afecdccfc480b8719bc11fd7170671f8d30b3c1",
+    "candidate_smoke_run":33323180487,
+    "pages_run":33323179920,
+    "document_outcome_marker":"evidence-derived-v1",
+    "authenticated_visual_e2e":"pending_unclaimed"
+  },
+  "gates": {
+    "heavy_v9":"248/248 PASS across 19 suites",
+    "document_outcome_state":"4/4 PASS",
+    "document_outcome_browser_acl":"4/4 PASS",
+    "historical_registry_v4":"16/16 PASS; 68 open Mastercard cycles 2019-2025",
+    "global_historical_inventory":"5/5 PASS; 31 blocks / 314 fallback rows / R$2650846.36",
+    "fix86_guardrails_v4":"10/10 PASS"
+  },
+  "historical": {
+    "expense_total":8623752.53,
+    "certified_cycles":38,
+    "certified_rows":650,
+    "certified_amount":885855.19,
+    "fallback_rows":314,
+    "fallback_amount":2650846.36,
+    "visa_2017_p1":126681.76,
+    "visa_infinite_itau_2024_p1":112253.01,
+    "documentary_recheck":"Visa 2017 and Visa Infinite Itau 2024 settlement series confirmed; no complete category matrix. Dec/2022 Cartao Itau rows re-found but complete signed tail still truncated."
+  },
+  "open_dependencies": [
+    "authenticated visual homologation of v141",
+    "Mastercard 2022 remaining Jan-Mar fragmented and May/Aug/Sep/Nov/Dec incomplete documentary composition",
+    "Mastercard 2023 independent category matrix",
+    "Mastercard 2024 six settlement-proven/composition-missing months",
+    "Mastercard 2025 Jan/Feb/Jul/Oct partial and Sep/Dec blocked",
+    "Visa 2017 category composition",
+    "Visa Infinite Itau 2024 category composition",
+    "C6 Aug/2024 individual-detail gap R$66.70",
+    "CIPO Consorcio Itau R$303.60 unresolved",
+    "CIPO Condominio formula/cut unresolved",
+    "TR-dependent post-2029 CIPO tail",
+    "human classification gaps without safe evidence",
+    "Volvo trim/km evidence",
+    "Open Finance provider/consent/spend decision"
+  ],
+  "guardrail":"No historical cash rewrite, inferred category, invented merchant/purchase, fabricated TR amount or financial assumption was introduced. Document outcomes are presentation-only evidence states."
+}
