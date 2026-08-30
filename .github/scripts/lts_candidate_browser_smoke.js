@@ -48,7 +48,6 @@ async function runCandidate(browser,viewport,label,baselineErrors){
       hasPlanningOverride:typeof window.planejamento==='function'&&String(window.planejamento).includes('u142PlanningAuditRenderer'),
       planningAuditSafe:typeof window.planejamento==='function'&&String(window.planejamento).includes('não tratado como falta real'),
       hasWealthOverride:typeof window.patrimonio==='function'&&String(window.patrimonio).includes('u142WealthExecutiveRenderer'),
-      wealthReadModel:typeof window.patrimonio==='function'&&String(window.patrimonio).includes('lts_browser_wealth_executive_v2'),
       css137:!!document.getElementById('wip35-v137-candidate-css'),
       css138:!!document.getElementById('wip35-v138-cockpit-css'),
       css139:!!document.getElementById('wip35-v139-updates-css')||!!document.getElementById('wip35-v139-evidence-css'),
@@ -59,7 +58,7 @@ async function runCandidate(browser,viewport,label,baselineErrors){
       rootScrollWidth:document.documentElement.scrollWidth,
       appText:String(document.getElementById('app')?.innerText||'').slice(0,240)
     }
-  }).catch(()=>({bridge:null,topCandidateVersion:null,versionGetter:false,versionConfigurable:false,lexicalSVisible:false,flowV4Bridge:false,lexicalDIsNull:false,uiStamp:null,candidateUx:null,flowUx:null,documentOutcomes:null,brandLabel:'',hasMaintOverride:false,hasQuickInterpret:false,hasPlanningOverride:false,planningAuditSafe:false,hasWealthOverride:false,wealthReadModel:false,css137:false,css138:false,css139:false,css141:false,css142:false,viewportWidth:0,bodyScrollWidth:0,rootScrollWidth:0,appText:''}));
+  }).catch(()=>({bridge:null,topCandidateVersion:null,versionGetter:false,versionConfigurable:false,lexicalSVisible:false,flowV4Bridge:false,lexicalDIsNull:false,uiStamp:null,candidateUx:null,flowUx:null,documentOutcomes:null,brandLabel:'',hasMaintOverride:false,hasQuickInterpret:false,hasPlanningOverride:false,planningAuditSafe:false,hasWealthOverride:false,css137:false,css138:false,css139:false,css141:false,css142:false,viewportWidth:0,bodyScrollWidth:0,rootScrollWidth:0,appText:''}));
 
   const bridgeOk=innerState.bridge==='v140'&&innerState.lexicalSVisible===true&&innerState.flowV4Bridge===true&&innerState.lexicalDIsNull===true;
   const visibleVersionOk=innerState.topCandidateVersion==='v142'&&innerState.versionGetter===true&&/v142/i.test(innerState.brandLabel)&&!/v141/i.test(innerState.brandLabel);
@@ -67,13 +66,13 @@ async function runCandidate(browser,viewport,label,baselineErrors){
   const v142StampOk=innerState.candidateUx==='v142-quick-planning-wealth-density-recovery-v2';
   const flowUxOk=innerState.flowUx==='balance-emphasis-no-duplicate-today';
   const documentOutcomeOk=innerState.documentOutcomes==='evidence-derived-v1';
-  const injectionsOk=!!innerState.css137&&!!innerState.css138&&!!innerState.css139&&!!innerState.css141&&!!innerState.css142&&innerState.hasMaintOverride&&innerState.hasQuickInterpret&&innerState.hasPlanningOverride&&innerState.planningAuditSafe&&innerState.hasWealthOverride&&innerState.wealthReadModel&&inheritedStampOk&&v142StampOk&&documentOutcomeOk;
+  const injectionsOk=!!innerState.css137&&!!innerState.css138&&!!innerState.css139&&!!innerState.css141&&!!innerState.css142&&innerState.hasMaintOverride&&innerState.hasQuickInterpret&&innerState.hasPlanningOverride&&innerState.planningAuditSafe&&innerState.hasWealthOverride&&inheritedStampOk&&v142StampOk&&documentOutcomeOk;
   const noSyntheticReady=!String(innerState.appText||'').includes('candidate synthetic readiness');
   const newErrors=candidateErrors.filter(e=>!inherited.has(e));
   const rootOverflow=Math.max(innerState.bodyScrollWidth||0,innerState.rootScrollWidth||0)-(innerState.viewportWidth||0);
   const rootWidthOk=rootOverflow<=2;
   const pass=chainOk&&bridgeOk&&visibleVersionOk&&inheritedStampOk&&v142StampOk&&flowUxOk&&documentOutcomeOk&&bootNewErrors.length===0&&injectionsOk&&newErrors.length===0&&rootWidthOk&&noSyntheticReady;
-  const result={label,viewport,pass,chain,chainOk,bridgeOk,visibleVersionOk,inheritedStampOk,v142StampOk,flowUxOk,documentOutcomeOk,injectionsOk,innerState,rootWidthOk,rootOverflow,baselineErrors,candidateErrors,bootNewErrors,newErrors,readinessMode:'real lexical bridge + early Flow v4 + stable v142 ownership getter + inherited v141 document/Flow markers + v142 natural-input/planning-audit/wealth-v2/density markers; no synthetic D/S/render payload; non-authenticated smoke, not authenticated E2E'};
+  const result={label,viewport,pass,chain,chainOk,bridgeOk,visibleVersionOk,inheritedStampOk,v142StampOk,flowUxOk,documentOutcomeOk,injectionsOk,innerState,rootWidthOk,rootOverflow,baselineErrors,candidateErrors,bootNewErrors,newErrors,readinessMode:'real lexical bridge + early Flow v4 + stable v142 ownership getter + inherited v141 document/Flow markers + v142 natural-input/planning-audit/wealth-renderer/density markers; wealth-v2 RPC ACL/canonical-read-model is checked by SQL gate v13; no synthetic D/S/render payload; non-authenticated smoke, not authenticated E2E'};
   await page.close();return result;
 }
 
@@ -84,7 +83,7 @@ async function runCandidate(browser,viewport,label,baselineErrors){
   await baseline.close();
   const desktop=await runCandidate(browser,{width:1440,height:1000},'desktop',baselineErrors);
   const mobile=await runCandidate(browser,{width:390,height:844},'mobile-390x844',baselineErrors);
-  const result={pass:desktop.pass&&mobile.pass,baselineErrors,desktop,mobile,importantLimit:'Non-authenticated browser composition/runtime smoke only. Wealth v2 RPC auth behavior is gated separately; this is not authenticated visual E2E or user homologation.'};
+  const result={pass:desktop.pass&&mobile.pass,baselineErrors,desktop,mobile,importantLimit:'Non-authenticated browser composition/runtime smoke only. Wealth v2 RPC auth/ACL/canonical read-model is gated separately by lts_browser_wealth_v2_contract_qa_v1 / homologation gate v13; this is not authenticated visual E2E or user homologation.'};
   fs.writeFileSync('candidate-browser-smoke-result.json',JSON.stringify(result,null,2));
   console.log(JSON.stringify(result,null,2));
   await browser.close();if(!result.pass)process.exit(1)
