@@ -9,10 +9,12 @@ Canonical persistent project list. Completed evidence remains under `backups/`, 
 - [x] Recovered the earlier executive Planning information architecture from project artifacts: fast liquidity story, current vs future-resource coverage, `ponto de gestão` vs `falta real`, RSUs that change cash, account-level need and few prioritized actions. This is the UX reference; implementation/QA language must not dominate the page.
 - [x] **P0 Planning Excel→current bridge audit** closed for the Jan/2027 discrepancy. Current first management point is 08/01/2027; FGTS request-by 09/12/2026; conservative projected FGTS existing on that request date R$32,309.05; worst before contingency R$-21,046.80; worst after planned D+30 contingency R$+11,262.25; no uncovered gap through 28/02/2027. The conclusion is liquidity management, not proven lack of resources. Permanent bridge QA 19/19 PASS.
 - [x] Restored one obvious **natural-language launch surface** for everyday financial input. Expense/income routes to existing reviewed approval. Resgate/aplicação now uses a dedicated reviewed bank↔asset liquidity path, explicit preview/approval, zero economic effect and no income/expense classification.
-- [~] **Atualizações** action-first recovery: Round 2 compacted the page and Round 3 adds a top `Resolver agora` checklist with direct shortcuts for maintenance, classification and documents needing decision. Final Round 3 browser smoke/integration is still open.
+- [x] **Atualizações** action-first recovery completed for v142: compact page, top `Resolver agora` checklist and direct shortcuts for maintenance, classification and documents needing decision. Round 3 branch smoke and integrated main smoke are green desktop/mobile.
 - [x] **Patrimônio** executive-first implementation exists: net worth, known debt, current liquidity, restricted/future resources, CIPÓ/Volvo equity and expandable evidence. Financial semantics were not changed; visual user approval remains pending.
-- [x] `wip35-v142-candidate.html` is now the coherent material successor candidate. Round 2 was merged to main at `4eded532ad90a11ed73119edf997ee58246f2f46`; candidate-smoke `33342589464` and same-SHA Pages `33342589186` succeeded. `homologacao-current.json` intentionally remains on v141 until Round 3/checkpoint closes.
-- [ ] Do not ask the user to test again until Round 3 is green, docs/checkpoint are synchronized and the fixed homologation manifest is deliberately moved to v142. Basic QA remains our responsibility.
+- [x] `wip35-v142-candidate.html` is the coherent material successor candidate. Final Round 3 runtime was merged to main at `204d5a019f7334ae6361c747552da15659919487`; integrated candidate-smoke `33342968051` and Pages `33342967458` succeeded.
+- [x] Final recovery checkpoint created at `backups/WIP35_V142_FINAL_RECOVERY_CHECKPOINT_2026-08-30.md`, commit `c8025b97b99cb5e0011f31be78647e0cf450a851`.
+- [x] Fixed homologation manifest switched to v142 at `5c3cf9ea01878baed00d827bde671382dd275605`; candidate-smoke `33343053019` and Pages `33343052602` succeeded, including fixed-target validation, desktop/mobile composition, zero new errors and zero overflow.
+- [ ] Next P0 gate is the user's **material visual homologation** through the fixed `/homologacao.html` URL. Do not confuse this with basic QA; the internal package is already green.
 
 ## 0. Release / homologation
 - [x] Public `index.html` remains WIP35-v136 fallback; exact blob `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9` guarded. v136 is not user-approved; effective prior visual baseline v135.
@@ -20,28 +22,31 @@ Canonical persistent project list. Completed evidence remains under `backups/`, 
 - [x] v140 added lexical bridge and early Flow-v4 routing; user confirmed real mobile boot.
 - [x] v141 version-ownership race fixed; document-outcome package at `3afecdccfc480b8719bc11fd7170671f8d30b3c1` had candidate-smoke run `33323180487` SUCCESS and same-head Pages run `33323179920` SUCCESS.
 - [x] Fixed homologation entrypoint is `homologacao.html`; it loads `homologacao-current.json` with `no-store` + timestamp cache busting and redirects to the currently validated candidate. The user keeps one URL across future candidate versions.
-- [x] Homologation-entrypoint gate head `ff3107947cdf8dc34ea214f8f95fbf6f29818000`: fixed-entrypoint validation, parser and Chromium desktop/mobile were established before v142 work. Manifest remained v141 throughout recovery.
-- [x] v142 smoke now validates full v142→v141→v140→v139→v138→v137→index chain, stable v142 ownership, Planning, Dashboard, Patrimônio inheritance, liquidity UI/parser and desktop/mobile overflow.
-- [x] Round 2 integrated main `4eded532ad90a11ed73119edf997ee58246f2f46`: candidate-smoke `33342589464` SUCCESS; Pages/build/deploy `33342589186` SUCCESS; public fallback and homologation manifest unchanged.
-- [~] Round 3 `v142-round3-final-polish`: action hierarchy/density layer is implemented and final branch smoke is running from code head `21a797e47484c4caaafcd7e9a56c75d4ae5cdd5c`.
+- [x] Homologation-entrypoint gate head `ff3107947cdf8dc34ea214f8f95fbf6f29818000`: fixed-entrypoint validation, parser and Chromium desktop/mobile were established before v142 work.
+- [x] v142 smoke validates full v142→v141→v140→v139→v138→v137→index chain, stable v142 ownership, Planning, Dashboard, Patrimônio inheritance, liquidity UI/parser, final action-first polish and desktop/mobile overflow.
+- [x] Round 2 integrated main `4eded532ad90a11ed73119edf997ee58246f2f46`: candidate-smoke `33342589464` SUCCESS; Pages/build/deploy `33342589186` SUCCESS.
+- [x] Round 3 final action hierarchy/density passed branch smoke `33342878089` after deterministic Planning ownership stabilization; merged to main at `204d5a019f7334ae6361c747552da15659919487`.
+- [x] Post-Round3 integrated main: candidate-smoke `33342968051` SUCCESS; Pages/build/report/deploy `33342967458` SUCCESS.
+- [x] Fixed homologation manifest now exposes v142; exposure commit `5c3cf9ea01878baed00d827bde671382dd275605`; candidate-smoke `33343053019` SUCCESS and Pages `33343052602` SUCCESS. Fixed entrypoint explicitly validated target `wip35-v142-candidate.html`.
 - [x] Public fallback unchanged; no promotion occurred.
 - [ ] Real authenticated visual E2E remains pending/unclaimed.
-- [ ] Promotion to `index.html` only after user homologation.
-- [ ] Do not ask user for basic QA; next request must be material visual homologation of the internally green fixed-link candidate or a genuine user decision.
+- [ ] User visual homologation of v142 via the fixed link.
+- [ ] Promotion to `index.html` only after explicit user homologation/approval.
 
 ## 1. Executive UX / candidate
 - [x] Despesas and Fluxo timeout paths replaced by exact-parity cache-backed reads.
-- [x] Fluxo v141 removes duplicate internal `Hoje` button while retaining the period chip, and restores subtle balance-cell emphasis on mobile/desktop; parser + Chromium + Pages green.
+- [x] Fluxo v141 removes duplicate internal `Hoje` button while retaining the period chip, and restores subtle balance-cell emphasis on mobile/desktop; parser + Chromium + Pages green and inherited by v142.
 - [x] Atualizações has evidence-derived document outcomes: Alterou / Sem alteração / Precisa decisão / Processando / Erro, separate from `O que mudou`.
 - [x] Configurações shows metadata-only backup status.
 - [x] Planning executive renderer restored around audited management-point semantics; primary UX no longer presents Jan/2027 as proven patrimonial insufficiency.
+- [x] Planning renderer ownership stabilized in Round 3 so lower inherited layers cannot reclaim the page after v142 installation.
 - [x] Patrimônio executive summary implemented; CIPÓ/Volvo/evidence guardrails stay behind a clear first layer.
-- [~] Atualizações final action hierarchy: Round 3 top checklist/shortcuts and tighter density implemented; final smoke/integration pending.
-- [~] Despesas: preserve current direction and refine density/insights/drilldown after the rejected surfaces are stabilized; do not regress.
+- [x] Atualizações final action hierarchy: top checklist/shortcuts and tighter density green desktop/mobile.
+- [~] Despesas: preserve current direction and refine density/insights/drilldown after visual homologation feedback; do not regress.
 - [~] Classification triage backend is ready/gated; UI may use it only to order review, never to invent a category suggestion.
 - [~] Document association backend is ready/gated; guided upload still needs explicit bank/card/competence fields without filename inference.
 - [~] Visual approval of Dashboard, Fluxo, Despesas, Cartões, Planejamento, Atualizações, Patrimônio and Configurações pending.
-- [~] Continue checking mobile overflow, empty states and action hierarchy.
+- [~] Continue checking mobile overflow, empty states and action hierarchy after real user feedback.
 
 ## 2. Atualizações / inputs / documents
 - [x] Checklist-first maintenance, upload, bank/card/financing/salary/IPVA checks and manual invoice update exist in the underlying product history.
@@ -72,13 +77,13 @@ Canonical persistent project list. Completed evidence remains under `backups/`, 
 - [~] Reduce unclassified/unassigned only with evidence.
 
 ## 4. Fluxo Diário / FIX86
-- [x] Flow v12 remains the underlying canonical economic engine; Flow v13 adds the effective bank↔asset liquidity overlay for reviewed resgate/aplicação without changing spend economics. Browser read/refresh paths now consume the effective v13 composition where liquidity movements matter.
+- [x] Flow v12 remains the underlying canonical economic engine; Flow v13 adds the effective bank↔asset liquidity overlay for reviewed resgate/aplicação without changing spend economics. Browser read/refresh paths consume the effective v13 composition where liquidity movements matter.
 - [x] Historical effective parity v2: 2,030 days / 147 months and annual comparisons exact through 2025; timeline 57/57; zero technical leak/overlap.
 - [x] FIX86 transversal QA v4 = 10/10 PASS: frozen baseline, stale-anchor exclusion, Inbox isolation, nonrecursive estimates, read-only scenarios, append-only mutations, core no-double-count and CIPÓ parity.
 - [x] Flow edit/cancel/split never destructively updates source facts.
 - [x] Liquidity movement transactional QA proves bank -R$100 / D0 asset +R$100 / economic effect R$0 and parity across effective Flow, Planning, Dashboard, Patrimônio and future cache, then rolls everything back.
 - [x] v141 mobile/desktop saldo emphasis and single `Hoje` control technically green on candidate smoke + Pages and inherited by v142.
-- [x] Planning bridge now proves the Jan/2027 negative is covered by already-modeled FGTS D+30 if requested on time; internally consistent Flow is no longer the only evidence used for that conclusion.
+- [x] Planning bridge proves the Jan/2027 negative is covered by already-modeled FGTS D+30 if requested on time; internally consistent Flow is no longer the only evidence used for that conclusion.
 - [ ] Final authenticated visual E2E.
 
 ## 5. Planejamento
@@ -88,7 +93,8 @@ Canonical persistent project list. Completed evidence remains under `backups/`, 
 - [x] P0 audit `PLANNING_EXCEL_TO_CURRENT_AUDIT_2026-08-30.md` recovered and reconciled the material RSU/FGTS bridge evidence needed to classify Jan/2027 correctly. Historical unknowns stay explicit; no missing Excel formula output was invented.
 - [x] Negative-point UX distinguishes account redistribution / liquidity management / real insufficiency; Jan/2027 is currently liquidity management covered by planned FGTS D+30, not “sem recursos”.
 - [x] Executive, fast-reading layout restored from recovered Claude-era reference; implementation/QA jargon is secondary.
-- [~] Visual homologation pending after Round 3/checkpoint and manifest switch.
+- [x] Technical candidate package, checkpoint and fixed-manifest switch completed.
+- [~] Material visual homologation via fixed link is now the next gate.
 - [ ] New assumption/scenario changing money requires explicit user decision.
 
 ## 6. Cartões / historical validation
@@ -132,7 +138,7 @@ Canonical persistent project list. Completed evidence remains under `backups/`, 
 - [x] Matcher ~2.65s → ~0.314s over 5,224 rows with zero output difference.
 - [x] 48 groups / 53 lines / 62 options; safe suggestions 0; 26 effective August lines remain human-review gaps.
 - [x] Objective classification triage backend orders review by value/share/repetition only, proposes no category, requires review for every item, is auth.uid-scoped and anon-blocked. QA **9/9 PASS**.
-- [~] Round 3 makes the review queue reachable from the top `Resolver agora` summary and keeps rows dense; triage may still order only, never propose an unsafe category.
+- [x] Round 3 makes the review queue reachable from the top `Resolver agora` summary and keeps rows dense; triage still orders only and never proposes an unsafe category.
 - [~] Real authenticated save→cache→UI click pending.
 - [~] Research vendor evidence only where appropriate; propagate only confirmed/history-safe rules.
 - [ ] Never classify from appearance/order/screenshot alone.
@@ -154,8 +160,9 @@ Canonical persistent project list. Completed evidence remains under `backups/`, 
 - [x] Delta gate v15 = **67/67 PASS across 5 suites**: liquidity writer, rollback, read path, browser ACL and Dashboard cockpit.
 - [x] Delta gate v16 = **19/19 PASS across 2 suites**: refresh-v2 contract 11/11 + transactional effective-surface refresh 8/8.
 - [x] Current staged backend evidence total = **379 checks / 31 suites PASS**.
-- [x] Round 2 candidate parser/browser smoke and Pages are green on integrated main `4eded532ad90a11ed73119edf997ee58246f2f46`.
-- [~] Round 3 action-first polish browser smoke pending final SUCCESS before integration/checkpoint.
+- [x] Round 2 candidate parser/browser smoke and Pages green on integrated main `4eded532ad90a11ed73119edf997ee58246f2f46`.
+- [x] Round 3 final action-first polish branch smoke `33342878089` SUCCESS; integrated main smoke `33342968051` SUCCESS; Pages `33342967458` SUCCESS.
+- [x] Manifest-switch smoke `33343053019` SUCCESS and Pages `33343052602` SUCCESS; fixed target is v142.
 - [ ] Authenticated visual E2E outside automated evidence.
 
 ## 11. Open Finance
@@ -170,13 +177,13 @@ Canonical persistent project list. Completed evidence remains under `backups/`, 
 - [x] Canonical export + safe restore; private daily snapshot with RLS/hash; browser cannot read payload.
 - [x] `pg_cron` job daily 06:15 UTC / 03:15 BRT; one snapshot/user/date, idempotent; metadata-only UI status.
 - [x] Public fallback/checkpoints recoverable.
-- [~] Create/synchronize the next immutable checkpoint after Round 3 code smoke, docs and integration are all green.
+- [x] Final v142 pre-exposure checkpoint created and synchronized: `backups/WIP35_V142_FINAL_RECOVERY_CHECKPOINT_2026-08-30.md`, commit `c8025b97b99cb5e0011f31be78647e0cf450a851`.
 
 ## 13. Remaining user-dependent decisions
-- [ ] Material visual homologation via the fixed `/homologacao.html` link after Round 3/checkpoint and deliberate manifest move to v142.
+- [ ] **Material visual homologation now ready** via the fixed `/homologacao.html` link; v142 is exposed there while `index.html` remains unchanged.
 - [ ] Human classification where no safe evidence emerges.
 - [ ] Any new financial assumption/scenario.
 - [ ] Open Finance provider/consent/spend.
 - [ ] Volvo refinement with trim/km evidence.
 
-Until one of these is the genuine blocker, continue autonomous technical/documentary work.
+Until one of these is the genuine blocker, continue autonomous technical/documentary work. Public promotion remains forbidden until explicit user approval.
