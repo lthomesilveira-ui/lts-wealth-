@@ -17,6 +17,7 @@ on:
       - 'wip35-v142-planning-bridge-v2.js'
       - 'wip35-v142-dashboard-cockpit.js'
       - 'wip35-v142-liquidity-ui-v2.js'
+      - 'wip35-v142-final-polish.js'
       - '.github/scripts/lts_candidate_smoke.py'
       - '.github/scripts/lts_candidate_browser_smoke.js'
       - '.github/workflows/candidate-smoke.yml'
@@ -76,6 +77,19 @@ jobs:
           assert not missing, 'liquidity markers missing: '+repr(missing)
           assert not leaked, 'direct write leaked into browser layer: '+repr(leaked)
           print('liquidity_ui_static=PASS')
+          PY
+      - name: Validate action-first final polish layer
+        run: |
+          node --check wip35-v142-final-polish.js
+          python - <<'PY'
+          from pathlib import Path
+          html=Path('wip35-v142-candidate.html').read_text(encoding='utf-8')
+          js=Path('wip35-v142-final-polish.js').read_text(encoding='utf-8')
+          required_html=['wip35-v142-final-polish.js?v142-final-polish-v1']
+          required_js=['LTS_V142_FINAL_POLISH','action-first-round3-v1','Resolver agora','Atualizações necessárias','Classificações para revisar','Documentos com decisão','wip35-v142-final-polish-css','stable-nonconfigurable-v1']
+          missing=[x for x in required_html if x not in html]+[x for x in required_js if x not in js]
+          assert not missing, 'final polish markers missing: '+repr(missing)
+          print('final_polish_static=PASS')
           PY
       - name: Install headless browser
         run: |
