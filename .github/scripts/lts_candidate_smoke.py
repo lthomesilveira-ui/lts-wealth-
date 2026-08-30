@@ -18,7 +18,7 @@ V141_REQUIRED = {
     "future_collapse": "Cobertura futura distante",
     "healthy_collapse": "Checks já cobertos / acompanhados",
     "version_hygiene": "fallback público v136 preservado",
-    "ui_stamp": "LTS_CANDIDATE_UI='wip35-v141-updates-cipo-backup-shared-flow'",
+    "ui_stamp": "LTS_CANDIDATE_UI='wip35-v141-updates-cipo-backup-shared-flow-document-outcomes'",
     "cipo_documentary_coverage": "card_documentary_coverage",
     "cipo_non_promoting_copy": "Cobertura documental não significa conciliação concluída",
     "backup_status_rpc": "lts_browser_backup_status_v1",
@@ -26,6 +26,10 @@ V141_REQUIRED = {
     "flow_ux_stamp": "LTS_V141_FLOW_UX='balance-emphasis-no-duplicate-today'",
     "flow_hide_duplicate_today": "#goToday{display:none!important}",
     "flow_balance_emphasis": ".fx87-row .fx87-balance{background:#f2f4f6!important}",
+    "document_outcome_rpc": "lts_browser_document_outcome_state_v1",
+    "document_outcome_stamp": "LTS_V141_DOCUMENT_OUTCOMES='evidence-derived-v1'",
+    "document_outcome_copy": "“Sem alteração” não cria lançamento",
+    "document_outcome_decision": "Precisa decisão",
 }
 
 V140_REQUIRED = {
