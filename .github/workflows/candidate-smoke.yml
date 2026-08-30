@@ -15,6 +15,7 @@ on:
       - 'wip35-v142-candidate.html'
       - 'wip35-v142-ux.js'
       - 'wip35-v142-planning-bridge-v2.js'
+      - 'wip35-v142-dashboard-cockpit.js'
       - '.github/scripts/lts_candidate_smoke.py'
       - '.github/scripts/lts_candidate_browser_smoke.js'
       - '.github/workflows/candidate-smoke.yml'
@@ -46,6 +47,19 @@ jobs:
           PY
       - name: Parse and validate isolated candidate
         run: python .github/scripts/lts_candidate_smoke.py
+      - name: Validate audited Dashboard cockpit layer
+        run: |
+          node --check wip35-v142-dashboard-cockpit.js
+          python - <<'PY'
+          from pathlib import Path
+          html=Path('wip35-v142-candidate.html').read_text(encoding='utf-8')
+          js=Path('wip35-v142-dashboard-cockpit.js').read_text(encoding='utf-8')
+          required_html=['wip35-v142-dashboard-cockpit.js?v142-dashboard-cockpit-v1']
+          required_js=['Sua vida financeira, em uma tela.','Disponível realizável até D+3','Ponto de gestão auditado','Plano de cobertura · FGTS D+30','lts_browser_dashboard_cockpit_v1','LTS_DASHBOARD_COCKPIT','v142-claude-cockpit-audited',"['Dashboard','Atualizações','Fluxo Diário','Despesas','Cartões','Patrimônio','Planejamento']"]
+          missing=[x for x in required_html if x not in html]+[x for x in required_js if x not in js]
+          assert not missing, 'dashboard markers missing: '+repr(missing)
+          print('dashboard_cockpit_static=PASS')
+          PY
       - name: Install headless browser
         run: |
           npm install --no-save playwright@1.55.0
