@@ -4,12 +4,25 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-CANDIDATE = ROOT / "wip35-v141-candidate.html"
-PARENT = ROOT / "wip35-v140-candidate.html"
-GRANDPARENT = ROOT / "wip35-v139-candidate.html"
+CANDIDATE = ROOT / "wip35-v142-candidate.html"
+PARENT = ROOT / "wip35-v141-candidate.html"
+GRANDPARENT = ROOT / "wip35-v140-candidate.html"
+GREATGRANDPARENT = ROOT / "wip35-v139-candidate.html"
 PUBLIC_FALLBACK = ROOT / "index.html"
 PUBLIC_FALLBACK_BLOB_SHA = "a130eafe5f7ee5b7f60a95b5ff988669d0c401d9"
 RESULT = ROOT / "candidate-smoke-result.txt"
+
+V142_REQUIRED = {
+    "candidate_stamp": "CANDIDATA v142",
+    "parent_candidate": "wip35-v141-candidate.html",
+    "ux_stamp": "LTS_CANDIDATE_UX='v142-quick-planning-wealth-density-recovery'",
+    "quick_input": "Lançamento rápido",
+    "quick_interpreter": "u142QuickInterpret",
+    "planning_override": "w.planejamento=function()",
+    "wealth_override": "w.patrimonio=function()",
+    "updates_compaction": ".u132-classrow{display:grid!important",
+    "v142_css": "wip35-v142-ux-css",
+}
 
 V141_REQUIRED = {
     "candidate_stamp": "CANDIDATA v141",
@@ -92,7 +105,7 @@ def require_markers(html: str, markers: dict, lines: list[str], failures: list[s
 
 
 def main() -> int:
-    lines = ["candidate=wip35-v141-candidate.html"]
+    lines = ["candidate=wip35-v142-candidate.html"]
     failures = []
 
     if not PUBLIC_FALLBACK.exists():
@@ -108,9 +121,10 @@ def main() -> int:
 
     htmls=[]
     for path,prefix,markers in [
-        (CANDIDATE,'v141',V141_REQUIRED),
-        (PARENT,'v140',V140_REQUIRED),
-        (GRANDPARENT,'v139',V139_REQUIRED),
+        (CANDIDATE,'v142',V142_REQUIRED),
+        (PARENT,'v141',V141_REQUIRED),
+        (GRANDPARENT,'v140',V140_REQUIRED),
+        (GREATGRANDPARENT,'v139',V139_REQUIRED),
     ]:
         if not path.exists():
             failures.append(f"{prefix}_missing")
