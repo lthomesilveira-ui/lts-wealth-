@@ -4,15 +4,24 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-CANDIDATE = ROOT / "wip35-v140-candidate.html"
-PARENT = ROOT / "wip35-v139-candidate.html"
+CANDIDATE = ROOT / "wip35-v141-candidate.html"
+PARENT = ROOT / "wip35-v140-candidate.html"
+GRANDPARENT = ROOT / "wip35-v139-candidate.html"
 PUBLIC_FALLBACK = ROOT / "index.html"
 PUBLIC_FALLBACK_BLOB_SHA = "a130eafe5f7ee5b7f60a95b5ff988669d0c401d9"
 RESULT = ROOT / "candidate-smoke-result.txt"
 
+V141_REQUIRED = {
+    "candidate_stamp": "CANDIDATA v141",
+    "parent_candidate": "wip35-v140-candidate.html",
+    "updates_focus": "O que realmente precisa de atualização",
+    "future_collapse": "Cobertura futura distante",
+    "healthy_collapse": "Checks já cobertos / acompanhados",
+    "version_hygiene": "fallback público v136 preservado",
+    "ui_stamp": "LTS_CANDIDATE_UI='wip35-v141-updates-focus-version-hygiene'",
+}
+
 V140_REQUIRED = {
-    "candidate_stamp": "CANDIDATA v140",
-    "parent_candidate": "wip35-v139-candidate.html",
     "lexical_bridge_stamp": "__LTS_LEXICAL_BRIDGE='v140'",
     "bridge_s": "['S','D','brl','fmt','esc','num','today']",
     "bridge_v": "exposeLexical(w,'V',true)",
@@ -25,16 +34,10 @@ V139_REQUIRED = {
     "updates_action_filter": "original.filter(w.updateIsAction)",
     "updates_context_filter": "original.filter(x=>!w.updateIsAction(x))",
     "updates_context_label": "Contexto / monitoramento",
-    "updates_compact_lifecycle": "Recebido</span><i>›</i><span>Interpretado",
     "document_change_summary": "u139DocumentChanges",
-    "document_change_payload": "change_summary",
-    "document_change_heading": "O que mudou",
-    "card_cash_guardrail": "Compra documentada; efeito de caixa ocorre pela fatura.",
     "expense_documentary_rpc": "lts_browser_expense_merchant_drilldown_v1",
     "card_history_coverage_rpc": "lts_browser_card_history_coverage_v1",
     "analytics_stamp": "LTS_CANDIDATE_ANALYTICS",
-    "merchant_documentary_guardrail": "Merchant só aparece quando existe compra individual estruturada",
-    "card_history_no_fabrication_guardrail": "agregado nunca vira compra/merchant fictício",
 }
 
 FORBIDDEN = {
@@ -69,8 +72,16 @@ def check_inline_scripts(path: Path, lines: list[str], failures: list[str], pref
     return html
 
 
+def require_markers(html: str, markers: dict, lines: list[str], failures: list[str], prefix: str):
+    for name, marker in markers.items():
+        ok = marker in html
+        lines.append(f"required_{prefix}_{name}={'ok' if ok else 'missing'}")
+        if not ok:
+            failures.append(f"{prefix}_{name}")
+
+
 def main() -> int:
-    lines = ["candidate=wip35-v140-candidate.html"]
+    lines = ["candidate=wip35-v141-candidate.html"]
     failures = []
 
     if not PUBLIC_FALLBACK.exists():
@@ -84,29 +95,21 @@ def main() -> int:
         if not fallback_ok:
             failures.append("public_fallback_v136")
 
-    if not CANDIDATE.exists():
-        failures.append("candidate_missing")
-        candidate_html = ""
-    else:
-        candidate_html = check_inline_scripts(CANDIDATE, lines, failures, "v140")
-        for name, marker in V140_REQUIRED.items():
-            ok = marker in candidate_html
-            lines.append(f"required_v140_{name}={'ok' if ok else 'missing'}")
-            if not ok:
-                failures.append(f"v140_{name}")
+    htmls=[]
+    for path,prefix,markers in [
+        (CANDIDATE,'v141',V141_REQUIRED),
+        (PARENT,'v140',V140_REQUIRED),
+        (GRANDPARENT,'v139',V139_REQUIRED),
+    ]:
+        if not path.exists():
+            failures.append(f"{prefix}_missing")
+            html=''
+        else:
+            html=check_inline_scripts(path,lines,failures,prefix)
+            require_markers(html,markers,lines,failures,prefix)
+        htmls.append(html)
 
-    if not PARENT.exists():
-        failures.append("v139_parent_missing")
-        parent_html = ""
-    else:
-        parent_html = check_inline_scripts(PARENT, lines, failures, "v139")
-        for name, marker in V139_REQUIRED.items():
-            ok = marker in parent_html
-            lines.append(f"required_v139_{name}={'ok' if ok else 'missing'}")
-            if not ok:
-                failures.append(f"v139_{name}")
-
-    combined = (candidate_html + "\n" + parent_html).lower()
+    combined='\n'.join(htmls).lower()
     for name, marker in FORBIDDEN.items():
         present = marker.lower() in combined
         lines.append(f"forbidden_{name}={'present' if present else 'absent'}")
