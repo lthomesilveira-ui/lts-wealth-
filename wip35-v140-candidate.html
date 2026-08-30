@@ -48,7 +48,7 @@ html,body{margin:0;width:100%;height:100%;background:#f5f6f8}#shell{border:0;wid
     }catch(e){}
     let ready=false;try{ready=!!w.D}catch(e){}
     if(ready){
-      try{const label=d&&d.querySelector('.brand small');if(label)label.textContent='WIP35-v140 · candidata para homologação'}catch(e){}
+      try{const label=d&&d.querySelector('.brand small');if(label&&w.__LTS_TOP_CANDIDATE_VERSION!=='v141')label.textContent='WIP35-v140 · candidata para homologação'}catch(e){}
       try{w.LTS_CANDIDATE='wip35-v140-lexical-bridge-auth-boot'}catch(e){}
       try{const app=d&&d.getElementById('app'),txt=String(app&&app.innerText||'');if(/Carregando seu LTS/i.test(txt)){if(typeof w.renderNav==='function')w.renderNav();if(typeof w.render==='function')w.render()}}catch(e){console.error('v140 recovery render failed',e)}
     }
