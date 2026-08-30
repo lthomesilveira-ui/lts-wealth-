@@ -23,6 +23,8 @@ Canonical persistent project list. Completed evidence remains under `backups/`, 
 - [x] Atualizações now shows evidence-derived document outcomes: Alterou / Sem alteração / Precisa decisão / Processando / Erro, separate from `O que mudou`.
 - [x] Patrimônio shows non-promoting CIPÓ documentary progress; Configurações shows metadata-only backup status.
 - [x] Fluxo v141 removes duplicate internal `Hoje` button while retaining the period chip, and restores subtle balance-cell emphasis on mobile/desktop; parser + Chromium + Pages green.
+- [~] Classification triage backend is ready/gated; integrate as review-order UX only in a coherent classification package, not as a category suggestion.
+- [~] Document association backend is ready/gated; integrate explicit bank/card/competence fields into guided upload without filename inference.
 - [~] Visual approval of Fluxo, Despesas, Cartões, Planejamento, Atualizações, Patrimônio and Configurações pending.
 - [~] Continue checking mobile overflow, empty states and action hierarchy.
 
@@ -33,8 +35,10 @@ Canonical persistent project list. Completed evidence remains under `backups/`, 
 - [x] Documented card purchase remains separated from bank cash effect before invoice reconciliation.
 - [x] Document outcome semantics QA 4/4 PASS; auth.uid-scoped browser ACL 4/4 PASS; anon blocked and internal arbitrary-user contracts private.
 - [x] v141 outcome summary makes changed/unchanged/decision-required explicit without creating financial writes; parser/Chromium/Pages green on head `3afecdcc…`.
+- [x] Explicit file association contract exists for PDF/photo/file only; card/bank association requires explicit identity + competence, financing requires explicit commitment + as-of date; filename/similarity inference is forbidden. QA 5/5 PASS.
+- [~] Guided UI still needs to collect/pass explicit bank/card/competence context so more document review becomes exception-only.
 - [~] Real authenticated resolved-item disappearance/save-refresh/self-heal/`O que mudou`/outcome path pending.
-- [~] Improve PDF/image interpretation and bank/card/competence association.
+- [~] Improve PDF/image interpretation; visual extraction remains unavailable without an external extraction service, so manual review remains the safe fallback.
 - [~] Final review should become exception-only as parser/document coverage improves.
 
 ## 3. Despesas
@@ -78,7 +82,7 @@ Canonical persistent project list. Completed evidence remains under `backups/`, 
 - [x] 2020 ledger-only total R$99,107.08 / 12 months; 10 fragmented months.
 - [x] 2021 ledger-only total R$116,458.47 / 12 months; 12 fragmented months.
 - [~] 2022 remaining: Jan–Mar fragmented; May/Aug/Sep/Nov/Dec partial documentary candidates. Dec/2022 source rows were re-found in `Cartão Itaú`, but retrieval still truncates before a complete signed tail, so it remains un-certified.
-- [~] 2023: 12 ledger-only payments / R$496,689.05; independent category matrix missing.
+- [~] 2023: 12 ledger-only payments / R$496,689.05; independent category matrix missing; latest targeted retrieval failed before content and changed no status.
 - [x] C6 Aug/2024 category total certified; individual-detail gap R$66.70 explicit.
 - [~] File Library retrieval is intermittent; retrieval failure != evidence absence and partial snippets != complete documentary composition.
 - [~] Extend documentary recovery to global fallback inventory by evidence/impact only; no pattern backfill.
@@ -90,8 +94,9 @@ Canonical persistent project list. Completed evidence remains under `backups/`, 
 - [x] Reconciliation v4: 12 exact, 32 pending, 1 divergent, 1 unresolved, 6 source-only.
 - [x] Documentary card coverage: source R$1,465,713.29; same-category R$894,312.01; capped floor R$569,196.83; 19/32 some coverage, 12/32 enough category amount but no promotion. QA 6/6.
 - [x] Móveis duplicate R$2,937.26 proven and handled without duplicate economic effect.
-- [ ] Condomínio formula/cut unresolved.
-- [ ] Consórcio Itaú R$303.60 delta unresolved.
+- [x] CIPÓ open-blocker QA 6/6 PASS: Consórcio delta R$303.60 remains explicit; arithmetic overlap does not suppress rows; Condomínio formula/cut remains unresolved; no natural raw/dedup monthly cut matches source within R$0.02; duplicate excess through Jul/2026 = R$3,531.70.
+- [ ] Condomínio formula/cut unresolved. Best tested natural raw-cut gap R$1,780.358; best date+value-dedup cut gap R$1,312.268. Do not rewrite ledger from proximity.
+- [ ] Consórcio Itaú R$303.60 delta unresolved. R$6,654.50 = R$6,502.70 + R$151.80 is overlap evidence only; dates differ and no invalid row is identified.
 - [ ] Post-2029 TR-dependent values must not be fabricated.
 - [~] Volvo provisional until trim/km evidence; net-worth history only with sufficient evidence.
 
@@ -99,6 +104,8 @@ Canonical persistent project list. Completed evidence remains under `backups/`, 
 - [x] User-confirmed rules priority; unsafe auto-classification blocked.
 - [x] Matcher ~2.65s → ~0.314s over 5,224 rows with zero output difference.
 - [x] 48 groups / 53 lines / 62 options; safe suggestions 0; 26 effective August lines remain human-review gaps.
+- [x] Objective classification triage backend orders review by value/share/repetition only, proposes no category, requires review for every item, is auth.uid-scoped and anon-blocked. QA **9/9 PASS**.
+- [~] Integrate triage into classification UX as review order only; do not turn it into category recommendation.
 - [~] Real authenticated save→cache→UI click pending.
 - [~] Research vendor evidence only where appropriate; propagate only confirmed/history-safe rules.
 - [ ] Never classify from appearance/order/screenshot alone.
@@ -113,16 +120,18 @@ Canonical persistent project list. Completed evidence remains under `backups/`, 
 - [x] Core 15/15; readiness 51/51; UI shape 17/17; UI consistency 7/7; writer-refresh 9/9; anon browser exposure 0.
 - [x] Expense v9 19/19; v10 18/18; Planning 23/23; Wealth 18/18; classification 5/5; lifecycle 17/17; documentary lens 4/4.
 - [x] Card coverage v2 8/8; historical registry v4 16/16; global historical fallback inventory 5/5; effective-history v2 PASS; FIX86 v4 10/10.
-- [x] Backup 13/13; shared-flow 6/6; CIPÓ coverage 6/6; candidate UI extension 6/6.
-- [x] Document outcome semantics 4/4 and browser ACL 4/4 PASS.
-- [x] Extended heavy gate **v9 = 248/248 PASS across 19 suites**.
-- [x] Current document-outcome candidate head `3afecdcc…`: parser/Chromium and same-head Pages SUCCESS.
+- [x] Backup 13/13; shared-flow 6/6; CIPÓ coverage 6/6; candidate UI extension 6/6; CIPÓ open blockers 6/6.
+- [x] Document outcome semantics 4/4 and browser ACL 4/4; document association 5/5; classification triage 9/9 PASS.
+- [x] Extended heavy gate **v12 = 268/268 PASS across 22 suites**.
+- [x] Current visible candidate code remains head `3afecdcc…`: parser/Chromium and same-head Pages SUCCESS; subsequent backend/docs work did not promote public fallback.
 - [ ] Authenticated visual E2E outside automated evidence.
 
 ## 11. Open Finance
 - [x] Provider-neutral private staging + lifecycle writer v2; architecture QA 14/14; no provider account/token/consent/commitment.
-- [x] Pluggy first sandbox candidate; Belvo benchmark; Klavi alternative.
-- [~] Confirm production pricing/support/SLA/product×bank coverage before provider decision.
+- [x] Pluggy remains first sandbox candidate: official current coverage explicitly supports Itaú/Bradesco/C6 Open Finance principal data products; sandbox available pre-sales; production OF connector is premium and price/SLA still needs written commercial terms.
+- [x] Belvo remains benchmark: public Launch R$6,000/month and free sandbox; OFDA aggregation explicitly covers Itaú/Bradesco but current aggregation matrix does not list C6. `c6_retail` in payments is not accepted as aggregation proof.
+- [x] Klavi remains alternative: sandbox fully simulated; testing/development mirrors production with real consent/data, daily consent limit and no billing; public production price not found.
+- [~] Obtain production pricing/support/SLA and explicit product×bank coverage before provider decision.
 - [ ] Real provider connection/consent/spend requires explicit user decision.
 
 ## 12. Backup / continuity
