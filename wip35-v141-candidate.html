@@ -31,6 +31,8 @@ html,body{margin:0;width:100%;height:100%;background:#f5f6f8}#shell{border:0;wid
     const w=z.w,d=z.d;hideInnerBadges(z.docs);
     if(w.__LTS_LEXICAL_BRIDGE!=='v140')return;
     w.__LTS_TOP_CANDIDATE_VERSION='v141';
+    try{const label=d.querySelector('.brand small');if(label)label.textContent='WIP35-v141 · candidata para homologação'}catch(e){}
+    badge.textContent='CANDIDATA v141 · pronta para homologação';
     if(wired!==w){
       wired=w;renderOnce=false;
       if(d&&!d.getElementById('wip35-v141-ui-css')){
@@ -52,9 +54,7 @@ html,body{margin:0;width:100%;height:100%;background:#f5f6f8}#shell{border:0;wid
     }
     let ready=false;try{ready=!!w.D}catch(e){}
     if(!ready)return;
-    try{const label=d.querySelector('.brand small');if(label)label.textContent='WIP35-v141 · candidata para homologação'}catch(e){}
     try{d.querySelectorAll('.footer').forEach(x=>x.textContent='Candidata WIP35-v141 · fallback público v136 preservado')}catch(e){}
-    badge.textContent='CANDIDATA v141 · pronta para homologação';
     if(!renderOnce&&w.V==='Atualizações'&&typeof w.render==='function'){renderOnce=true;try{w.render()}catch(e){console.error('v141 updates render failed',e)}}
     if(w.V==='Atualizações'){
       try{
