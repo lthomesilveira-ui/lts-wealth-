@@ -63,6 +63,8 @@ Canonical persistent project list. Completed evidence remains under `backups/`, 
 - [x] Open actual bill separate from future installments; 3 open cycles / 153 historical months.
 - [x] Certified historical allocation: **38 cycles / 650 rows / R$885,855.19**.
 - [x] Aggregate fallback: **314 rows / R$2,650,846.36**; dynamic coverage QA v2 8/8 PASS; zero certified/fallback overlap.
+- [x] Global fallback inventory v1 covers **31 instrument×year blocks**; 7 registry-tracked and 24 aggregate-only documentary gaps; QA **5/5 PASS**.
+- [x] Two non-Mastercard P1 gaps are explicit: **Visa 2017 R$126,681.76** and **Visa Infinite Itaú 2024 R$112,253.01**; priority is diagnostic only and authorizes no inferred reconstruction.
 - [x] Visa Infinite Itaú 2025 = 12/12 exact.
 - [x] Mastercard 2025 certified Mar/Apr/May/Jun/Aug/Nov; Jan/Feb/Jul/Oct partial; Sep/Dec blocked.
 - [x] Mastercard 2024 certified Mar/May/Aug/Sep/Oct/Dec; Jan/Feb/Apr/Jun/Jul/Nov exact settlement but composition missing.
@@ -75,7 +77,7 @@ Canonical persistent project list. Completed evidence remains under `backups/`, 
 - [~] 2023: 12 ledger-only payments / R$496,689.05; independent category matrix missing.
 - [x] C6 Aug/2024 category total certified; individual-detail gap R$66.70 explicit.
 - [~] File Library retrieval currently failing before content; retrieval failure != evidence absence; avoid hammering.
-- [~] Continue older-year recovery by evidence/impact only; no pattern backfill.
+- [~] Extend documentary recovery to global fallback inventory by evidence/impact only; no pattern backfill.
 - [~] Visual homologation pending.
 
 ## 7. Patrimônio / CIPÓ 396
@@ -106,9 +108,9 @@ Canonical persistent project list. Completed evidence remains under `backups/`, 
 ## 10. Data quality / gates
 - [x] Core 15/15; readiness 51/51; UI shape 17/17; UI consistency 7/7; writer-refresh 9/9; anon browser exposure 0.
 - [x] Expense v9 19/19; v10 18/18; Planning 23/23; Wealth 18/18; classification 5/5; lifecycle 17/17; documentary lens 4/4.
-- [x] Card coverage v2 8/8; historical registry v4 16/16; effective-history v2 PASS; FIX86 v4 10/10.
+- [x] Card coverage v2 8/8; historical registry v4 16/16; global historical fallback inventory 5/5; effective-history v2 PASS; FIX86 v4 10/10.
 - [x] Backup 13/13; shared-flow 6/6; CIPÓ coverage 6/6; candidate UI extension 6/6.
-- [x] Extended heavy gate **v7 = 235/235 PASS across 16 suites**.
+- [x] Extended heavy gate **v8 = 240/240 PASS across 17 suites**.
 - [x] Current Flow-UX candidate head `211f067c…`: parser/Chromium and same-head Pages SUCCESS.
 - [ ] Authenticated visual E2E outside automated evidence.
 
