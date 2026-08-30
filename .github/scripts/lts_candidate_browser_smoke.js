@@ -1,18 +1,145 @@
 const { chromium } = require('playwright');
 const fs = require('fs');
 
-async function collect(page,url){const errors=[];const onPage=e=>errors.push(`pageerror:${e.message}`);const onConsole=m=>{if(m.type()==='error')errors.push(`console:${m.text()}`)};page.on('pageerror',onPage);page.on('console',onConsole);await page.goto(url,{waitUntil:'domcontentloaded',timeout:30000});await page.waitForTimeout(2500);page.off('pageerror',onPage);page.off('console',onConsole);return errors}
-
-async function runCandidate(browser,viewport,label,baselineErrors){
-  const page=await browser.newPage({viewport});const candidateErrors=[];const onPage=e=>candidateErrors.push(`pageerror:${e.message}`);const onConsole=m=>{if(m.type()==='error')candidateErrors.push(`console:${m.text()}`)};page.on('pageerror',onPage);page.on('console',onConsole);
-  await page.goto('http://127.0.0.1:8765/wip35-v142-candidate.html',{waitUntil:'domcontentloaded',timeout:30000});await page.waitForTimeout(7000);
-  const chain=[];let f=page.mainFrame();for(let i=0;i<7;i++){chain.push(f.url());const kids=f.childFrames();if(!kids.length)break;f=kids[0]}
-  const expected=['wip35-v142-candidate.html','wip35-v141-candidate.html','wip35-v140-candidate.html','wip35-v139-candidate.html','wip35-v138-candidate.html','wip35-v137-candidate.html','index.html'];const chainOk=expected.every((x,i)=>chain[i]&&chain[i].includes(x));const inherited=new Set(baselineErrors);const bootNewErrors=candidateErrors.filter(e=>!inherited.has(e));
-  const innerState=await f.evaluate(()=>{const vd=Object.getOwnPropertyDescriptor(window,'__LTS_TOP_CANDIDATE_VERSION');let dashboardStatic='';try{dashboardStatic=typeof window.dashboard==='function'?String(window.dashboard()||''):''}catch(e){}return {
-    bridge:window.__LTS_LEXICAL_BRIDGE||null,topCandidateVersion:window.__LTS_TOP_CANDIDATE_VERSION||null,versionGetter:!!(vd&&typeof vd.get==='function'),versionConfigurable:!!(vd&&vd.configurable),lexicalSVisible:!!(window.S&&typeof window.S.rpc==='function'),flowV4Bridge:!!(window.S&&window.S.__lts_v140_flow_v4_bridge),lexicalDIsNull:window.D===null,uiStamp:window.LTS_CANDIDATE_UI||null,candidateUx:window.LTS_CANDIDATE_UX||null,planningBridge:window.LTS_V142_PLANNING_BRIDGE||null,liquidityUi:window.LTS_V142_LIQUIDITY_UI||null,liquidityParseSelfTest:window.__LTS_V142_PARSE_AMOUNT_SELFTEST||null,flowUx:window.LTS_V141_FLOW_UX||null,documentOutcomes:window.LTS_V141_DOCUMENT_OUTCOMES||null,brandLabel:String(document.querySelector('.brand small')?.textContent||''),hasMaintOverride:typeof window.u132Maintenance==='function'&&String(window.u132Maintenance).includes('Cobertura futura distante'),hasQuickInterpret:typeof window.u142QuickInterpret==='function',hasLiquidityQuickOverride:typeof window.u142QuickInterpret==='function'&&String(window.u142QuickInterpret).includes('u142LiquidityReviewedInterpret'),hasPlanningBridgeOverride:typeof window.planejamento==='function'&&String(window.planejamento).includes('u142PlanningBridgeRenderer'),planningBridgeState:typeof window.__LTS_V142_PLAN_BRIDGE==='object',hasWealthOverride:typeof window.patrimonio==='function'&&String(window.patrimonio).includes('u142WealthExecutiveRenderer'),hasDashboardOverride:typeof window.dashboard==='function'&&String(window.dashboard).includes('v142ClaudeCockpitDashboard'),hasDashboardNav:typeof window.renderNav==='function'&&String(window.renderNav).includes('v142DashboardNav'),dashboardNavVisible:Array.from(document.querySelectorAll('.nav button')).some(x=>String(x.textContent||'').trim()==='Dashboard'),dashboardStaticCopy:dashboardStatic.includes('Sua vida financeira, em uma tela.')&&dashboardStatic.includes('Atualizando o cockpit'),css137:!!document.getElementById('wip35-v137-candidate-css'),css138:!!document.getElementById('wip35-v138-cockpit-css'),css139:!!document.getElementById('wip35-v139-updates-css')||!!document.getElementById('wip35-v139-evidence-css'),css141:!!document.getElementById('wip35-v141-ui-css'),css142:!!document.getElementById('wip35-v142-ux-css'),cssPlanningBridge:!!document.getElementById('wip35-v142-planning-bridge-css'),cssDashboard:!!document.getElementById('wip35-v142-dashboard-cockpit-css'),cssLiquidity:!!document.getElementById('wip35-v142-liquidity-ui-css'),viewportWidth:document.documentElement.clientWidth,bodyScrollWidth:document.body?document.body.scrollWidth:0,rootScrollWidth:document.documentElement.scrollWidth,appText:String(document.getElementById('app')?.innerText||'').slice(0,240)
-  }}).catch(()=>({bridge:null,topCandidateVersion:null,versionGetter:false,versionConfigurable:false,lexicalSVisible:false,flowV4Bridge:false,lexicalDIsNull:false,uiStamp:null,candidateUx:null,planningBridge:null,liquidityUi:null,liquidityParseSelfTest:null,flowUx:null,documentOutcomes:null,brandLabel:'',hasMaintOverride:false,hasQuickInterpret:false,hasLiquidityQuickOverride:false,hasPlanningBridgeOverride:false,planningBridgeState:false,hasWealthOverride:false,hasDashboardOverride:false,hasDashboardNav:false,dashboardNavVisible:false,dashboardStaticCopy:false,css137:false,css138:false,css139:false,css141:false,css142:false,cssPlanningBridge:false,cssDashboard:false,cssLiquidity:false,viewportWidth:0,bodyScrollWidth:0,rootScrollWidth:0,appText:''}));
-  const bridgeOk=innerState.bridge==='v140'&&innerState.lexicalSVisible===true&&innerState.flowV4Bridge===true&&innerState.lexicalDIsNull===true;const visibleVersionOk=innerState.topCandidateVersion==='v142'&&innerState.versionGetter===true&&/v142/i.test(innerState.brandLabel)&&!/v141/i.test(innerState.brandLabel);const inheritedStampOk=innerState.uiStamp==='wip35-v141-updates-cipo-backup-shared-flow-document-outcomes';const v142StampOk=innerState.candidateUx==='v142-quick-planning-wealth-density-recovery-v2';const planningBridgeOk=innerState.planningBridge==='fgts-d30-projected-conservative-v2'&&innerState.hasPlanningBridgeOverride&&innerState.planningBridgeState;const parseTests=innerState.liquidityParseSelfTest||{},parseOk=['fiveMil','fiveThousandPt','fiveThousandRaw','threeK','decimalPtBr'].every(k=>parseTests[k]===true);const liquidityUiOk=innerState.liquidityUi==='reviewed-preview-confirm-v2'&&innerState.hasLiquidityQuickOverride&&innerState.cssLiquidity&&parseOk;const dashboardCockpitOk=innerState.hasDashboardOverride&&innerState.hasDashboardNav&&innerState.dashboardNavVisible&&innerState.dashboardStaticCopy&&innerState.cssDashboard;const flowUxOk=innerState.flowUx==='balance-emphasis-no-duplicate-today';const documentOutcomeOk=innerState.documentOutcomes==='evidence-derived-v1';const injectionsOk=!!innerState.css137&&!!innerState.css138&&!!innerState.css139&&!!innerState.css141&&!!innerState.css142&&!!innerState.cssPlanningBridge&&innerState.hasMaintOverride&&innerState.hasQuickInterpret&&innerState.hasWealthOverride&&inheritedStampOk&&v142StampOk&&planningBridgeOk&&liquidityUiOk&&dashboardCockpitOk&&documentOutcomeOk;const noSyntheticReady=!String(innerState.appText||'').includes('candidate synthetic readiness');const newErrors=candidateErrors.filter(e=>!inherited.has(e));const rootOverflow=Math.max(innerState.bodyScrollWidth||0,innerState.rootScrollWidth||0)-(innerState.viewportWidth||0);const rootWidthOk=rootOverflow<=2;const pass=chainOk&&bridgeOk&&visibleVersionOk&&inheritedStampOk&&v142StampOk&&planningBridgeOk&&liquidityUiOk&&dashboardCockpitOk&&flowUxOk&&documentOutcomeOk&&bootNewErrors.length===0&&injectionsOk&&newErrors.length===0&&rootWidthOk&&noSyntheticReady;
-  const result={label,viewport,pass,chain,chainOk,bridgeOk,visibleVersionOk,inheritedStampOk,v142StampOk,planningBridgeOk,liquidityUiOk,parseOk,dashboardCockpitOk,flowUxOk,documentOutcomeOk,injectionsOk,innerState,rootWidthOk,rootOverflow,baselineErrors,candidateErrors,bootNewErrors,newErrors,readinessMode:'real lexical bridge + early Flow v4 + stable v142 ownership + inherited v141 markers + natural expense input + reviewed preview/confirm liquidity UI v2 with amount parser self-tests + effective Planning + restored Claude cockpit Dashboard; SQL gates cover financial semantics/ACL; non-authenticated smoke, not authenticated E2E'};await page.close();return result
+async function collect(page, url) {
+  const errors = [];
+  const onPage = e => errors.push(`pageerror:${e.message}`);
+  const onConsole = m => { if (m.type() === 'error') errors.push(`console:${m.text()}`); };
+  page.on('pageerror', onPage);
+  page.on('console', onConsole);
+  await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
+  await page.waitForTimeout(2500);
+  page.off('pageerror', onPage);
+  page.off('console', onConsole);
+  return errors;
 }
 
-(async()=>{const browser=await chromium.launch({headless:true});const baseline=await browser.newPage({viewport:{width:1440,height:1000}});const baselineErrors=await collect(baseline,'http://127.0.0.1:8765/index.html?candidate-smoke-baseline');await baseline.close();const desktop=await runCandidate(browser,{width:1440,height:1000},'desktop',baselineErrors);const mobile=await runCandidate(browser,{width:390,height:844},'mobile-390x844',baselineErrors);const result={pass:desktop.pass&&mobile.pass,baselineErrors,desktop,mobile,importantLimit:'Non-authenticated browser composition/runtime smoke only. Liquidity writer financial semantics/ACL are gated separately and QA writes are transactional/rolled back. This is not authenticated visual E2E or user homologation.'};fs.writeFileSync('candidate-browser-smoke-result.json',JSON.stringify(result,null,2));console.log(JSON.stringify(result,null,2));await browser.close();if(!result.pass)process.exit(1)})().catch(e=>{console.error(e);process.exit(1)});
+async function runCandidate(browser, viewport, label, baselineErrors) {
+  const page = await browser.newPage({ viewport });
+  const candidateErrors = [];
+  const onPage = e => candidateErrors.push(`pageerror:${e.message}`);
+  const onConsole = m => { if (m.type() === 'error') candidateErrors.push(`console:${m.text()}`); };
+  page.on('pageerror', onPage);
+  page.on('console', onConsole);
+  await page.goto('http://127.0.0.1:8765/wip35-v142-candidate.html', { waitUntil: 'domcontentloaded', timeout: 30000 });
+  await page.waitForTimeout(7000);
+
+  const chain = [];
+  let f = page.mainFrame();
+  for (let i = 0; i < 7; i++) {
+    chain.push(f.url());
+    const kids = f.childFrames();
+    if (!kids.length) break;
+    f = kids[0];
+  }
+  const expected = [
+    'wip35-v142-candidate.html','wip35-v141-candidate.html','wip35-v140-candidate.html',
+    'wip35-v139-candidate.html','wip35-v138-candidate.html','wip35-v137-candidate.html','index.html'
+  ];
+  const chainOk = expected.every((x, i) => chain[i] && chain[i].includes(x));
+  const inherited = new Set(baselineErrors);
+  const bootNewErrors = candidateErrors.filter(e => !inherited.has(e));
+
+  const innerState = await f.evaluate(() => {
+    const vd = Object.getOwnPropertyDescriptor(window, '__LTS_TOP_CANDIDATE_VERSION');
+    let dashboardStatic = '';
+    try { dashboardStatic = typeof window.dashboard === 'function' ? String(window.dashboard() || '') : ''; } catch (e) {}
+    return {
+      bridge: window.__LTS_LEXICAL_BRIDGE || null,
+      topCandidateVersion: window.__LTS_TOP_CANDIDATE_VERSION || null,
+      versionGetter: !!(vd && typeof vd.get === 'function'),
+      versionConfigurable: !!(vd && vd.configurable),
+      lexicalSVisible: !!(window.S && typeof window.S.rpc === 'function'),
+      flowV4Bridge: !!(window.S && window.S.__lts_v140_flow_v4_bridge),
+      lexicalDIsNull: window.D === null,
+      uiStamp: window.LTS_CANDIDATE_UI || null,
+      candidateUx: window.LTS_CANDIDATE_UX || null,
+      planningBridge: window.LTS_V142_PLANNING_BRIDGE || null,
+      liquidityUi: window.LTS_V142_LIQUIDITY_UI || null,
+      liquidityParseSelfTest: window.__LTS_V142_PARSE_AMOUNT_SELFTEST || null,
+      finalPolish: window.LTS_V142_FINAL_POLISH || null,
+      flowUx: window.LTS_V141_FLOW_UX || null,
+      documentOutcomes: window.LTS_V141_DOCUMENT_OUTCOMES || null,
+      brandLabel: String(document.querySelector('.brand small')?.textContent || ''),
+      hasMaintOverride: typeof window.u132Maintenance === 'function' && String(window.u132Maintenance).includes('Cobertura futura distante'),
+      hasQuickInterpret: typeof window.u142QuickInterpret === 'function',
+      hasLiquidityQuickOverride: typeof window.u142QuickInterpret === 'function' && String(window.u142QuickInterpret).includes('u142LiquidityReviewedInterpret'),
+      hasPlanningBridgeOverride: typeof window.planejamento === 'function' && String(window.planejamento).includes('u142PlanningBridgeRenderer'),
+      planningBridgeState: typeof window.__LTS_V142_PLAN_BRIDGE === 'object',
+      hasWealthOverride: typeof window.patrimonio === 'function' && String(window.patrimonio).includes('u142WealthExecutiveRenderer'),
+      hasDashboardOverride: typeof window.dashboard === 'function' && String(window.dashboard).includes('v142ClaudeCockpitDashboard'),
+      hasDashboardNav: typeof window.renderNav === 'function' && String(window.renderNav).includes('v142DashboardNav'),
+      dashboardNavVisible: Array.from(document.querySelectorAll('.nav button')).some(x => String(x.textContent || '').trim() === 'Dashboard'),
+      dashboardStaticCopy: dashboardStatic.includes('Sua vida financeira, em uma tela.') && dashboardStatic.includes('Atualizando o cockpit'),
+      css137: !!document.getElementById('wip35-v137-candidate-css'),
+      css138: !!document.getElementById('wip35-v138-cockpit-css'),
+      css139: !!document.getElementById('wip35-v139-updates-css') || !!document.getElementById('wip35-v139-evidence-css'),
+      css141: !!document.getElementById('wip35-v141-ui-css'),
+      css142: !!document.getElementById('wip35-v142-ux-css'),
+      cssPlanningBridge: !!document.getElementById('wip35-v142-planning-bridge-css'),
+      cssDashboard: !!document.getElementById('wip35-v142-dashboard-cockpit-css'),
+      cssLiquidity: !!document.getElementById('wip35-v142-liquidity-ui-css'),
+      cssFinalPolish: !!document.getElementById('wip35-v142-final-polish-css'),
+      viewportWidth: document.documentElement.clientWidth,
+      bodyScrollWidth: document.body ? document.body.scrollWidth : 0,
+      rootScrollWidth: document.documentElement.scrollWidth,
+      appText: String(document.getElementById('app')?.innerText || '').slice(0, 240)
+    };
+  }).catch(() => ({
+    bridge:null,topCandidateVersion:null,versionGetter:false,versionConfigurable:false,lexicalSVisible:false,
+    flowV4Bridge:false,lexicalDIsNull:false,uiStamp:null,candidateUx:null,planningBridge:null,liquidityUi:null,
+    liquidityParseSelfTest:null,finalPolish:null,flowUx:null,documentOutcomes:null,brandLabel:'',hasMaintOverride:false,
+    hasQuickInterpret:false,hasLiquidityQuickOverride:false,hasPlanningBridgeOverride:false,planningBridgeState:false,
+    hasWealthOverride:false,hasDashboardOverride:false,hasDashboardNav:false,dashboardNavVisible:false,dashboardStaticCopy:false,
+    css137:false,css138:false,css139:false,css141:false,css142:false,cssPlanningBridge:false,cssDashboard:false,
+    cssLiquidity:false,cssFinalPolish:false,viewportWidth:0,bodyScrollWidth:0,rootScrollWidth:0,appText:''
+  }));
+
+  const bridgeOk = innerState.bridge === 'v140' && innerState.lexicalSVisible === true && innerState.flowV4Bridge === true && innerState.lexicalDIsNull === true;
+  const visibleVersionOk = innerState.topCandidateVersion === 'v142' && innerState.versionGetter === true && /v142/i.test(innerState.brandLabel) && !/v141/i.test(innerState.brandLabel);
+  const inheritedStampOk = innerState.uiStamp === 'wip35-v141-updates-cipo-backup-shared-flow-document-outcomes';
+  const v142StampOk = innerState.candidateUx === 'v142-quick-planning-wealth-density-recovery-v2';
+  const planningBridgeOk = innerState.planningBridge === 'fgts-d30-projected-conservative-v2' && innerState.hasPlanningBridgeOverride && innerState.planningBridgeState;
+  const parseTests = innerState.liquidityParseSelfTest || {};
+  const parseOk = ['fiveMil','fiveThousandPt','fiveThousandRaw','threeK','decimalPtBr'].every(k => parseTests[k] === true);
+  const liquidityUiOk = innerState.liquidityUi === 'reviewed-preview-confirm-v2' && innerState.hasLiquidityQuickOverride && innerState.cssLiquidity && parseOk;
+  const finalPolishOk = innerState.finalPolish === 'action-first-round3-v1' && innerState.cssFinalPolish;
+  const dashboardCockpitOk = innerState.hasDashboardOverride && innerState.hasDashboardNav && innerState.dashboardNavVisible && innerState.dashboardStaticCopy && innerState.cssDashboard;
+  const flowUxOk = innerState.flowUx === 'balance-emphasis-no-duplicate-today';
+  const documentOutcomeOk = innerState.documentOutcomes === 'evidence-derived-v1';
+  const injectionsOk = !!innerState.css137 && !!innerState.css138 && !!innerState.css139 && !!innerState.css141 && !!innerState.css142 && !!innerState.cssPlanningBridge && innerState.hasMaintOverride && innerState.hasQuickInterpret && innerState.hasWealthOverride && inheritedStampOk && v142StampOk && planningBridgeOk && liquidityUiOk && dashboardCockpitOk && documentOutcomeOk && finalPolishOk;
+  const noSyntheticReady = !String(innerState.appText || '').includes('candidate synthetic readiness');
+  const newErrors = candidateErrors.filter(e => !inherited.has(e));
+  const rootOverflow = Math.max(innerState.bodyScrollWidth || 0, innerState.rootScrollWidth || 0) - (innerState.viewportWidth || 0);
+  const rootWidthOk = rootOverflow <= 2;
+  const pass = chainOk && bridgeOk && visibleVersionOk && inheritedStampOk && v142StampOk && planningBridgeOk && liquidityUiOk && finalPolishOk && dashboardCockpitOk && flowUxOk && documentOutcomeOk && bootNewErrors.length === 0 && injectionsOk && newErrors.length === 0 && rootWidthOk && noSyntheticReady;
+
+  const result = {
+    label, viewport, pass, chain, chainOk, bridgeOk, visibleVersionOk, inheritedStampOk, v142StampOk,
+    planningBridgeOk, liquidityUiOk, parseOk, finalPolishOk, dashboardCockpitOk, flowUxOk, documentOutcomeOk,
+    injectionsOk, innerState, rootWidthOk, rootOverflow, baselineErrors, candidateErrors, bootNewErrors, newErrors,
+    readinessMode: 'real lexical bridge + early Flow v4 + stable v142 ownership + inherited v141 markers + natural expense input + reviewed preview/confirm liquidity UI v2 with amount parser self-tests + effective Planning + restored Claude cockpit Dashboard + action-first final polish; SQL gates cover financial semantics/ACL; non-authenticated smoke, not authenticated E2E'
+  };
+  await page.close();
+  return result;
+}
+
+(async () => {
+  const browser = await chromium.launch({ headless: true });
+  const baseline = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
+  const baselineErrors = await collect(baseline, 'http://127.0.0.1:8765/index.html?candidate-smoke-baseline');
+  await baseline.close();
+  const desktop = await runCandidate(browser, { width: 1440, height: 1000 }, 'desktop', baselineErrors);
+  const mobile = await runCandidate(browser, { width: 390, height: 844 }, 'mobile-390x844', baselineErrors);
+  const result = {
+    pass: desktop.pass && mobile.pass,
+    baselineErrors,
+    desktop,
+    mobile,
+    importantLimit: 'Non-authenticated browser composition/runtime smoke only. Liquidity writer financial semantics/ACL are gated separately and QA writes are transactional/rolled back. This is not authenticated visual E2E or user homologation.'
+  };
+  fs.writeFileSync('candidate-browser-smoke-result.json', JSON.stringify(result, null, 2));
+  console.log(JSON.stringify(result, null, 2));
+  await browser.close();
+  if (!result.pass) process.exit(1);
+})().catch(e => { console.error(e); process.exit(1); });
