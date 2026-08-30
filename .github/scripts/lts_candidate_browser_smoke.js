@@ -19,7 +19,7 @@ async function runCandidate(browser,viewport,label,baselineErrors){
   const onConsole=m=>{if(m.type()==='error')candidateErrors.push(`console:${m.text()}`)};
   page.on('pageerror',onPage);page.on('console',onConsole);
   await page.goto('http://127.0.0.1:8765/wip35-v142-candidate.html',{waitUntil:'domcontentloaded',timeout:30000});
-  await page.waitForTimeout(6000);
+  await page.waitForTimeout(6500);
 
   const chain=[];let f=page.mainFrame();
   for(let i=0;i<7;i++){chain.push(f.url());const kids=f.childFrames();if(!kids.length)break;f=kids[0]}
@@ -40,39 +40,42 @@ async function runCandidate(browser,viewport,label,baselineErrors){
       lexicalDIsNull:window.D===null,
       uiStamp:window.LTS_CANDIDATE_UI||null,
       candidateUx:window.LTS_CANDIDATE_UX||null,
+      planningBridge:window.LTS_V142_PLANNING_BRIDGE||null,
       flowUx:window.LTS_V141_FLOW_UX||null,
       documentOutcomes:window.LTS_V141_DOCUMENT_OUTCOMES||null,
       brandLabel:String(document.querySelector('.brand small')?.textContent||''),
       hasMaintOverride:typeof window.u132Maintenance==='function'&&String(window.u132Maintenance).includes('Cobertura futura distante'),
       hasQuickInterpret:typeof window.u142QuickInterpret==='function',
-      hasPlanningOverride:typeof window.planejamento==='function'&&String(window.planejamento).includes('u142PlanningAuditRenderer'),
-      planningAuditSafe:typeof window.planejamento==='function'&&String(window.planejamento).includes('não tratado como falta real'),
+      hasPlanningBridgeOverride:typeof window.planejamento==='function'&&String(window.planejamento).includes('u142PlanningBridgeRenderer'),
+      planningBridgeCallsRpc:typeof window.planejamento==='function'&&typeof window.__LTS_V142_PLAN_BRIDGE==='object',
       hasWealthOverride:typeof window.patrimonio==='function'&&String(window.patrimonio).includes('u142WealthExecutiveRenderer'),
       css137:!!document.getElementById('wip35-v137-candidate-css'),
       css138:!!document.getElementById('wip35-v138-cockpit-css'),
       css139:!!document.getElementById('wip35-v139-updates-css')||!!document.getElementById('wip35-v139-evidence-css'),
       css141:!!document.getElementById('wip35-v141-ui-css'),
       css142:!!document.getElementById('wip35-v142-ux-css'),
+      cssPlanningBridge:!!document.getElementById('wip35-v142-planning-bridge-css'),
       viewportWidth:document.documentElement.clientWidth,
       bodyScrollWidth:document.body?document.body.scrollWidth:0,
       rootScrollWidth:document.documentElement.scrollWidth,
       appText:String(document.getElementById('app')?.innerText||'').slice(0,240)
     }
-  }).catch(()=>({bridge:null,topCandidateVersion:null,versionGetter:false,versionConfigurable:false,lexicalSVisible:false,flowV4Bridge:false,lexicalDIsNull:false,uiStamp:null,candidateUx:null,flowUx:null,documentOutcomes:null,brandLabel:'',hasMaintOverride:false,hasQuickInterpret:false,hasPlanningOverride:false,planningAuditSafe:false,hasWealthOverride:false,css137:false,css138:false,css139:false,css141:false,css142:false,viewportWidth:0,bodyScrollWidth:0,rootScrollWidth:0,appText:''}));
+  }).catch(()=>({bridge:null,topCandidateVersion:null,versionGetter:false,versionConfigurable:false,lexicalSVisible:false,flowV4Bridge:false,lexicalDIsNull:false,uiStamp:null,candidateUx:null,planningBridge:null,flowUx:null,documentOutcomes:null,brandLabel:'',hasMaintOverride:false,hasQuickInterpret:false,hasPlanningBridgeOverride:false,planningBridgeCallsRpc:false,hasWealthOverride:false,css137:false,css138:false,css139:false,css141:false,css142:false,cssPlanningBridge:false,viewportWidth:0,bodyScrollWidth:0,rootScrollWidth:0,appText:''}));
 
   const bridgeOk=innerState.bridge==='v140'&&innerState.lexicalSVisible===true&&innerState.flowV4Bridge===true&&innerState.lexicalDIsNull===true;
   const visibleVersionOk=innerState.topCandidateVersion==='v142'&&innerState.versionGetter===true&&/v142/i.test(innerState.brandLabel)&&!/v141/i.test(innerState.brandLabel);
   const inheritedStampOk=innerState.uiStamp==='wip35-v141-updates-cipo-backup-shared-flow-document-outcomes';
   const v142StampOk=innerState.candidateUx==='v142-quick-planning-wealth-density-recovery-v2';
+  const planningBridgeOk=innerState.planningBridge==='fgts-d30-projected-conservative-v1';
   const flowUxOk=innerState.flowUx==='balance-emphasis-no-duplicate-today';
   const documentOutcomeOk=innerState.documentOutcomes==='evidence-derived-v1';
-  const injectionsOk=!!innerState.css137&&!!innerState.css138&&!!innerState.css139&&!!innerState.css141&&!!innerState.css142&&innerState.hasMaintOverride&&innerState.hasQuickInterpret&&innerState.hasPlanningOverride&&innerState.planningAuditSafe&&innerState.hasWealthOverride&&inheritedStampOk&&v142StampOk&&documentOutcomeOk;
+  const injectionsOk=!!innerState.css137&&!!innerState.css138&&!!innerState.css139&&!!innerState.css141&&!!innerState.css142&&!!innerState.cssPlanningBridge&&innerState.hasMaintOverride&&innerState.hasQuickInterpret&&innerState.hasPlanningBridgeOverride&&innerState.planningBridgeCallsRpc&&innerState.hasWealthOverride&&inheritedStampOk&&v142StampOk&&planningBridgeOk&&documentOutcomeOk;
   const noSyntheticReady=!String(innerState.appText||'').includes('candidate synthetic readiness');
   const newErrors=candidateErrors.filter(e=>!inherited.has(e));
   const rootOverflow=Math.max(innerState.bodyScrollWidth||0,innerState.rootScrollWidth||0)-(innerState.viewportWidth||0);
   const rootWidthOk=rootOverflow<=2;
-  const pass=chainOk&&bridgeOk&&visibleVersionOk&&inheritedStampOk&&v142StampOk&&flowUxOk&&documentOutcomeOk&&bootNewErrors.length===0&&injectionsOk&&newErrors.length===0&&rootWidthOk&&noSyntheticReady;
-  const result={label,viewport,pass,chain,chainOk,bridgeOk,visibleVersionOk,inheritedStampOk,v142StampOk,flowUxOk,documentOutcomeOk,injectionsOk,innerState,rootWidthOk,rootOverflow,baselineErrors,candidateErrors,bootNewErrors,newErrors,readinessMode:'real lexical bridge + early Flow v4 + stable v142 ownership getter + inherited v141 document/Flow markers + v142 natural-input/planning-audit/wealth-renderer/density markers; wealth-v2 RPC ACL/canonical-read-model is checked by SQL gate v13; no synthetic D/S/render payload; non-authenticated smoke, not authenticated E2E'};
+  const pass=chainOk&&bridgeOk&&visibleVersionOk&&inheritedStampOk&&v142StampOk&&planningBridgeOk&&flowUxOk&&documentOutcomeOk&&bootNewErrors.length===0&&injectionsOk&&newErrors.length===0&&rootWidthOk&&noSyntheticReady;
+  const result={label,viewport,pass,chain,chainOk,bridgeOk,visibleVersionOk,inheritedStampOk,v142StampOk,planningBridgeOk,flowUxOk,documentOutcomeOk,injectionsOk,innerState,rootWidthOk,rootOverflow,baselineErrors,candidateErrors,bootNewErrors,newErrors,readinessMode:'real lexical bridge + early Flow v4 + stable v142 ownership getter + inherited v141 document/Flow markers + v142 natural input/wealth/density + reconciled Planning bridge marker; SQL gate v14 checks Planning financial semantics and ACL; no synthetic D/S/render payload; non-authenticated smoke, not authenticated E2E'};
   await page.close();return result;
 }
 
@@ -83,7 +86,7 @@ async function runCandidate(browser,viewport,label,baselineErrors){
   await baseline.close();
   const desktop=await runCandidate(browser,{width:1440,height:1000},'desktop',baselineErrors);
   const mobile=await runCandidate(browser,{width:390,height:844},'mobile-390x844',baselineErrors);
-  const result={pass:desktop.pass&&mobile.pass,baselineErrors,desktop,mobile,importantLimit:'Non-authenticated browser composition/runtime smoke only. Wealth v2 RPC auth/ACL/canonical read-model is gated separately by lts_browser_wealth_v2_contract_qa_v1 / homologation gate v13; this is not authenticated visual E2E or user homologation.'};
+  const result={pass:desktop.pass&&mobile.pass,baselineErrors,desktop,mobile,importantLimit:'Non-authenticated browser composition/runtime smoke only. Planning financial semantics/ACL are gated separately by planning-excel-bridge QA / homologation gate v14; this is not authenticated visual E2E or user homologation.'};
   fs.writeFileSync('candidate-browser-smoke-result.json',JSON.stringify(result,null,2));
   console.log(JSON.stringify(result,null,2));
   await browser.close();if(!result.pass)process.exit(1)
