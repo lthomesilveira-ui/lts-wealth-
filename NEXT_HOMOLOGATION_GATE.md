@@ -8,14 +8,19 @@ Purpose: minimum evidence-backed package before asking the user to inspect a can
 - v140 introduced lexical bridge/early Flow-v4 routing; user confirmed real mobile boot.
 - Current material candidate: `wip35-v141-candidate.html`.
 - Current document-outcome candidate code/smoke head: `3afecdccfc480b8719bc11fd7170671f8d30b3c1`.
+- Fixed homologation URL: `homologacao.html`; it resolves the current validated candidate through `homologacao-current.json` with `no-store` + timestamp cache busting.
+- Fixed-entrypoint gate head: `ff3107947cdf8dc34ea7dcddc284c07ec6daad86`.
 - Public fallback exact blob: `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
 - Real authenticated visual E2E: PENDING / NOT CLAIMED.
 
 ## Browser / serving evidence
 - Candidate smoke run `33323180487`: SUCCESS on the document-outcome head; parser, Chromium desktop/mobile and evidence upload green.
 - Same-head GitHub Pages run `33323179920`: SUCCESS.
+- Fixed homologation entrypoint candidate-smoke run `33325382391`: SUCCESS; entrypoint validation, parser and Chromium desktop/mobile all green.
+- Fixed homologation entrypoint same-head Pages run `33325382173`: SUCCESS.
 - Chromium chain v141→v140→v139→v138→v137→v136.
 - Runtime requires lexical bridge, early Flow-v4, visible v141 ownership, current CIPÓ/backup/shared-flow/document-outcome extension stamp, Flow UX marker, document-outcome marker, zero new errors and no root overflow; no synthetic D/S/render readiness.
+- `homologacao.html` is the user-facing homologation entrypoint; future candidate version changes update the manifest rather than requiring a new user URL.
 - v141 Flow UX removes the duplicate internal `Hoje` button while retaining the period chip and restores subtle balance-cell emphasis on desktop/mobile.
 - v141 Atualizações adds evidence-derived document outcomes without replacing `O que mudou`.
 - Evidence is non-authenticated browser composition/runtime smoke, not authenticated visual E2E.
@@ -31,9 +36,10 @@ Purpose: minimum evidence-backed package before asking the user to inspect a can
 - Historical validation registry QA v4: **16/16 PASS**, **68 open Mastercard cycles 2019–2025** tracked internally.
 - Global historical fallback inventory QA v1: **5/5 PASS**; 31 instrument×year blocks, 314 fallback rows / R$2,650,846.36; 24 aggregate-only documentary gaps remain explicit.
 - Document outcome semantics QA: **4/4 PASS**; browser ACL QA: **4/4 PASS**.
+- Document association QA: **5/5 PASS**; classification triage QA: **9/9 PASS**; CIPÓ open-blocker QA: **6/6 PASS**.
 - Effective-history QA v2: **PASS — 2,030 days / 147 months exact**.
 - FIX86 legacy/transversal guardrails QA v4: **10/10 PASS**.
-- Extended heavy pre-homologation gate **v9 = 248/248 PASS across 19 suites**.
+- Extended heavy pre-homologation gate **v12 = 268/268 PASS across 22 suites**.
 
 ## Performance / refresh
 - Despesas cache read ~0.1s; Flow cached 33d ~10ms; classification queue within guard.
@@ -48,6 +54,7 @@ Purpose: minimum evidence-backed package before asking the user to inspect a can
 - Document approval path explicitly gated: Inbox/manual review creates no financial write before approval; reviewed application is the write path.
 - New outcome states: **Alterou / Sem alteração / Precisa decisão / Processando / Erro**. They are read-only presentation derived from lifecycle/change-summary evidence; `Sem alteração` never creates a launch and `Precisa decisão` remains pending until explicit review.
 - Browser reads outcomes only through `auth.uid()` scoped RPC; anon blocked and arbitrary-user internal contracts private.
+- Explicit file association contract forbids filename/similarity inference; card/bank association requires explicit identity + competence, financing requires explicit commitment + as-of date.
 - Parser/Chromium/Pages are green for the new outcome marker.
 - Remaining blocker: real authenticated save/refresh/self-heal/`O que mudou`/outcome visual behavior.
 
@@ -96,6 +103,7 @@ Purpose: minimum evidence-backed package before asking the user to inspect a can
 
 ## Classification
 - 48 groups / 53 lines; 62 category options; safe suggestions 0; 26 effective August lines remain genuine human-review gaps.
+- Objective triage may order human review by value/share/repetition but proposes no category.
 - No auto-classification from merchant appearance.
 - Real authenticated save→cache→UI click pending/unclaimed.
 
@@ -109,12 +117,13 @@ Purpose: minimum evidence-backed package before asking the user to inspect a can
 2. Real-user boot regression fixed — GREEN on real mobile v140.
 3. Candidate parser + Chromium without synthetic readiness — GREEN.
 4. Visible v141 ownership/current extension + Flow UX + document-outcome markers — GREEN.
-5. Pages same verified candidate head — GREEN.
-6. Readiness/core/ACL/current financial gates — GREEN.
-7. Historical/FIX86/global fallback/document-outcome contracts — GREEN; heavy v9 248/248.
-8. Material v141 UX package — IMPLEMENTED; user approval pending.
-9. Historical/classification/CIPÓ unresolved items explicit/non-promoted — GREEN as guardrail.
-10. Real authenticated visual E2E — PENDING / NOT CLAIMED.
-11. Promotion to `index.html` — NOT AUTHORIZED / NOT DONE.
+5. Fixed homologation URL + manifest cache-busting + target existence gate — GREEN.
+6. Pages same verified fixed-entrypoint head — GREEN.
+7. Readiness/core/ACL/current financial gates — GREEN.
+8. Historical/FIX86/global fallback/document-outcome/document-association/classification-triage/CIPÓ-open-blocker contracts — GREEN; heavy v12 268/268.
+9. Material v141 UX package — IMPLEMENTED; user approval pending.
+10. Historical/classification/CIPÓ unresolved items explicit/non-promoted — GREEN as guardrail.
+11. Real authenticated visual E2E — PENDING / NOT CLAIMED.
+12. Promotion to `index.html` — NOT AUTHORIZED / NOT DONE.
 
 Continue autonomous technical and historical evidence work while it can materially reduce risk. Ask the user only when the remaining blocker is genuinely visual/authenticated behavior or a real financial/classification/commercial decision.
