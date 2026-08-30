@@ -8,89 +8,105 @@ Purpose: persistent evidence/recovery log so historical reconstruction never dep
 - A cycle is certified only when complete signed category composition closes to the ledger to the cent and source identity is explicit.
 - Payment/reference equality alone is insufficient for category certification.
 - Signed credits/reversals remain documentary evidence; they are not silently normalized away.
-- Mastercard Itaú evidence must come from `Cartão Itaú`; `Cartão Itaú VISA` / Visa Infinite is a distinct source.
+- Mastercard Itaú evidence must come from `Cartão Itaú`; Visa evidence is a distinct source.
 - Retrieval failure is a technical blockage, never evidence absence.
+- Fragmented settlements are never collapsed into one invoice without documentary proof.
 
-## Canonical state — 2026-08-30
+## Canonical state — 2026-08-30 / recovery batch 2022
 - Public fallback remains WIP35-v136; historical recovery has not changed the public build.
-- Historical expense invariant: R$8,623,752.53.
-- Effective expense cache: 3,767/3,767 rows exact.
-- Recovered category-detail rows: 3,449.
-- Certified historical category-allocation cycles: 34.
-- Certified category-allocation rows: 553 / R$821,898.39.
-- Aggregate fallback still distinct: 318 rows / R$2,714,803.16.
+- Historical expense invariant: **R$8,623,752.53**.
+- Current analytical expense cache after recovery: **3,860/3,860**, zero missing/extra/mismatch; total exact.
+- Certified historical category-allocation cycles: **38**.
+- Certified category-allocation rows: **650 / R$885,855.19**.
+- Aggregate fallback: **314 rows / R$2,650,846.36**.
+- Card-history dynamic coverage QA v2: **8/8 PASS**; no certified cycle remains fallback.
 - Expense v9 19/19 PASS; Expense v10 18/18 PASS; core financial 15/15 PASS.
-- Extended heavy gate v3: 213/213 PASS.
+- Historical effective parity v2: **2,030 days / 147 months exact** through 2025; timeline 57/57; zero technical leak/overlap.
+- FIX86 transversal guardrails v4: **10/10 PASS**.
+- Extended heavy gate v6: **231/231 PASS across 16 suites**.
 - Real authenticated visual E2E remains pending/unclaimed.
 
 ## Mastercard Itaú — 2025
 ### Certified exact
-- 2025-03 — R$37,905.32; complete signed category matrix closes to `evento_base:2547`.
-- 2025-04 — R$34,559.66; signed Crédito evidence closes the category matrix exactly.
-- 2025-05 — R$28,105.02; exact matrix/ledger closure.
-- 2025-06 — R$33,817.15; signed Crédito evidence closes exactly.
-- 2025-08 — R$29,693.33; exact category matrix/ledger identity.
-- 2025-11 — R$5,883.96; signed Crédito evidence closes exactly.
+- Mar R$37,905.32; Apr R$34,559.66; May R$28,105.02; Jun R$33,817.15; Aug R$29,693.33; Nov R$5,883.96.
 
-### Candidate partial — never certified until complete tail is recovered
-- 2025-01 — source matrix R$38,636.48; ledger `evento_base:2414` R$38,635.88; signed Crédito -R$0.30 explains the R$0.60 sign-loss effect, but full category tail is missing.
-- 2025-02 — source matrix R$37,939.80; ledger `evento_base:2487` R$37,939.80 exactly. Partial recovered categories extend through Espelhos/Box, but the tail is truncated. Never fill the remainder by arithmetic difference.
-- 2025-07 — source matrix R$33,870.67; ledger `evento_base:2778` R$33,870.17; signed Crédito -R$0.25 explains the R$0.50 sign-loss effect. Previously recovered composition remains short by a tail; prior known unaccounted amount R$22.15. Full signed tail is required.
-- 2025-10 — source matrix R$16,086.02; ledger `evento_base:2939` R$16,086.02 exactly; signed Crédito +R$0.03 exists. Recovered composition truncates after Projeto Automação and one documentary category line remains unidentified.
+### Candidate partial — never certify until complete signed tail is recovered
+- Jan — source matrix R$38,636.48; ledger `evento_base:2414` R$38,635.88; signed Crédito -R$0.30 explains sign-loss effect, but full tail missing.
+- Feb — source matrix/ledger R$37,939.80; partial categories recovered, tail truncated; never fill by arithmetic difference.
+- Jul — source R$33,870.67; ledger `evento_base:2778` R$33,870.17; Crédito -R$0.25 explains R$0.50 sign effect; full tail required.
+- Oct — source/ledger R$16,086.02; Crédito +R$0.03; composition truncates after Projeto Automação.
 
 ### Documentary-blocked
-- 2025-09 — source matrix R$26,582.10 vs ledger `evento_base:2889` R$26,558.28; delta R$23.82. Signed Crédito -R$0.13 explains only R$0.26 of sign effect. Do not force.
-- 2025-12 — source matrix R$14,062.17 vs ledger `evento_base:3041` R$13,195.37; delta R$866.80. Known signed Crédito is insufficient. Do not force.
+- Sep — source R$26,582.10 vs ledger R$26,558.28; known credit does not close R$23.82 delta.
+- Dec — source R$14,062.17 vs ledger R$13,195.37; known credit does not close R$866.80 delta.
 
 ## Mastercard Itaú — 2024
 ### Certified exact
 - Mar, May, Aug, Sep, Oct, Dec.
 
-### Settlement proven; category composition not recovered
-All six source totals equal the canonical ledger payment to the cent, but exact payment identity alone does not authorize category allocation:
-- 2024-01 — `evento_base:1829` R$53,652.87.
-- 2024-02 — `evento_base:1871` R$58,667.61.
-- 2024-04 — `evento_base:1966` R$47,802.70.
-- 2024-06 — `evento_base:2061` R$48,393.80.
-- 2024-07 — `evento_base:2104` R$51,947.18.
-- 2024-11 — `evento_base:2281` R$45,259.24.
+### Settlement proven; composition missing
+- Jan `evento_base:1829` R$53,652.87.
+- Feb `evento_base:1871` R$58,667.61.
+- Apr `evento_base:1966` R$47,802.70.
+- Jun `evento_base:2061` R$48,393.80.
+- Jul `evento_base:2104` R$51,947.18.
+- Nov `evento_base:2281` R$45,259.24.
+All six source totals equal ledger payment to the cent, but payment identity alone does not authorize category allocation.
 
-The repo search and `legacy_namespace` audit did not recover complete category matrices for these months. Keep them open until documentary composition is available.
+## Mastercard Itaú — 2023
+- Twelve ledger payments identified, total **R$496,689.05**.
+- No independent complete category matrix recovered yet.
+- All 12 months remain `ledger_only_source_composition_missing`; ledger identity is not category evidence.
+
+## Mastercard Itaú — 2022
+### Newly certified exact in this batch
+Complete `Cartão Itaú` category matrices plus signed Crédito/reversal evidence were independently summed before insert; raw ledger remained unchanged.
+- **2022-04 — R$11,910.91**; 23 category rows / 95 source occurrences; absolute matrix R$11,911.35; signed Crédito -R$0.22 closes exactly to `evento_base:1239`.
+- **2022-06 — R$10,185.54**; 23 category rows / 93 source occurrences; signed Crédito -R$0.05 closes exactly to `evento_base:1311`.
+- **2022-07 — R$13,486.29**; 24 category rows / 96 source occurrences; signed Crédito -R$2.76 closes exactly to `evento_base:1332`.
+- **2022-10 — R$28,374.06**; 27 category rows / 103 source occurrences; signed Crédito -R$0.20 closes exactly to `evento_base:1410`.
+
+### Remaining open 2022
+- Jan — three ledger rows totaling R$12,888.65; fragmented settlement, full matrix not yet independently recovered. Never assume one invoice.
+- Feb — two ledger rows totaling R$12,300.71; fragmented settlement, full matrix not yet independently recovered.
+- Mar — two ledger rows totaling R$12,125.56; fragmented settlement, full matrix not yet independently recovered.
+- May — partial documentary candidate; unresolved signed remainder currently R$0.08.
+- Aug — partial documentary candidate; signed closure still incomplete.
+- Sep — partial documentary candidate; unresolved amount currently R$1.54.
+- Nov — partial documentary candidate; unresolved amount currently R$2.74.
+- Dec — arithmetic sign evidence is promising (known Crédito -R$0.04), but complete category tail was not independently recovered; no certification until full tail closes.
 
 ## Historical validation registry
-- Internal table `lts_card_historical_validation_registry` now persists the 12 open Mastercard 2024/2025 cycles.
-- It stores validation evidence/status only; it is not a source for Despesas or category allocation.
-- Browser roles cannot read the registry.
-- `lts_card_historical_validation_registry_qa_v1`: 7/7 PASS.
-- QA guarantees no registry month is present as `certified_exact` in `lts_card_historical_category_allocation`.
-- Current registry: six 2024 settlement-proven/composition-missing; four 2025 candidate-partial; two 2025 documentary-blocked.
-
-## Visa Infinite Itaú — 2025
-- 12/12 months certified exact. Never mix this source with Mastercard Itaú evidence.
+- Internal `lts_card_historical_validation_registry` now tracks **32 open Mastercard cycles from 2022–2025**.
+- Registry is evidence/status only; never a source for Despesas/category allocation; browser roles cannot read it.
+- QA v3: **12/12 PASS**.
+- It explicitly distinguishes 2022 fragmented settlements/partial candidates, 2023 ledger-only, 2024 settlement-proven/composition-missing, 2025 candidate-partial and documentary-blocked.
+- QA guarantees no registry month is simultaneously `certified_exact`.
 
 ## C6 historical recovery
-- Documentary target May/2024–Jun/2026 recovered except the Aug/2024 individual-detail gap R$66.70 in Táxi/Uber.
-- Aug/2024 category total R$4,087.42 is certified; staged individual detail R$4,020.72. No missing purchase is invented.
+- Documentary target May/2024–Jun/2026 recovered except Aug/2024 individual-detail gap **R$66.70** in Táxi/Uber.
+- Aug/2024 category total R$4,087.42 certified; staged individual detail R$4,020.72. No missing purchase invented.
 
 ## CIPÓ documentary linkage
-- CIPÓ reconciliation remains separate from card-history analytics and consumption.
-- 32 historical card aggregates remain `pending`; no aggregate was promoted by category-name matching.
-- Source aggregate total R$1,465,713.29.
-- Same-category recovered/certified evidence observed R$894,312.01.
-- Conservative capped documentary floor R$569,196.83.
-- 19/32 rubrics have some documentary coverage; 12 have enough same-category value to cover the aggregate amount but remain pending where instrument identity/composition is not proven.
-- `lts_cipo_card_documentary_coverage_qa_v1`: 6/6 PASS and explicitly non-promoting.
-- Consórcio Itaú R$303.60 and Condomínio formula/cut remain unresolved.
+- CIPÓ reconciliation remains separate from card-history analytics/consumption.
+- 32 historical card aggregates remain pending; no promotion by category-name matching.
+- Source aggregates R$1,465,713.29; same-category observed R$894,312.01; conservative capped floor R$569,196.83.
+- 19/32 rubrics have some documentary coverage; 12/32 enough category amount but remain pending without instrument identity/composition proof.
+- CIPÓ coverage QA 6/6 PASS. Consórcio Itaú R$303.60 and Condomínio formula/cut remain unresolved.
+
+## FIX86 / historical invariants now permanently gated
+- `lts_effective_history_qa_v2`: dynamic current-contract parity, not obsolete hard-coded row counts.
+- `lts_fix86_legacy_guardrails_qa_v4`: frozen projection baseline; stale/superado anchors excluded; Inbox preapproval zero write; approval-only document application; documented-only nonrecursive card estimates; read-only scenarios; append-only Flow mutations; core-owned no-double-count; CIPÓ core parity.
+- Heavy gate v6 incorporates historical registry and FIX86 guardrails without duplicating the expensive core suite.
 
 ## Retrieval state
-- File Library intermittently returned useful 2025 source material, then resumed failing before content retrieval.
-- Latest targeted Jan/Feb/Jul/Oct searches failed at retrieval-service level.
-- Repo search and database legacy staging/namespace do not contain the missing tails in recoverable text form.
-- Do not repeatedly hammer retrieval in a short interval; retry later and only certify if complete signed composition is recovered.
+- File Library intermittently returned valuable 2022 source matrices/signed credit evidence and then resumed instability.
+- Retrieval failure never changes cycle status.
+- Do not hammer repeated failing retrieval; resume from the exact registry blocker when service is healthy.
 
 ## Next evidence work
-1. Recover full signed tails for Mastercard Jan/Feb/Jul/Oct 2025; independently sum before any allocation insert.
-2. Keep Sep/Dec 2025 blocked until the true reversal/adjustment evidence closes the ledger.
-3. Recover complete category matrices for Mastercard Jan/Feb/Apr/Jun/Jul/Nov 2024; payment identity alone remains insufficient.
-4. Continue older years only by documentary evidence and impact; do not backfill by pattern.
-5. After every material exact recovery: rerun card-history coverage, Expense v9/v10, core financial regression and heavy homologation gate; update this log/backlog/checkpoint.
+1. Recover complete 2022 Dec tail, then May/Aug/Sep/Nov signed closures; Jan–Mar require proof of fragmented settlement composition.
+2. Recover a complete independent 2023 Mastercard matrix; R$496,689.05 is the largest single older fallback block.
+3. Continue 2025 Jan/Feb/Jul/Oct tails and keep Sep/Dec blocked until genuine reversal evidence closes.
+4. Recover 2024 Jan/Feb/Apr/Jun/Jul/Nov category matrices; payment identity remains insufficient.
+5. After every exact recovery: refresh expense cache; rerun dynamic card coverage, Expense v9/v10, core, historical/FIX86 and heavy gate; update log/backlog/checkpoint.
