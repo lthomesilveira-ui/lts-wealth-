@@ -4,6 +4,8 @@ on:
     branches: [main]
     paths:
       - 'index.html'
+      - 'homologacao.html'
+      - 'homologacao-current.json'
       - 'wip35-v137-candidate.html'
       - 'wip35-v138-candidate.html'
       - 'wip35-v138-cockpits.js'
@@ -24,6 +26,21 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Validate fixed homologation entrypoint
+        run: |
+          python - <<'PY'
+          import json, pathlib, re
+          root = pathlib.Path('.')
+          manifest = json.loads((root / 'homologacao-current.json').read_text(encoding='utf-8'))
+          target = str(manifest.get('path') or '')
+          assert re.fullmatch(r'wip35-v\d+-candidate\.html', target), target
+          assert (root / target).exists(), target
+          bootstrap = (root / 'homologacao.html').read_text(encoding='utf-8')
+          assert 'homologacao-current.json' in bootstrap
+          assert "cache:'no-store'" in bootstrap
+          assert 'Date.now()' in bootstrap
+          print('fixed_homologation_entrypoint=PASS target=' + target)
+          PY
       - name: Parse and validate isolated candidate
         run: python .github/scripts/lts_candidate_smoke.py
       - name: Install headless browser
