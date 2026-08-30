@@ -19,10 +19,10 @@ html,body{margin:0;width:100%;height:100%;background:#f5f6f8}#shell{border:0;wid
     try{
       const d140=shell.contentDocument,f139=d140&&d140.getElementById('shell');
       const d139=f139&&f139.contentDocument,f138=d139&&d139.getElementById('shell');
-      const d138=f138&&d138.getElementById('shell'),d137=f138&&f138.contentDocument;
-      const real137=d138&&d138.contentDocument,app=real137&&real137.getElementById('app');
+      const d138=f138&&f138.contentDocument,f137=d138&&d138.getElementById('shell');
+      const d137=f137&&f137.contentDocument,app=d137&&d137.getElementById('app');
       if(!app)return null;
-      return {w:app.contentWindow,d:app.contentDocument,docs:[d140,d139,d137,real137]};
+      return {w:app.contentWindow,d:app.contentDocument,docs:[d140,d139,d138,d137]};
     }catch(e){return null}
   }
   function hideInnerBadges(docs){(docs||[]).forEach(d=>{try{['badge','candidateBadge'].forEach(id=>{const x=d&&d.getElementById(id);if(x)x.style.display='none'})}catch(e){}})}
