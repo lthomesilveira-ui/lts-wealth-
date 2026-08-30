@@ -9,8 +9,8 @@ Canonical persistent project list. Completed evidence remains under `backups/`, 
 - [x] v137 failed real homologation; v139 failed real authenticated boot because lexical v136 state was treated as `window.*`; synthetic-readiness smoke retired.
 - [x] v140 added lexical bridge and early Flow-v4 routing; user confirmed real mobile boot.
 - [x] Current material candidate remains `wip35-v141-candidate.html`; version-ownership race fixed.
-- [x] Current Flow-UX candidate head `211f067cf94d4b1d6b61be191054c6ae292daf77`: candidate-smoke run `33319620454` SUCCESS and same-head Pages run `33319620096` SUCCESS.
-- [x] Chromium desktop/mobile requires lexical bridge, runtime Flow-v4 bridge, visible v141, current extension stamp, Flow UX marker, zero new errors and no root overflow.
+- [x] Current document-outcome candidate head `3afecdccfc480b8719bc11fd7170671f8d30b3c1`: candidate-smoke run `33323180487` SUCCESS and same-head Pages run `33323179920` SUCCESS.
+- [x] Chromium desktop/mobile requires lexical bridge, runtime Flow-v4 bridge, visible v141, current extension stamp, Flow UX marker, document-outcome marker, zero new errors and no root overflow.
 - [x] Public fallback unchanged; no promotion occurred.
 - [ ] Real authenticated visual E2E remains pending/unclaimed.
 - [ ] Promotion to `index.html` only after user homologation.
@@ -20,6 +20,7 @@ Canonical persistent project list. Completed evidence remains under `backups/`, 
 - [x] Despesas and Fluxo timeout paths replaced by exact-parity cache-backed reads.
 - [x] Planejamento and Cartões are decision cockpits.
 - [x] Atualizações v141 prioritizes 6 near/current actions, collapses distant/covered checks and separates classification workstream.
+- [x] Atualizações now shows evidence-derived document outcomes: Alterou / Sem alteração / Precisa decisão / Processando / Erro, separate from `O que mudou`.
 - [x] Patrimônio shows non-promoting CIPÓ documentary progress; Configurações shows metadata-only backup status.
 - [x] Fluxo v141 removes duplicate internal `Hoje` button while retaining the period chip, and restores subtle balance-cell emphasis on mobile/desktop; parser + Chromium + Pages green.
 - [~] Visual approval of Fluxo, Despesas, Cartões, Planejamento, Atualizações, Patrimônio and Configurações pending.
@@ -30,9 +31,11 @@ Canonical persistent project list. Completed evidence remains under `backups/`, 
 - [x] Operational resolutions append-only; lifecycle v2 + `O que mudou`; writer→refresh/safety QA 9/9 PASS.
 - [x] Inbox preapproval guard: manual review entry has no financial write; write occurs only through explicit reviewed approval path.
 - [x] Documented card purchase remains separated from bank cash effect before invoice reconciliation.
-- [~] Real authenticated resolved-item disappearance/save-refresh/self-heal/`O que mudou` path pending.
+- [x] Document outcome semantics QA 4/4 PASS; auth.uid-scoped browser ACL 4/4 PASS; anon blocked and internal arbitrary-user contracts private.
+- [x] v141 outcome summary makes changed/unchanged/decision-required explicit without creating financial writes; parser/Chromium/Pages green on head `3afecdcc…`.
+- [~] Real authenticated resolved-item disappearance/save-refresh/self-heal/`O que mudou`/outcome path pending.
 - [~] Improve PDF/image interpretation and bank/card/competence association.
-- [~] Upload UI should make changed/unchanged/decision-required explicit; final review should be exception-only.
+- [~] Final review should become exception-only as parser/document coverage improves.
 
 ## 3. Despesas
 - [x] Historical expense invariant R$8,623,752.53 from 10/10/2013 preserved.
@@ -65,6 +68,7 @@ Canonical persistent project list. Completed evidence remains under `backups/`, 
 - [x] Aggregate fallback: **314 rows / R$2,650,846.36**; dynamic coverage QA v2 8/8 PASS; zero certified/fallback overlap.
 - [x] Global fallback inventory v1 covers **31 instrument×year blocks**; 7 registry-tracked and 24 aggregate-only documentary gaps; QA **5/5 PASS**.
 - [x] Two non-Mastercard P1 gaps are explicit: **Visa 2017 R$126,681.76** and **Visa Infinite Itaú 2024 R$112,253.01**; priority is diagnostic only and authorizes no inferred reconstruction.
+- [x] File Library source recheck confirmed the 12 Visa 2017 settlement totals and Visa Infinite Itaú monthly 2024 settlement totals; neither result contains a complete category matrix, so no promotion.
 - [x] Visa Infinite Itaú 2025 = 12/12 exact.
 - [x] Mastercard 2025 certified Mar/Apr/May/Jun/Aug/Nov; Jan/Feb/Jul/Oct partial; Sep/Dec blocked.
 - [x] Mastercard 2024 certified Mar/May/Aug/Sep/Oct/Dec; Jan/Feb/Apr/Jun/Jul/Nov exact settlement but composition missing.
@@ -73,10 +77,10 @@ Canonical persistent project list. Completed evidence remains under `backups/`, 
 - [x] 2019 ledger-only total R$164,402.94 / 12 months; 5 fragmented months.
 - [x] 2020 ledger-only total R$99,107.08 / 12 months; 10 fragmented months.
 - [x] 2021 ledger-only total R$116,458.47 / 12 months; 12 fragmented months.
-- [~] 2022 remaining: Jan–Mar fragmented; May/Aug/Sep/Nov/Dec partial documentary candidates.
+- [~] 2022 remaining: Jan–Mar fragmented; May/Aug/Sep/Nov/Dec partial documentary candidates. Dec/2022 source rows were re-found in `Cartão Itaú`, but retrieval still truncates before a complete signed tail, so it remains un-certified.
 - [~] 2023: 12 ledger-only payments / R$496,689.05; independent category matrix missing.
 - [x] C6 Aug/2024 category total certified; individual-detail gap R$66.70 explicit.
-- [~] File Library retrieval currently failing before content; retrieval failure != evidence absence; avoid hammering.
+- [~] File Library retrieval is intermittent; retrieval failure != evidence absence and partial snippets != complete documentary composition.
 - [~] Extend documentary recovery to global fallback inventory by evidence/impact only; no pattern backfill.
 - [~] Visual homologation pending.
 
@@ -110,8 +114,9 @@ Canonical persistent project list. Completed evidence remains under `backups/`, 
 - [x] Expense v9 19/19; v10 18/18; Planning 23/23; Wealth 18/18; classification 5/5; lifecycle 17/17; documentary lens 4/4.
 - [x] Card coverage v2 8/8; historical registry v4 16/16; global historical fallback inventory 5/5; effective-history v2 PASS; FIX86 v4 10/10.
 - [x] Backup 13/13; shared-flow 6/6; CIPÓ coverage 6/6; candidate UI extension 6/6.
-- [x] Extended heavy gate **v8 = 240/240 PASS across 17 suites**.
-- [x] Current Flow-UX candidate head `211f067c…`: parser/Chromium and same-head Pages SUCCESS.
+- [x] Document outcome semantics 4/4 and browser ACL 4/4 PASS.
+- [x] Extended heavy gate **v9 = 248/248 PASS across 19 suites**.
+- [x] Current document-outcome candidate head `3afecdcc…`: parser/Chromium and same-head Pages SUCCESS.
 - [ ] Authenticated visual E2E outside automated evidence.
 
 ## 11. Open Finance
