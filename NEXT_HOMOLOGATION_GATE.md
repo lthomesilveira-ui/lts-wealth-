@@ -1,134 +1,118 @@
 # LTS Wealth — Next Homologation Gate
 
-Purpose: define the minimum evidence-backed package required before asking the user to inspect a candidate. Keep aligned with `PROJECT_MASTER_BACKLOG.md`.
+Purpose: minimum evidence-backed package before asking the user to inspect a candidate. Keep aligned with `PROJECT_MASTER_BACKLOG.md` and `HISTORICAL_RECOVERY_LOG.md`.
 
 ## Current baseline
-- Public fallback: WIP35-v136 in `index.html`; unchanged and not user-approved.
-- User effective visual baseline: v135.
-- v139 real authenticated boot failed on the user's notebook, stuck on `Carregando seu LTS…`.
-- Root cause: v136 core state is lexical (`let`/`const`), while candidate layers incorrectly treated it as `window.*`; former synthetic-readiness Chromium could therefore false-green the path.
-- v140 introduced the real lexical bridge without changing public v136. User confirmed v140 opened in a real mobile session.
+- Public fallback: WIP35-v136 in `index.html`, unchanged and not user-approved; effective user visual baseline remains v135.
+- v139 real authenticated boot failed on user evidence; synthetic-readiness smoke was retired.
+- v140 introduced lexical bridge/early Flow-v4 routing; user confirmed v140 opened in a real mobile session.
 - Current material candidate: `wip35-v141-candidate.html`.
-- Latest reinforced browser-smoke head: `e7a69758bc4f15b7456e7ab2af4b30d6f40c1f29`.
-- Public fallback exact blob remains `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
-- Real authenticated visual E2E remains PENDING / NOT CLAIMED.
+- Latest candidate code/smoke head: `5d67b2e2d719c309d9159e078d3c2e681e6ab361`.
+- Public fallback exact blob: `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
+- Real authenticated visual E2E: PENDING / NOT CLAIMED.
 
 ## Browser / serving evidence
-- Candidate smoke run **33282949795**: SUCCESS.
-- Pages deployment on the same head: SUCCESS.
+- Candidate smoke run `33311276232`: SUCCESS.
+- Candidate job `99256663902`: SUCCESS.
+- Same-head GitHub Pages build/deploy: SUCCESS; deploy check `99256687084`, Pages workflow run `33311275717`.
 - Chromium chain: v141 → v140 → v139 → v138 → v137 → v136.
-- No synthetic `window.D/window.S/render` readiness is used.
-- Runtime smoke now requires both the v140 lexical bridge and `S.__lts_v140_flow_v4_bridge=true` before PASS.
-- Parser/Node syntax, v137/v138/v139/v141 injections and root-width checks are green.
-- This is a non-authenticated browser composition/runtime-routing smoke, not authenticated visual E2E.
+- No synthetic `window.D/window.S/render` readiness.
+- Runtime requires lexical bridge v140, real lexical Supabase client, early Flow-v4 bridge, top candidate v141, visible v141 brand label, current `wip35-v141-updates-cipo-backup-shared-flow` stamp, zero new browser errors and no root overflow.
+- Parser requires current CIPÓ documentary and backup-status markers while preserving fallback blob lock.
+- Evidence is non-authenticated browser composition/runtime smoke, not authenticated visual E2E.
 
-## Readiness / data / security
-- `lts_candidate_fast_readiness_qa_v7`: **51/51 PASS**.
-- Underlying UI shape contract: **17/17 PASS** against the real cached payload.
-- UI internal consistency: **7/7 PASS**:
-  - open-card total equals cycle sum;
-  - card history month count equals monthly-array length;
-  - Planning episode count equals episode array;
-  - first gap summary equals first episode start;
-  - Updates actionable summary closes to maintenance checks;
-  - pending/actionable relationships remain valid.
-- Writer→refresh/safety catalog contract: **9/9 PASS**:
-  - classification patches effective expense cache and uses classification-scoped refresh;
-  - manual invoice uses invoice-scoped refresh;
-  - overdue transfer requires a complete neutral pair and uses confirmation-scoped refresh;
-  - overdue event and card payment use confirmation-scoped refresh;
-  - reconciliation requires an eligible candidate and uses Updates-scoped refresh.
-- Browser RPC ACL: 48 `lts_browser_*` functions; anon exposure = 0.
-- Latest latency sample: Despesas ~115 ms; Flow 33d ~10 ms; classification queue ~1.47 s.
+## Backend readiness / gates
+- `lts_candidate_fast_readiness_qa_v7`: 51/51 PASS.
+- Core financial regression: 15/15 PASS.
+- UI shape: 17/17 PASS.
+- UI consistency: 7/7 PASS.
+- Writer→refresh/safety: 9/9 PASS.
+- Browser ACL: 48 `lts_browser_*`; anon exposure 0; 39 authenticated exposures.
+- Expense v9 19/19; Expense v10 18/18; Planning 23/23; Wealth 18/18; classification cache 5/5; document lifecycle 17/17; documentary expense lens 4/4; card-history coverage 5/5.
+- Candidate UI extension QA: 6/6 PASS.
+- Shared-Flow exact parity: 6/6 PASS.
+- Backup scheduled snapshot QA: 13/13 PASS.
+- CIPÓ documentary coverage QA: 6/6 PASS.
+- Historical validation registry QA: 7/7 PASS.
+- Extended heavy pre-homologation gate v3: **213/213 PASS across 15 suites**.
 
-## Financial/data invariants
-- Core financial regression: **15/15 PASS** after current v141/v140 changes.
-- Expense v9: 19/19 PASS.
-- Expense v10: 18/18 PASS.
-- Planning: 23/23 PASS.
-- Wealth: 18/18 PASS.
-- Classification cache: 5/5 PASS.
-- Document lifecycle/change summary: 17/17 PASS.
-- Documentary expense counterparty/merchant: 4/4 PASS.
-- Card-history coverage: 5/5 PASS.
-- Historical expense invariant remains R$8,623,752.53; effective expense cache remains exact 3,767/3,767 rows.
+## Performance / refresh
+- Despesas cache read ~0.1s; Flow cached 33d ~10ms; classification queue ~1.5s within permanent guards.
+- Operational refresh v3 computes one annual Flow v12 and reuses it for short Flow, Planning, Dashboard and cashflow scenarios.
+- Each shared-Flow output is JSON + MD5 exact versus its previous motor.
+- Warm daily operational refresh reduced from ~20.2s to ~11.8s.
+- Simulated day rollover with stale Despesas cache ~14.06s including ~2.82s expense-cache rebuild; transaction rolled back after benchmark.
+- Day rollover now refreshes Despesas cache when stale, preventing product/Flow and Despesas from being on different dates.
+- Browser product v9 / api 39 uses operational refresh v3.
 
-## v141 package
+## v141 material package
 ### Atualizações
-- 25 maintenance checks remain fully auditable.
-- v141 presents 6 near/current operational checks first.
-- 4 distant 2030/2031 coverage checks are collapsed once, not duplicated.
-- 15 covered/monitoring checks are collapsed.
-- The 48 classification groups are a separate workstream and are not mixed into the headline operational-action count.
-- Header/footer identify v141; inherited old-candidate badges are hidden; public v136 remains stated as fallback.
-- Remaining blocker: real authenticated click/save/refresh visual validation.
+- 25 checks remain auditable: 6 near/current actions shown first, 4 distant coverage checks collapsed, 15 covered/monitoring checks collapsed.
+- 48 classification groups remain separate from operational action count.
+- Remaining blocker: real authenticated save/refresh visual behavior.
 
-### Fluxo Diário
-- Financial truth remains Flow v12.
-- Browser path is authenticated-only Flow v4 with exact cache parity.
-- v140 now installs v1/v2/v3→v4 routing as soon as lexical `S` exists, before `D` finishes, removing first-load escape to old slow v3.
-- Runtime CI now proves this bridge is installed.
-- Remaining blocker: real authenticated visual/browser inspection of current Flow data.
+### Fluxo
+- Flow v12 financial truth; browser Flow v4 cache-backed/authenticated-only.
+- Early v4 routing is proven at runtime.
+- Remaining blocker: real authenticated visual inspection and real-session latency.
 
 ### Despesas
-- Timeout path remains replaced by exact-parity cache-backed read.
-- Month/year/rolling analysis and documentary merchant/counterparty lens are present.
-- Merchant detail is shown only from structured purchase evidence; category-only/recovered/aggregate history never fabricates merchant detail.
-- Remaining blocker: real authenticated visual inspection.
+- Historical invariant R$8,623,752.53 / 3,767 effective rows remains exact.
+- Executive comparisons and documentary merchant/counterparty lens remain present without merchant fabrication.
+- Remaining blocker: visual inspection.
 
-### Cartões
-- Current real payload: 3 open cycles; 153 historical monthly points.
-- Historical evidence: 34 certified cycles; 553 allocation rows / R$821,898.39; 318 aggregate fallback rows / R$2,714,803.16; recovered C6 kept separate.
-- Visa Infinite Itaú 2025: 12/12 certified.
-- Mastercard 2025 certified Mar/Apr/May/Jun/Aug/Nov; Jan/Feb/Jul/Oct candidate-only; Sep/Dec blocked.
-- Mastercard 2024 certified Mar/May/Aug/Sep/Oct/Dec; Jan/Feb/Apr/Jun/Jul/Nov pending.
-- Latest Feb/2025 File Library retry failed technically before returning content; no new certification or inference.
+### Cartões / historical evidence
+- 3 open cycles; 153 historical monthly points.
+- 34 certified historical allocation cycles / 553 rows / R$821,898.39.
+- Visa Infinite Itaú 2025 = 12/12 certified.
+- Mastercard Itaú 2025 certified Mar/Apr/May/Jun/Aug/Nov.
+- Mastercard Itaú 2025 Jan/Feb/Jul/Oct remain candidate-partial; full signed tails missing.
+- Mastercard Itaú 2025 Sep/Dec remain documentary-blocked.
+- Mastercard Itaú 2024 certified Mar/May/Aug/Sep/Oct/Dec; Jan/Feb/Apr/Jun/Jul/Nov have exact payment identity but missing category composition.
+- Internal validation registry persists all 12 open months and prevents accidental promotion; QA 7/7 PASS.
+- Latest File Library targeted retrieval failed technically before content; no inference or certification resulted.
 
 ### Planejamento
-- Current payload: 5 liquidity layers; 3 negative episodes.
-- Certified semantics: first real gap 08/01/2027; worst balance R$-21,046.80; FGTS request-by 09/12/2026 for the first gap; FGTS remains ~D+30 contingency, not automatic cash.
-- v131 12/01 counterfactual remains preserved/explained.
-- Remaining blocker: visual homologation of the cockpit/rationale.
+- 5 liquidity layers / 3 negative episodes.
+- First real gap 08/01/2027; worst balance R$-21,046.80; FGTS request-by 09/12/2026; FGTS remains D+30 contingency.
+- v131 12/01 counterfactual preserved.
+- Remaining blocker: visual homologation of rationale/cockpit.
 
-### Patrimônio
-- UI contract confirms named `wealth_executive.assets` object with explicit CIPÓ and Volvo objects.
-- Market estimates, current documentary debt and future schedules remain separated.
-- Remaining blocker: visual homologation; Volvo range remains provisional until trim/km evidence exists.
+### Patrimônio / CIPÓ
+- Market estimate, documentary debt and equity remain separate.
+- New CIPÓ documentary coverage is evidence-only: source card aggregates R$1,465,713.29; conservative capped documented floor R$569,196.83; no status promotion.
+- 32 CIPÓ card aggregates remain pending; Consórcio Itaú R$303.60 and Condomínio formula/cut remain unresolved.
+- Candidate displays documentary progress separately from reconciliation closure.
+- Volvo remains provisional pending trim/km evidence.
+
+### Configurações / backup
+- Private daily automatic snapshot is active through internal `pg_cron` at 06:15 UTC / 03:15 BRT.
+- Snapshot is idempotent by user/date, hashed and private; browser roles cannot read payload.
+- UI reads metadata only through authenticated `lts_browser_backup_status_v1`.
+- Restore behavior remains unchanged.
 
 ## Classification
-- Current review: 48 groups / 53 lines across August and future September cycles; 62 category choices.
-- Safe suggestion groups = 0. No auto-classification authorized.
-- The 26 economically effective August lines remain genuine human-review gaps unless evidence changes.
-- Real authenticated save→cache→UI click remains pending and unclaimed.
-
-## CIPÓ unresolved evidence
-- Condomínio formula/cut remains unresolved; duplicate-looking raw rows cannot be suppressed without full closure.
-- Consórcio Itaú R$303.60 remains unresolved; overlap math alone cannot choose an invalid row.
-- Post-2029 tail is TR-dependent and must never be treated as zero or fabricated exact.
+- Current review 48 groups / 53 lines; 62 category options; safe suggestion groups 0.
+- 26 economically effective August lines remain human-review gaps.
+- No auto-classification from merchant appearance.
+- Real authenticated save→cache→UI click remains pending/unclaimed.
 
 ## Open Finance
-- Provider-neutral staging/writer v2 exists; architecture QA 14/14 PASS; no browser policy/direct canonical write.
-- Pluggy remains first sandbox candidate; sandbox publicly available and operational limits documented; production price/SLA still commercial.
-- Belvo current public Launch price is R$6,000/month; sandbox free; explicit C6 product equivalence remains to confirm.
-- Klavi documents operational limits but public comparable production price/institution-product matrix/SLA remain to confirm.
-- No account/token/consent/paid commitment exists. Real provider connection or spend requires explicit user decision.
+- Provider-neutral staging/writer v2 exists; architecture QA 14/14 PASS, no browser policy/direct canonical write.
+- Pluggy first sandbox candidate; Belvo benchmark; Klavi alternative.
+- No account/token/consent/commercial commitment exists. Provider/consent/spend needs explicit user decision.
 
 ## Minimum package before next user look
-1. Public fallback unchanged. **GREEN.**
-2. Real-user boot regression fixed. **GREEN on real mobile v140.**
-3. Candidate parser + Chromium without synthetic readiness. **GREEN.**
-4. Runtime early Flow-v4 bridge. **GREEN.**
-5. Pages deployed on verified smoke head. **GREEN.**
-6. Readiness shape/consistency/writer contracts. **GREEN 51/51.**
-7. Core financial regression. **GREEN 15/15.**
-8. Despesas/Fluxo performance regressions technically fixed. **GREEN internally.**
-9. Cartões/Planejamento/Atualizações material UX. **IMPLEMENTED in v141; user approval pending.**
-10. Historical/classification/CIPÓ gaps remain explicit without inference. **GREEN as guardrail.**
-11. Real authenticated visual E2E. **PENDING / NOT CLAIMED.**
-12. Promotion to `index.html`. **NOT AUTHORIZED / NOT DONE.**
+1. Public fallback unchanged — GREEN.
+2. Real-user boot regression fixed — GREEN on real mobile v140.
+3. Candidate parser + Chromium without synthetic readiness — GREEN.
+4. Visible v141 ownership + current extension stamp — GREEN.
+5. Pages same verified candidate head — GREEN.
+6. Readiness/core/financial/ACL gates — GREEN.
+7. Heavy gate including shared Flow, backup, CIPÓ evidence and historical registry — GREEN 213/213.
+8. Material v141 UX package — IMPLEMENTED; user approval pending.
+9. Historical/classification/CIPÓ unresolved items explicit and non-promoted — GREEN as guardrail.
+10. Real authenticated visual E2E — PENDING / NOT CLAIMED.
+11. Promotion to `index.html` — NOT AUTHORIZED / NOT DONE.
 
-Continue autonomous checks while they can materially reduce risk. Ask the user only when the remaining blocker is genuinely visual/authenticated behavior or a real financial/classification/commercial decision.
-
-Latest immutable evidence:
-- `backups/wip35-v141-readiness-ui-contract-batch11-2026-08-29.json`
-- `backups/wip35-v141-writer-refresh-openfinance-batch12-2026-08-29.json`
+Continue autonomous technical and historical evidence work while it can materially reduce risk. Ask the user only when the remaining blocker is genuinely visual/authenticated behavior or a real financial/classification/commercial decision.
