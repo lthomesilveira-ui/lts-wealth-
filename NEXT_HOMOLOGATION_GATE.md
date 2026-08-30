@@ -6,9 +6,10 @@ Purpose: minimum evidence-backed package before asking the user to inspect the n
 - Public fallback: WIP35-v136 in `index.html`, unchanged and not user-approved; effective prior visual baseline remains v135.
 - Public fallback protected blob: `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
 - Fixed user homologation URL: `homologacao.html`.
-- `homologacao-current.json` still intentionally points to validated v141 while v142 finishes its final coherent package.
-- Current integrated main: `4eded532ad90a11ed73119edf997ee58246f2f46`.
-- Round 3 final-polish branch: `v142-round3-final-polish`; current smoke head `21a797e47484c4caaafcd7e9a56c75d4ae5cdd5c`.
+- `homologacao-current.json` now points to **v142** after the full internal recovery package and manifest-switch smoke became green.
+- Integrated v142 runtime main SHA: `204d5a019f7334ae6361c747552da15659919487`.
+- Final pre-exposure checkpoint commit: `c8025b97b99cb5e0011f31be78647e0cf450a851`.
+- Manifest exposure SHA: `5c3cf9ea01878baed00d827bde671382dd275605`.
 - Real authenticated visual E2E: PENDING / NOT CLAIMED.
 - Promotion to `index.html`: NOT AUTHORIZED / NOT DONE.
 
@@ -25,42 +26,50 @@ Audited current semantics:
 
 Therefore Dashboard/Planning must describe January as a **liquidity management point covered by a D+30 contingency if requested on time**, not as “real lack of money”. Planning bridge QA: **19/19 PASS**.
 
-## v142 integrated package through Round 2
-Main `4eded532ad90a11ed73119edf997ee58246f2f46` now contains:
-- restored Claude-era executive Dashboard/cockpit;
+## v142 final integrated package
+Main `204d5a019f7334ae6361c747552da15659919487` contains the coherent recovery candidate:
+- restored executive Dashboard/cockpit;
 - reconciled Planning renderer with the FGTS D+30 bridge;
-- executive-first Patrimônio read model;
-- compact Atualizações + obvious natural-language launch surface;
+- deterministic v142 Planning renderer ownership to prevent the earlier timing/race regression;
+- executive-first Patrimônio read model/presentation;
+- compact Atualizações with obvious natural-language launch surface;
+- `Resolver agora` action-first summary with direct shortcuts for maintenance, classification review and documents requiring a decision;
 - reviewed resgate/aplicação UI v2 with explicit preview and approval;
 - hardened value parser (`5 mil`, `R$ 5.000`, `5000`, `3k`, `R$ 1.250,50`);
 - Flow v13 effective bank↔asset movement propagation;
-- no change to public fallback or homologation manifest.
+- tighter mobile/desktop density without changing financial values or read models;
+- inherited v141 Flow balance emphasis, document outcomes, CIPÓ documentary coverage and backup metadata.
 
-Main post-merge evidence:
-- candidate-smoke run `33342589464`: **SUCCESS**;
-- Pages run `33342589186`: build/deploy/report checks **SUCCESS** on the same SHA;
+Final Round 3 branch evidence after Planning ownership stabilization:
+- code head `89ac771d0473165201400c2afe1dd31ed14fea88`;
+- candidate-smoke run `33342878089`: **SUCCESS**;
 - desktop 1440×1000: PASS;
 - mobile 390×844: PASS;
+- Planning bridge, liquidity UI/parser, Dashboard and final action-first polish: PASS in both viewports;
+- zero new console/page errors;
+- zero root overflow.
+
+Integrated main evidence before manifest exposure:
+- candidate-smoke run `33342968051`: **SUCCESS**;
+- Pages run `33342967458`: build/report/deploy **SUCCESS** on the integrated SHA.
+
+Manifest-switch evidence on `5c3cf9ea01878baed00d827bde671382dd275605`:
+- fixed entrypoint test: **PASS**, target=`wip35-v142-candidate.html`;
+- candidate-smoke run `33343053019`: **SUCCESS**;
+- Pages run `33343052602`: build/report/deploy **SUCCESS**;
+- desktop 1440×1000: PASS;
+- mobile 390×844: PASS;
+- complete v142→v141→v140→v139→v138→v137→index chain: PASS;
+- Planning bridge ownership: PASS;
+- liquidity UI/parser: PASS;
+- final action-first polish: PASS;
+- Dashboard: PASS;
+- Flow/document outcome inheritance: PASS;
 - zero new console/page errors;
 - zero root overflow;
-- fixed homologation entrypoint still targets v141.
+- public fallback blob unchanged.
 
 Important limit: browser smoke is non-authenticated composition/runtime evidence. It is not authenticated visual E2E.
-
-## Round 3 — final action hierarchy / density
-Round 3 is intentionally a polish layer, not a financial-model rewrite.
-
-Implemented on `v142-round3-final-polish`:
-- `Resolver agora` summary immediately below the natural-language launch surface;
-- separate counts/shortcuts for current maintenance, classification review and documents requiring a decision;
-- action buttons scroll directly to the relevant queue instead of forcing the user to hunt lower in the page;
-- distant coverage and healthy checks remain available for audit but do not dominate the primary view;
-- tighter classification/document/maintenance density;
-- mobile-specific compact rows and no deliberate horizontal expansion;
-- Dashboard/Patrimônio micro-density cleanup without changing financial values or read models.
-
-Round 3 smoke head: `21a797e47484c4caaafcd7e9a56c75d4ae5cdd5c`.
-Current branch smoke run: `33342704158` — must be SUCCESS before integration.
 
 ## Financial / backend gates
 Heavy and delta gates are deliberately staged to avoid timeout-prone nesting.
@@ -123,20 +132,22 @@ Those two items do not authorize inventing or silently modifying any financial m
 - Document association requires explicit bank/card/competence or commitment/as-of context; no filename inference.
 - Open Finance production consent/provider/spend requires explicit user decision.
 
-## Minimum package before changing `homologacao-current.json` to v142
+## Homologation status
+All minimum internal gates required to expose v142 through the fixed homologation URL are now GREEN:
 1. Public fallback unchanged — GREEN.
 2. Planning Excel→current bridge — GREEN.
 3. Dashboard cockpit read model/ACL — GREEN.
 4. v142 parser/static layers — GREEN.
-5. Chromium desktop/mobile Round 2 composition smoke — GREEN.
-6. Pages on integrated Round 2 main SHA — GREEN.
+5. Chromium desktop/mobile composition smoke — GREEN.
+6. Pages on integrated v142 main — GREEN.
 7. Heavy v14 + delta v15 + delta v16 — GREEN (**31 suites / 379 checks** staged).
-8. Reviewed natural-language resgate/aplicação UI — GREEN on integrated main.
+8. Reviewed natural-language resgate/aplicação UI — GREEN.
 9. Flow-v13-effective write→refresh consistency after liquidity movement — GREEN.
-10. Round 3 action hierarchy/density — IN FINAL SMOKE.
-11. Final v142 package checkpoint + master backlog synchronization — PENDING.
-12. Real authenticated visual E2E — PENDING / NOT CLAIMED.
-13. Only after 10–11 are complete may the fixed homologation manifest move from v141 to v142 for the user's material visual review.
-14. `index.html` promotion only after explicit user approval.
+10. Round 3 action hierarchy/density — GREEN.
+11. Final v142 package checkpoint + master backlog synchronization — GREEN.
+12. Manifest switch to v142 + fixed-link smoke + Pages — GREEN.
+13. Real authenticated visual E2E — PENDING / NOT CLAIMED.
+14. User material visual homologation — NOW THE NEXT GATE.
+15. `index.html` promotion only after explicit user approval.
 
-Continue autonomously. Do not ask the user to perform basic QA.
+The next user-facing step is a **material visual homologation through the same fixed `/homologacao.html` URL**, not basic QA. Any defect found there remains a product/homologation finding; it does not retroactively turn the non-authenticated smoke into authenticated E2E.
