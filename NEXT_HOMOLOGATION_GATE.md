@@ -7,15 +7,16 @@ Purpose: minimum evidence-backed package before asking the user to inspect a can
 - v139 real authenticated boot failed; synthetic-readiness smoke retired.
 - v140 introduced lexical bridge/early Flow-v4 routing; user confirmed real mobile boot.
 - Current material candidate: `wip35-v141-candidate.html`.
-- Latest verified candidate code/smoke head: `5d67b2e2d719c309d9159e078d3c2e681e6ab361`.
+- Current Flow-UX candidate code/smoke head: `211f067cf94d4b1d6b61be191054c6ae292daf77`.
 - Public fallback exact blob: `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
 - Real authenticated visual E2E: PENDING / NOT CLAIMED.
 
 ## Browser / serving evidence
-- Candidate smoke run `33311276232`: SUCCESS; candidate job `99256663902`: SUCCESS.
-- Same-head GitHub Pages build/deploy: SUCCESS; deploy check `99256687084`, Pages workflow `33311275717`.
+- Candidate smoke run `33319620454`: SUCCESS on the Flow-UX head.
+- Same-head GitHub Pages run `33319620096`: SUCCESS.
 - Chromium chain v141→v140→v139→v138→v137→v136.
-- Runtime requires lexical bridge, early Flow-v4, visible v141 ownership, current CIPÓ/backup/shared-flow stamp, zero new errors and no root overflow; no synthetic D/S/render readiness.
+- Runtime requires lexical bridge, early Flow-v4, visible v141 ownership, current CIPÓ/backup/shared-flow extension stamp, Flow UX marker, zero new errors and no root overflow; no synthetic D/S/render readiness.
+- v141 Flow UX removes the duplicate internal `Hoje` button while retaining the period chip and restores subtle balance-cell emphasis on desktop/mobile.
 - Evidence is non-authenticated browser composition/runtime smoke, not authenticated visual E2E.
 
 ## Backend readiness / gates
@@ -26,10 +27,10 @@ Purpose: minimum evidence-backed package before asking the user to inspect a can
 - Expense v9 19/19; Expense v10 18/18; Planning 23/23; Wealth 18/18; classification cache 5/5; document lifecycle 17/17; documentary expense lens 4/4.
 - Candidate UI extension QA 6/6; shared-Flow exact parity 6/6; backup snapshot 13/13; CIPÓ documentary coverage 6/6.
 - Dynamic card-history coverage QA v2: **8/8 PASS**.
-- Historical validation registry QA v3: **12/12 PASS**.
+- Historical validation registry QA v4: **16/16 PASS**, **68 open Mastercard cycles 2019–2025** tracked internally.
 - Effective-history QA v2: **PASS — 2,030 days / 147 months exact**.
 - FIX86 legacy/transversal guardrails QA v4: **10/10 PASS**.
-- Extended heavy pre-homologation gate **v6 = 231/231 PASS across 16 suites**. The v6 gate avoids duplicate core/projection recomputation while preserving runtime ownership inside the base heavy suite.
+- Extended heavy pre-homologation gate **v7 = 235/235 PASS across 16 suites**.
 
 ## Performance / refresh
 - Despesas cache read ~0.1s; Flow cached 33d ~10ms; classification queue within guard.
@@ -41,12 +42,13 @@ Purpose: minimum evidence-backed package before asking the user to inspect a can
 ## v141 material package
 ### Atualizações / documents
 - 25 checks auditable: 6 near/current first, 4 distant collapsed, 15 covered/monitoring collapsed; classification workstream separate.
-- Document approval path is explicitly gated: Inbox/manual review creates no financial write before approval; reviewed application is the write path.
+- Document approval path explicitly gated: Inbox/manual review creates no financial write before approval; reviewed application is the write path.
 - Remaining blocker: real authenticated save/refresh/self-heal/`O que mudou` visual behavior.
 
 ### Fluxo / FIX86
 - Flow v12 financial truth; browser Flow v4 authenticated/cache-backed; early routing proven.
 - Historical parity exact through 2025; baseline frozen; stale/superado anchor excluded; scenarios read-only; Flow edits/cancel/split append overlays/audit rather than destructively rewriting source facts.
+- v141 Flow UX single-`Hoje`/balance-emphasis package is parser/Chromium/Pages green.
 - Remaining blocker: real authenticated visual inspection and real-session latency.
 
 ### Despesas
@@ -57,14 +59,18 @@ Purpose: minimum evidence-backed package before asking the user to inspect a can
 
 ### Cartões / historical evidence
 - 3 open cycles; 153 historical monthly points.
-- Certified historical allocation now **38 cycles / 650 rows / R$885,855.19**.
-- Aggregate fallback now **314 rows / R$2,650,846.36**.
+- Certified historical allocation: **38 cycles / 650 rows / R$885,855.19**.
+- Aggregate fallback: **314 rows / R$2,650,846.36**.
 - Visa Infinite Itaú 2025 = 12/12 certified.
 - Mastercard 2025: Mar/Apr/May/Jun/Aug/Nov certified; Jan/Feb/Jul/Oct candidate-partial; Sep/Dec documentary-blocked.
 - Mastercard 2024: Mar/May/Aug/Sep/Oct/Dec certified; Jan/Feb/Apr/Jun/Jul/Nov settlement proven but composition missing.
 - Mastercard 2023: 12 ledger-only cycles totaling R$496,689.05; independent matrix missing.
-- Mastercard 2022 newly certified exact: Apr R$11,910.91; Jun R$10,185.54; Jul R$13,486.29; Oct R$28,374.06. Remaining eight months tracked explicitly; Jan–Mar fragmented settlements are not assumed to be one invoice.
-- Internal historical registry tracks **32 open Mastercard cycles 2022–2025** and prevents accidental promotion.
+- Mastercard 2022 certified exact: Apr R$11,910.91; Jun R$10,185.54; Jul R$13,486.29; Oct R$28,374.06. Eight months remain explicitly tracked; Jan–Mar fragmented settlements are not assumed to be one invoice.
+- Mastercard 2021: 12 ledger-only months / R$116,458.47; all 12 fragmented.
+- Mastercard 2020: 12 ledger-only months / R$99,107.08; 10 fragmented.
+- Mastercard 2019: 12 ledger-only months / R$164,402.94; 5 fragmented.
+- Internal registry tracks **68 open Mastercard cycles 2019–2025** and prevents accidental promotion.
+- Current DB namespaces/staging do not contain an independent category matrix for 2019–2021; File Library retrieval failure remains technical, not evidence absence.
 - C6 Aug/2024 individual-detail gap R$66.70 remains explicit.
 
 ### Planejamento
@@ -95,10 +101,10 @@ Purpose: minimum evidence-backed package before asking the user to inspect a can
 1. Public fallback unchanged — GREEN.
 2. Real-user boot regression fixed — GREEN on real mobile v140.
 3. Candidate parser + Chromium without synthetic readiness — GREEN.
-4. Visible v141 ownership/current extension stamp — GREEN.
+4. Visible v141 ownership/current extension + Flow UX marker — GREEN.
 5. Pages same verified candidate head — GREEN.
 6. Readiness/core/ACL/current financial gates — GREEN.
-7. Historical/FIX86 contracts — GREEN; heavy v6 231/231.
+7. Historical/FIX86 contracts — GREEN; heavy v7 235/235.
 8. Material v141 UX package — IMPLEMENTED; user approval pending.
 9. Historical/classification/CIPÓ unresolved items explicit/non-promoted — GREEN as guardrail.
 10. Real authenticated visual E2E — PENDING / NOT CLAIMED.
