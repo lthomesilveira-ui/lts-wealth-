@@ -1,12 +1,12 @@
 # LTS Wealth — Auditoria Planejamento Excel → motor atual — 2026-08-30
 
-Status: **ABERTA / P0**. Nenhuma conclusão financeira nova deve ser promovida a regra de negócio até esta ponte fechar.
+Status: **ABERTA / P0, ponte material avançada**. Nenhuma conclusão financeira nova deve ser promovida a regra de negócio até esta ponte fechar.
 
 ## Por que esta auditoria existe
 
-Na homologação real de 30/08/2026, o usuário voltou a apontar uma inconsistência material: na leitura que fazia no Excel, o horizonte após considerar RSUs e FGTS não mostrava falta real de recursos, enquanto o motor atual sinaliza primeiro gap em janeiro/2027. O fato de os gates internos passarem prova consistência do motor atual com suas próprias entradas; **não prova paridade econômica com o Excel nem prova que as premissas carregadas são as mesmas**.
+Na homologação real de 30/08/2026, o usuário voltou a apontar uma inconsistência material: na leitura que fazia no Excel, o horizonte após considerar RSUs e FGTS não mostrava falta real de recursos, enquanto o motor atual sinaliza um cruzamento negativo em janeiro/2027. O fato de os gates internos passarem prova consistência do motor atual com suas próprias entradas; **não prova paridade econômica com o Excel nem prova que as premissas carregadas são as mesmas**.
 
-Portanto, `08/01/2027` e `R$ -21.046,80` permanecem resultados do motor atual, mas ficam sob auditoria de ponte antes de serem tratados como conclusão financeira definitiva na UX.
+Portanto, `08/01/2027` e `R$ -21.046,80` permanecem resultados do motor atual sob a camada de RSUs programadas. **Não devem ser chamados de “falta real de dinheiro” na UX enquanto esta auditoria estiver aberta.**
 
 ## Evidência atual do motor
 
@@ -22,65 +22,148 @@ Consulta direta a `lts_dashboard_cash_ladder_v2` para 30/08/2026–28/02/2027, p
 | 2027-01 | -135.718,62 | -92.876,03 | -60.103,73 | **-21.046,80** | **-3.537,75** |
 | 2027-02 | -105.797,48 | -62.954,89 | -30.182,59 | 8.874,34 | 26.383,39 |
 
-\* A coluna atual `balance_with_fgts` é uma camada contrafactual que soma o saldo de FGTS; ela **não deve ser lida como caixa automaticamente disponível antes do prazo de saque**. O planejamento separado registra FGTS como contingência ~D+30. Esta semântica precisa permanecer explícita.
+\* `balance_with_fgts` é uma camada contrafactual que soma o saldo de FGTS. Ela **não significa caixa automaticamente disponível antes do prazo de saque**. FGTS permanece contingência ~D+30.
 
-## Âncoras atuais a reconciliar com o Excel
+## Âncoras atuais
 
-- Cofrinho Itaú: R$ 42.842,59, posição 27/08/2026, D+0.
-- RSU vested / Organon Long Share Holdings: R$ 32.772,30, posição 18/08/2026, D+3.
-- FGTS Organon: R$ 17.509,05, posição 18/08/2026, restrito / contingência ~D+30.
-- Caixa bancário: derivado das contas correntes + fatos efetivos a partir das âncoras bancárias atuais.
+- Cofrinho Itaú: **R$42.842,59**, posição 27/08/2026, D+0.
+- RSU vested / Organon Long Share Holdings: **R$32.772,30**, posição 18/08/2026, D+3.
+- FGTS Organon: **R$17.509,05**, posição 18/08/2026, restrito / contingência ~D+30.
+- Caixa bancário: derivado das âncoras bancárias atuais + fatos/projeções efetivos.
 
-## Liquidez futura atual relevante antes do gap
+## O Excel antigo efetivamente mostrava sem RSUs
 
-Tabela `lts_future_liquidity_schedule`, ativa:
+A aba `Fluxo Negativo` do `Controle_Financeiro_Fase1_Compactado.xlsx` recuperou a série mensal `Saldo Ex RSUs` de 2026:
 
-- RSU 05/11/2026 + D+3: R$ 21.745,98, valor bruto, schedule legado certificado.
-- RSU 07/11/2026 + D+3: R$ 17.310,95, valor bruto, schedule legado certificado.
-- Cash Award 18/02/2027 + D+3: bruto R$ 198.145,97 / líquido estimado R$ 138.702,18. Por ocorrer depois de janeiro, não cobre o primeiro gap atual.
+| Mês | Saldo Ex RSUs no Excel |
+|---|---:|
+| Jan | R$34.632,90 |
+| Fev | R$8.295,33 |
+| Mar | R$-1.794,36 |
+| Abr | R$82.943,24 |
+| Mai | R$82.556,02 |
+| Jun | R$95.126,22 |
+| Jul | R$55.813,48 |
+| Ago | R$26.600,57 |
+| Set | R$1.714,42 |
+| Out | R$-31.194,26 |
+| Nov | R$-51.881,67 |
+| Dez | **R$-78.668,59** |
 
-Ponto crítico: as duas RSUs de novembro estão como `gross_only`. A auditoria deve confirmar qual valor o Excel utilizava e se a comparação é bruto contra bruto, líquido contra líquido ou se havia outra premissa documentada. Não inferir imposto/FX/quantidade.
+Conclusão parcial segura: **o Excel já ficava negativo sem RSUs**. Portanto a lembrança do usuário é compatível com a evidência e deve ser testada no cenário que adicionava RSUs/FGTS — não contra o cenário `Saldo Ex RSUs`.
 
-## Principais eventos do motor que pressionam a ponte até janeiro
+O workbook também preserva os blocos `Saldo Ex FGTS`, `Saldo Total` e `Saldo Futuro`, mas os valores calculados dessas linhas estão vazios no cache recuperável do arquivo. Os rótulos são evidência; os números não serão reconstruídos por hipótese.
 
-A auditoria deve comparar, um a um, com o Excel projetado e classificar cada diferença como: `já existia no Excel`, `valor/data atualizados por fato`, `novo compromisso documentado`, `projeção substituída`, `possível duplicidade`, `ausente no Excel`, `inconclusivo`.
+## Ponte operacional: Excel importado x motor atual
 
-Itens materialmente relevantes hoje incluem:
+Foi comparado o `evento_base` legado com `lts_corrected_cashflow_operational_v1` para set/2026–jan/2027. A comparação é de fluxo operacional do período e não substitui a ponte de saldos/ativos.
 
-- Financiamento CIPÓ 396: ~R$ 20,5–20,7 mil/mês.
-- Cartões Visa/Mastercard/C6 com valores que mudam por competência.
-- Benjamin Educação.
-- Condomínio O Parque.
-- Volvo: parcela R$ 2.886,43/mês + seguro.
-- IPTU CIPÓ 396 até nov/2026 e IPVA/licenciamento em jan/2027.
-- Fisioterapia Larissa + reembolsos correspondentes.
-- Enel O Parque.
-- Salário líquido + adiantamento quinzenal.
-- Retention Bonus Organon de R$ 39.175,57 em 31/01/2027 no motor atual.
+| Mês | Líquido legado | Líquido atual | Delta atual − legado |
+|---|---:|---:|---:|
+| Set/2026 | R$-30.735,13 | R$-42.226,83 | **R$-11.491,70** |
+| Out/2026 | — | — | **R$+2.592,03** |
+| Nov/2026 | — | — | **R$-96,21** |
+| Dez/2026 | — | — | **R$+2.127,06** |
+| Jan/2027 | — | — | **R$+314,13** |
 
-Nenhum desses itens deve ser removido ou alterado apenas para “fazer bater” com o Excel. A ponte deve explicar a diferença.
+Delta acumulado set→jan: aproximadamente **R$-6.554,69**. A piora operacional relativa ao plano legado está fortemente concentrada em setembro; outubro, dezembro e janeiro são favoráveis ao motor atual e novembro é praticamente neutro.
 
-## Evidência recuperada do Excel
+### Ponte detalhada de setembro/2026
 
-O arquivo histórico `Controle_Financeiro_v16.xlsm` / `Controle_Financeiro_Fase1_Compactado.xlsx`, aba `Fluxo Negativo`, contém pelo menos uma série mensal identificada como `Saldo Ex RSUs`, com 2026 visível nos artefatos recuperados. A série tem deterioração ao longo de 2026 e termina negativa no cenário sem RSUs. O arquivo também contém blocos rotulados `Saldo Ex FGTS`, `Saldo Total` e `Saldo Futuro`; os valores desses blocos ainda precisam ser extraídos de forma inequívoca antes da conclusão.
+Principais diferenças documentadas, após neutralizar simples renomes:
 
-A observação do usuário — de que após RSUs + FGTS não via ruptura real — é a hipótese principal a testar contra esses blocos, não algo a descartar porque o motor atual passa QA.
+- Visa Aeternum: legado ~R$-12.523,13 → atual R$-17.967,48: **~R$-5.444,35** pior.
+- Mastercard/Personnalité: legado ~R$-8.457,38 → atual R$-9.589,03: **~R$-1.131,65** pior.
+- Benjamin Educação: legado R$-5.912,00 → atual R$-10.837,00: **R$-4.925,00** pior.
+- Fisioterapia Larissa + reembolso: efeito líquido atual ~R$-585,00 versus ausência/efeito diferente na projeção antiga: **~R$-585,00** pior.
+- Financiamento CIPÓ: diferença pequena, ~**R$-157,52** pior.
+- Volvo: parcela + seguro atuais têm efeito ~**R$464,62 favorável** versus a antiga linha de compra/carro na comparação do período.
+- C6: ~**R$214,08 favorável**.
+- Salário + Coopharma: ~**R$73,12 favorável**.
 
-## Plano de fechamento da ponte
+A soma explica materialmente o delta mensal sem exigir uma hipótese de “nova regra” genérica.
 
-1. Recuperar no Excel os valores mensais/diários de `Saldo Ex RSUs`, `Saldo Ex FGTS`, `Saldo Total` e `Saldo Futuro`, com datas e fórmulas/semântica.
-2. Congelar uma tabela de âncoras comparáveis na mesma data-base.
-3. Reconciliar entradas e saídas futuras por identidade, data e valor entre Excel e motor atual.
-4. Separar diferenças provocadas por fatos ocorridos após a planilha daquelas provocadas por mudança de regra/modelo.
-5. Reconciliar RSUs por vesting/settlement e verificar bruto x líquido sem inventar impostos, FX ou quantidade.
-6. Reconciliar FGTS como contingência com prazo ~D+30, sem tratá-lo como caixa automático.
-7. Produzir ponte acumulada até o primeiro gap: `saldo Excel + deltas documentados = saldo motor atual`.
-8. Se fechar: explicar por que o gap mudou. Se não fechar: localizar bug/gap de modelo e corrigir antes de homologar Planejamento.
-9. Criar gate regressivo permanente de paridade Excel→motor para a janela auditada.
+## Coopharma: hipótese de duplo débito descartada
 
-## UX de Planejamento após a auditoria
+A auditoria verificou o tratamento atual e a referência FIX86:
 
-A referência de informação é a antiga visão executiva já recuperada do projeto: leitura rápida de caixa/recursos, camadas de liquidez, cenário com/sem recursos futuros, diferença entre `ponto de gestão` e `falta real`, RSUs que mudam o caixa, necessidade por conta e poucas ações prioritárias. A tela não deve expor linguagem de implementação, nomes de funções, QA ou excesso de texto técnico.
+- O legado tinha `Salário` +R$10.300 e `Pagamento Novo Coopharma` -R$4.451,02.
+- O motor atual possui uma linha econômica `economic_withholding`/Folha e, na visão operacional, **a incorpora ao salário líquido e remove a linha separada**.
+- A regra FIX86 original certifica `Coopharma econômico sem segundo débito bancário`.
+
+Portanto **Coopharma não explica a deterioração como novo débito duplicado**. A semântica atual preserva um único efeito econômico.
+
+## RSUs futuras: também não explicam a piora
+
+Evidência antiga recuperada para novembro/2026:
+
+- RSU 05/11/2026: ~R$21.060,49.
+- RSU 07/11/2026: ~R$16.765,26.
+- Total antigo aproximado: **R$37.825,75**.
+
+Schedule atual ativo:
+
+- RSU 05/11/2026 + D+3: **R$21.745,98**, `gross_only`.
+- RSU 07/11/2026 + D+3: **R$17.310,95**, `gross_only`.
+- Total atual: **R$39.056,93**.
+
+O total atual é ~**R$1.231,18 maior** que o recuperado do plano antigo. Logo os vestings futuros de novembro, isoladamente, não explicam por que o cenário atual piorou.
+
+## Pontos que agora concentram a investigação
+
+### 1. RSU já vested / realizável
+
+Há evidência antiga em julho/2026 em torno de **R$51.437,69** para RSU vested, contra **R$32.772,30** na posição atual de 18/08/2026 — diferença aproximada de **R$18.665,39**.
+
+Isso é material, mas **não autoriza concluir bug**: o valor pode ter sido vendido, consumido, reprecificado ou substituído por uma posição posterior. A ponte precisa explicar a movimentação documentalmente antes de usar a diferença como causa.
+
+### 2. FGTS
+
+O motor atual usa posição documentada **R$17.509,05** e prazo ~D+30. O Excel contém referência histórica de FGTS e os blocos `Saldo Ex FGTS` / `Saldo Total`, mas o cache calculado dessas fórmulas não foi recuperado de forma suficiente. A semântica e a data-base do valor antigo ainda precisam fechar.
+
+### 3. Saldo inicial / data-base
+
+A comparação mensal de eventos explica apenas cerca de R$6,55 mil de piora acumulada set→jan. Ela **não é suficiente para explicar sozinha** a diferença entre a lembrança do Excel pós-RSU/FGTS e o cruzamento atual. A ponte de posição inicial, RSU vested e FGTS continua sendo o bloco mais relevante.
+
+### 4. Janeiro/2027 é intramês
+
+O motor atual cruza zero antes de entradas relevantes do fim do mês e volta a ficar positivo em fevereiro. Portanto o diagnóstico precisa distinguir:
+
+- falta estrutural de patrimônio;
+- necessidade temporária de liquidez / funding intramês;
+- gap ainda não conciliado entre planilha e motor.
+
+Até o fechamento desta auditoria, a UX deve usar **“ponto do motor em auditoria”**, não “primeiro aperto real” ou “falta real”.
+
+## Liquidez futura posterior
+
+Cash Award 18/02/2027 + D+3: bruto **R$198.145,97** / líquido estimado **R$138.702,18**. Por ocorrer depois do ponto de janeiro, não pode ser antecipado para eliminá-lo.
+
+## Próxima ponte obrigatória
+
+1. Explicar RSU vested de ~R$51,4 mil antiga → R$32,8 mil atual por eventos/posição documental.
+2. Fechar a semântica/data-base do FGTS antigo versus R$17,5 mil atual.
+3. Produzir uma ponte de posição: `posição antiga + deltas de fluxo + deltas de ativos = posição atual`.
+4. Classificar cada diferença como `fato posterior`, `mudança documental`, `timing`, `projeção substituída`, `duplicidade`, `bug` ou `não resolvido`.
+5. Recalcular o horizonte apenas depois disso.
+6. Se a ponte fechar, explicar por que o ponto mudou. Se não fechar, corrigir o modelo antes de homologar Planejamento.
+7. Criar gate regressivo permanente Excel→motor para a janela reconciliada.
+
+## UX de Planejamento durante a auditoria
+
+A referência de informação é a visão executiva antiga já recuperada no projeto:
+
+- `Planejamento de liquidez — não falta patrimonial` quando aplicável;
+- recursos disponíveis hoje;
+- Cofrinho D+0;
+- RSUs vested D+3;
+- RSUs futuras somente depois de vesting + liquidação;
+- FGTS separado/restrito;
+- `Primeiro ponto de gestão`, não linguagem alarmista;
+- cenário com e sem recursos futuros lado a lado;
+- poucas ações concretas.
+
+A tela não deve expor nomes de funções, QA ou texto técnico como mensagem principal.
 
 ## Guardrails
 
@@ -88,6 +171,8 @@ A referência de informação é a antiga visão executiva já recuperada do pro
 - Cenário não vira fato.
 - RSU futura só entra após elegibilidade + settlement.
 - FGTS é contingência ~D+30, nunca caixa automático.
+- Coopharma permanece efeito econômico único, sem segundo débito bancário.
 - Não inventar valor líquido de RSU, imposto, FX, merchant, classificação ou reconciliação.
-- Não reinterpretar saída/entrada apenas para eliminar um gap.
+- Não reinterpretar entrada/saída apenas para eliminar um gap.
+- Não inferir os valores vazios de `Saldo Ex FGTS`, `Saldo Total` ou `Saldo Futuro`.
 - Nenhuma promoção para `index.html` enquanto a candidata visual e esta frente P0 não estiverem em estado homologável.
