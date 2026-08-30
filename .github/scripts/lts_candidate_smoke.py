@@ -6,7 +6,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 CANDIDATE = ROOT / "wip35-v142-candidate.html"
 CANDIDATE_JS = ROOT / "wip35-v142-ux.js"
-PLANNING_BRIDGE_JS = ROOT / "wip35-v142-planning-bridge.js"
+PLANNING_BRIDGE_JS = ROOT / "wip35-v142-planning-bridge-v2.js"
 PARENT = ROOT / "wip35-v141-candidate.html"
 GRANDPARENT = ROOT / "wip35-v140-candidate.html"
 GREATGRANDPARENT = ROOT / "wip35-v139-candidate.html"
@@ -18,7 +18,7 @@ V142_HTML_REQUIRED = {
     "candidate_stamp": "CANDIDATA v142",
     "parent_candidate": "wip35-v141-candidate.html",
     "external_ux_layer": "wip35-v142-ux.js?v142-ux-v2",
-    "planning_bridge_layer": "wip35-v142-planning-bridge.js?v142-planning-bridge-v1",
+    "planning_bridge_layer": "wip35-v142-planning-bridge-v2.js?v142-planning-bridge-v2",
     "internal_validation_copy": "validação interna",
 }
 
@@ -37,9 +37,10 @@ V142_JS_REQUIRED = {
 }
 
 PLANNING_BRIDGE_REQUIRED = {
-    "stamp": "LTS_V142_PLANNING_BRIDGE='fgts-d30-projected-conservative-v1'",
+    "stamp": "LTS_V142_PLANNING_BRIDGE='fgts-d30-projected-conservative-v2'",
     "rpc": "lts_browser_planning_bridge_executive_v1",
     "renderer": "u142PlanningBridgeRenderer",
+    "stable_owner": "Object.defineProperty(w,'planejamento'",
     "management_copy": "Primeiro ponto de gestão",
     "d30_copy": "FGTS continua restrito",
     "request_balance_copy": "não conta contribuições posteriores",
@@ -143,61 +144,30 @@ def read_external(path: Path, prefix: str, markers: dict, lines: list[str], fail
 
 
 def main() -> int:
-    lines = ["candidate=wip35-v142-candidate.html", "candidate_js=wip35-v142-ux.js", "planning_bridge_js=wip35-v142-planning-bridge.js"]
+    lines = ["candidate=wip35-v142-candidate.html", "candidate_js=wip35-v142-ux.js", "planning_bridge_js=wip35-v142-planning-bridge-v2.js"]
     failures = []
-
-    if not PUBLIC_FALLBACK.exists():
-        failures.append("public_fallback_missing")
+    if not PUBLIC_FALLBACK.exists(): failures.append("public_fallback_missing")
     else:
-        fallback_sha = git_blob_sha(PUBLIC_FALLBACK)
-        fallback_ok = fallback_sha == PUBLIC_FALLBACK_BLOB_SHA
-        lines.append(f"public_fallback_blob_sha={fallback_sha}")
-        lines.append(f"public_fallback_expected_sha={PUBLIC_FALLBACK_BLOB_SHA}")
-        lines.append(f"public_fallback_v136={'ok' if fallback_ok else 'changed'}")
-        if not fallback_ok:
-            failures.append("public_fallback_v136")
-
+        fallback_sha = git_blob_sha(PUBLIC_FALLBACK); fallback_ok = fallback_sha == PUBLIC_FALLBACK_BLOB_SHA
+        lines.extend([f"public_fallback_blob_sha={fallback_sha}",f"public_fallback_expected_sha={PUBLIC_FALLBACK_BLOB_SHA}",f"public_fallback_v136={'ok' if fallback_ok else 'changed'}"])
+        if not fallback_ok: failures.append("public_fallback_v136")
     htmls=[]
-    if not CANDIDATE.exists():
-        failures.append("v142_missing")
-        v142_html=''
+    if not CANDIDATE.exists(): failures.append("v142_missing"); v142_html=''
     else:
-        v142_html=check_inline_scripts(CANDIDATE,lines,failures,'v142',require_inline=False)
-        require_markers(v142_html,V142_HTML_REQUIRED,lines,failures,'v142_html')
+        v142_html=check_inline_scripts(CANDIDATE,lines,failures,'v142',require_inline=False); require_markers(v142_html,V142_HTML_REQUIRED,lines,failures,'v142_html')
     htmls.append(v142_html)
-
-    v142_js=read_external(CANDIDATE_JS,'v142_external_js',V142_JS_REQUIRED,lines,failures)
-    htmls.append(v142_js)
-    plan_js=read_external(PLANNING_BRIDGE_JS,'v142_planning_bridge_js',PLANNING_BRIDGE_REQUIRED,lines,failures)
-    htmls.append(plan_js)
-
-    for path,prefix,markers in [
-        (PARENT,'v141',V141_REQUIRED),
-        (GRANDPARENT,'v140',V140_REQUIRED),
-        (GREATGRANDPARENT,'v139',V139_REQUIRED),
-    ]:
-        if not path.exists():
-            failures.append(f"{prefix}_missing")
-            html=''
-        else:
-            html=check_inline_scripts(path,lines,failures,prefix)
-            require_markers(html,markers,lines,failures,prefix)
+    v142_js=read_external(CANDIDATE_JS,'v142_external_js',V142_JS_REQUIRED,lines,failures); htmls.append(v142_js)
+    plan_js=read_external(PLANNING_BRIDGE_JS,'v142_planning_bridge_js',PLANNING_BRIDGE_REQUIRED,lines,failures); htmls.append(plan_js)
+    for path,prefix,markers in [(PARENT,'v141',V141_REQUIRED),(GRANDPARENT,'v140',V140_REQUIRED),(GREATGRANDPARENT,'v139',V139_REQUIRED)]:
+        if not path.exists(): failures.append(f"{prefix}_missing"); html=''
+        else: html=check_inline_scripts(path,lines,failures,prefix); require_markers(html,markers,lines,failures,prefix)
         htmls.append(html)
-
     combined='\n'.join(htmls).lower()
     for name, marker in FORBIDDEN.items():
-        present = marker.lower() in combined
-        lines.append(f"forbidden_{name}={'present' if present else 'absent'}")
-        if present:
-            failures.append(name)
-
+        present=marker.lower() in combined; lines.append(f"forbidden_{name}={'present' if present else 'absent'}")
+        if present: failures.append(name)
     lines.append("result=" + ("PASS" if not failures else "FAIL"))
-    if failures:
-        lines.append("failures=" + ",".join(failures))
-    RESULT.write_text("\n".join(lines) + "\n", encoding="utf-8")
-    print(RESULT.read_text(encoding="utf-8"))
-    return 0 if not failures else 1
+    if failures: lines.append("failures=" + ",".join(failures))
+    RESULT.write_text("\n".join(lines)+"\n",encoding="utf-8"); print(RESULT.read_text(encoding="utf-8")); return 0 if not failures else 1
 
-
-if __name__ == "__main__":
-    sys.exit(main())
+if __name__ == "__main__": sys.exit(main())
