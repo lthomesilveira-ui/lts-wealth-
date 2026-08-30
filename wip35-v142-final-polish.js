@@ -26,6 +26,37 @@
     `;d.head.appendChild(s)
   }
 
+  function stabilizePlanningOwner(w){
+    const renderer=w.__LTS_V142_PLANNING_RENDERER;
+    if(typeof renderer!=='function'||!String(renderer).includes('u142PlanningBridgeRenderer'))return false;
+    try{
+      if(!w.__LTS_V142_FINAL_PLAN_GETTER){
+        w.__LTS_V142_FINAL_PLAN_GETTER=function v142FinalPlanningOwner(){return w.__LTS_V142_PLANNING_RENDERER};
+        w.__LTS_V142_FINAL_PLAN_SETTER=function v142FinalPlanningSetter(fn){
+          if(typeof fn==='function'&&String(fn).includes('u142PlanningBridgeRenderer'))w.__LTS_V142_PLANNING_RENDERER=fn;
+          return fn;
+        };
+      }
+      const desc=Object.getOwnPropertyDescriptor(w,'planejamento');
+      if(desc&&desc.configurable===false){
+        w.LTS_V142_FINAL_PLANNING_OWNER=String(w.planejamento).includes('u142PlanningBridgeRenderer')?'stable-nonconfigurable-v1':'blocked-nonconfigurable';
+        return w.LTS_V142_FINAL_PLANNING_OWNER==='stable-nonconfigurable-v1';
+      }
+      Object.defineProperty(w,'planejamento',{
+        configurable:false,
+        enumerable:true,
+        get:w.__LTS_V142_FINAL_PLAN_GETTER,
+        set:w.__LTS_V142_FINAL_PLAN_SETTER
+      });
+      w.LTS_V142_FINAL_PLANNING_OWNER='stable-nonconfigurable-v1';
+      return true;
+    }catch(e){
+      try{w.planejamento=renderer}catch(_){}
+      w.LTS_V142_FINAL_PLANNING_OWNER=String(w.planejamento).includes('u142PlanningBridgeRenderer')?'stable-assignment-fallback':'stabilize-error';
+      return String(w.planejamento).includes('u142PlanningBridgeRenderer');
+    }
+  }
+
   function farFuture(w,x){try{return typeof w.u141FarFuture==='function'&&w.u141FarFuture(x)}catch(e){return false}}
   function counts(w){
     const maintenance=(w.D?.updates?.maintenance_checks||[]).filter(x=>x&&x.actionable&&!farFuture(w,x)).length;
@@ -79,10 +110,11 @@
   function install(){
     const z=chain();if(!z)return;const w=z.w,d=z.d;ensureCss(d);
     w.LTS_V142_FINAL_POLISH='action-first-round3-v1';
+    stabilizePlanningOwner(w);
     ensureNowBar(w,d);ensureProductCopy(w,d);
     if(wired!==w){wired=w;try{w.renderNav()}catch(e){}}
   }
 
   outer?.addEventListener('load',()=>setTimeout(install,180));
-  setInterval(install,220);
+  setInterval(install,120);
 })();
