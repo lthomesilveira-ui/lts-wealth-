@@ -10,6 +10,8 @@ Canonical persistent project list. Completed evidence remains under `backups/`, 
 - [x] v140 added lexical bridge and early Flow-v4 routing; user confirmed real mobile boot.
 - [x] Current material candidate remains `wip35-v141-candidate.html`; version-ownership race fixed.
 - [x] Current document-outcome candidate head `3afecdccfc480b8719bc11fd7170671f8d30b3c1`: candidate-smoke run `33323180487` SUCCESS and same-head Pages run `33323179920` SUCCESS.
+- [x] Fixed homologation entrypoint is now `homologacao.html`; it loads `homologacao-current.json` with `no-store` + timestamp cache busting and redirects to the currently validated candidate. The user can keep one URL across future candidate versions.
+- [x] Homologation-entrypoint gate head `ff3107947cdf8dc34ea7dcddc284c07ec6daad86`: fixed-entrypoint validation, parser and Chromium desktop/mobile all SUCCESS in candidate-smoke run `33325382391`; same-head Pages run `33325382173` SUCCESS. Manifest currently targets v141 / material candidate head `3afecdcc…`.
 - [x] Chromium desktop/mobile requires lexical bridge, runtime Flow-v4 bridge, visible v141, current extension stamp, Flow UX marker, document-outcome marker, zero new errors and no root overflow.
 - [x] Public fallback unchanged; no promotion occurred.
 - [ ] Real authenticated visual E2E remains pending/unclaimed.
