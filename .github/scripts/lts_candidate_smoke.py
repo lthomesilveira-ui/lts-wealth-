@@ -23,6 +23,9 @@ V141_REQUIRED = {
     "cipo_non_promoting_copy": "Cobertura documental não significa conciliação concluída",
     "backup_status_rpc": "lts_browser_backup_status_v1",
     "backup_private_copy": "O snapshot completo fica privado no backend",
+    "flow_ux_stamp": "LTS_V141_FLOW_UX='balance-emphasis-no-duplicate-today'",
+    "flow_hide_duplicate_today": "#goToday{display:none!important}",
+    "flow_balance_emphasis": ".fx87-row .fx87-balance{background:#f2f4f6!important}",
 }
 
 V140_REQUIRED = {
