@@ -12,6 +12,7 @@ on:
       - 'wip35-v139-candidate.html'
       - 'wip35-v140-candidate.html'
       - 'wip35-v141-candidate.html'
+      - 'wip35-v142-candidate.html'
       - '.github/scripts/lts_candidate_smoke.py'
       - '.github/scripts/lts_candidate_browser_smoke.js'
       - '.github/workflows/candidate-smoke.yml'
@@ -58,7 +59,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: wip35-v141-candidate-smoke
+          name: wip35-v142-candidate-smoke
           path: |
             candidate-smoke-result.txt
             candidate-browser-smoke-result.json
