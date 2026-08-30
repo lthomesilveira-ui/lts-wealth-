@@ -1,7 +1,7 @@
 name: LTS candidate smoke
 on:
   push:
-    branches: [main, v142-round2-liquidity-ui]
+    branches: [main]
     paths:
       - 'index.html'
       - 'homologacao.html'
