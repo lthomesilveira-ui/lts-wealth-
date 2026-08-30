@@ -6,6 +6,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 CANDIDATE = ROOT / "wip35-v142-candidate.html"
 CANDIDATE_JS = ROOT / "wip35-v142-ux.js"
+PLANNING_BRIDGE_JS = ROOT / "wip35-v142-planning-bridge.js"
 PARENT = ROOT / "wip35-v141-candidate.html"
 GRANDPARENT = ROOT / "wip35-v140-candidate.html"
 GREATGRANDPARENT = ROOT / "wip35-v139-candidate.html"
@@ -17,6 +18,7 @@ V142_HTML_REQUIRED = {
     "candidate_stamp": "CANDIDATA v142",
     "parent_candidate": "wip35-v141-candidate.html",
     "external_ux_layer": "wip35-v142-ux.js?v142-ux-v2",
+    "planning_bridge_layer": "wip35-v142-planning-bridge.js?v142-planning-bridge-v1",
     "internal_validation_copy": "validação interna",
 }
 
@@ -32,6 +34,17 @@ V142_JS_REQUIRED = {
     "wealth_v2_rpc": "lts_browser_wealth_executive_v2",
     "updates_compaction": ".u132-classrow{display:grid!important",
     "v142_css": "wip35-v142-ux-css",
+}
+
+PLANNING_BRIDGE_REQUIRED = {
+    "stamp": "LTS_V142_PLANNING_BRIDGE='fgts-d30-projected-conservative-v1'",
+    "rpc": "lts_browser_planning_bridge_executive_v1",
+    "renderer": "u142PlanningBridgeRenderer",
+    "management_copy": "Primeiro ponto de gestão",
+    "d30_copy": "FGTS continua restrito",
+    "request_balance_copy": "não conta contribuições posteriores",
+    "position_bridge": "Ponte documental de RSU e FGTS",
+    "css": "wip35-v142-planning-bridge-css",
 }
 
 V141_REQUIRED = {
@@ -118,8 +131,19 @@ def require_markers(text: str, markers: dict, lines: list[str], failures: list[s
             failures.append(f"{prefix}_{name}")
 
 
+def read_external(path: Path, prefix: str, markers: dict, lines: list[str], failures: list[str]) -> str:
+    if not path.exists():
+        failures.append(prefix + "_missing")
+        return ''
+    text=path.read_text(encoding='utf-8')
+    lines.append(f"{prefix}_bytes={len(text.encode('utf-8'))}")
+    node_check(text,prefix,lines,failures)
+    require_markers(text,markers,lines,failures,prefix)
+    return text
+
+
 def main() -> int:
-    lines = ["candidate=wip35-v142-candidate.html", "candidate_js=wip35-v142-ux.js"]
+    lines = ["candidate=wip35-v142-candidate.html", "candidate_js=wip35-v142-ux.js", "planning_bridge_js=wip35-v142-planning-bridge.js"]
     failures = []
 
     if not PUBLIC_FALLBACK.exists():
@@ -142,15 +166,10 @@ def main() -> int:
         require_markers(v142_html,V142_HTML_REQUIRED,lines,failures,'v142_html')
     htmls.append(v142_html)
 
-    if not CANDIDATE_JS.exists():
-        failures.append("v142_js_missing")
-        v142_js=''
-    else:
-        v142_js=CANDIDATE_JS.read_text(encoding='utf-8')
-        lines.append(f"v142_js_bytes={len(v142_js.encode('utf-8'))}")
-        node_check(v142_js,'v142_external_js',lines,failures)
-        require_markers(v142_js,V142_JS_REQUIRED,lines,failures,'v142_js')
+    v142_js=read_external(CANDIDATE_JS,'v142_external_js',V142_JS_REQUIRED,lines,failures)
     htmls.append(v142_js)
+    plan_js=read_external(PLANNING_BRIDGE_JS,'v142_planning_bridge_js',PLANNING_BRIDGE_REQUIRED,lines,failures)
+    htmls.append(plan_js)
 
     for path,prefix,markers in [
         (PARENT,'v141',V141_REQUIRED),
