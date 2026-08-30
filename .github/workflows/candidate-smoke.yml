@@ -14,6 +14,7 @@ on:
       - 'wip35-v141-candidate.html'
       - 'wip35-v142-candidate.html'
       - 'wip35-v142-ux.js'
+      - 'wip35-v142-planning-bridge.js'
       - '.github/scripts/lts_candidate_smoke.py'
       - '.github/scripts/lts_candidate_browser_smoke.js'
       - '.github/workflows/candidate-smoke.yml'
