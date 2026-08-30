@@ -30,6 +30,7 @@ html,body{margin:0;width:100%;height:100%;background:#f5f6f8}#shell{border:0;wid
     const z=chain();if(!z||!z.w)return;
     const w=z.w,d=z.d;hideInnerBadges(z.docs);
     if(w.__LTS_LEXICAL_BRIDGE!=='v140')return;
+    w.__LTS_TOP_CANDIDATE_VERSION='v141';
     if(wired!==w){
       wired=w;renderOnce=false;
       if(d&&!d.getElementById('wip35-v141-ui-css')){
@@ -64,7 +65,7 @@ html,body{margin:0;width:100%;height:100%;background:#f5f6f8}#shell{border:0;wid
     }
   }
   shell.addEventListener('load',()=>setTimeout(install,40));
-  setInterval(install,350);
+  setInterval(install,120);
 })();
 </script>
 </body>
