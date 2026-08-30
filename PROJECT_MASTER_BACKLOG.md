@@ -9,8 +9,8 @@ Canonical persistent project list. Completed evidence remains under `backups/`, 
 - [x] v137 failed real homologation; v139 failed real authenticated boot because lexical v136 state was treated as `window.*`; synthetic-readiness smoke retired.
 - [x] v140 added lexical bridge and early Flow-v4 routing; user confirmed real mobile boot.
 - [x] Current material candidate remains `wip35-v141-candidate.html`; version-ownership race fixed.
-- [x] Prior verified candidate smoke/Pages head `5d67b2e2d719c309d9159e078d3c2e681e6ab361` is green.
-- [~] Current Flow-UX candidate head `211f067cf94d4b1d6b61be191054c6ae292daf77` is in CI; do not treat as green until Chromium + Pages complete.
+- [x] Current Flow-UX candidate head `211f067cf94d4b1d6b61be191054c6ae292daf77`: candidate-smoke run `33319620454` SUCCESS and same-head Pages run `33319620096` SUCCESS.
+- [x] Chromium desktop/mobile requires lexical bridge, runtime Flow-v4 bridge, visible v141, current extension stamp, Flow UX marker, zero new errors and no root overflow.
 - [x] Public fallback unchanged; no promotion occurred.
 - [ ] Real authenticated visual E2E remains pending/unclaimed.
 - [ ] Promotion to `index.html` only after user homologation.
@@ -21,7 +21,7 @@ Canonical persistent project list. Completed evidence remains under `backups/`, 
 - [x] Planejamento and Cartões are decision cockpits.
 - [x] Atualizações v141 prioritizes 6 near/current actions, collapses distant/covered checks and separates classification workstream.
 - [x] Patrimônio shows non-promoting CIPÓ documentary progress; Configurações shows metadata-only backup status.
-- [~] Flow UX patch in CI: remove duplicate internal `Hoje` button while retaining period chip; preserve subtle balance-cell emphasis on mobile/desktop.
+- [x] Fluxo v141 removes duplicate internal `Hoje` button while retaining the period chip, and restores subtle balance-cell emphasis on mobile/desktop; parser + Chromium + Pages green.
 - [~] Visual approval of Fluxo, Despesas, Cartões, Planejamento, Atualizações, Patrimônio and Configurações pending.
 - [~] Continue checking mobile overflow, empty states and action hierarchy.
 
@@ -49,7 +49,7 @@ Canonical persistent project list. Completed evidence remains under `backups/`, 
 - [x] Historical effective parity v2: 2,030 days / 147 months and annual comparisons exact through 2025; timeline 57/57; zero technical leak/overlap.
 - [x] FIX86 transversal QA v4 = 10/10 PASS: frozen baseline, stale-anchor exclusion, Inbox isolation, nonrecursive estimates, read-only scenarios, append-only mutations, core no-double-count and CIPÓ parity.
 - [x] Flow edit/cancel/split never destructively updates source facts.
-- [~] Current v141 UX patch restores balance emphasis on mobile and removes redundant `goToday`; Chromium/Pages pending.
+- [x] v141 mobile/desktop saldo emphasis and single `Hoje` control technically green on candidate smoke + Pages.
 - [ ] Final authenticated visual E2E.
 
 ## 5. Planejamento
@@ -109,7 +109,7 @@ Canonical persistent project list. Completed evidence remains under `backups/`, 
 - [x] Card coverage v2 8/8; historical registry v4 16/16; effective-history v2 PASS; FIX86 v4 10/10.
 - [x] Backup 13/13; shared-flow 6/6; CIPÓ coverage 6/6; candidate UI extension 6/6.
 - [x] Extended heavy gate **v7 = 235/235 PASS across 16 suites**.
-- [~] Current Flow-UX parser/Chromium/Pages head pending; prior candidate head remains green fallback for homologation candidate chain.
+- [x] Current Flow-UX candidate head `211f067c…`: parser/Chromium and same-head Pages SUCCESS.
 - [ ] Authenticated visual E2E outside automated evidence.
 
 ## 11. Open Finance
