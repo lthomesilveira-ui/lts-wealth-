@@ -1,153 +1,104 @@
 # LTS Wealth — Next Homologation Gate
 
-Purpose: minimum evidence-backed package before asking the user to inspect the next material candidate. Keep aligned with `PROJECT_MASTER_BACKLOG.md`, `PLANNING_EXCEL_TO_CURRENT_AUDIT_2026-08-30.md` and the latest immutable checkpoint.
+Purpose: minimum evidence-backed package before asking the user to inspect the next material candidate. Keep aligned with `PROJECT_MASTER_BACKLOG.md`, `LTS_WEALTH_CONTINUITY_HANDOFF.md`, `PLANNING_EXCEL_TO_CURRENT_AUDIT_2026-08-30.md` and the latest immutable checkpoint.
 
-## Current baseline
-- Public fallback: WIP35-v136 in `index.html`, unchanged and not user-approved; effective prior visual baseline remains v135.
-- Public fallback protected blob: `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
-- Fixed user homologation URL: `homologacao.html`.
-- `homologacao-current.json` now points to **v142** after the full internal recovery package and manifest-switch smoke became green.
-- Integrated v142 runtime main SHA: `204d5a019f7334ae6361c747552da15659919487`.
-- Final pre-exposure checkpoint commit: `c8025b97b99cb5e0011f31be78647e0cf450a851`.
-- Manifest exposure SHA: `5c3cf9ea01878baed00d827bde671382dd275605`.
-- Real authenticated visual E2E: PENDING / NOT CLAIMED.
-- Promotion to `index.html`: NOT AUTHORIZED / NOT DONE.
+## Current release baseline
+- Public fallback: WIP35-v136 in `index.html`, unchanged; protected blob `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
+- Effective prior visual baseline remains v135.
+- Fixed homologation URL: `homologacao.html`.
+- `homologacao-current.json` remains **v142** (`wip35-v142-candidate.html`).
+- Main re-fetched immediately before this documentation package: `53b586b3feec95089d26cfc2cf797576131c2b50`.
+- v143 implementation code head: `0291737238b6b0bd69fe4c9bf3c348598a4b2277`.
+- Public promotion: NOT AUTHORIZED / NOT DONE.
+- Authenticated visual E2E: PENDING / NOT CLAIMED.
 
-## P0 financial conclusion closed
-The Excel→current Planning discrepancy is no longer an unresolved blocker for January/2027.
+## v143 package now internally green before integration
+Branch smoke run `33399959217` on exact code SHA `0291737238b6b0bd69fe4c9bf3c348598a4b2277`: **SUCCESS**.
 
-Audited current semantics:
-- first management point: **08/01/2027**;
-- FGTS request-by under the user-confirmed ~D+30 access rule: **09/12/2026**;
-- conservative FGTS amount existing on request date: **R$32.309,05**;
-- worst balance before contingency: **R$-21.046,80**;
-- worst balance after conservative planned FGTS: **R$+11.262,25**;
-- first uncovered gap through 28/02/2027: **none**.
-
-Therefore Dashboard/Planning must describe January as a **liquidity management point covered by a D+30 contingency if requested on time**, not as “real lack of money”. Planning bridge QA: **19/19 PASS**.
-
-## v142 final integrated package
-Main `204d5a019f7334ae6361c747552da15659919487` contains the coherent recovery candidate:
-- restored executive Dashboard/cockpit;
-- reconciled Planning renderer with the FGTS D+30 bridge;
-- deterministic v142 Planning renderer ownership to prevent the earlier timing/race regression;
-- executive-first Patrimônio read model/presentation;
-- compact Atualizações with obvious natural-language launch surface;
-- `Resolver agora` action-first summary with direct shortcuts for maintenance, classification review and documents requiring a decision;
-- reviewed resgate/aplicação UI v2 with explicit preview and approval;
-- hardened value parser (`5 mil`, `R$ 5.000`, `5000`, `3k`, `R$ 1.250,50`);
-- Flow v13 effective bank↔asset movement propagation;
-- tighter mobile/desktop density without changing financial values or read models;
-- inherited v141 Flow balance emphasis, document outcomes, CIPÓ documentary coverage and backup metadata.
-
-Final Round 3 branch evidence after Planning ownership stabilization:
-- code head `89ac771d0473165201400c2afe1dd31ed14fea88`;
-- candidate-smoke run `33342878089`: **SUCCESS**;
-- desktop 1440×1000: PASS;
-- mobile 390×844: PASS;
-- Planning bridge, liquidity UI/parser, Dashboard and final action-first polish: PASS in both viewports;
-- zero new console/page errors;
-- zero root overflow.
-
-Integrated main evidence before manifest exposure:
-- candidate-smoke run `33342968051`: **SUCCESS**;
-- Pages run `33342967458`: build/report/deploy **SUCCESS** on the integrated SHA.
-
-Manifest-switch evidence on `5c3cf9ea01878baed00d827bde671382dd275605`:
-- fixed entrypoint test: **PASS**, target=`wip35-v142-candidate.html`;
-- candidate-smoke run `33343053019`: **SUCCESS**;
-- Pages run `33343052602`: build/report/deploy **SUCCESS**;
-- desktop 1440×1000: PASS;
-- mobile 390×844: PASS;
-- complete v142→v141→v140→v139→v138→v137→index chain: PASS;
-- Planning bridge ownership: PASS;
-- liquidity UI/parser: PASS;
-- final action-first polish: PASS;
-- Dashboard: PASS;
-- Flow/document outcome inheritance: PASS;
-- zero new console/page errors;
+Validated:
+- full v143→v142→v141→v140→v139→v138→v137→index composition chain;
+- desktop 1440×1000 PASS;
+- mobile 390×844 PASS;
+- Dashboard owner v143 true;
+- Planejamento owner v143 true;
+- Despesas owner v143 true;
+- Cartões owner v143 true;
+- Patrimônio owner v143 true;
+- nav owner v143 true;
+- inherited v142 Dashboard/nav/Planning/Wealth pointers redirect to v143;
+- real navigation click-through changes `window.V` for every main destination;
+- nav label is `Liquidez detalhada` while internal destination remains `Planejamento`;
 - zero root overflow;
-- public fallback blob unchanged.
+- zero console/page errors;
+- button census **197 identifiable / 197 wired / 0 unresolved / 0 anonymous**.
 
-Important limit: browser smoke is non-authenticated composition/runtime evidence. It is not authenticated visual E2E.
+Important limit: this is non-authenticated browser runtime/composition/click-through evidence. It is not authenticated visual E2E.
 
-## Financial / backend gates
-Heavy and delta gates are deliberately staged to avoid timeout-prone nesting.
+## P0 product requirements closed in v143 package
+- Dashboard is again **“Sua vida financeira, em uma tela.”**.
+- D+3 realizable liquidity remains the hero.
+- FGTS-inclusive reading is separate and explicitly restricted/D+30, never presented as cash available today.
+- Future liquidity risk is high in the page with human cross-zero wording and request-by timing.
+- `Fatura vencida / a confirmar` is restored to the executive snapshot.
+- Planejamento is visually `Liquidez detalhada` and deepens rather than repeats Dashboard.
+- Jan/2027 is described as a management point, not proven patrimonial insolvency, because the audited planned FGTS contingency leaves the horizon positive when initiated on time.
+- Atualizações remains action/checklist-first and contains evidence-assisted classification.
+- Recurrence audit UI is generic; no fixed list of condominium/IPTU/education/salary examples controls behavior.
+- Despesas has clickable evidence-backed composition with human context.
+- Cartões restores classification consolidation + raw evidence + Cartão × mês and keeps open-bill vs future-installment semantics separate.
+- Patrimônio restores vested RSU/future vestings, read-only anticipation scenario, CIPÓ drill-down and Volvo Bradesco financing.
 
-Heavy gate v14:
-- **24 suites / 293 checks / PASS**.
+## Financial conclusion that must not change by assumption
+- first management point: **08/01/2027**;
+- FGTS request-by: **09/12/2026**;
+- documentary FGTS 18/08/2026: **R$17.509,05**;
+- existing accrual model: **R$3.700/mês**;
+- projected FGTS already existing on request date: **R$32.309,05**;
+- worst balance before contingency: **R$-21.046,80**;
+- worst balance after planned contingency: **R$+11.262,25**;
+- first uncovered gap through 28/02/2027: none.
 
-Delta gate v15:
-- liquidity writer v2: 10/10;
-- transactional rollback: 15/15;
-- liquidity read-path: 12/12;
-- browser liquidity ACL: 17/17;
-- Dashboard cockpit: 13/13;
-- **5 suites / 67 checks / PASS**.
+Required interpretation: January is a liquidity-management point covered by the already-modeled D+30 FGTS contingency if requested on time. It is not evidence of real patrimonial insufficiency.
 
-Delta gate v16:
-- refresh-v2 contract: 11/11;
-- real transactional application across Flow v13 / Planning / Dashboard / Patrimônio / future cache with full rollback: 8/8;
-- **2 suites / 19 checks / PASS**.
+## Final backend evidence frozen before integration
+Fingerprint before and after the entire final battery: `85a1b60816a5b84dfe3b41341ed27948`.
 
-Current staged evidence total: **31 suites / 379 checks PASS**.
+Staged gates:
+- v14: **24 suites / 293 checks / PASS**;
+- v15: **5 suites / 67 checks / PASS**;
+- v16: **2 suites / 19 checks / PASS**;
+- v17: **4 suites / 32 checks / PASS**;
+- total staged: **35 suites / 411 checks PASS**.
 
-This proves code/data contracts, ACL and transaction semantics; it does not prove authenticated visual E2E or user homologation.
+Supplemental read-model QA:
+- `lts_v143_life_real_backend_qa_v2`: **16/16 PASS** on the same fingerprint.
 
-## Liquidity movement status
-Application/redemption is now a reviewed everyday path rather than a hidden backend primitive.
+The 411-check set is same-fingerprint staged evidence, not a single monolithic gate. Transactional liquidity QA deliberately rolls back all QA movement/cache mutations.
 
-Proven:
-- equal-and-opposite bank ↔ cash-investment asset legs;
-- economic effect zero;
-- excluded from income/expense;
-- idempotent;
-- explicit preview + explicit approval required;
-- over-redemption rejected against effective asset balance;
-- same-snapshot-day guard against documentary double count;
-- Flow v13 / Planning / Dashboard / future cache / effective Wealth propagation;
-- browser wrappers auth.uid scoped, anon blocked;
-- real transactional QA is fully rolled back; no QA financial rows persist;
-- browser parser self-tests cover common pt-BR amount formats.
+## Invariants and blockers still open
+- Despesas invariant **R$8.623.752,53**; analytical cache 3.860/3.860 exact.
+- Certified card allocation 38 cycles / 650 rows / R$885.855,19.
+- Aggregate fallback 314 rows / R$2.650.846,36 remains aggregate-only.
+- C6 Aug/2024 R$66,70 detail gap remains explicit.
+- Mastercard/Visa historical documentary gaps remain open; no inferred purchase detail.
+- CIPÓ consortium delta R$303,60 and condominium formula/cut remain unresolved; arithmetic proximity does not authorize suppression or rewrite.
+- Post-2029 TR is never fabricated.
+- Volvo valuation refinement waits for exact trim/km evidence.
+- Classification ambiguity waits for user confirmation when evidence does not close.
+- Guided document association UI remains open.
+- Liquidity cancellation/reversal semantics remain open and must be append-only/auditable.
+- Open Finance provider/pricing/SLA/bank coverage remains open; no consent/spend without explicit user decision.
+- Real authenticated visual E2E remains pending/unclaimed.
 
-Still open before calling this a mature repairable writer:
-- authenticated save→refresh→visible-result inspection in a real session;
-- explicit cancellation/repair UX semantics for a previously confirmed liquidity movement.
+## Exact remaining gate before user sees v143
+1. Re-fetch `main` and branch after this documentation/checkpoint commit.
+2. Integrate `v143-life-real-feedback` through normal merge/PR semantics; no force.
+3. Candidate-smoke must pass on the integrated **same SHA of main**.
+4. GitHub Pages build/report/deploy must pass on that exact same main SHA.
+5. Verify protected `index.html` blob unchanged.
+6. Only then move `homologacao-current.json` from v142 to `wip35-v143-candidate.html`.
+7. Run fixed-entrypoint candidate-smoke + Pages on the manifest-switch SHA.
+8. Only after those are green ask the user for material visual homologation through the fixed `/homologacao.html` URL.
+9. Public `index.html` remains untouched until explicit user approval.
 
-Those two items do not authorize inventing or silently modifying any financial movement.
-
-## Existing guardrails that remain mandatory
-- Historical expense economic invariant: **R$8.623.752,53**.
-- Analytical historical cache: 3.860/3.860, zero mismatch.
-- Historical effective parity: 2.030 days / 147 months exact through 2025.
-- FIX86 transversal guardrails remain mandatory.
-- 38 certified card cycles / 650 categorical rows / R$885.855,19.
-- Aggregate historical fallback 314 rows / R$2.650.846,36 remains non-promoting.
-- Mastercard/Visa/C6 documentary gaps remain explicit; never infer category composition.
-- C6 Aug/2024 R$66,70 remains unresolved.
-- CIPÓ Consórcio Itaú R$303,60 remains unresolved.
-- CIPÓ Condomínio formula/cut remains unresolved; arithmetic proximity never authorizes rewrite.
-- Volvo market estimate remains provisional pending exact trim/km evidence.
-- Classification triage may order review only; it may not suggest unsafe categories.
-- Document association requires explicit bank/card/competence or commitment/as-of context; no filename inference.
-- Open Finance production consent/provider/spend requires explicit user decision.
-
-## Homologation status
-All minimum internal gates required to expose v142 through the fixed homologation URL are now GREEN:
-1. Public fallback unchanged — GREEN.
-2. Planning Excel→current bridge — GREEN.
-3. Dashboard cockpit read model/ACL — GREEN.
-4. v142 parser/static layers — GREEN.
-5. Chromium desktop/mobile composition smoke — GREEN.
-6. Pages on integrated v142 main — GREEN.
-7. Heavy v14 + delta v15 + delta v16 — GREEN (**31 suites / 379 checks** staged).
-8. Reviewed natural-language resgate/aplicação UI — GREEN.
-9. Flow-v13-effective write→refresh consistency after liquidity movement — GREEN.
-10. Round 3 action hierarchy/density — GREEN.
-11. Final v142 package checkpoint + master backlog synchronization — GREEN.
-12. Manifest switch to v142 + fixed-link smoke + Pages — GREEN.
-13. Real authenticated visual E2E — PENDING / NOT CLAIMED.
-14. User material visual homologation — NOW THE NEXT GATE.
-15. `index.html` promotion only after explicit user approval.
-
-The next user-facing step is a **material visual homologation through the same fixed `/homologacao.html` URL**, not basic QA. Any defect found there remains a product/homologation finding; it does not retroactively turn the non-authenticated smoke into authenticated E2E.
+There is currently **no user QA action required**. Integration/deployment verification remains autonomous work.

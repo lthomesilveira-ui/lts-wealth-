@@ -5,7 +5,7 @@ Last materially refreshed: 2026-08-31 (America/Sao_Paulo)
 This file exists so project continuity never depends on chat context. Always re-fetch `main`, the active branch, `PROJECT_MASTER_BACKLOG.md`, `NEXT_HOMOLOGATION_GATE.md`, this file and the latest immutable checkpoint before writing.
 
 ## Conduct
-- Preserve every open financial/documentary dependency; never compact it away.
+- Preserve every open financial/documentary/classification dependency; never compact it away.
 - Project updates to the user use exactly `Concluído / Em execução / Próximos passos`.
 - No microbuilds; package coherent changes.
 - Never invent financial amounts, classifications, merchants, competence, valuation or reconciliation.
@@ -13,79 +13,104 @@ This file exists so project continuity never depends on chat context. Always re-
 - Test before asking user homologation; do not delegate basic QA.
 - Never claim authenticated visual E2E unless actually executed.
 - Public `index.html` remains protected; no promotion without explicit user approval.
+- Re-fetch before every write and never force branch divergence.
 
-## Release state
-- Public fixed root: `https://lthomesilveira-ui.github.io/lts-wealth-/`
-- Fixed homologation: `https://lthomesilveira-ui.github.io/lts-wealth-/homologacao.html`
-- Current homologation manifest remains **v142** (`wip35-v142-candidate.html`). Do not move to v143 before final v143 integration/gates/smoke/Pages/docs.
-- Public `index.html` fallback remains WIP35-v136, protected blob `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
-- Main known at this handoff: `53b586b3feec95089d26cfc2cf797576131c2b50`; re-fetch before any write.
-- Active branch: `v143-life-real-feedback`; branch was still advancing when this handoff was written. Re-fetch branch head.
+## Release state at this checkpoint
+- Public root: `https://lthomesilveira-ui.github.io/lts-wealth-/`.
+- Fixed homologation: `https://lthomesilveira-ui.github.io/lts-wealth-/homologacao.html`.
+- Homologation manifest still **v142**; do not expose v143 until integrated-main same-SHA candidate-smoke + Pages are green.
+- Public `index.html` fallback remains WIP35-v136; protected blob `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
+- Main immediately before this docs package: `53b586b3feec95089d26cfc2cf797576131c2b50`.
+- Active branch: `v143-life-real-feedback`.
+- Frozen v143 implementation code head: `0291737238b6b0bd69fe4c9bf3c348598a4b2277`.
+- Immutable pre-integration checkpoint: `backups/WIP35_V143_PREINTEGRATION_CHECKPOINT_2026-08-31.md`.
 
-## User feedback v142 that v143 must close before next homologation
-1. Dashboard: preserve D+3 liquidity hero, add a second balance including FGTS, and move the negative-cash action much higher. Human wording: explain that without an action the account crosses zero; if FGTS is the contingency, show request-by date and ~D+30 timing.
-2. Dashboard vs Planning: Planning must stop repeating Dashboard. It becomes `Liquidez detalhada`, explaining negative windows, resource order and conditional inflows.
-3. Atualizações: button must open reliably; surface evidence-assisted classification. Classification order is own LTS history first, public merchant research second, user confirmation when ambiguous.
-4. Recurrence/future audit: generic, not hardcoded to salary/IPVA. Compare recurring history against future 12 months; examples such as school, condominium, IPTU, salary etc. are examples only. No automatic value projection from historical median.
-5. Despesas: values must be auditable; human labels and context. Drill-down must explain `Benjamin · Educação`, `Benjamin · Saúde`, Rafiki, IPTU, financing/loans etc.; avoid technical `merchant` language as primary UI. Clicking ranked lines must open composition.
-6. Cartões: restore card detail model with semantic/classification consolidation plus raw-item evidence. Add card×month table so user can validate what is considered for C6, Itaú and Bradesco. Open invoice = observed amount; future installments = known contracted floor, not predicted closing.
-7. C6 open invoice must show the same useful consolidated-by-classification block as the good Aeternum model, while retaining `A classificar` where evidence is insufficient.
-8. Patrimônio: restore RSUs/vestings as a major component; show current vested position, all future known vesting/availability events, and a read-only `Simular antecipação` scenario. Future awards stay outside acquired current net worth until vesting/settlement.
-9. Patrimônio: restore loans/financings and create CIPÓ 396 drill-down with purchase/reform historical outlays, documentary debt, market central estimate, equity and financing schedule; do not call the difference tax profit without a validated tax/cost rule.
-10. Volvo XC40 financing: user confirmed Bradesco. 60 installments, first 08/09/2026, last 08/08/2031, R$2,886.43 each. Must appear in Bradesco Flow and Patrimônio. Account-assignment QA 6/6 PASS.
-11. Button QA: user should not have to test every button. Static census plus runtime navigation/click-through must be green; financial writers remain transactional/rollback QA unless real authenticated execution is safe.
+## v143 package completed before integration
+- `wip35-v143-candidate.html`: wrapper over v142; no public-root promotion.
+- `wip35-v143-life-real.js`: Dashboard, Liquidez detalhada, Despesas drill-down, Cartão × mês, card detail, Patrimônio, RSU/vestings, read-only anticipation scenario, CIPÓ, Volvo and v143 nav.
+- `wip35-v143-feedback-polish.js`: evidence-assisted classification, generic recurrence/future UI, detail focus, exact executive Dashboard wording/overdue card snapshot and Planning management-point explanation.
+- `wip35-v143-ownership.js`: deterministic ownership by redirecting inherited v142 pointers instead of timer fighting.
+- Feedback marker: `classification-evidence-recurrence-generic-decision-cockpit-v2`.
+- Ownership marker: `redirect-inherited-owners-v2`.
+- Branch candidate-smoke run `33399959217`: SUCCESS on code SHA `0291737238b6b0bd69fe4c9bf3c348598a4b2277`.
+- Desktop 1440×1000 PASS; mobile 390×844 PASS; zero overflow; zero errors.
+- Runtime owners true for Dashboard/Planejamento/Despesas/Cartões/Patrimônio/nav; inherited pointers redirected; all main navigation clicks pass.
+- Button census: 197/197 identifiable/wired, zero unresolved/anonymous.
+- Not authenticated visual E2E.
 
-## v143 implementation already present on active branch
-- `wip35-v143-candidate.html` wraps v142, keeping public fallback untouched.
-- `wip35-v143-life-real.js`: human Dashboard, `Liquidez detalhada`, expense drill-down, card×month matrix, card composition, RSUs/vestings, anticipation scenario, CIPÓ detail, Volvo/financing visibility.
-- `wip35-v143-feedback-polish.js`: evidence-first classification panel, recurring-future audit panel, focus/scroll behavior for opened details.
-- `wip35-v143-ownership.js`: added after a runtime smoke exposed lower-layer renderer/navigation reclaims; uses configurable accessor ownership so future versions can still override deliberately.
-- Button static audit is being expanded to include v143 files rather than only the inherited 174-button v142 census.
+## P0 product semantics preserved
+### Dashboard
+- Header: `Sua vida financeira, em uma tela.`
+- Hero: `Disponível realizável até D+3`.
+- Clear second balance if FGTS is also activated; FGTS explicitly restricted/D+30 and not cash today.
+- Future negative point brought high in the page with human wording: without a liquidity action, cash crosses zero on the management date.
+- If FGTS is the contingency, request-by date and D+30 timing are clear.
+- Faturas vencidas/a confirmar, faturas abertas, operational work and next card action remain executive signals.
+- Few numbers that decide; no QA-screen regression.
 
-## Classification evidence example
-- `GULA GULA MORUMBI`: two Aeternum Sep/2026 lines, total R$725.46, still `A classificar` in purchase detail.
-- Merchant enrichment exists: merchant `Gula Gula`, suggested category `Restaurantes`, confidence 0.99, provider `public_research`, official site evidence, status `taxonomy_review` because historical taxonomy between restaurant/leisure labels is protected. Do not auto-confirm taxonomy.
-- General rule: exact user-confirmed semantic rule > exact historical single-category evidence > public merchant identification suggestion > manual review. Marketplaces/payment intermediators never imply final merchant purpose.
+### Planejamento / Liquidez detalhada
+- Resource order: bank cash → D0/Cofrinho → vested RSU → new vestings only when actually available → FGTS D+30.
+- First management point 08/01/2027; FGTS request-by 09/12/2026.
+- Documentary FGTS 18/08/2026 R$17.509,05; existing accrual model R$3.700/month; projected request-date balance R$32.309,05.
+- Worst before contingency R$-21.046,80; worst after planned FGTS R$+11.262,25.
+- Required interpretation: liquidity management point, not proven patrimonial insufficiency.
+- Conditional vestings separated from already-available liquidity.
 
-## Backend/gates current evidence
-- Core financial regression v5: **15/15 PASS**.
-- Shared Flow QA updated truthfully from retired Flow v12/operational v3 assumptions to **Flow v13 / operational v4**, **6/6 PASS**.
-- Candidate UI extension QA updated from old browser RPC v9/v3 assumption to current browser RPC v10/API40 + operational v4, **6/6 PASS**.
-- Heavy gate v14: **293 checks / 24 suites PASS** after current-QA fixes.
-- Delta v15: **67 / 5 PASS**.
-- Delta v16: **19 / 2 PASS**.
-- New v17 life-real/current-rollover delta: **32 / 4 PASS**.
-- Individual staged evidence therefore totals **411 checks / 35 suites**, but before final certification rerun on a frozen final DB/code fingerprint; do not describe as one monolithic same-fingerprint gate until then.
-- Real authenticated visual E2E remains pending/unclaimed.
+### Atualizações / classification / recurrence
+- Action-first checklist remains primary.
+- Evidence order: explicit user semantic rule → exact consistent LTS history → public merchant research → manual review.
+- Public research may identify merchant/suggest category but never invent purchase purpose or auto-confirm ambiguous taxonomy.
+- `GULA GULA MORUMBI` remains taxonomy_review despite public restaurant evidence; total R$725,46 in two Aeternum Sep/2026 rows.
+- Recurrence audit is generic over history versus next 12 months; no hardcoded example series and no median-to-future auto projection.
 
-## Important fixed financial guardrails
-- Despesas historical invariant: R$8,623,752.53; 3,860/3,860 analytical rows; zero missing/extra/mismatch.
-- Historical card certified allocation: 38 cycles / 650 rows / R$885,855.19.
-- Aggregate fallback: 314 rows / R$2,650,846.36; preserve aggregate-only when purchase composition is unavailable.
-- C6 Aug/2024 explicit detail gap R$66.70; never invent the line.
-- CIPÓ open blockers remain unresolved: Itaú consortium delta R$303.60; condominium source formula/cut; R$6,654.50 = R$6,502.70 + R$151.80 is arithmetic overlap evidence only; no suppression.
-- Planning Excel bridge: management point 08/01/2027; FGTS request-by 09/12/2026; conservative projected FGTS on request date R$32,309.05; worst before contingency -R$21,046.80; worst after planned FGTS +R$11,262.25. This is liquidity management, not proven resource insufficiency.
-- RSU current documentary vested value R$32,772.30 and 459.483 units; old 283-unit sale settled 05/08/2026, theoretical gross R$19,673.72 vs liquid proceeds R$19,095.04; R$578.68 difference not itemized and must not be invented.
-- Liquidity movement writer: bank↔asset, economic effect zero, explicit preview/approval, Flow v13 / Planning / Dashboard / Wealth v5 / future cache refresh; QA writes rolled back.
+### Despesas / Cartões / Patrimônio
+- Despesas: human category/group/macrogroup/center-cost context with clickable real composition; mixed certified-detail/aggregate historical model retained.
+- Cartões: card×month matrix, classification consolidation and raw evidence; open bill observed-now; future installments known contracted floor only.
+- RSU vested: 459.483 units / R$32.772,30 / D+3; future awards excluded from current acquired wealth.
+- Historical RSU sale: 283 units settled 05/08/2026; theoretical gross R$19.673,72; net R$19.095,04; R$578,68 difference unitemized.
+- CIPÓ drill-down preserves documentary debt/market/equity/history without calling market-minus-cost taxable gain.
+- Volvo financing Bradesco: 60 × R$2.886,43, 08/09/2026 through 08/08/2031; Flow Bradesco and Patrimônio without duplicate effect.
 
-## Historical reconciliation still open and must continue after v143 package
-- Mastercard open evidence 2019–2025 registry, especially fragmented/partial cycles; 2023 has 12 ledger-only payments totaling R$496,689.05 with independent category matrix missing.
-- Visa 2017 and Visa Infinite Itaú 2024 aggregate-only documentary gaps remain explicit.
-- CIPÓ consortium/condominium blockers above.
-- Classification with no sufficient evidence.
-- Guided document association UI.
-- Liquidity cancellation/reversal semantics.
-- Volvo exact trim/km refinement before valuation refinement.
-- Open Finance provider/pricing/SLA/bank-coverage decision remains backlog; no external consent/spend/credential without explicit user decision.
-- Real authenticated visual E2E and user homologation.
+## Final backend evidence before integration
+Fingerprint before/after: `85a1b60816a5b84dfe3b41341ed27948`.
+- v14 293 checks / 24 suites PASS.
+- v15 67 / 5 PASS.
+- v16 19 / 2 PASS.
+- v17 32 / 4 PASS.
+- Same-fingerprint staged total: 411 checks / 35 suites PASS; do not call it a single monolithic gate.
+- Supplemental `lts_v143_life_real_backend_qa_v2`: 16/16 PASS on same fingerprint.
+- Transactional liquidity QA rolls back every QA financial/cache mutation.
 
-## Immediate execution after handoff
-1. Re-fetch `main` and active branch.
-2. Finish v143 deterministic ownership/nav smoke; do not weaken the test.
-3. Ensure v143 button census includes v143-generated controls and zero unresolved identifiable buttons.
-4. Run branch candidate smoke desktop/mobile and inspect logs/artifact, including real navigation clicks in unauthenticated shell; separately preserve transaction/ACL QA for financial actions.
-5. Freeze backend fingerprint and rerun staged v14 + v15 + v16 + v17 evidence.
-6. Synchronize `PROJECT_MASTER_BACKLOG.md`, `NEXT_HOMOLOGATION_GATE.md` and create immutable v143 checkpoint.
-7. Re-fetch `main`, integrate branch via normal PR/merge; no force.
-8. Verify same-SHA candidate-smoke + Pages on main.
-9. Only after all above, switch fixed homologation manifest v142→v143 and ask user to retest. Do not promote public `index.html`.
+## Fixed financial/historical guardrails
+- Despesas invariant R$8.623.752,53; analytical cache 3.860/3.860 exact.
+- Historical card certified allocation 38 cycles / 650 rows / R$885.855,19.
+- Aggregate fallback 314 rows / R$2.650.846,36 remains aggregate-only.
+- C6 Aug/2024 R$66,70 detail gap remains explicit; never fabricate.
+- FGTS historical R$25.585,03 realization on 07/05/2026 + same-day R$25.000 investment is a historical state, not the same as current employer FGTS R$17.509,05.
+- Facts beat projections; scenarios never become facts; stale/superseded anchors never reanchor.
+- Bank↔liquidity asset movement economic effect is zero and excluded from spend/revenue.
+
+## Open backlog that must survive every handoff
+- Mastercard historical recovery, especially 2022 remaining months and 2023 12 ledger-only payments R$496.689,05 with no independent category matrix.
+- Visa 2017 R$126.681,76 aggregate-only and Visa Infinite Itaú 2024 R$112.253,01 aggregate-only; Visa Infinite 2025 certified 12/12.
+- Mastercard 2024 certified Mar/May/Aug/Sep/Oct/Dec; Mastercard 2025 certified Mar/Apr/May/Jun/Aug/Nov, partial Jan/Feb/Jul/Oct, blocked Sep/Dec.
+- CIPÓ consortium delta R$303,60; R$6.654,50 overlap arithmetic only; condominium formula/cut unresolved; raw gap R$1.780.358; dedup gap R$1.312.268; duplicate excess through Jul/2026 R$3.531,70; never fabricate post-2029 TR.
+- Classification where evidence is insufficient.
+- Guided document association UI with explicit identity/competence/as-of inputs.
+- Liquidity cancellation/reversal append-only semantics and real authenticated save→refresh→visible-result inspection.
+- Volvo exact trim/km before valuation refinement.
+- Open Finance production provider/pricing/SLA/bank coverage; no consent/spend/credential without explicit user decision.
+- Performance only after correctness/exact parity.
+- Real authenticated visual E2E.
+- User material v143 homologation.
+- Public `index.html` promotion only after explicit user approval.
+
+## Immediate next execution
+1. Re-fetch `main`, branch, backlog, gate, this handoff and v143 checkpoint.
+2. Integrate v143 branch via normal merge/PR semantics; no force.
+3. Verify candidate-smoke + Pages on the same integrated main SHA.
+4. Verify protected `index.html` blob unchanged.
+5. Only then switch `homologacao-current.json` v142→v143.
+6. Verify fixed-link candidate-smoke + Pages on the manifest-switch main SHA.
+7. Only after all above say `AÇÃO SUA NECESSÁRIA` and ask for material visual homologation through the fixed link.
+8. Do not promote public root without explicit user approval.
