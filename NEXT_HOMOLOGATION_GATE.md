@@ -4,44 +4,34 @@ Purpose: evidence-backed sequence before asking the user to inspect a material c
 
 ## Current release baseline
 - Public fallback: WIP35-v136 in `index.html`, unchanged; protected blob `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
-- Fixed homologation: `https://lthomesilveira-ui.github.io/lts-wealth-/homologacao.html`.
-- Fixed homologation currently targets **v145** via `wip35-v145-candidate.html`.
-- v145 exposure SHA: `a99483543f3d1408be5b297dc66ec5f491be68dd`.
-- v145 manifest candidate head: `9d4a52df566d74bdc77f92b0d227906fc46bddce`.
-- Promotion status: `not_promoted`.
+- Fixed homologation is switching to **v146** via `wip35-v146-candidate.html` in the controlled exposure commit.
+- Manifest candidate head: `bef91e27927dc8b73f89239568dd0ae81cd68707`.
+- Promotion status remains `not_promoted`.
 - Public promotion: NOT AUTHORIZED / NOT DONE.
 - Authenticated visual E2E: PENDING / NOT CLAIMED.
 
-## v146 pre-integration candidate
-- Active branch: `v146-updates-navigation-stability`.
+## v146 integrated evidence
 - Exact green product SHA: `bef91e27927dc8b73f89239568dd0ae81cd68707`.
-- Branch workflow `33443494728`: SUCCESS.
-- Evidence artifact: `9777202035` (`wip35-v146-updates-navigation`).
-- v146 is **not integrated into main and not exposed in fixed homologation** at this checkpoint.
+- Branch workflow `33443494728`: SUCCESS; artifact `9777202035`.
+- Pre-integration freeze/integrated SHA: `a2bfb254144efccb3da52d8e8fdc15a5c4182235`.
+- Integrated-main v146 workflow `33444432578`: SUCCESS.
+- Integrated-main Pages `33444431699`: SUCCESS.
+- `candidate-smoke` did not auto-trigger at integration because its path filter excludes v146 files. The v146 workflow itself reran inherited candidate parser/browser gates; the exposure commit modifies `homologacao-current.json`, which is in the legacy candidate-smoke path filter and therefore must trigger it on the exact exposure SHA.
 
-### Why v146 exists
-Repeated physical navigation testing reproduced a hang specifically around `Cartões` → `Patrimônio`. The final cause was not a financial/data rule. An inherited v142 wealth-loader completion/retry path could still call `render()` after v146 retired the legacy wealth loader/owner, allowing stale completion to re-enter the Patrimônio render path and create an effective retry/render loop.
+## v146 correction
+Repeated physical navigation testing reproduced a hang specifically around `Cartões` → `Patrimônio`. The final cause was inherited v142 wealth-loader completion/retry behavior, not a financial/data rule. A stale completion could call `render()` after v146 had retired legacy wealth loading/ownership, re-entering Patrimônio and sustaining an effective retry/render loop.
 
-### v146 correction
-- Stable seven-button nav DOM; no nav-node recreation after ownership is locked.
-- Navigation work is coalesced and moved outside the synchronous physical-click path.
-- v142 wealth owner is redirected to the v143 Patrimônio renderer.
-- Legacy v142 wealth loader is retired once v146 owns Patrimônio.
-- Stale v142 wealth-loader completion render is suppressed after retirement so it cannot restart the loop.
-- v144 Atualizações evidence/confidence/classification surface and v145 Dashboard stability remain inherited.
-- No financial rule, value, classification, backend writer or economic effect changed.
+v146:
+- keeps one stable seven-button nav DOM without node recreation;
+- coalesces/defer state/render work outside the synchronous physical-click path;
+- redirects the v142 wealth owner to the active v143 Patrimônio renderer;
+- retires the redundant legacy v142 wealth loader;
+- suppresses stale v142 wealth-loader completion render after retirement;
+- preserves v144 Atualizações evidence/confidence/classification surface and v145 Dashboard stability;
+- changes no financial rule, value, classification, backend writer or economic effect.
 
-## Exact v146 branch evidence
-On `bef91e27927dc8b73f89239568dd0ae81cd68707`, run `33443494728` passed:
-1. v146 architecture/static validation;
-2. inherited button wiring census;
-3. inherited v142 parser/static candidate gate;
-4. inherited v142 browser smoke;
-5. inherited v143 runtime/navigation smoke;
-6. v146 classification + repeated-navigation smoke;
-7. evidence artifact upload.
-
-The v146 repeated-navigation smoke performs 10 cycles over seven destinations on desktop and mobile: **140 physical Playwright clicks**, including `Cartões` → `Patrimônio` every cycle. This is synthetic/unauthenticated browser evidence, not authenticated visual E2E, and performs no backend financial write.
+## Repeated-navigation evidence
+The v146 smoke performs 10 cycles over seven destinations on desktop and mobile: **140 physical Playwright clicks**, including `Cartões` → `Patrimônio` every cycle. Both branch and integrated-main v146 runs passed. This is synthetic/unauthenticated browser evidence, not authenticated visual E2E, and performs no backend financial write.
 
 Classification evidence remains conservative: GULA GULA MORUMBI may show `Restaurantes` with research/confidence but remains manual taxonomy review; marketplaces/intermediators remain unresolved without purpose evidence.
 
@@ -66,11 +56,13 @@ Classification evidence remains conservative: GULA GULA MORUMBI may show `Restau
 - Public promotion only after explicit user approval.
 
 ## Current gate to advance
-1. Freeze v146 evidence/canonical docs without changing product, manifest or public fallback.
-2. Re-fetch `main` and branch; require zero divergence and branch strictly ahead.
-3. Integrate by normal fast-forward only (`force=false`).
-4. On the exact integrated-main SHA require v146 workflow SUCCESS, legacy candidate-smoke SUCCESS and Pages SUCCESS; inspect any additional safety-relevant run fired by the commit.
-5. Reconfirm protected `index.html` blob and v145 homologation manifest are unchanged.
-6. Only then create a separate controlled exposure package that switches `homologacao-current.json` to v146 / `wip35-v146-candidate.html`, keeps `promotion_status: not_promoted`, creates an immutable exposure checkpoint and synchronizes canonical docs.
-7. On the exact exposure SHA require v146 smoke, candidate-smoke and Pages SUCCESS before telling the user `Pode acessar agora`.
-8. Public root promotion remains a separate explicit user authorization.
+1. Commit the controlled v146 exposure: manifest v146 / `wip35-v146-candidate.html`, candidate head `bef91e279…`, `promotion_status: not_promoted`, plus immutable exposure checkpoint and canonical docs.
+2. On that exact exposure SHA require all of:
+   - v146 navigation/classification workflow SUCCESS;
+   - legacy `candidate-smoke` SUCCESS;
+   - Pages SUCCESS;
+   - protected `index.html` blob exactly `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`;
+   - manifest resolves v146 / `wip35-v146-candidate.html` / candidate `bef91e279…` / `not_promoted`.
+3. Only after all exact-SHA gates are green tell the user `Pode acessar agora` with the fixed homologation URL.
+4. First material check: repeated navigation including `Cartões` → `Patrimônio`; Dashboard no flicker; Atualizações retains classification-first evidence/confidence/select/save surface.
+5. Public root promotion remains a separate explicit user authorization.
