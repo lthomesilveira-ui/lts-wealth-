@@ -7,7 +7,7 @@ async function run(browser, viewport, label){
   page.on('pageerror',e=>errors.push('pageerror:'+e.message));
   page.on('console',m=>{if(m.type()==='error')errors.push('console:'+m.text())});
   await page.goto('http://127.0.0.1:8765/wip35-v143-candidate.html',{waitUntil:'domcontentloaded',timeout:30000});
-  await page.waitForTimeout(7000);
+  await page.waitForTimeout(7500);
   const chain=[];let f=page.mainFrame();
   for(let i=0;i<8;i++){chain.push(f.url());const kids=f.childFrames();if(!kids.length)break;f=kids[0]}
   const expected=['wip35-v143-candidate.html','wip35-v142-candidate.html','wip35-v141-candidate.html','wip35-v140-candidate.html','wip35-v139-candidate.html','wip35-v138-candidate.html','wip35-v137-candidate.html','index.html'];
@@ -31,8 +31,11 @@ async function run(browser, viewport, label){
     if(temporary)document.querySelector('.nav')?.remove();
     return {
       marker:window.LTS_V143_LIFE_REAL||null,
+      feedbackMarker:window.LTS_V143_FEEDBACK_POLISH||null,
       top:window.__LTS_TOP_CANDIDATE_VERSION||null,
       css:!!document.getElementById('wip35-v143-life-real-css'),
+      feedbackCss:!!document.getElementById('wip35-v143-feedback-polish-css'),
+      feedbackBound:!!document.__V143_FEEDBACK_BOUND,
       dashboard:typeof window.dashboard==='function'&&String(window.dashboard).includes('v143Dashboard'),
       planning:typeof window.planejamento==='function'&&String(window.planejamento).includes('v143Planning'),
       expenses:typeof window.despesas==='function'&&String(window.despesas).includes('v143Expenses'),
@@ -44,8 +47,9 @@ async function run(browser, viewport, label){
     }
   });
   const navOk=state.clickResults.every(x=>x.ok)&&['Dashboard','Atualizações','Fluxo Diário','Despesas','Cartões','Patrimônio','Liquidez detalhada'].every(x=>state.navLabels.includes(x));
-  const pass=chainOk&&state.marker==='dashboard-human-expense-drill-card-matrix-rsu-cipo-v1'&&state.top==='v143'&&state.css&&state.dashboard&&state.planning&&state.expenses&&state.cards&&state.wealth&&navOk&&state.scroll-state.width<=2&&errors.length===0;
-  await page.close();return {label,viewport,pass,chain,chainOk,state,navOk,errors};
+  const feedbackOk=state.feedbackMarker==='classification-evidence-recurrence-focus-v1'&&state.feedbackCss&&state.feedbackBound;
+  const pass=chainOk&&state.marker==='dashboard-human-expense-drill-card-matrix-rsu-cipo-v1'&&feedbackOk&&state.top==='v143'&&state.css&&state.dashboard&&state.planning&&state.expenses&&state.cards&&state.wealth&&navOk&&state.scroll-state.width<=2&&errors.length===0;
+  await page.close();return {label,viewport,pass,chain,chainOk,state,navOk,feedbackOk,errors};
 }
 
 (async()=>{
