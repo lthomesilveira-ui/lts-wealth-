@@ -6,32 +6,36 @@ Canonical persistent project list. Detailed completed evidence remains in `backu
 
 ## P0 — v143 real-life feedback package — 31/08/2026
 - [x] `wip35-v143-candidate.html` preserves v142 as parent and leaves public `index.html` untouched.
-- [x] Frozen implementation code head before documentation-only checkpoint: `0291737238b6b0bd69fe4c9bf3c348598a4b2277`.
+- [x] Frozen implementation code head: `0291737238b6b0bd69fe4c9bf3c348598a4b2277`.
 - [x] Branch candidate-smoke run `33399959217` SUCCESS on that exact code SHA.
 - [x] Runtime/navigation smoke: desktop 1440×1000 PASS; mobile 390×844 PASS; zero root overflow; zero console/page errors.
 - [x] Deterministic v143 ownership PASS for Dashboard, Planejamento, Despesas, Cartões, Patrimônio and nav; inherited v142 Dashboard/nav/Planning/Wealth pointers redirect to v143; all real nav click-through checks change `window.V` correctly.
 - [x] Button census v3 covers v143 candidate/life-real/feedback/ownership: **197/197 identifiable and wired, 0 unresolved, 0 anonymous**. This is static wiring evidence, not authenticated visual E2E.
-- [x] Dashboard restored to the binding executive concept **“Sua vida financeira, em uma tela.”** with D+3 liquidity hero, separate FGTS-inclusive reading, explicit restricted/D+30 semantics, high-priority human cross-zero warning and overdue/a-confirm card reading.
+- [x] Dashboard restored to **“Sua vida financeira, em uma tela.”** with D+3 liquidity hero, separate FGTS-inclusive reading, explicit restricted/D+30 semantics, high-priority human cross-zero warning and overdue/a-confirm card reading.
 - [x] Dashboard keeps few decision numbers and does not regress into a QA/reconciliation screen.
 - [x] Planejamento is visually **“Liquidez detalhada”**, not a duplicate Dashboard: cash → D0/Cofrinho → vested RSU → future vestings only when available → FGTS D+30 contingency; negative episodes, action deadline and conditional resources are separated.
 - [x] Planejamento explicitly states that the audited Jan/2027 event is a liquidity-management point, not proven patrimonial insufficiency, when planned contingency remains positive.
 - [x] Atualizações remains checklist/action-first; evidence-assisted classification is surfaced and `Atualizações` navigation ownership is stable.
-- [x] Recurrence/future panel no longer hardcodes example series. It consumes the generic 12-month historical-vs-future audit and treats historical median only as evidence, never as an automatically projected amount.
+- [x] Recurrence/future panel is generic; it consumes the 12-month historical-vs-future audit and treats historical median only as evidence, never as an automatically projected amount.
 - [x] Despesas v143 supports clickable ranking/drill-down with human category/group/macrogroup/center-cost context and underlying composition; technical merchant language is secondary evidence.
 - [x] Cartões v143 restores card/invoice detail, consolidated LTS classification, raw evidence and **Cartão × mês**; open bill = observed amount that may grow, future installments = known contracted floor, not predicted closing.
 - [x] Patrimônio v143 restores vested RSU, future vestings/availability, read-only `Simular antecipação`, CIPÓ drill-down and Volvo Bradesco financing visibility.
-- [x] Backend final staged gates rerun on frozen fingerprint `85a1b60816a5b84dfe3b41341ed27948`: v14 293/24 PASS + v15 67/5 PASS + v16 19/2 PASS + v17 32/4 PASS = **411 checks / 35 suites PASS**. These are staged gates, not one monolithic gate.
-- [x] Supplemental read-model QA `lts_v143_life_real_backend_qa_v2` = **16/16 PASS** on the same fingerprint, covering RSU scope/value, future awards, Volvo Bradesco schedule, evidence-backed expense contexts and browser ACLs.
-- [~] v143 still must be integrated normally into `main`, then candidate-smoke + Pages must be green on the same integrated SHA before `homologacao-current.json` can move from v142 to v143.
+- [x] Backend final staged gates on fingerprint `85a1b60816a5b84dfe3b41341ed27948`: v14 293/24 PASS + v15 67/5 PASS + v16 19/2 PASS + v17 32/4 PASS = **411 checks / 35 suites PASS**. These are staged gates, not one monolithic gate.
+- [x] Supplemental read-model QA `lts_v143_life_real_backend_qa_v2` = **16/16 PASS** on the same fingerprint.
+- [x] Integrated normally by PR #6; integrated baseline `main` SHA `0526033f33ef90086388a946470313bd5002180c`.
+- [x] Same-SHA integrated-main candidate-smoke run `33401135988` SUCCESS and Pages run `33401135026` SUCCESS.
+- [x] Protected public `index.html` remains exact blob `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
+- [~] Fixed homologation manifest is being switched to v143 in the same coherent exposure package; the manifest-switch SHA still requires same-SHA candidate-smoke + Pages before user homologation.
 - [ ] Real authenticated visual E2E remains pending/unclaimed.
-- [ ] User material visual homologation of v143 only after the fixed homologation manifest is safely switched.
+- [ ] User material visual homologation of v143 only after the manifest-switch gates are green.
 - [ ] Public `index.html` promotion only after explicit user approval.
 
 ## 0. Release / homologation guardrails
 - [x] Public root fixed: `https://lthomesilveira-ui.github.io/lts-wealth-/`.
 - [x] Fixed homologation entrypoint: `https://lthomesilveira-ui.github.io/lts-wealth-/homologacao.html` using no-store/timestamp manifest routing.
 - [x] Public `index.html` fallback remains WIP35-v136, exact protected blob `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`; effective prior approved visual reference remains v135.
-- [x] `homologacao-current.json` remains on **v142** until v143 integration + same-SHA smoke/Pages complete.
+- [x] v143 integration gate on `0526033…` passed candidate-smoke + Pages on the same SHA before exposure.
+- [~] `homologacao-current.json` now targets **v143** in this exposure package; same-SHA post-switch smoke/Pages still must be verified before asking the user to open it.
 - [x] v137 real homologation failure, v139 authenticated lexical-state failure and subsequent v140/v141/v142 recovery remain recorded in immutable incident/checkpoint files.
 - [ ] Never force branch history to resolve divergence.
 - [ ] Never promote `index.html` without explicit user authorization.
@@ -47,7 +51,7 @@ Binding architecture remains:
 - [x] If FGTS is the modeled contingency, request-by date and D+30 behavior are visible.
 - [x] Horizons, prioritized actions, known future liquidity and shortcuts to Fluxo/Despesas/Cartões/Patrimônio.
 - [x] Light background, white cards, fine borders, contained radius, restrained semantic color hierarchy.
-- [~] Material user visual approval still pending after v143 exposure.
+- [~] Material user visual approval still pending after safe v143 exposure.
 
 ## 2. Fluxo Diário / FIX86
 - [x] Daily flow remains mandatory by bank + consolidated, historical coverage preserved back to available 2013 history.
@@ -157,15 +161,16 @@ Binding architecture remains:
 - [ ] No real provider consent, spend, external credential or commercial commitment without explicit user decision.
 
 ## 12. Gates / QA truth
-- [x] Final v143 staged backend fingerprint before integration: `85a1b60816a5b84dfe3b41341ed27948` before and after gates.
+- [x] Final v143 staged backend fingerprint: `85a1b60816a5b84dfe3b41341ed27948` before and after gates.
 - [x] v14 **293/293 across 24 suites PASS**.
 - [x] v15 **67/67 across 5 suites PASS**.
 - [x] v16 **19/19 across 2 suites PASS**.
 - [x] v17 **32/32 across 4 suites PASS**.
-- [x] Staged gate evidence = **411 checks / 35 suites PASS** on one unchanged fingerprint; still do not call this a monolithic gate because execution is deliberately staged.
+- [x] Staged gate evidence = **411 checks / 35 suites PASS** on one unchanged fingerprint; do not call this a monolithic gate because execution is deliberately staged.
 - [x] Supplemental v143 backend QA v2 = **16/16 PASS** on same fingerprint.
 - [x] v143 branch browser/runtime smoke + static census green on code SHA `0291737238b6b0bd69fe4c9bf3c348598a4b2277`.
-- [ ] Same-SHA integrated-main candidate-smoke + Pages still required.
+- [x] Integrated-main candidate-smoke + Pages green on same SHA `0526033f33ef90086388a946470313bd5002180c`.
+- [~] Manifest-switch main SHA candidate-smoke + Pages still required before user QA.
 - [ ] Real authenticated visual E2E remains pending/unclaimed.
 
 ## 13. Remaining user-dependent decisions
@@ -173,7 +178,7 @@ Binding architecture remains:
 - [ ] Any new money-changing financial assumption/scenario.
 - [ ] Volvo refinement when exact trim/km evidence is available.
 - [ ] Open Finance provider/consent/spend.
-- [ ] Material v143 visual homologation only after safe manifest exposure.
+- [ ] Material v143 visual homologation only after safe manifest exposure gates are green.
 - [ ] Public promotion only after explicit user approval.
 
 Until one of these is the genuine blocker, continue autonomous technical/documentary work. Do not ask the user to perform basic QA.
