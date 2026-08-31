@@ -149,7 +149,7 @@
     w.__LTS_V147_BASE_UPLOAD_CALLS=0;w.__LTS_V147_BLOCKED_UPLOADS=0;
     const wrapped=async function(){
       const s=readAssociation(),msg=d.getElementById('v147DocAssocMsg');
-      if(!s.valid){w.__LTS_V147_BLOCKED_UPLOADS++;if(msg){msg.className='v147-msg err';msg.textContent='Antes de enviar, complete: '+s.missing.join(', ')+'.'}refreshPreview();return}
+      if(!s.valid){w.__LTS_V147_BLOCKED_UPLOADS++;refreshPreview();if(msg){msg.className='v147-msg err';msg.textContent='Antes de enviar, complete: '+s.missing.join(', ')+'.'}return}
       w.__LTS_V147_BASE_UPLOAD_CALLS++;if(msg){msg.className='v147-msg ok';msg.textContent='Associação completa. Enviando para revisão…'}
       return baseUpload.apply(this,arguments);
     };
