@@ -13,6 +13,8 @@ async function run(browser, viewport, label){
   const expected=['wip35-v143-candidate.html','wip35-v142-candidate.html','wip35-v141-candidate.html','wip35-v140-candidate.html','wip35-v139-candidate.html','wip35-v138-candidate.html','wip35-v137-candidate.html','index.html'];
   const chainOk=expected.every((x,i)=>chain[i]&&chain[i].includes(x));
   const state=await f.evaluate(()=>{
+    const descriptor=name=>{const x=Object.getOwnPropertyDescriptor(window,name)||{};return {exists:!!Object.getOwnPropertyDescriptor(window,name),configurable:x.configurable??null,writable:x.writable??null,hasGetter:typeof x.get==='function',hasSetter:typeof x.set==='function',valueName:typeof x.value==='function'?x.value.name:null,currentName:typeof window[name]==='function'?window[name].name:null}};
+    const ptr=name=>({type:typeof window[name],name:typeof window[name]==='function'?window[name].name:null});
     const before=window.V;
     let nav=document.querySelector('.nav');
     let temporary=false;
@@ -32,15 +34,21 @@ async function run(browser, viewport, label){
     return {
       marker:window.LTS_V143_LIFE_REAL||null,
       feedbackMarker:window.LTS_V143_FEEDBACK_POLISH||null,
+      ownershipMarker:window.LTS_V143_OWNERSHIP||null,
+      ownershipStatus:window.__LTS_V143_OWNERSHIP_STATUS||null,
       top:window.__LTS_TOP_CANDIDATE_VERSION||null,
       css:!!document.getElementById('wip35-v143-life-real-css'),
       feedbackCss:!!document.getElementById('wip35-v143-feedback-polish-css'),
       feedbackBound:!!document.__V143_FEEDBACK_BOUND,
+      lifeBound:!!document.__V143_BOUND,
       dashboard:typeof window.dashboard==='function'&&String(window.dashboard).includes('v143Dashboard'),
       planning:typeof window.planejamento==='function'&&String(window.planejamento).includes('v143Planning'),
       expenses:typeof window.despesas==='function'&&String(window.despesas).includes('v143Expenses'),
       cards:typeof window.cartoes==='function'&&String(window.cartoes).includes('v143Cards'),
       wealth:typeof window.patrimonio==='function'&&String(window.patrimonio).includes('v143Wealth'),
+      pointers:{dashboard:ptr('__v143Dashboard'),planning:ptr('__v143Planning'),expenses:ptr('__v143Expenses'),cards:ptr('__v143Cards'),wealth:ptr('__v143Wealth'),nav:ptr('__v143Nav')},
+      inheritedPointers:{dashboard:ptr('__lts_v142_dashboard_fn'),nav:ptr('__lts_v142_dashboard_nav'),planning:ptr('__lts_v142_planning_fn'),planningBridge:ptr('__LTS_V142_PLANNING_RENDERER'),wealth:ptr('__lts_v142_wealth_fn')},
+      descriptors:{dashboard:descriptor('dashboard'),planning:descriptor('planejamento'),expenses:descriptor('despesas'),cards:descriptor('cartoes'),wealth:descriptor('patrimonio'),nav:descriptor('renderNav')},
       navLabels:labels,clickResults,before,
       width:document.documentElement.clientWidth,
       scroll:Math.max(document.documentElement.scrollWidth,document.body?document.body.scrollWidth:0)
@@ -48,8 +56,9 @@ async function run(browser, viewport, label){
   });
   const navOk=state.clickResults.every(x=>x.ok)&&['Dashboard','Atualizações','Fluxo Diário','Despesas','Cartões','Patrimônio','Liquidez detalhada'].every(x=>state.navLabels.includes(x));
   const feedbackOk=state.feedbackMarker==='classification-evidence-recurrence-focus-v1'&&state.feedbackCss&&state.feedbackBound;
-  const pass=chainOk&&state.marker==='dashboard-human-expense-drill-card-matrix-rsu-cipo-v1'&&feedbackOk&&state.top==='v143'&&state.css&&state.dashboard&&state.planning&&state.expenses&&state.cards&&state.wealth&&navOk&&state.scroll-state.width<=2&&errors.length===0;
-  await page.close();return {label,viewport,pass,chain,chainOk,state,navOk,feedbackOk,errors};
+  const ownershipOk=state.ownershipMarker==='redirect-inherited-owners-v2'&&state.ownershipStatus&&Object.values(state.ownershipStatus).every(Boolean);
+  const pass=chainOk&&state.marker==='dashboard-human-expense-drill-card-matrix-rsu-cipo-v1'&&feedbackOk&&ownershipOk&&state.top==='v143'&&state.css&&state.dashboard&&state.planning&&state.expenses&&state.cards&&state.wealth&&navOk&&state.scroll-state.width<=2&&errors.length===0;
+  await page.close();return {label,viewport,pass,chain,chainOk,state,navOk,feedbackOk,ownershipOk,errors};
 }
 
 (async()=>{
