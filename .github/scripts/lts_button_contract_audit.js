@@ -5,7 +5,8 @@ const files = [
   'wip35-v137-candidate.html','wip35-v138-candidate.html','wip35-v138-cockpits.js',
   'wip35-v139-candidate.html','wip35-v140-candidate.html','wip35-v141-candidate.html',
   'wip35-v142-candidate.html','wip35-v142-ux.js','wip35-v142-planning-bridge-v2.js',
-  'wip35-v142-dashboard-cockpit.js','wip35-v142-liquidity-ui-v2.js','wip35-v142-final-polish.js'
+  'wip35-v142-dashboard-cockpit.js','wip35-v142-liquidity-ui-v2.js','wip35-v142-final-polish.js',
+  'wip35-v143-candidate.html','wip35-v143-life-real.js','wip35-v143-feedback-polish.js','wip35-v143-ownership.js'
 ].filter(f => fs.existsSync(f));
 const sources = files.map(f => ({file:f,text:fs.readFileSync(f,'utf8')}));
 const all = sources.map(x=>`\n/* FILE:${x.file} */\n${x.text}`).join('\n');
@@ -46,7 +47,8 @@ function dataWired(name){
   return [
     new RegExp(`\\[${nr}(?:[=\\]])`,'m'),
     new RegExp(`dataset\\.${pr}(?:[^\\w]|$)`,'m'),
-    new RegExp(`getAttribute\\(\\s*['\"]${nr}['\"]`,'m')
+    new RegExp(`getAttribute\\(\\s*['\"]${nr}['\"]`,'m'),
+    new RegExp(`hasAttribute\\(\\s*['\"]${nr}['\"]`,'m')
   ].some(r=>r.test(all));
 }
 
@@ -76,7 +78,7 @@ const unresolved=buttons.filter(b=>b.identifiable && !b.wired);
 const anonymous=buttons.filter(b=>!b.identifiable && !b.disabled);
 const byFile={}; for(const b of buttons){byFile[b.file]=(byFile[b.file]||0)+1}
 const result={
-  version:'button-contract-audit-v2-direct-global-handlers',
+  version:'button-contract-audit-v3-v143-surface-census',
   files,
   buttonCount:buttons.length,
   identifiableCount:buttons.filter(b=>b.identifiable).length,
@@ -86,7 +88,7 @@ const result={
   byFile,
   unresolved,
   anonymous:anonymous.slice(0,50),
-  note:'Static wiring census: verifies identifiable button templates have inline/id/class/data/direct-global event wiring somewhere in the composed source. It does not replace authenticated click-through or financial writer transaction QA.'
+  note:'Static wiring census includes v143 candidate and feedback layers. It verifies identifiable button templates have inline/id/class/data/direct-global event wiring somewhere in the composed source. It does not replace runtime navigation, authenticated click-through or financial writer transaction QA.'
 };
 fs.writeFileSync('button-contract-audit-result.json',JSON.stringify(result,null,2));
 console.log(JSON.stringify(result,null,2));

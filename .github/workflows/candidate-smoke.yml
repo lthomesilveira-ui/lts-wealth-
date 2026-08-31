@@ -1,7 +1,7 @@
 name: LTS candidate smoke
 on:
   push:
-    branches: [main, v142-button-contract-audit]
+    branches: [main, v143-life-real-feedback]
     paths:
       - 'index.html'
       - 'homologacao.html'
@@ -18,8 +18,13 @@ on:
       - 'wip35-v142-dashboard-cockpit.js'
       - 'wip35-v142-liquidity-ui-v2.js'
       - 'wip35-v142-final-polish.js'
+      - 'wip35-v143-candidate.html'
+      - 'wip35-v143-life-real.js'
+      - 'wip35-v143-feedback-polish.js'
+      - 'wip35-v143-ownership.js'
       - '.github/scripts/lts_candidate_smoke.py'
       - '.github/scripts/lts_candidate_browser_smoke.js'
+      - '.github/scripts/lts_v143_browser_smoke.js'
       - '.github/scripts/lts_button_contract_audit.js'
       - '.github/workflows/candidate-smoke.yml'
   workflow_dispatch:
@@ -48,7 +53,7 @@ jobs:
           assert 'Date.now()' in bootstrap
           print('fixed_homologation_entrypoint=PASS target=' + target)
           PY
-      - name: Parse and validate isolated candidate
+      - name: Parse and validate isolated v142 fallback candidate
         run: python .github/scripts/lts_candidate_smoke.py
       - name: Validate audited Dashboard cockpit layer
         run: |
@@ -92,26 +97,58 @@ jobs:
           assert not missing, 'final polish markers missing: '+repr(missing)
           print('final_polish_static=PASS')
           PY
-      - name: Audit button wiring contracts
+      - name: Validate v143 real-life feedback layer
+        run: |
+          node --check wip35-v143-life-real.js
+          node --check wip35-v143-feedback-polish.js
+          node --check wip35-v143-ownership.js
+          node --check .github/scripts/lts_v143_browser_smoke.js
+          python - <<'PY'
+          from pathlib import Path
+          html=Path('wip35-v143-candidate.html').read_text(encoding='utf-8')
+          js=Path('wip35-v143-life-real.js').read_text(encoding='utf-8')
+          fb=Path('wip35-v143-feedback-polish.js').read_text(encoding='utf-8')
+          own=Path('wip35-v143-ownership.js').read_text(encoding='utf-8')
+          required_html=['wip35-v142-candidate.html?v143-parent','wip35-v143-life-real.js?v143-life-real-v1','wip35-v143-feedback-polish.js?v143-feedback-polish-v2','wip35-v143-ownership.js?v143-ownership-v1']
+          required_js=['LTS_V143_LIFE_REAL','Disponível se também acionar o FGTS','Sem uma ação de liquidez','Liquidez detalhada','lts_browser_expense_drilldown_v1','Cartão × mês','Consolidado pela classificação do LTS','lts_browser_wealth_detail_v1','Simular antecipação','lts_browser_vesting_scenario_v1','CIPÓ 396 · histórico completo','Volvo XC40 · financiamento Bradesco']
+          required_fb=['classification-evidence-recurrence-generic-decision-cockpit-v2','Sua vida financeira, em uma tela.','Fatura vencida / a confirmar','Sem uma ação de liquidez, o caixa cruza zero','Ponto de gestão de liquidez, não falta patrimonial comprovada.','procura genericamente séries','mediana é evidência, não valor projetado']
+          required_own=['redirect-inherited-owners-v2','__lts_v142_dashboard_fn','__lts_v142_dashboard_nav','__lts_v142_planning_fn','__LTS_V142_PLANNING_RENDERER','__lts_v142_wealth_fn']
+          missing=[x for x in required_html if x not in html]+[x for x in required_js if x not in js]+[x for x in required_fb if x not in fb]+[x for x in required_own if x not in own]
+          assert not missing, 'v143 markers missing: '+repr(missing)
+          hardcoded="['Condomínio - O Parque','IPTU - O Parque','Benjamin - Educação','Adiantamento Quinzenal']"
+          assert hardcoded not in fb, 'recurrence UI still hardcodes example series'
+          assert 'insert into' not in js.lower() and 'delete from' not in js.lower() and 'update public.' not in js.lower(), 'browser layer contains direct SQL write'
+          print('v143_life_real_static=PASS')
+          PY
+      - name: Audit inherited button wiring contracts
         run: node .github/scripts/lts_button_contract_audit.js
       - name: Install headless browser
         run: |
           npm install --no-save playwright@1.55.0
           npx playwright install --with-deps chromium
-      - name: Run local candidate browser smoke
+      - name: Run local v142 fallback browser smoke
         run: |
           python3 -m http.server 8765 >/tmp/lts-http.log 2>&1 &
           SERVER_PID=$!
           trap 'kill $SERVER_PID || true' EXIT
           sleep 1
           node .github/scripts/lts_candidate_browser_smoke.js
+      - name: Run v143 runtime and navigation smoke
+        run: |
+          python3 -m http.server 8766 >/tmp/lts-http-v143.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID || true' EXIT
+          sleep 1
+          sed 's/8765/8766/g' .github/scripts/lts_v143_browser_smoke.js >/tmp/lts_v143_browser_smoke.js
+          NODE_PATH="$PWD/node_modules" node /tmp/lts_v143_browser_smoke.js
       - name: Upload smoke evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: wip35-v142-candidate-smoke
+          name: wip35-v143-candidate-smoke
           path: |
             candidate-smoke-result.txt
             candidate-browser-smoke-result.json
+            v143-browser-smoke-result.json
             button-contract-audit-result.json
           if-no-files-found: error
