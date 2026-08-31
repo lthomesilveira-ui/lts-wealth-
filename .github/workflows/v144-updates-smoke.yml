@@ -9,6 +9,8 @@ on:
       - 'wip35-v144-lexical-bridge.js'
       - 'wip35-v144-updates-layout.js'
       - '.github/scripts/lts_v144_updates_smoke.js'
+      - '.github/scripts/lts_v144_full_browser_smoke.js'
+      - '.github/scripts/lts_button_contract_audit.js'
       - '.github/workflows/v144-updates-smoke.yml'
   workflow_dispatch:
 permissions:
@@ -26,6 +28,7 @@ jobs:
           node --check wip35-v144-lexical-bridge.js
           node --check wip35-v144-updates-layout.js
           node --check .github/scripts/lts_v144_updates_smoke.js
+          node --check .github/scripts/lts_v144_full_browser_smoke.js
           python - <<'PY'
           from pathlib import Path
           import re
@@ -45,6 +48,8 @@ jobs:
           assert assignment is None and '__LTS_V144_UPDATES_RENDERER' not in js, 'v144 must not compete for renderer ownership'
           print('v144_deep_runtime_host_static=PASS')
           PY
+      - name: Audit inherited button wiring contracts
+        run: node .github/scripts/lts_button_contract_audit.js
       - name: Install headless browser
         run: |
           npm install --no-save playwright@1.55.0
@@ -56,10 +61,20 @@ jobs:
           trap 'kill $SERVER_PID || true' EXIT
           sleep 1
           node .github/scripts/lts_v144_updates_smoke.js
+      - name: Run v144 full ownership/navigation smoke
+        run: |
+          python3 -m http.server 8768 >/tmp/lts-http-v144-full.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID || true' EXIT
+          sleep 1
+          node .github/scripts/lts_v144_full_browser_smoke.js
       - name: Upload v144 smoke evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: wip35-v144-updates-smoke
-          path: v144-updates-smoke-result.json
+          path: |
+            v144-updates-smoke-result.json
+            v144-full-browser-smoke-result.json
+            button-contract-audit-result.json
           if-no-files-found: error
