@@ -6,7 +6,7 @@
   let stable=null,tries=0,done=false,renderToken=0;
 
   function buildStableNav(){
-    function v146StableNav(){
+    function v146StableNav(activeDest=w.V){
       const N=d.querySelector('.nav');if(!N)return;
       let buttons=Array.from(N.querySelectorAll('button[data-v143-dest]'));
       const shapeOk=buttons.length===ITEMS.length&&ITEMS.every(([dest,label],i)=>buttons[i]&&buttons[i].dataset.v143Dest===dest&&String(buttons[i].textContent||'').trim()===label);
@@ -20,7 +20,7 @@
         const item=ITEMS[i];if(!item)return;
         const [dest,label]=item;
         if(String(b.textContent||'').trim()!==label)b.textContent=label;
-        b.classList.toggle('active',w.V===dest);
+        b.classList.toggle('active',activeDest===dest);
         b.classList.remove('minor');
       });
     }
@@ -66,13 +66,15 @@
     return true;
   }
 
-  function scheduleRender(dest){
+  function scheduleNavigation(dest){
     const token=++renderToken;
-    w.__LTS_V146_NAV_RENDER_PENDING=dest;
+    w.__LTS_V146_NAV_PENDING_DEST=dest;
     w.__LTS_V146_NAV_RENDER_SCHEDULED_AT=performance.now();
     setTimeout(()=>{
-      if(token!==renderToken||w.V!==dest)return;
-      w.__LTS_V146_NAV_RENDER_PENDING=null;
+      if(token!==renderToken)return;
+      w.__LTS_V146_NAV_PENDING_DEST=null;
+      w.V=dest;
+      try{stable?.(dest)}catch(err){}
       w.__LTS_V146_NAV_RENDER_STARTED_AT=performance.now();
       try{w.render()}catch(err){w.__LTS_V146_NAV_RENDER_ERROR=String(err?.message||err)}
       finally{w.__LTS_V146_NAV_RENDER_FINISHED_AT=performance.now()}
@@ -87,9 +89,8 @@
       const dest=b.dataset.v143Dest;if(!dest)return;
       e.preventDefault();e.stopImmediatePropagation();
       w.__LTS_V146_NAV_LAST_CLICK_CAPTURE_AT=performance.now();
-      w.V=dest;
-      try{stable?.()}catch(err){}
-      scheduleRender(dest);
+      try{stable?.(dest)}catch(err){}
+      scheduleNavigation(dest);
       w.__LTS_V146_NAV_LAST_CLICK_RETURN_AT=performance.now();
     },true);
   }
@@ -132,10 +133,10 @@
     const wealthStable=stabilizeWealthOwner();
     if(!wealthStable)return false;
     bindCapture();
-    stable();
+    stable(w.V);
     const domLocked=lockNavDom();
     if(!domLocked)return false;
-    stable();
+    stable(w.V);
     w.LTS_V146_NAV_STABILITY=MARK;
     w.__LTS_V146_NAV_STATUS={
       installed:true,
@@ -143,8 +144,9 @@
       render_nav_stable:w.renderNav===stable,
       dom_locked:!!d.querySelector('.nav')?.__LTS_V146_NAV_DOM_LOCKED,
       blocked_writes:w.__LTS_V146_NAV_BLOCKED_WRITES||0,
-      click_render_mode:'non-blocking-coalesced-80ms-yield',
+      click_render_mode:'visual-active-immediate-state-and-render-coalesced-80ms',
       click_render_yield_ms:CLICK_RENDER_YIELD_MS,
+      state_commit_deferred:true,
       wealth_owner_stable:wealthStable,
       legacy_v142_wealth_loader_retired:w.__LTS_V146_WEALTH_OWNER_STATUS?.legacy_loader_retired===true,
       permanent_polling:false,
