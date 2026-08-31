@@ -2,7 +2,7 @@
   const MARK='stable-nav-no-recreate-v1';
   const w=window,d=document;
   const ITEMS=[['Dashboard','Dashboard'],['Atualizações','Atualizações'],['Fluxo Diário','Fluxo Diário'],['Despesas','Despesas'],['Cartões','Cartões'],['Patrimônio','Patrimônio'],['Planejamento','Liquidez detalhada']];
-  let stable=null,tries=0,done=false;
+  let stable=null,tries=0,done=false,renderToken=0;
 
   function buildStableNav(){
     function v146StableNav(){
@@ -65,6 +65,16 @@
     return true;
   }
 
+  function scheduleRender(dest){
+    const token=++renderToken;
+    w.__LTS_V146_NAV_RENDER_PENDING=dest;
+    requestAnimationFrame(()=>setTimeout(()=>{
+      if(token!==renderToken||w.V!==dest)return;
+      w.__LTS_V146_NAV_RENDER_PENDING=null;
+      try{w.render()}catch(err){w.__LTS_V146_NAV_RENDER_ERROR=String(err?.message||err)}
+    },0));
+  }
+
   function bindCapture(){
     if(d.__LTS_V146_NAV_CAPTURE_BOUND)return;
     d.__LTS_V146_NAV_CAPTURE_BOUND=true;
@@ -73,7 +83,8 @@
       const dest=b.dataset.v143Dest;if(!dest)return;
       e.preventDefault();e.stopImmediatePropagation();
       w.V=dest;
-      try{stable?.();w.render()}catch(err){}
+      try{stable?.()}catch(err){}
+      scheduleRender(dest);
     },true);
   }
 
@@ -105,6 +116,7 @@
       render_nav_stable:w.renderNav===stable,
       dom_locked:!!d.querySelector('.nav')?.__LTS_V146_NAV_DOM_LOCKED,
       blocked_writes:w.__LTS_V146_NAV_BLOCKED_WRITES||0,
+      click_render_mode:'non-blocking-coalesced-next-frame',
       permanent_polling:false,
       nav_nodes:Array.from(d.querySelectorAll('.nav button[data-v143-dest]')).length
     };
