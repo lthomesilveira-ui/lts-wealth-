@@ -26,6 +26,7 @@ jobs:
           node --check .github/scripts/lts_v144_updates_smoke.js
           python - <<'PY'
           from pathlib import Path
+          import re
           html=Path('wip35-v144-candidate.html').read_text(encoding='utf-8')
           js=Path('wip35-v144-updates-layout.js').read_text(encoding='utf-8')
           required_html=['wip35-v142-candidate.html?v144-parent','wip35-v143-life-real.js?v143-life-real-v1','wip35-v143-feedback-polish.js?v143-feedback-polish-v2','wip35-v143-ownership.js?v143-ownership-v1','wip35-v144-updates-layout.js?v144-updates-layout-v3',"__LTS_TOP_CANDIDATE_VERSION='v144'"]
@@ -35,7 +36,8 @@ jobs:
           forbidden=['insert into','delete from','update public.','.upsert(']
           leaked=[x for x in forbidden if x.lower() in js.lower()]
           assert not leaked, 'direct financial write leaked into browser layer: '+repr(leaked)
-          assert 'w.atualizacoes=' not in js and '__LTS_V144_UPDATES_RENDERER' not in js, 'v144 must not compete for renderer ownership'
+          assignment=re.search(r'w\.atualizacoes\s*=(?!=)',js)
+          assert assignment is None and '__LTS_V144_UPDATES_RENDERER' not in js, 'v144 must not compete for renderer ownership'
           print('v144_updates_deepest_frame_static=PASS')
           PY
       - name: Install headless browser
