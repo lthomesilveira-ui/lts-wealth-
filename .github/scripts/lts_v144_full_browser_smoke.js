@@ -8,6 +8,7 @@ async function run(browser, viewport, label){
   page.on('console',m=>{if(m.type()==='error')errors.push('console:'+m.text())});
   await page.goto('http://127.0.0.1:8768/wip35-v144-candidate.html',{waitUntil:'domcontentloaded',timeout:30000});
   await page.waitForTimeout(8000);
+  const outerTop=await page.evaluate(()=>window.__LTS_TOP_CANDIDATE_VERSION||null);
   const chain=[];let f=page.mainFrame();
   for(let i=0;i<8;i++){chain.push(f.url());const kids=f.childFrames();if(!kids.length)break;f=kids[0]}
   const expected=['wip35-v144-candidate.html','wip35-v142-candidate.html','wip35-v141-candidate.html','wip35-v140-candidate.html','wip35-v139-candidate.html','wip35-v138-candidate.html','wip35-v137-candidate.html','index.html'];
@@ -38,7 +39,7 @@ async function run(browser, viewport, label){
       ownershipStatus:window.__LTS_V143_OWNERSHIP_STATUS||null,
       bridge:window.LTS_V144_LEXICAL_BRIDGE||null,
       deepHost:window.LTS_V144_DEEP_RUNTIME_HOST||null,
-      top:window.__LTS_TOP_CANDIDATE_VERSION||null,
+      innerTop:window.__LTS_TOP_CANDIDATE_VERSION||null,
       css:!!document.getElementById('wip35-v143-life-real-css'),
       feedbackCss:!!document.getElementById('wip35-v143-feedback-polish-css'),
       feedbackBound:!!document.__V143_FEEDBACK_BOUND,
@@ -60,8 +61,9 @@ async function run(browser, viewport, label){
   const feedbackOk=state.feedbackMarker==='classification-evidence-recurrence-generic-decision-cockpit-v2'&&state.feedbackCss&&state.feedbackBound;
   const ownershipOk=state.ownershipMarker==='redirect-inherited-owners-v2'&&state.ownershipStatus&&Object.values(state.ownershipStatus).every(Boolean);
   const bridgeOk=state.bridge==='v144-lexical-state-bridge-v1'&&state.deepHost==='deep-runtime-host-v1';
-  const pass=chainOk&&state.marker==='dashboard-human-expense-drill-card-matrix-rsu-cipo-v1'&&feedbackOk&&ownershipOk&&bridgeOk&&state.top==='v144'&&state.css&&state.dashboard&&state.planning&&state.expenses&&state.cards&&state.wealth&&navOk&&state.scroll-state.width<=2&&errors.length===0;
-  await page.close();return {label,viewport,pass,chain,chainOk,state,navOk,feedbackOk,ownershipOk,bridgeOk,errors};
+  const versionOk=outerTop==='v144'&&state.innerTop==='v143';
+  const pass=chainOk&&state.marker==='dashboard-human-expense-drill-card-matrix-rsu-cipo-v1'&&feedbackOk&&ownershipOk&&bridgeOk&&versionOk&&state.css&&state.dashboard&&state.planning&&state.expenses&&state.cards&&state.wealth&&navOk&&state.scroll-state.width<=2&&errors.length===0;
+  await page.close();return {label,viewport,pass,chain,chainOk,outerTop,state,navOk,feedbackOk,ownershipOk,bridgeOk,versionOk,errors};
 }
 
 (async()=>{
@@ -69,7 +71,7 @@ async function run(browser, viewport, label){
   const desktop=await run(browser,{width:1440,height:1000},'desktop');
   const mobile=await run(browser,{width:390,height:844},'mobile-390x844');
   await browser.close();
-  const result={pass:desktop.pass&&mobile.pass,desktop,mobile,importantLimit:'Runtime composition and real navigation click-through on the unauthenticated v144 shell. Authenticated data rendering and financial writers remain separately gated; this is not authenticated visual E2E.'};
+  const result={pass:desktop.pass&&mobile.pass,desktop,mobile,importantLimit:'Runtime composition and real navigation click-through on the unauthenticated v144 shell. The outer wrapper is v144 while the preserved deepest inherited product runtime remains v143 by design. Authenticated data rendering and financial writers remain separately gated; this is not authenticated visual E2E.'};
   fs.writeFileSync('v144-full-browser-smoke-result.json',JSON.stringify(result,null,2));
   console.log(JSON.stringify(result,null,2));
   if(!result.pass)process.exit(1);
