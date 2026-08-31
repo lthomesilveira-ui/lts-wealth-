@@ -19,29 +19,46 @@ This file exists so project continuity never depends on chat context. Always re-
 - Public: `https://lthomesilveira-ui.github.io/lts-wealth-/`.
 - Fixed homologation: `https://lthomesilveira-ui.github.io/lts-wealth-/homologacao.html`.
 - Public `index.html` remains WIP35-v136, protected blob `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
-- v143 integrated by normal PR #6; integrated baseline main SHA `0526033f33ef90086388a946470313bd5002180c`.
-- Candidate-smoke `33401135988` SUCCESS and Pages `33401135026` SUCCESS on that same integrated SHA.
-- Active implementation branch remains `v143-life-real-feedback` at `1b8a2246f9f9af77015caedf9975aef12f4d384f` for provenance; implementation code freeze is `0291737238b6b0bd69fe4c9bf3c348598a4b2277`.
-- `homologacao-current.json` is switched from v142 to v143 in the current exposure package; post-switch same-SHA candidate-smoke + Pages are still required before user action.
-- Latest immutable checkpoints: `backups/WIP35_V143_PREINTEGRATION_CHECKPOINT_2026-08-31.md` and `backups/WIP35_V143_HOMOLOGATION_EXPOSURE_CHECKPOINT_2026-08-31.md`.
+- v143 integrated by normal PR #6; integrated baseline `0526033f33ef90086388a946470313bd5002180c`.
+- v143 exposure main SHA `a86b7cffe909098d65fcaad849800316c13dab3a`.
+- v143 post-switch Pages `33402028275` SUCCESS and candidate-smoke `33402029074` SUCCESS on that exact exposure SHA.
+- Fixed homologation currently targets v143.
+- User material homologation found a P0 Atualizações regression; v144 is the corrective candidate and is not yet exposed.
+- Active branch: `v144-updates-classification-layout`.
+- Current green branch head: `f7cd162062406c2e1e37328883ca9586cc0374a8`.
+- Latest v144 branch gate: `33412827358` SUCCESS.
 - Authenticated visual E2E: not performed / not claimed.
 
-## v143 P0 package
-- Dashboard header: `Sua vida financeira, em uma tela.`
-- Hero: `Disponível realizável até D+3`; separate FGTS-inclusive reading explicitly restricted/D+30, not cash today.
-- Future liquidity problem high with human cross-zero wording and request-by deadline.
-- `Fatura vencida / a confirmar` restored.
-- Planejamento visual label `Liquidez detalhada`; resource order bank cash → D0/Cofrinho → vested RSU → future vestings when actually available → FGTS D+30; Jan/2027 explained as management point, not proven insolvency.
-- Atualizações action-first; classification evidence order explicit user rule → exact consistent LTS history → public merchant research → manual review.
-- `GULA GULA MORUMBI`: two Aeternum Sep/2026 rows, total R$725,46, remains taxonomy_review despite public restaurant evidence; no invented final classification.
-- Generic recurrence audit compares history against next 12 months; no hardcoded example list and no historical median auto-projection.
-- Despesas human context + clickable composition; Cartões classification consolidation/raw evidence/Cartão × mês; Patrimônio vested RSU/future vestings/read-only anticipation/CIPÓ/Volvo.
-- Deterministic v143 ownership redirects inherited v142 owners; runtime/navigation smoke desktop/mobile PASS; button census 197/197.
+## v144 corrective package
+User feedback preserved:
+- Atualizações must restore the earlier suggestion / research / certainty-% model.
+- Layout must be compact and clearly hierarchical instead of loose cards/blank space.
+- Classification should be first and actionable.
+
+Implementation:
+- candidate `wip35-v144-candidate.html`;
+- deepest host marker `deep-runtime-host-v1`;
+- lexical bridge marker `v144-lexical-state-bridge-v1`;
+- Updates marker `classification-action-center-v2`;
+- v144 outer marker is `v144`; deepest inherited runtime remains `v143` by design.
+- preserves `cardClassificationUpdates` / `expenseClassificationUpdates` and old save controls.
+- no direct backend financial writer added; does not replace `w.atualizacoes`.
+- secondary recurrence/maintenance sections compact/collapsible; duplicated v143 evidence panel suppressed.
+
+Run `33412827358` proves desktop + mobile:
+- suggestion/evidence visible;
+- 83% suggestion / 99% identification / 91% ambiguous-marketplace identification in synthetic evidence;
+- 2 save controls preserved;
+- classification before secondary sections;
+- ownership for Dashboard/Planejamento/Despesas/Cartões/Patrimônio/nav remains true;
+- all main nav click-throughs pass;
+- zero overflow; zero errors.
+This is unauthenticated browser composition/navigation evidence, not authenticated visual E2E.
 
 ## Financial evidence that must not change by assumption
 - Planning management point 08/01/2027; FGTS request-by 09/12/2026.
 - FGTS documentary 18/08/2026 R$17.509,05; existing accrual model R$3.700/month; request-date projection R$32.309,05.
-- Worst before contingency R$-21.046,80; worst after planned FGTS R$+11.262,25; no uncovered gap through 28/02/2027.
+- Worst before contingency -R$21.046,80; worst after planned FGTS +R$11.262,25; no uncovered gap through 28/02/2027.
 - Correct interpretation: liquidity-management point covered by already-modeled D+30 contingency if initiated on time; not proven patrimonial insufficiency.
 - Despesas invariant R$8.623.752,53; analytical cache 3.860/3.860 exact.
 - Historical card certified allocation 38 cycles / 650 rows / R$885.855,19; aggregate fallback 314 rows / R$2.650.846,36 remains aggregate-only.
@@ -52,14 +69,15 @@ This file exists so project continuity never depends on chat context. Always re-
 - Historical FGTS realization R$25.585,03 on 07/05/2026 and later current employer FGTS R$17.509,05 are different temporal positions.
 - Bank↔liquidity-asset movements have economic effect zero and are excluded from spend/revenue.
 
-## Final backend evidence
-Fingerprint `85a1b60816a5b84dfe3b41341ed27948` unchanged before/after:
+## Backend evidence inherited unchanged
+Fingerprint `85a1b60816a5b84dfe3b41341ed27948`:
 - v14 293 / 24 PASS;
 - v15 67 / 5 PASS;
 - v16 19 / 2 PASS;
 - v17 32 / 4 PASS;
 - staged total 411 checks / 35 suites PASS, not a single monolithic gate;
 - supplemental v143 read-model QA v2 16/16 PASS.
+v144 has no backend financial-rule change.
 
 ## Open backlog that must survive every handoff
 - Mastercard historical recovery: 2022 remaining months; 2023 12 ledger-only payments R$496.689,05 with independent category matrix absent; 2024 only Mar/May/Aug/Sep/Oct/Dec certified; 2025 Mar/Apr/May/Jun/Aug/Nov certified, Jan/Feb/Jul/Oct partial, Sep/Dec blocked.
@@ -72,13 +90,16 @@ Fingerprint `85a1b60816a5b84dfe3b41341ed27948` unchanged before/after:
 - Open Finance provider/pricing/SLA/bank coverage; no consent/spend/credential without explicit user decision.
 - Performance only after correctness/exact parity.
 - Real authenticated visual E2E.
-- User material v143 homologation.
+- Material user v144 homologation after safe exposure.
 - Public `index.html` promotion only after explicit user approval.
 
 ## Immediate next execution
-1. Re-fetch manifest-switch main SHA.
-2. Verify candidate-smoke + Pages on that same SHA and that the fixed manifest resolves v143.
-3. Verify protected `index.html` blob unchanged.
-4. If practical, add deployed fixed-link unauthenticated smoke without overstating it as authenticated E2E.
-5. Only after gates are green say `AÇÃO SUA NECESSÁRIA` and request material visual homologation at the fixed link.
-6. Do not promote public root without explicit user approval.
+1. Freeze v144 evidence and update canonical docs/checkpoint.
+2. Extend the static button census to include v144 while keeping legacy candidate-smoke intact.
+3. Require both branch workflows green.
+4. Open/merge normal PR to main with expected head SHA.
+5. Require v144 smoke + legacy candidate-smoke + Pages on exact integrated SHA; public index unchanged and homologation still v143.
+6. Separate exposure commit switches fixed homologation manifest to v144.
+7. Require same-SHA post-switch v144 smoke + candidate-smoke + Pages and public index unchanged.
+8. Only then tell the user `Pode acessar` at the fixed homologation URL, starting with Atualizações.
+9. Do not promote public root without explicit user approval.
