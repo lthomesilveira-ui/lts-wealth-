@@ -10,10 +10,11 @@ const files = [
 const sources = files.map(f => ({file:f,text:fs.readFileSync(f,'utf8')}));
 const all = sources.map(x=>`\n/* FILE:${x.file} */\n${x.text}`).join('\n');
 
+function clean(v){return String(v||'').replace(/\\(["'])/g,'$1').replace(/^['"]|['"]$/g,'')}
 function attrs(raw){
   const out={};
   const re=/([:\w-]+)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+)))?/g;
-  let m; while((m=re.exec(raw))) out[m[1].toLowerCase()] = m[2] ?? m[3] ?? m[4] ?? '';
+  let m; while((m=re.exec(raw))) out[m[1].toLowerCase()] = clean(m[2] ?? m[3] ?? m[4] ?? '');
   return out;
 }
 function escRe(s){return String(s).replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}
@@ -28,10 +29,14 @@ function classWired(cls){
   return patterns.some(r=>r.test(all));
 }
 function idWired(id){
-  const i=escRe(id);
+  const i=escRe(clean(id));
+  if(!i)return false;
   return [
     new RegExp(`getElementById\\(\\s*['\"]${i}['\"]`,'m'),
-    new RegExp(`querySelector(?:All)?\\(\\s*['\"]#${i}(?:[^\\w-]|$)`,'m')
+    new RegExp(`querySelector(?:All)?\\(\\s*['\"]#${i}(?:[^\\w-]|$)`,'m'),
+    new RegExp(`(?:^|[^\\w$])${i}\\.onclick\\s*=`,'m'),
+    new RegExp(`(?:^|[^\\w$])${i}\\.on(?:change|input|submit|click|keydown|keyup)\\s*=`,'m'),
+    new RegExp(`(?:^|[^\\w$])${i}\\.addEventListener\\s*\\(`,'m')
   ].some(r=>r.test(all));
 }
 function dataWired(name){
@@ -50,8 +55,8 @@ for(const s of sources){
   const re=/<button\b([^>]*)>/gi; let m;
   while((m=re.exec(s.text))){
     const a=attrs(m[1]);
-    const id=a.id||'';
-    const classes=(a.class||'').split(/\s+/).filter(Boolean).filter(x=>!x.includes('${'));
+    const id=clean(a.id||'');
+    const classes=clean(a.class||'').split(/\s+/).filter(Boolean).filter(x=>!x.includes('${'));
     const dataNames=Object.keys(a).filter(k=>k.startsWith('data-'));
     const inline=Object.keys(a).some(k=>k.startsWith('on') && String(a[k]).trim());
     const disabled=Object.prototype.hasOwnProperty.call(a,'disabled');
@@ -71,7 +76,7 @@ const unresolved=buttons.filter(b=>b.identifiable && !b.wired);
 const anonymous=buttons.filter(b=>!b.identifiable && !b.disabled);
 const byFile={}; for(const b of buttons){byFile[b.file]=(byFile[b.file]||0)+1}
 const result={
-  version:'button-contract-audit-v1',
+  version:'button-contract-audit-v2-direct-global-handlers',
   files,
   buttonCount:buttons.length,
   identifiableCount:buttons.filter(b=>b.identifiable).length,
@@ -81,7 +86,7 @@ const result={
   byFile,
   unresolved,
   anonymous:anonymous.slice(0,50),
-  note:'Static wiring census: verifies identifiable button templates have inline/id/class/data event wiring somewhere in the composed source. It does not replace authenticated click-through or financial writer transaction QA.'
+  note:'Static wiring census: verifies identifiable button templates have inline/id/class/data/direct-global event wiring somewhere in the composed source. It does not replace authenticated click-through or financial writer transaction QA.'
 };
 fs.writeFileSync('button-contract-audit-result.json',JSON.stringify(result,null,2));
 console.log(JSON.stringify(result,null,2));
