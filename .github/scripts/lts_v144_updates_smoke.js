@@ -16,7 +16,7 @@ async function run(browser, viewport, label){
   await f.evaluate(()=>{
     window.D={
       updates:{items:[],maintenance_checks:[],freshness:{position_as_of:'2026-08-31'},guardrail:'Itens resolvidos não reaparecem.'},
-      semantic_review:{pending_groups:0},
+      semantic_review:{pending_groups:0,items:[]},
       card_classification_review:{
         pending_groups:2,pending_lines:2,pending_value:725.46,safe_suggestion_groups:0,
         category_options:['Restaurantes','Supermercado','Outros'],
@@ -31,24 +31,23 @@ async function run(browser, viewport, label){
     window.renderNav?.();
     window.render();
   });
-  await page.waitForTimeout(800);
+  await page.waitForTimeout(1600);
 
   const state=await f.evaluate(()=>{
     const root=document.getElementById('v144UpdatesRoot');
     const text=root?root.innerText:'';
-    const classSec=document.getElementById('v144Classification');
+    const classSec=document.getElementById('v144ClassificationZone');
     const other=document.getElementById('v144OtherActions');
-    const classRect=classSec?.getBoundingClientRect();
-    const otherRect=other?.getBoundingClientRect();
-    const saveButtons=Array.from(document.querySelectorAll('#v144Classification .cardclass-save')).map(x=>x.textContent.trim());
-    const conf=Array.from(document.querySelectorAll('#v144Classification .v144u-conf i')).map(x=>x.textContent.trim());
-    const cards=Array.from(document.querySelectorAll('#v144Classification .v144u-class'));
+    const classRect=classSec?.getBoundingClientRect(),otherRect=other?.getBoundingClientRect();
+    const saveButtons=Array.from(document.querySelectorAll('#v144ClassificationZone .cardclass-save')).map(x=>x.textContent.trim());
+    const conf=Array.from(document.querySelectorAll('#v144ClassificationZone .v144-proofline span')).map(x=>x.textContent.trim());
+    const cards=Array.from(document.querySelectorAll('#v144ClassificationZone #cardClassReview .cardclass-row'));
+    const duplicate=document.getElementById('v143EvidenceSuggestions');
     return {
-      marker:window.LTS_V144_UPDATES_CLASSIFICATION||null,
-      rendererOwned:window.__LTS_V144_UPDATES_RENDERER===window.atualizacoes,
-      top:window.parent?.__LTS_TOP_CANDIDATE_VERSION||null,
+      marker:window.LTS_V144_UPDATES_LAYOUT||null,
       root:!!root,
-      css:!!document.getElementById('wip35-v144-updates-css'),
+      css:!!document.getElementById('wip35-v144-updates-layout-css'),
+      baseClassificationPreserved:!!document.getElementById('cardClassReview'),
       title:text.includes('Resolva o que precisa de você.'),
       methodology:text.includes('Histórico do LTS')&&text.includes('Pesquisa pública')&&text.includes('% de confiança'),
       suggestion:text.includes('Restaurantes'),
@@ -59,12 +58,13 @@ async function run(browser, viewport, label){
       cards:cards.length,
       saveButtons,
       classificationBeforeSecondary:!!classRect&&!!otherRect&&classRect.top<otherRect.top,
-      legacySuppressed:!!document.querySelector('#v143FeedbackUpdates.v144-legacy-suppressed'),
+      secondaryCollapsed:!!other&&!other.open,
+      duplicateHidden:!duplicate||getComputedStyle(duplicate).display==='none',
       width:document.documentElement.clientWidth,
       scroll:Math.max(document.documentElement.scrollWidth,document.body?document.body.scrollWidth:0)
     };
   });
-  const pass=chainOk&&state.marker==='updates-classification-confidence-layout-v1'&&state.rendererOwned&&state.root&&state.css&&state.title&&state.methodology&&state.suggestion&&state.evidence&&state.confidence83&&state.confidence99&&state.ambiguousResearch&&state.cards===2&&state.saveButtons.length===2&&state.classificationBeforeSecondary&&state.legacySuppressed&&state.scroll-state.width<=2&&errors.length===0;
+  const pass=chainOk&&state.marker==='classification-action-center-v1'&&state.root&&state.css&&state.baseClassificationPreserved&&state.title&&state.methodology&&state.suggestion&&state.evidence&&state.confidence83&&state.confidence99&&state.ambiguousResearch&&state.cards===2&&state.saveButtons.length===2&&state.classificationBeforeSecondary&&state.secondaryCollapsed&&state.duplicateHidden&&state.scroll-state.width<=2&&errors.length===0;
   await page.close();
   return {label,viewport,pass,chain,chainOk,state,errors};
 }
@@ -74,7 +74,7 @@ async function run(browser, viewport, label){
   const desktop=await run(browser,{width:1440,height:1000},'desktop');
   const mobile=await run(browser,{width:390,height:844},'mobile-390x844');
   await browser.close();
-  const result={pass:desktop.pass&&mobile.pass,desktop,mobile,importantLimit:'Synthetic classification data is injected only to validate v144 layout/rendering and confidence/evidence presentation. No backend financial write is executed. This is not authenticated visual E2E.'};
+  const result={pass:desktop.pass&&mobile.pass,desktop,mobile,importantLimit:'Synthetic classification data validates post-render layout, preserved existing controls, confidence/evidence visibility and responsive composition only. No backend financial write is executed. This is not authenticated visual E2E.'};
   fs.writeFileSync('v144-updates-smoke-result.json',JSON.stringify(result,null,2));
   console.log(JSON.stringify(result,null,2));
   if(!result.pass)process.exit(1);
