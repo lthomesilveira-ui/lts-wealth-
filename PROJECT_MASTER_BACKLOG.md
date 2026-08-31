@@ -6,43 +6,40 @@ Canonical persistent project list. Detailed immutable evidence remains in `backu
 
 ## P0 — v144 Atualizações corrective package — 31/08/2026
 - [x] User v143 material homologation found a P0 regression in Atualizações: assisted classification had lost the earlier visible suggestion + research/evidence + certainty %, and the page had poor hierarchy/large blank space.
-- [x] v144 restores classification FIRST with `Sugestão + pesquisa + % de confiança, item por item`, preserving old classification helpers and save handlers instead of inventing a new financial writer.
+- [x] v144 restores classification FIRST with `Sugestão + pesquisa + % de confiança, item por item`, preserving existing classification helpers and save handlers instead of inventing a new financial writer.
 - [x] Evidence hierarchy remains explicit user rule → exact/consistent LTS history → public merchant research → manual confirmation when ambiguity remains.
 - [x] `GULA GULA MORUMBI` sample remains taxonomy review: `Restaurantes` suggestion is shown with evidence/confidence, but no auto-confirmation is authorized.
 - [x] Marketplaces/intermediators remain review items; public research identifies the merchant but does not invent purchase purpose.
-- [x] v144 deep-runtime bridge exposes the base app lexical `D/V` bindings only to the same inherited runtime; it does not alter financial logic.
-- [x] Product host commit `01b15f5e382939851086c67515b5ecff38fbcef1` made v144 extensions run in the deepest inherited product realm.
-- [x] Branch gate run `33412827358` SUCCESS on head `f7cd162062406c2e1e37328883ca9586cc0374a8`.
-- [x] Updates smoke PASS desktop 1440×1000 and mobile 390×844: marker/root/css/helpers present; suggestion/evidence present; `83% sugestão`, `99% identificação`, ambiguous marketplace `91% identificação`; 2 save controls; classification before secondary sections; secondary sections collapsed; zero overflow/errors.
-- [x] Full ownership/navigation smoke PASS desktop/mobile: outer candidate v144 + preserved deepest inherited v143 runtime; v143 Dashboard/Planejamento/Despesas/Cartões/Patrimônio/nav ownership all true; every main nav click changes `V` correctly; zero overflow/errors.
-- [x] Static button audit remains 197/197 identifiable+wired, 0 unresolved, 0 anonymous before the v144 census extension; v144 introduces no replacement financial writer.
-- [ ] Freeze/pre-integration checkpoint and canonical docs synchronization.
-- [ ] Normal PR integration to `main`; no force.
-- [ ] Same-SHA integrated-main v144 smoke + legacy candidate-smoke + Pages.
-- [ ] Controlled fixed-homologation manifest switch from v143 to v144 in a separate exposure commit.
-- [ ] Same-SHA post-switch v144 smoke + candidate-smoke + Pages; protected public `index.html` must remain unchanged.
+- [x] v144 deep-runtime/lexical-state bridge exposes the inherited runtime state only inside the same product realm; it does not alter financial logic.
+- [x] Stable product host commit `01b15f5e382939851086c67515b5ecff38fbcef1`.
+- [x] Branch gate run `33412827358` SUCCESS.
+- [x] Freeze/pre-integration checkpoint committed; freeze run `33413763757` SUCCESS on head `b0d23e35be1d5d27400268a36bb3562395bb3513`.
+- [x] Integrated into `main` by fast-forward with `force=false`; no divergent work overwritten.
+- [x] Integrated-main same-SHA v144 smoke `33414249775` SUCCESS.
+- [x] Integrated-main same-SHA legacy candidate-smoke `33414249873` SUCCESS.
+- [x] Integrated-main same-SHA Pages `33414248379` SUCCESS.
+- [x] Protected public `index.html` still exact blob `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9` before exposure switch.
+- [~] Controlled fixed-homologation manifest switch from v143 to v144 is contained in the current exposure commit; post-switch exact-SHA gates are still required before user access.
+- [ ] Post-switch exact-SHA v144 smoke + candidate-smoke + Pages must all pass; public `index.html` must remain unchanged.
 - [ ] Material user visual homologation of v144 only after those gates are green.
 - [ ] Public `index.html` promotion only after explicit user approval.
 - [ ] Real authenticated visual E2E remains pending/unclaimed.
 
-## P0 — v143 release facts
+## P0 — v143 release facts retained
 - [x] v143 integrated normally by PR #6; integrated baseline `0526033f33ef90086388a946470313bd5002180c`.
 - [x] Integrated same-SHA candidate-smoke `33401135988` SUCCESS and Pages `33401135026` SUCCESS.
 - [x] Exposure main SHA `a86b7cffe909098d65fcaad849800316c13dab3a`.
 - [x] Post-switch exact-SHA Pages `33402028275` SUCCESS and candidate smoke `33402029074` SUCCESS.
-- [x] Fixed homologation currently targets v143.
-- [x] Protected public `index.html` remains exact blob `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
-- [x] Dashboard: `Sua vida financeira, em uma tela.` + D+3 realizable liquidity + restricted/D+30 FGTS reading + human cross-zero warning.
-- [x] Planejamento visual label `Liquidez detalhada`; bank cash → D0/Cofrinho → vested RSU → future vestings when actually available → FGTS D+30.
-- [x] Despesas clickable evidence-backed composition; Cartões raw evidence/classification/Cartão × mês; Patrimônio RSU/CIPÓ/Volvo.
+- [x] Protected public `index.html` exact blob `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
+- [x] Dashboard, Planejamento, Despesas, Cartões and Patrimônio corrections remain inherited by v144.
 - [x] Backend final fingerprint `85a1b60816a5b84dfe3b41341ed27948`; v14 293/24 + v15 67/5 + v16 19/2 + v17 32/4 = 411 checks / 35 suites PASS, staged not monolithic.
-- [x] Supplemental v143 backend QA 16/16 PASS on the same fingerprint.
+- [x] Supplemental v143 backend QA 16/16 PASS on same fingerprint.
 
 ## 0. Release / homologation guardrails
 - [x] Public root fixed: `https://lthomesilveira-ui.github.io/lts-wealth-/`.
 - [x] Fixed homologation entrypoint: `https://lthomesilveira-ui.github.io/lts-wealth-/homologacao.html` using no-store/timestamp manifest routing.
 - [x] Public fallback remains WIP35-v136, protected blob `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
-- [x] Fixed homologation is currently v143; v144 is not yet exposed.
+- [~] Fixed homologation is being switched to v144 in the current exposure package; same-SHA post-switch gates remain mandatory before user access.
 - [ ] Never force branch history to resolve divergence.
 - [ ] Never promote `index.html` without explicit user authorization.
 - [ ] Never claim authenticated visual E2E unless actually performed.
@@ -170,10 +167,12 @@ Canonical persistent project list. Detailed immutable evidence remains in `backu
 - [x] Staged total 411 checks / 35 suites PASS; not monolithic.
 - [x] Supplemental v143 backend QA 16/16 PASS.
 - [x] v143 post-switch candidate-smoke `33402029074` + Pages `33402028275` green on exposure SHA `a86b7c...`.
-- [x] v144 branch run `33412827358` green: Updates smoke + full ownership/navigation + inherited button audit.
-- [ ] v144 freeze commit gates.
-- [ ] Integrated-main same-SHA gates.
-- [ ] Post-manifest-switch same-SHA gates.
+- [x] v144 branch run `33412827358` green.
+- [x] v144 freeze run `33413763757` green on `b0d23e35...`.
+- [x] Integrated-main v144 smoke `33414249775` SUCCESS on `b0d23e35...`.
+- [x] Integrated-main candidate-smoke `33414249873` SUCCESS on `b0d23e35...`.
+- [x] Integrated-main Pages `33414248379` SUCCESS on `b0d23e35...`.
+- [~] Post-manifest-switch same-SHA gates required before user access.
 - [ ] Real authenticated visual E2E pending/unclaimed.
 
 ## 13. Remaining user-dependent decisions

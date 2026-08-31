@@ -2,13 +2,15 @@
 
 Purpose: evidence-backed sequence before asking the user to inspect the next material candidate. Keep aligned with `PROJECT_MASTER_BACKLOG.md`, `LTS_WEALTH_CONTINUITY_HANDOFF.md`, `PLANNING_EXCEL_TO_CURRENT_AUDIT_2026-08-30.md` and immutable checkpoints.
 
-## Current deployed baseline
+## Current release baseline
 - Public fallback: WIP35-v136 in `index.html`, unchanged; protected blob `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
 - Fixed homologation URL: `homologacao.html`.
-- Fixed homologation currently targets **v143**.
-- v143 exposure main SHA: `a86b7cffe909098d65fcaad849800316c13dab3a`.
-- Post-switch exact-SHA Pages run `33402028275`: SUCCESS.
-- Post-switch exact-SHA candidate-smoke run `33402029074`: SUCCESS.
+- v144 integrated-main SHA: `b0d23e35be1d5d27400268a36bb3562395bb3513`.
+- Integrated-main v144 smoke `33414249775`: SUCCESS.
+- Integrated-main legacy candidate-smoke `33414249873`: SUCCESS.
+- Integrated-main Pages `33414248379`: SUCCESS.
+- Before the current exposure commit, fixed homologation still targeted v143.
+- Current exposure package switches `homologacao-current.json` to **v144** with `promotion_status: not_promoted`.
 - Public promotion: NOT AUTHORIZED / NOT DONE.
 - Authenticated visual E2E: PENDING / NOT CLAIMED.
 
@@ -19,28 +21,22 @@ User material homologation of v143 found a P0 regression specifically in Atualiz
 
 This is corrective work, not a new financial rule.
 
-## v144 corrective package evidence
-Current branch: `v144-updates-classification-layout`.
-Current green head: `f7cd162062406c2e1e37328883ca9586cc0374a8`.
-Stable product-host commit: `01b15f5e382939851086c67515b5ecff38fbcef1`.
-
+## v144 package evidence
 Architecture:
-- v144 outer candidate preserves the inherited v142/v143 product chain.
-- The deepest inherited product runtime remains v143 by design.
-- `wip35-v144-lexical-bridge.js` exposes the base lexical `D/V` state only inside that same deepest realm; no financial rule or writer changes.
-- `wip35-v144-updates-layout.js` is a post-render layout/classification layer and does not replace `w.atualizacoes`.
-- Existing `cardClassificationUpdates` / `expenseClassificationUpdates` helpers and save handlers are preserved.
+- v144 outer candidate preserves the inherited v142/v143 product chain;
+- deepest inherited product runtime remains v143 by design;
+- lexical-state bridge exposes existing `D/V` state only inside that same runtime;
+- post-render Updates layer does not replace `w.atualizacoes`;
+- existing `cardClassificationUpdates` / `expenseClassificationUpdates` helpers and save handlers remain in use;
+- no direct backend financial writer was introduced.
 
-Branch run `33412827358`: SUCCESS.
-- Static deep-runtime hosting/layout: PASS.
-- Inherited button contract audit: PASS.
-- Updates smoke desktop 1440×1000: PASS.
-- Updates smoke mobile 390×844: PASS.
-- Full ownership/navigation desktop: PASS.
-- Full ownership/navigation mobile: PASS.
-- Zero root overflow and zero console/page errors.
+Branch/freeze evidence:
+- product host commit `01b15f5e382939851086c67515b5ecff38fbcef1`;
+- branch run `33412827358`: SUCCESS;
+- freeze head `b0d23e35be1d5d27400268a36bb3562395bb3513`;
+- freeze run `33413763757`: SUCCESS.
 
-Updates-specific evidence proven:
+Updates-specific evidence proven in desktop 1440×1000 and mobile 390×844:
 - classification first;
 - `Sugestão + pesquisa + % de confiança, item por item`;
 - history/public research/confidence/manual-confirmation methodology;
@@ -51,9 +47,12 @@ Updates-specific evidence proven:
 - research/evidence visible;
 - two preserved save controls;
 - secondary sections collapsed;
-- duplicated v143 evidence panel suppressed.
+- duplicated v143 evidence panel suppressed;
+- zero root overflow and zero console/page errors.
 
-This is synthetic/unauthenticated browser composition evidence. No backend financial write is executed. It is **not authenticated visual E2E**.
+Full inherited ownership/navigation smoke also passes desktop/mobile for Dashboard, Atualizações, Fluxo Diário, Despesas, Cartões, Patrimônio and Planejamento; `Liquidez detalhada` remains the visual planning label.
+
+This remains synthetic/unauthenticated browser composition evidence. It is **not authenticated visual E2E**.
 
 ## Audited Planning conclusion — immutable unless new evidence/decision
 - first management point: **08/01/2027**;
@@ -67,15 +66,15 @@ This is synthetic/unauthenticated browser composition evidence. No backend finan
 
 Interpretation: January is a liquidity-management point covered by the already-modeled D+30 FGTS contingency if requested on time. It is not evidence of real patrimonial insufficiency.
 
-## Final backend evidence
-Fingerprint remains `85a1b60816a5b84dfe3b41341ed27948`.
+## Final backend evidence inherited unchanged
+Fingerprint `85a1b60816a5b84dfe3b41341ed27948`.
 - v14: 24 suites / 293 checks PASS.
 - v15: 5 / 67 PASS.
 - v16: 2 / 19 PASS.
 - v17: 4 / 32 PASS.
 - staged total: **35 suites / 411 checks PASS**.
 - supplemental v143 read-model QA v2: **16/16 PASS**.
-No v144 backend/financial writer change occurred, so these rules are inherited unchanged.
+No v144 backend/financial writer change occurred.
 
 ## Open invariants / blockers retained
 - Despesas invariant R$8.623.752,53; cache 3.860/3.860 exact.
@@ -90,18 +89,13 @@ No v144 backend/financial writer change occurred, so these rules are inherited u
 - Open Finance provider/pricing/SLA/bank coverage remains open; no consent/spend without explicit user decision.
 - Real authenticated visual E2E remains pending/unclaimed.
 
-## Gate from here to user access
-1. Freeze v144 evidence + synchronize canonical backlog/gate/handoff.
-2. Keep legacy candidate-smoke intact and extend the static button census to include v144; run both legacy and v144 workflows on the freeze branch.
-3. Open a normal PR from `v144-updates-classification-layout` to `main`; no force.
-4. Merge only with expected head SHA.
-5. On the exact integrated `main` SHA require:
+## Remaining gate to user access
+1. Complete the current exposure commit switching `homologacao-current.json` to `wip35-v144-candidate.html` with `promotion_status: not_promoted`.
+2. On that exact exposure SHA require:
    - v144 Updates/full-browser smoke SUCCESS;
    - legacy candidate-smoke SUCCESS;
    - Pages SUCCESS;
    - protected `index.html` blob still exactly `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`;
-   - fixed homologation manifest still v143.
-6. In a separate controlled exposure commit, switch `homologacao-current.json` to `wip35-v144-candidate.html` with `promotion_status: not_promoted`.
-7. On that exact exposure SHA require v144 smoke + candidate-smoke + Pages SUCCESS and reconfirm the public index blob.
-8. Only then tell the user **Pode acessar** and direct first inspection to Atualizações at the fixed `/homologacao.html` URL.
-9. Public `index.html` remains untouched until explicit user approval.
+   - manifest resolves to v144.
+3. Only then tell the user **Pode acessar agora** and direct first inspection to Atualizações at the fixed `/homologacao.html` URL.
+4. Public `index.html` remains untouched until explicit user approval.

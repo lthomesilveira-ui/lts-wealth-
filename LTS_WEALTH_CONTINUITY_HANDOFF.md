@@ -19,40 +19,37 @@ This file exists so project continuity never depends on chat context. Always re-
 - Public: `https://lthomesilveira-ui.github.io/lts-wealth-/`.
 - Fixed homologation: `https://lthomesilveira-ui.github.io/lts-wealth-/homologacao.html`.
 - Public `index.html` remains WIP35-v136, protected blob `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
-- v143 integrated by normal PR #6; integrated baseline `0526033f33ef90086388a946470313bd5002180c`.
-- v143 exposure main SHA `a86b7cffe909098d65fcaad849800316c13dab3a`.
-- v143 post-switch Pages `33402028275` SUCCESS and candidate-smoke `33402029074` SUCCESS on that exact exposure SHA.
-- Fixed homologation currently targets v143.
-- User material homologation found a P0 Atualizações regression; v144 is the corrective candidate and is not yet exposed.
-- Active branch: `v144-updates-classification-layout`.
-- Current green branch head: `f7cd162062406c2e1e37328883ca9586cc0374a8`.
-- Latest v144 branch gate: `33412827358` SUCCESS.
+- v143 integrated by PR #6; v143 exposure SHA `a86b7cffe909098d65fcaad849800316c13dab3a`; post-switch Pages `33402028275` and candidate-smoke `33402029074` SUCCESS.
+- User material homologation of v143 found a P0 Atualizações regression; v144 is the corrective package.
+- v144 freeze/integrated-main SHA: `b0d23e35be1d5d27400268a36bb3562395bb3513`.
+- v144 integrated into main by fast-forward with `force=false`; no divergence overwritten.
+- Integrated-main v144 smoke `33414249775` SUCCESS.
+- Integrated-main legacy candidate-smoke `33414249873` SUCCESS.
+- Integrated-main Pages `33414248379` SUCCESS.
+- Current exposure package switches fixed homologation from v143 to v144; post-switch exact-SHA gates are still required before telling the user to access.
 - Authenticated visual E2E: not performed / not claimed.
 
 ## v144 corrective package
 User feedback preserved:
 - Atualizações must restore the earlier suggestion / research / certainty-% model.
 - Layout must be compact and clearly hierarchical instead of loose cards/blank space.
-- Classification should be first and actionable.
+- Classification must be first and actionable.
 
 Implementation:
 - candidate `wip35-v144-candidate.html`;
 - deepest host marker `deep-runtime-host-v1`;
 - lexical bridge marker `v144-lexical-state-bridge-v1`;
 - Updates marker `classification-action-center-v2`;
-- v144 outer marker is `v144`; deepest inherited runtime remains `v143` by design.
-- preserves `cardClassificationUpdates` / `expenseClassificationUpdates` and old save controls.
-- no direct backend financial writer added; does not replace `w.atualizacoes`.
+- outer candidate marker is v144 while deepest inherited product runtime remains v143 by design;
+- existing `cardClassificationUpdates` / `expenseClassificationUpdates` and old save controls are preserved;
+- no direct backend financial writer added; v144 does not replace `w.atualizacoes`;
 - secondary recurrence/maintenance sections compact/collapsible; duplicated v143 evidence panel suppressed.
 
-Run `33412827358` proves desktop + mobile:
-- suggestion/evidence visible;
-- 83% suggestion / 99% identification / 91% ambiguous-marketplace identification in synthetic evidence;
-- 2 save controls preserved;
-- classification before secondary sections;
-- ownership for Dashboard/Planejamento/Despesas/Cartões/Patrimônio/nav remains true;
-- all main nav click-throughs pass;
-- zero overflow; zero errors.
+Evidence:
+- branch run `33412827358` SUCCESS;
+- freeze run `33413763757` SUCCESS;
+- desktop/mobile show suggestion/evidence, `83% sugestão`, `99% identificação`, `91%` ambiguous-marketplace identification, 2 save controls, classification before secondary sections, zero overflow/errors;
+- ownership/navigation for Dashboard, Atualizações, Fluxo Diário, Despesas, Cartões, Patrimônio and Planejamento remains green.
 This is unauthenticated browser composition/navigation evidence, not authenticated visual E2E.
 
 ## Financial evidence that must not change by assumption
@@ -94,12 +91,8 @@ v144 has no backend financial-rule change.
 - Public `index.html` promotion only after explicit user approval.
 
 ## Immediate next execution
-1. Freeze v144 evidence and update canonical docs/checkpoint.
-2. Extend the static button census to include v144 while keeping legacy candidate-smoke intact.
-3. Require both branch workflows green.
-4. Open/merge normal PR to main with expected head SHA.
-5. Require v144 smoke + legacy candidate-smoke + Pages on exact integrated SHA; public index unchanged and homologation still v143.
-6. Separate exposure commit switches fixed homologation manifest to v144.
-7. Require same-SHA post-switch v144 smoke + candidate-smoke + Pages and public index unchanged.
-8. Only then tell the user `Pode acessar` at the fixed homologation URL, starting with Atualizações.
-9. Do not promote public root without explicit user approval.
+1. Complete the current exposure commit switching fixed homologation to v144.
+2. Require v144 smoke + legacy candidate-smoke + Pages on the exact exposure SHA.
+3. Reconfirm protected public `index.html` blob unchanged and manifest resolves v144.
+4. Only then tell the user `Pode acessar agora` at the fixed homologation URL, starting with Atualizações.
+5. Do not promote public root without explicit user approval.
