@@ -6,15 +6,15 @@
 
   function deep(){
     try{
-      let d=document,w=window,f=outer;
-      for(let i=0;i<11;i++){
-        if(!f)return null;
-        d=f.contentDocument;w=f.contentWindow;
-        if(!d||!w)return null;
-        const app=d.getElementById('app');
-        if(app&&app.contentWindow&&app.contentDocument)return {w:app.contentWindow,d:app.contentDocument};
-        f=d.getElementById('shell');
+      let d=document,w=window;
+      for(let i=0;i<12;i++){
+        const frames=Array.from(d.querySelectorAll('iframe'));
+        if(!frames.length)break;
+        const next=frames.find(x=>x.id==='shell'||x.id==='app')||frames[0];
+        if(!next||!next.contentDocument||!next.contentWindow)break;
+        d=next.contentDocument;w=next.contentWindow;
       }
+      if(d&&w&&typeof w.render==='function'&&typeof w.atualizacoes==='function')return {w,d};
     }catch(e){}
     return null;
   }
