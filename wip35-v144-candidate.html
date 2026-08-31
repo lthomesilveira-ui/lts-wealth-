@@ -11,7 +11,24 @@ html,body{margin:0;width:100%;height:100%;background:#f5f6f8}#shell{border:0;wid
 <body>
 <iframe id="shell" src="./wip35-v143-candidate.html?v144-parent"></iframe>
 <div id="badge">CANDIDATA v144 · v143 permanece homologação</div>
-<script src="./wip35-v144-updates-classification.js?v144-updates-classification-v1"></script>
-<script>window.__LTS_TOP_CANDIDATE_VERSION='v144';</script>
+<script>
+window.__LTS_TOP_CANDIDATE_VERSION='v144';
+(function(){
+  const frame=document.getElementById('shell');
+  function inject(){
+    try{
+      const d=frame.contentDocument;
+      if(!d||!d.documentElement)return;
+      if(d.getElementById('wip35-v144-updates-loader'))return;
+      const s=d.createElement('script');
+      s.id='wip35-v144-updates-loader';
+      s.src='./wip35-v144-updates-classification.js?v144-updates-classification-v2';
+      (d.body||d.head||d.documentElement).appendChild(s);
+    }catch(e){}
+  }
+  frame.addEventListener('load',()=>{inject();setTimeout(inject,300)});
+  setTimeout(inject,300);
+})();
+</script>
 </body>
 </html>
