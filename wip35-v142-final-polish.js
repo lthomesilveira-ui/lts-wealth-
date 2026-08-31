@@ -32,6 +32,8 @@
     if(!w.__LTS_V142_FINAL_PLAN_RENDERER&&isBridgeRenderer(live))w.__LTS_V142_FINAL_PLAN_RENDERER=live;
     const renderer=w.__LTS_V142_FINAL_PLAN_RENDERER;
     if(!isBridgeRenderer(renderer))return false;
+    /* Stop the older v142 UX loop from reasserting its audit renderer between bridge ticks. */
+    w.__lts_v142_planning_fn=renderer;
     try{
       if(!w.__LTS_V142_FINAL_PLAN_GETTER){
         w.__LTS_V142_FINAL_PLAN_GETTER=function v142FinalPlanningOwner(){return w.__LTS_V142_FINAL_PLAN_RENDERER};
@@ -39,6 +41,7 @@
           if(isBridgeRenderer(fn)){
             w.__LTS_V142_FINAL_PLAN_RENDERER=fn;
             w.__LTS_V142_PLANNING_RENDERER=fn;
+            w.__lts_v142_planning_fn=fn;
           }
           return fn;
         };
@@ -49,7 +52,7 @@
           w.LTS_V142_FINAL_PLANNING_OWNER='blocked-nonconfigurable';
           return false;
         }
-        w.LTS_V142_FINAL_PLANNING_OWNER='stable-nonconfigurable-v1';
+        w.LTS_V142_FINAL_PLANNING_OWNER='stable-nonconfigurable-v2';
         return true;
       }
       Object.defineProperty(w,'planejamento',{
@@ -58,8 +61,8 @@
         get:w.__LTS_V142_FINAL_PLAN_GETTER,
         set:w.__LTS_V142_FINAL_PLAN_SETTER
       });
-      w.LTS_V142_FINAL_PLANNING_OWNER=isBridgeRenderer(w.planejamento)?'stable-nonconfigurable-v1':'stabilize-error';
-      return w.LTS_V142_FINAL_PLANNING_OWNER==='stable-nonconfigurable-v1';
+      w.LTS_V142_FINAL_PLANNING_OWNER=isBridgeRenderer(w.planejamento)?'stable-nonconfigurable-v2':'stabilize-error';
+      return w.LTS_V142_FINAL_PLANNING_OWNER==='stable-nonconfigurable-v2';
     }catch(e){
       try{w.planejamento=renderer}catch(_){}
       w.LTS_V142_FINAL_PLANNING_OWNER=isBridgeRenderer(w.planejamento)?'stable-assignment-fallback':'stabilize-error';
@@ -126,5 +129,5 @@
   }
 
   outer?.addEventListener('load',()=>setTimeout(install,180));
-  setInterval(install,60);
+  setInterval(install,40);
 })();
