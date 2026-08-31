@@ -1,7 +1,7 @@
 name: LTS candidate smoke
 on:
   push:
-    branches: [main]
+    branches: [main, v142-button-contract-audit]
     paths:
       - 'index.html'
       - 'homologacao.html'
@@ -20,6 +20,7 @@ on:
       - 'wip35-v142-final-polish.js'
       - '.github/scripts/lts_candidate_smoke.py'
       - '.github/scripts/lts_candidate_browser_smoke.js'
+      - '.github/scripts/lts_button_contract_audit.js'
       - '.github/workflows/candidate-smoke.yml'
   workflow_dispatch:
 permissions:
@@ -91,6 +92,8 @@ jobs:
           assert not missing, 'final polish markers missing: '+repr(missing)
           print('final_polish_static=PASS')
           PY
+      - name: Audit button wiring contracts
+        run: node .github/scripts/lts_button_contract_audit.js
       - name: Install headless browser
         run: |
           npm install --no-save playwright@1.55.0
@@ -110,4 +113,5 @@ jobs:
           path: |
             candidate-smoke-result.txt
             candidate-browser-smoke-result.json
+            button-contract-audit-result.json
           if-no-files-found: error
