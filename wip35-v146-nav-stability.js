@@ -104,9 +104,37 @@
     return w[name]===value;
   }
 
+  function bindWealthRetry(){
+    if(d.__LTS_V146_WEALTH_RETRY_BOUND)return;
+    d.__LTS_V146_WEALTH_RETRY_BOUND=true;
+    d.addEventListener('click',e=>{
+      const b=e.target?.closest?.('[data-v146-wealth-retry]');if(!b)return;
+      e.preventDefault();e.stopImmediatePropagation();
+      const st=w.__V143_WEALTH;
+      if(st){st.error=null;st.loading=false;st.data=null}
+      try{w.render()}catch(err){w.__LTS_V146_WEALTH_RETRY_ERROR=String(err?.message||err)}
+    },true);
+  }
+
   function stabilizeWealthOwner(){
-    const current=w.__v143Wealth;
-    if(typeof current!=='function')return false;
+    if(!w.__V146_WEALTH_BASE){
+      if(typeof w.__v143Wealth!=='function')return false;
+      w.__V146_WEALTH_BASE=w.__v143Wealth;
+    }
+    if(!w.__V146_WEALTH_GUARD){
+      const base=w.__V146_WEALTH_BASE;
+      const guard=function v146WealthGuard(){
+        const st=w.__V143_WEALTH;
+        if(st?.error&&!st?.data&&!st?.loading){
+          return '<div class="v143-loading"><b>Não foi possível carregar Patrimônio.</b><div style="margin-top:6px">A tela não entra em repetição automática quando o serviço falha. Tente novamente quando quiser.</div><button type="button" class="v143-btn" data-v146-wealth-retry style="margin-top:10px">Tentar novamente</button></div>';
+        }
+        return base();
+      };
+      guard.__ltsV146WealthRetryGuard=true;
+      w.__V146_WEALTH_GUARD=guard;
+    }
+    const current=w.__V146_WEALTH_GUARD;
+    try{w.__v143Wealth=current}catch(e){}
     const ownerLocked=lockPointer('__lts_v142_wealth_fn',current);
     if(!ownerLocked)return false;
     try{w.patrimonio=current}catch(e){}
@@ -114,13 +142,16 @@
     st.loading=false;
     st.loaded=true;
     st.retired_by_v146=true;
+    bindWealthRetry();
     w.__LTS_V146_WEALTH_OWNER_STATUS={
+      v143_guard_installed:w.__v143Wealth===current,
       v142_owner_redirected:w.__lts_v142_wealth_fn===current,
       patrimonio_current:w.patrimonio===current,
       legacy_loader_retired:st.retired_by_v146===true,
-      active_renderer:'v143Wealth'
+      retry_guard:true,
+      active_renderer:'v146WealthGuard→v143Wealth'
     };
-    return w.__lts_v142_wealth_fn===current&&w.patrimonio===current&&st.retired_by_v146===true;
+    return w.__v143Wealth===current&&w.__lts_v142_wealth_fn===current&&w.patrimonio===current&&st.retired_by_v146===true;
   }
 
   function install(){
@@ -148,12 +179,13 @@
       click_render_yield_ms:CLICK_RENDER_YIELD_MS,
       state_commit_deferred:true,
       wealth_owner_stable:wealthStable,
+      wealth_retry_guard:w.__LTS_V146_WEALTH_OWNER_STATUS?.retry_guard===true,
       legacy_v142_wealth_loader_retired:w.__LTS_V146_WEALTH_OWNER_STATUS?.legacy_loader_retired===true,
       permanent_polling:false,
       nav_nodes:Array.from(d.querySelectorAll('.nav button[data-v143-dest]')).length
     };
     if(w.__LTS_V146_UPDATES_STATUS)w.__LTS_V146_UPDATES_STATUS.navigation_owner='v146-stable-nav';
-    return w.__v143Nav===stable&&w.renderNav===stable&&domLocked&&wealthStable;
+    return w.__v143Nav===w.__V146_WEALTH_GUARD&&w.__v143Nav===stable?false:w.__v143Nav===stable&&w.renderNav===stable&&domLocked&&wealthStable;
   }
 
   function boot(){
