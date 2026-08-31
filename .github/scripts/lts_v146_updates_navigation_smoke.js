@@ -1,26 +1,306 @@
 const { chromium } = require('playwright');
 const fs = require('fs');
-const FINAL_TITLE='Sua vida financeira, em uma tela.';
 
-async function deepest(page){const chain=[];let f=page.mainFrame();for(let i=0;i<12;i++){chain.push(f.url());const kids=f.childFrames();if(!kids.length)break;f=kids[0]}return {f,chain}}
-async function waitState(f,predicate,arg,timeout=8000){await f.waitForFunction(predicate,arg,{timeout})}
-async function exposeSyntheticAuthenticatedShell(f){return await f.evaluate(()=>{const force=(el,display)=>{if(!el)return null;el.classList.remove('hidden');el.removeAttribute('hidden');el.style.setProperty('display',display,'important');el.style.setProperty('visibility','visible','important');el.style.setProperty('opacity','1','important');return {tag:el.tagName,id:el.id,cls:el.className,display:getComputedStyle(el).display,visibility:getComputedStyle(el).visibility,opacity:getComputedStyle(el).opacity}};const hdr=force(document.querySelector('.hdr'),'block');const hdrin=force(document.querySelector('.hdrin'),'block');const nav=force(document.querySelector('.nav'),'flex');return {hdr,hdrin,nav};})}
-async function initNavIdentity(f){return await f.evaluate(()=>{const nodes=Array.from(document.querySelectorAll('.nav [data-v143-dest]'));window.__V146_NAV_TEST_REFS=nodes.slice();return {count:nodes.length,labels:nodes.map(x=>x.textContent.trim()),marker:window.LTS_V146_NAV_STABILITY||null,status:window.__LTS_V146_NAV_STATUS||null}})}
-async function visibleNavButton(f,target){const all=f.locator(`.nav [data-v143-dest="${target}"]`);const count=await all.count();const visible=[];for(let i=0;i<count;i++){const x=all.nth(i);if(await x.isVisible().catch(()=>false))visible.push(i)}if(visible.length!==1){const diagnostics=await f.evaluate(t=>{const nodes=[...document.querySelectorAll(`.nav [data-v143-dest="${t}"]`)];return nodes.map(x=>({text:x.textContent,rect:x.getBoundingClientRect().toJSON(),display:getComputedStyle(x).display,visibility:getComputedStyle(x).visibility,opacity:getComputedStyle(x).opacity,parentDisplay:x.parentElement?getComputedStyle(x.parentElement).display:null,parentVisibility:x.parentElement?getComputedStyle(x.parentElement).visibility:null,hdrDisplay:document.querySelector('.hdr')?getComputedStyle(document.querySelector('.hdr')).display:null,hdrVisibility:document.querySelector('.hdr')?getComputedStyle(document.querySelector('.hdr')).visibility:null}))},target);throw new Error(`Expected exactly one visible nav button for ${target}; found ${visible.length} visible of ${count}; diagnostics=${JSON.stringify(diagnostics)}`)}return all.nth(visible[0])}
-async function clickNav(page,f,target){const b=await visibleNavButton(f,target);await b.scrollIntoViewIfNeeded({timeout:3000});const box=await b.boundingBox();if(!box)throw new Error(`No clickable box for ${target}`);await page.mouse.click(box.x+box.width/2,box.y+box.height/2);await waitState(f,t=>window.V===t,target,5000);await f.waitForTimeout(120);return await f.evaluate(t=>{const refs=window.__V146_NAV_TEST_REFS||[];const now=Array.from(document.querySelectorAll('.nav [data-v143-dest]'));return {target:t,current:window.V,active:Array.from(document.querySelectorAll('.nav button.active')).filter(x=>x.offsetParent!==null).map(x=>String(x.textContent||'').trim()),text:(document.getElementById('A')?.innerText||document.body.innerText||'').slice(0,5000),updateRoot:!!document.getElementById('v146UpdatesRoot'),renderCount:window.__LTS_V146_UPDATES_RENDER_COUNT||0,nodeIdentityStable:refs.length===now.length&&refs.every((x,i)=>x===now[i]&&x.isConnected),navMarker:window.LTS_V146_NAV_STABILITY||null,navStatus:window.__LTS_V146_NAV_STATUS||null}},target)}
+const FINAL_TITLE = 'Sua vida financeira, em uma tela.';
+const VIEWPORT_TIMEOUT_MS = 90000;
 
-async function run(browser,viewport,label){
-  const page=await browser.newPage({viewport});const errors=[];page.on('pageerror',e=>errors.push('pageerror:'+e.message));page.on('console',m=>{if(m.type()==='error')errors.push('console:'+m.text())});
-  await page.goto('http://127.0.0.1:8772/wip35-v146-candidate.html',{waitUntil:'domcontentloaded',timeout:30000});await page.waitForTimeout(4200);
-  const {f,chain}=await deepest(page);const expected=['wip35-v146-candidate.html','wip35-v142-candidate.html','wip35-v141-candidate.html','wip35-v140-candidate.html','wip35-v139-candidate.html','wip35-v138-candidate.html','wip35-v137-candidate.html','index.html'];const chainOk=expected.every((x,i)=>chain[i]&&chain[i].includes(x));
-  await waitState(f,()=>window.LTS_V146_UPDATES==='single-render-updates-navigation-v1'&&window.LTS_V146_NAV_STABILITY==='stable-nav-no-recreate-v1'&&window.LTS_V144_LEXICAL_BRIDGE==='v144-lexical-state-bridge-v1',null,10000);
-  await f.evaluate(()=>{window.D={updates:{items:[],maintenance_checks:[],freshness:{position_as_of:'2026-08-31'},guardrail:'Itens resolvidos não reaparecem; nenhuma classificação ambígua é gravada sem confirmação.'},semantic_review:{pending_groups:0,items:[]},card_classification_review:{pending_groups:5,pending_lines:7,pending_value:2800,safe_suggestion_groups:0,category_options:['Restaurantes','Restaurantes e Lazer','Supermercado','Farmácia','Combustível','Outros'],items:[{description_key:'sal gastronomia',merchant_name:'Sal Gastronomia',example_description:'SAL GASTRONOMIA',card_name:'Visa Aeternum',due_date:'2026-09-25',occurrences:1,total_value:933.38,suggested_category:'Restaurantes',suggestion_confidence:.99,suggestion_basis:'estabelecimento_identificado_pesquisa_publica',enrichment_attempted:true,merchant_identified:true,enrichment_confidence:.99,enrichment_evidence:'Site oficial do Sal Gastronomia identifica explicitamente o estabelecimento como restaurante em São Paulo.',taxonomy_ambiguous:true,enrichment_status:'taxonomy_review',suggestion_safe:false},{description_key:'gula gula morumbi',merchant_name:'Gula Gula',example_description:'GULA GULA MORUMBI',card_name:'Aeternum',due_date:'2026-09-10',occurrences:2,total_value:725.46,suggested_category:'Restaurantes',suggestion_confidence:.99,suggestion_basis:'estabelecimento_identificado_pesquisa_publica',enrichment_attempted:true,merchant_identified:true,enrichment_confidence:.99,enrichment_evidence:'Site oficial do Gula Gula identifica a marca como restaurante.',taxonomy_ambiguous:true,enrichment_status:'taxonomy_review',suggestion_safe:false},{description_key:'superia park',merchant_name:null,example_description:'SUPERIA PARK ESTACION',card_name:'Aeternum',due_date:'2026-09-10',occurrences:1,total_value:20,suggested_category:'Estacionamento E Pedágio',suggestion_confidence:.90,suggestion_basis:'historico_mesmo_fornecedor_unico_com_guardrails',enrichment_attempted:false,merchant_identified:false,enrichment_confidence:null,enrichment_evidence:'Histórico LTS consistente para o mesmo fornecedor.',taxonomy_ambiguous:false,enrichment_status:null,suggestion_safe:false},{description_key:'floracea',merchant_name:'Floracea Farmácia de Manipulação',example_description:'VINDI *FLORACEA',card_name:'Aeternum',due_date:'2026-09-10',occurrences:1,total_value:79,suggested_category:'Farmácia',suggestion_confidence:.99,suggestion_basis:'estabelecimento_identificado_pesquisa_publica',enrichment_attempted:true,merchant_identified:true,enrichment_confidence:.99,enrichment_evidence:'Site oficial identifica Floracea como farmácia de manipulação.',taxonomy_ambiguous:false,enrichment_status:'taxonomy_review',suggestion_safe:false},{description_key:'zigpay exemplo',merchant_name:'ZigPay',example_description:'ZIGPAY*EXEMPLO',card_name:'Aeternum',due_date:'2026-09-10',occurrences:1,total_value:541.16,suggested_category:null,suggestion_confidence:0,suggestion_basis:'pesquisa_publica_realizada_inconclusiva',enrichment_attempted:true,merchant_identified:true,enrichment_confidence:.94,enrichment_evidence:'Intermediador de pagamentos identificado; o estabelecimento final não está provado.',taxonomy_ambiguous:false,enrichment_status:'payment_intermediary_needs_context',suggestion_safe:false}]},dashboard_cockpit:{version:'v146-smoke',as_of:'2026-08-31',status:'attention',liquidity:{through_d3:100000,bank_cash:50000,d0:25000,d3_vested:25000,fgts_d30:17509.05},planning_audited:{management_point_date:'2027-01-08',fgts_request_by:'2026-12-09',worst_after_brl:11262.25},cards:{open_cycles_total:1000,closed_or_due_total:0,next_due:{}},work:{actionable_count:0,top_actions:[]},horizons:[],future_liquidity:[]},flow:{days:[],events:[]},card_history:{units:[]},duplicate_quality_gate:{},card_operating:{},expenses:{},wealth:{},planning:{}};window.V='Atualizações';window.renderNav?.();window.render()});await page.waitForTimeout(500);
-  const shellVisibility=await exposeSyntheticAuthenticatedShell(f);await page.waitForTimeout(120);const navIdentity=await initNavIdentity(f);
-  const content=await f.evaluate(()=>{const get=k=>document.querySelector(`[data-v146-key="${k}"]`);const rowState=k=>{const r=get(k),sel=r?.querySelector('.cardcat');return {exists:!!r,text:r?.innerText||'',selected:sel?.value||'',save:!!r?.querySelector('.cardclass-save'),newcat:!!r?.querySelector('.newcatbtn'),safe:!!r?.querySelector('.safe121-pick')}};return {marker:window.LTS_V146_UPDATES||null,status:window.__LTS_V146_UPDATES_STATUS||null,navMarker:window.LTS_V146_NAV_STABILITY||null,navStatus:window.__LTS_V146_NAV_STATUS||null,root:!!document.getElementById('v146UpdatesRoot'),sal:rowState('sal gastronomia'),gula:rowState('gula gula morumbi'),history:rowState('superia park'),floracea:rowState('floracea'),zig:rowState('zigpay exemplo'),width:document.documentElement.clientWidth,scroll:Math.max(document.documentElement.scrollWidth,document.body?.scrollWidth||0)}});
-  const contentOk=content.marker==='single-render-updates-navigation-v1'&&content.navMarker==='stable-nav-no-recreate-v1'&&content.navStatus?.stable_pointer===true&&content.navStatus?.render_nav_stable===true&&content.status?.permanent_polling===false&&content.status?.dom_reparenting===false&&content.root&&content.sal.exists&&content.sal.selected==='Restaurantes'&&content.sal.text.includes('99% sugestão')&&content.sal.text.includes('99% identificação')&&content.sal.text.includes('Pesquisa pública')&&!content.sal.safe&&content.gula.selected==='Restaurantes'&&content.gula.text.includes('99% sugestão')&&!content.gula.safe&&content.history.selected==='Estacionamento E Pedágio'&&content.history.text.includes('Histórico LTS')&&content.floracea.selected==='Farmácia'&&content.floracea.text.includes('Pesquisa pública')&&content.zig.selected===''&&content.zig.text.includes('Intermediador')&&content.sal.save&&content.sal.newcat;
-  const navTargets=[['Fluxo Diário','Fluxo Diário'],['Dashboard','Dashboard'],['Atualizações','Atualizações'],['Despesas','Despesas'],['Cartões','Cartões'],['Patrimônio','Patrimônio'],['Planejamento','Liquidez detalhada']];
-  const transitions=[];for(let i=0;i<10;i++){for(const [target,activeLabel] of navTargets){await exposeSyntheticAuthenticatedShell(f);const before=await f.evaluate(()=>window.__LTS_V146_UPDATES_RENDER_COUNT||0);const state=await clickNav(page,f,target);await exposeSyntheticAuthenticatedShell(f);await page.waitForTimeout(target==='Fluxo Diário'?180:100);const after=await f.evaluate(()=>window.__LTS_V146_UPDATES_RENDER_COUNT||0);let specific=state.nodeIdentityStable&&state.navMarker==='stable-nav-no-recreate-v1'&&state.navStatus?.stable_pointer===true;if(target==='Fluxo Diário')specific=specific&&state.text.includes('Fluxo Diário')&&!state.updateRoot&&after===before;if(target==='Dashboard'){const title=await f.evaluate(()=>document.querySelector('.v143-head h1')?.textContent||'');specific=specific&&title===FINAL_TITLE&&!state.updateRoot;state.title=title}if(target==='Atualizações'){const salVisible=await f.evaluate(()=>!!document.querySelector('[data-v146-key="sal gastronomia"]'));specific=specific&&state.updateRoot&&salVisible;state.salVisible=salVisible}if(!['Fluxo Diário','Dashboard','Atualizações'].includes(target))specific=specific&&!state.updateRoot;transitions.push({cycle:i,step:target,activeLabel,...state,contentOk:specific})}}
-  const navigationOk=transitions.every(x=>x.current===x.step&&x.active.includes(x.activeLabel)&&x.contentOk&&x.nodeIdentityStable);
-  await exposeSyntheticAuthenticatedShell(f);await clickNav(page,f,'Dashboard');const titles=[];for(let i=0;i<15;i++){await page.waitForTimeout(100);titles.push(await f.evaluate(()=>document.querySelector('.v143-head h1')?.textContent||''))}const titleSet=[...new Set(titles)];const finalNavIdentity=await f.evaluate(()=>{const refs=window.__V146_NAV_TEST_REFS||[];const now=Array.from(document.querySelectorAll('.nav [data-v143-dest]'));return {stable:refs.length===now.length&&refs.every((x,i)=>x===now[i]&&x.isConnected),count:now.length}});const dimensions=await f.evaluate(()=>({width:document.documentElement.clientWidth,scroll:Math.max(document.documentElement.scrollWidth,document.body?.scrollWidth||0)}));const pass=chainOk&&contentOk&&navigationOk&&finalNavIdentity.stable&&titleSet.length===1&&titleSet[0]===FINAL_TITLE&&content.scroll-content.width<=2&&dimensions.scroll-dimensions.width<=2&&errors.length===0;await page.close();return {label,viewport,pass,chain,chainOk,shellVisibility,navIdentity,finalNavIdentity,content,contentOk,navigationOk,transitions,titleSet,dimensions,errors}
+function withTimeout(promise, ms, label) {
+  let timer;
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => {
+      timer = setTimeout(() => reject(new Error(`v146 smoke timeout: ${label} exceeded ${ms}ms`)), ms);
+    })
+  ]).finally(() => clearTimeout(timer));
 }
-(async()=>{const browser=await chromium.launch({headless:true});const desktop=await run(browser,{width:1440,height:1000},'desktop');const mobile=await run(browser,{width:390,height:844},'mobile-390x844');await browser.close();const result={pass:desktop.pass&&mobile.pass,desktop,mobile,importantLimit:'Synthetic authenticated-shell browser smoke exposes the real nav without credentials, performs physical mouse clicks at the visible control coordinates, verifies the same DOM button nodes survive every click, and proves assisted classification rendering plus 10 repeated cycles across every primary destination. It is not authenticated E2E, does not confirm classifications, and executes no financial writes.'};fs.writeFileSync('v146-updates-navigation-smoke-result.json',JSON.stringify(result,null,2));console.log(JSON.stringify(result,null,2));if(!result.pass)process.exit(1)})().catch(e=>{console.error(e);process.exit(1)});
+
+async function deepest(page) {
+  const chain = [];
+  let f = page.mainFrame();
+  for (let i = 0; i < 12; i++) {
+    chain.push(f.url());
+    const kids = f.childFrames();
+    if (!kids.length) break;
+    f = kids[0];
+  }
+  return { f, chain };
+}
+
+async function waitState(f, predicate, arg, timeout = 8000) {
+  await f.waitForFunction(predicate, arg, { timeout });
+}
+
+async function exposeSyntheticAuthenticatedShell(f) {
+  return await f.evaluate(() => {
+    const force = (el, display) => {
+      if (!el) return null;
+      el.classList.remove('hidden');
+      el.removeAttribute('hidden');
+      el.style.setProperty('display', display, 'important');
+      el.style.setProperty('visibility', 'visible', 'important');
+      el.style.setProperty('opacity', '1', 'important');
+      return {
+        tag: el.tagName,
+        id: el.id,
+        cls: el.className,
+        display: getComputedStyle(el).display,
+        visibility: getComputedStyle(el).visibility,
+        opacity: getComputedStyle(el).opacity
+      };
+    };
+    return {
+      hdr: force(document.querySelector('.hdr'), 'block'),
+      hdrin: force(document.querySelector('.hdrin'), 'block'),
+      nav: force(document.querySelector('.nav'), 'flex')
+    };
+  });
+}
+
+async function initNavIdentity(f) {
+  return await f.evaluate(() => {
+    const nodes = Array.from(document.querySelectorAll('.nav [data-v143-dest]'));
+    window.__V146_NAV_TEST_REFS = nodes.slice();
+    return {
+      count: nodes.length,
+      labels: nodes.map(x => String(x.textContent || '').trim()),
+      marker: window.LTS_V146_NAV_STABILITY || null,
+      status: window.__LTS_V146_NAV_STATUS || null
+    };
+  });
+}
+
+async function visibleNavButton(f, target) {
+  const all = f.locator(`.nav [data-v143-dest="${target}"]`);
+  const count = await all.count();
+  const visible = [];
+  for (let i = 0; i < count; i++) {
+    if (await all.nth(i).isVisible().catch(() => false)) visible.push(i);
+  }
+  if (visible.length !== 1) {
+    const diagnostics = await f.evaluate(t => {
+      return Array.from(document.querySelectorAll(`.nav [data-v143-dest="${t}"]`)).map(x => ({
+        text: x.textContent,
+        connected: x.isConnected,
+        rect: x.getBoundingClientRect().toJSON(),
+        display: getComputedStyle(x).display,
+        visibility: getComputedStyle(x).visibility,
+        opacity: getComputedStyle(x).opacity
+      }));
+    }, target);
+    throw new Error(`Expected one visible nav button for ${target}; visible=${visible.length}; total=${count}; diagnostics=${JSON.stringify(diagnostics)}`);
+  }
+  return all.nth(visible[0]);
+}
+
+async function clickNav(f, target, label, cycle) {
+  console.log(`[v146][${label}] cycle=${cycle} target=${target} click:start`);
+  const b = await visibleNavButton(f, target);
+  await b.click({ timeout: 3500 });
+  await waitState(f, t => window.V === t, target, 3500);
+  await f.waitForTimeout(120);
+  const state = await f.evaluate(t => {
+    const refs = window.__V146_NAV_TEST_REFS || [];
+    const now = Array.from(document.querySelectorAll('.nav [data-v143-dest]'));
+    return {
+      target: t,
+      current: window.V,
+      active: Array.from(document.querySelectorAll('.nav button.active'))
+        .filter(x => x.offsetParent !== null)
+        .map(x => String(x.textContent || '').trim()),
+      text: (document.getElementById('A')?.innerText || document.body.innerText || '').slice(0, 5000),
+      updateRoot: !!document.getElementById('v146UpdatesRoot'),
+      renderCount: window.__LTS_V146_UPDATES_RENDER_COUNT || 0,
+      nodeIdentityStable: refs.length === now.length && refs.every((x, i) => x === now[i] && x.isConnected),
+      navMarker: window.LTS_V146_NAV_STABILITY || null,
+      navStatus: window.__LTS_V146_NAV_STATUS || null
+    };
+  }, target);
+  console.log(`[v146][${label}] cycle=${cycle} target=${target} click:done current=${state.current} identity=${state.nodeIdentityStable}`);
+  return state;
+}
+
+function syntheticData() {
+  return {
+    updates: {
+      items: [], maintenance_checks: [],
+      freshness: { position_as_of: '2026-08-31' },
+      guardrail: 'Itens resolvidos não reaparecem; nenhuma classificação ambígua é gravada sem confirmação.'
+    },
+    semantic_review: { pending_groups: 0, items: [] },
+    card_classification_review: {
+      pending_groups: 5,
+      pending_lines: 7,
+      pending_value: 2800,
+      safe_suggestion_groups: 0,
+      category_options: ['Restaurantes', 'Restaurantes e Lazer', 'Supermercado', 'Farmácia', 'Combustível', 'Outros', 'Estacionamento E Pedágio'],
+      items: [
+        {
+          description_key: 'sal gastronomia', merchant_name: 'Sal Gastronomia', example_description: 'SAL GASTRONOMIA', card_name: 'Visa Aeternum', due_date: '2026-09-25', occurrences: 1, total_value: 933.38,
+          suggested_category: 'Restaurantes', suggestion_confidence: .99, suggestion_basis: 'estabelecimento_identificado_pesquisa_publica', enrichment_attempted: true, merchant_identified: true, enrichment_confidence: .99,
+          enrichment_evidence: 'Site oficial do Sal Gastronomia identifica explicitamente o estabelecimento como restaurante em São Paulo.', taxonomy_ambiguous: true, enrichment_status: 'taxonomy_review', suggestion_safe: false
+        },
+        {
+          description_key: 'gula gula morumbi', merchant_name: 'Gula Gula', example_description: 'GULA GULA MORUMBI', card_name: 'Aeternum', due_date: '2026-09-10', occurrences: 2, total_value: 725.46,
+          suggested_category: 'Restaurantes', suggestion_confidence: .99, suggestion_basis: 'estabelecimento_identificado_pesquisa_publica', enrichment_attempted: true, merchant_identified: true, enrichment_confidence: .99,
+          enrichment_evidence: 'Site oficial do Gula Gula identifica a marca como restaurante.', taxonomy_ambiguous: true, enrichment_status: 'taxonomy_review', suggestion_safe: false
+        },
+        {
+          description_key: 'superia park', merchant_name: null, example_description: 'SUPERIA PARK ESTACION', card_name: 'Aeternum', due_date: '2026-09-10', occurrences: 1, total_value: 20,
+          suggested_category: 'Estacionamento E Pedágio', suggestion_confidence: .90, suggestion_basis: 'historico_mesmo_fornecedor_unico_com_guardrails', enrichment_attempted: false, merchant_identified: false,
+          enrichment_evidence: 'Histórico LTS consistente para o mesmo fornecedor.', taxonomy_ambiguous: false, enrichment_status: null, suggestion_safe: false
+        },
+        {
+          description_key: 'floracea', merchant_name: 'Floracea Farmácia de Manipulação', example_description: 'VINDI *FLORACEA', card_name: 'Aeternum', due_date: '2026-09-10', occurrences: 1, total_value: 79,
+          suggested_category: 'Farmácia', suggestion_confidence: .99, suggestion_basis: 'estabelecimento_identificado_pesquisa_publica', enrichment_attempted: true, merchant_identified: true, enrichment_confidence: .99,
+          enrichment_evidence: 'Site oficial identifica Floracea como farmácia de manipulação.', taxonomy_ambiguous: false, enrichment_status: 'taxonomy_review', suggestion_safe: false
+        },
+        {
+          description_key: 'zigpay exemplo', merchant_name: 'ZigPay', example_description: 'ZIGPAY*EXEMPLO', card_name: 'Aeternum', due_date: '2026-09-10', occurrences: 1, total_value: 541.16,
+          suggested_category: null, suggestion_confidence: 0, suggestion_basis: 'pesquisa_publica_realizada_inconclusiva', enrichment_attempted: true, merchant_identified: true, enrichment_confidence: .94,
+          enrichment_evidence: 'Intermediador de pagamentos identificado; o estabelecimento final não está provado.', taxonomy_ambiguous: false, enrichment_status: 'payment_intermediary_needs_context', suggestion_safe: false
+        }
+      ]
+    },
+    dashboard_cockpit: {
+      version: 'v146-smoke', as_of: '2026-08-31', status: 'attention',
+      liquidity: { through_d3: 100000, bank_cash: 50000, d0: 25000, d3_vested: 25000, fgts_d30: 17509.05 },
+      planning_audited: { management_point_date: '2027-01-08', fgts_request_by: '2026-12-09', worst_after_brl: 11262.25 },
+      cards: { open_cycles_total: 1000, closed_or_due_total: 0, next_due: {} },
+      work: { actionable_count: 0, top_actions: [] }, horizons: [], future_liquidity: []
+    },
+    flow: { days: [], events: [] },
+    card_history: { units: [] }, duplicate_quality_gate: {}, card_operating: {}, expenses: {}, wealth: {}, planning: {}
+  };
+}
+
+async function run(browser, viewport, label) {
+  console.log(`[v146][${label}] viewport:start ${viewport.width}x${viewport.height}`);
+  const page = await browser.newPage({ viewport });
+  const errors = [];
+  page.on('pageerror', e => errors.push('pageerror:' + e.message));
+  page.on('console', m => { if (m.type() === 'error') errors.push('console:' + m.text()); });
+  try {
+    await page.goto('http://127.0.0.1:8772/wip35-v146-candidate.html', { waitUntil: 'domcontentloaded', timeout: 30000 });
+    await page.waitForTimeout(4200);
+    const { f, chain } = await deepest(page);
+    const expected = ['wip35-v146-candidate.html','wip35-v142-candidate.html','wip35-v141-candidate.html','wip35-v140-candidate.html','wip35-v139-candidate.html','wip35-v138-candidate.html','wip35-v137-candidate.html','index.html'];
+    const chainOk = expected.every((x, i) => chain[i] && chain[i].includes(x));
+
+    await waitState(f, () => window.LTS_V146_UPDATES === 'single-render-updates-navigation-v1' && window.LTS_V146_NAV_STABILITY === 'stable-nav-no-recreate-v1' && window.LTS_V144_LEXICAL_BRIDGE === 'v144-lexical-state-bridge-v1', null, 10000);
+    await f.evaluate(data => {
+      window.D = data;
+      window.V = 'Atualizações';
+      window.renderNav?.();
+      window.render();
+    }, syntheticData());
+    await page.waitForTimeout(500);
+
+    const shellVisibility = await exposeSyntheticAuthenticatedShell(f);
+    await page.waitForTimeout(120);
+    const navIdentity = await initNavIdentity(f);
+
+    const content = await f.evaluate(() => {
+      const get = k => document.querySelector(`[data-v146-key="${k}"]`);
+      const rowState = k => {
+        const r = get(k), sel = r?.querySelector('.cardcat');
+        return { exists: !!r, text: r?.innerText || '', selected: sel?.value || '', save: !!r?.querySelector('.cardclass-save'), newcat: !!r?.querySelector('.newcatbtn'), safe: !!r?.querySelector('.safe121-pick') };
+      };
+      return {
+        marker: window.LTS_V146_UPDATES || null,
+        status: window.__LTS_V146_UPDATES_STATUS || null,
+        navMarker: window.LTS_V146_NAV_STABILITY || null,
+        navStatus: window.__LTS_V146_NAV_STATUS || null,
+        root: !!document.getElementById('v146UpdatesRoot'),
+        sal: rowState('sal gastronomia'), gula: rowState('gula gula morumbi'), history: rowState('superia park'), floracea: rowState('floracea'), zig: rowState('zigpay exemplo'),
+        width: document.documentElement.clientWidth,
+        scroll: Math.max(document.documentElement.scrollWidth, document.body?.scrollWidth || 0)
+      };
+    });
+
+    const contentOk = content.marker === 'single-render-updates-navigation-v1' &&
+      content.navMarker === 'stable-nav-no-recreate-v1' && content.navStatus?.stable_pointer === true && content.navStatus?.render_nav_stable === true &&
+      content.status?.permanent_polling === false && content.status?.dom_reparenting === false && content.root &&
+      content.sal.exists && content.sal.selected === 'Restaurantes' && content.sal.text.includes('99% sugestão') && content.sal.text.includes('99% identificação') && content.sal.text.includes('Pesquisa pública') && !content.sal.safe &&
+      content.gula.selected === 'Restaurantes' && content.gula.text.includes('99% sugestão') && !content.gula.safe &&
+      content.history.selected === 'Estacionamento E Pedágio' && content.history.text.includes('Histórico LTS') &&
+      content.floracea.selected === 'Farmácia' && content.floracea.text.includes('Pesquisa pública') &&
+      content.zig.selected === '' && content.zig.text.includes('Intermediador') && content.sal.save && content.sal.newcat;
+
+    if (!contentOk) throw new Error(`[${label}] classification surface contract failed: ${JSON.stringify(content)}`);
+
+    const navTargets = [['Fluxo Diário','Fluxo Diário'],['Dashboard','Dashboard'],['Atualizações','Atualizações'],['Despesas','Despesas'],['Cartões','Cartões'],['Patrimônio','Patrimônio'],['Planejamento','Liquidez detalhada']];
+    const transitions = [];
+    for (let cycle = 0; cycle < 10; cycle++) {
+      for (const [target, activeLabel] of navTargets) {
+        await exposeSyntheticAuthenticatedShell(f);
+        const before = await f.evaluate(() => window.__LTS_V146_UPDATES_RENDER_COUNT || 0);
+        const state = await clickNav(f, target, label, cycle);
+        await exposeSyntheticAuthenticatedShell(f);
+        await page.waitForTimeout(target === 'Fluxo Diário' ? 180 : 100);
+        const after = await f.evaluate(() => window.__LTS_V146_UPDATES_RENDER_COUNT || 0);
+        let specific = state.nodeIdentityStable && state.navMarker === 'stable-nav-no-recreate-v1' && state.navStatus?.stable_pointer === true;
+        if (target === 'Fluxo Diário') specific = specific && state.text.includes('Fluxo Diário') && !state.updateRoot && after === before;
+        if (target === 'Dashboard') {
+          const title = await f.evaluate(() => document.querySelector('.v143-head h1')?.textContent || '');
+          state.title = title;
+          specific = specific && title === FINAL_TITLE && !state.updateRoot;
+        }
+        if (target === 'Atualizações') {
+          const salVisible = await f.evaluate(() => !!document.querySelector('[data-v146-key="sal gastronomia"]'));
+          state.salVisible = salVisible;
+          specific = specific && state.updateRoot && salVisible;
+        }
+        if (!['Fluxo Diário','Dashboard','Atualizações'].includes(target)) specific = specific && !state.updateRoot;
+        transitions.push({ cycle, step: target, activeLabel, ...state, contentOk: specific });
+        if (!(state.current === target && state.active.includes(activeLabel) && specific && state.nodeIdentityStable)) {
+          throw new Error(`[${label}] navigation contract failed cycle=${cycle} target=${target}: ${JSON.stringify(transitions[transitions.length - 1])}`);
+        }
+      }
+    }
+
+    await exposeSyntheticAuthenticatedShell(f);
+    await clickNav(f, 'Dashboard', label, 'title-stability');
+    const titles = [];
+    for (let i = 0; i < 15; i++) {
+      await page.waitForTimeout(100);
+      titles.push(await f.evaluate(() => document.querySelector('.v143-head h1')?.textContent || ''));
+    }
+    const titleSet = [...new Set(titles)];
+    const finalNavIdentity = await f.evaluate(() => {
+      const refs = window.__V146_NAV_TEST_REFS || [];
+      const now = Array.from(document.querySelectorAll('.nav [data-v143-dest]'));
+      return { stable: refs.length === now.length && refs.every((x, i) => x === now[i] && x.isConnected), count: now.length };
+    });
+    const dimensions = await f.evaluate(() => ({ width: document.documentElement.clientWidth, scroll: Math.max(document.documentElement.scrollWidth, document.body?.scrollWidth || 0) }));
+    const navigationOk = transitions.length === 70 && transitions.every(x => x.current === x.step && x.active.includes(x.activeLabel) && x.contentOk && x.nodeIdentityStable);
+    const pass = chainOk && contentOk && navigationOk && finalNavIdentity.stable && titleSet.length === 1 && titleSet[0] === FINAL_TITLE && (content.scroll - content.width) <= 2 && (dimensions.scroll - dimensions.width) <= 2 && errors.length === 0;
+    console.log(`[v146][${label}] viewport:done pass=${pass} transitions=${transitions.length} errors=${errors.length}`);
+    return { label, viewport, pass, chain, chainOk, shellVisibility, navIdentity, finalNavIdentity, content, contentOk, navigationOk, transitions, titleSet, dimensions, errors };
+  } finally {
+    await page.close().catch(() => {});
+  }
+}
+
+(async () => {
+  const browser = await chromium.launch({ headless: true });
+  try {
+    const desktop = await withTimeout(run(browser, { width: 1440, height: 1000 }, 'desktop'), VIEWPORT_TIMEOUT_MS, 'desktop');
+    const mobile = await withTimeout(run(browser, { width: 390, height: 844 }, 'mobile-390x844'), VIEWPORT_TIMEOUT_MS, 'mobile-390x844');
+    const result = {
+      pass: desktop.pass && mobile.pass,
+      desktop,
+      mobile,
+      importantLimit: 'Synthetic authenticated-shell browser smoke exposes the real nav without credentials, performs real Playwright click-through on the visible controls, verifies the same DOM button nodes survive every click, and proves assisted classification rendering plus 10 repeated cycles across every primary destination. It is not authenticated E2E, does not confirm classifications, and executes no financial writes.'
+    };
+    fs.writeFileSync('v146-updates-navigation-smoke-result.json', JSON.stringify(result, null, 2));
+    console.log(JSON.stringify(result, null, 2));
+    if (!result.pass) process.exitCode = 1;
+  } finally {
+    await browser.close().catch(() => {});
+  }
+})().catch(e => {
+  const failure = { pass: false, fatal: String(e?.stack || e) };
+  try { fs.writeFileSync('v146-updates-navigation-smoke-result.json', JSON.stringify(failure, null, 2)); } catch (_) {}
+  console.error(e);
+  process.exit(1);
+});
