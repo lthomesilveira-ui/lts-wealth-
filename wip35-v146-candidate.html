@@ -2,10 +2,19 @@
 window.__LTS_TOP_CANDIDATE_VERSION='v146';
 (function(){
   const outer=document.getElementById('shell');
+  const LEX='lexical-updates-owner-v1';
   function deep(){try{let f=outer,d,w;for(let i=0;i<12;i++){if(!f)return null;d=f.contentDocument;w=f.contentWindow;if(!d||!w)return null;const app=d.getElementById('app');if(app&&app.contentDocument&&app.contentWindow)return {d:app.contentDocument,w:app.contentWindow};f=d.getElementById('shell')} }catch(e){}return null}
   function add(d,id,src){if(d.getElementById(id))return true;const s=d.createElement('script');s.id=id;s.src=src;d.head.appendChild(s);return true}
-  function install(){const z=deep();if(!z)return false;add(z.d,'v146LexicalBridgeHost','wip35-v144-lexical-bridge.js?v144-lexical-bridge-v1');add(z.d,'v146NavStabilityHost','wip35-v146-nav-stability.js?v146-nav-stability-v1');add(z.d,'v146UpdatesNavigationHost','wip35-v146-updates-navigation.js?v146-updates-navigation-v1');return true}
+  function ownUpdates(z){
+    if(z.w.LTS_V146_UPDATES_LEXICAL_OWNER===LEX)return true;
+    if(typeof z.w.__LTS_V146_UPDATES_RENDERER!=='function')return false;
+    const s=z.d.createElement('script');
+    s.textContent="(function(){try{if(typeof window.__LTS_V146_UPDATES_RENDERER!=='function')return;const base=window.__LTS_V146_UPDATES_RENDERER;if(!window.__LTS_V146_PREVIOUS_LEXICAL_UPDATES)window.__LTS_V146_PREVIOUS_LEXICAL_UPDATES=atualizacoes;atualizacoes=function v146LexicalUpdatesOwner(){const h=base();return String(h).includes('id=\\\"v143FeedbackUpdates\\\"')?h:h+'<div id=\\\"v143FeedbackUpdates\\\" hidden aria-hidden=\\\"true\\\"></div>'};window.atualizacoes=atualizacoes;window.LTS_V146_UPDATES_LEXICAL_OWNER='"+LEX+"';window.__LTS_V146_UPDATES_LEXICAL_STATUS={owned:atualizacoes===window.atualizacoes,duplicate_feedback_suppressed:true,permanent_polling:false};if(window.__LTS_V146_UPDATES_STATUS)window.__LTS_V146_UPDATES_STATUS.lexical_owner='"+LEX+"'}catch(e){console.error('v146 lexical Updates owner failed',e)}})();";
+    (z.d.head||z.d.documentElement).appendChild(s);s.remove();
+    return z.w.LTS_V146_UPDATES_LEXICAL_OWNER===LEX;
+  }
+  function install(){const z=deep();if(!z)return false;add(z.d,'v146LexicalBridgeHost','wip35-v144-lexical-bridge.js?v144-lexical-bridge-v1');add(z.d,'v146NavStabilityHost','wip35-v146-nav-stability.js?v146-nav-stability-v1');add(z.d,'v146UpdatesNavigationHost','wip35-v146-updates-navigation.js?v146-updates-navigation-v1');ownUpdates(z);return true}
   outer.addEventListener('load',()=>[200,500,900,1500,2500,4000].forEach(ms=>setTimeout(install,ms)));
-  [600,1200,2200,3600].forEach(ms=>setTimeout(install,ms));
+  [600,1200,2200,3600,5200].forEach(ms=>setTimeout(install,ms));
 })();
 </script><script src="wip35-v143-life-real.js?v143-life-real-v1"></script><script src="wip35-v143-feedback-polish.js?v143-feedback-polish-v2"></script><script src="wip35-v143-ownership.js?v143-ownership-v1"></script><script src="wip35-v145-dashboard-stability.js?v145-dashboard-stability-v1"></script></body></html>
