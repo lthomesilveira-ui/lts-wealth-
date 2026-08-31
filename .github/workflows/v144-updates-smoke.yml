@@ -28,7 +28,7 @@ jobs:
           from pathlib import Path
           html=Path('wip35-v144-candidate.html').read_text(encoding='utf-8')
           js=Path('wip35-v144-updates-classification.js').read_text(encoding='utf-8')
-          required_html=['wip35-v142-candidate.html?v144-parent','wip35-v143-life-real.js?v143-life-real-v1','wip35-v143-feedback-polish.js?v143-feedback-polish-v2','wip35-v143-ownership.js?v143-ownership-v1','wip35-v144-updates-classification.js?v144-updates-classification-v3',"__LTS_TOP_CANDIDATE_VERSION='v144'"]
+          required_html=['wip35-v142-candidate.html?v144-parent','wip35-v143-life-real.js?v143-life-real-v1','wip35-v143-feedback-polish.js?v143-feedback-polish-v2','wip35-v143-ownership.js?v143-ownership-v1','v138-hosted-updates-v1','wip35-v144-updates-classification.js?v144-updates-classification-v4',"__LTS_TOP_CANDIDATE_VERSION='v144'"]
           required_js=['updates-classification-confidence-layout-v1','Resolva o que precisa de você.','Sugestão + pesquisa + % de confiança, item por item','Histórico do LTS','Pesquisa pública','% sugestão','% identificação','Pesquisa / evidência','Histórico / repetição','O que falta de você','v144-legacy-suppressed']
           missing=[x for x in required_html if x not in html]+[x for x in required_js if x not in js]
           assert not missing, 'v144 markers missing: '+repr(missing)
