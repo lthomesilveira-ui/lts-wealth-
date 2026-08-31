@@ -4,6 +4,27 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 
 Canonical persistent project list. Detailed immutable evidence remains in `backups/`, `HISTORICAL_RECOVERY_LOG.md`, `HOMOLOGATION_V135_V137_INCIDENTS_2026-08-29.md`, `PLANNING_EXCEL_TO_CURRENT_AUDIT_2026-08-30.md`, `NEXT_HOMOLOGATION_GATE.md` and checkpoints. Never remove an open financial, documentary, classification or product dependency during compaction.
 
+## P0 — v146 Atualizações/navigation stability — 31/08/2026
+- [x] Reproduced a real navigation hang under repeated physical Playwright clicks: transition `Cartões` → `Patrimônio` could stall before the click action returned.
+- [x] Preserved v144 Atualizações classification/evidence UX and v145 Dashboard stability; no financial rule, value, classification, backend writer or economic effect changed.
+- [x] v146 owns a stable seven-item navigation DOM without node recreation and coalesces navigation work outside the physical click path.
+- [x] Root cause isolated to inherited v142 wealth-loader completion/retry behavior: stale completion could call `render()` after v146 had retired legacy wealth loading/ownership, reopening an effective render/retry loop exactly when `Patrimônio` became active.
+- [x] Final guard suppresses stale v142 wealth-loader completion render once the legacy loader/owner is retired by v146; active Patrimônio renderer remains v143.
+- [x] Exact candidate SHA `bef91e27927dc8b73f89239568dd0ae81cd68707`.
+- [x] Branch gate `33443494728` SUCCESS on that exact SHA; artifact `9777202035`.
+- [x] Gate reran v146 architecture/static checks, inherited button census, v142 parser/browser smoke, v143 runtime/navigation smoke and v146 classification + repeated-navigation smoke.
+- [x] Repeated-navigation smoke exercises 10 cycles × 7 destinations × desktop/mobile = **140 physical clicks**, including `Cartões` → `Patrimônio` on every cycle.
+- [x] Classification contract remains manual where required: GULA GULA MORUMBI shows `Restaurantes` suggestion/evidence/confidence but no auto-confirmation; intermediators remain unresolved without purpose evidence.
+- [x] Public `index.html` remains protected blob `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
+- [x] `homologacao-current.json` still targets v145 / `wip35-v145-candidate.html`; v146 is NOT exposed yet.
+- [~] Pre-integration freeze is being recorded in `backups/WIP35_V146_PREINTEGRATION_CHECKPOINT_2026-08-31.md`.
+- [ ] Integrate v146 into `main` only by normal fast-forward after re-checking zero divergence.
+- [ ] Require exact integrated-main v146 + legacy candidate-smoke + Pages gates green before any homologation switch.
+- [ ] Expose v146 only in a separate controlled homologation commit; promotion status remains `not_promoted`.
+- [ ] Material user homologation after controlled v146 exposure.
+- [ ] Public `index.html` promotion only after explicit user approval.
+- [ ] Real authenticated visual E2E remains pending/unclaimed.
+
 ## P0 — v145 Dashboard stability — 31/08/2026
 - [x] User material homologation of v144 identified a real Dashboard flicker: titles alternated as if there were a bad contact.
 - [x] Root cause proven: inherited v142 Dashboard cockpit could poll every 180 ms and re-render; v143 feedback polish reapplied final copy every 220 ms.
@@ -23,7 +44,7 @@ Canonical persistent project list. Detailed immutable evidence remains in `backu
 - [x] Exposure exact-SHA Pages `33424044022` SUCCESS.
 - [x] Manifest resolves `v145` → `wip35-v145-candidate.html`, candidate head `9d4a52df...`.
 - [x] Protected public `index.html` remains exact blob `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
-- [~] Material user visual re-homologation of v145 is now the current release gate.
+- [x] v145 remains current fixed-homologation fallback while v146 integration/exposure gates are pending.
 - [ ] Public `index.html` promotion only after explicit user approval.
 - [ ] Real authenticated visual E2E remains pending/unclaimed.
 
@@ -33,7 +54,7 @@ Canonical persistent project list. Detailed immutable evidence remains in `backu
 - [x] `GULA GULA MORUMBI` remains taxonomy review: `Restaurantes` suggestion shown with evidence/confidence but no auto-confirmation.
 - [x] Marketplaces/intermediators remain review where purchase purpose is unproven.
 - [x] v144 exposure SHA `e8c522728a9c5740be89f1bcf08c8301ceecee78`; post-switch Updates `33417045276`, candidate `33417045163`, Pages `33417043749` all SUCCESS.
-- [x] v145 post-switch smoke confirms this Atualizações/classification surface remains present.
+- [x] v145/v146 synthetic gates preserve this Atualizações/classification surface.
 
 ## 0. Release / homologation guardrails
 - [x] Public root: `https://lthomesilveira-ui.github.io/lts-wealth-/`.
@@ -52,7 +73,8 @@ Canonical persistent project list. Detailed immutable evidence remains in `backu
 - [x] Faturas vencidas/a confirmar; faturas abertas; pendências; próxima ação de cartão.
 - [x] Human future-liquidity warning and request-by timing.
 - [x] v145 temporal smoke desktop/mobile proves stable title/subtitle with `renderDelta=0`, `rpcDelta=0`, zero overflow/errors under synthetic browser data.
-- [~] Material user visual approval pending.
+- [x] v146 inherited smoke preserves Dashboard renderer/ownership contracts.
+- [~] Material user visual approval remains pending after next controlled exposure.
 
 ## 2. Fluxo Diário / FIX86
 - [x] Daily flow mandatory by bank + consolidated; historical coverage preserved back to available 2013 history.
@@ -153,6 +175,7 @@ Canonical persistent project list. Detailed immutable evidence remains in `backu
 - [x] v14 293/293 across 24 suites; v15 67/67 across 5; v16 19/19 across 2; v17 32/32 across 4.
 - [x] Staged total 411 checks / 35 suites PASS; supplemental v143 QA 16/16 PASS.
 - [x] v145 exact exposure gates all green: `33424045510`, `33424045367`, `33424045318`, `33424044022`.
+- [x] v146 exact branch gate `33443494728` green on `bef91e279…`, artifact `9777202035`; synthetic unauthenticated evidence only.
 - [ ] Real authenticated visual E2E pending/unclaimed.
 
 ## 13. Remaining user-dependent decisions
@@ -160,7 +183,7 @@ Canonical persistent project list. Detailed immutable evidence remains in `backu
 - [ ] Any new money-changing financial assumption/scenario.
 - [ ] Volvo refinement when exact trim/km evidence is available.
 - [ ] Open Finance provider/consent/spend.
-- [~] Material v145 visual homologation now available at fixed homologation URL.
+- [~] Material homologation after v146 controlled exposure; do not ask before integrated/exposure gates are green.
 - [ ] Public promotion only after explicit user approval.
 
 Until one of these is the genuine blocker, continue autonomous technical/documentary work. Do not ask the user to perform basic QA.

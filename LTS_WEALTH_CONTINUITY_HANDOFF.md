@@ -19,42 +19,47 @@ This file exists so project continuity never depends on chat context. Always re-
 - Public: `https://lthomesilveira-ui.github.io/lts-wealth-/`.
 - Fixed homologation: `https://lthomesilveira-ui.github.io/lts-wealth-/homologacao.html`.
 - Public fallback remains WIP35-v136, protected blob `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
-- Fixed homologation now targets **v145**.
-- Exposure SHA `a99483543f3d1408be5b297dc66ec5f491be68dd`.
-- Manifest: version v145, path `wip35-v145-candidate.html`, candidate head `9d4a52df566d74bdc77f92b0d227906fc46bddce`, promotion `not_promoted`.
-- Post-switch exact-SHA runs: v145 stability `33424045510`, v144 Updates `33424045367`, candidate-smoke `33424045318`, Pages `33424044022` — all SUCCESS.
+- Fixed homologation still targets **v145**.
+- v145 exposure SHA `a99483543f3d1408be5b297dc66ec5f491be68dd`.
+- Manifest remains version v145, path `wip35-v145-candidate.html`, candidate head `9d4a52df566d74bdc77f92b0d227906fc46bddce`, promotion `not_promoted`.
+- v146 active branch `v146-updates-navigation-stability`; exact green candidate SHA `bef91e27927dc8b73f89239568dd0ae81cd68707`.
+- v146 branch run `33443494728` SUCCESS; evidence artifact `9777202035`.
+- v146 is not yet integrated/exposed at this pre-integration checkpoint.
 - Authenticated visual E2E: not performed / not claimed.
-- Material user v145 visual homologation is now pending.
 
-## v145 Dashboard stability correction
-User symptom: Dashboard headings visibly alternated like a bad contact.
+## v146 navigation/Patrimônio stability correction
+Symptom reproduced by the product gate: repeated physical navigation could hang when moving from `Cartões` to `Patrimônio`; Playwright reached the physical click action but it could fail to return.
 
-Proven cause:
-- v142 Dashboard polling could repeatedly refresh/re-render;
-- v143 renderer returned older head copy;
-- v143 feedback polish rewrote final copy on its own cycle;
-- competing cycles caused flicker.
+Final proven cause/correction:
+- inherited v142 wealth loading/ownership survived beneath the newer candidate layers;
+- v146 redirects Patrimônio ownership to the v143 renderer and retires the legacy v142 wealth loader;
+- an already-running/stale v142 wealth-loader completion could still call `render()` after that retirement and re-enter the active Patrimônio path, sustaining an effective retry/render loop;
+- v146 now suppresses that stale completion render once the legacy loader/owner is retired;
+- stable nav nodes are preserved and navigation commit/render work is coalesced outside the synchronous click path;
+- no financial rule, amount, classification, backend writer or economic effect changed.
 
-Implementation:
-- preserves inherited v142/v143/v144 chain and historical candidates;
-- marker `single-refresh-title-stable-v1`;
-- final renderer copy is `Sua vida financeira, em uma tela.` / `Tenho dinheiro hoje? O que exige ação? Para onde estou indo?`;
-- repeated v142 Dashboard polling is locked after valid cockpit data;
+Exact evidence on `bef91e27927dc8b73f89239568dd0ae81cd68707`:
+- workflow `33443494728` SUCCESS;
+- artifact `9777202035`;
+- architecture/static and inherited button census PASS;
+- v142 parser/browser PASS;
+- v143 runtime/navigation PASS;
+- v146 classification + repeated navigation PASS;
+- repeated navigation = 10 cycles × 7 destinations × desktop/mobile = 140 physical clicks, including `Cartões` → `Patrimônio` every cycle.
+This is synthetic/unauthenticated browser evidence, not authenticated visual E2E.
+
+## v145 Dashboard stability retained
+- final renderer copy remains `Sua vida financeira, em uma tela.` / `Tenho dinheiro hoje? O que exige ação? Para onde estou indo?`;
+- repeated v142 Dashboard polling remains locked after valid cockpit data;
 - explicit one-shot read-only refresh remains available;
-- no permanent new interval;
 - v144 Atualizações action center remains inherited;
 - no financial/backend rule change.
 
-Evidence:
-- product commit `8ccd9fc6eca1f7da833f80b9788fefd98c601f18`;
-- hardened SHA `9d4a52df566d74bdc77f92b0d227906fc46bddce`;
-- branch run `33423228532` SUCCESS;
-- integrated run `33423462471` SUCCESS, artifact `9769869448`;
-- integrated Pages `33423461388` SUCCESS;
-- exposure exact-SHA runs `33424045510`, `33424045367`, `33424045318`, `33424044022` all SUCCESS;
-- temporal desktop/mobile: one title/subtitle, `renderDelta=0`, `rpcDelta=0`, zero overflow/errors;
-- v144 Atualizações suggestion/evidence/confidence preserved.
-This remains synthetic/unauthenticated browser evidence, not authenticated visual E2E.
+## v144 Atualizações retained
+- classification is first and compact, with suggestion + public/history evidence + confidence per item;
+- evidence hierarchy remains explicit user rule → exact/consistent LTS history → public merchant research → manual confirmation;
+- GULA GULA MORUMBI remains manual taxonomy review despite restaurant suggestion/evidence;
+- marketplaces/intermediators remain review when purpose is not proven.
 
 ## Financial evidence that must not change by assumption
 - Planning management point 08/01/2027; FGTS request-by 09/12/2026.
@@ -85,11 +90,14 @@ Fingerprint `85a1b60816a5b84dfe3b41341ed27948`: v14 293/24, v15 67/5, v16 19/2, 
 - Open Finance provider/pricing/SLA/product×bank coverage; no consent/spend/credential without explicit user decision.
 - Performance only after correctness/exact parity.
 - Real authenticated visual E2E.
-- Material user v145 homologation.
+- v146 controlled integration/exposure and material user homologation.
 - Public `index.html` promotion only after explicit user approval.
 
 ## Immediate next execution
-1. User checks v145 materially at the fixed homologation URL, first leaving Dashboard open long enough to detect any title flicker, then navigating once Dashboard ↔ Atualizações.
-2. If user reports a material regression, reproduce and fix in a coherent new candidate package; keep public fallback untouched.
-3. If user approves, do not promote public root until explicit authorization.
-4. Continue autonomous open-backlog work that does not require user financial/documentary decisions.
+1. Freeze canonical v146 pre-integration evidence without changing product, manifest or public fallback.
+2. Re-fetch `main` and v146 branch and compare; integrate only if branch remains strictly ahead with zero divergence.
+3. Require exact integrated-main v146, legacy candidate-smoke and Pages gates green.
+4. Verify protected public `index.html` and v145 homologation manifest remain unchanged.
+5. Build a separate v146 homologation-exposure package; keep promotion `not_promoted`.
+6. Require exact exposure-SHA gates green before telling the user `Pode acessar agora`.
+7. Public root promotion still requires separate explicit user authorization.

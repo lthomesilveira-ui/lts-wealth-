@@ -5,43 +5,45 @@ Purpose: evidence-backed sequence before asking the user to inspect a material c
 ## Current release baseline
 - Public fallback: WIP35-v136 in `index.html`, unchanged; protected blob `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
 - Fixed homologation: `https://lthomesilveira-ui.github.io/lts-wealth-/homologacao.html`.
-- Fixed homologation now targets **v145** via `wip35-v145-candidate.html`.
-- Exposure SHA: `a99483543f3d1408be5b297dc66ec5f491be68dd`.
-- Manifest candidate head: `9d4a52df566d74bdc77f92b0d227906fc46bddce`.
+- Fixed homologation currently targets **v145** via `wip35-v145-candidate.html`.
+- v145 exposure SHA: `a99483543f3d1408be5b297dc66ec5f491be68dd`.
+- v145 manifest candidate head: `9d4a52df566d74bdc77f92b0d227906fc46bddce`.
 - Promotion status: `not_promoted`.
 - Public promotion: NOT AUTHORIZED / NOT DONE.
 - Authenticated visual E2E: PENDING / NOT CLAIMED.
 
-## v145 reason and correction
-User material homologation of v144 found a real Dashboard title/subtitle flicker. Proven root cause was competing inherited cycles: v142 could repeatedly refresh/render the cockpit while v143 feedback polish rewrote the approved copy.
+## v146 pre-integration candidate
+- Active branch: `v146-updates-navigation-stability`.
+- Exact green product SHA: `bef91e27927dc8b73f89239568dd0ae81cd68707`.
+- Branch workflow `33443494728`: SUCCESS.
+- Evidence artifact: `9777202035` (`wip35-v146-updates-navigation`).
+- v146 is **not integrated into main and not exposed in fixed homologation** at this checkpoint.
 
-v145 is a stability-only correction:
-- final H1 is generated as `Sua vida financeira, em uma tela.`;
-- final subtitle is generated as `Tenho dinheiro hoje? O que exige ação? Para onde estou indo?`;
-- inherited repeated Dashboard polling is locked after valid cockpit data exists;
-- explicit read-only one-shot refresh remains available;
-- no permanent v145 interval was added;
-- v144 Atualizações/classification action center remains inherited;
-- no financial rule, value, classification, backend writer or economic effect changed.
+### Why v146 exists
+Repeated physical navigation testing reproduced a hang specifically around `Cartões` → `Patrimônio`. The final cause was not a financial/data rule. An inherited v142 wealth-loader completion/retry path could still call `render()` after v146 retired the legacy wealth loader/owner, allowing stale completion to re-enter the Patrimônio render path and create an effective retry/render loop.
 
-## Evidence before exposure
-- Product commit `8ccd9fc6eca1f7da833f80b9788fefd98c601f18`.
-- Hardened candidate/integrated SHA `9d4a52df566d74bdc77f92b0d227906fc46bddce`.
-- Hardened branch run `33423228532`: SUCCESS.
-- Integrated-main v145 run `33423462471`: SUCCESS; artifact `9769869448`.
-- Integrated-main Pages `33423461388`: SUCCESS.
-- Desktop 1440×1000 and mobile 390×844 temporal smoke: one title, one subtitle, `renderDelta=0`, `rpcDelta=0`, zero overflow/errors.
+### v146 correction
+- Stable seven-button nav DOM; no nav-node recreation after ownership is locked.
+- Navigation work is coalesced and moved outside the synchronous physical-click path.
+- v142 wealth owner is redirected to the v143 Patrimônio renderer.
+- Legacy v142 wealth loader is retired once v146 owns Patrimônio.
+- Stale v142 wealth-loader completion render is suppressed after retirement so it cannot restart the loop.
+- v144 Atualizações evidence/confidence/classification surface and v145 Dashboard stability remain inherited.
+- No financial rule, value, classification, backend writer or economic effect changed.
 
-## Exact exposure-SHA evidence
-All on `a99483543f3d1408be5b297dc66ec5f491be68dd`:
-- v145 Dashboard stability `33424045510`: SUCCESS.
-- v144 Updates/full ownership smoke `33424045367`: SUCCESS.
-- legacy candidate-smoke `33424045318`: SUCCESS.
-- Pages `33424044022`: SUCCESS.
-- `homologacao-current.json` resolves v145 / `wip35-v145-candidate.html`.
-- public `index.html` remains exact protected blob `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
+## Exact v146 branch evidence
+On `bef91e27927dc8b73f89239568dd0ae81cd68707`, run `33443494728` passed:
+1. v146 architecture/static validation;
+2. inherited button wiring census;
+3. inherited v142 parser/static candidate gate;
+4. inherited v142 browser smoke;
+5. inherited v143 runtime/navigation smoke;
+6. v146 classification + repeated-navigation smoke;
+7. evidence artifact upload.
 
-This is synthetic/unauthenticated browser evidence. It is not authenticated visual E2E and executes no backend financial write.
+The v146 repeated-navigation smoke performs 10 cycles over seven destinations on desktop and mobile: **140 physical Playwright clicks**, including `Cartões` → `Patrimônio` every cycle. This is synthetic/unauthenticated browser evidence, not authenticated visual E2E, and performs no backend financial write.
+
+Classification evidence remains conservative: GULA GULA MORUMBI may show `Restaurantes` with research/confidence but remains manual taxonomy review; marketplaces/intermediators remain unresolved without purpose evidence.
 
 ## Financial/backend invariants — unchanged
 - Planning: management point 08/01/2027; FGTS request-by 09/12/2026; documentary FGTS R$17.509,05; existing accrual R$3.700/mês; request-date FGTS R$32.309,05; worst before -R$21.046,80; worst after +R$11.262,25; no uncovered gap through 28/02/2027.
@@ -64,7 +66,11 @@ This is synthetic/unauthenticated browser evidence. It is not authenticated visu
 - Public promotion only after explicit user approval.
 
 ## Current gate to advance
-1. User performs **material visual homologation** of v145 at the fixed homologation URL, focusing first on Dashboard stability and then a quick Dashboard ↔ Atualizações transition.
-2. If a material regression appears, open a new corrective package; do not patch public `index.html` directly.
-3. If user approves the candidate, public promotion still requires a separate explicit authorization.
-4. Until public promotion, protected public fallback remains untouched.
+1. Freeze v146 evidence/canonical docs without changing product, manifest or public fallback.
+2. Re-fetch `main` and branch; require zero divergence and branch strictly ahead.
+3. Integrate by normal fast-forward only (`force=false`).
+4. On the exact integrated-main SHA require v146 workflow SUCCESS, legacy candidate-smoke SUCCESS and Pages SUCCESS; inspect any additional safety-relevant run fired by the commit.
+5. Reconfirm protected `index.html` blob and v145 homologation manifest are unchanged.
+6. Only then create a separate controlled exposure package that switches `homologacao-current.json` to v146 / `wip35-v146-candidate.html`, keeps `promotion_status: not_promoted`, creates an immutable exposure checkpoint and synchronizes canonical docs.
+7. On the exact exposure SHA require v146 smoke, candidate-smoke and Pages SUCCESS before telling the user `Pode acessar agora`.
+8. Public root promotion remains a separate explicit user authorization.
