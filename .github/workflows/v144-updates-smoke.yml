@@ -1,0 +1,57 @@
+name: LTS v144 Updates smoke
+on:
+  push:
+    branches: [main, v144-updates-classification-layout]
+    paths:
+      - 'homologacao-current.json'
+      - 'homologacao.html'
+      - 'wip35-v144-candidate.html'
+      - 'wip35-v144-updates-classification.js'
+      - '.github/scripts/lts_v144_updates_smoke.js'
+      - '.github/workflows/v144-updates-smoke.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  updates-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate v144 Updates restoration layer
+        run: |
+          node --check wip35-v144-updates-classification.js
+          node --check .github/scripts/lts_v144_updates_smoke.js
+          python - <<'PY'
+          from pathlib import Path
+          html=Path('wip35-v144-candidate.html').read_text(encoding='utf-8')
+          js=Path('wip35-v144-updates-classification.js').read_text(encoding='utf-8')
+          required_html=['wip35-v143-candidate.html?v144-parent','wip35-v144-updates-classification.js?v144-updates-classification-v1',"__LTS_TOP_CANDIDATE_VERSION='v144'"]
+          required_js=['updates-classification-confidence-layout-v1','Resolva o que precisa de você.','Sugestão + pesquisa + % de confiança, item por item','Histórico do LTS','Pesquisa pública','% sugestão','% identificação','Pesquisa / evidência','Histórico / repetição','O que falta de você','v144-legacy-suppressed']
+          missing=[x for x in required_html if x not in html]+[x for x in required_js if x not in js]
+          assert not missing, 'v144 markers missing: '+repr(missing)
+          forbidden=['insert into','delete from','update public.','.upsert(']
+          leaked=[x for x in forbidden if x.lower() in js.lower()]
+          assert not leaked, 'direct financial write leaked into browser layer: '+repr(leaked)
+          print('v144_updates_static=PASS')
+          PY
+      - name: Install headless browser
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Run v144 Updates desktop/mobile smoke
+        run: |
+          python3 -m http.server 8767 >/tmp/lts-http-v144.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID || true' EXIT
+          sleep 1
+          node .github/scripts/lts_v144_updates_smoke.js
+      - name: Upload v144 smoke evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: wip35-v144-updates-smoke
+          path: v144-updates-smoke-result.json
+          if-no-files-found: error
