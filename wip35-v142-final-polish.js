@@ -9,13 +9,13 @@
       const d139=f139&&f139.contentDocument,f138=d139&&d139.getElementById('shell');
       const d138=f138&&f138.contentDocument,f137=d138&&d138.getElementById('shell');
       const d137=f137&&f137.contentDocument,app=d137&&d137.getElementById('app');
-      if(!app)return null;
+      if(!app||!app.contentDocument||!app.contentDocument.head)return null;
       return {w:app.contentWindow,d:app.contentDocument};
     }catch(e){return null}
   }
 
   function ensureCss(d){
-    if(d.getElementById('wip35-v142-final-polish-css'))return;
+    if(!d||!d.head||d.getElementById('wip35-v142-final-polish-css'))return;
     const s=d.createElement('style');s.id='wip35-v142-final-polish-css';s.textContent=`
       .p142-now{display:grid;grid-template-columns:minmax(220px,.95fr) repeat(3,minmax(150px,1fr));gap:7px;margin:-3px 0 11px}.p142-nowintro,.p142-nowitem{border:1px solid var(--bd);border-radius:13px;background:#fff;padding:10px 11px;min-height:72px;box-sizing:border-box}.p142-nowintro{background:#f8fafc}.p142-nowintro span,.p142-nowitem span{display:block;font-size:7px;font-weight:900;text-transform:uppercase;letter-spacing:.06em;color:var(--mut)}.p142-nowintro b{display:block;font-size:12px;margin:4px 0}.p142-nowintro small,.p142-nowitem small{display:block;font-size:8px;line-height:1.35;color:var(--mut)}.p142-nowitem{appearance:none;text-align:left;color:var(--ink);cursor:pointer}.p142-nowitem strong{display:block;font-size:18px;margin:4px 0}.p142-nowitem.attn{border-color:#ead7b4;background:#fffaf0}.p142-nowitem.good{border-color:#d7e5dc;background:#f8fbf9}.p142-nowitem:focus-visible{outline:2px solid #b8935a;outline-offset:2px}
       .u141-mainthead{margin:8px 0 6px!important}.u141-mainthead h2{font-size:17px!important}.u141-mainthead p{max-width:760px!important}.u141-collapsed{margin-top:6px!important;padding:7px 9px!important}.u141-docout{padding:8px 9px!important}.u141-docchips{margin-top:6px!important}.u141-note{margin-top:5px!important;line-height:1.35!important}.u132-classrow{margin-top:5px!important;padding:8px!important}.u132-actions .chip{min-height:32px!important}.u132-actions select.cardcat{height:34px!important}.u131-batch{margin:5px 0!important}.fx89-review{padding:8px!important}
