@@ -2,6 +2,7 @@ const { chromium } = require('playwright');
 const fs = require('fs');
 
 const MARK='guided-document-association-v1';
+const BRIDGE='v144-lexical-state-bridge-v1';
 
 async function deepest(page){
   const chain=[];let f=page.mainFrame();
@@ -26,20 +27,31 @@ async function run(viewport,label){
     const chainOk=expected.every((x,i)=>chain[i]&&chain[i].includes(x));
     if(!chainOk)throw new Error('candidate chain mismatch: '+JSON.stringify(chain));
     await f.waitForFunction(m=>window.LTS_V147_DOCUMENT_ASSOCIATION===m,MARK,{timeout:10000});
+    await f.waitForFunction(m=>window.LTS_V144_LEXICAL_BRIDGE===m,BRIDGE,{timeout:10000});
+
     await f.evaluate(()=>{
       window.D={
         input:{queue:[]},
         wealth:{accounts:[{institution:'Itaú'},{institution:'Bradesco'},{institution:'C6'}]},
+        flow:{accounts:[]},
         card_operating:{open_cycles:[{card_name:'Visa Aeternum'},{card_name:'Personnalite Black Pontos final 5546'}]},
-        card_history:{units:[]},
+        card_history:{units:[],cards:[]},
         commitments:{commitments:[{id:'cipo_396',label:'CIPÓ 396'},{id:'volvo',label:'Volvo XC40'}]},
         documentary_commitments:{items:[]},
-        updates:{items:[],maintenance_checks:[]},
-        card_classification_review:{pending_groups:0,items:[],category_options:[]},semantic_review:{pending_groups:0,items:[]}
+        updates:{items:[{id:'document_test',type:'document_request',title:'Posição documental',detail:'Teste sintético de associação',priority:1}],maintenance_checks:[]},
+        card_classification_review:{pending_groups:0,items:[],category_options:[]},
+        semantic_review:{pending_groups:0,items:[]}
       };
-      window.INPUTCTX={id:'document_test',type:'document_request',title:'Posição documental',detail:'Teste sintético de associação'};
-      window.V='Entradas';window.renderNav?.();window.render();
+      window.V='Atualizações';
+      window.renderNav?.();
+      window.render();
     });
+
+    const docAction=f.locator('.updinput[data-update="document_test"]');
+    await docAction.waitFor({state:'visible',timeout:5000});
+    await docAction.click({timeout:5000});
+    await f.waitForFunction(()=>String(window.V)==='Entradas',{timeout:5000});
+    await f.waitForSelector('#file',{state:'attached',timeout:5000});
     await f.waitForSelector('#v147DocAssociation',{state:'attached',timeout:5000});
 
     const status=await f.evaluate(()=>window.__LTS_V147_DOCUMENT_ASSOCIATION_STATUS);
