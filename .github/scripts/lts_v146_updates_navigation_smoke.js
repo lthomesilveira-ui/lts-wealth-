@@ -60,6 +60,23 @@ async function initNavIdentity(f) {
   return await f.evaluate(() => {
     const nodes = Array.from(document.querySelectorAll('.nav [data-v143-dest]'));
     window.__V146_NAV_TEST_REFS = nodes.slice();
+    window.__V146_PHYSICAL_EVENT_TRACE = [];
+    if (!document.__V146_PHYSICAL_TRACE_BOUND) {
+      document.__V146_PHYSICAL_TRACE_BOUND = true;
+      ['pointerdown','mousedown','pointerup','mouseup','click'].forEach(type => {
+        document.addEventListener(type, e => {
+          const t=e.target;
+          window.__V146_PHYSICAL_EVENT_TRACE.push({
+            type,
+            at: performance.now(),
+            tag: t?.tagName || null,
+            text: String(t?.textContent || '').trim().slice(0,80),
+            dest: t?.closest?.('[data-v143-dest]')?.dataset?.v143Dest || null
+          });
+          if (window.__V146_PHYSICAL_EVENT_TRACE.length > 40) window.__V146_PHYSICAL_EVENT_TRACE.shift();
+        }, true);
+      });
+    }
     return {
       count: nodes.length,
       labels: nodes.map(x => String(x.textContent || '').trim()),
@@ -92,10 +109,75 @@ async function visibleNavButton(f, target) {
   return all.nth(visible[0]);
 }
 
+async function navPhysicalDiagnostics(f, target) {
+  return await f.evaluate(t => {
+    const refs = window.__V146_NAV_TEST_REFS || [];
+    const now = Array.from(document.querySelectorAll('.nav [data-v143-dest]'));
+    const b = document.querySelector(`.nav [data-v143-dest="${t}"]`);
+    const r = b?.getBoundingClientRect();
+    const cx = r ? r.left + r.width / 2 : null;
+    const cy = r ? r.top + r.height / 2 : null;
+    const hit = cx != null && cy != null ? document.elementFromPoint(cx, cy) : null;
+    const cs = b ? getComputedStyle(b) : null;
+    return {
+      target:t,
+      current:window.V,
+      pendingDest:window.__LTS_V146_NAV_PENDING_DEST ?? null,
+      clickCaptureAt:window.__LTS_V146_NAV_LAST_CLICK_CAPTURE_AT ?? null,
+      clickReturnAt:window.__LTS_V146_NAV_LAST_CLICK_RETURN_AT ?? null,
+      renderScheduledAt:window.__LTS_V146_NAV_RENDER_SCHEDULED_AT ?? null,
+      renderStartedAt:window.__LTS_V146_NAV_RENDER_STARTED_AT ?? null,
+      renderFinishedAt:window.__LTS_V146_NAV_RENDER_FINISHED_AT ?? null,
+      renderError:window.__LTS_V146_NAV_RENDER_ERROR ?? null,
+      eventTrace:(window.__V146_PHYSICAL_EVENT_TRACE || []).slice(-12),
+      nodeIdentityStable:refs.length===now.length&&refs.every((x,i)=>x===now[i]&&x.isConnected),
+      navLabels:now.map(x=>String(x.textContent||'').trim()),
+      active:Array.from(document.querySelectorAll('.nav button.active')).filter(x=>x.offsetParent!==null).map(x=>String(x.textContent||'').trim()),
+      button:b?{
+        connected:b.isConnected,
+        rect:r?.toJSON?.() || null,
+        pointerEvents:cs?.pointerEvents || null,
+        zIndex:cs?.zIndex || null,
+        visibility:cs?.visibility || null,
+        display:cs?.display || null,
+        opacity:cs?.opacity || null
+      }:null,
+      hit:hit?{
+        tag:hit.tagName,
+        id:hit.id || null,
+        cls:String(hit.className||''),
+        text:String(hit.textContent||'').trim().slice(0,120),
+        dest:hit.closest?.('[data-v143-dest]')?.dataset?.v143Dest || null
+      }:null,
+      activeElement:document.activeElement?{
+        tag:document.activeElement.tagName,
+        text:String(document.activeElement.textContent||'').trim().slice(0,80),
+        dest:document.activeElement.closest?.('[data-v143-dest]')?.dataset?.v143Dest || null
+      }:null
+    };
+  }, target);
+}
+
 async function clickNav(f, target, label, cycle) {
   console.log(`[v146][${label}] cycle=${cycle} target=${target} click:start`);
   const b = await visibleNavButton(f, target);
-  await b.click({ timeout: 3500 });
+  const pre = await navPhysicalDiagnostics(f, target);
+  console.log(`[v146][${label}] cycle=${cycle} target=${target} pre=${JSON.stringify(pre)}`);
+  try {
+    await b.click({ timeout: 3500 });
+  } catch (err) {
+    let post = { diagnostic: 'unavailable' };
+    try {
+      post = await Promise.race([
+        navPhysicalDiagnostics(f, target),
+        new Promise(resolve => setTimeout(() => resolve({ diagnostic: 'evaluate-timeout' }), 1200))
+      ]);
+    } catch (diagErr) {
+      post = { diagnostic: 'error', error: String(diagErr?.message || diagErr) };
+    }
+    console.error(`[v146][${label}] cycle=${cycle} target=${target} click:failure diagnostics=${JSON.stringify(post)}`);
+    throw err;
+  }
   await waitState(f, t => window.V === t, target, 3500);
   await f.waitForTimeout(120);
   const state = await f.evaluate(t => {
