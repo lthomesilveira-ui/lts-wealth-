@@ -5,97 +5,77 @@ Purpose: evidence-backed sequence before asking the user to inspect the next mat
 ## Current release baseline
 - Public fallback: WIP35-v136 in `index.html`, unchanged; protected blob `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
 - Fixed homologation URL: `homologacao.html`.
-- v144 integrated-main SHA: `b0d23e35be1d5d27400268a36bb3562395bb3513`.
-- Integrated-main v144 smoke `33414249775`: SUCCESS.
-- Integrated-main legacy candidate-smoke `33414249873`: SUCCESS.
-- Integrated-main Pages `33414248379`: SUCCESS.
-- Before the current exposure commit, fixed homologation still targeted v143.
-- Current exposure package switches `homologacao-current.json` to **v144** with `promotion_status: not_promoted`.
+- Fixed homologation currently targets **v144**; v144 exposure SHA `e8c522728a9c5740be89f1bcf08c8301ceecee78`.
+- v144 post-switch exact-SHA gates: Updates smoke `33417045276` SUCCESS; legacy candidate-smoke `33417045163` SUCCESS; Pages `33417043749` SUCCESS.
 - Public promotion: NOT AUTHORIZED / NOT DONE.
 - Authenticated visual E2E: PENDING / NOT CLAIMED.
 
-## Why v144 exists
-User material homologation of v143 found a P0 regression specifically in Atualizações:
-- the earlier assisted-classification model no longer visibly presented suggestion + public research/evidence + confidence percentage;
-- the layout was visually loose, with excessive blank space and weak hierarchy.
+## Why v145 exists
+User material homologation of v144 found a real Dashboard flicker: titles visibly alternated as if the page had a bad contact.
 
-This is corrective work, not a new financial rule.
+Root cause is proven, not inferred:
+- `wip35-v142-dashboard-cockpit.js` runs its installer every 180 ms and repeatedly re-enters `loadCockpit`; after RPC completion it can call `render()` while Dashboard is active.
+- inherited v143 Dashboard renderer produces an older H1/subtitle;
+- `wip35-v143-feedback-polish.js` runs every 220 ms and rewrites those nodes to the approved final copy;
+- those two cycles therefore alternate visible copy.
 
-## v144 package evidence
-Architecture:
-- v144 outer candidate preserves the inherited v142/v143 product chain;
-- deepest inherited product runtime remains v143 by design;
-- lexical-state bridge exposes existing `D/V` state only inside that same runtime;
-- post-render Updates layer does not replace `w.atualizacoes`;
-- existing `cardClassificationUpdates` / `expenseClassificationUpdates` helpers and save handlers remain in use;
-- no direct backend financial writer was introduced.
+v145 is a stability correction only. It changes no financial rule, value, classification, backend writer or economic effect.
 
-Branch/freeze evidence:
-- product host commit `01b15f5e382939851086c67515b5ecff38fbcef1`;
-- branch run `33412827358`: SUCCESS;
-- freeze head `b0d23e35be1d5d27400268a36bb3562395bb3513`;
-- freeze run `33413763757`: SUCCESS.
+## v145 architecture
+Branch: `v145-dashboard-stability`.
+Green product head: `8ccd9fc6eca1f7da833f80b9788fefd98c601f18`.
 
-Updates-specific evidence proven in desktop 1440×1000 and mobile 390×844:
-- classification first;
-- `Sugestão + pesquisa + % de confiança, item por item`;
-- history/public research/confidence/manual-confirmation methodology;
-- `Restaurantes` suggestion visible in synthetic Gula-like evidence;
-- `83% sugestão`;
-- `99% identificação`;
-- ambiguous marketplace `91% identificação`;
-- research/evidence visible;
-- two preserved save controls;
-- secondary sections collapsed;
-- duplicated v143 evidence panel suppressed;
-- zero root overflow and zero console/page errors.
+- Candidate `wip35-v145-candidate.html` inherits v142→v143/v144 composition without editing historical candidates.
+- v144 lexical bridge and Atualizações layout remain hosted in the deepest inherited runtime.
+- New marker: `single-refresh-title-stable-v1`.
+- v145 wraps `__v143Dashboard` once so returned HTML already contains the approved H1/subtitle.
+- After a valid cockpit exists, v145 locks the inherited v142 polling guard so the 180 ms loop cannot perform repeated Dashboard RPC/render work.
+- Explicit `LTS_V145_REFRESH_DASHBOARD` remains available for a controlled one-shot read-only cockpit refresh.
+- No permanent new v145 interval is added; install uses finite retry timeouts only.
+- The outer candidate omits the inherited candidate badge to avoid another known cross-layer rewrite surface.
 
-Full inherited ownership/navigation smoke also passes desktop/mobile for Dashboard, Atualizações, Fluxo Diário, Despesas, Cartões, Patrimônio and Planejamento; `Liquidez detalhada` remains the visual planning label.
+## Branch gate evidence
+Workflow `33421305585`: SUCCESS. Artifact `9769043340`.
 
-This remains synthetic/unauthenticated browser composition evidence. It is **not authenticated visual E2E**.
+Desktop 1440×1000 and mobile 390×844 both prove:
+- exact final title set = only `Sua vida financeira, em uma tela.`;
+- exact final subtitle set = only `Tenho dinheiro hoje? O que exige ação? Para onde estou indo?`;
+- legacy poll guard locked;
+- stable Dashboard renderer owns the active renderer;
+- `renderDelta=0` during the temporal observation window;
+- `rpcDelta=0` for `lts_browser_dashboard_cockpit_v1` during the same window;
+- v144 Atualizações remains present with `classification-action-center-v2`, restaurant suggestion and confidence evidence;
+- zero horizontal overflow and zero console/page errors.
 
-## Audited Planning conclusion — immutable unless new evidence/decision
-- first management point: **08/01/2027**;
-- FGTS request-by: **09/12/2026**;
-- documentary FGTS 18/08/2026: **R$17.509,05**;
-- existing accrual model: **R$3.700/mês**;
-- projected request-date FGTS: **R$32.309,05**;
-- worst balance before contingency: **-R$21.046,80**;
-- worst balance after planned contingency: **+R$11.262,25**;
-- first uncovered gap through 28/02/2027: none.
+The same workflow also reruns inherited parser/static v142, v142 browser smoke, v143 runtime/navigation smoke and button contract audit, all PASS.
 
-Interpretation: January is a liquidity-management point covered by the already-modeled D+30 FGTS contingency if requested on time. It is not evidence of real patrimonial insufficiency.
+This evidence is synthetic/unauthenticated browser evidence. It is **not authenticated visual E2E** and executes no backend financial write.
 
-## Final backend evidence inherited unchanged
-Fingerprint `85a1b60816a5b84dfe3b41341ed27948`.
-- v14: 24 suites / 293 checks PASS.
-- v15: 5 / 67 PASS.
-- v16: 2 / 19 PASS.
-- v17: 4 / 32 PASS.
-- staged total: **35 suites / 411 checks PASS**.
-- supplemental v143 read-model QA v2: **16/16 PASS**.
-No v144 backend/financial writer change occurred.
+## Financial/backend invariants — unchanged
+- Planning: management point 08/01/2027; FGTS request-by 09/12/2026; documentary FGTS R$17.509,05; existing accrual R$3.700/mês; request-date projected FGTS R$32.309,05; worst before -R$21.046,80; worst after +R$11.262,25; no uncovered gap through 28/02/2027.
+- Despesas invariant R$8.623.752,53; analytical cache 3.860/3.860 exact.
+- Card certified allocation 38 cycles / 650 rows / R$885.855,19; aggregate fallback 314 rows / R$2.650.846,36 remains aggregate-only; C6 Aug/2024 R$66,70 gap explicit.
+- RSU vested 459.483 units / R$32.772,30 / D+3; future awards excluded until vest/settle; R$578,68 historical sale difference remains unitemized.
+- Volvo financing 60 × R$2.886,43 from 08/09/2026 to 08/08/2031, no duplicate economic effect.
+- Backend fingerprint remains `85a1b60816a5b84dfe3b41341ed27948`; staged 411 checks / 35 suites PASS plus supplemental 16/16.
 
-## Open invariants / blockers retained
-- Despesas invariant R$8.623.752,53; cache 3.860/3.860 exact.
-- Card certified allocation 38 cycles / 650 rows / R$885.855,19; aggregate fallback 314 rows / R$2.650.846,36 remains aggregate-only.
-- C6 Aug/2024 R$66,70 detail gap remains explicit.
-- Mastercard/Visa documentary gaps remain open; no inferred purchase detail.
-- CIPÓ consortium delta R$303,60, overlap/date ambiguity and condominium formula/cut remain unresolved; no post-2029 TR fabrication.
-- Volvo exact trim/km remains required before valuation refinement.
-- Classification ambiguity still requires user confirmation when evidence does not close.
-- Guided document association UI remains open.
-- Liquidity cancellation/reversal semantics remain append-only/auditable design work.
-- Open Finance provider/pricing/SLA/bank coverage remains open; no consent/spend without explicit user decision.
-- Real authenticated visual E2E remains pending/unclaimed.
+## Open blockers retained
+- Human classification where evidence remains insufficient.
+- Guided document association and PDF/image interpretation with manual review.
+- Authenticated classification save→refresh/resolved-item disappearance/self-heal/`O que mudou`.
+- Authenticated natural-liquidity save→refresh→visible result and append-only cancellation/reversal semantics.
+- Mastercard/Visa documentary gaps; never infer purchase detail.
+- CIPÓ R$303,60 delta, overlap/date ambiguity, condominium source, raw/dedup gaps; no fabricated post-2029 TR.
+- Volvo exact trim/km before valuation refinement.
+- Open Finance pricing/SLA/product×bank coverage; no consent/spend without explicit decision.
+- Real authenticated visual E2E.
+- Public promotion only after explicit user approval.
 
-## Remaining gate to user access
-1. Complete the current exposure commit switching `homologacao-current.json` to `wip35-v144-candidate.html` with `promotion_status: not_promoted`.
-2. On that exact exposure SHA require:
-   - v144 Updates/full-browser smoke SUCCESS;
-   - legacy candidate-smoke SUCCESS;
-   - Pages SUCCESS;
-   - protected `index.html` blob still exactly `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`;
-   - manifest resolves to v144.
-3. Only then tell the user **Pode acessar agora** and direct first inspection to Atualizações at the fixed `/homologacao.html` URL.
-4. Public `index.html` remains untouched until explicit user approval.
+## Gate from here to user re-test
+1. Freeze v145 evidence/checkpoint and synchronize canonical backlog/gate/handoff.
+2. Integrate v145 into `main` via normal fast-forward/PR path with `force=false`; no divergence overwrite.
+3. On exact integrated main SHA require v145 stability workflow SUCCESS + Pages SUCCESS; reconfirm protected `index.html` blob and manifest still v144.
+4. In a separate controlled exposure commit, switch `homologacao-current.json` to `wip35-v145-candidate.html` with `promotion_status: not_promoted`.
+5. On exact exposure SHA require v145 stability workflow SUCCESS + Pages SUCCESS and reconfirm protected public index.
+6. Only then tell the user to re-test the Dashboard at the fixed homologation URL.
+7. Public `index.html` remains untouched until explicit user approval.
