@@ -1,0 +1,109 @@
+name: LTS v147 Guided document association
+on:
+  push:
+    branches: [main, v147-guided-document-association]
+    paths:
+      - 'wip35-v147-candidate.html'
+      - 'wip35-v147-guided-document-association.js'
+      - '.github/scripts/lts_v147_document_association_smoke.js'
+      - '.github/scripts/lts_v146_updates_navigation_smoke.js'
+      - '.github/scripts/lts_candidate_browser_smoke.js'
+      - '.github/scripts/lts_v143_browser_smoke.js'
+      - '.github/scripts/lts_candidate_smoke.py'
+      - '.github/scripts/lts_button_contract_audit.js'
+      - '.github/workflows/v147-guided-document-association.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  guided-document-association:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate v147 architecture and guardrails
+        run: |
+          node --check wip35-v147-guided-document-association.js
+          node --check .github/scripts/lts_v147_document_association_smoke.js
+          python - <<'PY'
+          from pathlib import Path
+          import subprocess
+          html=Path('wip35-v147-candidate.html').read_text(encoding='utf-8')
+          js=Path('wip35-v147-guided-document-association.js').read_text(encoding='utf-8')
+          required=[
+            'wip35-v146-candidate.html?v147-parent',
+            'wip35-v147-guided-document-association.js?v147-guided-document-association-v1',
+            "__LTS_TOP_CANDIDATE_VERSION='v147'",
+            'guided-document-association-v1',
+            'bank_statement','card_statement','financing_statement',
+            'document_association_status',
+            'explicit_user_input_pending_review',
+            'provided_by_user:true',
+            'review_required:true',
+            'financial_writer_changed:false',
+            'filename_inference:false',
+            'permanent_polling:false'
+          ]
+          corpus=html+'\n'+js
+          missing=[x for x in required if x not in corpus]
+          assert not missing, 'v147 markers missing: '+repr(missing)
+          forbidden=['insert into','delete from','update public.','.upsert(','lts_browser_apply_document_entry_v1','lts_browser_apply_reviewed_input_v1']
+          leaked=[x for x in forbidden if x.lower() in js.lower()]
+          assert not leaked, 'v147 must not introduce financial writers: '+repr(leaked)
+          assert 'setInterval(' not in js, 'v147 must not add permanent polling'
+          protected=subprocess.check_output(['git','rev-parse','HEAD:index.html'],text=True).strip()
+          assert protected=='a130eafe5f7ee5b7f60a95b5ff988669d0c401d9', 'protected index.html changed: '+protected
+          print('v147_guided_document_association_static=PASS')
+          PY
+      - name: Audit inherited button wiring contracts
+        run: node .github/scripts/lts_button_contract_audit.js
+      - name: Install headless browser
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Re-run inherited parser/static candidate gate
+        run: python .github/scripts/lts_candidate_smoke.py
+      - name: Re-run inherited v142 browser smoke
+        run: |
+          python3 -m http.server 8765 >/tmp/lts-http-v142-v147.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID || true' EXIT
+          sleep 1
+          node .github/scripts/lts_candidate_browser_smoke.js
+      - name: Re-run inherited v143 runtime/navigation smoke
+        run: |
+          python3 -m http.server 8766 >/tmp/lts-http-v143-v147.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID || true' EXIT
+          sleep 1
+          sed 's/8765/8766/g' .github/scripts/lts_v143_browser_smoke.js >/tmp/lts_v143_browser_smoke.js
+          NODE_PATH="$PWD/node_modules" node /tmp/lts_v143_browser_smoke.js
+      - name: Re-run inherited v146 repeated navigation and classification smoke
+        run: |
+          python3 -m http.server 8772 >/tmp/lts-http-v146-v147.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID || true' EXIT
+          sleep 1
+          node .github/scripts/lts_v146_updates_navigation_smoke.js
+      - name: Run v147 guided document association smoke
+        run: |
+          python3 -m http.server 8773 >/tmp/lts-http-v147.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID || true' EXIT
+          sleep 1
+          node .github/scripts/lts_v147_document_association_smoke.js
+      - name: Upload v147 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: wip35-v147-guided-document-association
+          path: |
+            v147-document-association-smoke-result.json
+            v146-updates-navigation-smoke-result.json
+            candidate-smoke-result.txt
+            candidate-browser-smoke-result.json
+            v143-browser-smoke-result.json
+            button-contract-audit-result.json
+          if-no-files-found: error
