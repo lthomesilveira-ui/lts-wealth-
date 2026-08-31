@@ -1,0 +1,93 @@
+name: LTS v146 Updates navigation stability
+on:
+  push:
+    branches: [main, v146-updates-navigation-stability]
+    paths:
+      - 'homologacao-current.json'
+      - 'homologacao.html'
+      - 'wip35-v146-candidate.html'
+      - 'wip35-v146-updates-navigation.js'
+      - 'wip35-v145-dashboard-stability.js'
+      - 'wip35-v144-lexical-bridge.js'
+      - '.github/scripts/lts_v146_updates_navigation_smoke.js'
+      - '.github/scripts/lts_button_contract_audit.js'
+      - '.github/workflows/v146-updates-navigation.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  updates-navigation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate v146 architecture
+        run: |
+          node --check wip35-v146-updates-navigation.js
+          node --check .github/scripts/lts_v146_updates_navigation_smoke.js
+          python - <<'PY'
+          from pathlib import Path
+          html=Path('wip35-v146-candidate.html').read_text(encoding='utf-8')
+          js=Path('wip35-v146-updates-navigation.js').read_text(encoding='utf-8')
+          required=[
+            'wip35-v142-candidate.html?v146-parent',
+            'wip35-v143-life-real.js?v143-life-real-v1',
+            'wip35-v143-feedback-polish.js?v143-feedback-polish-v2',
+            'wip35-v143-ownership.js?v143-ownership-v1',
+            'wip35-v144-lexical-bridge.js?v144-lexical-bridge-v1',
+            'wip35-v145-dashboard-stability.js?v145-dashboard-stability-v1',
+            'wip35-v146-updates-navigation.js?v146-updates-navigation-v1',
+            "__LTS_TOP_CANDIDATE_VERSION='v146'",
+            'single-render-updates-navigation-v1'
+          ]
+          missing=[x for x in required if x not in html+js]
+          assert not missing, 'v146 markers missing: '+repr(missing)
+          forbidden=['wip35-v144-updates-layout.js','wip35-v144-updates-classification.js','setInterval(','insert into','delete from','update public.','.upsert(']
+          leaked=[x for x in forbidden if x.lower() in (html+'\n'+js).lower()]
+          assert not leaked, 'v146 forbidden polling/write/legacy layout markers: '+repr(leaked)
+          print('v146_updates_navigation_static=PASS')
+          PY
+      - name: Audit inherited button wiring contracts
+        run: node .github/scripts/lts_button_contract_audit.js
+      - name: Install headless browser
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Re-run inherited parser/static candidate gate
+        run: python .github/scripts/lts_candidate_smoke.py
+      - name: Re-run inherited v142 browser smoke
+        run: |
+          python3 -m http.server 8765 >/tmp/lts-http-v142-v146.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID || true' EXIT
+          sleep 1
+          node .github/scripts/lts_candidate_browser_smoke.js
+      - name: Re-run inherited v143 runtime/navigation smoke
+        run: |
+          python3 -m http.server 8766 >/tmp/lts-http-v143-v146.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID || true' EXIT
+          sleep 1
+          sed 's/8765/8766/g' .github/scripts/lts_v143_browser_smoke.js >/tmp/lts_v143_browser_smoke.js
+          NODE_PATH="$PWD/node_modules" node /tmp/lts_v143_browser_smoke.js
+      - name: Run v146 classification + repeated navigation smoke
+        run: |
+          python3 -m http.server 8772 >/tmp/lts-http-v146.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID || true' EXIT
+          sleep 1
+          node .github/scripts/lts_v146_updates_navigation_smoke.js
+      - name: Upload v146 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: wip35-v146-updates-navigation
+          path: |
+            v146-updates-navigation-smoke-result.json
+            candidate-smoke-result.txt
+            candidate-browser-smoke-result.json
+            v143-browser-smoke-result.json
+            button-contract-audit-result.json
+          if-no-files-found: error
