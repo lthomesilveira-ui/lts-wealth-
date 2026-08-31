@@ -10,7 +10,7 @@ async function run(browser, viewport, label){
   await page.waitForTimeout(8000);
   const chain=[];let f=page.mainFrame();
   for(let i=0;i<10;i++){chain.push(f.url());const kids=f.childFrames();if(!kids.length)break;f=kids[0]}
-  const expected=['wip35-v144-candidate.html','wip35-v143-candidate.html','wip35-v142-candidate.html','wip35-v141-candidate.html','wip35-v140-candidate.html','wip35-v139-candidate.html','wip35-v138-candidate.html','wip35-v137-candidate.html','index.html'];
+  const expected=['wip35-v144-candidate.html','wip35-v142-candidate.html','wip35-v141-candidate.html','wip35-v140-candidate.html','wip35-v139-candidate.html','wip35-v138-candidate.html','wip35-v137-candidate.html','index.html'];
   const chainOk=expected.every((x,i)=>chain[i]&&chain[i].includes(x));
 
   await f.evaluate(()=>{
