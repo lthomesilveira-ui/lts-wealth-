@@ -26,21 +26,31 @@
     `;d.head.appendChild(s)
   }
 
+  function isBridgeRenderer(fn){return typeof fn==='function'&&String(fn).includes('u142PlanningBridgeRenderer')}
   function stabilizePlanningOwner(w){
-    const renderer=w.__LTS_V142_PLANNING_RENDERER;
-    if(typeof renderer!=='function'||!String(renderer).includes('u142PlanningBridgeRenderer'))return false;
+    const live=w.__LTS_V142_PLANNING_RENDERER;
+    if(!w.__LTS_V142_FINAL_PLAN_RENDERER&&isBridgeRenderer(live))w.__LTS_V142_FINAL_PLAN_RENDERER=live;
+    const renderer=w.__LTS_V142_FINAL_PLAN_RENDERER;
+    if(!isBridgeRenderer(renderer))return false;
     try{
       if(!w.__LTS_V142_FINAL_PLAN_GETTER){
-        w.__LTS_V142_FINAL_PLAN_GETTER=function v142FinalPlanningOwner(){return w.__LTS_V142_PLANNING_RENDERER};
+        w.__LTS_V142_FINAL_PLAN_GETTER=function v142FinalPlanningOwner(){return w.__LTS_V142_FINAL_PLAN_RENDERER};
         w.__LTS_V142_FINAL_PLAN_SETTER=function v142FinalPlanningSetter(fn){
-          if(typeof fn==='function'&&String(fn).includes('u142PlanningBridgeRenderer'))w.__LTS_V142_PLANNING_RENDERER=fn;
+          if(isBridgeRenderer(fn)){
+            w.__LTS_V142_FINAL_PLAN_RENDERER=fn;
+            w.__LTS_V142_PLANNING_RENDERER=fn;
+          }
           return fn;
         };
       }
       const desc=Object.getOwnPropertyDescriptor(w,'planejamento');
       if(desc&&desc.configurable===false){
-        w.LTS_V142_FINAL_PLANNING_OWNER=String(w.planejamento).includes('u142PlanningBridgeRenderer')?'stable-nonconfigurable-v1':'blocked-nonconfigurable';
-        return w.LTS_V142_FINAL_PLANNING_OWNER==='stable-nonconfigurable-v1';
+        if(!isBridgeRenderer(w.planejamento)&&isBridgeRenderer(renderer)){
+          w.LTS_V142_FINAL_PLANNING_OWNER='blocked-nonconfigurable';
+          return false;
+        }
+        w.LTS_V142_FINAL_PLANNING_OWNER='stable-nonconfigurable-v1';
+        return true;
       }
       Object.defineProperty(w,'planejamento',{
         configurable:false,
@@ -48,12 +58,12 @@
         get:w.__LTS_V142_FINAL_PLAN_GETTER,
         set:w.__LTS_V142_FINAL_PLAN_SETTER
       });
-      w.LTS_V142_FINAL_PLANNING_OWNER='stable-nonconfigurable-v1';
-      return true;
+      w.LTS_V142_FINAL_PLANNING_OWNER=isBridgeRenderer(w.planejamento)?'stable-nonconfigurable-v1':'stabilize-error';
+      return w.LTS_V142_FINAL_PLANNING_OWNER==='stable-nonconfigurable-v1';
     }catch(e){
       try{w.planejamento=renderer}catch(_){}
-      w.LTS_V142_FINAL_PLANNING_OWNER=String(w.planejamento).includes('u142PlanningBridgeRenderer')?'stable-assignment-fallback':'stabilize-error';
-      return String(w.planejamento).includes('u142PlanningBridgeRenderer');
+      w.LTS_V142_FINAL_PLANNING_OWNER=isBridgeRenderer(w.planejamento)?'stable-assignment-fallback':'stabilize-error';
+      return isBridgeRenderer(w.planejamento);
     }
   }
 
@@ -116,5 +126,5 @@
   }
 
   outer?.addEventListener('load',()=>setTimeout(install,180));
-  setInterval(install,120);
+  setInterval(install,60);
 })();
