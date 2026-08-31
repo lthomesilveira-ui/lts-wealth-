@@ -55,7 +55,7 @@ async function run(browser, viewport, label){
     }
   });
   const navOk=state.clickResults.every(x=>x.ok)&&['Dashboard','Atualizações','Fluxo Diário','Despesas','Cartões','Patrimônio','Liquidez detalhada'].every(x=>state.navLabels.includes(x));
-  const feedbackOk=state.feedbackMarker==='classification-evidence-recurrence-focus-v1'&&state.feedbackCss&&state.feedbackBound;
+  const feedbackOk=state.feedbackMarker==='classification-evidence-recurrence-generic-decision-cockpit-v2'&&state.feedbackCss&&state.feedbackBound;
   const ownershipOk=state.ownershipMarker==='redirect-inherited-owners-v2'&&state.ownershipStatus&&Object.values(state.ownershipStatus).every(Boolean);
   const pass=chainOk&&state.marker==='dashboard-human-expense-drill-card-matrix-rsu-cipo-v1'&&feedbackOk&&ownershipOk&&state.top==='v143'&&state.css&&state.dashboard&&state.planning&&state.expenses&&state.cards&&state.wealth&&navOk&&state.scroll-state.width<=2&&errors.length===0;
   await page.close();return {label,viewport,pass,chain,chainOk,state,navOk,feedbackOk,ownershipOk,errors};
