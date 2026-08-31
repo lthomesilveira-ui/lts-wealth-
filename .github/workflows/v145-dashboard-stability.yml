@@ -3,6 +3,8 @@ on:
   push:
     branches: [main, v145-dashboard-stability]
     paths:
+      - 'homologacao-current.json'
+      - 'homologacao.html'
       - 'wip35-v145-candidate.html'
       - 'wip35-v145-dashboard-stability.js'
       - '.github/scripts/lts_v145_dashboard_stability_smoke.js'
