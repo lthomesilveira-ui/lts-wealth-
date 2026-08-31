@@ -97,13 +97,34 @@
     return w[name]===value;
   }
 
+  function stabilizeWealthOwner(){
+    const current=w.__v143Wealth;
+    if(typeof current!=='function')return false;
+    const ownerLocked=lockPointer('__lts_v142_wealth_fn',current);
+    if(!ownerLocked)return false;
+    try{w.patrimonio=current}catch(e){}
+    const st=w.__lts_v142_wealth_state||(w.__lts_v142_wealth_state={loading:false,loaded:false,data:null,error:null});
+    st.loading=false;
+    st.loaded=true;
+    st.retired_by_v146=true;
+    w.__LTS_V146_WEALTH_OWNER_STATUS={
+      v142_owner_redirected:w.__lts_v142_wealth_fn===current,
+      patrimonio_current:w.patrimonio===current,
+      legacy_loader_retired:st.retired_by_v146===true,
+      active_renderer:'v143Wealth'
+    };
+    return w.__lts_v142_wealth_fn===current&&w.patrimonio===current&&st.retired_by_v146===true;
+  }
+
   function install(){
-    if(!('V' in w)||typeof w.render!=='function'||typeof w.__v143Nav!=='function')return false;
+    if(!('V' in w)||typeof w.render!=='function'||typeof w.__v143Nav!=='function'||typeof w.__v143Wealth!=='function')return false;
     if(!stable)stable=buildStableNav();
     const pointerLocked=lockPointer('__v143Nav',stable);
     if(!pointerLocked)return false;
     w.__lts_v142_dashboard_nav=stable;
     try{w.renderNav=stable}catch(e){}
+    const wealthStable=stabilizeWealthOwner();
+    if(!wealthStable)return false;
     bindCapture();
     stable();
     const domLocked=lockNavDom();
@@ -117,11 +138,13 @@
       dom_locked:!!d.querySelector('.nav')?.__LTS_V146_NAV_DOM_LOCKED,
       blocked_writes:w.__LTS_V146_NAV_BLOCKED_WRITES||0,
       click_render_mode:'non-blocking-coalesced-next-frame',
+      wealth_owner_stable:wealthStable,
+      legacy_v142_wealth_loader_retired:w.__LTS_V146_WEALTH_OWNER_STATUS?.legacy_loader_retired===true,
       permanent_polling:false,
       nav_nodes:Array.from(d.querySelectorAll('.nav button[data-v143-dest]')).length
     };
     if(w.__LTS_V146_UPDATES_STATUS)w.__LTS_V146_UPDATES_STATUS.navigation_owner='v146-stable-nav';
-    return w.__v143Nav===stable&&w.renderNav===stable&&domLocked;
+    return w.__v143Nav===stable&&w.renderNav===stable&&domLocked&&wealthStable;
   }
 
   function boot(){
