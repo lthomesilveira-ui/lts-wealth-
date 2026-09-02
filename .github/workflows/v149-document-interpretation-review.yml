@@ -1,0 +1,87 @@
+name: LTS v149 Document interpretation review
+on:
+  push:
+    branches: [v149-document-interpretation-review, main]
+    paths:
+      - 'wip35-v149-candidate.html'
+      - 'wip35-v149-document-interpretation-review.js'
+      - '.github/scripts/lts_v149_document_interpretation_review_smoke.js'
+      - '.github/workflows/v149-document-interpretation-review.yml'
+      - 'wip35-v148-classification-lifecycle.js'
+      - 'wip35-v147-guided-document-association.js'
+      - '.github/scripts/lts_v148_classification_lifecycle_smoke.js'
+      - '.github/scripts/lts_v147_document_association_smoke.js'
+      - '.github/scripts/lts_v146_updates_navigation_smoke.js'
+      - '.github/scripts/lts_candidate_smoke.py'
+      - '.github/scripts/lts_button_contract_audit.js'
+      - 'homologacao-current.json'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  document-interpretation-review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate v149 architecture and guardrails
+        run: |
+          node --check wip35-v149-document-interpretation-review.js
+          node --check .github/scripts/lts_v149_document_interpretation_review_smoke.js
+          python - <<'PY'
+          from pathlib import Path
+          import subprocess
+          html=Path('wip35-v149-candidate.html').read_text()
+          js=Path('wip35-v149-document-interpretation-review.js').read_text()
+          required=['wip35-v147-candidate.html?v149-parent','wip35-v148-classification-lifecycle.js?v149-preserve-v148','document-interpretation-review-v1','WIP35-v149 · Homologação','CANDIDATA v149 · validação interna','financial_writer_changed:false','rpc_calls:0','filename_inference:false','manual_review_required:true','permanent_polling:false','Somente evidência · revisão manual']
+          missing=[x for x in required if x not in html+'\n'+js]
+          assert not missing, missing
+          assert 'setInterval(' not in html+'\n'+js
+          assert 'S.rpc(' not in js
+          protected=subprocess.check_output(['git','rev-parse','HEAD:index.html'],text=True).strip()
+          assert protected=='a130eafe5f7ee5b7f60a95b5ff988669d0c401d9'
+          print('v149_static=PASS')
+          PY
+      - name: Audit inherited button contracts
+        run: node .github/scripts/lts_button_contract_audit.js
+      - name: Install browser
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Re-run inherited parser/static gate
+        run: python .github/scripts/lts_candidate_smoke.py
+      - name: Re-run inherited v146 navigation gate
+        run: |
+          python3 -m http.server 8772 >/tmp/lts-v146-v149.log 2>&1 &
+          PID=$!; trap 'kill $PID || true' EXIT; sleep 1
+          node .github/scripts/lts_v146_updates_navigation_smoke.js
+      - name: Re-run inherited v147 document association gate
+        run: |
+          python3 -m http.server 8773 >/tmp/lts-v147-v149.log 2>&1 &
+          PID=$!; trap 'kill $PID || true' EXIT; sleep 1
+          node .github/scripts/lts_v147_document_association_smoke.js
+      - name: Re-run inherited v148 classification lifecycle gate
+        run: |
+          python3 -m http.server 8774 >/tmp/lts-v148-v149.log 2>&1 &
+          PID=$!; trap 'kill $PID || true' EXIT; sleep 1
+          node .github/scripts/lts_v148_classification_lifecycle_smoke.js
+      - name: Run v149 document interpretation review gate
+        run: |
+          python3 -m http.server 8775 >/tmp/lts-v149.log 2>&1 &
+          PID=$!; trap 'kill $PID || true' EXIT; sleep 1
+          node .github/scripts/lts_v149_document_interpretation_review_smoke.js
+      - name: Upload v149 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: wip35-v149-document-interpretation-review
+          path: |
+            v149-document-interpretation-review-smoke-result.json
+            v148-classification-lifecycle-smoke-result.json
+            v147-document-association-smoke-result.json
+            v146-updates-navigation-smoke-result.json
+            candidate-smoke-result.txt
+            button-contract-audit-result.json
+          if-no-files-found: warn
