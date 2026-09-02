@@ -98,3 +98,12 @@ Fingerprint `85a1b60816a5b84dfe3b41341ed27948`: v14 293/24, v15 67/5, v16 19/2, 
 3. Reconfirm protected public `index.html` exact blob and v146 manifest.
 4. Only then tell the user `Pode acessar agora` and ask for material validation of repeated navigation, Patrimônio after Cartões, stable Dashboard and classification-first Atualizações.
 5. Public root promotion remains separately blocked until explicit user authorization.
+
+
+## Continuity update — v147 green before integration — 02/09/2026
+- Branch `v147-guided-document-association`; green product SHA `8ae3eb92b1eb155ffdf029bbcb373fe1f3d3bace`.
+- Run `33647189124` SUCCESS; artifact `9853344026`, digest `sha256:0d04050fee20cbafba3eb8dee9870785f271ebbbfc3e47d00bb0ed36f4e45ca2`.
+- Guided document association passed desktop/mobile and all inherited gates, including v146 repeated navigation.
+- Fixed homologation remains v146 and public `index.html` remains protected.
+- Immediate execution: freeze docs, fast-forward main if strictly linear, exact integrated gates, then separate controlled v147 exposure.
+- Backlog remains open for authenticated E2E, classification save→refresh/self-heal, liquidity save→refresh/reversal, documentary recovery, CIPÓ, Volvo and Open Finance decisions.
