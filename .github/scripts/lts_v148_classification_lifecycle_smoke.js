@@ -11,7 +11,7 @@ async function run(browser,viewport,label){const page=await browser.newPage({vie
     window.__V148_MODE='success';
     window.__V148_CALLS={semantic:0,product:0};
     window.__V148_CLEAN=d.clean;
-    window.S={...window.S,rpc:async(name,args)=>{
+    const mockedRpc=async(name,args)=>{
       if(name==='lts_browser_semantic_feedback_v1'){
         window.__V148_CALLS.semantic++;
         return {data:{ok:true},error:null};
@@ -22,7 +22,8 @@ async function run(browser,viewport,label){const page=await browser.newPage({vie
         return {data:{mvp:window.__V148_CLEAN},error:null};
       }
       return {data:null,error:{message:'unexpected rpc '+name}};
-    }};
+    };
+    S.rpc=mockedRpc;
     window.D=d.full;
     window.V='Atualizações';
     document.getElementById('nav')?.classList.remove('hidden');
