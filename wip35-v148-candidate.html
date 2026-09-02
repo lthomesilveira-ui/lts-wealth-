@@ -2,10 +2,15 @@
 window.__LTS_TOP_CANDIDATE_VERSION='v148';
 (function(){
   const outer=document.getElementById('shell');
-  function deep(){try{let f=outer,d,w;for(let i=0;i<15;i++){if(!f)return null;d=f.contentDocument;w=f.contentWindow;if(!d||!w)return null;const app=d.getElementById('app');if(app&&app.contentDocument&&app.contentWindow)return {d:app.contentDocument,w:app.contentWindow};const next=d.getElementById('shell');if(!next)return {d,w};f=next}}catch(e){}return null}
-  function add(z){if(!z?.d)return false;if(z.d.getElementById('v148ClassificationLifecycleHost'))return true;const s=z.d.createElement('script');s.id='v148ClassificationLifecycleHost';s.src='wip35-v148-classification-lifecycle.js?v148-classification-lifecycle-v2';(z.d.head||z.d.documentElement).appendChild(s);return true}
-  function install(){return add(deep())}
-  outer.addEventListener('load',()=>[250,600,1100,1800,3000,4800].forEach(ms=>setTimeout(install,ms)));
-  [500,1000,1800,3000,5000].forEach(ms=>setTimeout(install,ms));
+  const VISIBLE='WIP35-v148 · Homologação',BADGE='CANDIDATA v148 · validação interna',FOOTER='Versão WIP35-v148';
+  const observed=new WeakSet(),wired=new WeakSet();let queued=false;
+  function chain(){const xs=[];try{let f=outer;for(let i=0;i<15&&f;i++){const d=f.contentDocument,w=f.contentWindow;if(!d||!w)break;xs.push({f,d,w});const app=d.getElementById('app'),shell=d.getElementById('shell');f=app?.contentDocument&&app?.contentWindow?app:shell}}catch(e){}return xs}
+  function later(){if(queued)return;queued=true;queueMicrotask(()=>{queued=false;own()})}
+  function watch(z){if(!observed.has(z.d)&&z.d.documentElement&&typeof MutationObserver==='function'){const mo=new MutationObserver(later);mo.observe(z.d.documentElement,{childList:true,subtree:true,characterData:true});observed.add(z.d)}for(const id of ['shell','app']){const f=z.d.getElementById(id);if(f&&!wired.has(f)){f.addEventListener('load',later);wired.add(f)}}}
+  function stamp(xs){let badges=0,legacy=false;for(const z of xs){watch(z);const b=z.d.getElementById('badge');if(b){badges++;if(b.textContent!==BADGE)b.textContent=BADGE}z.d.querySelectorAll('.brand small').forEach(x=>{if(x.textContent!==VISIBLE)x.textContent=VISIBLE});z.d.querySelectorAll('.footer').forEach(x=>{if(x.textContent!==FOOTER)x.textContent=FOOTER})}const deep=xs[xs.length-1],labels=xs.flatMap(z=>[z.d.getElementById('badge')?.textContent||'',...Array.from(z.d.querySelectorAll('.brand small,.footer'),x=>x.textContent||'')]);legacy=labels.some(x=>/v14[0-7]\b/i.test(x));const status={version:'classification-save-refresh-self-heal-visible-version-v3',label:'v148',brand:deep?.d.querySelector('.brand small')?.textContent||'',badges,legacy_v142_visible:legacy};window.__LTS_V148_VISIBLE_VERSION_STATUS=status;if(deep?.w)deep.w.__LTS_V148_VISIBLE_VERSION_STATUS=status;return deep}
+  function add(z){if(!z?.d)return false;if(z.d.getElementById('v148ClassificationLifecycleHost'))return true;const s=z.d.createElement('script');s.id='v148ClassificationLifecycleHost';s.src='wip35-v148-classification-lifecycle.js?v148-classification-lifecycle-v3';(z.d.head||z.d.documentElement).appendChild(s);return true}
+  function own(){const xs=chain();return add(stamp(xs))}
+  outer.addEventListener('load',later);
+  [100,250,500,900,1400,2200,3400,5000,7000,9500,12000].forEach(ms=>setTimeout(own,ms));
 })();
 </script></body></html>
