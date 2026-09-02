@@ -1,7 +1,7 @@
 name: LTS v148 Classification lifecycle
 on:
   push:
-    branches: [main, v148-classification-lifecycle]
+    branches: [main, v148-classification-lifecycle, v148-visible-version-correction]
     paths:
       - 'wip35-v148-candidate.html'
       - 'wip35-v148-classification-lifecycle.js'
