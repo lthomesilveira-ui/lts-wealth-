@@ -259,7 +259,7 @@ async function run(browser, viewport, label) {
   console.log(`[v146][${label}] viewport:start ${viewport.width}x${viewport.height}`);
   const page = await browser.newPage({ viewport });
   const errors = [];
-  page.on('pageerror', e => errors.push('pageerror:' + e.message));
+  page.on('pageerror', e => errors.push('pageerror:' + String(e?.stack || e?.message || e)));
   page.on('console', m => { if (m.type() === 'error') errors.push('console:' + m.text()); });
   try {
     await page.goto('http://127.0.0.1:8772/wip35-v146-candidate.html', { waitUntil: 'domcontentloaded', timeout: 30000 });
