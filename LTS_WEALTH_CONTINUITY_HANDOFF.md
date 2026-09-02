@@ -1,155 +1,161 @@
 # LTS Wealth — Continuity Handoff
 
-Last materially refreshed: 2026-08-31 (America/Sao_Paulo)
+Last materially refreshed: 2026-09-02 (America/Sao_Paulo)
 
-This file exists so project continuity never depends on chat context. Always re-fetch `main`, the active branch, `PROJECT_MASTER_BACKLOG.md`, `NEXT_HOMOLOGATION_GATE.md`, this file and the latest immutable checkpoint before writing.
+This file exists so project continuity never depends on chat context. Always re-fetch `main`, the active branch, `PROJECT_MASTER_BACKLOG.md`, `NEXT_HOMOLOGATION_GATE.md`, this file and the latest immutable checkpoint before every repository write.
 
 ## Conduct
 - Preserve every open financial/documentary/classification dependency; never compact it away.
 - Project updates use exactly `Concluído / Em execução / Próximos passos`.
 - No microbuilds; package coherent changes.
-- Never invent financial amounts, classifications, merchants, competence, valuation or reconciliation.
-- Ask user only when a real financial/classification/documentary decision is required.
+- Never invent financial amounts, classifications, merchants, competence, valuation, recurrence or reconciliation.
+- Ask the user only when a real financial/classification/documentary decision is required; otherwise advance autonomously.
 - Test before user homologation; do not delegate basic QA.
 - Never claim authenticated visual E2E unless actually executed.
 - Public `index.html` remains protected; no promotion without explicit user approval.
-- Re-fetch before every write and never force branch divergence.
+- Never force branch divergence. Integration is normal fast-forward/merge only after a fresh compare.
 
-## Release state
+## Fixed links and protected baseline
 - Public: `https://lthomesilveira-ui.github.io/lts-wealth-/`.
 - Fixed homologation: `https://lthomesilveira-ui.github.io/lts-wealth-/homologacao.html`.
-- Public fallback remains WIP35-v136, protected blob `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
-- v146 has been integrated into `main` at `a2bfb254144efccb3da52d8e8fdc15a5c4182235` after a zero-divergence fast-forward.
-- Integrated-main v146 run `33444432578` SUCCESS; Pages `33444431699` SUCCESS.
-- Controlled fixed-homologation exposure is switching manifest to version v146, path `wip35-v146-candidate.html`, candidate head `bef91e27927dc8b73f89239568dd0ae81cd68707`, promotion `not_promoted`.
-- v145 remains the immediately prior homologation rollback reference.
-- Authenticated visual E2E: not performed / not claimed.
+- Repo: `lthomesilveira-ui/lts-wealth-`.
+- Supabase project: `tadhkamnwtsbdozwkyut`.
+- Canonical user UUID: `c1b23404-210f-4095-b3c7-7b8664e64f4c`.
+- Public fallback remains WIP35-v136; protected `index.html` blob `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
+- Public promotion remains unauthorized/not done.
+- Authenticated visual E2E remains pending/not claimed.
 
-## v146 navigation/Patrimônio stability correction
-Symptom reproduced by the product gate: repeated physical navigation could hang when moving from `Cartões` to `Patrimônio`; Playwright reached the physical click action but it could fail to return.
+## Current fixed homologation — v148
+- Fixed homologation currently serves v148 / `wip35-v148-candidate.html` / `not_promoted`.
+- User/mobile previously saw v142 labels despite the v148 wrapper. This was reproduced publicly and was not diagnosed as cache.
+- Cause: inherited v142 60 ms version-label ownership loop plus MutationObserver survived beneath later candidates.
+- Corrected v148 product SHA `333bb3c4eb06c8e68d9de0c637da37c09db43989` owns badge/brand/footer across the same-origin frame chain and retires the inherited v142 brand owner.
+- Exact v148 exposure SHA `966db03a64fdfadb4d27656044f220624f8debaf`; exact exposure Pages, candidate-smoke and v144–v148 workflows all SUCCESS.
+- Live public unauthenticated verification remained visibly v148 beyond delayed inherited timers; no visible v142.
+- Immutable evidence: `backups/WIP35_V148_VISIBLE_VERSION_CORRECTION_EXPOSURE_CHECKPOINT_2026-09-02.md`.
+- Keep v148 fixed and untouched while the user tests today's resolved items and v149 integration is gated.
 
-Final proven cause/correction:
-- inherited v142 wealth loading/ownership survived beneath the newer candidate layers;
-- v146 redirects Patrimônio ownership to the v143 renderer and retires the legacy v142 wealth loader;
-- an already-running/stale v142 wealth-loader completion could still call `render()` after that retirement and re-enter the active Patrimônio path, sustaining an effective retry/render loop;
-- v146 suppresses that stale completion render once the legacy loader/owner is retired;
-- stable nav nodes are preserved and navigation state/render work is coalesced outside the synchronous click path;
-- no financial rule, amount, classification, backend writer or economic effect changed.
+## Retained v146/v147/v148 product facts
+### v146 navigation
+- Real repeated-navigation hang reproduced around `Cartões` → `Patrimônio`.
+- Cause was inherited v142 wealth-loader stale completion/retry rendering after retirement, not a financial rule.
+- v146 owns stable seven-node navigation, coalesces navigation work outside the physical click path, redirects wealth ownership to v143 and suppresses stale legacy completion rendering.
+- Repeated-navigation smoke: 10 cycles × 7 destinations × desktop/mobile = **140 physical Playwright clicks**.
 
-Evidence:
-- exact product SHA `bef91e27927dc8b73f89239568dd0ae81cd68707`;
-- branch workflow `33443494728` SUCCESS, artifact `9777202035`;
-- pre-integration/integrated SHA `a2bfb254144efccb3da52d8e8fdc15a5c4182235`;
-- integrated-main workflow `33444432578` SUCCESS;
-- integrated-main Pages `33444431699` SUCCESS;
-- architecture/static + button census PASS;
-- v142 parser/browser PASS;
-- v143 runtime/navigation PASS;
-- repeated navigation PASS: 10 cycles × 7 destinations × desktop/mobile = 140 physical clicks, including `Cartões` → `Patrimônio` every cycle.
-The evidence is synthetic/unauthenticated browser evidence, not authenticated visual E2E.
+### v147 guided document association
+- Bank statement: explicit account/institution + competence.
+- Card statement: explicit card + competence.
+- Financing: explicit commitment + exact as-of date.
+- Other financial document: manual review; no invented identity.
+- Filename does not infer identity, competence, date or amount.
+- Association stored under `task_context.document_association`; upload/registration itself creates no financial posting.
 
-## v145 Dashboard stability retained
-- final renderer copy remains `Sua vida financeira, em uma tela.` / `Tenho dinheiro hoje? O que exige ação? Para onde estou indo?`;
-- repeated v142 Dashboard polling remains locked after valid cockpit data;
-- explicit one-shot read-only refresh remains available;
-- no financial/backend rule change.
+### v148 classification lifecycle
+- Existing writer `lts_browser_semantic_feedback_v1` executes only on explicit user save; reader `lts_browser_product_v1` reloads product.
+- Synthetic desktop/mobile gate proves save→refresh→resolved disappearance, one writer call, read-only retry after refresh failure and `O que mudou`.
+- If writer succeeds and refresh fails, safe state is `Decisão salva · verificação pendente`; retry is read-only and must not repeat writer.
+- Real authenticated save→refresh remains pending/unclaimed.
 
-## v144 Atualizações retained
-- classification is first and compact, with suggestion + public/history evidence + confidence per item;
-- evidence hierarchy remains explicit user rule → exact/consistent LTS history → public merchant research → manual confirmation;
-- GULA GULA MORUMBI remains manual taxonomy review despite restaurant suggestion/evidence;
-- marketplaces/intermediators remain review when purpose is not proven.
+## Active branch — v149 document interpretation review
+- Branch: `v149-document-interpretation-review`.
+- Scope: read-only interpretation review for PDF/image output layered on v147 explicit association.
+- Marker: `document-interpretation-review-v1`.
+- Structured extracted fields are shown as evidence, separate from the user-provided association.
+- Raw OCR/text/content/pages/rows/lines are not promoted automatically to financial facts.
+- Missing required association remains visible/manual; filename never infers account/card/competence/date/amount.
+- No financial posting, reconciliation, category inference, balance effect or new financial writer.
+- Guardrails: `financial_writer_changed=false`, `rpc_calls=0`, `filename_inference=false`, `manual_review_required=true`, `permanent_polling=false`.
+- v149 inherits v147 directly, loads the v148 lifecycle into the deepest app and uses one combined mutation owner to preserve v148 Atualizações + v149 Entradas behavior without competing version observers.
+- First v149 gate caught a self-triggering version-label MutationObserver loop; fixed by idempotent version stamping before release evidence.
+- Exact green product/gate SHA `050ca36dd14d4ffdbaa27dbfdfc579ddbfe54331`.
+- Workflow `33692647025` SUCCESS; job `100454598090` SUCCESS.
+- Artifact `9870669700`; digest `sha256:e470c3d9c46feb622b42371606cb11d0712ba057c6a4668ce2419e1b533d26ff`.
+- Same run passed static architecture, button contracts, parser, v146 140-click regression, v147 association, v148 lifecycle and v149 desktop/mobile smoke.
+- Desktop/mobile evidence includes explicit CIPÓ association/structured fields and an unassociated image field, with manual-review warnings, stable v149 visible labels and zero relevant browser errors.
+- Immutable checkpoint: `backups/WIP35_V149_PREINTEGRATION_CHECKPOINT_2026-09-02.md`.
+- Documentation commits after the exact product run are docs-only; integration must still be followed by exact integrated-main gates.
+- v149 is NOT exposed in fixed homologation yet.
+- Real authenticated PDF/image interpret→review remains pending/unclaimed.
 
-## Financial evidence that must not change by assumption
-- Planning management point 08/01/2027; FGTS request-by 09/12/2026.
-- FGTS documentary 18/08/2026 R$17.509,05; existing accrual model R$3.700/month; request-date projection R$32.309,05.
-- Worst before contingency -R$21.046,80; worst after planned FGTS +R$11.262,25; no uncovered gap through 28/02/2027.
-- Correct interpretation: liquidity-management point covered by D+30 contingency if initiated on time; not proven patrimonial insufficiency.
+## Immediate execution sequence
+1. Freshly compare `main` vs `v149-document-interpretation-review`.
+2. Require no divergence: main must be ancestor / branch `behind_by=0`.
+3. Re-fetch the six mandatory resources immediately before integration.
+4. Fast-forward `main` to the v149 branch head with `force=false`; do not alter `homologacao-current.json` in the integration step.
+5. Run/verify v149 integrated-main workflow and Pages on the exact integrated SHA; protected `index.html` must remain exact.
+6. Keep fixed homologation v148 while the user is testing; v149 exposure is separate after integrated gates.
+7. If later exposed, use `promotion_status:not_promoted`, run exact exposure gates and verify served fixed URL before telling the user to test v149.
+8. Never promote public `index.html` without explicit user approval.
+
+## Canonical financial/product invariants — preserve
+### Dashboard / liquidity
+- Hero `Disponível realizável até D+3`.
+- FGTS separate restricted D+30, never cash today.
+- First liquidity management point 08/01/2027; FGTS request by 09/12/2026.
+- Documentary FGTS 18/08/2026 R$17.509,05; existing accrual R$3.700/month; projected request-date R$32.309,05.
+- Worst before contingency -R$21.046,80; worst after +R$11.262,25; no uncovered gap through 28/02/2027 under current model.
+- Future RSUs only when vested/settled.
+
+### Classification evidence hierarchy
+1. explicit user-confirmed rule;
+2. exact/consistent LTS history;
+3. public merchant research;
+4. manual review if ambiguity remains.
+- GULA GULA MORUMBI may suggest Restaurantes but remains manual taxonomy review.
+- Marketplaces/intermediaries remain manual where purchase purpose is unproven.
+
+### Daily Flow
+- Mandatory by bank + consolidated; historical evidence back to 2013 where supported.
+- Hierarchy `Saldo anterior | Entradas | Saídas | Saldo final`; balances visually differentiated.
+- Facts > projections; scenarios never facts; stale anchors cannot reanchor.
+- Cards do not feed their own forecast.
+- Bank↔liquidity asset transfer economic effect zero.
+- Engine `daily-flow-fix86-v13-bank-asset-liquidity-parity`.
+
+### Natural liquidity input
+- Parser supports `5 mil`, `R$5.000`, `5000`, `3k`, `R$1.250,50`.
+- Never guess account/asset.
+- Preview both legs/before-after/economic effect 0; explicit confirmation before write.
+- Authenticated save→refresh→visible remains open.
+- Cancellation/reversal must be append-only/auditable; do not invent semantics.
+
+### Expenses / cards
 - Despesas invariant R$8.623.752,53; cache 3.860/3.860 exact.
-- Historical card certified allocation 38 cycles / 650 rows / R$885.855,19; aggregate fallback 314 rows / R$2.650.846,36 remains aggregate-only; C6 Aug/2024 R$66,70 gap explicit.
-- RSU vested 459.483 units / R$32.772,30 / D+3; future awards excluded until vest/settle.
-- Historical RSU sale 283 units settled 05/08/2026; theoretical gross R$19.673,72; net R$19.095,04; R$578,68 difference unitemized.
-- Volvo financing Bradesco: 60 × R$2.886,43, 08/09/2026 through 08/08/2031; no duplicate economic effect.
-- Historical FGTS realization R$25.585,03 on 07/05/2026 and later employer FGTS R$17.509,05 are different temporal positions.
-- Bank↔liquidity-asset movements have economic effect zero and are excluded from spend/revenue.
+- Category/Group/Macrogroup/Cost Center/context primary; merchant secondary.
+- Certified cards 38 cycles / 650 lines / R$885.855,19; aggregate fallback 314 lines / R$2.650.846,36.
+- C6 Aug/2024 category R$4.087,42 vs detail R$4.020,72; explicit Taxi/Uber gap R$66,70.
+- Aggregate-only history never receives fabricated purchase detail.
+- Continue Mastercard/Visa recovery only from evidence, never pattern-backfill.
 
-## Backend evidence inherited unchanged
-Fingerprint `85a1b60816a5b84dfe3b41341ed27948`: v14 293/24, v15 67/5, v16 19/2, v17 32/4; staged total 411 checks / 35 suites PASS; supplemental v143 QA 16/16 PASS.
+### RSU / FGTS
+- RSU vested 459.483 units / R$32.772,30 / D+3; future awards excluded.
+- 283-unit sale settled 05/08/2026: theoretical gross R$19.673,72; net R$19.095,04; R$578,68 difference unexplained/unitemized.
+- Historical Excel FGTS R$25.585,03 and 07/05/2026 realization are a different temporal position from current R$17.509,05.
 
-## Open backlog that must survive every handoff
-- Mastercard: 2022 remaining months; 2023 12 ledger-only payments R$496.689,05 with independent category matrix absent; 2024 only Mar/May/Aug/Sep/Oct/Dec certified; 2025 Mar/Apr/May/Jun/Aug/Nov certified, Jan/Feb/Jul/Oct partial, Sep/Dec blocked.
-- Visa 2017 R$126.681,76 aggregate-only; Visa Infinite Itaú 2024 R$112.253,01 aggregate-only; Visa Infinite Itaú 2025 12/12 certified.
-- C6 Aug/2024 explicit R$66,70 detail gap; never fabricate purchase.
-- CIPÓ: consortium delta R$303,60; R$6.654,50 = R$6.502,70 + R$151,80 arithmetic overlap only with differing dates; condominium formula/cut unresolved; raw gap R$1.780.358; dedup gap R$1.312.268; duplicate excess through Jul/2026 R$3.531,70; no fabricated post-2029 TR.
-- Human classification where evidence is insufficient.
-- Guided document association UI and improved PDF/image interpretation with manual review.
-- Authenticated classification save→refresh/resolved-item disappearance/self-heal/`O que mudou`.
-- Liquidity cancellation/reversal append-only semantics and authenticated save→refresh→visible-result inspection.
-- Volvo exact trim/km before valuation refinement.
-- Open Finance provider/pricing/SLA/product×bank coverage; no consent/spend/credential without explicit user decision.
-- Performance only after correctness/exact parity.
+### CIPÓ / Volvo
+- CIPÓ open: R$303,60 consortium delta; R$6.654,50 = R$6.502,70 + R$151,80 arithmetic evidence only with different dates; condominium formula/cutoff source absent; raw gap R$1.780.358; dedup gap R$1.312.268; duplicate excess through Jul/2026 R$3.531,70.
+- Never fabricate post-2029 TR; market-minus-cost is not automatically taxable/net gain.
+- Volvo financing: 60 × R$2.886,43, first 08/09/2026, last 08/08/2031, exactly once economically; exact trim/km open before refined valuation.
+
+### Open Finance / backend QA
+- Provider-neutral private architecture QA 14/14; no real consent/token/provider.
+- Need written pricing/support/SLA/product×bank Itaú/Bradesco/C6 before any provider decision.
+- No consent/spend/credential/commercial commitment without explicit user decision.
+- Backend fingerprint `85a1b60816a5b84dfe3b41341ed27948`.
+- v14 293/293 in 24 suites; v15 67/67 in 5; v16 19/19 in 2; v17 32/32 in 4; staged total 411 checks / 35 suites PASS; supplemental v143 16/16 PASS. Never call this one monolithic gate.
+
+## Open backlog that must always remain visible
+- Material user homologation of current v148 fixed release.
 - Real authenticated visual E2E.
-- Material v146 user homologation after exposure gates.
-- Public `index.html` promotion only after explicit user approval.
-
-## Immediate next execution
-1. Commit controlled v146 fixed-homologation exposure with `promotion_status: not_promoted` and immutable exposure checkpoint.
-2. On the exact exposure SHA require v146 workflow, legacy candidate-smoke and Pages SUCCESS.
-3. Reconfirm protected public `index.html` exact blob and v146 manifest.
-4. Only then tell the user `Pode acessar agora` and ask for material validation of repeated navigation, Patrimônio after Cartões, stable Dashboard and classification-first Atualizações.
-5. Public root promotion remains separately blocked until explicit user authorization.
-
-
-## Continuity update — v147 green before integration — 02/09/2026
-- Branch `v147-guided-document-association`; green product SHA `8ae3eb92b1eb155ffdf029bbcb373fe1f3d3bace`.
-- Run `33647189124` SUCCESS; artifact `9853344026`, digest `sha256:0d04050fee20cbafba3eb8dee9870785f271ebbbfc3e47d00bb0ed36f4e45ca2`.
-- Guided document association passed desktop/mobile and all inherited gates, including v146 repeated navigation.
-- Fixed homologation remains v146 and public `index.html` remains protected.
-- Immediate execution: freeze docs, fast-forward main if strictly linear, exact integrated gates, then separate controlled v147 exposure.
-- Backlog remains open for authenticated E2E, classification save→refresh/self-heal, liquidity save→refresh/reversal, documentary recovery, CIPÓ, Volvo and Open Finance decisions.
-
-
-## Continuity update — v147 exposed for material homologation
-- Exact exposure SHA `a4d6f49eded94d921de1ba9401d6a5a93ba653d2`; all six exact-SHA workflows SUCCESS.
-- Fixed homologation manifest: v147 / `wip35-v147-candidate.html` / candidate `8ae3eb92…` / `not_promoted`.
-- Public `index.html` remains blob `a130eafe…`.
-- Checkpoint: `backups/WIP35_V147_HOMOLOGATION_EXPOSURE_CHECKPOINT_2026-09-02.md`.
-- Next: user material homologation; continue autonomous backlog packages that do not require financial/classification decisions.
-- Do not claim authenticated visual E2E; it remains open.
-
-
-## Continuity update — v148 classification lifecycle green — 02/09/2026
-- Active branch: `v148-classification-lifecycle`; fixed homologation remains v147 and public `index.html` remains protected.
-- Exact green product/gate SHA: `b902f84a71a4dc1aa35d955e07b5280775cb9ca5`.
-- Run `33659959930` SUCCESS; artifact `9858327121`; digest `sha256:e87e90f77f156b90d5a481e84861284db84f5170f782389816f6ab082e14db0d`.
-- v148 uses the existing semantic-feedback writer once, reloads the existing product reader, removes a confirmed resolved row and records session-scoped `O que mudou` evidence.
-- A successful write followed by failed read is held as `verificação pendente`; the manual retry invokes only the reader and never repeats the writer.
-- The panel injection was made state-idempotent after CI exposed a self-sustaining mutation loop; final desktop/mobile smoke passes with exact call counts and zero browser errors.
-- Inherited parser/button gates, v146 repeated navigation and v147 guided document association remain green on the final SHA.
-- No amount, category inference, financial rule, backend schema, reconciliation or public fallback changed.
-- Important limit: synthetic mocked-RPC browser evidence only; authenticated save→refresh and authenticated visual E2E remain pending/unclaimed.
-- Immediate execution: immutable pre-integration checkpoint; recompare against `main`; normal fast-forward only if behind=0/no divergence; exact integrated gates; then separate controlled v148 exposure.
-- Backlog still retained: PDF/image interpretation, natural-liquidity authenticated lifecycle and append-only reversal, Despesas refinement/evidence-only classification reduction, Mastercard/Visa recovery, CIPÓ blockers, Volvo trim/km, Open Finance pricing/SLA/product×bank and performance after correctness.
-
-
-## Continuity update — v148 exposed and ready for material homologation
-- Integrated-main SHA `0da167c66ec59f424e143d74ecd12ea6f4207364`; v148 workflow `33660549950` and Pages `33660548862` SUCCESS.
-- Exact exposure SHA `c6ff4ec0282fbdfaacdeb1ef60c5edd92fe6dc24`; v144 `33661135475`, v145 `33661135553`, v146 `33661135606`, v147 `33661135763`, v148 `33661135583`, candidate-smoke `33661135368` and Pages `33661134816` all SUCCESS.
-- Fixed manifest: v148 / `wip35-v148-candidate.html` / candidate `b902f84a…` / `not_promoted`.
-- Public browser verification loaded the fixed homologation title and resolved to the v148 candidate with the exact candidate SHA in the served URL; the nested login surface loaded.
-- Public `index.html` remains protected blob `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
-- Exposure checkpoint: `backups/WIP35_V148_HOMOLOGATION_EXPOSURE_CHECKPOINT_2026-09-02.md`.
-- User may now materially test v147 document association plus v148 classification save→refresh/self-heal/`O que mudou`, alongside preserved navigation and Dashboard regressions.
-- Do not claim authenticated E2E; no credentials were used in autonomous browser verification.
-- Continue remaining backlog autonomously after this gate; public promotion still requires explicit authorization.
-
-
-## Continuity update — v148 visible-version correction exposed
-- User reported that mobile still visibly showed v142 even though the fixed homologation served the v148 wrapper.
-- Public reproduction proved this was inherited runtime ownership, not a cache assumption: v142's label loop/observer overwrote newer visible labels.
-- Corrected product SHA `333bb3c4eb06c8e68d9de0c637da37c09db43989` owns version labels across all nested frames, retires the inherited observer and guards transient frame teardown; no financial behavior changed.
-- Branch gate `33687727964` and exact integrated-main gate `33688014674` SUCCESS; exact integrated Pages `33688013452` SUCCESS.
-- Exposure SHA `966db03a64fdfadb4d27656044f220624f8debaf`: Pages `33688619281`, candidate-smoke `33688621067`, v144 `33688620994`, v145 `33688621358`, v146 `33688621053`, v147 `33688621179`, v148 `33688621145` all SUCCESS.
-- Public live URL resolved with candidate SHA `333bb3c4…`; title/login brand/badge remained v148 after delayed verification and no visible v142 remained.
-- Public `index.html` remains protected blob `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`; promotion remains `not_promoted` and unauthorized.
-- Authenticated visual/save→refresh E2E remains pending/unclaimed. Continue the preserved backlog autonomously after material homologation feedback.
+- Public promotion only after explicit user approval.
+- v149 safe integration, integrated-main gates and later controlled exposure.
+- Real authenticated PDF/image interpretation→review.
+- Real authenticated classification save→refresh→resolved disappearance/self-heal/`O que mudou`.
+- Natural liquidity authenticated save→refresh→visible.
+- Append-only cancellation/reversal.
+- Expense refinement and evidence-only reduction of `A classificar`.
+- Mastercard/Visa historical documentary recovery.
+- All CIPÓ blockers listed above.
+- Volvo trim/km.
+- Open Finance pricing/SLA/product×bank.
+- Performance only after correctness/parity.
