@@ -66,3 +66,12 @@ Classification evidence remains conservative: GULA GULA MORUMBI may show `Restau
 3. Only after all exact-SHA gates are green tell the user `Pode acessar agora` with the fixed homologation URL.
 4. First material check: repeated navigation including `Cartões` → `Patrimônio`; Dashboard no flicker; Atualizações retains classification-first evidence/confidence/select/save surface.
 5. Public root promotion remains a separate explicit user authorization.
+
+
+## Current gate — v147 integration and controlled exposure — 02/09/2026
+1. v147 product/gate SHA `8ae3eb92…` is green in run `33647189124`; checkpoint `backups/WIP35_V147_PREINTEGRATION_CHECKPOINT_2026-09-02.md`.
+2. Confirm branch remains strictly ahead of main with no divergence, then fast-forward main without force.
+3. On the exact integrated SHA require v147 workflow SUCCESS, legacy candidate-smoke SUCCESS, Pages SUCCESS and protected `index.html` blob `a130eafe…`.
+4. In a separate commit expose manifest v147 / `wip35-v147-candidate.html` with `promotion_status: not_promoted`; rerun exact exposure gates.
+5. Only after the served fixed homologation is verified may the user be told `Pode acessar agora`.
+6. Public root promotion remains blocked pending explicit authorization.
