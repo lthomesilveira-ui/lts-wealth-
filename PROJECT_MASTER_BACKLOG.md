@@ -107,9 +107,9 @@ Canonical persistent project list. Detailed immutable evidence remains in `backu
 - [x] Generic recurrence compares history vs next 12 months; missing future is investigation, not automatic projection.
 - [x] Historical median is evidence only, never a future amount.
 - [x] Document backend QA 5/5; bank/card docs need identity+competence; financing needs commitment+as-of; filename similarity insufficient.
-- [~] Guided document-association UI remains open.
+- [x] Guided document-association UI implemented in v147 with explicit identity/competence/as-of guardrails and manual review.
 - [~] Improve PDF/image interpretation while preserving manual review.
-- [~] Authenticated resolved-item disappearance/save-refresh/self-heal/`O que mudou` path pending.
+- [~] v148 synthetic browser lifecycle proves save→refresh→resolved disappearance, read-only retry and `O que mudou`; real authenticated save→refresh remains pending/unclaimed.
 
 ## 5. Natural input / resgate / aplicação
 - [x] Parser supports `5 mil`, `R$5.000`, `5000`, `3k`, `R$1.250,50`.
@@ -208,3 +208,19 @@ Until one of these is the genuine blocker, continue autonomous technical/documen
 - [~] Material user homologation pending.
 - [ ] Real authenticated visual E2E remains pending/unclaimed.
 - [ ] Public promotion remains blocked pending explicit user approval.
+
+
+## P0 — v148 classification save/refresh lifecycle — 02/09/2026
+- [x] Additive candidate `wip35-v148-candidate.html` preserves v147/v146/v145/v144 layers and changes no financial rule, category inference, amount, backend schema or writer contract.
+- [x] Existing writer `lts_browser_semantic_feedback_v1` is called once per explicit user save; reader `lts_browser_product_v1` reloads the product afterward.
+- [x] Confirmed reload removes the resolved item from the visible queue and records a session-scoped `O que mudou` summary with before→after pending counts.
+- [x] If the writer succeeds but refresh fails, UI shows `Decisão salva · verificação pendente`; manual retry performs only the product read and never repeats the writer.
+- [x] Mutation-driven injection is idempotent; no permanent polling or self-sustaining render loop.
+- [x] Exact green product/gate SHA `b902f84a71a4dc1aa35d955e07b5280775cb9ca5`; workflow `33659959930` SUCCESS.
+- [x] Artifact `9858327121`; digest `sha256:e87e90f77f156b90d5a481e84861284db84f5170f782389816f6ab082e14db0d`.
+- [x] Desktop/mobile lifecycle smoke validates success, refresh failure, manual read retry, resolved disappearance, call counts and zero browser errors.
+- [x] Inherited architecture/button/parser, v146 repeated navigation and v147 document-association gates remain green.
+- [x] Public `index.html` remains protected blob `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`; fixed homologation remains v147 during v148 integration gates.
+- [~] Pre-integration freeze, normal fast-forward, exact integrated-main gates and separate controlled exposure remain pending.
+- [ ] Real authenticated save→refresh/visual E2E remains pending and must not be claimed.
+- [ ] Public promotion remains blocked until explicit user authorization.
