@@ -5,6 +5,7 @@ on:
     paths:
       - 'wip35-v147-candidate.html'
       - 'wip35-v147-guided-document-association.js'
+      - 'homologacao-current.json'
       - '.github/scripts/lts_v147_document_association_smoke.js'
       - '.github/scripts/lts_v146_updates_navigation_smoke.js'
       - '.github/scripts/lts_candidate_browser_smoke.js'
