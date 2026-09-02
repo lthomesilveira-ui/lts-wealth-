@@ -107,3 +107,12 @@ Fingerprint `85a1b60816a5b84dfe3b41341ed27948`: v14 293/24, v15 67/5, v16 19/2, 
 - Fixed homologation remains v146 and public `index.html` remains protected.
 - Immediate execution: freeze docs, fast-forward main if strictly linear, exact integrated gates, then separate controlled v147 exposure.
 - Backlog remains open for authenticated E2E, classification save→refresh/self-heal, liquidity save→refresh/reversal, documentary recovery, CIPÓ, Volvo and Open Finance decisions.
+
+
+## Continuity update — v147 exposed for material homologation
+- Exact exposure SHA `a4d6f49eded94d921de1ba9401d6a5a93ba653d2`; all six exact-SHA workflows SUCCESS.
+- Fixed homologation manifest: v147 / `wip35-v147-candidate.html` / candidate `8ae3eb92…` / `not_promoted`.
+- Public `index.html` remains blob `a130eafe…`.
+- Checkpoint: `backups/WIP35_V147_HOMOLOGATION_EXPOSURE_CHECKPOINT_2026-09-02.md`.
+- Next: user material homologation; continue autonomous backlog packages that do not require financial/classification decisions.
+- Do not claim authenticated visual E2E; it remains open.
