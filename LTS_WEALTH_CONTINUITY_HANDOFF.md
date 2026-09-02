@@ -130,3 +130,15 @@ Fingerprint `85a1b60816a5b84dfe3b41341ed27948`: v14 293/24, v15 67/5, v16 19/2, 
 - Important limit: synthetic mocked-RPC browser evidence only; authenticated save→refresh and authenticated visual E2E remain pending/unclaimed.
 - Immediate execution: immutable pre-integration checkpoint; recompare against `main`; normal fast-forward only if behind=0/no divergence; exact integrated gates; then separate controlled v148 exposure.
 - Backlog still retained: PDF/image interpretation, natural-liquidity authenticated lifecycle and append-only reversal, Despesas refinement/evidence-only classification reduction, Mastercard/Visa recovery, CIPÓ blockers, Volvo trim/km, Open Finance pricing/SLA/product×bank and performance after correctness.
+
+
+## Continuity update — v148 exposed and ready for material homologation
+- Integrated-main SHA `0da167c66ec59f424e143d74ecd12ea6f4207364`; v148 workflow `33660549950` and Pages `33660548862` SUCCESS.
+- Exact exposure SHA `c6ff4ec0282fbdfaacdeb1ef60c5edd92fe6dc24`; v144 `33661135475`, v145 `33661135553`, v146 `33661135606`, v147 `33661135763`, v148 `33661135583`, candidate-smoke `33661135368` and Pages `33661134816` all SUCCESS.
+- Fixed manifest: v148 / `wip35-v148-candidate.html` / candidate `b902f84a…` / `not_promoted`.
+- Public browser verification loaded the fixed homologation title and resolved to the v148 candidate with the exact candidate SHA in the served URL; the nested login surface loaded.
+- Public `index.html` remains protected blob `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
+- Exposure checkpoint: `backups/WIP35_V148_HOMOLOGATION_EXPOSURE_CHECKPOINT_2026-09-02.md`.
+- User may now materially test v147 document association plus v148 classification save→refresh/self-heal/`O que mudou`, alongside preserved navigation and Dashboard regressions.
+- Do not claim authenticated E2E; no credentials were used in autonomous browser verification.
+- Continue remaining backlog autonomously after this gate; public promotion still requires explicit authorization.
