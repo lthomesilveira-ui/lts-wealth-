@@ -99,3 +99,12 @@ Sequence to advance:
 5. Only after integrated gates are green prepare a separate controlled exposure commit for v148 / `wip35-v148-candidate.html` / candidate product SHA `b902f84a…` / `promotion_status: not_promoted`.
 6. Rerun exact exposure gates and verify the served manifest before inviting material user homologation.
 7. Real authenticated visual/save E2E remains pending/unclaimed; public root promotion remains blocked pending explicit authorization.
+
+
+## Current gate — material v148 homologation
+- Fixed homologation now serves v148; exact exposure SHA `c6ff4ec0282fbdfaacdeb1ef60c5edd92fe6dc24` passed all seven applicable workflows.
+- Public browser verification loaded the fixed URL, observed title `LTS Wealth · Homologação` and resolved to `wip35-v148-candidate.html` with candidate SHA `b902f84a…`.
+- Material check order: (1) repeated navigation including Cartões → Patrimônio; (2) Dashboard title/subtitle stability; (3) Atualizações classification-first evidence/confidence controls; (4) document association; (5) save a classification only when the real category decision is known, then verify row disappearance and `O que mudou`; (6) absence of large blank regions.
+- If the save succeeds but reload fails, expected safe state is `Decisão salva · verificação pendente`; `Atualizar verificação` must not duplicate the write.
+- Real authenticated visual/save E2E was not performed and remains pending/unclaimed.
+- Public `index.html` promotion remains blocked pending explicit authorization.
