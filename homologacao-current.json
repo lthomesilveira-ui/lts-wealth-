@@ -1,8 +1,11 @@
 {
   "schema": 1,
-  "version": "v146",
-  "path": "wip35-v146-candidate.html",
+  "version": "v147",
+  "path": "wip35-v147-candidate.html",
   "candidate_head": "bef91e27927dc8b73f89239568dd0ae81cd68707",
   "public_fallback": "index.html",
-  "promotion_status": "not_promoted"
+  "promotion_status": "not_promoted",
+  "candidate_sha": "8ae3eb92b1eb155ffdf029bbcb373fe1f3d3bace",
+  "exposed_from_main_sha": "aa3ba2e0d8912ba0090b1dd0b4477990ed56f4e3",
+  "updated_at": "2026-09-02T15:35:00Z"
 }
