@@ -1,0 +1,80 @@
+name: LTS v144 Updates smoke
+on:
+  push:
+    branches: [main, v144-updates-classification-layout]
+    paths:
+      - 'homologacao-current.json'
+      - 'homologacao.html'
+      - 'wip35-v144-candidate.html'
+      - 'wip35-v144-lexical-bridge.js'
+      - 'wip35-v144-updates-layout.js'
+      - '.github/scripts/lts_v144_updates_smoke.js'
+      - '.github/scripts/lts_v144_full_browser_smoke.js'
+      - '.github/scripts/lts_button_contract_audit.js'
+      - '.github/workflows/v144-updates-smoke.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  updates-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate v144 deep-runtime hosting and Updates layout
+        run: |
+          node --check wip35-v144-lexical-bridge.js
+          node --check wip35-v144-updates-layout.js
+          node --check .github/scripts/lts_v144_updates_smoke.js
+          node --check .github/scripts/lts_v144_full_browser_smoke.js
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          html=Path('wip35-v144-candidate.html').read_text(encoding='utf-8')
+          bridge=Path('wip35-v144-lexical-bridge.js').read_text(encoding='utf-8')
+          js=Path('wip35-v144-updates-layout.js').read_text(encoding='utf-8')
+          required_html=['wip35-v142-candidate.html?v144-parent','wip35-v143-life-real.js?v143-life-real-v1','wip35-v143-feedback-polish.js?v143-feedback-polish-v2','wip35-v143-ownership.js?v143-ownership-v1','deep-runtime-host-v1','v144LexicalBridgeHost','v144UpdatesLayoutHost','wip35-v144-lexical-bridge.js?v144-lexical-bridge-v1','wip35-v144-updates-layout.js?v144-updates-layout-v3',"__LTS_TOP_CANDIDATE_VERSION='v144'"]
+          required_bridge=['v144-lexical-state-bridge-v1',"Object.defineProperty(window,'D'","Object.defineProperty(window,'V'",'get(){return D}','set(v){D=v}','get(){return V}','set(v){V=v}']
+          required_js=['classification-action-center-v2','cardClassificationUpdates','expenseClassificationUpdates','querySelectorAll(\'iframe\')','Resolva o que precisa de você.','Sugestão + pesquisa + % de confiança, item por item','Histórico do LTS','Pesquisa pública','% sugestão','% identificação','Pesquisa / evidência','v144-duplicate-hidden','v144OtherActions']
+          missing=[x for x in required_html if x not in html]+[x for x in required_bridge if x not in bridge]+[x for x in required_js if x not in js]
+          assert not missing, 'v144 markers missing: '+repr(missing)
+          assert '<script src="./wip35-v144-lexical-bridge.js' not in html and '<script src="./wip35-v144-updates-layout.js' not in html, 'v144 extension scripts must be hosted in deepest runtime, not executed by outer wrapper'
+          forbidden=['insert into','delete from','update public.','.upsert(']
+          leaked=[x for x in forbidden if x.lower() in (bridge+'\n'+js).lower()]
+          assert not leaked, 'direct financial write leaked into browser layer: '+repr(leaked)
+          assignment=re.search(r'w\.atualizacoes\s*=(?!=)',js)
+          assert assignment is None and '__LTS_V144_UPDATES_RENDERER' not in js, 'v144 must not compete for renderer ownership'
+          print('v144_deep_runtime_host_static=PASS')
+          PY
+      - name: Audit inherited button wiring contracts
+        run: node .github/scripts/lts_button_contract_audit.js
+      - name: Install headless browser
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Run v144 Updates desktop/mobile smoke
+        run: |
+          python3 -m http.server 8767 >/tmp/lts-http-v144.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID || true' EXIT
+          sleep 1
+          node .github/scripts/lts_v144_updates_smoke.js
+      - name: Run v144 full ownership/navigation smoke
+        run: |
+          python3 -m http.server 8768 >/tmp/lts-http-v144-full.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID || true' EXIT
+          sleep 1
+          node .github/scripts/lts_v144_full_browser_smoke.js
+      - name: Upload v144 smoke evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: wip35-v144-updates-smoke
+          path: |
+            v144-updates-smoke-result.json
+            v144-full-browser-smoke-result.json
+            button-contract-audit-result.json
+          if-no-files-found: error

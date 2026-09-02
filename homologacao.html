@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>LTS Wealth · Homologação</title>
+<meta name="robots" content="noindex,nofollow">
+<style>html,body{margin:0;min-height:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:#f5f6f8;color:#102b50}main{min-height:100vh;display:grid;place-items:center;padding:24px;box-sizing:border-box}.box{max-width:520px;text-align:center;background:#fff;border:1px solid #e4e7eb;border-radius:16px;padding:24px;box-shadow:0 8px 30px rgba(16,43,80,.08)}h1{font-size:18px;margin:0 0 8px}p{font-size:14px;line-height:1.45;margin:0;color:#556270}button{margin-top:16px;border:0;border-radius:10px;background:#102b50;color:#fff;padding:10px 14px;font-weight:700}</style>
+</head>
+<body>
+<main><div class="box"><h1>LTS Wealth · Homologação</h1><p id="status">Abrindo a candidata validada mais recente…</p><button id="retry" hidden>Atualizar</button></div></main>
+<script>
+(async function(){
+  const status=document.getElementById('status'),retry=document.getElementById('retry');
+  retry.onclick=()=>location.reload();
+  try{
+    const nonce=Date.now();
+    const r=await fetch('./homologacao-current.json?ts='+nonce,{cache:'no-store'});
+    if(!r.ok)throw new Error('manifest '+r.status);
+    const m=await r.json();
+    const path=String(m.path||'');
+    if(!/^wip35-v\d+-candidate\.html$/.test(path))throw new Error('target inválido');
+    const stamp=encodeURIComponent(String(m.candidate_head||m.version||'current'));
+    location.replace('./'+path+'?homologacao='+stamp+'&ts='+nonce);
+  }catch(e){
+    status.textContent='Não foi possível carregar a candidata agora. Toque em Atualizar.';
+    retry.hidden=false;
+    console.error('LTS homologation bootstrap',e);
+  }
+})();
+</script>
+</body>
+</html>

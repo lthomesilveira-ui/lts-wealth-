@@ -1,0 +1,57 @@
+{
+  "project": "LTS Wealth",
+  "date": "2026-08-29",
+  "candidate": "wip35-v139-candidate.html",
+  "public_fallback": "wip35-v136 via index.html",
+  "batch": "analysis-cipo-merchant-batch6",
+  "expense_counterparty_drilldown": {
+    "backend_version": "expense-counterparty-drilldown-v3-structured-card-merchants-only",
+    "qa_version": "expense-counterparty-drilldown-qa-v3",
+    "qa": "4/4 PASS",
+    "browser_security": "authenticated only",
+    "guardrail": "card merchants only from card_detail_structured; recovered category-only and aggregate invoice fallback never become merchants",
+    "2023_to_today": {
+      "total_amount_brl": 5056055.53,
+      "card_merchant_rows": 289,
+      "card_merchant_amount_brl": 66200.29,
+      "card_merchant_coverage_pct": 2.6,
+      "card_category_only_amount_brl": 821898.39,
+      "card_recovered_category_amount_brl": 58727.98,
+      "card_aggregate_fallback_amount_brl": 1587369.56,
+      "cash_counterparty_coverage_pct": 100.0
+    },
+    "ui_status": "backend ready; hold for next material candidate package, no microbuild"
+  },
+  "classification": {
+    "effective_unclassified_card_lines_current_horizon": 26,
+    "card_review_pending_groups_total": 48,
+    "all_suggestion_groups": 9,
+    "safe_suggestion_groups": 0,
+    "decision": "do not auto-apply; current backend guardrails correctly require human review for remaining cases"
+  },
+  "cipo": {
+    "reconciliation_version": "cipo-reconciliation-v4-source-duplicate-evidence",
+    "exact_components": 12,
+    "consorcio_itau": {
+      "source_brl": 19508.10,
+      "ledger_brl": 19811.70,
+      "delta_brl": 303.60,
+      "raw_lines": [6502.70,6654.50,151.80,6502.70],
+      "finding": "R$ 303.60 equals 2 x R$ 151.80 and R$ 6654.50 equals R$ 6502.70 + R$ 151.80; overlap suspicion strengthened but no line can be suppressed without documentary evidence"
+    },
+    "condominio": {
+      "source_paid_brl": 115867.108,
+      "ledger_through_2026_07_brl": 126030.85,
+      "raw_delta_brl": 10163.742,
+      "exact_duplicate_evidence": [
+        {"date":"2023-05-15","amount_brl":1750.00,"occurrences":2},
+        {"date":"2023-06-15","amount_brl":1750.00,"occurrences":2},
+        {"date":"2023-07-10","amount_brl":31.70,"occurrences":2}
+      ],
+      "closest_raw_cut": {"date":"2026-04-06","cumulative_brl":114086.75,"delta_to_source_brl":1780.358},
+      "closest_exact_deduplicated_cut": {"date":"2026-05-05","cumulative_brl":114554.84,"delta_to_source_brl":1312.268},
+      "finding": "exact duplicates exist but do not fully explain the workbook Paid snapshot; remain unresolved, no automatic correction"
+    }
+  },
+  "manual_user_action_required_now": false
+}

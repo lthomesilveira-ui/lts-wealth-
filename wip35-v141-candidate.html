@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>LTS Wealth · WIP35-v141 candidate</title>
+<style>
+html,body{margin:0;width:100%;height:100%;background:#f5f6f8}#shell{border:0;width:100%;height:100%;display:block}#badge{position:fixed;right:10px;bottom:10px;z-index:999999;background:#102B50;color:#fff;border:1px solid rgba(255,255,255,.22);border-radius:999px;padding:6px 9px;font:700 10px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;box-shadow:0 4px 18px rgba(0,0,0,.14);pointer-events:none}
+</style>
+</head>
+<body>
+<iframe id="shell" src="./wip35-v140-candidate.html?v141-parent"></iframe>
+<div id="badge">CANDIDATA v141 · pacote de homologação</div>
+<script>
+(function(){
+  const shell=document.getElementById('shell'),badge=document.getElementById('badge');
+  let wired=null,renderOnce=false,backupLoading=false,documentOutcomeLoading=false;
+  function chain(){
+    try{
+      const d140=shell.contentDocument,f139=d140&&d140.getElementById('shell');
+      const d139=f139&&f139.contentDocument,f138=d139&&d139.getElementById('shell');
+      const d138=f138&&f138.contentDocument,f137=d138&&d138.getElementById('shell');
+      const d137=f137&&f137.contentDocument,app=d137&&d137.getElementById('app');
+      if(!app)return null;
+      return {w:app.contentWindow,d:app.contentDocument,docs:[d140,d139,d138,d137]};
+    }catch(e){return null}
+  }
+  function hideInnerBadges(docs){(docs||[]).forEach(d=>{try{['badge','candidateBadge'].forEach(id=>{const x=d&&d.getElementById(id);if(x)x.style.display='none'})}catch(e){}})}
+  function injectCipoCoverage(w,d){
+    if(!d||d.getElementById('u141CipoCoverage'))return;
+    const cov=w.D?.wealth?.cipo_396?.card_documentary_coverage,sum=cov?.summary;if(!sum)return;
+    const cards=[...d.querySelectorAll('.w130-asset')],target=cards.find(x=>/CIPÓ 396/i.test(x.innerText||''));if(!target)return;
+    const pct=w.num(sum.source_paid_total)>0?Math.round(100*w.num(sum.documented_floor_capped_total)/w.num(sum.source_paid_total)):0;
+    const box=d.createElement('div');box.id='u141CipoCoverage';box.className='u141-evidence';
+    box.innerHTML=`<div class="u141-evidence-head"><div><span class="w104-eye">Reconciliação histórica · cartões</span><h4>Cobertura documental já recuperada</h4></div><b>${pct}%</b></div><div class="u141-evidence-grid"><div><span>Agregados da planilha</span><strong>${w.brl(sum.source_paid_total)}</strong><small>${w.num(sum.pending_aggregate_rows)} rubricas ainda pendentes</small></div><div><span>Piso documental identificado</span><strong>${w.brl(sum.documented_floor_capped_total)}</strong><small>${w.num(sum.rows_with_any_documentary_coverage)}/${w.num(sum.pending_aggregate_rows)} rubricas têm alguma evidência</small></div><div><span>Rubricas cobertas por valor</span><strong>${w.num(sum.rows_with_100pct_any_card_floor)}</strong><small>continuam pendentes se o instrumento não fecha</small></div></div><div class="u141-note">Cobertura documental não significa conciliação concluída. “Mastercard” antigo permanece ambíguo entre instrumentos; nenhum agregado é promovido sem identidade e composição suficientes.</div>`;
+    target.appendChild(box);
+  }
+  function injectBackupStatus(w,d){
+    if(!d)return;
+    const cards=[...d.querySelectorAll('.card')],target=cards.find(x=>/Dados e Backup/i.test(x.innerText||''));if(!target)return;
+    let box=d.getElementById('u141BackupStatus');if(!box){box=d.createElement('div');box.id='u141BackupStatus';box.className='u141-backup';target.insertBefore(box,target.firstChild?.nextSibling||null)}
+    const s=w.__lts_v141_backup_status;
+    if(!s){box.innerHTML='<div class="u141-backup-line"><span>Backup automático</span><b>checando…</b></div>';return}
+    const bytes=w.num(s.last_snapshot_bytes),mb=bytes?`${(bytes/1048576).toFixed(2).replace('.',',')} MB`:'—';
+    box.innerHTML=`<div class="u141-backup-line"><span>Backup automático diário</span><b class="${s.automatic?'pos':'neg'}">${s.automatic?'ativo':'inativo'}</b></div><div class="u141-backup-meta"><span>Último snapshot: ${s.last_snapshot_date?w.fmt(s.last_snapshot_date):'—'}</span><span>${w.esc(s.schedule_local||'')}</span><span>${mb}</span></div><div class="u141-note">O snapshot completo fica privado no backend. Esta tela recebe somente data, horário e tamanho; o restore seguro continua separado.</div>`;
+  }
+  async function ensureBackupStatus(w,d){
+    injectBackupStatus(w,d);if(w.__lts_v141_backup_status||backupLoading||!w.S||typeof w.S.rpc!=='function')return;
+    backupLoading=true;try{const {data:j,error}=await w.S.rpc('lts_browser_backup_status_v1');if(!error&&j)w.__lts_v141_backup_status=j}catch(e){}finally{backupLoading=false;injectBackupStatus(w,d)}
+  }
+  function injectDocumentOutcomes(w,d){
+    if(!d)return;
+    let box=d.getElementById('u141DocumentOutcomes');
+    if(!box){
+      const anchor=d.querySelector('.u139-changes')||d.querySelector('.u137-flow')||d.querySelector('.u113-actions');
+      if(!anchor)return;
+      box=d.createElement('div');box.id='u141DocumentOutcomes';box.className='u141-docout';
+      anchor.insertAdjacentElement(anchor.classList.contains('u113-actions')?'beforebegin':'afterend',box);
+    }
+    const j=w.__lts_v141_document_outcomes;
+    if(!j){box.innerHTML='<div class="u141-docout-head"><div><span class="w104-eye">Documentos</span><h4>Resultado das atualizações</h4></div><b>checando…</b></div>';return}
+    const s=j.summary||{},items=(j.items||[]).slice(0,5);
+    const counters=[['Alterou',s.changed||0,'changed'],['Sem alteração',s.unchanged||0,'unchanged'],['Precisa decisão',s.decision_required||0,'decision'],['Processando',s.processing||0,'processing'],['Erro',s.error||0,'error']];
+    const chips=counters.map(([label,n,state])=>`<span class="u141-docchip ${state}"><b>${w.num(n)}</b>${w.esc(label)}</span>`).join('');
+    const rows=items.map(x=>`<div class="u141-docrow"><div><b>${w.esc(x.original_name||x.input_type||'Documento')}</b><small>${w.esc(x.phase_label||x.technical_status||'')}</small></div><strong class="${w.esc(x.outcome_state||'')}">${w.esc(x.outcome_label||'')}</strong></div>`).join('');
+    box.innerHTML=`<div class="u141-docout-head"><div><span class="w104-eye">Documentos</span><h4>Resultado das atualizações</h4></div><b>${w.num(s.total||0)} item(ns)</b></div><div class="u141-docchips">${chips}</div>${rows?`<div class="u141-docrows">${rows}</div>`:''}<div class="u141-note">Os estados são derivados do lifecycle e do efeito efetivamente aplicado. “Sem alteração” não cria lançamento; “Precisa decisão” permanece pendente até revisão explícita.</div>`;
+  }
+  async function ensureDocumentOutcomes(w,d){
+    injectDocumentOutcomes(w,d);if(w.__lts_v141_document_outcomes||documentOutcomeLoading||!w.S||typeof w.S.rpc!=='function')return;
+    documentOutcomeLoading=true;try{const {data:j,error}=await w.S.rpc('lts_browser_document_outcome_state_v1',{p_limit:20});if(!error&&j)w.__lts_v141_document_outcomes=j}catch(e){}finally{documentOutcomeLoading=false;injectDocumentOutcomes(w,d)}
+  }
+  function install(){
+    const z=chain();if(!z||!z.w)return;
+    const w=z.w,d=z.d;hideInnerBadges(z.docs);
+    if(w.__LTS_LEXICAL_BRIDGE!=='v140')return;
+    w.__LTS_TOP_CANDIDATE_VERSION='v141';
+    try{const label=d.querySelector('.brand small');if(label)label.textContent='WIP35-v141 · candidata para homologação'}catch(e){}
+    badge.textContent='CANDIDATA v141 · pronta para homologação';
+    if(wired!==w){
+      wired=w;renderOnce=false;backupLoading=false;documentOutcomeLoading=false;
+      if(d&&!d.getElementById('wip35-v141-ui-css')){
+        const st=d.createElement('style');st.id='wip35-v141-ui-css';st.textContent=`
+          .u139-future{display:none!important}.u141-mainthead{display:flex;justify-content:space-between;gap:12px;align-items:flex-end;margin:16px 0 8px}.u141-mainthead h2{font-size:19px;margin:4px 0}.u141-mainthead p{font-size:9px;color:var(--mut);margin:0}.u141-count{min-width:34px;height:34px;border-radius:999px;background:#fff5df;color:#765b2b;display:grid;place-items:center;font-size:11px;font-weight:900}.u141-collapsed{margin-top:8px;border:1px solid var(--bd);border-radius:13px;background:#f8fafc;padding:9px 11px}.u141-collapsed summary{cursor:pointer;font-size:9px;font-weight:850;color:#617083}.u141-mini{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;padding:7px 0;border-top:1px solid #e7ebef}.u141-mini:first-child{border-top:0}.u141-mini b{font-size:9px}.u141-mini span{font-size:8px;color:var(--mut);text-align:right}.u141-note{font-size:8px;color:var(--mut);line-height:1.45;margin-top:7px}.u141-evidence{margin-top:12px;border-top:1px solid var(--bd);padding-top:12px}.u141-evidence-head{display:flex;align-items:end;justify-content:space-between;gap:10px}.u141-evidence-head h4{margin:3px 0 0;font-size:13px}.u141-evidence-head>b{font-size:22px;color:#8b6732}.u141-evidence-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:9px}.u141-evidence-grid>div{background:#f8fafc;border:1px solid #e6ebf0;border-radius:10px;padding:9px}.u141-evidence-grid span,.u141-evidence-grid small{display:block;font-size:8px;color:var(--mut)}.u141-evidence-grid strong{display:block;font-size:12px;margin:4px 0}.u141-backup{border:1px solid #dbe7df;background:#f4faf7;border-radius:11px;padding:10px 11px;margin:8px 0 12px}.u141-backup-line{display:flex;justify-content:space-between;gap:8px;font-size:10px}.u141-backup-meta{display:flex;gap:9px;flex-wrap:wrap;margin-top:5px}.u141-backup-meta span{font-size:8px;color:var(--mut)}.u141-docout{margin:10px 0;border:1px solid #dbe4ee;background:#f8fbfd;border-radius:13px;padding:10px 11px}.u141-docout-head{display:flex;justify-content:space-between;align-items:flex-end;gap:10px}.u141-docout-head h4{margin:3px 0 0;font-size:12px}.u141-docout-head>b{font-size:9px;color:var(--mut)}.u141-docchips{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}.u141-docchip{display:flex;align-items:center;gap:4px;border:1px solid #e0e5ea;background:white;border-radius:999px;padding:4px 7px;font-size:7px;color:var(--mut)}.u141-docchip b{font-size:9px;color:#263544}.u141-docchip.changed{border-color:#cde1d5;background:#f5faf7}.u141-docchip.decision{border-color:#ead9b7;background:#fffaf0}.u141-docchip.error{border-color:#edcece;background:#fff7f7}.u141-docrows{margin-top:8px}.u141-docrow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;padding:7px 0;border-top:1px solid #e7edf2}.u141-docrow b{font-size:9px}.u141-docrow small{display:block;font-size:7px;color:var(--mut);margin-top:2px}.u141-docrow strong{font-size:8px;white-space:nowrap}.u141-docrow strong.changed{color:#39704f}.u141-docrow strong.decision_required{color:#89661f}.u141-docrow strong.error{color:#9b4444}
+          #goToday{display:none!important}
+          .fx87-row .fx87-balance{background:#f2f4f6!important}
+          @media(max-width:820px){.u141-mainthead{align-items:flex-start}.u141-mini{grid-template-columns:1fr}.u141-mini span{text-align:left}.u141-evidence-grid{grid-template-columns:1fr}.u141-evidence-head{align-items:flex-start}.u141-docout-head{align-items:flex-start}.u141-docrow{grid-template-columns:1fr}.fx87-row .fx87-balance{background:#f2f4f6!important;border:1px solid #e5e9ee;border-radius:10px;padding:8px 9px!important}.fx87-row .fx87-balance b{font-weight:850}}
+        `;d.head.appendChild(st);
+      }
+      w.u141FarFuture=function(x){const id=String(x?.id||''),m=id.match(/^coverage_(?:salary|ipva)_(\d{4})$/);if(!m)return false;const year=Number(m[1]),nowYear=Number((typeof w.today==='function'?w.today():new Date().toISOString().slice(0,10)).slice(0,4));return Number.isFinite(year)&&year>nowYear+1};
+      w.u132Maintenance=function(){
+        const all=w.D?.updates?.maintenance_checks||[];if(!all.length)return '';
+        const actionable=all.filter(x=>x.actionable),near=actionable.filter(x=>!w.u141FarFuture(x)),future=actionable.filter(w.u141FarFuture),healthy=all.filter(x=>!x.actionable);
+        const data=near.filter(x=>x.group==='Dados a atualizar'),coverage=near.filter(x=>x.group==='Cobertura futura');
+        const groups=typeof w.u132MaintGroup==='function'?w.u132MaintGroup('Dados a atualizar',data)+w.u132MaintGroup('Cobertura próxima',coverage):'';
+        const futureRows=future.map(x=>`<div class="u141-mini"><b>${w.esc(x.label||x.id||'Cobertura futura')}</b><span>${w.esc(x.status||'revisar')}</span></div>`).join('');
+        const healthyRows=healthy.map(x=>`<div class="u141-mini"><b>${w.esc(x.label||x.id||'Check')}</b><span>${w.esc(x.status||'ok')}</span></div>`).join('');
+        return `<div class="u141-mainthead"><div><span class="w104-eye">Integridade do LTS</span><h2>O que realmente precisa de atualização</h2><p>Primeiro o que exige ação agora. Cobertura distante e checks OK ficam recolhidos, sem desaparecer da auditoria.</p></div><span class="u141-count">${near.length}</span></div><div class="u132-maint">${groups||'<div class="empty">Nenhuma manutenção próxima exige ação.</div>'}</div>${future.length?`<details class="u141-collapsed"><summary>Cobertura futura distante · ${future.length} item(ns)</summary>${futureRows}<div class="u141-note">Nenhum valor é criado automaticamente. Esses itens permanecem apenas como lembrete de cobertura.</div></details>`:''}${healthy.length?`<details class="u141-collapsed"><summary>Checks já cobertos / acompanhados · ${healthy.length}</summary>${healthyRows}</details>`:''}`;
+      };
+      w.LTS_CANDIDATE_UI='wip35-v141-updates-cipo-backup-shared-flow-document-outcomes';
+      w.LTS_V141_FLOW_UX='balance-emphasis-no-duplicate-today';
+      w.LTS_V141_DOCUMENT_OUTCOMES='evidence-derived-v1';
+    }
+    let ready=false;try{ready=!!w.D}catch(e){}
+    if(!ready)return;
+    try{d.querySelectorAll('.footer').forEach(x=>x.textContent='Candidata WIP35-v141 · fallback público v136 preservado')}catch(e){}
+    if(!renderOnce&&w.V==='Atualizações'&&typeof w.render==='function'){renderOnce=true;try{w.render()}catch(e){console.error('v141 updates render failed',e)}}
+    if(w.V==='Atualizações'){
+      try{
+        const all=w.D?.updates?.maintenance_checks||[],near=all.filter(x=>x.actionable&&!w.u141FarFuture(x)),future=all.filter(x=>x.actionable&&w.u141FarFuture(x));
+        const classes=w.num(w.D?.card_classification_review?.pending_groups)+w.num(w.D?.semantic_review?.pending_groups),box=d.querySelector('.u130-counter');
+        if(box){const s=box.querySelector('span'),b=box.querySelector('b'),small=box.querySelector('small');if(s)s.textContent='Ações operacionais próximas';if(b)b.textContent=String(near.length);if(small)small.textContent=`${classes} classificação(ões) abaixo · ${future.length} cobertura(s) futura(s) recolhida(s)`}
+      }catch(e){}
+      ensureDocumentOutcomes(w,d);
+    }
+    if(w.V==='Patrimônio')try{injectCipoCoverage(w,d)}catch(e){}
+    if(w.V==='Configurações')ensureBackupStatus(w,d);
+  }
+  shell.addEventListener('load',()=>setTimeout(install,40));
+  setInterval(install,120);
+})();
+</script>
+</body>
+</html>

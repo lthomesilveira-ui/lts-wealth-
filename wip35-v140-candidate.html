@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>LTS Wealth · WIP35-v140 candidate</title>
+<style>
+html,body{margin:0;width:100%;height:100%;background:#f5f6f8}#shell{border:0;width:100%;height:100%;display:block}#badge{position:fixed;right:10px;bottom:10px;z-index:999999;background:#102B50;color:#fff;border:1px solid rgba(255,255,255,.22);border-radius:999px;padding:6px 9px;font:700 10px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;box-shadow:0 4px 18px rgba(0,0,0,.14);pointer-events:none}
+</style>
+</head>
+<body>
+<iframe id="shell" src="./wip35-v139-candidate.html?v140-parent"></iframe>
+<div id="badge">CANDIDATA v140 · correção de boot autenticado</div>
+<script>
+(function(){
+  const shell=document.getElementById('shell');
+  let bridgedWindow=null;
+  function deepest(){
+    try{
+      const d139=shell.contentDocument,f138=d139&&d139.getElementById('shell');
+      const d138=f138&&f138.contentDocument,f137=d138&&d138.getElementById('shell');
+      const d137=f137&&f137.contentDocument,app=d137&&d137.getElementById('app');
+      if(!app)return null;
+      return {w:app.contentWindow,d:app.contentDocument,app};
+    }catch(e){return null}
+  }
+  function exposeLexical(w,name,mutable){
+    const current=Object.getOwnPropertyDescriptor(w,name);
+    if(current&&!current.configurable)return false;
+    Object.defineProperty(w,name,{configurable:true,enumerable:false,get(){try{return w.eval(name)}catch(e){return undefined}},set(v){if(!mutable)return;w.__lts_v140_set=v;try{w.eval(name+'=window.__lts_v140_set')}catch(e){}try{delete w.__lts_v140_set}catch(e){}}});
+    return true;
+  }
+  function install(){
+    const z=deepest();if(!z||!z.w)return;
+    const w=z.w,d=z.d;
+    if(bridgedWindow!==w||w.__LTS_LEXICAL_BRIDGE!=='v140'){
+      ['S','D','brl','fmt','esc','num','today'].forEach(n=>exposeLexical(w,n,false));
+      exposeLexical(w,'V',true);
+      w.__LTS_LEXICAL_BRIDGE='v140';
+      bridgedWindow=w;
+    }
+    try{
+      if(w.S&&typeof w.S.rpc==='function'&&!w.S.__lts_v140_flow_v4_bridge){
+        const originalRpc=w.S.rpc.bind(w.S);
+        w.S.rpc=function(name,args){const n=String(name||'');if((n==='lts_browser_flow_v1'||n==='lts_browser_flow_v2'||n==='lts_browser_flow_v3')&&args&&args.p_from&&args.p_to)return originalRpc('lts_browser_flow_v4',args);return originalRpc(name,args)};
+        w.S.__lts_v140_flow_v4_bridge=true;
+      }
+    }catch(e){}
+    let ready=false;try{ready=!!w.D}catch(e){}
+    if(ready){
+      try{const label=d&&d.querySelector('.brand small');if(label&&w.__LTS_TOP_CANDIDATE_VERSION!=='v141')label.textContent='WIP35-v140 · candidata para homologação'}catch(e){}
+      try{w.LTS_CANDIDATE='wip35-v140-lexical-bridge-auth-boot'}catch(e){}
+      try{const app=d&&d.getElementById('app'),txt=String(app&&app.innerText||'');if(/Carregando seu LTS/i.test(txt)){if(typeof w.renderNav==='function')w.renderNav();if(typeof w.render==='function')w.render()}}catch(e){console.error('v140 recovery render failed',e)}
+    }
+  }
+  function wire(){try{const d139=shell.contentDocument,f138=d139&&d139.getElementById('shell');if(f138){f138.addEventListener('load',()=>setTimeout(install,40));const d138=f138.contentDocument,f137=d138&&d138.getElementById('shell');if(f137){f137.addEventListener('load',()=>setTimeout(install,40));const d137=f137.contentDocument,app=d137&&d137.getElementById('app');if(app)app.addEventListener('load',()=>setTimeout(install,20));}}}catch(e){}setTimeout(install,40)}
+  shell.addEventListener('load',()=>setTimeout(wire,20));
+  setInterval(install,120);
+})();
+</script>
+</body>
+</html>

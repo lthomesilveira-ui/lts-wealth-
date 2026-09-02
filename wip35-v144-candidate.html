@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>LTS Wealth · WIP35-v144 candidate</title>
+<style>
+html,body{margin:0;width:100%;height:100%;background:#f5f6f8}#shell{border:0;width:100%;height:100%;display:block}#badge{position:fixed;right:10px;bottom:10px;z-index:999999;background:#102B50;color:#fff;border:1px solid rgba(255,255,255,.22);border-radius:999px;padding:6px 9px;font:700 10px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;box-shadow:0 4px 18px rgba(0,0,0,.14);pointer-events:none}
+</style>
+</head>
+<body>
+<iframe id="shell" src="./wip35-v142-candidate.html?v144-parent"></iframe>
+<div id="badge">CANDIDATA v144 · v143 permanece homologação</div>
+<!-- v144 reuses the proven v143 runtime. Its own bridge/layout are hosted inside the deepest base app realm so they share the real lexical D/V state. -->
+<script src="./wip35-v143-life-real.js?v143-life-real-v1"></script>
+<script src="./wip35-v143-feedback-polish.js?v143-feedback-polish-v2"></script>
+<script src="./wip35-v143-ownership.js?v143-ownership-v1"></script>
+<script>
+(function(){
+  const HOST='deep-runtime-host-v1';
+  function deepest(){
+    try{
+      let d=document,w=window;
+      for(let i=0;i<12;i++){
+        const frames=Array.from(d.querySelectorAll('iframe'));
+        if(!frames.length)break;
+        const next=frames.find(x=>x.id==='shell'||x.id==='app')||frames[0];
+        if(!next||!next.contentDocument||!next.contentWindow)return null;
+        d=next.contentDocument;w=next.contentWindow;
+      }
+      if(d&&w&&typeof w.render==='function'&&typeof w.atualizacoes==='function')return {d,w};
+    }catch(e){}
+    return null;
+  }
+  function addScript(d,id,src,onload){
+    const old=d.getElementById(id);
+    if(old){onload?.();return old}
+    const s=d.createElement('script');s.id=id;s.src=src;s.async=false;
+    if(onload)s.addEventListener('load',onload,{once:true});
+    (d.head||d.documentElement).appendChild(s);return s;
+  }
+  function install(){
+    const z=deepest();if(!z)return;
+    z.w.LTS_V144_DEEP_RUNTIME_HOST=HOST;
+    addScript(z.d,'v144LexicalBridgeHost','./wip35-v144-lexical-bridge.js?v144-lexical-bridge-v1',()=>{
+      addScript(z.d,'v144UpdatesLayoutHost','./wip35-v144-updates-layout.js?v144-updates-layout-v3');
+    });
+    if(z.w.LTS_V144_LEXICAL_BRIDGE==='v144-lexical-state-bridge-v1')addScript(z.d,'v144UpdatesLayoutHost','./wip35-v144-updates-layout.js?v144-updates-layout-v3');
+  }
+  document.getElementById('shell')?.addEventListener('load',()=>{setTimeout(install,250);setTimeout(install,800);setTimeout(install,1500)});
+  setInterval(install,120);setTimeout(install,500);
+})();
+window.__LTS_TOP_CANDIDATE_VERSION='v144';
+</script>
+</body>
+</html>

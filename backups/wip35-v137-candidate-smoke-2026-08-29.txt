@@ -1,0 +1,44 @@
+LTS Wealth WIP35-v137 candidate smoke
+Date: 2026-08-29
+Candidate file: wip35-v137-candidate.html
+Baseline/fallback: index.html / WIP35-v136 (unchanged)
+Candidate commit: 31d604e8b8a89a665b38c3313c532ef05177de7a
+
+STATIC CANDIDATE CHECKS
+candidate_stamp=ok
+baseline_iframe=ok
+no_direct_supabase_rpc=ok
+no_fetch=ok
+no_financial_write_words=ok
+expense_category_focus=ok
+expense_uses_certified_month_rpc=ok
+expense_no_merchant_invention=ok
+updates_lifecycle=ok
+updates_no_status_invention=ok
+mobile_css=ok
+baseline_preserved_badge=ok
+static_passed=12/12
+node_parse=ok
+
+FINANCIAL / DATA GATES AFTER CANDIDATE CREATION
+expense_v9=19/19 PASS
+certified_cycles=34/34 close
+historical_expense_total=8623752.53 invariant
+expense_v10=18/18 PASS
+core_financial_regression=15/15 PASS
+projection_bridge=PASS via core suite; max_abs_residue=0.0192666667 < 0.03 tolerance
+operational_cache_health=PASS via core suite
+
+SCOPE / GUARDRAILS
+- Candidate is an isolated same-origin wrapper around the WIP35-v136 baseline; the public main index was not replaced.
+- Candidate adds no direct Supabase RPC and no financial write path.
+- Expense ranking/trend click opens a category focus lens from existing category_trends_12m data; month click delegates to the existing certified ex135OpenMonth / lts_browser_expense_month_detail_v2 path.
+- If no documented monthly series exists, the candidate explicitly refuses to fabricate detail.
+- Updates adds the requested lifecycle vocabulary as possible workflow stages, but explicitly does not infer a completed state from absence in the active queue.
+- Real authenticated visual E2E has NOT been performed and remains unclaimed.
+
+STATUS
+candidate_static=green
+financial_gates=green
+public_baseline=wip35-v136 preserved
+next=authenticated visual/user homologation candidate after final repository continuity update

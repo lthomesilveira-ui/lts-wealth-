@@ -1,0 +1,44 @@
+{
+  "checkpoint": "wip35-v141-heavy-homologation-gate-batch13-2026-08-29",
+  "candidate": "wip35-v141-candidate.html",
+  "browser_smoke": {
+    "run_id": 33282949795,
+    "head_sha": "e7a69758bc4f15b7456e7ab2af4b30d6f40c1f29",
+    "pass": true,
+    "runtime_early_flow_v4_bridge_required": true,
+    "synthetic_readiness": false
+  },
+  "homologation_gate": {
+    "version": "candidate-homologation-gate-v1",
+    "pass": true,
+    "suite_passed": 10,
+    "suite_total": 10,
+    "check_total": 175,
+    "elapsed_ms": 72288.9,
+    "suites": {
+      "readiness_v7": "51/51 PASS",
+      "core_financial": "15/15 PASS",
+      "expense_v9": "19/19 PASS",
+      "expense_v10": "18/18 PASS",
+      "planning": "23/23 PASS",
+      "wealth": "18/18 PASS",
+      "classification_cache": "5/5 PASS",
+      "document_lifecycle": "17/17 PASS",
+      "expense_merchant_lens": "4/4 PASS",
+      "card_history_coverage": "5/5 PASS"
+    }
+  },
+  "remaining_non_technical_blockers": [
+    "Real authenticated visual behavior/user homologation of v141.",
+    "Human classification decisions where safe_suggestion_groups remains zero.",
+    "Historical Mastercard evidence blocked by File Library retrieval/evidence gaps.",
+    "Unresolved CIPÓ condominium/consortium documentary closure.",
+    "Real Open Finance provider/consent/commercial decision."
+  ],
+  "guardrails": [
+    "PASS does not mean authenticated visual E2E.",
+    "Public v136 fallback remains unchanged.",
+    "No promotion to index.html before user homologation.",
+    "No inferred classification or historical card certification."
+  ]
+}

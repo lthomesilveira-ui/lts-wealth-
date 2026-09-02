@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>LTS Wealth · WIP35-v145 candidate</title>
+<style>
+html,body{margin:0;width:100%;height:100%;background:#f5f6f8}
+#shell{border:0;width:100%;height:100%;display:block}
+</style>
+</head>
+<body>
+<iframe id="shell" src="./wip35-v142-candidate.html?v145-parent"></iframe>
+<!-- v145 keeps the proven v144 product composition but stabilizes Dashboard refresh/title ownership. -->
+<script src="./wip35-v143-life-real.js?v143-life-real-v1"></script>
+<script src="./wip35-v143-feedback-polish.js?v143-feedback-polish-v2"></script>
+<script src="./wip35-v143-ownership.js?v143-ownership-v1"></script>
+<script>
+(function(){
+  const HOST='deep-runtime-host-v1';
+  function deepest(){
+    try{
+      let d=document,w=window;
+      for(let i=0;i<12;i++){
+        const frames=Array.from(d.querySelectorAll('iframe'));
+        if(!frames.length)break;
+        const next=frames.find(x=>x.id==='shell'||x.id==='app')||frames[0];
+        if(!next||!next.contentDocument||!next.contentWindow)return null;
+        d=next.contentDocument;w=next.contentWindow;
+      }
+      if(d&&w&&typeof w.render==='function'&&typeof w.atualizacoes==='function')return {d,w};
+    }catch(e){}
+    return null;
+  }
+  function addScript(d,id,src,onload){
+    const old=d.getElementById(id);
+    if(old){onload?.();return old}
+    const s=d.createElement('script');s.id=id;s.src=src;s.async=false;
+    if(onload)s.addEventListener('load',onload,{once:true});
+    (d.head||d.documentElement).appendChild(s);return s;
+  }
+  function install(){
+    const z=deepest();if(!z)return;
+    z.w.LTS_V144_DEEP_RUNTIME_HOST=HOST;
+    addScript(z.d,'v144LexicalBridgeHost','./wip35-v144-lexical-bridge.js?v144-lexical-bridge-v1',()=>{
+      addScript(z.d,'v144UpdatesLayoutHost','./wip35-v144-updates-layout.js?v144-updates-layout-v3');
+    });
+    if(z.w.LTS_V144_LEXICAL_BRIDGE==='v144-lexical-state-bridge-v1')addScript(z.d,'v144UpdatesLayoutHost','./wip35-v144-updates-layout.js?v144-updates-layout-v3');
+  }
+  document.getElementById('shell')?.addEventListener('load',()=>{setTimeout(install,250);setTimeout(install,800);setTimeout(install,1500)});
+  setInterval(install,120);setTimeout(install,500);
+})();
+window.__LTS_TOP_CANDIDATE_VERSION='v145';
+</script>
+<script src="./wip35-v145-dashboard-stability.js?v145-dashboard-stability-v1"></script>
+</body>
+</html>

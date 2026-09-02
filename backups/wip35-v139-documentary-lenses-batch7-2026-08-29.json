@@ -1,0 +1,85 @@
+{
+  "checkpoint": "wip35-v139-documentary-lenses-batch7",
+  "date": "2026-08-29",
+  "candidate": {
+    "file": "wip35-v139-candidate.html",
+    "commit": "71853adfcbb40f06509a539eb359a85f19b6b3f3",
+    "public_fallback": "index.html / v136",
+    "public_fallback_changed": false
+  },
+  "ci": {
+    "candidate_smoke_run": 33275122675,
+    "candidate_smoke_status": "success",
+    "pages_run": 33275122077,
+    "pages_status": "success",
+    "same_head_sha": true
+  },
+  "expense_documentary_lens": {
+    "version": "expense-counterparty-drilldown-v3-structured-card-merchants-only",
+    "qa": "4/4 PASS",
+    "guardrail": "Card merchant appears only from structured individual card purchase lines. Recovered category-only rows and aggregate invoice fallback never become fabricated merchants. Cash counterparties are separate.",
+    "example_2023_to_2026_08_29": {
+      "card_merchant_rows": 289,
+      "card_merchant_amount": 66200.29,
+      "card_merchant_coverage_pct": 2.6,
+      "card_category_only_amount": 821898.39,
+      "card_recovered_category_amount": 58727.98,
+      "card_aggregate_fallback_amount": 1587369.56,
+      "cash_counterparty_amount": 2521859.31,
+      "cash_counterparty_coverage_pct": 100
+    }
+  },
+  "card_history_coverage": {
+    "version": "card-history-coverage-summary-v1",
+    "qa": "5/5 PASS",
+    "certified_cycles": 34,
+    "allocation_rows": 553,
+    "certified_category_amount": 821898.39,
+    "aggregate_fallback_rows": 318,
+    "aggregate_fallback_amount": 2714803.16,
+    "c6_recovered_detail": {
+      "2024": {"months": 8, "rows": 151, "amount": 21657.14},
+      "2025": {"months": 12, "rows": 157, "amount": 24560.95},
+      "2026": {"months": 6, "rows": 39, "amount": 12509.89}
+    },
+    "guardrail": "Certified category allocation, recovered purchase detail and aggregate fallback are distinct evidence levels. Aggregate fallback is not individual purchase evidence."
+  },
+  "financial_gates": {
+    "core_financial_regression": "15/15 PASS",
+    "expense_engine_total": 8623752.53,
+    "expense_cache_rows": 3767,
+    "expense_cache_parity": "exact"
+  },
+  "historical_card_recovery": {
+    "complete": false,
+    "mastercard_2024_certified_months": ["03","05","08","09","10","12"],
+    "mastercard_2024_pending_months": ["01","02","04","06","07","11"],
+    "mastercard_2025_certified_months": ["03","04","05","06","08","11"],
+    "mastercard_2025_candidate_months": ["01","02","07","10"],
+    "mastercard_2025_blocked_months": ["09","12"],
+    "visa_infinite_itau_2025": "12/12 certified",
+    "c6_aug_2024_individual_gap": 66.70,
+    "rule": "No cycle is certified without complete documentary closure."
+  },
+  "cipo_open_reconciliation": {
+    "consorcio_itau_delta": 303.60,
+    "consorcio_status": "unresolved_do_not_adjust",
+    "condominio_source_paid": 115867.108,
+    "condominio_status": "cutoff_or_formula_unresolved",
+    "duplicate_rows_found": true,
+    "duplicate_rows_alone_close_source_snapshot": false,
+    "closest_deduplicated_gap": 1312.268
+  },
+  "classification": {
+    "effective_unclassified_card_lines": 26,
+    "card_pending_groups": 48,
+    "suggestion_groups": 9,
+    "safe_auto_groups": 0,
+    "rule": "Do not force classifications; unresolved items remain human review."
+  },
+  "validation_limits": {
+    "authenticated_visual_e2e": false,
+    "user_homologation_latest_candidate": false
+  },
+  "user_action_required_now": false
+}

@@ -1,0 +1,80 @@
+{
+  "checkpoint": "wip35-v141-readiness-ui-contract-batch11-2026-08-29",
+  "candidate": "wip35-v141-candidate.html",
+  "effective_repo_head_for_verified_chain": "2bb8f5968cd2bc0ad19ba756d1522307593ccd3c",
+  "public_fallback": {
+    "file": "index.html",
+    "version": "WIP35-v136",
+    "blob_sha_expected": "a130eafe5f7ee5b7f60a95b5ff988669d0c401d9",
+    "promoted": false,
+    "user_approved": false
+  },
+  "incident": {
+    "v139_real_authenticated_boot": "failed_stuck_loading",
+    "root_cause": "candidate wrappers treated lexical v136 bindings as window properties; v138 render guard blocked lexical D readiness",
+    "old_smoke_false_green": "synthetic window D/S readiness did not reproduce real lexical state",
+    "v140_fix": "explicit lexical bridge plus no-synthetic-readiness Chromium smoke",
+    "real_user_mobile_v140_boot": "confirmed_opened"
+  },
+  "v141": {
+    "updates_near_actionable": 6,
+    "updates_far_future_collapsed": 4,
+    "updates_covered_or_monitored_collapsed": 15,
+    "classification_groups_separate": 48,
+    "version_hygiene": true,
+    "old_inner_candidate_badges_hidden": true,
+    "flow_v4_bridge_installed_early_in_v140": true
+  },
+  "browser_ci": {
+    "run_id": 33282756752,
+    "conclusion": "success",
+    "chain": ["v141","v140","v139","v138","v137","v136"],
+    "synthetic_readiness": false,
+    "authenticated_visual_e2e": false
+  },
+  "pages": {
+    "run_id": 33282756246,
+    "conclusion": "success",
+    "head_sha": "2bb8f5968cd2bc0ad19ba756d1522307593ccd3c"
+  },
+  "readiness": {
+    "version": "candidate-fast-readiness-qa-v5-ui-contract",
+    "pass": true,
+    "passed": 35,
+    "total": 35,
+    "ui_contract": {"version":"candidate-ui-contract-qa-v1","pass":true,"passed":17,"total":17},
+    "latency_ms_latest": {"expense_ytd":103.2,"flow_33d":10.2,"classification_queue":1451.8},
+    "browser_rpc_acl": {"functions":48,"anon_exposed":0,"authenticated_exposed":39}
+  },
+  "financial_gates": {
+    "core_financial_regression": "15/15 PASS",
+    "expense_v9": "19/19 PASS",
+    "expense_v10": "18/18 PASS",
+    "planning": "23/23 PASS",
+    "wealth": "18/18 PASS",
+    "classification_cache": "5/5 PASS",
+    "document_lifecycle": "17/17 PASS",
+    "expense_documentary_lens": "4/4 PASS",
+    "card_history_coverage": "5/5 PASS"
+  },
+  "planning_contract": {
+    "first_real_gap_date": "2027-01-08",
+    "worst_balance_brl": -21046.80,
+    "gap_episodes": 3,
+    "layers": 5,
+    "fgts_request_by": "2026-12-09"
+  },
+  "classification": {
+    "pending_groups": 48,
+    "pending_lines": 53,
+    "safe_suggestion_groups": 0,
+    "do_not_auto_classify": true
+  },
+  "limits": [
+    "Real authenticated visual E2E remains pending and unclaimed.",
+    "Historical Mastercard recovery remains evidence-limited; no inference authorized.",
+    "CIPO unresolved condominium/consortium gaps remain unchanged.",
+    "Open Finance real provider account/consent/paid commitment requires user decision.",
+    "Candidate is not promoted to index.html."
+  ]
+}

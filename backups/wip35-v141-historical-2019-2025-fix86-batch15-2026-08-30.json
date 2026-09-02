@@ -1,0 +1,72 @@
+{
+  "checkpoint": "wip35-v141-historical-2019-2025-fix86-batch15-2026-08-30",
+  "date": "2026-08-30",
+  "public_fallback": {
+    "version": "WIP35-v136",
+    "index_blob": "a130eafe5f7ee5b7f60a95b5ff988669d0c401d9",
+    "promoted": false
+  },
+  "candidate": {
+    "version": "WIP35-v141",
+    "flow_ux_code_head": "211f067cf94d4b1d6b61be191054c6ae292daf77",
+    "candidate_smoke_run": 33319620454,
+    "pages_run": 33319620096,
+    "authenticated_visual_e2e": "pending_unclaimed"
+  },
+  "historical": {
+    "expense_total": 8623752.53,
+    "analytical_cache_rows": 3860,
+    "certified_cycles": 38,
+    "certified_allocation_rows": 650,
+    "certified_allocation_amount": 885855.19,
+    "aggregate_fallback_rows": 314,
+    "aggregate_fallback_amount": 2650846.36,
+    "open_registry_cycles_2019_2025": 68,
+    "mastercard_2019_ledger_only_total": 164402.94,
+    "mastercard_2019_fragmented_months": 5,
+    "mastercard_2020_ledger_only_total": 99107.08,
+    "mastercard_2020_fragmented_months": 10,
+    "mastercard_2021_ledger_only_total": 116458.47,
+    "mastercard_2021_fragmented_months": 12,
+    "mastercard_2022_new_exact": {
+      "2022-04": 11910.91,
+      "2022-06": 10185.54,
+      "2022-07": 13486.29,
+      "2022-10": 28374.06
+    },
+    "mastercard_2023_ledger_only_total": 496689.05,
+    "c6_2024_08_individual_gap": 66.70
+  },
+  "gates": {
+    "core_financial": "15/15 PASS",
+    "expense_v9": "19/19 PASS",
+    "expense_v10": "18/18 PASS",
+    "card_history_dynamic_v2": "8/8 PASS",
+    "historical_registry_v4": "16/16 PASS",
+    "effective_history_v2": "PASS 2030 days / 147 months exact",
+    "fix86_guardrails_v4": "10/10 PASS",
+    "heavy_v7": "235/235 PASS across 16 suites"
+  },
+  "retrieval": {
+    "file_library_latest": "failed before content on targeted 2019-2021 query",
+    "internal_fatura": "recent 2026 only",
+    "legacy_namespace": "recent card positions/config only",
+    "searchable_staging": "no independent 2019-2021 card_hier/category matrix"
+  },
+  "open_dependencies": [
+    "authenticated visual homologation of v141",
+    "Mastercard 2019-2021 independent documentary category matrices",
+    "Mastercard 2022 remaining Jan-Mar fragmented and May/Aug/Sep/Nov/Dec partial evidence",
+    "Mastercard 2023 independent category composition",
+    "Mastercard 2024 six settlement-proven/composition-missing months",
+    "Mastercard 2025 Jan/Feb/Jul/Oct partial and Sep/Dec blocked",
+    "C6 Aug/2024 individual-detail gap R$66.70",
+    "CIPÓ Consorcio Itau R$303.60 unresolved",
+    "CIPÓ Condominio formula/cut unresolved",
+    "TR-dependent post-2029 CIPÓ tail",
+    "human classification gaps without safe evidence",
+    "Volvo trim/km evidence",
+    "Open Finance provider/consent/spend decision"
+  ],
+  "guardrail": "No historical cash rewrite, inferred category, invented merchant/purchase, collapsed fragmented settlement, fabricated TR amount or financial assumption was introduced in this batch."
+}

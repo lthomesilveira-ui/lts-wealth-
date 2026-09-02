@@ -1,0 +1,62 @@
+{
+  "checkpoint": "wip35-v141-global-history-inventory-batch16-2026-08-30",
+  "date": "2026-08-30",
+  "public_fallback": {
+    "version": "WIP35-v136",
+    "index_blob": "a130eafe5f7ee5b7f60a95b5ff988669d0c401d9",
+    "promoted": false
+  },
+  "candidate": {
+    "version": "WIP35-v141",
+    "flow_ux_code_head": "211f067cf94d4b1d6b61be191054c6ae292daf77",
+    "candidate_smoke_run": 33319620454,
+    "pages_run": 33319620096,
+    "authenticated_visual_e2e": "pending_unclaimed"
+  },
+  "historical": {
+    "expense_total": 8623752.53,
+    "analytical_cache_rows": 3860,
+    "certified_cycles": 38,
+    "certified_allocation_rows": 650,
+    "certified_allocation_amount": 885855.19,
+    "aggregate_fallback_rows": 314,
+    "aggregate_fallback_amount": 2650846.36,
+    "fallback_inventory_blocks": 31,
+    "registry_tracked_blocks": 7,
+    "aggregate_only_blocks": 24,
+    "p1_untracked": [
+      {"origin":"Visa","year":2017,"amount":126681.76},
+      {"origin":"Visa Infinite Itaú","year":2024,"amount":112253.01}
+    ],
+    "open_mastercard_registry_cycles_2019_2025": 68
+  },
+  "gates": {
+    "core_financial": "15/15 PASS",
+    "expense_v9": "19/19 PASS",
+    "expense_v10": "18/18 PASS",
+    "card_history_dynamic_v2": "8/8 PASS",
+    "historical_registry_v4": "16/16 PASS",
+    "global_historical_inventory_v1": "5/5 PASS",
+    "effective_history_v2": "PASS 2030 days / 147 months exact",
+    "fix86_guardrails_v4": "10/10 PASS",
+    "heavy_v8": "240/240 PASS across 17 suites"
+  },
+  "open_dependencies": [
+    "authenticated visual homologation of v141",
+    "Visa 2017 independent category composition",
+    "Visa Infinite Itau 2024 independent category composition",
+    "Mastercard 2019-2021 independent documentary category matrices",
+    "Mastercard 2022 remaining Jan-Mar fragmented and May/Aug/Sep/Nov/Dec partial evidence",
+    "Mastercard 2023 independent category composition",
+    "Mastercard 2024 six settlement-proven/composition-missing months",
+    "Mastercard 2025 Jan/Feb/Jul/Oct partial and Sep/Dec blocked",
+    "C6 Aug/2024 individual-detail gap R$66.70",
+    "CIPÓ Consorcio Itau R$303.60 unresolved",
+    "CIPÓ Condominio formula/cut unresolved",
+    "TR-dependent post-2029 CIPÓ tail",
+    "human classification gaps without safe evidence",
+    "Volvo trim/km evidence",
+    "Open Finance provider/consent/spend decision"
+  ],
+  "guardrail": "Global inventory is diagnostic only. No category, merchant, purchase, competence, collapsed fragmented settlement or financial assumption was inferred."
+}
