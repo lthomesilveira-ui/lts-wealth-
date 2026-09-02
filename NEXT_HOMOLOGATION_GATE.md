@@ -75,3 +75,10 @@ Classification evidence remains conservative: GULA GULA MORUMBI may show `Restau
 4. In a separate commit expose manifest v147 / `wip35-v147-candidate.html` with `promotion_status: not_promoted`; rerun exact exposure gates.
 5. Only after the served fixed homologation is verified may the user be told `Pode acessar agora`.
 6. Public root promotion remains blocked pending explicit authorization.
+
+
+## Current gate — material v147 homologation
+- Fixed homologation now targets v147; exact exposure gates are green on `a4d6f49e…`.
+- User should test repeated navigation, especially Cartões → Patrimônio; stable Dashboard; classification-first Atualizações; document association under the collapsed other-actions section; and absence of large blank regions.
+- Real authenticated visual E2E remains pending and must not be claimed.
+- Public `index.html` promotion requires separate explicit authorization.
