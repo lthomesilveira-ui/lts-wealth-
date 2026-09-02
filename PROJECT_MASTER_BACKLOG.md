@@ -198,3 +198,13 @@ Until one of these is the genuine blocker, continue autonomous technical/documen
 - [x] Full branch workflow `33647189124` SUCCESS on product SHA `8ae3eb92…`; inherited v142–v146 gates and v147 desktop/mobile smoke green.
 - [x] Immutable checkpoint: `backups/WIP35_V147_PREINTEGRATION_CHECKPOINT_2026-09-02.md`.
 - [~] Pending: safe main integration, exact integrated gates, separate controlled exposure and material user homologation.
+
+
+## v147 exposure closure — 02/09/2026
+- [x] Integrated v147 by fast-forward without force.
+- [x] Exact exposure SHA `a4d6f49e…` passed Pages, candidate-smoke, v144, v145, v146 and v147 workflows.
+- [x] Fixed homologation manifest points to v147 with `not_promoted`; public `index.html` blob remains protected.
+- [x] Immutable exposure checkpoint: `backups/WIP35_V147_HOMOLOGATION_EXPOSURE_CHECKPOINT_2026-09-02.md`.
+- [~] Material user homologation pending.
+- [ ] Real authenticated visual E2E remains pending/unclaimed.
+- [ ] Public promotion remains blocked pending explicit user approval.
