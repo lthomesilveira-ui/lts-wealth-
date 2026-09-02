@@ -1,0 +1,86 @@
+name: LTS v148 Classification lifecycle
+on:
+  push:
+    branches: [main, v148-classification-lifecycle]
+    paths:
+      - 'wip35-v148-candidate.html'
+      - 'wip35-v148-classification-lifecycle.js'
+      - '.github/scripts/lts_v148_classification_lifecycle_smoke.js'
+      - '.github/scripts/lts_v147_document_association_smoke.js'
+      - '.github/scripts/lts_v146_updates_navigation_smoke.js'
+      - '.github/scripts/lts_candidate_browser_smoke.js'
+      - '.github/scripts/lts_v143_browser_smoke.js'
+      - '.github/scripts/lts_candidate_smoke.py'
+      - '.github/scripts/lts_button_contract_audit.js'
+      - '.github/workflows/v148-classification-lifecycle.yml'
+      - 'homologacao-current.json'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  classification-lifecycle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate v148 architecture and guardrails
+        run: |
+          node --check wip35-v148-classification-lifecycle.js
+          node --check .github/scripts/lts_v148_classification_lifecycle_smoke.js
+          python - <<'PY'
+          from pathlib import Path
+          import subprocess
+          html=Path('wip35-v148-candidate.html').read_text()
+          js=Path('wip35-v148-classification-lifecycle.js').read_text()
+          required=['wip35-v147-candidate.html?v148-parent','classification-save-refresh-self-heal-v1','lts_browser_semantic_feedback_v1','lts_browser_product_v1','writer_repeated_on_refresh:false','permanent_polling:false','financial_rules_changed:false','classification_inference:false']
+          missing=[x for x in required if x not in html+'\n'+js]
+          assert not missing, missing
+          assert 'setInterval(' not in js
+          assert js.count("lts_browser_semantic_feedback_v1") == 2, 'one runtime writer call plus status declaration expected'
+          protected=subprocess.check_output(['git','rev-parse','HEAD:index.html'],text=True).strip()
+          assert protected=='a130eafe5f7ee5b7f60a95b5ff988669d0c401d9'
+          print('v148_static=PASS')
+          PY
+      - name: Audit inherited button contracts
+        run: node .github/scripts/lts_button_contract_audit.js
+      - name: Install browser
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Re-run inherited parser/static gate
+        run: python .github/scripts/lts_candidate_smoke.py
+      - name: Re-run inherited v146 navigation gate
+        run: |
+          python3 -m http.server 8772 >/tmp/lts-v146-v148.log 2>&1 &
+          PID=$!
+          trap 'kill $PID || true' EXIT
+          sleep 1
+          node .github/scripts/lts_v146_updates_navigation_smoke.js
+      - name: Re-run inherited v147 document gate
+        run: |
+          python3 -m http.server 8773 >/tmp/lts-v147-v148.log 2>&1 &
+          PID=$!
+          trap 'kill $PID || true' EXIT
+          sleep 1
+          node .github/scripts/lts_v147_document_association_smoke.js
+      - name: Run v148 classification lifecycle gate
+        run: |
+          python3 -m http.server 8774 >/tmp/lts-v148.log 2>&1 &
+          PID=$!
+          trap 'kill $PID || true' EXIT
+          sleep 1
+          node .github/scripts/lts_v148_classification_lifecycle_smoke.js
+      - name: Upload v148 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: wip35-v148-classification-lifecycle
+          path: |
+            v148-classification-lifecycle-smoke-result.json
+            v147-document-association-smoke-result.json
+            v146-updates-navigation-smoke-result.json
+            candidate-smoke-result.txt
+            button-contract-audit-result.json
+          if-no-files-found: error
