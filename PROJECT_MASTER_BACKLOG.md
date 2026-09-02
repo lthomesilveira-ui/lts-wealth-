@@ -221,6 +221,17 @@ Until one of these is the genuine blocker, continue autonomous technical/documen
 - [x] Desktop/mobile lifecycle smoke validates success, refresh failure, manual read retry, resolved disappearance, call counts and zero browser errors.
 - [x] Inherited architecture/button/parser, v146 repeated navigation and v147 document-association gates remain green.
 - [x] Public `index.html` remains protected blob `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`; fixed homologation remains v147 during v148 integration gates.
-- [~] Pre-integration freeze, normal fast-forward, exact integrated-main gates and separate controlled exposure remain pending.
+- [x] Pre-integration freeze, zero-divergence fast-forward, exact integrated-main gates and separate controlled exposure completed.
 - [ ] Real authenticated save→refresh/visual E2E remains pending and must not be claimed.
 - [ ] Public promotion remains blocked until explicit user authorization.
+
+
+## v148 exposure closure — 02/09/2026
+- [x] Integrated by normal fast-forward at `0da167c66ec59f424e143d74ecd12ea6f4207364`; integrated v148 workflow `33660549950` and Pages `33660548862` SUCCESS.
+- [x] Exact exposure SHA `c6ff4ec0282fbdfaacdeb1ef60c5edd92fe6dc24` passed Pages, candidate-smoke, v144, v145, v146, v147 and v148 workflows.
+- [x] Fixed homologation manifest points to v148 / `wip35-v148-candidate.html` / candidate `b902f84a…` / `not_promoted`.
+- [x] Live fixed URL loaded and resolved to the v148 candidate; public `index.html` remains protected.
+- [x] Immutable exposure checkpoint: `backups/WIP35_V148_HOMOLOGATION_EXPOSURE_CHECKPOINT_2026-09-02.md`.
+- [~] Material user homologation of v147/v148 improvements pending.
+- [ ] Real authenticated visual/save→refresh E2E remains pending/unclaimed.
+- [ ] Public promotion remains blocked pending explicit user approval.
