@@ -4,6 +4,20 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 
 Canonical persistent project list. Detailed immutable evidence remains in `backups/`, `HISTORICAL_RECOVERY_LOG.md`, `HOMOLOGATION_V135_V137_INCIDENTS_2026-08-29.md`, `PLANNING_EXCEL_TO_CURRENT_AUDIT_2026-08-30.md`, `NEXT_HOMOLOGATION_GATE.md` and checkpoints. Never remove an open financial, documentary, classification or product dependency during compaction.
 
+## P0 — v149 revisão de interpretação documental — 02/09/2026
+- [x] Added read-only PDF/image interpretation review on top of v147 explicit association.
+- [x] Structured extraction stays evidence; user-provided association stays explicit and separate.
+- [x] Missing required association remains visible/manual; filename never infers account/card/competence/date/amount.
+- [x] No RPC financial writer, reconciliation, classification inference or balance effect.
+- [x] Preserved v148 classification lifecycle while retiring its competing observer under v149.
+- [x] First v149 gate caught a self-triggering version-label `MutationObserver` loop; fixed by idempotent stamping before release evidence.
+- [x] Exact green product/gate SHA `050ca36dd14d4ffdbaa27dbfdfc579ddbfe54331`; workflow `33692647025` SUCCESS; artifact `9870669700`; digest `sha256:e470c3d9c46feb622b42371606cb11d0712ba057c6a4668ce2419e1b533d26ff`.
+- [x] Desktop/mobile smoke shows CIPÓ structured evidence and unassociated image evidence, manual review warnings, stable v149 visible labels and zero relevant browser errors.
+- [x] Immutable pre-integration checkpoint: `backups/WIP35_V149_PREINTEGRATION_CHECKPOINT_2026-09-02.md`.
+- [~] Safe main integration and exact integrated-main gates pending; fixed homologation remains v148 while the user tests.
+- [ ] Real authenticated PDF/image interpret→review and visual E2E remain pending; never claim synthetic smoke as authenticated E2E.
+- [ ] Public promotion remains blocked pending explicit user approval.
+
 ## P0 — v146 Atualizações/navigation stability — 31/08/2026
 - [x] Reproduced a real navigation hang under repeated physical Playwright clicks: transition `Cartões` → `Patrimônio` could stall before the click action returned.
 - [x] Preserved v144 Atualizações classification/evidence UX and v145 Dashboard stability; no financial rule, value, classification, backend writer or economic effect changed.
@@ -108,7 +122,7 @@ Canonical persistent project list. Detailed immutable evidence remains in `backu
 - [x] Historical median is evidence only, never a future amount.
 - [x] Document backend QA 5/5; bank/card docs need identity+competence; financing needs commitment+as-of; filename similarity insufficient.
 - [x] Guided document-association UI implemented in v147 with explicit identity/competence/as-of guardrails and manual review.
-- [~] Improve PDF/image interpretation while preserving manual review.
+- [x] v149 adds read-only PDF/image interpretation review while preserving manual review and evidence-only semantics; real authenticated interpret→review remains pending.
 - [~] v148 synthetic browser lifecycle proves save→refresh→resolved disappearance, read-only retry and `O que mudou`; real authenticated save→refresh remains pending/unclaimed.
 
 ## 5. Natural input / resgate / aplicação
@@ -177,6 +191,7 @@ Canonical persistent project list. Detailed immutable evidence remains in `backu
 - [x] v145 exact exposure gates all green: `33424045510`, `33424045367`, `33424045318`, `33424044022`.
 - [x] v146 branch gate `33443494728` green on `bef91e279…`, artifact `9777202035`.
 - [x] v146 integrated-main gate `33444432578` green on `a2bfb254…`; Pages `33444431699` green.
+- [x] v149 exact branch gate `33692647025` green on `050ca36d…`; artifact `9870669700`; inherited v146/v147/v148 and v149 desktop/mobile all green.
 - [ ] Real authenticated visual E2E pending/unclaimed.
 
 ## 13. Remaining user-dependent decisions
@@ -184,7 +199,7 @@ Canonical persistent project list. Detailed immutable evidence remains in `backu
 - [ ] Any new money-changing financial assumption/scenario.
 - [ ] Volvo refinement when exact trim/km evidence is available.
 - [ ] Open Finance provider/consent/spend.
-- [~] Material homologation after v146 controlled exposure; do not ask before exact exposure gates are green.
+- [~] Material homologation of current v148 fixed release; v149 remains unexposed during integration gates.
 - [ ] Public promotion only after explicit user approval.
 
 Until one of these is the genuine blocker, continue autonomous technical/documentary work. Do not ask the user to perform basic QA.
