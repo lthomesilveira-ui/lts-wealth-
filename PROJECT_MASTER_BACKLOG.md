@@ -235,3 +235,17 @@ Until one of these is the genuine blocker, continue autonomous technical/documen
 - [~] Material user homologation of v147/v148 improvements pending.
 - [ ] Real authenticated visual/save→refresh E2E remains pending/unclaimed.
 - [ ] Public promotion remains blocked pending explicit user approval.
+
+
+## P0 — v148 visible-version ownership correction — 02/09/2026
+- [x] User/mobile incident reproduced: the fixed URL resolved to the v148 wrapper while inherited visible labels still showed v142; this was not a browser-cache diagnosis.
+- [x] Root cause proved: the inherited v142 UX layer retained a 60 ms ownership loop plus a brand observer, reasserting v142 after newer wrappers loaded.
+- [x] v148 now owns version labels across the complete same-origin frame chain, retires the inherited brand observer, protects replacement nodes, uses bounded installation retries and tolerates discarded-frame teardown.
+- [x] No amount, category, financial rule, backend writer, reconciliation or public fallback changed.
+- [x] Exact corrected product SHA `333bb3c4eb06c8e68d9de0c637da37c09db43989`; branch workflow `33687727964` and integrated-main workflow `33688014674` SUCCESS; integrated Pages `33688013452` SUCCESS.
+- [x] Exact exposure SHA `966db03a64fdfadb4d27656044f220624f8debaf`; Pages, candidate-smoke and v144–v148 workflows all SUCCESS.
+- [x] Public verification resolved to v148 candidate SHA `333bb3c4…`; title, login brand and badge remained v148 after delayed timers, with no visible v142.
+- [x] Immutable checkpoint: `backups/WIP35_V148_VISIBLE_VERSION_CORRECTION_EXPOSURE_CHECKPOINT_2026-09-02.md`.
+- [~] Material user homologation remains pending.
+- [ ] Authenticated visual/save→refresh E2E remains pending and unclaimed.
+- [ ] Public promotion remains blocked until explicit user authorization.

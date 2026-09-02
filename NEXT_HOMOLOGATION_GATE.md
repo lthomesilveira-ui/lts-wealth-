@@ -108,3 +108,13 @@ Sequence to advance:
 - If the save succeeds but reload fails, expected safe state is `Decisão salva · verificação pendente`; `Atualizar verificação` must not duplicate the write.
 - Real authenticated visual/save E2E was not performed and remains pending/unclaimed.
 - Public `index.html` promotion remains blocked pending explicit authorization.
+
+
+## Current gate — corrected v148 visible-version homologation
+- Incident closed at product SHA `333bb3c4eb06c8e68d9de0c637da37c09db43989` and exposure SHA `966db03a64fdfadb4d27656044f220624f8debaf`.
+- Exact exposure gates SUCCESS: Pages `33688619281`, candidate-smoke `33688621067`, v144 `33688620994`, v145 `33688621358`, v146 `33688621053`, v147 `33688621179`, v148 `33688621145`.
+- v148 artifact `9869171950`; digest `sha256:e573380396d0a0edb414383712ff98a83a0af17400041298e08d980d18dc3c12`.
+- Fixed manifest remains v148 / `wip35-v148-candidate.html` / candidate `333bb3c4…` / `not_promoted`.
+- Live public check resolved to the exact candidate SHA and remained visibly v148 beyond inherited delayed timers; no visible v142 was observed.
+- Material check order remains: repeated navigation (especially Cartões → Patrimônio), Dashboard title/subtitle, Atualizações classification-first, document association, classification save→refresh→resolved disappearance/`O que mudou`, and absence of large blank regions.
+- Authenticated visual/save E2E was not performed and remains pending/unclaimed. Public root promotion remains unauthorized.

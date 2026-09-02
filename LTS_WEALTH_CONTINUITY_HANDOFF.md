@@ -142,3 +142,14 @@ Fingerprint `85a1b60816a5b84dfe3b41341ed27948`: v14 293/24, v15 67/5, v16 19/2, 
 - User may now materially test v147 document association plus v148 classification save→refresh/self-heal/`O que mudou`, alongside preserved navigation and Dashboard regressions.
 - Do not claim authenticated E2E; no credentials were used in autonomous browser verification.
 - Continue remaining backlog autonomously after this gate; public promotion still requires explicit authorization.
+
+
+## Continuity update — v148 visible-version correction exposed
+- User reported that mobile still visibly showed v142 even though the fixed homologation served the v148 wrapper.
+- Public reproduction proved this was inherited runtime ownership, not a cache assumption: v142's label loop/observer overwrote newer visible labels.
+- Corrected product SHA `333bb3c4eb06c8e68d9de0c637da37c09db43989` owns version labels across all nested frames, retires the inherited observer and guards transient frame teardown; no financial behavior changed.
+- Branch gate `33687727964` and exact integrated-main gate `33688014674` SUCCESS; exact integrated Pages `33688013452` SUCCESS.
+- Exposure SHA `966db03a64fdfadb4d27656044f220624f8debaf`: Pages `33688619281`, candidate-smoke `33688621067`, v144 `33688620994`, v145 `33688621358`, v146 `33688621053`, v147 `33688621179`, v148 `33688621145` all SUCCESS.
+- Public live URL resolved with candidate SHA `333bb3c4…`; title/login brand/badge remained v148 after delayed verification and no visible v142 remained.
+- Public `index.html` remains protected blob `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`; promotion remains `not_promoted` and unauthorized.
+- Authenticated visual/save→refresh E2E remains pending/unclaimed. Continue the preserved backlog autonomously after material homologation feedback.
