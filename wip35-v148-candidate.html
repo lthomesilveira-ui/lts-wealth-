@@ -3,7 +3,7 @@ window.__LTS_TOP_CANDIDATE_VERSION='v148';
 (function(){
   const outer=document.getElementById('shell');
   function deep(){try{let f=outer,d,w;for(let i=0;i<15;i++){if(!f)return null;d=f.contentDocument;w=f.contentWindow;if(!d||!w)return null;const app=d.getElementById('app');if(app&&app.contentDocument&&app.contentWindow)return {d:app.contentDocument,w:app.contentWindow};const next=d.getElementById('shell');if(!next)return {d,w};f=next}}catch(e){}return null}
-  function add(z){if(!z?.d)return false;if(z.d.getElementById('v148ClassificationLifecycleHost'))return true;const s=z.d.createElement('script');s.id='v148ClassificationLifecycleHost';s.src='wip35-v148-classification-lifecycle.js?v148-classification-lifecycle-v1';(z.d.head||z.d.documentElement).appendChild(s);return true}
+  function add(z){if(!z?.d)return false;if(z.d.getElementById('v148ClassificationLifecycleHost'))return true;const s=z.d.createElement('script');s.id='v148ClassificationLifecycleHost';s.src='wip35-v148-classification-lifecycle.js?v148-classification-lifecycle-v2';(z.d.head||z.d.documentElement).appendChild(s);return true}
   function install(){return add(deep())}
   outer.addEventListener('load',()=>[250,600,1100,1800,3000,4800].forEach(ms=>setTimeout(install,ms)));
   [500,1000,1800,3000,5000].forEach(ms=>setTimeout(install,ms));

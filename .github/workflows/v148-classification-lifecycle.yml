@@ -34,7 +34,7 @@ jobs:
           import subprocess
           html=Path('wip35-v148-candidate.html').read_text()
           js=Path('wip35-v148-classification-lifecycle.js').read_text()
-          required=['wip35-v147-candidate.html?v148-parent','classification-save-refresh-self-heal-v1','lts_browser_semantic_feedback_v1','lts_browser_product_v1','writer_repeated_on_refresh:false','permanent_polling:false','financial_rules_changed:false','classification_inference:false']
+          required=['wip35-v147-candidate.html?v148-parent','classification-save-refresh-self-heal-visible-version-v2','WIP35-v148 · Homologação','CANDIDATA v148 · validação interna','visible_version_label:\'v148\'','lts_browser_semantic_feedback_v1','lts_browser_product_v1','writer_repeated_on_refresh:false','permanent_polling:false','financial_rules_changed:false','classification_inference:false']
           missing=[x for x in required if x not in html+'\n'+js]
           assert not missing, missing
           assert 'setInterval(' not in js

@@ -1,7 +1,9 @@
 (function(){
   const w=window,d=document;
-  const MARK='classification-save-refresh-self-heal-v1';
+  const MARK='classification-save-refresh-self-heal-visible-version-v2';
   const STORE='lts_v148_classification_changes_v1';
+  const VISIBLE='WIP35-v148 · Homologação';
+  const BADGE='CANDIDATA v148 · validação interna';
   if(w.LTS_V148_CLASSIFICATION_LIFECYCLE===MARK)return;
   const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const num=x=>Number(x||0)||0;
@@ -12,6 +14,7 @@
   function counts(mvp){return {card:num(mvp?.card_classification_review?.pending_groups),semantic:num(mvp?.semantic_review?.pending_groups),total:num(mvp?.card_classification_review?.pending_groups)+num(mvp?.semantic_review?.pending_groups)}}
   function addChange(x){const xs=readChanges().filter(y=>!(y.key===x.key&&y.category===x.category));xs.unshift(x);writeChanges(xs);return xs}
   function state(x){w.__LTS_V148_CLASSIFICATION_STATE={version:MARK,...x,at:now()};return w.__LTS_V148_CLASSIFICATION_STATE}
+  function stampVersion(){let badges=0;const brand=d.querySelector('.brand small');if(brand&&brand.textContent!==VISIBLE)brand.textContent=VISIBLE;d.querySelectorAll('.footer').forEach(x=>{if(x.textContent!=='Versão WIP35-v148')x.textContent='Versão WIP35-v148'});let p=w;for(let i=0;i<15;i++){try{const b=p.document?.getElementById('badge');if(b){badges++;if(b.textContent!==BADGE)b.textContent=BADGE}if(p===p.parent)break;p=p.parent}catch(e){break}}w.__LTS_V148_VISIBLE_VERSION_STATUS={version:MARK,label:'v148',brand:brand?.textContent||'',badges,legacy_v142_visible:false};return w.__LTS_V148_VISIBLE_VERSION_STATUS}
   function css(){if(d.getElementById('wip35-v148-classification-css'))return;const s=d.createElement('style');s.id='wip35-v148-classification-css';s.textContent=`
     .v148-change{border:1px solid #cfe1d7;background:#f7fbf8;border-radius:14px;padding:11px 12px;margin:0 0 10px}.v148-change>span{display:block;font-size:8px;text-transform:uppercase;letter-spacing:.07em;font-weight:900;color:#3f7359}.v148-change-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;padding:8px 0;border-top:1px solid #e4eee8}.v148-change-row:first-of-type{border-top:0}.v148-change-row b{display:block;font-size:10px}.v148-change-row small{display:block;font-size:8px;color:var(--mut);margin-top:3px;line-height:1.4}.v148-change-row strong{font-size:9px;color:#32694f;white-space:nowrap}.v148-pending{border-color:#e6d5b4;background:#fffaf1}.v148-pending>span{color:#86601f}.v148-retry{border:0;border-radius:9px;background:#17304d;color:#fff;font-size:8px;font-weight:850;padding:7px 9px;margin-top:7px}.v148-save-msg{display:block;font-size:8px;line-height:1.4;margin-top:4px}.v148-save-msg.ok{color:#32694f}.v148-save-msg.err{color:#9b3a36}@media(max-width:520px){.v148-change-row{grid-template-columns:1fr}.v148-change-row strong{white-space:normal}}
   `;(d.head||d.documentElement).appendChild(s)}
@@ -25,8 +28,9 @@
   w.__LTS_V148_RETRY_CLASSIFICATION_REFRESH=retryVerification;
   w.__LTS_V148_INJECT_CHANGES=inject;
   w.LTS_V148_CLASSIFICATION_LIFECYCLE=MARK;
-  w.__LTS_V148_CLASSIFICATION_STATUS={version:MARK,backend_writer:'lts_browser_semantic_feedback_v1',refresh_reader:'lts_browser_product_v1',writer_repeated_on_refresh:false,permanent_polling:false,financial_rules_changed:false,classification_inference:false};
+  w.__LTS_V148_CLASSIFICATION_STATUS={version:MARK,backend_writer:'lts_browser_semantic_feedback_v1',refresh_reader:'lts_browser_product_v1',writer_repeated_on_refresh:false,permanent_polling:false,financial_rules_changed:false,classification_inference:false,visible_version_label:'v148'};
   writeChanges(readChanges());
-  if(!install())[80,180,350,700,1200,2000,3500].forEach(ms=>setTimeout(install,ms));
-  const root=d.getElementById('A')||d.getElementById('app')||d.body;if(root&&typeof MutationObserver==='function'){const mo=new MutationObserver(()=>{if(String(w.V)==='Atualizações')queueMicrotask(()=>{install();inject()})});mo.observe(root,{childList:true,subtree:true});w.__LTS_V148_CLASSIFICATION_OBSERVER=mo}
+  stampVersion();
+  if(!install())[80,180,350,700,1200,2000,3500].forEach(ms=>setTimeout(()=>{stampVersion();install()},ms));
+  const root=d.getElementById('A')||d.getElementById('app')||d.body;if(root&&typeof MutationObserver==='function'){const mo=new MutationObserver(()=>queueMicrotask(()=>{stampVersion();if(String(w.V)==='Atualizações'){install();inject()}}));mo.observe(root,{childList:true,subtree:true});w.__LTS_V148_CLASSIFICATION_OBSERVER=mo}
 })();
