@@ -82,3 +82,20 @@ Classification evidence remains conservative: GULA GULA MORUMBI may show `Restau
 - User should test repeated navigation, especially Cartões → Patrimônio; stable Dashboard; classification-first Atualizações; document association under the collapsed other-actions section; and absence of large blank regions.
 - Real authenticated visual E2E remains pending and must not be claimed.
 - Public `index.html` promotion requires separate explicit authorization.
+
+
+## Current gate — v148 classification lifecycle integration — 02/09/2026
+- Fixed homologation remains v147 / `wip35-v147-candidate.html` / `not_promoted` while v148 is gated.
+- v148 exact green product/gate SHA: `b902f84a71a4dc1aa35d955e07b5280775cb9ca5`.
+- Branch workflow `33659959930`: SUCCESS; artifact `9858327121`; digest `sha256:e87e90f77f156b90d5a481e84861284db84f5170f782389816f6ab082e14db0d`.
+- The gate proves desktop/mobile save→refresh→resolved disappearance, one writer call, read-only retry after refresh failure, `O que mudou`, idempotent mutation injection and zero browser errors.
+- This is synthetic unauthenticated browser evidence with mocked RPC responses; it is not authenticated E2E and performed no financial write.
+
+Sequence to advance:
+1. Freeze the exact green v148 product and canonical documentation in an immutable pre-integration checkpoint.
+2. Recompare `main` and `v148-classification-lifecycle`; require strictly ahead, `behind_by=0`, no divergence.
+3. Fast-forward `main` normally with `force=false`; do not change `homologacao-current.json` in the integration step.
+4. On the exact integrated SHA require v148 workflow SUCCESS, relevant inherited workflows/Pages SUCCESS and protected `index.html` blob `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
+5. Only after integrated gates are green prepare a separate controlled exposure commit for v148 / `wip35-v148-candidate.html` / candidate product SHA `b902f84a…` / `promotion_status: not_promoted`.
+6. Rerun exact exposure gates and verify the served manifest before inviting material user homologation.
+7. Real authenticated visual/save E2E remains pending/unclaimed; public root promotion remains blocked pending explicit authorization.
