@@ -188,3 +188,13 @@ Canonical persistent project list. Detailed immutable evidence remains in `backu
 - [ ] Public promotion only after explicit user approval.
 
 Until one of these is the genuine blocker, continue autonomous technical/documentary work. Do not ask the user to perform basic QA.
+
+
+## P0 — v147 guided document association — 02/09/2026
+- [x] Guided association implemented for bank statements, card statements, financing positions and other financial documents.
+- [x] Explicit guardrails preserved: bank/card identity + competence; financing commitment + as-of; manual review remains mandatory.
+- [x] No financial writer, reconciliation, classification, filename inference or permanent polling added.
+- [x] Classification remains primary; document actions remain secondary/collapsible.
+- [x] Full branch workflow `33647189124` SUCCESS on product SHA `8ae3eb92…`; inherited v142–v146 gates and v147 desktop/mobile smoke green.
+- [x] Immutable checkpoint: `backups/WIP35_V147_PREINTEGRATION_CHECKPOINT_2026-09-02.md`.
+- [~] Pending: safe main integration, exact integrated gates, separate controlled exposure and material user homologation.
