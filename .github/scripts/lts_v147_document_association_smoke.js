@@ -53,6 +53,13 @@ async function run(viewport,label){
 
     stage='open-document-action';
     const docAction=f.locator('.updinput[data-update="document_test"]');
+    await docAction.waitFor({state:'attached',timeout:5000});
+    const actionSection=docAction.locator('xpath=ancestor::details[1]');
+    if(await actionSection.count()){
+      const summary=actionSection.locator(':scope > summary');
+      await summary.waitFor({state:'visible',timeout:5000});
+      await summary.click({timeout:5000});
+    }
     await docAction.waitFor({state:'visible',timeout:5000});
     await docAction.click({timeout:5000});
     await f.waitForFunction(()=>String(window.V)==='Entradas',{timeout:5000});
