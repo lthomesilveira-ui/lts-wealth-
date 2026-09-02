@@ -116,3 +116,17 @@ Fingerprint `85a1b60816a5b84dfe3b41341ed27948`: v14 293/24, v15 67/5, v16 19/2, 
 - Checkpoint: `backups/WIP35_V147_HOMOLOGATION_EXPOSURE_CHECKPOINT_2026-09-02.md`.
 - Next: user material homologation; continue autonomous backlog packages that do not require financial/classification decisions.
 - Do not claim authenticated visual E2E; it remains open.
+
+
+## Continuity update — v148 classification lifecycle green — 02/09/2026
+- Active branch: `v148-classification-lifecycle`; fixed homologation remains v147 and public `index.html` remains protected.
+- Exact green product/gate SHA: `b902f84a71a4dc1aa35d955e07b5280775cb9ca5`.
+- Run `33659959930` SUCCESS; artifact `9858327121`; digest `sha256:e87e90f77f156b90d5a481e84861284db84f5170f782389816f6ab082e14db0d`.
+- v148 uses the existing semantic-feedback writer once, reloads the existing product reader, removes a confirmed resolved row and records session-scoped `O que mudou` evidence.
+- A successful write followed by failed read is held as `verificação pendente`; the manual retry invokes only the reader and never repeats the writer.
+- The panel injection was made state-idempotent after CI exposed a self-sustaining mutation loop; final desktop/mobile smoke passes with exact call counts and zero browser errors.
+- Inherited parser/button gates, v146 repeated navigation and v147 guided document association remain green on the final SHA.
+- No amount, category inference, financial rule, backend schema, reconciliation or public fallback changed.
+- Important limit: synthetic mocked-RPC browser evidence only; authenticated save→refresh and authenticated visual E2E remain pending/unclaimed.
+- Immediate execution: immutable pre-integration checkpoint; recompare against `main`; normal fast-forward only if behind=0/no divergence; exact integrated gates; then separate controlled v148 exposure.
+- Backlog still retained: PDF/image interpretation, natural-liquidity authenticated lifecycle and append-only reversal, Despesas refinement/evidence-only classification reduction, Mastercard/Visa recovery, CIPÓ blockers, Volvo trim/km, Open Finance pricing/SLA/product×bank and performance after correctness.
