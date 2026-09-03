@@ -77,23 +77,23 @@ async function run(browser,viewport,label){
   },{data:synthetic(),matrix:expenseMatrix()});
   await f.waitForFunction(()=>window.LTS_V150_RECOMPOSITION==='expense-input-dashboard-recomposition-v1'&&window.__LTS_V150_BOOTSTRAP_STATUS?.bounded_retry===true,null,{timeout:12000});
   await setView(f,'Dashboard'); await forceShell(f); await page.waitForTimeout(250);
-  let text=await f.locator('#A').innerText();
+  let text=await f.locator('body').innerText();
   for(const needle of ['Sua vida financeira, em uma tela.','Disponível realizável até D+3','75.133,58','19.294,43','42.929,50','12.909,65','Disponível incluindo FGTS','92.642,63','17.509,05']) if(!text.includes(needle)) throw new Error(label+' dashboard missing '+needle+'\n'+text);
   if(/FGTS separado/i.test(text)) throw new Error('legacy FGTS separado still visible');
   const planVisible=await f.locator('.nav [data-v143-dest="Planejamento"]').isVisible().catch(()=>false);
   if(planVisible) throw new Error('Planejamento duplicate nav still visible');
   await f.locator('[data-v150-liq-toggle]').click(); await page.waitForTimeout(150);
-  text=await f.locator('#A').innerText();
+  text=await f.locator('body').innerText();
   if(!text.includes('FGTS · pedir até')||!text.includes('Pior após contingência')) throw new Error('liquidity detail did not open');
 
   await setView(f,'Despesas'); await page.waitForTimeout(350);
-  await f.waitForFunction(()=>document.getElementById('A')?.innerText.includes('Quanto você gasta'),null,{timeout:5000});
-  text=await f.locator('#A').innerText();
+  await f.waitForFunction(()=>document.body?.innerText.includes('Quanto você gasta'),null,{timeout:5000});
+  text=await f.locator('body').innerText();
   for(const needle of ['Benjamin','Casa','Educação','Sem detalhe documental recuperado','Detalhe disponível · LTS investigando','Classificação/contexto ainda pendente','186.252,10','165.493,93','9.156,77']) if(!text.includes(needle)) throw new Error('expense matrix missing '+needle);
   const ben=f.locator('details.v150-context').filter({hasText:'Benjamin'}).first(); await ben.locator('summary').click();
   const edu=ben.locator('button[data-v150-drill-dim]').filter({hasText:'Educação'}).first(); if(!await edu.isVisible()) throw new Error('Benjamin → Educação not visible');
   await edu.click(); await page.waitForTimeout(250);
-  text=await f.locator('#A').innerText(); if(!text.includes('Escolinha das Acácias')||!text.includes('4.925,00')) throw new Error('expense drilldown failed');
+  text=await f.locator('body').innerText(); if(!text.includes('Escolinha das Acácias')||!text.includes('4.925,00')) throw new Error('expense drilldown failed');
 
   await setView(f,'Atualizações'); await page.waitForTimeout(300);
   await f.waitForSelector('#v150Toolbox',{timeout:5000});
