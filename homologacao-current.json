@@ -1,11 +1,11 @@
 {
   "schema": 1,
-  "version": "v148",
-  "path": "wip35-v148-candidate.html",
-  "candidate_head": "333bb3c4eb06c8e68d9de0c637da37c09db43989",
+  "version": "v150",
+  "path": "wip35-v150-candidate.html",
+  "candidate_head": "a67ba2d9c8fb770a463397349c67e654fe2e781f",
   "public_fallback": "index.html",
   "promotion_status": "not_promoted",
-  "candidate_sha": "333bb3c4eb06c8e68d9de0c637da37c09db43989",
-  "exposed_from_main_sha": "333bb3c4eb06c8e68d9de0c637da37c09db43989",
-  "updated_at": "2026-09-02T22:02:00Z"
+  "candidate_sha": "a67ba2d9c8fb770a463397349c67e654fe2e781f",
+  "exposed_from_main_sha": "a67ba2d9c8fb770a463397349c67e654fe2e781f",
+  "updated_at": "2026-09-03T19:29:00Z"
 }
