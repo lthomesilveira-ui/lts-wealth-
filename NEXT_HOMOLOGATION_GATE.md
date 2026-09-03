@@ -2,48 +2,46 @@
 
 Purpose: evidence-backed sequence before asking the user to inspect a material candidate. Keep aligned with `PROJECT_MASTER_BACKLOG.md`, `LTS_WEALTH_CONTINUITY_HANDOFF.md` and immutable checkpoints.
 
-## Current release baseline — 02/09/2026
+## Current release baseline — 03/09/2026
 - Public fallback: WIP35-v136 in `index.html`, unchanged; protected blob `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
-- Fixed homologation currently serves **v148** through `wip35-v148-candidate.html` after the visible-version ownership correction.
-- v148 corrected product SHA: `333bb3c4eb06c8e68d9de0c637da37c09db43989`.
-- v148 exact exposure SHA: `966db03a64fdfadb4d27656044f220624f8debaf`; exact exposure Pages, candidate-smoke and v144–v148 workflows all SUCCESS.
-- Fixed homologation stays v148 while v149 is integrated/gated so the user can continue testing today's resolved items.
-- Promotion status remains `not_promoted`.
-- Public promotion: NOT AUTHORIZED / NOT DONE.
+- Fixed homologation now serves **v150** through `wip35-v150-candidate.html`.
+- v150 exact green product/gate SHA: `a67ba2d9c8fb770a463397349c67e654fe2e781f`.
+- Controlled exposure commit: `97fff4d35cc0c3edd24a11b458a1bed7d885ddcb`.
+- `promotion_status` remains `not_promoted`.
+- Public root promotion: NOT AUTHORIZED / NOT DONE.
 - Authenticated visual E2E: PENDING / NOT CLAIMED.
+- Immutable release evidence: `backups/WIP35_V150_HOMOLOGATION_EXPOSURE_CHECKPOINT_2026-09-03.md`.
 
-## v149 document interpretation review — exact green branch evidence
-- Scope: read-only PDF/image interpretation review layered on explicit v147 document association.
-- Structured extraction is evidence only and remains separate from the association explicitly provided by the user.
-- Missing required association is visibly manual; filename never infers account, card, competence, date or amount.
-- No financial posting, reconciliation, category inference, balance effect or new financial writer.
-- v148 save→refresh classification lifecycle remains preserved beneath v149.
-- Exact green product/gate SHA: `050ca36dd14d4ffdbaa27dbfdfc579ddbfe54331`.
-- Workflow `33692647025`: SUCCESS; job `100454598090`: SUCCESS.
-- Artifact `9870669700`; digest `sha256:e470c3d9c46feb622b42371606cb11d0712ba057c6a4668ce2419e1b533d26ff`.
-- The same run passed static architecture, button contracts, parser, v146 repeated navigation, v147 guided association, v148 classification lifecycle and v149 desktop/mobile smoke.
+## v150 exact release evidence
+- Branch workflow `33784295793`: SUCCESS; job `100745221087`; artifact `9904891998`; digest `sha256:3a2550ddc480b17182cedfff16ef49d8756387195509816f163bc5d56145c8ea`.
+- Integrated-main baseline `25e517a28f900e281966d00a44cba827e49efb85`: v150 workflow `33785378395` SUCCESS; Pages `33785376825` SUCCESS.
+- Exact exposure-SHA v150 workflow `33796998363`: SUCCESS; job `100786998249`: SUCCESS.
+- Exact exposure artifact `9909647698`; digest `sha256:735cc4082378302a8b04ad710898a485defe6cf7909f2f9af65e0e292e02d388`.
+- Exact exposure candidate-smoke `33796998174`: SUCCESS.
+- Exact exposure v148 classification lifecycle `33796998303`: SUCCESS.
+- Exact exposure Pages `33796996669`: SUCCESS.
+- All nine workflows triggered by the exposure commit reached terminal conclusions with no in-progress/null/failure/cancellation remaining at release closure.
+- The v150 exact exposure job passed architecture/guardrails, inherited button contracts, parser/static, v146 repeated navigation, v147 document association, v148 classification lifecycle, v149 document interpretation and v150 desktop/mobile recomposition.
 - v146 regression remains 10 cycles × 7 destinations × desktop/mobile = **140 physical Playwright clicks**.
-- v149 smoke proves `financial_writer_changed=false`, `rpc_calls=0`, `filename_inference=false`, `manual_review_required=true`, `permanent_polling=false`, stable v149 visible labels and zero relevant browser errors.
-- First v149 gate exposed a self-triggering label `MutationObserver`; the product was corrected with idempotent stamping before the green evidence above.
-- Immutable checkpoint: `backups/WIP35_V149_PREINTEGRATION_CHECKPOINT_2026-09-02.md`.
-- This is synthetic/unauthenticated browser evidence. Real authenticated PDF/image interpret→review and authenticated visual E2E remain pending/unclaimed.
 
-## Current gate — v149 safe integration
-1. Recompare `main` and `v149-document-interpretation-review` immediately before integration.
-2. Require `main` to be an ancestor of the v149 branch with no divergence/behind commits.
-3. Fast-forward `main` normally with `force=false`; do not change `homologacao-current.json` in the integration step.
-4. On the exact integrated-main SHA require the v149 workflow SUCCESS, inherited v146/v147/v148 gates SUCCESS, Pages SUCCESS and protected `index.html` blob exactly `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
-5. Keep fixed homologation v148 while the user is testing. v149 exposure is a separate controlled decision after integrated-main gates are green.
-6. If/when v149 is exposed, use `promotion_status: not_promoted`, rerun exact exposure gates and verify the served fixed URL before requesting material homologation.
-7. Public root promotion remains a separate explicit user authorization.
+## v150 product contract to homologate materially
+- Dashboard: `Disponível realizável até D+3` remains the primary liquidity number; bank cash, D0 and vested D+3 resources stay separated.
+- FGTS remains restricted/not immediate cash and appears only as an additional D+30 contingency layer.
+- Planejamento is no longer a redundant top-level navigation item; detailed liquidity remains inside Dashboard.
+- Despesas separates **natureza** from **contexto/pessoa** and keeps documentary/system-review/classification-pending states explicit without fabricated detail.
+- Despesas drilldown and Fluxo lookup are read-only journeys.
+- Atualizações quick reviewed-input shortcut routes to the existing `Entradas` preview UI, prefills the phrase and adds no writer; explicit approval remains required before the pre-existing reviewed-input writer can execute.
+- v149 read-only document interpretation review remains inherited and preserved.
+- Classification ambiguity remains manual where evidence is insufficient.
 
-## Material checks already expected on current v148 fixed homologation
-- Repeated navigation, especially `Cartões` → `Patrimônio`.
-- Dashboard title/subtitle stable with no flicker.
-- Atualizações remains classification-first with evidence/confidence and manual ambiguity handling.
-- Guided document association requires explicit identity/competence/as-of and displays a visible reason when incomplete.
-- Classification save→refresh removes a resolved item and shows `O que mudou`; safe read-only verification retry must not duplicate the writer.
-- No large blank/whitespace regression on desktop/mobile.
+## Current gate — material user homologation of v150
+1. Open the fixed homologation URL and confirm the visible release is v150.
+2. Inspect Dashboard hierarchy and the FGTS distinction; no duplicated planning cockpit or misleading current-cash treatment.
+3. Inspect Despesas in at least two periods and open one context/person and one nature drilldown; confirm the two dimensions are understandable and not conflated.
+4. In Atualizações, use the quick input only far enough to verify it opens `Entradas` with the phrase prefilled; do not approve a real financial write merely for QA.
+5. Recheck navigation, especially `Cartões` → `Patrimônio`, and absence of large blank/whitespace regressions on desktop/mobile.
+6. If a real document is available, the v149 review may be materially inspected, but authenticated PDF/image interpret→review is still not claimed as automated E2E.
+7. Public root promotion is a separate explicit user authorization after material homologation; it must never be inferred from homologation approval.
 
 ## Financial/backend invariants — unchanged
 - Planning: management point 08/01/2027; FGTS request-by 09/12/2026; documentary FGTS R$17.509,05; existing accrual R$3.700/mês; request-date FGTS R$32.309,05; worst before -R$21.046,80; worst after +R$11.262,25; no uncovered gap through 28/02/2027.
@@ -51,12 +49,12 @@ Purpose: evidence-backed sequence before asking the user to inspect a material c
 - Card certified allocation 38 cycles / 650 rows / R$885.855,19; aggregate fallback 314 rows / R$2.650.846,36 stays aggregate-only; C6 Aug/2024 R$66,70 gap remains explicit.
 - RSU vested 459.483 units / R$32.772,30 / D+3; future awards excluded until vest/settle; R$578,68 historical sale difference remains unitemized.
 - Volvo financing 60 × R$2.886,43 from 08/09/2026 to 08/08/2031, no duplicate economic effect.
-- Backend fingerprint `85a1b60816a5b84dfe3b41341ed27948`; staged 411 checks / 35 suites PASS plus supplemental v143 16/16.
+- Backend fingerprint `85a1b60816a5b84dfe3b41341ed27948`; staged 411 checks / 35 suites PASS plus supplemental v143 16/16. Do not call this one monolithic gate.
 
 ## Open blockers retained
 - Human classification where evidence remains insufficient; GULA GULA MORUMBI/marketplaces remain manual where purpose is unproven.
 - Real authenticated classification save→refresh/resolved disappearance/self-heal/`O que mudou`.
-- Real authenticated PDF/image interpretation→review after v149 integration/exposure.
+- Real authenticated PDF/image interpretation→review.
 - Authenticated natural-liquidity save→refresh→visible result.
 - Append-only auditable cancellation/reversal semantics; no destructive financial behavior by assumption.
 - Expense density/insight refinement and evidence-only reduction of `A classificar`.
