@@ -40,7 +40,15 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#f4f6f9}
   }
   function inject(){
     refresh();const ds=docs(),deep=ds[ds.length-1];if(!deep)return false;const dw=deep.defaultView;
-    const repaint=()=>{try{dw&&dw.__LTS_V151_AFTER_RENDER&&dw.__LTS_V151_AFTER_RENDER()}catch(e){}try{dw&&dw.__LTS_V151_LEDGER_SEARCH_AFTER_RENDER&&dw.__LTS_V151_LEDGER_SEARCH_AFTER_RENDER()}catch(e){}refresh()};
+    const paintDashboard=()=>{
+      try{
+        if(!dw||String(dw.V)!=='Dashboard'||typeof dw.__LTS_V151_DASHBOARD_FN!=='function')return;
+        const root=deep.getElementById('A');if(!root)return;
+        root.innerHTML=dw.__LTS_V151_DASHBOARD_FN();
+      }catch(e){}
+    };
+    const repaint=()=>{paintDashboard();try{dw&&dw.__LTS_V151_AFTER_RENDER&&dw.__LTS_V151_AFTER_RENDER()}catch(e){}try{dw&&dw.__LTS_V151_LEDGER_SEARCH_AFTER_RENDER&&dw.__LTS_V151_LEDGER_SEARCH_AFTER_RENDER()}catch(e){}refresh()};
+    if(dw)dw.__LTS_V151_WRAPPER_REPAINT=repaint;
     if(!deep.getElementById('v151DashboardUpdatesLayer')){
       const nativeMO=dw&&dw.MutationObserver;if(dw)dw.MutationObserver=undefined;
       addScript(deep,'v151DashboardUpdatesLayer','wip35-v151-dashboard-updates.js?v151-dashboard-updates-v1',()=>{
@@ -50,14 +58,14 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#f4f6f9}
       });
     }
     addScript(deep,'v151LedgerSearchLayer','wip35-v151-ledger-search.js?v151-ledger-search-v1',()=>{[0,100,350].forEach(ms=>setTimeout(repaint,ms))});
-    return true;
+    repaint();return true;
   }
   document.getElementById('shell').addEventListener('load',()=>setTimeout(inject,80));
   [80,180,350,700,1200,2200,4000,7000,11000,15000].forEach(ms=>setTimeout(inject,ms));
   window.__LTS_TOP_CANDIDATE_VERSION=VERSION;
-  window.__LTS_V151_WRAPPER_STATUS={version:'v151-wrapper-v4',bounded_retry:true,permanent_polling:false,public_index_changed:false,decoration_observer_suppressed:true,event_refresh:true,version_observer:false,ledger_search_layer:true};
+  window.__LTS_V151_WRAPPER_STATUS={version:'v151-wrapper-v5',bounded_retry:true,permanent_polling:false,public_index_changed:false,decoration_observer_suppressed:true,event_refresh:true,version_observer:false,ledger_search_layer:true,dashboard_dom_owner:'bounded-event-repaint'};
 })();
 </script>
-<!-- v151 bounded refresh + server-side ledger search; no permanent wrapper observer -->
+<!-- v151 bounded/event repaint + server-side ledger search; no permanent wrapper observer -->
 </body>
 </html>
