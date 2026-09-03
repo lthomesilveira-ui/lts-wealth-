@@ -42,14 +42,26 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#f4f6f9}
     const deep=ds[ds.length-1];
     if(!deep)return false;
     if(!deep.getElementById('v151DashboardUpdatesLayer')){
-      const s=deep.createElement('script');s.id='v151DashboardUpdatesLayer';s.src='wip35-v151-dashboard-updates.js?v151-dashboard-updates-v1';(deep.head||deep.documentElement).appendChild(s);
+      const dw=deep.defaultView;
+      const nativeMO=dw&&dw.MutationObserver;
+      if(dw)dw.MutationObserver=undefined;
+      const s=deep.createElement('script');
+      s.id='v151DashboardUpdatesLayer';
+      s.src='wip35-v151-dashboard-updates.js?v151-dashboard-updates-v2';
+      s.onload=()=>{
+        const refresh=()=>{try{dw&&dw.__LTS_V151_AFTER_RENDER&&dw.__LTS_V151_AFTER_RENDER()}catch(e){}};
+        deep.addEventListener('click',()=>{[0,80,250].forEach(ms=>setTimeout(refresh,ms))},{capture:true});
+        [120,500,1200,2600,5200,7600].forEach(ms=>setTimeout(refresh,ms));
+        setTimeout(()=>{try{if(dw&&nativeMO)dw.MutationObserver=nativeMO}catch(e){}},8200);
+      };
+      (deep.head||deep.documentElement).appendChild(s);
     }
     return true;
   }
   document.getElementById('shell').addEventListener('load',()=>setTimeout(inject,80));
   [80,180,350,700,1200,2200,4000,7000,11000,15000].forEach(ms=>setTimeout(inject,ms));
   window.__LTS_TOP_CANDIDATE_VERSION=VERSION;
-  window.__LTS_V151_WRAPPER_STATUS={version:'v151-wrapper-v1',bounded_retry:true,permanent_polling:false,public_index_changed:false};
+  window.__LTS_V151_WRAPPER_STATUS={version:'v151-wrapper-v2',bounded_retry:true,permanent_polling:false,public_index_changed:false,decoration_observer_suppressed:true,event_refresh:true};
 })();
 </script>
 </body>
