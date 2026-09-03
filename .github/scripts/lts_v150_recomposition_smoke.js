@@ -67,6 +67,7 @@ async function run(browser,viewport,label){
     if(!window.S||typeof window.S!=='object') throw new Error('Supabase client missing');
     window.S.rpc=async(name,args)=>{
       window.__V150_RPC_CALLS=(window.__V150_RPC_CALLS||[]).concat([{name,args}]);
+      if(name==='lts_browser_product_v1') return {data:{mvp:data},error:null};
       if(name==='lts_browser_expense_context_nature_v1') return {data:matrix,error:null};
       if(name==='lts_browser_expense_drilldown_v1') return {data:{rows:[{date:'2026-09-03',display_name:'Escolinha das Acácias',category:'Educação',center:'Benjamin',counterparty:'Escolinha das Acácias',amount:4925}]},error:null};
       if(name==='lts_browser_flow_v4') return {data:{ok:true,flow:{historical:{events:[{event_date:'2026-09-03',description:'PAG BOLETO ESCOLINHA DAS ACACIAS',account:'Itaú',category:'Educação',amount:-4925}]},current_future:{events:[]}}},error:null};
@@ -76,6 +77,7 @@ async function run(browser,viewport,label){
     window.__LTS_V150_BOOTSTRAP_RETRY?.();
   },{data:synthetic(),matrix:expenseMatrix()});
   await f.waitForFunction(()=>window.LTS_V150_RECOMPOSITION==='expense-input-dashboard-recomposition-v1'&&window.__LTS_V150_BOOTSTRAP_STATUS?.bounded_retry===true,null,{timeout:12000});
+  await f.evaluate(data=>{window.D=data;window.__V150_EXP=null},synthetic());
   await setView(f,'Dashboard'); await forceShell(f); await page.waitForTimeout(250);
   let text=await f.locator('body').innerText();
   for(const needle of ['Sua vida financeira, em uma tela.','Disponível realizável até D+3','75.133,58','19.294,43','42.929,50','12.909,65','Disponível incluindo FGTS','92.642,63','17.509,05']) if(!text.includes(needle)) throw new Error(label+' dashboard missing '+needle+'\n'+text);
