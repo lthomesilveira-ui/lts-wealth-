@@ -1,0 +1,116 @@
+name: LTS v150 Expense input dashboard recomposition
+on:
+  push:
+    branches: [v150-expenses-input-dashboard-recomposition, main]
+    paths:
+      - 'wip35-v150-candidate.html'
+      - 'wip35-v150-recomposition.js'
+      - 'wip35-v150-bootstrap.js'
+      - '.github/scripts/lts_v150_recomposition_smoke.js'
+      - '.github/workflows/v150-recomposition.yml'
+      - 'wip35-v149-document-interpretation-review.js'
+      - 'wip35-v148-classification-lifecycle.js'
+      - 'wip35-v147-guided-document-association.js'
+      - '.github/scripts/lts_v149_document_interpretation_review_smoke.js'
+      - '.github/scripts/lts_v148_classification_lifecycle_smoke.js'
+      - '.github/scripts/lts_v147_document_association_smoke.js'
+      - '.github/scripts/lts_v146_updates_navigation_smoke.js'
+      - '.github/scripts/lts_candidate_smoke.py'
+      - '.github/scripts/lts_button_contract_audit.js'
+      - 'homologacao-current.json'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  recomposition:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate v150 architecture and guardrails
+        run: |
+          node --check wip35-v150-recomposition.js
+          node --check wip35-v150-bootstrap.js
+          node --check .github/scripts/lts_v150_recomposition_smoke.js
+          python - <<'PY'
+          from pathlib import Path
+          import subprocess
+          html=Path('wip35-v150-candidate.html').read_text()
+          js=Path('wip35-v150-recomposition.js').read_text()
+          boot=Path('wip35-v150-bootstrap.js').read_text()
+          allv='\n'.join([html,js,boot])
+          required=[
+            'wip35-v147-candidate.html?v150-parent',
+            'wip35-v150-bootstrap.js?v150-auth-bootstrap-v1',
+            'wip35-v150-recomposition.js?v150-recomposition-v1',
+            'expense-input-dashboard-recomposition-v1',
+            'WIP35-v150 · Homologação',
+            'CANDIDATA v150 · validação interna',
+            'Disponível realizável até D+3',
+            'Disponível incluindo FGTS',
+            'Lançamento por texto',
+            'Consultar o Fluxo',
+            'Quanto você gasta — e para quem é cada gasto.',
+            'financial_writer_changed:false',
+            'classification_inference:false',
+            'permanent_polling:false',
+            'bounded_retry:true'
+          ]
+          missing=[x for x in required if x not in allv]
+          assert not missing, missing
+          assert 'setInterval(' not in allv
+          assert 'lts_browser_apply_reviewed_input_v1' not in js
+          assert 'lts_apply_reviewed_input_v1' not in js
+          protected=subprocess.check_output(['git','rev-parse','HEAD:index.html'],text=True).strip()
+          assert protected=='a130eafe5f7ee5b7f60a95b5ff988669d0c401d9'
+          print('v150_static=PASS')
+          PY
+      - name: Audit inherited button contracts
+        run: node .github/scripts/lts_button_contract_audit.js
+      - name: Install browser
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Re-run inherited parser/static gate
+        run: python .github/scripts/lts_candidate_smoke.py
+      - name: Re-run inherited v146 navigation gate
+        run: |
+          python3 -m http.server 8772 >/tmp/lts-v146-v150.log 2>&1 &
+          PID=$!; trap 'kill $PID || true' EXIT; sleep 1
+          node .github/scripts/lts_v146_updates_navigation_smoke.js
+      - name: Re-run inherited v147 document association gate
+        run: |
+          python3 -m http.server 8773 >/tmp/lts-v147-v150.log 2>&1 &
+          PID=$!; trap 'kill $PID || true' EXIT; sleep 1
+          node .github/scripts/lts_v147_document_association_smoke.js
+      - name: Re-run inherited v148 classification lifecycle gate
+        run: |
+          python3 -m http.server 8774 >/tmp/lts-v148-v150.log 2>&1 &
+          PID=$!; trap 'kill $PID || true' EXIT; sleep 1
+          node .github/scripts/lts_v148_classification_lifecycle_smoke.js
+      - name: Re-run inherited v149 document interpretation gate
+        run: |
+          python3 -m http.server 8775 >/tmp/lts-v149-v150.log 2>&1 &
+          PID=$!; trap 'kill $PID || true' EXIT; sleep 1
+          node .github/scripts/lts_v149_document_interpretation_review_smoke.js
+      - name: Run v150 desktop/mobile recomposition gate
+        run: |
+          python3 -m http.server 8776 >/tmp/lts-v150.log 2>&1 &
+          PID=$!; trap 'kill $PID || true' EXIT; sleep 1
+          node .github/scripts/lts_v150_recomposition_smoke.js
+      - name: Upload v150 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: wip35-v150-recomposition
+          path: |
+            v150-recomposition-smoke-result.json
+            v149-document-interpretation-review-smoke-result.json
+            v148-classification-lifecycle-smoke-result.json
+            v147-document-association-smoke-result.json
+            v146-updates-navigation-smoke-result.json
+            candidate-smoke-result.txt
+            button-contract-audit-result.json
+          if-no-files-found: warn
