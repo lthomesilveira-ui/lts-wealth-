@@ -5,6 +5,7 @@ on:
     paths:
       - 'wip35-v151-candidate.html'
       - 'wip35-v151-dashboard-updates.js'
+      - 'wip35-v151-ledger-search.js'
       - '.github/scripts/lts_v151_dashboard_updates_smoke.js'
       - '.github/workflows/v151-dashboard-updates.yml'
       - 'wip35-v150-candidate.html'
@@ -27,17 +28,21 @@ jobs:
       - name: Validate v151 architecture and guardrails
         run: |
           node --check wip35-v151-dashboard-updates.js
+          node --check wip35-v151-ledger-search.js
           node --check .github/scripts/lts_v151_dashboard_updates_smoke.js
           python - <<'PY'
           from pathlib import Path
           import subprocess
           html=Path('wip35-v151-candidate.html').read_text()
           js=Path('wip35-v151-dashboard-updates.js').read_text()
-          allv=html+'\n'+js
+          ledger=Path('wip35-v151-ledger-search.js').read_text()
+          allv=html+'\n'+js+'\n'+ledger
           required=[
             'wip35-v150-candidate.html?v151-parent',
             'wip35-v151-dashboard-updates.js?v151-dashboard-updates-v1',
+            'wip35-v151-ledger-search.js?v151-ledger-search-v1',
             'dashboard-updates-cockpit-v1',
+            'ledger-search-export-v1',
             'WIP35-v151 · Homologação',
             'CANDIDATA v151 · validação interna',
             'Sua vida financeira, em uma tela.',
@@ -50,6 +55,12 @@ jobs:
             'O que exige minha atenção',
             'Estabelecimento já identificado',
             'LTS ainda investigando',
+            'Encontrar lançamentos',
+            'lts_browser_transactions_v1',
+            '2013-10-10',
+            'Exportar para Excel (CSV)',
+            'server_side:true',
+            'writer_added:false',
             'financial_writer_changed:false',
             'classification_inference:false',
             'classification_writer_added:false',
@@ -59,8 +70,9 @@ jobs:
           missing=[x for x in required if x not in allv]
           assert not missing, missing
           assert 'setInterval(' not in allv
-          assert 'lts_browser_apply_reviewed_input_v1' not in js
-          assert 'lts_browser_semantic_feedback_v1' not in js
+          assert 'lts_browser_apply_reviewed_input_v1' not in js+ledger
+          assert 'lts_browser_semantic_feedback_v1' not in js+ledger
+          assert 'lts_browser_flow_v4' not in ledger
           protected=subprocess.check_output(['git','rev-parse','HEAD:index.html'],text=True).strip()
           assert protected=='a130eafe5f7ee5b7f60a95b5ff988669d0c401d9'
           print('v151_static=PASS')
@@ -98,7 +110,7 @@ jobs:
           python3 -m http.server 8776 >/tmp/lts-v150-v151.log 2>&1 &
           PID=$!; trap 'kill $PID || true' EXIT; sleep 1
           node .github/scripts/lts_v150_recomposition_smoke.js
-      - name: Run v151 desktop/mobile cockpit gate
+      - name: Run v151 desktop/mobile cockpit + ledger search gate
         run: |
           python3 -m http.server 8777 >/tmp/lts-v151.log 2>&1 &
           PID=$!; trap 'kill $PID || true' EXIT; sleep 1
