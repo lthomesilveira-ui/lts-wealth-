@@ -62,16 +62,16 @@ async function run(browser,viewport,label){
   await page.waitForTimeout(4000);
   const {f,chain}=await deepest(page);
   if(!chain[0].includes('wip35-v150-candidate.html')||!chain.some(x=>x.includes('wip35-v147-candidate.html'))) throw new Error('candidate chain invalid '+JSON.stringify(chain));
-  const rpcCalls=[];
   await f.evaluate(({data,matrix})=>{
     window.D=data;
-    window.S={rpc:async(name,args)=>{
+    if(!window.S||typeof window.S!=='object') throw new Error('Supabase client missing');
+    window.S.rpc=async(name,args)=>{
       window.__V150_RPC_CALLS=(window.__V150_RPC_CALLS||[]).concat([{name,args}]);
       if(name==='lts_browser_expense_context_nature_v1') return {data:matrix,error:null};
       if(name==='lts_browser_expense_drilldown_v1') return {data:{rows:[{date:'2026-09-03',display_name:'Escolinha das Acácias',category:'Educação',center:'Benjamin',counterparty:'Escolinha das Acácias',amount:4925}]},error:null};
       if(name==='lts_browser_flow_v4') return {data:{ok:true,flow:{historical:{events:[{event_date:'2026-09-03',description:'PAG BOLETO ESCOLINHA DAS ACACIAS',account:'Itaú',category:'Educação',amount:-4925}]},current_future:{events:[]}}},error:null};
       return {data:{ok:true},error:null};
-    }};
+    };
     window.V='Dashboard'; window.renderNav?.(); window.render();
     window.__LTS_V150_BOOTSTRAP_RETRY?.();
   },{data:synthetic(),matrix:expenseMatrix()});
@@ -90,7 +90,7 @@ async function run(browser,viewport,label){
   await f.waitForFunction(()=>document.getElementById('A')?.innerText.includes('Quanto você gasta'),null,{timeout:5000});
   text=await f.locator('#A').innerText();
   for(const needle of ['Benjamin','Casa','Educação','Sem detalhe documental recuperado','Detalhe disponível · LTS investigando','Classificação/contexto ainda pendente','186.252,10','165.493,93','9.156,77']) if(!text.includes(needle)) throw new Error('expense matrix missing '+needle);
-  const ben= f.locator('details.v150-context').filter({hasText:'Benjamin'}).first(); await ben.locator('summary').click();
+  const ben=f.locator('details.v150-context').filter({hasText:'Benjamin'}).first(); await ben.locator('summary').click();
   const edu=ben.locator('button[data-v150-drill-dim]').filter({hasText:'Educação'}).first(); if(!await edu.isVisible()) throw new Error('Benjamin → Educação not visible');
   await edu.click(); await page.waitForTimeout(250);
   text=await f.locator('#A').innerText(); if(!text.includes('Escolinha das Acácias')||!text.includes('4.925,00')) throw new Error('expense drilldown failed');
