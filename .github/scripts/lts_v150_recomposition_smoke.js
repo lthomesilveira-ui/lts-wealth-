@@ -103,24 +103,25 @@ async function run(browser,viewport,label){
   text=await f.locator('#v150Toolbox').innerText();
   if(!hasText(text,'Lançamento por texto')||!hasText(text,'Consultar o Fluxo')) throw new Error('updates tools missing');
   await f.locator('#v150Phrase').fill('lançar R$ 250 no Itaú');
-  await f.locator('[data-v150-open-input]').click(); await page.waitForTimeout(180);
-  const route=await f.evaluate(()=>({V:window.V,phrase:document.querySelector('.phrase')?.value||'',status:document.getElementById('v150InputStatus')?.textContent||''}));
-  if(route.V!=='Lançar / Importar'||route.phrase!=='lançar R$ 250 no Itaú') throw new Error('reviewed input route did not reopen '+JSON.stringify(route));
+  await f.locator('[data-v150-open-entry],[data-v150-open-input]').click(); await page.waitForTimeout(180);
+  const route=await f.evaluate(()=>({V:window.V,phrase:document.querySelector('.phrase')?.value||'',status:document.getElementById('v150InputStatus')?.textContent||'',routeStatus:window.__LTS_V150_INPUT_ROUTE_STATUS||null}));
+  if(route.V!=='Entradas'||route.phrase!=='lançar R$ 250 no Itaú'||route.routeStatus?.target!=='Entradas'||route.routeStatus?.preview_only!==true||route.routeStatus?.writer_added!==false) throw new Error('reviewed input route did not reopen '+JSON.stringify(route));
   await setView(f,'Atualizações'); await page.waitForTimeout(180); await f.waitForSelector('#v150Toolbox');
   await f.locator('#v150FlowTerm').fill('escolinha'); await f.locator('[data-v150-flow-query]').click(); await page.waitForTimeout(180);
   const flowText=await f.locator('#v150FlowResults').innerText(); if(!hasText(flowText,'ESCOLINHA DAS ACACIAS')) throw new Error('flow query failed '+flowText);
 
   await page.waitForTimeout(900);
-  const status=await f.evaluate(()=>({product:window.__LTS_V150_STATUS,bootstrap:window.__LTS_V150_BOOTSTRAP_STATUS,rpcCalls:window.__V150_RPC_CALLS||[],version:window.__LTS_V150_VISIBLE_VERSION_STATUS}));
+  const status=await f.evaluate(()=>({product:window.__LTS_V150_STATUS,bootstrap:window.__LTS_V150_BOOTSTRAP_STATUS,rpcCalls:window.__V150_RPC_CALLS||[],version:window.__LTS_V150_VISIBLE_VERSION_STATUS,inputRoute:window.__LTS_V150_INPUT_ROUTE_STATUS||null}));
   if(status.product?.financial_writer_changed!==false||status.product?.classification_inference!==false||status.product?.permanent_polling!==false) throw new Error('v150 guardrails invalid '+JSON.stringify(status.product));
   if(status.bootstrap?.permanent_polling!==false||status.bootstrap?.bounded_retry!==true) throw new Error('bootstrap guardrails invalid');
   if(status.version?.older_version_visible) throw new Error('older visible version won ownership');
+  if(status.inputRoute?.target!=='Entradas'||status.inputRoute?.preview_only!==true||status.inputRoute?.writer_added!==false) throw new Error('input route guardrails invalid '+JSON.stringify(status.inputRoute));
   const names=status.rpcCalls.map(x=>x.name);
   const forbidden=names.filter(x=>/apply|approve|write|feedback/i.test(x)); if(forbidden.length) throw new Error('unexpected writer rpc '+forbidden.join(','));
   for(const required of ['lts_browser_expense_context_nature_v1','lts_browser_expense_drilldown_v1','lts_browser_flow_v4']) if(!names.includes(required)) throw new Error('missing expected read rpc '+required);
   if(errors.length) throw new Error('browser errors '+JSON.stringify(errors));
   await page.close();
-  return {label,viewport,chain,route,status:{product:status.product,bootstrap:{version:status.bootstrap.version,bounded_retry:status.bootstrap.bounded_retry,permanent_polling:status.bootstrap.permanent_polling},version:status.version},rpcNames:names,pass:true};
+  return {label,viewport,chain,route,status:{product:status.product,bootstrap:{version:status.bootstrap.version,bounded_retry:status.bootstrap.bounded_retry,permanent_polling:status.bootstrap.permanent_polling},version:status.version,inputRoute:status.inputRoute},rpcNames:names,pass:true};
 }
 (async()=>{
   const browser=await chromium.launch({headless:true});
