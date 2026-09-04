@@ -11,6 +11,7 @@ on:
       - '.github/workflows/v151-dashboard-updates.yml'
       - 'wip35-v150-candidate.html'
       - 'wip35-v150-recomposition.js'
+      - 'wip35-v146-candidate.html'
       - 'wip35-v146-updates-navigation.js'
       - 'wip35-v148-classification-lifecycle.js'
       - 'wip35-v149-document-interpretation-review.js'
@@ -39,6 +40,7 @@ jobs:
           js=Path('wip35-v151-dashboard-updates.js').read_text()
           ledger=Path('wip35-v151-ledger-search.js').read_text()
           reference=Path('wip35-v151-reference-fidelity.js').read_text()
+          v146=Path('wip35-v146-candidate.html').read_text()
           allv=html+'\n'+js+'\n'+ledger+'\n'+reference
           required=[
             'wip35-v150-candidate.html?v151-parent',
@@ -78,6 +80,8 @@ jobs:
           ]
           missing=[x for x in required if x not in allv]
           assert not missing, missing
+          assert 'v146-feedback-safe-loader-v1' in v146
+          assert 'app-document-not-ready' in v146
           assert 'setInterval(' not in allv
           assert 'lts_browser_apply_reviewed_input_v1' not in js+ledger+reference
           assert 'lts_browser_semantic_feedback_v1' not in js+ledger+reference
