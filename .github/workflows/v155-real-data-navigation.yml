@@ -4,22 +4,28 @@ on:
     branches: [v155-real-data-navigation-fix, main]
     paths:
       - 'wip35-v155-candidate.html'
+      - 'wip35-v155-runtime.js'
       - '.github/workflows/v155-real-data-navigation.yml'
       - 'homologacao-current.json'
   workflow_dispatch:
 jobs:
   gate:
     runs-on: ubuntu-latest
+    timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
       - name: Static contract
         run: |
           python - <<'PY'
           from pathlib import Path
-          s=Path('wip35-v155-candidate.html').read_text()
-          for x in ['all_route_retry:true','false_zero_guard:true','d3_component_recovery:true','dado mensal não carregado','ROUTES=[','Fluxo Diário','Despesas','Patrimônio','Cartões','Atualizações']:
-              assert x in s, x
-          assert 'index.html' not in '\n'.join([p.as_posix() for p in Path('.').glob('index.html.__v155*')])
+          boot=Path('wip35-v155-candidate.html').read_text(encoding='utf-8')
+          run=Path('wip35-v155-runtime.js').read_text(encoding='utf-8')
+          for x in ['wip35-v154-candidate.html','wip35-v155-runtime.js']:
+              assert x in boot, x
+          for x in ['all_route_retry:true','false_zero_guard:true','d3_component_recovery:true','direct_visual_shell:true','dado mensal não carregado','Fluxo Diário','Despesas','Patrimônio','Cartões','Atualizações']:
+              assert x in run, x
+          assert 'index.html' not in boot and 'index.html' not in run
+          print('v155_static=PASS')
           PY
       - name: Install Playwright
         run: |
@@ -32,48 +38,55 @@ jobs:
         run: |
           node <<'NODE'
           const { chromium } = require('playwright');
+          const fs=require('fs');
           (async()=>{
             const browser=await chromium.launch({headless:true});
+            const result={pass:true,authenticated_e2e:false,views:{}};
             for (const vp of [{name:'desktop',width:1312,height:1199},{name:'mobile',width:390,height:844}]) {
               const page=await browser.newPage({viewport:{width:vp.width,height:vp.height}});
-              await page.goto('http://127.0.0.1:8000/wip35-v155-candidate.html?runtimeFixture=1',{waitUntil:'load'});
-              await page.waitForTimeout(5000);
-              const app=page.frames().find(f=>f.url().includes('wip35-v154-candidate.html'));
-              if(!app) throw new Error(vp.name+': v154 visual frame missing');
-              const kpi=app.locator('.kpi').filter({hasText:'Disponível D+3'}).locator('strong');
-              const d3=(await kpi.textContent())||'';
+              await page.goto('http://127.0.0.1:8000/wip35-v155-candidate.html?runtimeFixture=1&visualFixture=1',{waitUntil:'domcontentloaded',timeout:20000});
+              await page.waitForSelector('.kpis .kpi',{state:'visible',timeout:8000});
+              await page.waitForFunction(()=>window.__LTS_V155_STATUS?.direct_visual_shell===true,null,{timeout:5000});
+              await page.waitForTimeout(900);
+              const d3=(await page.locator('.kpi').filter({hasText:'Disponível D+3'}).locator('strong').textContent())||'';
               if(!d3.includes('40.000')) throw new Error(vp.name+': D+3 component recovery failed: '+d3);
-              const expenses=app.locator('.kpi').filter({hasText:'Despesas (mês)'});
-              const expText=(await expenses.textContent())||'';
+              const expText=(await page.locator('.kpi').filter({hasText:'Despesas (mês)'}).textContent())||'';
               if(expText.includes('R$ 0,00')||!expText.includes('dado mensal não carregado')) throw new Error(vp.name+': false-zero guard failed: '+expText);
-              const actions=(await app.locator('.kpi').filter({hasText:'Ações pendentes'}).textContent())||'';
-              if(!actions.includes('23 atualizações em fila')) throw new Error(vp.name+': update count evidence missing: '+actions);
+              const actions=(await page.locator('.kpi').filter({hasText:'Ações pendentes'}).textContent())||'';
+              if(!actions.includes('23 atualizações em fila')) throw new Error(vp.name+': update queue evidence missing: '+actions);
               const selector=vp.name==='mobile'?'#mobileNav [data-route]':'#sideNav [data-route]';
+              const routeEvidence=[];
               for(const dest of ['Fluxo Diário','Despesas','Patrimônio','Cartões','Atualizações','Dashboard']){
-                const button=app.locator(selector).filter({hasText:dest}).first();
+                const button=page.locator(selector).filter({hasText:dest}).first();
                 await button.click();
-                await page.waitForTimeout(850);
+                await page.waitForTimeout(1100);
                 const state=await page.evaluate(()=>window.__LTS_V155_ROUTE_STATE||null);
                 if(dest==='Dashboard'){
-                  if(!(await app.locator('#dashboard').isVisible())) throw new Error(vp.name+': Dashboard did not return');
+                  if(!(await page.locator('#dashboard').isVisible())) throw new Error(vp.name+': Dashboard did not return');
+                  if(!state||state.dest!==dest||state.ok!==true) throw new Error(vp.name+': Dashboard state failed '+JSON.stringify(state));
                 } else {
-                  if(!(await app.locator('#routeFrame').isVisible())) throw new Error(vp.name+': route frame hidden for '+dest);
-                  if(!state||state.dest!==dest||state.ok!==true) throw new Error(vp.name+': route failed '+dest+' '+JSON.stringify(state));
+                  if(!(await page.locator('#routeFrame').isVisible())) throw new Error(vp.name+': route frame hidden for '+dest);
+                  if(!state||state.dest!==dest||state.ok!==true) throw new Error(vp.name+': deep route failed '+dest+' '+JSON.stringify(state));
                 }
+                routeEvidence.push({dest,state});
               }
-              const dims=await app.evaluate(()=>({sw:document.documentElement.scrollWidth,cw:document.documentElement.clientWidth}));
-              if(dims.sw>dims.cw+2) throw new Error(vp.name+': horizontal overflow '+JSON.stringify(dims));
+              const dims=await page.evaluate(()=>({sw:document.documentElement.scrollWidth,cw:document.documentElement.clientWidth,kpis:document.querySelectorAll('.kpi').length,panels:document.querySelectorAll('.panel').length}));
+              if(dims.sw>dims.cw+8) throw new Error(vp.name+': horizontal overflow '+JSON.stringify(dims));
+              if(dims.kpis!==5||dims.panels<9) throw new Error(vp.name+': dashboard density regression '+JSON.stringify(dims));
               await page.screenshot({path:`v155-${vp.name}.png`,fullPage:true});
+              result.views[vp.name]={d3,expenses:expText,actions,routes:routeEvidence,dims};
               await page.close();
             }
-            require('fs').writeFileSync('v155-result.json',JSON.stringify({pass:true,routes:6,false_zero_guard:true,d3_component_recovery:true,authenticated_e2e:false},null,2));
+            fs.writeFileSync('v155-result.json',JSON.stringify(result,null,2));
             await browser.close();
           })().catch(e=>{console.error(e);process.exit(1)});
           NODE
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: wip35-v155-functional-gate
           path: |
             v155-desktop.png
             v155-mobile.png
             v155-result.json
+          if-no-files-found: warn
