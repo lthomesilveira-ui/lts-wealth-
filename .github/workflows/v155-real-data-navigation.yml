@@ -11,7 +11,7 @@ on:
 jobs:
   gate:
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 14
     steps:
       - uses: actions/checkout@v4
       - name: Static contract
@@ -22,7 +22,7 @@ jobs:
           run=Path('wip35-v155-runtime.js').read_text(encoding='utf-8')
           for x in ['wip35-v154-candidate.html','wip35-v155-runtime.js']:
               assert x in boot, x
-          for x in ['all_route_retry:true','false_zero_guard:true','d3_component_recovery:true','direct_visual_shell:true','dado mensal não carregado','Fluxo Diário','Despesas','Patrimônio','Cartões','Atualizações']:
+          for x in ['all_route_retry:true','false_zero_guard:true','d3_component_recovery:true','direct_visual_shell:true','source_normalization:true','dado mensal não carregado','Fluxo Diário','Despesas','Patrimônio','Cartões','Atualizações']:
               assert x in run, x
           assert 'index.html' not in boot and 'index.html' not in run
           print('v155_static=PASS')
@@ -83,6 +83,41 @@ jobs:
             await browser.close();
           })().catch(e=>{console.error(e);process.exit(1)});
           NODE
+      - name: No-fixture runtime smoke
+        run: |
+          node <<'NODE'
+          const { chromium }=require('playwright');
+          const fs=require('fs');
+          (async()=>{
+            const browser=await chromium.launch({headless:true});
+            const page=await browser.newPage({viewport:{width:390,height:844}});
+            const out={pass:true,authenticated:false,data_loaded:false,route_clicks:{},note:null};
+            await page.goto('http://127.0.0.1:8000/wip35-v155-candidate.html',{waitUntil:'domcontentloaded',timeout:20000});
+            await page.waitForSelector('.kpis .kpi',{state:'visible',timeout:10000});
+            await page.waitForFunction(()=>window.__LTS_V155_STATUS?.direct_visual_shell===true,null,{timeout:5000});
+            await page.waitForTimeout(5000);
+            const state=await page.evaluate(()=>window.__LTS_V155_DATA_STATE||null);
+            out.data_loaded=!!state;
+            if(state){
+              out.data_state={through:state.through,expenses:state.expenses,actions:state.actions,updates:state.updates};
+              const exp=page.locator('.kpi').filter({hasText:'Despesas (mês)'});
+              const val=((await exp.locator('strong').textContent())||'').trim();
+              if(state.expenses==null && (val==='R$ 0,00'||val==='0')) throw new Error('no-fixture false-zero regression: '+val);
+            }else{
+              out.note='CI browser had no usable real read-model/session; functional fixture remains the deterministic gate. This is not authenticated E2E.';
+            }
+            for(const dest of ['Fluxo Diário','Dashboard']){
+              const b=page.locator('#mobileNav [data-route]').filter({hasText:dest}).first();
+              await b.click();await page.waitForTimeout(1600);
+              const rs=await page.evaluate(()=>window.__LTS_V155_ROUTE_STATE||null);
+              out.route_clicks[dest]=rs;
+              if(!rs||rs.dest!==dest||rs.ok!==true) throw new Error('no-fixture route failed '+dest+' '+JSON.stringify(rs));
+            }
+            fs.writeFileSync('v155-no-fixture-result.json',JSON.stringify(out,null,2));
+            await page.screenshot({path:'v155-no-fixture-mobile.png',fullPage:true});
+            await browser.close();
+          })().catch(e=>{console.error(e);process.exit(1)});
+          NODE
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -91,4 +126,6 @@ jobs:
             v155-desktop.png
             v155-mobile.png
             v155-result.json
+            v155-no-fixture-mobile.png
+            v155-no-fixture-result.json
           if-no-files-found: warn
