@@ -50,8 +50,10 @@ jobs:
               await page.waitForTimeout(900);
               const d3=(await page.locator('.kpi').filter({hasText:'Disponível D+3'}).locator('strong').textContent())||'';
               if(!d3.includes('40.000')) throw new Error(vp.name+': D+3 component recovery failed: '+d3);
-              const expText=(await page.locator('.kpi').filter({hasText:'Despesas (mês)'}).textContent())||'';
-              if(expText.includes('R$ 0,00')||!expText.includes('dado mensal não carregado')) throw new Error(vp.name+': false-zero guard failed: '+expText);
+              const expenses=page.locator('.kpi').filter({hasText:'Despesas (mês)'});
+              const expValue=((await expenses.locator('strong').textContent())||'').trim();
+              const expText=(await expenses.textContent())||'';
+              if(expValue.includes('R$ 0,00')||expValue==='0'||!expText.includes('dado mensal não carregado')) throw new Error(vp.name+': false-zero guard failed: '+expValue+' / '+expText);
               const actions=(await page.locator('.kpi').filter({hasText:'Ações pendentes'}).textContent())||'';
               if(!actions.includes('23 atualizações em fila')) throw new Error(vp.name+': update queue evidence missing: '+actions);
               const selector=vp.name==='mobile'?'#mobileNav [data-route]':'#sideNav [data-route]';
