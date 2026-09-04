@@ -3,18 +3,18 @@
 Canonical visual reference for the product.
 
 ## Official reference asset
-- Repository render: `design/LTS_WEALTH_DASHBOARD_REFERENCE_OFFICIAL_2026-09-04.jpeg`.
-- Repository render SHA-256: `d27118b4d57c6d90cd0f08ea3b8c9e9d69e1a73dede6aae851fc5c189e4b5d99`.
-- Repository render dimensions: 300×274; it is a downscaled visual-preservation copy of the source supplied by the user, kept in-repo so future chats do not depend on chat memory or re-upload.
-- Original source dimensions: 1312×1199.
-- Original source SHA-256: `0e5293a98bf3fce30b27ba508afdb2f17d82700a6134372938eaff38da73c06b`.
-- Status: mandatory visual contract, not inspiration. The downscaled repository render preserves layout, hierarchy, spacing, proportions, color language and visual density; it is not financial data evidence.
+- Repository visual proxy: `design/LTS_WEALTH_DASHBOARD_REFERENCE_OFFICIAL_2026-09-04.jpeg`.
+- Repository proxy SHA-256: `914019a3b94c6d8f4d63fb701c6c18be5e07d4c46c1c29f776cfe36523e7e44a`.
+- Repository proxy dimensions: 180×164. It is a deterministic downscaled/compressed visual proxy derived only from the official source, retained because the repository connector truncated the full binary during transfer. It preserves the composition sufficiently for permanent automated side-by-side evidence; it is not a substitute for the original source when performing the final human visual comparison.
+- Original official source dimensions: 1312×1199.
+- Original official source SHA-256: `0e5293a98bf3fce30b27ba508afdb2f17d82700a6134372938eaff38da73c06b`.
+- The original source is the mandatory visual contract, not inspiration. Its layout, hierarchy, spacing, proportions, color language and visual density are authoritative. Reference-image financial values are illustrative unless separately evidenced by LTS data.
 
 ## Acceptance rule
 Before asking the user to homologate a Dashboard candidate:
 1. render the real candidate in desktop and mobile;
 2. capture screenshots;
-3. build side-by-side evidence against the official repository reference;
+3. build side-by-side evidence against the repository proxy and inspect the candidate against the original official source;
 4. inspect visual hierarchy, density, spacing, proportions, typography, card language and navigation;
 5. test mobile `Dashboard → Fluxo Diário → Dashboard` with physical browser clicks;
 6. continue correcting if the candidate is still visually distant.
