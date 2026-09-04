@@ -3,15 +3,18 @@
 Canonical visual reference for the product.
 
 ## Official reference asset
-- File: `design/LTS_WEALTH_DASHBOARD_REFERENCE_OFFICIAL_2026-09-04.jpeg`
-- SHA-256: `0e5293a98bf3fce30b27ba508afdb2f17d82700a6134372938eaff38da73c06b`
-- Status: mandatory visual contract, not inspiration.
+- Repository render: `design/LTS_WEALTH_DASHBOARD_REFERENCE_OFFICIAL_2026-09-04.jpeg`.
+- Repository render SHA-256: `d27118b4d57c6d90cd0f08ea3b8c9e9d69e1a73dede6aae851fc5c189e4b5d99`.
+- Repository render dimensions: 300×274; it is a downscaled visual-preservation copy of the source supplied by the user, kept in-repo so future chats do not depend on chat memory or re-upload.
+- Original source dimensions: 1312×1199.
+- Original source SHA-256: `0e5293a98bf3fce30b27ba508afdb2f17d82700a6134372938eaff38da73c06b`.
+- Status: mandatory visual contract, not inspiration. The downscaled repository render preserves layout, hierarchy, spacing, proportions, color language and visual density; it is not financial data evidence.
 
 ## Acceptance rule
 Before asking the user to homologate a Dashboard candidate:
 1. render the real candidate in desktop and mobile;
 2. capture screenshots;
-3. build side-by-side evidence against the official reference;
+3. build side-by-side evidence against the official repository reference;
 4. inspect visual hierarchy, density, spacing, proportions, typography, card language and navigation;
 5. test mobile `Dashboard → Fluxo Diário → Dashboard` with physical browser clicks;
 6. continue correcting if the candidate is still visually distant.
