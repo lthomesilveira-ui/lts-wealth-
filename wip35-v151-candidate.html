@@ -38,15 +38,18 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#f4f6f9}
     if(deep.getElementById(id))return false;
     const s=deep.createElement('script');s.id=id;s.src=src;if(onload)s.onload=onload;(deep.head||deep.documentElement).appendChild(s);return true;
   }
-  function addScriptWithoutObserver(deep,id,src,onload){
+  function addScriptWithBoundObserver(deep,id,src,onload){
     if(deep.getElementById(id))return false;
-    const marker=deep.createElement('script');marker.id=id;marker.type='application/lts-v151';marker.dataset.src=src;(deep.head||deep.documentElement).appendChild(marker);
-    const dw=deep.defaultView,url=new URL(src,deep.baseURI).href;
-    dw.fetch(url,{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('HTTP '+r.status);return r.text()}).then(code=>{
-      dw.Function('MutationObserver',code+'\n//# sourceURL='+url).call(dw,undefined);
-      marker.dataset.loaded='true';if(onload)onload();
-    }).catch(e=>{marker.dataset.error=String(e&&e.message||e);try{console.error('v151 layer load failed',e)}catch(_){}});
-    return true;
+    const s=deep.createElement('script');s.id=id;s.src=src;
+    s.onload=()=>{
+      try{
+        const dw=deep.defaultView,o=dw&&dw.__LTS_V151_DECORATION_OBSERVER;
+        if(o&&typeof o.disconnect==='function')o.disconnect();
+        if(dw)dw.__LTS_V151_DECORATION_OBSERVER=null;
+      }catch(e){}
+      if(onload)onload();
+    };
+    (deep.head||deep.documentElement).appendChild(s);return true;
   }
   function inject(){
     refresh();const ds=docs(),deep=ds[ds.length-1];if(!deep)return false;const dw=deep.defaultView;
@@ -115,7 +118,7 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#f4f6f9}
     if(dw)dw.__LTS_V151_WRAPPER_REPAINT=repaintBurst;
     wireRender();
     if(!deep.getElementById('v151DashboardUpdatesLayer')){
-      addScriptWithoutObserver(deep,'v151DashboardUpdatesLayer','wip35-v151-dashboard-updates.js?v151-dashboard-updates-v1',()=>{
+      addScriptWithBoundObserver(deep,'v151DashboardUpdatesLayer','wip35-v151-dashboard-updates.js?v151-dashboard-updates-v1',()=>{
         wireRender();
         deep.addEventListener('click',repaintBurst,{capture:true});
         [120,500,1200,2600,5200,7600].forEach(ms=>setTimeout(repaintOnce,ms));
@@ -127,9 +130,9 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#f4f6f9}
   document.getElementById('shell').addEventListener('load',()=>setTimeout(inject,80));
   [80,180,350,700,1200,2200,4000,7000,11000,15000].forEach(ms=>setTimeout(inject,ms));
   window.__LTS_TOP_CANDIDATE_VERSION=VERSION;
-  window.__LTS_V151_WRAPPER_STATUS={version:'v151-wrapper-v12',bounded_retry:true,permanent_polling:false,public_index_changed:false,decoration_observer_suppressed:true,event_refresh:true,render_after_hook:true,inherited_expense_root_bridge:true,inherited_expense_renderer_bridge:true,inherited_expense_renderer_owner:true,version_observer:false,ledger_search_layer:true,dashboard_dom_owner:'bounded-event-repaint-burst',global_mutation_observer_preserved:true,layer_scope_shadow:true};
+  window.__LTS_V151_WRAPPER_STATUS={version:'v151-wrapper-v13',bounded_retry:true,permanent_polling:false,public_index_changed:false,decoration_observer_bounded:true,event_refresh:true,render_after_hook:true,inherited_expense_root_bridge:true,inherited_expense_renderer_bridge:true,inherited_expense_renderer_owner:true,version_observer:false,ledger_search_layer:true,dashboard_dom_owner:'bounded-event-repaint-burst',global_mutation_observer_preserved:true,layer_scope_shadow:false};
 })();
 </script>
-<!-- v151 bounded/event repaint burst + render-after hook + inherited expense renderer ownership/root bridge + server-side ledger search; dashboard layer receives a scoped observer shadow and does not alter the browser global -->
+<!-- v151 native script load + bounded decoration observer lifetime + bounded/event repaint burst + render-after hook + inherited expense renderer ownership/root bridge + server-side ledger search; public index untouched -->
 </body>
 </html>
