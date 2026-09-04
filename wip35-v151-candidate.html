@@ -59,10 +59,15 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#f4f6f9}
     };
     const prepareInheritedRoots=()=>{
       try{
-        if(String(dw?.V)==='Despesas'&&!deep.getElementById('v150ExpensesRoot')){
-          const root=deep.querySelector('#A > .v150')||deep.querySelector('#A .v150');
-          if(root)root.id='v150ExpensesRoot';
+        if(String(dw?.V)!=='Despesas')return;
+        const area=deep.getElementById('A');
+        let root=deep.getElementById('v150ExpensesRoot')||deep.querySelector('#A > .v150')||deep.querySelector('#A .v150');
+        if(!root&&area&&dw?.LTS_V150_RECOMPOSITION==='expense-input-dashboard-recomposition-v1'&&typeof dw.__v143Expenses==='function'){
+          const html=dw.__v143Expenses();
+          if(typeof html==='string'&&html)area.innerHTML=html;
+          root=deep.querySelector('#A > .v150')||deep.querySelector('#A .v150');
         }
+        if(root&&!root.id)root.id='v150ExpensesRoot';
       }catch(e){}
     };
     const repaintOnce=()=>{paintDashboard();prepareInheritedRoots();try{dw&&dw.__LTS_V151_AFTER_RENDER&&dw.__LTS_V151_AFTER_RENDER()}catch(e){}try{dw&&dw.__LTS_V151_LEDGER_SEARCH_AFTER_RENDER&&dw.__LTS_V151_LEDGER_SEARCH_AFTER_RENDER()}catch(e){}refresh()};
@@ -93,9 +98,9 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#f4f6f9}
   document.getElementById('shell').addEventListener('load',()=>setTimeout(inject,80));
   [80,180,350,700,1200,2200,4000,7000,11000,15000].forEach(ms=>setTimeout(inject,ms));
   window.__LTS_TOP_CANDIDATE_VERSION=VERSION;
-  window.__LTS_V151_WRAPPER_STATUS={version:'v151-wrapper-v10',bounded_retry:true,permanent_polling:false,public_index_changed:false,decoration_observer_suppressed:true,event_refresh:true,render_after_hook:true,inherited_expense_root_bridge:true,version_observer:false,ledger_search_layer:true,dashboard_dom_owner:'bounded-event-repaint-burst',global_mutation_observer_preserved:true,layer_scope_shadow:true};
+  window.__LTS_V151_WRAPPER_STATUS={version:'v151-wrapper-v11',bounded_retry:true,permanent_polling:false,public_index_changed:false,decoration_observer_suppressed:true,event_refresh:true,render_after_hook:true,inherited_expense_root_bridge:true,inherited_expense_renderer_bridge:true,version_observer:false,ledger_search_layer:true,dashboard_dom_owner:'bounded-event-repaint-burst',global_mutation_observer_preserved:true,layer_scope_shadow:true};
 })();
 </script>
-<!-- v151 bounded/event repaint burst + render-after hook + inherited expense root bridge + server-side ledger search; dashboard layer receives a scoped observer shadow and does not alter the browser global -->
+<!-- v151 bounded/event repaint burst + render-after hook + inherited expense renderer/root bridge + server-side ledger search; dashboard layer receives a scoped observer shadow and does not alter the browser global -->
 </body>
 </html>
