@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>LTS Wealth · Homologação v155</title>
+<style>
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#f2f5f8}#app{border:0;width:100%;height:100%;display:block;background:#f2f5f8}#status{position:fixed;right:8px;bottom:8px;z-index:2147483647;background:#14263c;color:#fff;border-radius:999px;padding:5px 8px;font:800 8px/1.2 -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;opacity:.9;pointer-events:none}@media(max-width:820px){#status{display:none}}
+</style>
+</head>
+<body>
+<iframe id="app" src="wip35-v154-candidate.html?v155-parent"></iframe><div id="status">CANDIDATA v155 · recuperação funcional</div>
+<script>
+(function(){'use strict';
+const host=document.getElementById('app');
+const TEST=new URLSearchParams(location.search).get('runtimeFixture')==='1';
+const norm=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim().toLowerCase();
+const finite=v=>{const n=Number(v);return Number.isFinite(n)?n:null};
+const money=v=>finite(v)==null?'—':new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL',maximumFractionDigits:2}).format(Number(v));
+const ROUTES=['Dashboard','Fluxo Diário','Despesas','Patrimônio','Cartões','Atualizações'];
+let requested='Dashboard',lastDeep=null,lastPatch='';
+function child(){try{return {w:host.contentWindow,d:host.contentDocument}}catch(e){return null}}
+function deep(){
+  const c=child();if(!c?.w||!c?.d)return null;let w=c.w,d=c.d,last={w,d};
+  for(let i=0;i<32;i++){
+    let fr=null;
+    try{fr=d.getElementById('routeFrame')||d.getElementById('shell')||d.querySelector('iframe#app')||d.querySelector('iframe')}catch(e){break}
+    if(!fr)break;
+    try{if(!fr.contentWindow||!fr.contentDocument)break;w=fr.contentWindow;d=fr.contentDocument;last={w,d}}catch(e){break}
+  }
+  lastDeep=last;return last;
+}
+function visualDoc(){const c=child();return c?.d||null}
+function clickNative(dest,z){
+  if(!z?.d)return false;const target=norm(dest);const nodes=[...z.d.querySelectorAll('button,a,[role="button"],[data-view],[data-route]')];
+  const exact=nodes.find(x=>norm(x.textContent)===target)||nodes.find(x=>norm(x.getAttribute('data-view'))===target)||nodes.find(x=>norm(x.getAttribute('data-route'))===target);
+  if(!exact)return false;try{exact.click();return true}catch(e){return false}
+}
+function forceNative(dest,z){
+  if(!z?.w)return false;let ok=false;
+  try{z.w.V=dest;if(typeof z.w.renderNav==='function')z.w.renderNav();if(typeof z.w.render==='function')z.w.render();z.w.__LTS_V151_AFTER_RENDER?.();z.w.__LTS_V151_LEDGER_SEARCH_AFTER_RENDER?.();ok=String(z.w.V)===dest}catch(e){}
+  return ok;
+}
+function showOuter(dest){
+  const d=visualDoc();if(!d)return false;const dash=d.getElementById('dashboard'),rf=d.getElementById('routeFrame');if(!dash||!rf)return false;
+  try{
+    d.querySelectorAll('[data-route]').forEach(b=>b.classList.toggle('active',b.dataset.route===dest));
+    if(dest==='Dashboard'){dash.style.display='block';rf.style.display='none'}else{dash.style.display='none';rf.style.display='block'}
+    return true
+  }catch(e){return false}
+}
+function navigate(dest,attempt=0){
+  if(!ROUTES.includes(dest))return;requested=dest;showOuter(dest);
+  if(dest==='Dashboard')return;
+  const z=deep();const clicked=clickNative(dest,z);const forced=forceNative(dest,z);
+  if((clicked||forced)&&String(z?.w?.V||'')===dest){window.__LTS_V155_ROUTE_STATE={dest,ok:true,attempt,via:clicked?'click':'force'};return}
+  if(attempt<24)setTimeout(()=>navigate(dest,attempt+1),Math.min(90+attempt*35,500));else window.__LTS_V155_ROUTE_STATE={dest,ok:false,attempt,via:'failed'};
+}
+function installNav(){
+  const d=visualDoc();if(!d)return false;if(d.__ltsV155NavInstalled)return true;
+  const handler=e=>{const b=e.target.closest?.('[data-route],[data-route2]');if(!b)return;const dest=b.dataset.route||b.dataset.route2;if(!ROUTES.includes(dest))return;e.preventDefault();e.stopImmediatePropagation();navigate(dest)};
+  d.addEventListener('click',handler,true);d.__ltsV155NavInstalled=true;return true
+}
+function fixtureDeep(z){
+  if(!TEST||!z?.w)return;
+  z.w.D=z.w.D||{};z.w.D.dashboard_cockpit={version:'v155-fixture',as_of:'2026-09-04',liquidity:{through_d3:0,bank_cash:24000,d0:6000,d3_vested:10000,fgts_d30:22432.31,accounts:[{institution:'Itaú',balance:15000},{institution:'Bradesco',balance:9000}]},cards:{open_cycles_total:33328.6},wealth:{net_worth_central:3590703,assets_central:5200000,known_debt_total:1609297},expenses:{current_month:{spend:null},previous_month:{spend:62000}},work:{actionable_count:null,top_actions:[{title:'A'},{title:'B'}]},planning_audited:{fgts_future_accrual_estimated:false}};z.w.D.updates={items:new Array(23).fill(0).map((_,i)=>({type:i<2?'document':'review'}))};
+}
+function deriveModel(z){
+  if(!z?.w)return null;fixtureDeep(z);const D=z.w.D||{},c=D.dashboard_cockpit||{},l=c.liquidity||{},work=c.work||{},updates=Array.isArray(D.updates?.items)?D.updates.items:[];
+  const bank=finite(l.bank_cash),d0=finite(l.d0),d3=finite(l.d3_vested),explicit=finite(l.through_d3);let through=explicit,throughSource='explicit';
+  const parts=[bank,d0,d3].filter(v=>v!=null);const derived=parts.length?parts.reduce((a,b)=>a+b,0):null;
+  if((through==null||through===0)&&derived!=null&&derived!==0){through=derived;throughSource='components'}
+  let actions=finite(work.actionable_count);if(actions==null&&Array.isArray(work.top_actions))actions=work.top_actions.length||null;
+  const exp=finite(c.expenses?.current_month?.spend);const prev=finite(c.expenses?.previous_month?.spend);
+  return {through,throughSource,actions,updates:updates.length,expenses:exp,previous:prev,bank,d0,d3}
+}
+function kpiByLabel(d,label){return [...d.querySelectorAll('.kpi')].find(x=>norm(x.querySelector('label')?.textContent)===norm(label))||null}
+function patchData(){
+  const d=visualDoc(),z=deep();if(!d||!z)return false;const m=deriveModel(z);if(!m)return false;let changed=[];
+  const liq=kpiByLabel(d,'Disponível D+3');if(liq){const strong=liq.querySelector('strong'),meta=liq.querySelector('.meta');if(strong&&m.through!=null){strong.textContent=money(m.through);changed.push('d3')}if(meta)meta.textContent=m.throughSource==='components'?'liquidez real · contas + D0 + RSU D+3':'liquidez realizável'}
+  const act=kpiByLabel(d,'Ações pendentes');if(act){const strong=act.querySelector('strong'),meta=act.querySelector('.meta');if(strong)strong.textContent=m.actions!=null?String(m.actions):'—';if(meta)meta.textContent=`${m.updates} atualizações em fila`;changed.push('actions')}
+  const exp=kpiByLabel(d,'Despesas (mês)');if(exp){const strong=exp.querySelector('strong'),meta=exp.querySelector('.meta');if(m.expenses==null){if(strong)strong.textContent='—';if(meta)meta.textContent='dado mensal não carregado · não assumir R$ 0,00'}else{if(strong)strong.textContent=money(m.expenses);if(meta&&m.previous)meta.textContent=`${((m.expenses-m.previous)/Math.abs(m.previous)*100).toFixed(1).replace('.',',')}% vs. mês anterior`}changed.push('expenses')}
+  const hero=[...d.querySelectorAll('.panel-title h2')].find(x=>norm(x.textContent)==='despesas do mes')?.closest('.panel')?.querySelector('.expense-hero');if(hero&&m.expenses==null){const s=hero.querySelector('strong'),sp=hero.querySelector('span');if(s)s.textContent='—';if(sp)sp.textContent='dado mensal não carregado'}
+  lastPatch=changed.join(',');window.__LTS_V155_DATA_STATE={ok:true,...m,patched:lastPatch};return true
+}
+function tick(){installNav();patchData();if(requested!=='Dashboard'){showOuter(requested);const z=deep();if(String(z?.w?.V||'')!==requested)navigate(requested)}setTimeout(tick,550)}
+host.addEventListener('load',()=>{setTimeout(()=>{installNav();patchData();navigate(requested)},120)});
+window.__LTS_V155_STATUS={version:'v155-real-data-navigation-fix-v1',public_index_changed:false,authenticated_e2e_claimed:false,all_route_retry:true,false_zero_guard:true,d3_component_recovery:true};
+setTimeout(tick,120);
+})();
+</script>
+</body>
+</html>
