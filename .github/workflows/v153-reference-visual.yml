@@ -4,6 +4,7 @@ on:
     branches: [main, v153-reference-visual-parity]
     paths:
       - 'wip35-v153-candidate.html'
+      - 'homologacao-current.json'
       - '.github/workflows/v153-reference-visual.yml'
   workflow_dispatch:
 permissions:
