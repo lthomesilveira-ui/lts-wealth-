@@ -50,6 +50,33 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#f4f6f9}
   }
   function inject(){
     refresh();const ds=docs(),deep=ds[ds.length-1];if(!deep)return false;const dw=deep.defaultView;
+    const brl=v=>{try{return typeof dw?.brl==='function'?dw.brl(Number(v||0)):new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(v||0))}catch(e){return String(v??'—')}};
+    const expensePanelMarkup=()=>{
+      try{
+        const data=dw?.__V150_EXP?.data;if(!data)return '';
+        const states=new Map((data.unassigned_states||[]).map(x=>[String(x.state),x]));
+        const hist=states.get('documentary_detail_not_recovered')||{},sys=states.get('detail_available_system_review')||{},act=states.get('classification_and_context_pending')||{};
+        return `<section id="v151ExpenseState" class="v151-exp-state"><div class="v151-exp-box"><span>Histórico sem detalhe recuperado</span><b>${brl(hist.total)}</b><small>${Number(hist.rows||0)} registro(s) · não transformar em compra inventada.</small></div><div class="v151-exp-box"><span>LTS ainda investigando</span><b>${brl(sys.total)}</b><small>${Number(sys.rows||0)} registro(s) com detalhe disponível para revisão do sistema.</small></div><div class="v151-exp-box action"><span>Realmente para classificar/contextualizar</span><b>${brl(act.total)}</b><small>${Number(act.rows||0)} registro(s) que podem precisar de decisão.</small></div></section><div class="v151-exp-note">Casa é contexto. Moradia é natureza do gasto. O LTS mantém as duas dimensões separadas.</div>`;
+      }catch(e){return ''}
+    };
+    const wireExpenses=()=>{
+      try{
+        const current=dw?.__v143Expenses;
+        if(typeof current!=='function'||current.__ltsV151ExpenseOwned)return;
+        const base=current.__ltsV151ExpenseBase||current;
+        function ownedExpenses(){
+          const html=base.apply(this,arguments);if(typeof html!=='string')return html;
+          const panel=expensePanelMarkup();if(!panel||html.includes('id="v151ExpenseState"'))return html;
+          let out=html.replace('<div class="v150-card"><b>O que significa “Não atribuído”</b>','<div class="v150-card v151-hide"><b>O que significa “Não atribuído”</b>');
+          const needle='<div class="v150-grid">';
+          out=out.includes(needle)?out.replace(needle,panel+needle):out+panel;
+          return out;
+        }
+        ownedExpenses.__ltsV151ExpenseOwned=true;ownedExpenses.__ltsV151ExpenseBase=base;
+        dw.__v143Expenses=ownedExpenses;
+        try{dw.despesas=ownedExpenses}catch(e){}
+      }catch(e){}
+    };
     const paintDashboard=()=>{
       try{
         if(!dw||String(dw.V)!=='Dashboard'||typeof dw.__LTS_V151_DASHBOARD_FN!=='function')return;
@@ -60,6 +87,7 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#f4f6f9}
     const prepareInheritedRoots=()=>{
       try{
         if(String(dw?.V)!=='Despesas')return;
+        wireExpenses();
         const area=deep.getElementById('A');
         let root=deep.getElementById('v150ExpensesRoot')||deep.querySelector('#A > .v150')||deep.querySelector('#A .v150');
         if(!root&&area&&dw?.LTS_V150_RECOMPOSITION==='expense-input-dashboard-recomposition-v1'&&typeof dw.__v143Expenses==='function'){
@@ -70,13 +98,14 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#f4f6f9}
         if(root&&!root.id)root.id='v150ExpensesRoot';
       }catch(e){}
     };
-    const repaintOnce=()=>{paintDashboard();prepareInheritedRoots();try{dw&&dw.__LTS_V151_AFTER_RENDER&&dw.__LTS_V151_AFTER_RENDER()}catch(e){}try{dw&&dw.__LTS_V151_LEDGER_SEARCH_AFTER_RENDER&&dw.__LTS_V151_LEDGER_SEARCH_AFTER_RENDER()}catch(e){}refresh()};
+    const repaintOnce=()=>{wireExpenses();paintDashboard();prepareInheritedRoots();try{dw&&dw.__LTS_V151_AFTER_RENDER&&dw.__LTS_V151_AFTER_RENDER()}catch(e){}try{dw&&dw.__LTS_V151_LEDGER_SEARCH_AFTER_RENDER&&dw.__LTS_V151_LEDGER_SEARCH_AFTER_RENDER()}catch(e){}refresh()};
     const repaintBurst=()=>{
       repaintOnce();
       [40,120,220,295,420].forEach(ms=>setTimeout(repaintOnce,ms));
     };
     const wireRender=()=>{
       try{
+        wireExpenses();
         if(!dw||typeof dw.render!=='function'||dw.render.__ltsV151AfterRender)return;
         const base=dw.render;
         function wrappedRender(){const out=base.apply(this,arguments);Promise.resolve().then(repaintBurst);return out}
@@ -98,9 +127,9 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#f4f6f9}
   document.getElementById('shell').addEventListener('load',()=>setTimeout(inject,80));
   [80,180,350,700,1200,2200,4000,7000,11000,15000].forEach(ms=>setTimeout(inject,ms));
   window.__LTS_TOP_CANDIDATE_VERSION=VERSION;
-  window.__LTS_V151_WRAPPER_STATUS={version:'v151-wrapper-v11',bounded_retry:true,permanent_polling:false,public_index_changed:false,decoration_observer_suppressed:true,event_refresh:true,render_after_hook:true,inherited_expense_root_bridge:true,inherited_expense_renderer_bridge:true,version_observer:false,ledger_search_layer:true,dashboard_dom_owner:'bounded-event-repaint-burst',global_mutation_observer_preserved:true,layer_scope_shadow:true};
+  window.__LTS_V151_WRAPPER_STATUS={version:'v151-wrapper-v12',bounded_retry:true,permanent_polling:false,public_index_changed:false,decoration_observer_suppressed:true,event_refresh:true,render_after_hook:true,inherited_expense_root_bridge:true,inherited_expense_renderer_bridge:true,inherited_expense_renderer_owner:true,version_observer:false,ledger_search_layer:true,dashboard_dom_owner:'bounded-event-repaint-burst',global_mutation_observer_preserved:true,layer_scope_shadow:true};
 })();
 </script>
-<!-- v151 bounded/event repaint burst + render-after hook + inherited expense renderer/root bridge + server-side ledger search; dashboard layer receives a scoped observer shadow and does not alter the browser global -->
+<!-- v151 bounded/event repaint burst + render-after hook + inherited expense renderer ownership/root bridge + server-side ledger search; dashboard layer receives a scoped observer shadow and does not alter the browser global -->
 </body>
 </html>
