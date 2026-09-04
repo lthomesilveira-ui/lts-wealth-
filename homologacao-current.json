@@ -1,13 +1,13 @@
 {
   "schema": 1,
-  "version": "v151",
-  "path": "wip35-v151-candidate.html",
-  "candidate_head": "11de9f790a6ccd2fc7ee7104925562439d8b44b7",
+  "version": "v152",
+  "path": "wip35-v152-candidate.html",
+  "candidate_head": "16319fee1ae22fba9f76b9ed6ecfaba5d63c47c9",
   "public_fallback": "index.html",
   "promotion_status": "not_promoted",
-  "candidate_sha": "11de9f790a6ccd2fc7ee7104925562439d8b44b7",
-  "exposed_from_main_sha": "11de9f790a6ccd2fc7ee7104925562439d8b44b7",
-  "exposure_mode": "user_requested_homologation_before_v151_harness_green",
-  "gate_status": "v146-v150-green_v151-harness-red",
-  "updated_at": "2026-09-04T18:49:00Z"
+  "candidate_sha": "16319fee1ae22fba9f76b9ed6ecfaba5d63c47c9",
+  "exposed_from_main_sha": "16319fee1ae22fba9f76b9ed6ecfaba5d63c47c9",
+  "exposure_mode": "user_requested_mobile_navigation_and_reference_dashboard_homologation",
+  "gate_status": "static-js-parse-pass_inherited-v146-v150-last-green_v151-harness-frame-ready-open",
+  "updated_at": "2026-09-04T19:06:00Z"
 }
