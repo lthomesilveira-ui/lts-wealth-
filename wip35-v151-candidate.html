@@ -38,6 +38,16 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#f4f6f9}
     if(deep.getElementById(id))return false;
     const s=deep.createElement('script');s.id=id;s.src=src;if(onload)s.onload=onload;(deep.head||deep.documentElement).appendChild(s);return true;
   }
+  function addScriptWithoutObserver(deep,id,src,onload){
+    if(deep.getElementById(id))return false;
+    const marker=deep.createElement('script');marker.id=id;marker.type='application/lts-v151';marker.dataset.src=src;(deep.head||deep.documentElement).appendChild(marker);
+    const dw=deep.defaultView,url=new URL(src,deep.baseURI).href;
+    dw.fetch(url,{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('HTTP '+r.status);return r.text()}).then(code=>{
+      dw.Function('MutationObserver',code+'\n//# sourceURL='+url).call(dw,undefined);
+      marker.dataset.loaded='true';if(onload)onload();
+    }).catch(e=>{marker.dataset.error=String(e&&e.message||e);try{console.error('v151 layer load failed',e)}catch(_){}});
+    return true;
+  }
   function inject(){
     refresh();const ds=docs(),deep=ds[ds.length-1];if(!deep)return false;const dw=deep.defaultView;
     const paintDashboard=()=>{
@@ -50,12 +60,7 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#f4f6f9}
     const repaint=()=>{paintDashboard();try{dw&&dw.__LTS_V151_AFTER_RENDER&&dw.__LTS_V151_AFTER_RENDER()}catch(e){}try{dw&&dw.__LTS_V151_LEDGER_SEARCH_AFTER_RENDER&&dw.__LTS_V151_LEDGER_SEARCH_AFTER_RENDER()}catch(e){}refresh()};
     if(dw)dw.__LTS_V151_WRAPPER_REPAINT=repaint;
     if(!deep.getElementById('v151DashboardUpdatesLayer')){
-      addScript(deep,'v151DashboardUpdatesLayer','wip35-v151-dashboard-updates.js?v151-dashboard-updates-v1',()=>{
-        try{
-          const ob=dw&&dw.__LTS_V151_DECORATION_OBSERVER;
-          if(ob&&typeof ob.disconnect==='function')ob.disconnect();
-          if(dw)dw.__LTS_V151_DECORATION_OBSERVER=null;
-        }catch(e){}
+      addScriptWithoutObserver(deep,'v151DashboardUpdatesLayer','wip35-v151-dashboard-updates.js?v151-dashboard-updates-v1',()=>{
         deep.addEventListener('click',()=>{[0,80,250].forEach(ms=>setTimeout(repaint,ms))},{capture:true});
         [120,500,1200,2600,5200,7600].forEach(ms=>setTimeout(repaint,ms));
       });
@@ -66,9 +71,9 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#f4f6f9}
   document.getElementById('shell').addEventListener('load',()=>setTimeout(inject,80));
   [80,180,350,700,1200,2200,4000,7000,11000,15000].forEach(ms=>setTimeout(inject,ms));
   window.__LTS_TOP_CANDIDATE_VERSION=VERSION;
-  window.__LTS_V151_WRAPPER_STATUS={version:'v151-wrapper-v6',bounded_retry:true,permanent_polling:false,public_index_changed:false,decoration_observer_suppressed:true,event_refresh:true,version_observer:false,ledger_search_layer:true,dashboard_dom_owner:'bounded-event-repaint',global_mutation_observer_preserved:true};
+  window.__LTS_V151_WRAPPER_STATUS={version:'v151-wrapper-v7',bounded_retry:true,permanent_polling:false,public_index_changed:false,decoration_observer_suppressed:true,event_refresh:true,version_observer:false,ledger_search_layer:true,dashboard_dom_owner:'bounded-event-repaint',global_mutation_observer_preserved:true,layer_scope_shadow:true};
 })();
 </script>
-<!-- v151 bounded/event repaint + server-side ledger search; no permanent wrapper observer and no global MutationObserver override -->
+<!-- v151 bounded/event repaint + server-side ledger search; dashboard layer receives a scoped observer shadow and does not alter the browser global -->
 </body>
 </html>
