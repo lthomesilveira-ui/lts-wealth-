@@ -1,13 +1,13 @@
 {
   "schema": 1,
-  "version": "v152",
-  "path": "wip35-v152-candidate.html",
-  "candidate_head": "16319fee1ae22fba9f76b9ed6ecfaba5d63c47c9",
+  "version": "v153",
+  "path": "wip35-v153-candidate.html",
+  "candidate_head": "96ae2a0f820646ebdd3568219d9d5cc4ca3a137c",
   "public_fallback": "index.html",
   "promotion_status": "not_promoted",
-  "candidate_sha": "16319fee1ae22fba9f76b9ed6ecfaba5d63c47c9",
-  "exposed_from_main_sha": "16319fee1ae22fba9f76b9ed6ecfaba5d63c47c9",
-  "exposure_mode": "user_requested_mobile_navigation_and_reference_dashboard_homologation",
-  "gate_status": "static-js-parse-pass_inherited-v146-v150-last-green_v151-harness-frame-ready-open",
-  "updated_at": "2026-09-04T19:06:00Z"
+  "candidate_sha": "96ae2a0f820646ebdd3568219d9d5cc4ca3a137c",
+  "exposed_from_main_sha": "5faac1273475a1be215d747749c55feabd64f4c9",
+  "exposure_mode": "user_requested_v153_reference_visual_parity_homologation",
+  "gate_status": "v153-visual-desktop-mobile-pass_mobile-physical-dashboard-flow-dashboard-pass_inherited-v146-v150-pass_legacy-v151-harness-open-nonblocking-for-human-v153-homologation",
+  "updated_at": "2026-09-04T21:22:00Z"
 }
