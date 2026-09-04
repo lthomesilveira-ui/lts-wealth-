@@ -1,0 +1,153 @@
+name: LTS v154 official visual contract
+on:
+  push:
+    branches: [main, v154-official-reference-contract]
+    paths:
+      - 'wip35-v154-candidate.html'
+      - 'design/LTS_WEALTH_DASHBOARD_REFERENCE_OFFICIAL_2026-09-04.jpeg'
+      - 'LTS_WEALTH_VISUAL_CONTRACT.md'
+      - 'homologacao-current.json'
+      - '.github/workflows/v154-official-visual.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  visual-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Static safety and visual contract
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re, hashlib
+          p=Path('wip35-v154-candidate.html')
+          s=p.read_text(encoding='utf-8')
+          req=[
+            'Dashboard','Visão consolidada da sua vida financeira',
+            'Patrimônio Líquido','Disponível D+3','Despesas (mês)',
+            'Evolução do Caixa','Distribuição do Patrimônio','Posição por Banco',
+            'Liquidez – composição D+3','Próximos Compromissos',
+            'Planejamento – Visão de Caixa','Atualizações Pendentes',
+            'saldo documental · 21/08/2026','Não são projetados aportes futuros de FGTS',
+            'wip35-v151-candidate.html?v154-parent','visualFixture'
+          ]
+          missing=[x for x in req if x not in s]
+          assert not missing, missing
+          assert 'index.html' not in s
+          assert 'R$ 3.700' not in s and '3700' not in s
+          ref=Path('design/LTS_WEALTH_DASHBOARD_REFERENCE_OFFICIAL_2026-09-04.jpeg')
+          assert ref.exists() and ref.stat().st_size > 100_000
+          digest=hashlib.sha256(ref.read_bytes()).hexdigest()
+          assert digest=='0e5293a98bf3fce30b27ba508afdb2f17d82700a6134372938eaff38da73c06b', digest
+          m=re.search(r'<script>\s*(.*?)\s*</script>',s,re.S)
+          assert m
+          Path('/tmp/v154-inline.js').write_text(m.group(1),encoding='utf-8')
+          print('v154_static=PASS reference_sha256='+digest)
+          PY
+          node --check /tmp/v154-inline.js
+      - name: Install browser
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Render desktop and mobile evidence
+        run: |
+          python3 -m http.server 8784 >/tmp/v154-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID || true' EXIT
+          sleep 1
+          cat >/tmp/v154-visual.js <<'JS'
+          const { chromium }=require('playwright');
+          const fs=require('fs');
+          (async()=>{
+            const browser=await chromium.launch({headless:true});
+            const out={pass:true,views:{},mobile_navigation:null,reference_contract:'design/LTS_WEALTH_DASHBOARD_REFERENCE_OFFICIAL_2026-09-04.jpeg'};
+            let failure=null;
+            for(const spec of [
+              {name:'desktop',viewport:{width:1312,height:1199},fullPage:true},
+              {name:'mobile',viewport:{width:390,height:844},fullPage:true}
+            ]){
+              const page=await browser.newPage({viewport:spec.viewport});
+              try{
+                await page.goto('http://127.0.0.1:8784/wip35-v154-candidate.html?visualFixture=1',{waitUntil:'domcontentloaded',timeout:20000});
+                await page.waitForSelector('.kpis .kpi',{state:'visible',timeout:5000});
+                const geom=await page.evaluate(()=>{
+                  const box=s=>{const r=document.querySelector(s)?.getBoundingClientRect();return r?{x:r.x,y:r.y,width:r.width,height:r.height,bottom:r.bottom}:null};
+                  return {
+                    sw:document.documentElement.scrollWidth,cw:document.documentElement.clientWidth,
+                    sidebar:box('.sidebar'),mobileHead:box('.mobile-head'),pageHead:box('.page-head'),
+                    kpis:[...document.querySelectorAll('.kpi')].map(x=>{const r=x.getBoundingClientRect();return {x:r.x,y:r.y,width:r.width,height:r.height}}),
+                    panels:[...document.querySelectorAll('.panel')].length,
+                    grids:[...document.querySelectorAll('.grid2,.grid3,.grid4')].map(x=>{const r=x.getBoundingClientRect();return {x:r.x,y:r.y,width:r.width,height:r.height}}),
+                    sideNav:[...document.querySelectorAll('#sideNav button')].map(x=>x.textContent.trim()),
+                    mobileNav:[...document.querySelectorAll('#mobileNav button')].map(x=>x.textContent.trim())
+                  };
+                });
+                out.views[spec.name]=geom;
+                if(geom.sw>geom.cw+8) throw Error(spec.name+' horizontal overflow '+JSON.stringify(geom));
+                if(geom.kpis.length!==5) throw Error(spec.name+' KPI count '+geom.kpis.length);
+                if(geom.panels<9) throw Error(spec.name+' panel density '+geom.panels);
+                if(spec.name==='desktop'){
+                  if(!geom.sidebar||geom.sidebar.width<165||geom.sidebar.width>190) throw Error('desktop sidebar geometry '+JSON.stringify(geom.sidebar));
+                  if(geom.sideNav.length!==6) throw Error('desktop route count '+geom.sideNav.length);
+                  const y=geom.kpis[0].y;if(geom.kpis.some(k=>Math.abs(k.y-y)>2)) throw Error('desktop KPI row not aligned');
+                  if(geom.grids.length!==3) throw Error('desktop dashboard grid rows missing');
+                }else{
+                  if(geom.mobileNav.length!==6) throw Error('mobile nav count '+geom.mobileNav.length);
+                  const flow=page.locator('#mobileNav [data-route="Fluxo Diário"]');
+                  const home=page.locator('#mobileNav [data-route="Dashboard"]');
+                  await flow.click();
+                  await page.waitForFunction(()=>getComputedStyle(document.getElementById('routeFrame')).display!=='none'&&getComputedStyle(document.getElementById('dashboard')).display==='none',null,{timeout:3000});
+                  const navVisible=await page.locator('#mobileNav').isVisible();
+                  await home.click();
+                  await page.waitForFunction(()=>getComputedStyle(document.getElementById('dashboard')).display!=='none'&&getComputedStyle(document.getElementById('routeFrame')).display==='none',null,{timeout:3000});
+                  const dashboardVisible=await page.locator('.page-title h1').isVisible();
+                  if(!navVisible||!dashboardVisible)throw Error('mobile Dashboard -> Fluxo Diário -> Dashboard recovery failed');
+                  out.mobile_navigation={dashboard_to_flow:true,nav_persistent:navVisible,flow_to_dashboard:true};
+                }
+              }catch(e){failure=failure||e;out.pass=false;out.error=String(e.stack||e)}
+              finally{try{await page.screenshot({path:`v154-${spec.name}.png`,fullPage:spec.fullPage})}catch(e){}await page.close()}
+            }
+            fs.writeFileSync('v154-official-visual-result.json',JSON.stringify(out,null,2));
+            await browser.close();
+            console.log(JSON.stringify(out));
+            if(failure)throw failure;
+          })().catch(e=>{console.error(e);process.exit(1)});
+          JS
+          NODE_PATH="$PWD/node_modules" node /tmp/v154-visual.js
+      - name: Build side-by-side evidence
+        if: always()
+        run: |
+          python -m pip install --quiet pillow
+          python - <<'PY'
+          from PIL import Image,ImageOps,ImageDraw
+          ref=Image.open('design/LTS_WEALTH_DASHBOARD_REFERENCE_OFFICIAL_2026-09-04.jpeg').convert('RGB')
+          cand=Image.open('v154-desktop.png').convert('RGB')
+          target_h=max(ref.height,cand.height)
+          def fit_h(im,h):
+              w=round(im.width*h/im.height)
+              return im.resize((w,h),Image.Resampling.LANCZOS)
+          a=fit_h(ref,target_h); b=fit_h(cand,target_h)
+          gap=24
+          canvas=Image.new('RGB',(a.width+b.width+gap,target_h+46),'white')
+          canvas.paste(a,(0,46)); canvas.paste(b,(a.width+gap,46))
+          d=ImageDraw.Draw(canvas)
+          d.text((10,14),'REFERÊNCIA OFICIAL',fill='black')
+          d.text((a.width+gap+10,14),'CANDIDATA v154',fill='black')
+          canvas.save('v154-reference-side-by-side.jpg',quality=91,optimize=True)
+          PY
+      - name: Upload visual evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: wip35-v154-official-visual
+          path: |
+            v154-desktop.png
+            v154-mobile.png
+            v154-reference-side-by-side.jpg
+            v154-official-visual-result.json
+          if-no-files-found: error
