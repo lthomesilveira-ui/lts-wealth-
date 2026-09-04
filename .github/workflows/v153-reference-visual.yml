@@ -50,30 +50,33 @@ jobs:
           (async()=>{
             const browser=await chromium.launch({headless:true});
             const out={pass:true,views:{}};
+            let failure=null;
             for(const spec of [{name:'desktop',viewport:{width:1536,height:864},fullPage:false},{name:'mobile',viewport:{width:390,height:844},fullPage:true}]){
               const page=await browser.newPage({viewport:spec.viewport});
-              await page.goto('http://127.0.0.1:8783/wip35-v153-candidate.html?visualFixture=1',{waitUntil:'domcontentloaded',timeout:20000});
-              await page.waitForSelector('.kpis .kpi',{state:'visible',timeout:5000});
-              const geom=await page.evaluate(()=>{
-                const box=s=>{const r=document.querySelector(s)?.getBoundingClientRect();return r?{x:r.x,y:r.y,width:r.width,height:r.height,bottom:r.bottom}:null};
-                return {sw:document.documentElement.scrollWidth,cw:document.documentElement.clientWidth,topbar:box('.topbar'),dashboard:box('.dashboard'),title:box('.section-title'),kpis:[...document.querySelectorAll('.kpi')].map(x=>{const r=x.getBoundingClientRect();return {x:r.x,y:r.y,width:r.width,height:r.height,bottom:r.bottom}}),attention:box('.attention'),nav:[...document.querySelectorAll('#mainNav button')].map(x=>x.textContent.trim())};
-              });
-              if(geom.sw>geom.cw+8) throw Error(spec.name+' horizontal overflow '+JSON.stringify(geom));
-              if(geom.nav.length!==6) throw Error(spec.name+' nav count '+geom.nav.length);
-              if(spec.name==='desktop'){
-                if(Math.abs(geom.topbar.height-72)>2) throw Error('desktop topbar geometry '+JSON.stringify(geom.topbar));
-                if(geom.kpis.length!==5||geom.kpis.some(k=>Math.abs(k.height-86)>3)) throw Error('desktop KPI geometry '+JSON.stringify(geom.kpis));
-                const y0=geom.kpis[0].y;if(geom.kpis.some(k=>Math.abs(k.y-y0)>2)) throw Error('desktop KPI alignment');
-                if(geom.attention.bottom>860) throw Error('desktop model does not fit viewport attention.bottom='+geom.attention.bottom);
-              }
-              await page.screenshot({path:`v153-${spec.name}.png`,fullPage:spec.fullPage});
-              out.views[spec.name]=geom;
-              await page.close();
+              try{
+                await page.goto('http://127.0.0.1:8783/wip35-v153-candidate.html?visualFixture=1',{waitUntil:'domcontentloaded',timeout:20000});
+                await page.waitForSelector('.kpis .kpi',{state:'visible',timeout:5000});
+                const geom=await page.evaluate(()=>{
+                  const box=s=>{const r=document.querySelector(s)?.getBoundingClientRect();return r?{x:r.x,y:r.y,width:r.width,height:r.height,bottom:r.bottom}:null};
+                  return {sw:document.documentElement.scrollWidth,cw:document.documentElement.clientWidth,topbar:box('.topbar'),dashboard:box('.dashboard'),title:box('.section-title'),kpis:[...document.querySelectorAll('.kpi')].map(x=>{const r=x.getBoundingClientRect();return {x:r.x,y:r.y,width:r.width,height:r.height,bottom:r.bottom}}),attention:box('.attention'),nav:[...document.querySelectorAll('#mainNav button')].map(x=>x.textContent.trim())};
+                });
+                out.views[spec.name]=geom;
+                if(geom.sw>geom.cw+8) throw Error(spec.name+' horizontal overflow '+JSON.stringify(geom));
+                if(geom.nav.length!==6) throw Error(spec.name+' nav count '+geom.nav.length);
+                if(spec.name==='desktop'){
+                  if(Math.abs(geom.topbar.height-72)>2) throw Error('desktop topbar geometry '+JSON.stringify(geom.topbar));
+                  if(geom.kpis.length!==5||geom.kpis.some(k=>Math.abs(k.height-86)>3)) throw Error('desktop KPI geometry '+JSON.stringify(geom.kpis));
+                  const y0=geom.kpis[0].y;if(geom.kpis.some(k=>Math.abs(k.y-y0)>2)) throw Error('desktop KPI alignment');
+                  if(geom.attention.bottom>860) throw Error('desktop model does not fit viewport attention.bottom='+geom.attention.bottom);
+                }
+              }catch(e){failure=failure||e;out.pass=false;out.error=String(e.stack||e)}
+              finally{try{await page.screenshot({path:`v153-${spec.name}.png`,fullPage:spec.fullPage})}catch(e){}await page.close()}
             }
             fs.writeFileSync('v153-reference-visual-result.json',JSON.stringify(out,null,2));
             await browser.close();
             console.log(JSON.stringify(out));
-          })().catch(e=>{fs.writeFileSync('v153-reference-visual-result.json',JSON.stringify({pass:false,error:String(e.stack||e)},null,2));console.error(e);process.exit(1)});
+            if(failure)throw failure;
+          })().catch(e=>{console.error(e);process.exit(1)});
           JS
           NODE_PATH="$PWD/node_modules" node /tmp/v153-visual.js
       - name: Upload visual evidence
@@ -85,4 +88,4 @@ jobs:
             v153-desktop.png
             v153-mobile.png
             v153-reference-visual-result.json
-          if-no-files-found: warn
+          if-no-files-found: error
