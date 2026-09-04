@@ -7,7 +7,7 @@
   const brl=v=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(n(v));
   const fmt=v=>{const s=String(v||'').slice(0,10),m=s.match(/^(\d{4})-(\d{2})-(\d{2})$/);return m?`${m[3]}/${m[2]}/${m[1]}`:s||'—'};
   const pct=v=>`${Math.abs(v).toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1})}%`;
-  let observer=null;
+  let observer=null,expenseRetry=0;
 
   function css(){
     if(d.getElementById('wip35-v151-css'))return;
@@ -145,14 +145,21 @@
   }
 
   function enhanceExpenses(){
-    if(String(w.V)!=='Despesas')return;
-    const root=d.getElementById('v150ExpensesRoot');if(!root)return;
-    const data=w.__V150_EXP?.data;if(!data)return;
+    if(String(w.V)!=='Despesas'){expenseRetry=0;return;}
+    let root=d.getElementById('v150ExpensesRoot')||d.querySelector('#A > .v150')||d.querySelector('#A .v150');
+    if(root&&!root.id)root.id='v150ExpensesRoot';
+    const data=w.__V150_EXP?.data;
+    if(!root||!data){
+      if(expenseRetry<6){const delays=[40,100,180,320,520,850],ms=delays[expenseRetry++]||850;setTimeout(enhanceExpenses,ms)}
+      return;
+    }
+    expenseRetry=0;
     if(d.getElementById('v151ExpenseState'))return;
     const states=new Map((data.unassigned_states||[]).map(x=>[String(x.state),x]));
     const hist=states.get('documentary_detail_not_recovered')||{},sys=states.get('detail_available_system_review')||{},act=states.get('classification_and_context_pending')||{};
     const el=d.createElement('section');el.id='v151ExpenseState';el.className='v151-exp-state';el.innerHTML=`<div class="v151-exp-box"><span>Histórico sem detalhe recuperado</span><b>${brl(hist.total)}</b><small>${n(hist.rows)} registro(s) · não transformar em compra inventada.</small></div><div class="v151-exp-box"><span>LTS ainda investigando</span><b>${brl(sys.total)}</b><small>${n(sys.rows)} registro(s) com detalhe disponível para revisão do sistema.</small></div><div class="v151-exp-box action"><span>Realmente para classificar/contextualizar</span><b>${brl(act.total)}</b><small>${n(act.rows)} registro(s) que podem precisar de decisão.</small></div>`;
-    const kpis=root.querySelector('.v150-kpis');kpis?.insertAdjacentElement('afterend',el);
+    const kpis=root.querySelector('.v150-kpis');
+    if(kpis)kpis.insertAdjacentElement('afterend',el);else root.insertBefore(el,root.children[2]||root.firstChild||null);
     const note=d.createElement('div');note.className='v151-exp-note';note.textContent='Casa é contexto. Moradia é natureza do gasto. O LTS mantém as duas dimensões separadas.';el.insertAdjacentElement('afterend',note);
     root.querySelectorAll('.v150-card').forEach(card=>{if(/O que significa Não atribuído/i.test(card.textContent||''))card.classList.add('v151-hide')});
     root.querySelectorAll('.v150-kpi').forEach(k=>{const sp=k.querySelector('span');if(sp&&/Não atribuído/i.test(sp.textContent||'')){sp.textContent='Sem contexto consolidado';const sm=k.querySelector('small');if(sm)sm.textContent='inclui histórico, investigação do LTS e fila real'}});
