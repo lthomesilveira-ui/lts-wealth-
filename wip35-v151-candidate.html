@@ -58,22 +58,32 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#f4f6f9}
       }catch(e){}
     };
     const repaint=()=>{paintDashboard();try{dw&&dw.__LTS_V151_AFTER_RENDER&&dw.__LTS_V151_AFTER_RENDER()}catch(e){}try{dw&&dw.__LTS_V151_LEDGER_SEARCH_AFTER_RENDER&&dw.__LTS_V151_LEDGER_SEARCH_AFTER_RENDER()}catch(e){}refresh()};
+    const wireRender=()=>{
+      try{
+        if(!dw||typeof dw.render!=='function'||dw.render.__ltsV151AfterRender)return;
+        const base=dw.render;
+        function wrappedRender(){const out=base.apply(this,arguments);Promise.resolve().then(repaint);return out}
+        wrappedRender.__ltsV151AfterRender=true;wrappedRender.__ltsV151Base=base;dw.render=wrappedRender;
+      }catch(e){}
+    };
     if(dw)dw.__LTS_V151_WRAPPER_REPAINT=repaint;
+    wireRender();
     if(!deep.getElementById('v151DashboardUpdatesLayer')){
       addScriptWithoutObserver(deep,'v151DashboardUpdatesLayer','wip35-v151-dashboard-updates.js?v151-dashboard-updates-v1',()=>{
+        wireRender();
         deep.addEventListener('click',()=>{[0,80,250].forEach(ms=>setTimeout(repaint,ms))},{capture:true});
         [120,500,1200,2600,5200,7600].forEach(ms=>setTimeout(repaint,ms));
       });
     }
-    addScript(deep,'v151LedgerSearchLayer','wip35-v151-ledger-search.js?v151-ledger-search-v1',()=>{[0,100,350].forEach(ms=>setTimeout(repaint,ms))});
+    addScript(deep,'v151LedgerSearchLayer','wip35-v151-ledger-search.js?v151-ledger-search-v1',()=>{wireRender();[0,100,350].forEach(ms=>setTimeout(repaint,ms))});
     repaint();return true;
   }
   document.getElementById('shell').addEventListener('load',()=>setTimeout(inject,80));
   [80,180,350,700,1200,2200,4000,7000,11000,15000].forEach(ms=>setTimeout(inject,ms));
   window.__LTS_TOP_CANDIDATE_VERSION=VERSION;
-  window.__LTS_V151_WRAPPER_STATUS={version:'v151-wrapper-v7',bounded_retry:true,permanent_polling:false,public_index_changed:false,decoration_observer_suppressed:true,event_refresh:true,version_observer:false,ledger_search_layer:true,dashboard_dom_owner:'bounded-event-repaint',global_mutation_observer_preserved:true,layer_scope_shadow:true};
+  window.__LTS_V151_WRAPPER_STATUS={version:'v151-wrapper-v8',bounded_retry:true,permanent_polling:false,public_index_changed:false,decoration_observer_suppressed:true,event_refresh:true,render_after_hook:true,version_observer:false,ledger_search_layer:true,dashboard_dom_owner:'bounded-event-repaint',global_mutation_observer_preserved:true,layer_scope_shadow:true};
 })();
 </script>
-<!-- v151 bounded/event repaint + server-side ledger search; dashboard layer receives a scoped observer shadow and does not alter the browser global -->
+<!-- v151 bounded/event repaint + render-after hook + server-side ledger search; dashboard layer receives a scoped observer shadow and does not alter the browser global -->
 </body>
 </html>
