@@ -131,14 +131,15 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#f4f6f9}
       });
     }
     addScript(deep,'v151LedgerSearchLayer','wip35-v151-ledger-search.js?v151-ledger-search-v1',()=>{wireRender();repaintBurst()});
+    addScript(deep,'v151ReferenceFidelityLayer','wip35-v151-reference-fidelity.js?v151-reference-fidelity-v1',()=>{wireRender();repaintBurst()});
     repaintBurst();return true;
   }
   document.getElementById('shell').addEventListener('load',()=>setTimeout(inject,80));
   [80,180,350,700,1200,2200,4000,7000,11000,15000].forEach(ms=>setTimeout(inject,ms));
   window.__LTS_TOP_CANDIDATE_VERSION=VERSION;
-  window.__LTS_V151_WRAPPER_STATUS={version:'v151-wrapper-v15',bounded_retry:true,permanent_polling:false,public_index_changed:false,decoration_observer_suppressed:true,event_refresh:true,render_after_hook:true,inherited_expense_root_bridge:true,inherited_expense_renderer_bridge:true,inherited_expense_renderer_owner:true,version_observer:false,ledger_search_layer:true,dashboard_dom_owner:'inherited-render-owner',global_mutation_observer_preserved:true,global_mutation_observer_restored:true,layer_scope_shadow:true};
+  window.__LTS_V151_WRAPPER_STATUS={version:'v151-wrapper-v16',bounded_retry:true,permanent_polling:false,public_index_changed:false,decoration_observer_suppressed:true,event_refresh:true,render_after_hook:true,inherited_expense_root_bridge:true,inherited_expense_renderer_bridge:true,inherited_expense_renderer_owner:true,version_observer:false,ledger_search_layer:true,reference_fidelity_layer:true,dashboard_dom_owner:'inherited-render-owner',global_mutation_observer_preserved:true,global_mutation_observer_restored:true,layer_scope_shadow:true};
 })();
 </script>
-<!-- v151 native script load with temporary observer-constructor shadow/restoration + bounded/event post-render decoration + inherited render as sole dashboard DOM owner + inherited expense renderer ownership/root bridge + server-side ledger search; public index untouched -->
+<!-- v151 native script load with temporary observer-constructor shadow/restoration + bounded/event post-render decoration + inherited render as sole dashboard DOM owner + inherited expense renderer ownership/root bridge + server-side ledger search + reference-fidelity layer; public index untouched -->
 </body>
 </html>
