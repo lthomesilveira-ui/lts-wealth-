@@ -2,42 +2,29 @@
 
 Status legend: [x] concluded, [~] in progress, [ ] open.
 
-Canonical persistent project list. Never remove an open financial, documentary, classification or product dependency during compaction. Detailed immutable evidence remains in `backups/`, `HISTORICAL_RECOVERY_LOG.md`, `PLANNING_EXCEL_TO_CURRENT_AUDIT_2026-08-30.md`, `NEXT_HOMOLOGATION_GATE.md` and release checkpoints.
+Canonical persistent project list. Never remove an open financial, documentary, classification, reconciliation or product dependency during compaction. Detailed immutable evidence remains in `backups/`, `HISTORICAL_RECOVERY_LOG.md`, `PLANNING_EXCEL_TO_CURRENT_AUDIT_2026-08-30.md`, `NEXT_HOMOLOGATION_GATE.md` and release checkpoints.
 
-## P0 — v151 Dashboard / Atualizações / busca de lançamentos — 03/09/2026
-- [~] Active branch `v151-dashboard-updates-cockpit`; base is current v150 fixed homologation.
-- [x] v151 executive Dashboard recomposition and evidence-clarity layer implemented without changing financial writers.
-- [x] User material feedback captured: current `Consultar o Fluxo` timed out on a broad query (`canceling statement due to statement timeout`) and is not acceptable as the transaction-finding experience.
-- [~] Replace the broad Flow fetch with **server-side transaction search** using `lts_browser_transactions_v1`.
-- [~] Desired behavior: type-as-you-go search; e.g. typing `Mastercard` immediately returns matching launches without requiring a separate top-level tab.
-- [~] Search scope must cover supported history from **10/10/2013 onward plus future launches already present in LTS**.
-- [~] Result list must expose a total and remain read-only.
-- [~] Add **Excel-compatible CSV export** of all matches, preserving date, description, account, direction, amount, category, counterparty, cost center and source/reference where available.
-- [x] Direct backend evidence check for `Mastercard` found 239 matching rows spanning 01/11/2013 to 12/04/2028; this is evidence that the server-side search can cover historical + future records without fetching the whole Flow first.
-- [ ] v151 branch gate must be fully green before integration/exposure.
-- [ ] Integrate v151 into `main` only after fresh compare and green gates.
-- [ ] Expose v151 only on fixed homologation after integrated-main gates are green; public `index.html` remains protected.
-- [ ] Real authenticated visual E2E remains pending/unclaimed.
+## P0 — current release v155 — 04/09/2026
+- [x] v154 visual direction retained but v154 rejected after real iPhone homologation because navigation was unreliable and nullable financial fields were rendered as false zeros.
+- [x] Root cause fixed in v155 without restarting architecture: null-safe read normalization, D+3 recovery only from eligible evidenced components, missing monthly spend rendered as unavailable rather than zero, action-count evidence fallback, and retrying navigation across all six established routes.
+- [x] Candidate: `wip35-v155-candidate.html` + `wip35-v155-runtime.js`.
+- [x] Branch deterministic browser gate `33928444995`: SUCCESS; physical desktop/mobile clicks across Dashboard, Fluxo Diário, Despesas, Patrimônio, Cartões, Atualizações; false-zero guard; D+3 component recovery; no page-level horizontal overflow.
+- [x] Exact-main v155 gate `33928619024`: SUCCESS.
+- [x] v155 integrated to `main` by normal fast-forward; no force.
+- [x] Controlled fixed-homologation exposure commit `5a8f43cefdacf5eb4a2817dfedd8dbcd58a57f47`.
+- [x] Exact exposure v155 gate `33929115651`: SUCCESS.
+- [x] Exact exposure Pages `33929115081`: SUCCESS.
+- [x] `homologacao-current.json` points to v155 / `wip35-v155-candidate.html` / `promotion_status:not_promoted`.
+- [x] Public `index.html` remains protected and unchanged; public promotion is NOT authorized.
+- [ ] Material authenticated user homologation of v155 on the fixed URL.
+- [ ] Real authenticated visual/data E2E remains pending and must not be claimed.
 
-## P0 — FGTS documentary refresh / conservative rule — 03/09/2026
-- [x] New CAIXA FGTS statement received, issued 03/09/2026 17:48.
-- [x] Statement chronology confirms prior 21/04/2026 balance R$25.585,03, full 07/05/2026 withdrawal to R$0, and later rebuilding through deposits/credits.
-- [x] Latest exact documentary balance in the statement is **R$22.432,31 as of 21/08/2026** (R$22.358,79 after Jul/2026 deposit on 19/08 + R$73,52 JAM on 21/08).
-- [x] Append-only asset-position evidence recorded for FGTS Organon at 21/08/2026 / R$22.432,31; previous snapshots remain preserved.
-- [x] Product/wealth/dashboard read caches refreshed so current FGTS read model uses R$22.432,31 as the restricted position.
-- [x] User rule: **FGTS must be conservative; do not estimate future FGTS deposits/accrual because the amount depends on percentage and other variables.**
-- [~] Reconcile Planning/FGTS bridge with the new documentary position and the new no-future-estimate rule before relying on any request-date FGTS coverage amount.
-- [ ] Historical planning values based on the older R$17.509,05 + R$3.700/month accrual (including R$32.309,05 projected request-date FGTS and downstream worst-after-contingency) are retained only as historical model evidence until the planning bridge is recalculated under the new rule; they are **not** to be presented as current validated forecast.
-- [x] FGTS remains restricted / approximately D+30 contingency when accessible, never immediate D+3 cash.
-- [x] `Valor para fins rescisórios` shown by CAIXA is not treated as current withdrawable cash balance.
-
-## P0 — v150 release baseline
-- [x] v150 exact green product SHA `a67ba2d9c8fb770a463397349c67e654fe2e781f`.
-- [x] v150 integrated and exposed on fixed homologation; `homologacao-current.json` remains v150 until v151 is green/exposed.
-- [x] Protected public `index.html` blob remains `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
-- [x] Public fallback remains WIP35-v136; public promotion is NOT authorized.
-- [x] v150 reviewed text input routes to existing `Entradas` preview with `preview_only:true`, adds no writer and requires explicit approval.
-- [x] v150 Despesas context×nature and read-only drilldowns are preserved.
+## P0 — FGTS documentary refresh / conservative rule
+- [x] Latest exact documentary balance: **R$22.432,31 as of 21/08/2026**.
+- [x] FGTS remains restricted / approximately D+30 contingency when accessible, never D+3 cash.
+- [x] No future FGTS deposit/accrual estimation under the current user rule.
+- [~] Reconcile Planning/FGTS bridge under the no-future-accrual rule before relying on request-date coverage conclusions.
+- [ ] Historical values based on R$17.509,05 + R$3.700/month, including R$32.309,05 request-date FGTS and dependent worst-case figures, remain historical evidence only and must never be presented as current validated forecast.
 
 ## 0. Release / homologation guardrails
 - [x] Public root: `https://lthomesilveira-ui.github.io/lts-wealth-/`.
@@ -46,27 +33,26 @@ Canonical persistent project list. Never remove an open financial, documentary, 
 - [ ] Before every repository write, re-fetch `main`, active branch, this backlog, `NEXT_HOMOLOGATION_GATE.md`, `LTS_WEALTH_CONTINUITY_HANDOFF.md` and latest immutable checkpoint.
 - [ ] Never promote `index.html` without explicit user authorization.
 - [ ] Never claim authenticated visual E2E unless actually performed.
-- [ ] Keep fixed link, mobile/desktop usability, backup and traceability working through every release.
+- [ ] Preserve fixed links, mobile/desktop usability, backup and traceability through every release.
 
 ## 1. Dashboard / planejamento incorporado
 - [x] Product framing: `Sua vida financeira, em uma tela.`.
-- [x] Primary liquidity: available realizable through D+3; bank cash, D0 and vested RSU D+3 remain separated.
+- [x] Primary liquidity: available realizable through D+3; bank cash, D0 and vested RSU D+3 stay separated.
 - [x] FGTS separate/restricted; never current D+3 cash.
-- [x] Redundant top-level `Planejamento` removed; planning remains inside Dashboard/liquidity view.
-- [~] Previous management-point model (08/01/2027; request-by 09/12/2026) must be revalidated after the new FGTS conservative/no-accrual rule before current presentation of FGTS-funded coverage conclusions.
-- [x] Future RSUs remain excluded before vest/settlement.
+- [x] Redundant top-level Planejamento removed; planning remains inside Dashboard/liquidity view.
+- [~] Revalidate first-negative date and management/action date under the current conservative FGTS rule; show both separately when they differ.
+- [x] Future RSUs excluded before vest/settlement.
 - [ ] Any new money-changing assumption/scenario requires explicit user decision unless already explicitly stated by the user.
 
 ## 2. Despesas — natureza × contexto/pessoa
 - [x] Economic invariant R$8.623.752,53 preserved.
 - [x] Analytical cache 3.860/3.860, zero mismatch.
-- [x] Nature of spend and context/person/cost center remain distinct dimensions.
+- [x] Nature and context/person/cost center remain distinct analytical dimensions.
 - [x] Periods: current year, 12 months, since 2023, since 2013 where evidence exists.
-- [x] Context examples: Benjamin, Lucas, Larissa, Rafiki, Casa, Não atribuído.
 - [x] Context→nature and nature→context read-only drilldown only where detail exists.
-- [x] `Não atribuído` split between documentary detail not recovered, system investigation and classification/context pending.
+- [x] `Não atribuído` distinguishes documentary detail not recovered, system investigation, and classification/context pending.
 - [~] Improve density, ranking and decision-useful insights.
-- [~] Reduce `A classificar` only by evidence, never by invention.
+- [~] Reduce `A classificar` only by evidence, never invention.
 
 ## 3. Classification evidence hierarchy
 1. explicit user-confirmed rule;
@@ -77,27 +63,29 @@ Canonical persistent project list. Never remove an open financial, documentary, 
 - [x] Merchant research never invents purchase purpose.
 - [x] Marketplaces/intermediaries remain manual where actual purchase purpose is unproven.
 - [x] Existing writer `lts_browser_semantic_feedback_v1`; reader `lts_browser_product_v1`.
-- [x] Synthetic v148 lifecycle covers save→refresh→resolved disappearance/read-only retry/`O que mudou`.
-- [ ] Real authenticated lifecycle remains pending.
+- [x] Synthetic lifecycle covers save→refresh→resolved disappearance/read-only retry/`O que mudou`.
+- [ ] Real authenticated classification lifecycle remains pending.
 
-## 4. Atualizações / Input / documents
-- [x] Atualizações remains a compact action center/checklist; avoid large blank whitespace and buried actions.
+## 4. Atualizações / Input / documents / transaction search
+- [x] Atualizações remains a compact checklist/action center; no large blank whitespace or buried actions.
 - [x] `Lançamento por texto` continues to existing `Entradas` preview; no automatic posting.
 - [x] Date/value/account-or-card mandatory before approval; liquidity/RSU movements are not revenue/expense.
-- [~] `Encontrar lançamentos` replaces the timeout-prone broad `Consultar o Fluxo` experience in v151.
-- [~] Search is read-only, server-side, incremental and exportable to Excel-compatible CSV.
-- [x] v147 guided association preserved: bank statement → explicit account/institution + competence; card statement → card + competence; financing → commitment + exact as-of; other docs → manual review.
+- [~] Replace timeout-prone broad Flow lookup with server-side incremental transaction search through `lts_browser_transactions_v1`.
+- [~] Search scope: supported history from 10/10/2013 onward plus future launches already present in LTS.
+- [~] Search must remain read-only, expose total, and export all matches to Excel-compatible CSV preserving available date, description, account, direction, amount, category, counterparty, cost center and source/reference.
+- [x] Backend evidence for `Mastercard`: 239 matching rows spanning 01/11/2013 to 12/04/2028.
+- [x] Explicit document association preserved: bank statement → account/institution + competence; card statement → card + competence; financing → commitment + exact as-of; other docs → manual review.
 - [x] Filename never determines account/card/competence/date/value; upload alone never posts financial data.
-- [x] v149 separates `Vínculo informado por você` from `Leitura do arquivo · revisar`; extraction remains evidence only.
+- [x] Interpretation separates `Vínculo informado por você` from `Leitura do arquivo · revisar`; extraction remains evidence only.
 - [ ] Real authenticated PDF/image interpret→review remains pending/unclaimed.
 
 ## 5. Fluxo Diário / FIX86
 - [x] Mandatory Itaú, Bradesco, C6 and Consolidado; history from 2013 where evidence exists.
-- [x] Visual hierarchy `Saldo anterior | Entradas | Saídas | Saldo final`; balances visually differentiated.
-- [x] Facts beat projections; scenarios never facts; stale anchors cannot reanchor; cards do not feed own forecast.
-- [x] Bank↔liquidity-asset transfer economic consolidated effect zero.
+- [x] Hierarchy `Saldo anterior | Entradas | Saídas | Saldo final`; balances visually differentiated.
+- [x] Facts beat projections; scenarios never facts; stale anchors cannot reanchor; cards do not feed their own forecast.
+- [x] Bank↔liquidity-asset transfer consolidated economic effect zero.
 - [ ] Never infer historical bank without evidence.
-- [ ] Real authenticated visual E2E remains open.
+- [ ] Real authenticated visual/data E2E remains open.
 
 ## 6. Natural liquidity input
 - [x] Parser supports `5 mil`, `R$5.000`, `5000`, `3k`, `R$1.250,50`.
@@ -110,7 +98,7 @@ Canonical persistent project list. Never remove an open financial, documentary, 
 - [x] Aggregate fallback 314 rows / R$2.650.846,36 remains aggregate-only.
 - [x] C6 Aug/2024 category R$4.087,42 vs detail R$4.020,72; explicit R$66,70 Taxi/Uber gap.
 - [x] Mastercard 2022 certified Apr/Jun/Jul/Oct; remaining months need evidence.
-- [~] Mastercard 2023 12 ledger-only payments / R$496.689,05; independent category matrix absent.
+- [~] Mastercard 2023: 12 ledger-only payments / R$496.689,05; independent category matrix absent.
 - [x] Mastercard 2024 certified Mar/May/Aug/Sep/Oct/Dec; others incomplete.
 - [x] Mastercard 2025 certified Mar/Apr/May/Jun/Aug/Nov; Jan/Feb/Jul/Oct partial; Sep/Dec blocked.
 - [x] Visa 2017 R$126.681,76 aggregate-only; Visa Infinite Itaú 2024 R$112.253,01 aggregate-only; Visa Infinite Itaú 2025 12/12 certified.
@@ -124,10 +112,10 @@ Canonical persistent project list. Never remove an open financial, documentary, 
 
 ### FGTS temporal distinction
 - [x] 21/04/2026 R$25.585,03 and 07/05/2026 full withdrawal are historical positions.
-- [x] 21/07/2026 R$17.509,05 is an intermediate later balance in the newly supplied statement.
-- [x] 21/08/2026 R$22.432,31 is the latest documentary balance currently evidenced.
+- [x] 21/07/2026 R$17.509,05 is an intermediate position.
+- [x] 21/08/2026 R$22.432,31 is the latest documentary balance evidenced.
 - [x] Keep temporal positions distinct; do not sum snapshots.
-- [x] No future FGTS accrual estimation under the current user rule.
+- [x] No future FGTS accrual estimation.
 
 ### CIPÓ 396
 - [x] Drilldown exposes purchase/history/reforms/debt/market estimate/equity/schedule.
@@ -150,16 +138,17 @@ Canonical persistent project list. Never remove an open financial, documentary, 
 - [x] Backend fingerprint `85a1b60816a5b84dfe3b41341ed27948`.
 - [x] v14 293/293; v15 67/67; v16 19/19; v17 32/32; staged 411 checks / 35 suites + supplemental v143 16/16.
 - [x] v146 repeated navigation regression: 10 × 7 destinations × desktop/mobile = 140 physical clicks.
-- [x] v151 must continue rerunning inherited parser/navigation/v147/v148/v149/v150 gates.
-- [~] Performance work only after correctness/parity; current transaction-search timeout is being solved by server-side filtering rather than a larger broad Flow fetch.
+- [x] v155 exact exposure gate validates complete six-route deterministic desktop/mobile navigation plus false-zero guards.
+- [~] Performance work only after correctness/parity; transaction search must solve timeout by server-side filtering rather than larger broad fetch.
 
 ## 11. Historical continuity / backups / product quality
 - [~] Continue audit back to project start 07/07/2026 so no pending item disappears.
 - [x] Preserve historical evidence from 2013 where supported.
 - [x] Preserve fixed public/homologation links and canonical backup/restore traceability.
-- [~] Preserve balance visual emphasis, compact Atualizações, no large whitespace regressions, mobile/desktop usability.
+- [~] Preserve balance visual emphasis, compact Atualizações, official-reference Dashboard language, no large whitespace regressions, mobile/desktop usability.
 
 ## 12. Current user-dependent decisions / blockers
+- [ ] Material authenticated homologation of current v155 fixed candidate.
 - [ ] Human classification only where evidence remains insufficient.
 - [ ] New money-changing assumptions not already explicitly supplied by the user.
 - [ ] Append-only reversal semantics before cancellation/reversal UI.
