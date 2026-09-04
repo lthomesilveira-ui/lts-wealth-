@@ -1,7 +1,7 @@
 name: LTS v153 reference visual parity
 on:
   push:
-    branches: [main, v153-reference-visual-parity]
+    branches: [main, v153-reference-visual-parity, v153-reference-contract-fidelity]
     paths:
       - 'wip35-v153-candidate.html'
       - 'homologacao-current.json'
