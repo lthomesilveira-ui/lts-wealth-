@@ -49,7 +49,7 @@ jobs:
           const fs=require('fs');
           (async()=>{
             const browser=await chromium.launch({headless:true});
-            const out={pass:true,views:{}};
+            const out={pass:true,views:{},mobile_navigation:null};
             let failure=null;
             for(const spec of [{name:'desktop',viewport:{width:1536,height:864},fullPage:false},{name:'mobile',viewport:{width:390,height:844},fullPage:true}]){
               const page=await browser.newPage({viewport:spec.viewport});
@@ -68,6 +68,17 @@ jobs:
                   if(geom.kpis.length!==5||geom.kpis.some(k=>Math.abs(k.height-86)>3)) throw Error('desktop KPI geometry '+JSON.stringify(geom.kpis));
                   const y0=geom.kpis[0].y;if(geom.kpis.some(k=>Math.abs(k.y-y0)>2)) throw Error('desktop KPI alignment');
                   if(geom.attention.bottom>860) throw Error('desktop model does not fit viewport attention.bottom='+geom.attention.bottom);
+                }
+                if(spec.name==='mobile'){
+                  const flow=page.getByRole('button',{name:'Fluxo Diário'});const home=page.getByRole('button',{name:'Dashboard'});
+                  await flow.click();
+                  await page.waitForFunction(()=>getComputedStyle(document.getElementById('routeFrame')).display!=='none'&&getComputedStyle(document.getElementById('dashboard')).display==='none',null,{timeout:3000});
+                  const headerVisible=await page.locator('.topbar').isVisible();
+                  await home.click();
+                  await page.waitForFunction(()=>getComputedStyle(document.getElementById('dashboard')).display!=='none'&&getComputedStyle(document.getElementById('routeFrame')).display==='none',null,{timeout:3000});
+                  const dashboardVisible=await page.locator('.section-title').isVisible();
+                  if(!headerVisible||!dashboardVisible)throw Error('mobile outer navigation did not recover Dashboard from Flow');
+                  out.mobile_navigation={flow_visible:true,header_persistent:headerVisible,dashboard_return:true};
                 }
               }catch(e){failure=failure||e;out.pass=false;out.error=String(e.stack||e)}
               finally{try{await page.screenshot({path:`v153-${spec.name}.png`,fullPage:spec.fullPage})}catch(e){}await page.close()}
