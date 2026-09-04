@@ -1,13 +1,13 @@
 {
   "schema": 1,
-  "version": "v154",
-  "path": "wip35-v154-candidate.html",
-  "candidate_head": "61dc1e2222f97f675607601519f2df3868bc2c31",
+  "version": "v155",
+  "path": "wip35-v155-candidate.html",
+  "candidate_head": "3f54c4df145d4ec81a9b61513a9fecd28f93f3ef",
   "public_fallback": "index.html",
   "promotion_status": "not_promoted",
-  "candidate_sha": "61dc1e2222f97f675607601519f2df3868bc2c31",
-  "exposed_from_main_sha": "61dc1e2222f97f675607601519f2df3868bc2c31",
-  "exposure_mode": "v154_official_visual_contract_candidate_homologation",
-  "gate_status": "v154-branch-and-main-visual-gate-pass_mobile-physical-dashboard-flow-dashboard-pass_original-reference-inspected_unauthenticated-e2e-not-claimed",
-  "updated_at": "2026-09-04T22:42:00Z"
+  "candidate_sha": "3f54c4df145d4ec81a9b61513a9fecd28f93f3ef",
+  "exposed_from_main_sha": "3f54c4df145d4ec81a9b61513a9fecd28f93f3ef",
+  "exposure_mode": "v155_functional_recovery_candidate_homologation",
+  "gate_status": "v155-branch-and-exact-main-functional-gate-pass_all-six-routes-desktop-mobile-physical-clicks-pass_false-zero-guard-pass_d3-component-recovery-pass_no-fixture-boot-navigation-pass_pages-pass_authenticated-e2e-not-claimed",
+  "updated_at": "2026-09-04T23:19:00Z"
 }
