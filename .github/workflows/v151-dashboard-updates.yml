@@ -3,6 +3,8 @@ on:
   push:
     branches: [v151-dashboard-updates-cockpit, main]
     paths:
+      - 'wip35-v153-candidate.html'
+      - '.github/workflows/v153-reference-visual.yml'
       - 'wip35-v151-candidate.html'
       - 'wip35-v151-dashboard-updates.js'
       - 'wip35-v151-ledger-search.js'
