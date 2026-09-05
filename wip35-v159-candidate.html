@@ -4,58 +4,44 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>LTS Wealth · Homologação v159</title>
-<style>html,body{margin:0;min-height:100%;background:#f2f5f8;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}.boot{min-height:100vh;display:grid;place-items:center;color:#718095;font-size:13px}</style>
+<style>
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#f2f5f8}
+#prototype{border:0;width:100%;height:100%;display:block;background:#f2f5f8}
+#v159Badge{position:fixed;right:9px;bottom:8px;z-index:2147483647;border-radius:999px;background:#14263c;color:#fff;padding:5px 8px;font:800 7px/1.1 -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;pointer-events:none}
+@media(max-width:820px){#v159Badge{display:none}}
+</style>
 </head>
-<body><div class="boot">Carregando LTS Wealth…</div>
+<body>
+<iframe id="prototype" src="wip35-v156-candidate.html?v159-host"></iframe>
+<div id="v159Badge">CANDIDATA v159 · protótipo + núcleo real</div>
 <script>
-(async()=>{
-  try{
-    const r=await fetch('wip35-v156-candidate.html',{cache:'no-store'});
-    if(!r.ok) throw new Error('v156 visual baseline '+r.status);
-    let src=await r.text();
-    const needle="document.open();document.write(s);document.close();";
-    if(!src.includes(needle)) throw new Error('v156 document contract not found');
-    const addon=String.raw`
-const v159css=\`<style id="v159-css">
-  @media(max-width:820px){
-    body:not(.v159-auth-mode){padding-bottom:64px!important}
-    .mobile-nav{overflow:hidden!important;display:grid!important;grid-template-columns:repeat(6,minmax(0,1fr))!important;padding-left:0!important;padding-right:0!important}
-    .mobile-nav button{min-width:0!important;width:auto!important;max-width:none!important;flex:none!important;padding:0 1px!important;font-size:6.25px!important;line-height:1.05!important;white-space:normal!important;overflow:hidden!important}
-    .mobile-nav button svg{width:15px!important;height:15px!important;flex:none!important}
-    .route-frame{height:calc(100dvh - 122px)!important;min-height:0!important}
-    .kpi{overflow:hidden!important}.kpi .meta,.kpi .mini-note{line-height:1.18!important}.kpi:last-child{min-height:94px!important;height:auto!important}
-    body.v159-auth-mode{padding-bottom:0!important;background:#fff!important}
-    body.v159-auth-mode .sidebar,body.v159-auth-mode .mobile-head,body.v159-auth-mode .mobile-nav,body.v159-auth-mode .candidate-badge{display:none!important}
-    body.v159-auth-mode .main{display:block!important;grid-column:1/-1!important}
-    body.v159-auth-mode .route-frame{display:block!important;position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;z-index:2147483000!important;background:#fff!important}
-  }
-</style>\`;
-const v159runtime=\`<script id="v159-runtime">(()=>{'use strict';
-const VERSION='v159',TOP_BADGE='CANDIDATA v159 · protótipo + núcleo real',VISIBLE='WIP35-v159 · Homologação';
-const frame=document.getElementById('routeFrame'),dash=document.getElementById('dashboard');
-const wired=new WeakSet(),styled=new WeakSet();let lastState='boot',forcing=false,checks=0;
-const norm=s=>String(s??'').normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').replace(/\\s+/g,' ').trim().toLowerCase();
-function chain(){const xs=[];try{let f=frame;for(let i=0;i<28&&f;i++){const d=f.contentDocument,w=f.contentWindow;if(!d||!w)break;xs.push({f,d,w});wire(f);const nf=d.getElementById('shell')||d.getElementById('app')||d.getElementById('routeFrame')||d.querySelector('iframe');if(!nf||!nf.contentDocument||!nf.contentWindow)break;f=nf}}catch(e){}return xs}
+(()=>{'use strict';
+const VERSION='v159',frame=document.getElementById('prototype');
+const norm=s=>String(s??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim().toLowerCase();
+const wired=new WeakSet(),styled=new WeakSet();let state='boot',checks=0;
 function wire(f){try{if(!f||wired.has(f))return;f.addEventListener('load',()=>burst(0),{passive:true});wired.add(f)}catch(e){}}
-function hideLegacyBadge(z){try{if(!z?.d||styled.has(z.d))return;const st=z.d.createElement('style');st.id='v159-nested-version-style';st.textContent='#badge,.candidate-badge{display:none!important}';(z.d.head||z.d.documentElement).appendChild(st);styled.add(z.d)}catch(e){}}
-function stamp(){try{document.title='LTS Wealth · Homologação v159';const b=document.querySelector('.candidate-badge');if(b)b.textContent=TOP_BADGE;for(const z of chain()){hideLegacyBadge(z);z.d.querySelectorAll('.brand small').forEach(x=>x.textContent=VISIBLE);z.d.querySelectorAll('.footer').forEach(x=>x.textContent='Versão WIP35-v159');try{z.w.__LTS_TOP_CANDIDATE_VERSION='v159'}catch(e){}}}catch(e){}}
-function state(){const xs=chain(),z=xs[xs.length-1];if(!z)return {kind:'boot',z:null};let login=false,app=false;try{const txt=norm(z.d.body?.innerText||'');login=!!z.d.querySelector('input[type="password"],input[name*="password" i]')||((/entrar|login|acessar/.test(txt))&&!!z.d.querySelector('form,input'));const D=z.w.D;app=!!(D&&typeof D==='object'&&Object.keys(D).length)||!!z.w.__V150_EXP?.data||(!login&&!!z.d.getElementById('A')&&z.d.querySelectorAll('button,a,[role="button"]').length>=4)}catch(e){}return {kind:login?'login':app?'app':'boot',z}}
-function enterLogin(){document.body.classList.add('v159-auth-mode');if(dash)dash.style.display='none';if(frame)frame.style.display='block';stamp()}
-function enterApp(){document.body.classList.remove('v159-auth-mode');stamp();if(forcing)return;forcing=true;setTimeout(()=>{try{const btn=[...document.querySelectorAll('[data-route],[data-route2]')].find(x=>norm(x.dataset.route||x.dataset.route2||x.textContent)==='dashboard');if(btn)btn.click();else{if(dash)dash.style.display='block';if(frame)frame.style.display='none'}}finally{forcing=false}},0)}
-function inspect(){checks++;stamp();const st=state();if(st.kind==='login'){if(lastState!=='login')enterLogin();lastState='login';return true}if(st.kind==='app'){if(lastState!=='app')enterApp();lastState='app';return true}lastState='boot';return false}
-function burst(i=0){inspect();if(i<52&&lastState==='boot')setTimeout(()=>burst(i+1),Math.min(120+i*12,420))}
-frame?.addEventListener('load',()=>burst(0),{passive:true});document.addEventListener('visibilitychange',()=>{if(!document.hidden)burst(0)});window.addEventListener('focus',()=>burst(0),{passive:true});document.addEventListener('click',()=>setTimeout(stamp,0),true);
-setTimeout(()=>burst(0),0);window.__LTS_V159_STATUS={version:'v159-prototype-dashboard-real-core-v1',visual_baseline:'v156',core_chain:'v151-v150-and-deeper',auth_truthful:true,synthetic_financial_values_added:false,mobile_nav_six_fixed:true,permanent_polling:false,authenticated_e2e_claimed:false,get state(){return lastState},get checks(){return checks}};
-})();<\\/script>\`;
-s=s.replace('</head>',v159css+'</head>').replace('</body>',v159runtime+'</body>');
-`;
-    src=src.replace(needle,addon+needle)
-      .replace(/Homologação v156/g,'Homologação v159')
-      .replace(/CANDIDATA v156 · liquidez \+ performance/g,'CANDIDATA v159 · protótipo + núcleo real');
-    document.open();document.write(src);document.close();
-  }catch(e){
-    document.body.innerHTML='<div class="boot">Falha ao carregar a candidata v159.</div>';
-    window.__LTS_V159_BOOT_ERROR=String(e&&e.message||e);
-  }
+function v156(){try{return frame.contentDocument&&frame.contentWindow?{d:frame.contentDocument,w:frame.contentWindow}:null}catch(e){return null}}
+function coreChain(){const root=v156();if(!root)return [];const xs=[root];try{let f=root.d.getElementById('routeFrame');for(let i=0;i<28&&f;i++){wire(f);const d=f.contentDocument,w=f.contentWindow;if(!d||!w)break;xs.push({d,w,f});const nf=d.getElementById('shell')||d.getElementById('app')||d.getElementById('routeFrame')||d.querySelector('iframe');if(!nf||!nf.contentDocument||!nf.contentWindow)break;f=nf}}catch(e){}return xs}
+function styleRoot(root){try{if(!root?.d||styled.has(root.d))return;const st=root.d.createElement('style');st.id='v159-host-css';st.textContent=`
+@media(max-width:820px){
+  body:not(.v159-auth-mode){padding-bottom:64px!important}
+  .mobile-nav{overflow:hidden!important;display:grid!important;grid-template-columns:repeat(6,minmax(0,1fr))!important;padding-left:0!important;padding-right:0!important}
+  .mobile-nav button{min-width:0!important;width:auto!important;max-width:none!important;flex:none!important;padding:0 1px!important;font-size:6.2px!important;line-height:1.05!important;white-space:normal!important;overflow:hidden!important}
+  .mobile-nav button svg{width:15px!important;height:15px!important;flex:none!important}
+  .route-frame{height:calc(100dvh - 122px)!important;min-height:0!important}
+  .kpi{overflow:hidden!important}.kpi .meta,.kpi .mini-note{line-height:1.15!important}.kpi:last-child{min-height:94px!important;height:auto!important}
+  body.v159-auth-mode{padding-bottom:0!important;background:#fff!important}
+  body.v159-auth-mode .sidebar,body.v159-auth-mode .mobile-head,body.v159-auth-mode .mobile-nav,body.v159-auth-mode .candidate-badge,body.v159-auth-mode #dashboard{display:none!important}
+  body.v159-auth-mode .main{display:block!important;grid-column:1/-1!important}
+  body.v159-auth-mode #routeFrame{display:block!important;position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;z-index:2147483000!important;background:#fff!important}
+}`;(root.d.head||root.d.documentElement).appendChild(st);styled.add(root.d)}catch(e){}}
+function hideLegacyBadges(xs){for(const z of xs.slice(1)){try{if(z.d.getElementById('v159-hide-old-badges'))continue;const st=z.d.createElement('style');st.id='v159-hide-old-badges';st.textContent='#badge,.candidate-badge{display:none!important}';(z.d.head||z.d.documentElement).appendChild(st);z.d.querySelectorAll('.brand small').forEach(x=>x.textContent='WIP35-v159 · Homologação');z.d.querySelectorAll('.footer').forEach(x=>x.textContent='Versão WIP35-v159')}catch(e){}}}
+function detect(xs){const z=xs[xs.length-1];if(!z)return 'boot';try{const txt=norm(z.d.body?.innerText||'');const login=!!z.d.querySelector('input[type="password"],input[name*="password" i]')||((/entrar|login|acessar/.test(txt))&&!!z.d.querySelector('form,input'));if(login)return 'login';const D=z.w.D;const app=!!(D&&typeof D==='object'&&Object.keys(D).length)||!!z.w.__V150_EXP?.data||!!z.d.getElementById('A');return app?'app':'boot'}catch(e){return 'boot'}}
+function apply(){checks++;const root=v156();if(!root)return false;styleRoot(root);const xs=coreChain();hideLegacyBadges(xs);try{const b=root.d.querySelector('.candidate-badge');if(b)b.textContent='CANDIDATA v159 · protótipo + núcleo real';root.d.title='LTS Wealth · Homologação v159';root.w.__LTS_TOP_CANDIDATE_VERSION='v159'}catch(e){}const next=detect(xs);if(next==='login'){try{root.d.body.classList.add('v159-auth-mode');const dash=root.d.getElementById('dashboard'),rf=root.d.getElementById('routeFrame');if(dash)dash.style.display='none';if(rf)rf.style.display='block'}catch(e){}}else if(next==='app'){try{root.d.body.classList.remove('v159-auth-mode')}catch(e){}}state=next;return next!=='boot'}
+function burst(i=0){apply();if(i<56&&state==='boot')setTimeout(()=>burst(i+1),Math.min(100+i*12,420))}
+frame.addEventListener('load',()=>burst(0),{passive:true});document.addEventListener('visibilitychange',()=>{if(!document.hidden)burst(0)});window.addEventListener('focus',()=>burst(0),{passive:true});setTimeout(()=>burst(0),0);
+window.__LTS_V159_STATUS={version:'v159-prototype-dashboard-real-core-v2',visual_baseline:'v156',auth_truthful:true,synthetic_financial_values_added:false,mobile_nav_six_fixed:true,permanent_polling:false,authenticated_e2e_claimed:false,get state(){return state},get checks(){return checks}};
 })();
-</script></body></html>
+</script>
+</body>
+</html>
