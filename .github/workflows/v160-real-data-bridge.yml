@@ -1,0 +1,98 @@
+name: LTS v160 real data bridge
+on:
+  push:
+    branches: [v160-real-data-bridge, main]
+    paths:
+      - 'wip35-v160-candidate.html'
+      - '.github/workflows/v160-real-data-bridge.yml'
+      - 'homologacao-current.json'
+  workflow_dispatch:
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+      - name: Static contract
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          s=Path('wip35-v160-candidate.html').read_text(encoding='utf-8')
+          for x in ['wip35-v156-candidate.html?','v160-real-data-bridge-v1','recursive_frame_scan:true','dashboard_rpc:\'lts_browser_dashboard_cockpit_v1\'','read_only_bridge:true','empty_dashboard_forbidden:true','mobile_nav_six_fixed:true','synthetic_financial_values_added:false','repeat(6,minmax(0,1fr))']:
+              assert x in s, x
+          assert 'index.html?v158-native-core' not in s
+          assert 'document.write' not in s
+          assert 'setInterval(' not in s
+          assert 'new MutationObserver' not in s
+          print('v160_static=PASS')
+          PY
+      - name: Install Playwright browsers
+        run: |
+          npm init -y >/dev/null 2>&1
+          npm i playwright@1.55.0 >/dev/null 2>&1
+          npx playwright install --with-deps chromium webkit >/dev/null
+      - name: Serve
+        run: python3 -m http.server 8000 >/tmp/lts-v160-http.log 2>&1 &
+      - name: Prototype plus data bridge gate
+        run: |
+          node <<'NODE'
+          const { chromium, webkit }=require('playwright');
+          const fs=require('fs');
+          async function run(browserType,name,width,height){
+            const browser=await browserType.launch({headless:true});
+            const page=await browser.newPage({viewport:{width,height}});
+            await page.goto('http://127.0.0.1:8000/wip35-v160-candidate.html?bridgeFixture=1&visualFixture=1',{waitUntil:'domcontentloaded',timeout:25000});
+            await page.waitForFunction(()=>window.__LTS_V160_STATUS?.dataReady===true&&window.__LTS_V160_STATUS?.state==='app',null,{timeout:18000});
+            const host=page.frameLocator('#prototype');
+            await host.locator('.kpis .kpi').first().waitFor({state:'visible',timeout:12000});
+            const values=await host.locator('.kpi strong').allTextContents();
+            if(values.length!==5||values.some(v=>v.trim()==='—'))throw new Error(name+': KPI bridge failed '+JSON.stringify(values));
+            const labels=await host.locator('.kpi label').allTextContents();
+            for(const x of ['Dinheiro em contas','Contas + curto prazo','RSUs vested','FGTS','Despesas (mês)'])if(!labels.includes(x))throw new Error(name+': missing '+x);
+            const selector=width<=820?'#mobileNav [data-route]':'#sideNav [data-route]';
+            for(const dest of ['Fluxo Diário','Despesas','Patrimônio','Cartões','Atualizações']){
+              await host.locator(selector).filter({hasText:dest}).first().click();
+              await page.waitForTimeout(450);
+              const st=await page.evaluate(()=>window.__LTS_V160_STATUS?.state);
+              if(st!=='native')throw new Error(name+': route did not enter native '+dest+' '+st);
+            }
+            await host.locator(selector).filter({hasText:'Dashboard'}).first().click();
+            await page.waitForTimeout(250);
+            const out=await page.evaluate(()=>{const f=document.getElementById('prototype'),d=f.contentDocument;return {status:{state:window.__LTS_V160_STATUS.state,dataReady:window.__LTS_V160_STATUS.dataReady,synthetic:window.__LTS_V160_STATUS.synthetic_financial_values_added,readOnly:window.__LTS_V160_STATUS.read_only_bridge},outer:[document.documentElement.scrollWidth,document.documentElement.clientWidth],inner:[d.documentElement.scrollWidth,d.documentElement.clientWidth],nav:[...d.querySelectorAll('#mobileNav [data-route]')].map(x=>{const r=x.getBoundingClientRect();return {l:r.left,r:r.right,w:r.width}})}});
+            if(out.status.state!=='app'||!out.status.dataReady||out.status.synthetic!==false||out.status.readOnly!==true)throw new Error(name+': status '+JSON.stringify(out));
+            if(out.outer[0]>out.outer[1]+4||out.inner[0]>out.inner[1]+4)throw new Error(name+': overflow '+JSON.stringify(out));
+            if(width<=820){if(out.nav.length!==6)throw new Error(name+': nav count '+out.nav.length);for(const n of out.nav)if(n.l<-1||n.r>width+1||n.w<40)throw new Error(name+': clipped '+JSON.stringify(n));}
+            await page.screenshot({path:`v160-${name}.png`,fullPage:true});
+            await browser.close();return {values,labels,out};
+          }
+          (async()=>{const result={authenticated_e2e:false};result.desktop=await run(chromium,'desktop',1312,1199);result.iphone=await run(webkit,'iphone',390,844);fs.writeFileSync('v160-result.json',JSON.stringify(result,null,2))})().catch(e=>{console.error(e);process.exit(1)});
+          NODE
+      - name: No-fixture truthful fallback gate
+        run: |
+          node <<'NODE'
+          const { webkit }=require('playwright');
+          const fs=require('fs');
+          (async()=>{
+            const browser=await webkit.launch({headless:true});
+            const page=await browser.newPage({viewport:{width:390,height:844}});
+            await page.goto('http://127.0.0.1:8000/wip35-v160-candidate.html',{waitUntil:'domcontentloaded',timeout:25000});
+            await page.waitForFunction(()=>window.__LTS_V160_STATUS?.settled===true,null,{timeout:22000});
+            const out=await page.evaluate(()=>{const f=document.getElementById('prototype'),d=f.contentDocument,dash=d.getElementById('dashboard'),rf=d.getElementById('routeFrame');return {status:{state:window.__LTS_V160_STATUS.state,dataReady:window.__LTS_V160_STATUS.dataReady,bridgeCalls:window.__LTS_V160_STATUS.bridgeCalls,bridgeErrors:window.__LTS_V160_STATUS.bridgeErrors,synthetic:window.__LTS_V160_STATUS.synthetic_financial_values_added},dashVisible:dash?getComputedStyle(dash).display!=='none':false,frameVisible:rf?getComputedStyle(rf).display!=='none':false,overflow:[d.documentElement.scrollWidth,d.documentElement.clientWidth]}});
+            if(!out.status.dataReady&&out.dashVisible)throw new Error('empty dashboard exposed '+JSON.stringify(out));
+            if(!out.status.dataReady&&!out.frameVisible)throw new Error('native fallback hidden '+JSON.stringify(out));
+            if(out.status.synthetic!==false)throw new Error('synthetic contract '+JSON.stringify(out));
+            if(out.overflow[0]>out.overflow[1]+4)throw new Error('overflow '+JSON.stringify(out));
+            fs.writeFileSync('v160-no-fixture.json',JSON.stringify(out,null,2));
+            await browser.close();
+          })().catch(e=>{console.error(e);process.exit(1)});
+          NODE
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: wip35-v160-real-data-bridge
+          path: |
+            v160-desktop.png
+            v160-iphone.png
+            v160-result.json
+            v160-no-fixture.json
+          if-no-files-found: warn
