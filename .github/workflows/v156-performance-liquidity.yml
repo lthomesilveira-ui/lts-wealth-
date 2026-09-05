@@ -87,7 +87,7 @@ jobs:
             const page=await browser.newPage({viewport:{width:390,height:844}});
             const out={pass:true,authenticated:false};
             await page.goto('http://127.0.0.1:8000/wip35-v156-candidate.html',{waitUntil:'domcontentloaded',timeout:20000});
-            await page.waitForSelector('#sideNav, #mobileNav',{timeout:10000});
+            await page.waitForSelector('#mobileNav [data-route]',{state:'visible',timeout:10000});
             await page.waitForTimeout(12000);
             out.status=await page.evaluate(()=>window.__LTS_V156_STATUS||null);
             out.polls=await page.evaluate(()=>window.__LTS_V156_POLL_COUNT||0);
