@@ -4,21 +4,23 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 
 Canonical persistent project list. Never remove an open financial, documentary, classification, reconciliation or product dependency during compaction. Detailed immutable evidence remains in `backups/`, `HISTORICAL_RECOVERY_LOG.md`, `PLANNING_EXCEL_TO_CURRENT_AUDIT_2026-08-30.md`, `NEXT_HOMOLOGATION_GATE.md` and release checkpoints.
 
-## P0 — current release v157 — 05/09/2026
+## P0 — current release v158 — 05/09/2026
 - [x] v154 established the accepted official-reference visual direction; v155 corrected false-zero/navigation defects; v156 removed permanent runtime churn and established the liquidity-first Dashboard.
-- [x] Real iPhone homologation rejected v156 because financial data did not load and navigation remained inoperable.
-- [x] v157 corrects the mobile/WebKit boot path without restarting architecture: static shell, no dynamic v154 fetch/string reconstruction, no `document.write`, no `setInterval`, no `MutationObserver`, bounded boot/model read/route retries.
-- [x] Candidate: `wip35-v157-candidate.html`; source branch `v157-ios-webkit-nav-recovery`.
-- [x] Branch WebKit runs `33970332769` and exact staged-head `33970468539`: SUCCESS.
-- [x] WebKit iPhone-equivalent 390×844 touch gate physically navigated Fluxo Diário → Despesas → Patrimônio → Cartões → Atualizações → Dashboard; 20-second steady state passed with no repeated Dashboard patching, material DOM churn or page-level horizontal overflow.
-- [x] WebKit no-fixture smoke booted the existing core, stayed responsive and physically opened Fluxo Diário; Chromium desktop 1312×1199 parity smoke passed.
-- [x] v157 integrated/exposed on `main` at `cb0b4420c030c6336db59249e11bf1307e9ce500` by normal fast-forward; no force.
-- [x] Exact-main v157 WebKit gate `33970591125`: SUCCESS.
-- [x] Exact-main Pages `33970589882`: SUCCESS.
-- [x] `homologacao-current.json` points to v157 / `wip35-v157-candidate.html` / `promotion_status:not_promoted`.
-- [x] Immutable checkpoint: `backups/WIP35_V157_IOS_WEBKIT_HOMOLOGATION_CHECKPOINT_2026-09-05.md`.
+- [x] v157 attempted a WebKit-specific recovery, but real iPhone evidence rejected it: financial KPIs remained unavailable, `Despesas (mês)` status text overlapped, and the bottom navigation was clipped with `Atualizações` not fully accessible.
+- [x] The real-device screenshot was captured in an Instagram in-app browser context. This does not prove whether that context shared the user's authenticated session; however, it proved the v157 shadow Dashboard was masking the native auth/data state behind an unusable empty financial presentation.
+- [x] v158 removes the shadow financial Dashboard. Candidate `wip35-v158-candidate.html` loads exactly one full-screen native/proven core through `index.html?v158-native-core`; the native core owns authentication, financial data and routes.
+- [x] Unauthenticated browser context must expose native login rather than fake KPI dashes; authenticated context must expose the native app/data.
+- [x] Mobile adaptation is limited to the six established routes in one fixed row: Dashboard, Fluxo Diário, Despesas, Patrimônio, Cartões, Atualizações. No top-level financial values are synthesized.
+- [x] No `document.write`, permanent `setInterval` or `MutationObserver`; bounded retry burst only.
+- [x] Source branch `v158-native-core-auth-mobile-recovery`; branch staged head `ecc7feb534921a93ac54064cd7e743d841a2486c`.
+- [x] Branch v158 native-core/WebKit gate `33973465268`: SUCCESS.
+- [x] v158 integrated by normal fast-forward; no force. Controlled exposure commit `aa5495f0cb230acc9d167f5577e1c5576641efc5`.
+- [x] Exact-main/exposure v158 gate `33973672077`: SUCCESS.
+- [x] Exact exposure Pages `33973671958`: SUCCESS.
+- [x] `homologacao-current.json` points to v158 / `wip35-v158-candidate.html` / `promotion_status:not_promoted`.
+- [x] Immutable checkpoint: `backups/WIP35_V158_NATIVE_CORE_AUTH_MOBILE_RECOVERY_CHECKPOINT_2026-09-05.md`.
 - [x] Public `index.html` remains protected and unchanged; public promotion is NOT authorized.
-- [ ] Material authenticated real-iPhone homologation of v157 on the fixed URL: real data must load and all six routes must work.
+- [ ] Material authenticated physical-iPhone homologation of v158: native login if needed; after authentication real data must load and all six routes must work without clipping/traps.
 - [ ] Real authenticated visual/data E2E remains pending and must not be claimed.
 
 ## P0 — FGTS documentary refresh / conservative rule
@@ -40,7 +42,7 @@ Canonical persistent project list. Never remove an open financial, documentary, 
 ## 1. Dashboard / planejamento incorporado
 - [x] Product framing: `Sua vida financeira, em uma tela.`.
 - [x] Primary liquidity: available realizable through D+3; bank cash, D0 and vested RSU D+3 stay separated.
-- [x] Liquidity-first KPI row: dinheiro em contas; contas + curto prazo; vested RSUs; FGTS; despesas do mês. Pending actions remain a compact shortcut rather than a primary KPI.
+- [x] Liquidity-first hierarchy: dinheiro em contas; contas + curto prazo; vested RSUs; FGTS; despesas do mês. Pending actions remain secondary.
 - [x] `Contas + curto prazo` arithmetic is evidence-only: `bank_cash + d0` when both exist, otherwise `through_d3 - vested` only when both exist; missing evidence stays unavailable.
 - [x] FGTS separate/restricted; never current D+3 cash.
 - [x] Redundant top-level Planejamento removed; planning remains inside Dashboard/liquidity view.
@@ -142,8 +144,8 @@ Canonical persistent project list. Never remove an open financial, documentary, 
 - [x] Backend fingerprint `85a1b60816a5b84dfe3b41341ed27948`.
 - [x] v14 293/293; v15 67/67; v16 19/19; v17 32/32; staged 411 checks / 35 suites + supplemental v143 16/16.
 - [x] v146 repeated navigation regression: 10 × 7 destinations × desktop/mobile = 140 physical clicks.
-- [x] v155 false-zero/navigation deterministic gate passed; v156 performance gate removed permanent runtime churn.
-- [x] v157 exact-main WebKit gate validates static iOS-safe boot, complete six-route mobile navigation, 20-second steady state, no-fixture boot/route responsiveness and desktop parity.
+- [x] v155 false-zero/navigation deterministic gate passed; v156 performance gate removed permanent runtime churn; v157 WebKit deterministic gate passed but was superseded by real-device failure evidence.
+- [x] v158 gate validates native-core ownership, truthful auth state, no shadow financial Dashboard, one native frame, WebKit mobile no-overflow policy and Chromium desktop smoke.
 - [~] Performance work only after correctness/parity; transaction search must solve timeout by server-side filtering rather than larger broad fetch.
 
 ## 11. Historical continuity / backups / product quality
@@ -153,7 +155,7 @@ Canonical persistent project list. Never remove an open financial, documentary, 
 - [~] Preserve balance visual emphasis, compact Atualizações, official-reference Dashboard language, no large whitespace regressions, mobile/desktop usability.
 
 ## 12. Current user-dependent decisions / blockers
-- [ ] Material authenticated real-iPhone homologation of current v157 fixed candidate.
+- [ ] Material authenticated physical-iPhone homologation of current v158 fixed candidate.
 - [ ] Human classification only where evidence remains insufficient.
 - [ ] New money-changing assumptions not already explicitly supplied by the user.
 - [ ] Append-only reversal semantics before cancellation/reversal UI.
