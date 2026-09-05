@@ -10,21 +10,33 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#f5f6f8}#co
 </head>
 <body>
 <iframe id="core" src="wip35-v151-candidate.html?v158-native-core"></iframe>
-<div class="badge">CANDIDATA v158 · core nativo</div>
+<div class="badge">CANDIDATA v158 · core real</div>
 <script>
 (function(){
 'use strict';
 var VERSION='v158',frame=document.getElementById('core'),attempts=0,patched=false;
 var allowed=['Dashboard','Fluxo Diário','Despesas','Patrimônio','Cartões','Atualizações'];
 function norm(s){return String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim().toLowerCase()}
-function visible(el){if(!el)return false;var cs=getComputedStyle(el);return cs.display!=='none'&&cs.visibility!=='hidden'&&el.getClientRects().length>0}
+function visible(el){if(!el)return false;var w=el.ownerDocument&&el.ownerDocument.defaultView;if(!w)return false;var cs=w.getComputedStyle(el);return cs.display!=='none'&&cs.visibility!=='hidden'&&el.getClientRects().length>0}
+function chain(){
+  var out=[],fr=frame;
+  for(var i=0;i<20&&fr;i++){
+    try{var d=fr.contentDocument;if(!d||!d.documentElement)break;out.push(d);fr=d.querySelector('iframe')}catch(e){break}
+  }
+  return out;
+}
+function findTarget(ds){
+  for(var i=ds.length-1;i>=0;i--){var d=ds[i];if(d.querySelector('.login')||d.querySelector('.nav')||d.getElementById('A')||d.querySelector('.wrap'))return {d:d,depth:i+1}}
+  return null;
+}
 function patch(){
   attempts++;
   try{
-    var d=frame.contentDocument,w=frame.contentWindow;if(!d||!w||!d.documentElement)return false;
+    var ds=chain(),target=findTarget(ds);if(!target)return false;var d=target.d;
     var login=d.querySelector('.login');
     if(login&&visible(login)){
-      window.__LTS_V158_STATUS={version:VERSION,mode:'native-core',auth_state:'authentication_required_in_this_browser_context',shadow_dashboard:false,duplicate_nav:false,attempts:attempts,pass:true};
+      patched=true;
+      window.__LTS_V158_STATUS={version:VERSION,mode:'native-core',auth_state:'authentication_required_in_this_browser_context',shadow_dashboard:false,duplicate_nav:false,nested_depth:target.depth,attempts:attempts,pass:true};
       return true;
     }
     var nav=d.querySelector('.nav'),area=d.getElementById('A')||d.querySelector('.wrap');
@@ -34,11 +46,11 @@ function patch(){
     }
     Array.prototype.forEach.call(nav.querySelectorAll('button'),function(b){var t=String(b.textContent||'').trim();var ok=allowed.some(function(x){return norm(t)===norm(x)});b.style.display=ok?'':'none';if(ok)b.setAttribute('data-v158-core-route',t)});
     patched=true;
-    window.__LTS_V158_STATUS={version:VERSION,mode:'native-core',auth_state:'core_ready',shadow_dashboard:false,duplicate_nav:false,native_data_owner:true,native_route_owner:true,mobile_nav_single_row:true,attempts:attempts,pass:true};
+    window.__LTS_V158_STATUS={version:VERSION,mode:'native-core',auth_state:'core_ready',shadow_dashboard:false,duplicate_nav:false,native_data_owner:true,native_route_owner:true,mobile_nav_single_row:true,nested_depth:target.depth,attempts:attempts,pass:true};
     return true;
   }catch(e){window.__LTS_V158_STATUS={version:VERSION,mode:'native-core',error:String(e&&e.message||e),attempts:attempts,pass:false};return false}
 }
-function burst(){[0,80,180,350,700,1200,2200,4000,7000,11000,15000].forEach(function(ms){setTimeout(function(){if(!patched)patch()},ms)})}
+function burst(){[0,80,180,350,700,1200,2200,4000,7000,11000,15000,20000].forEach(function(ms){setTimeout(function(){if(!patched)patch()},ms)})}
 frame.addEventListener('load',burst);burst();
 window.__LTS_TOP_CANDIDATE_VERSION=VERSION;
 })();
