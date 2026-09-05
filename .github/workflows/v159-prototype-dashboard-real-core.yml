@@ -18,7 +18,7 @@ jobs:
           python - <<'PY'
           from pathlib import Path
           s=Path('wip35-v159-candidate.html').read_text(encoding='utf-8')
-          for x in ['wip35-v156-candidate.html?v159-host','v159-prototype-dashboard-real-core-v3','visual_baseline:\'v156\'','auth_truthful:true','mobile_nav_six_fixed:true','synthetic_financial_values_added:false','v159-auth-mode','repeat(6,minmax(0,1fr))','.candidate-badge{display:none!important}']:
+          for x in ['wip35-v156-candidate.html?','v159-prototype-dashboard-real-core-v4','visual_baseline:\'v156\'','data_state_precedes_legacy_login:true','query_forwarded:true','auth_truthful:true','mobile_nav_six_fixed:true','synthetic_financial_values_added:false','v159-auth-mode','repeat(6,minmax(0,1fr))','.candidate-badge{display:none!important}']:
               assert x in s, x
           assert "setInterval(" not in s
           assert "new MutationObserver" not in s
@@ -43,8 +43,9 @@ jobs:
             await page.goto('http://127.0.0.1:8000/wip35-v159-candidate.html?runtimeFixture=1&visualFixture=1',{waitUntil:'domcontentloaded',timeout:25000});
             await page.waitForFunction(()=>window.__LTS_V159_STATUS?.visual_baseline==='v156',null,{timeout:12000});
             const host=page.frameLocator('#prototype');
-            await host.locator('.kpis .kpi').first().waitFor({state:'visible',timeout:15000});
-            await page.waitForFunction(()=>document.getElementById('prototype')?.contentWindow?.__LTS_V156_DATA_STATE?.patchCount>=1,null,{timeout:15000});
+            await host.locator('.kpis .kpi').first().waitFor({state:'visible',timeout:18000});
+            await page.waitForFunction(()=>document.getElementById('prototype')?.contentWindow?.__LTS_V156_DATA_STATE?.patchCount>=1,null,{timeout:18000});
+            await page.waitForFunction(()=>window.__LTS_V159_STATUS?.state==='app'&&window.__LTS_V159_STATUS?.dataReady===true,null,{timeout:12000});
             const labels=await host.locator('.kpi label').allTextContents();
             for(const x of ['Dinheiro em contas','Contas + curto prazo','RSUs vested','FGTS','Despesas (mês)']) if(!labels.includes(x)) throw new Error(name+': missing KPI '+x+' '+JSON.stringify(labels));
             const title=await page.title();if(!/v159/i.test(title)) throw new Error(name+': wrong title '+title);
@@ -58,8 +59,9 @@ jobs:
               if(!routeState||routeState.dest!==dest||routeState.ok!==true) throw new Error(name+': route '+dest+' failed '+JSON.stringify(routeState));
               routes.push({dest,state:routeState});
             }
-            const dims=await page.evaluate(()=>{const f=document.getElementById('prototype'),d=f.contentDocument,ib=d.querySelector('.candidate-badge');return {outer:{sw:document.documentElement.scrollWidth,cw:document.documentElement.clientWidth},inner:{sw:d.documentElement.scrollWidth,cw:d.documentElement.clientWidth,nav:[...d.querySelectorAll('#mobileNav [data-route]')].map(x=>{const r=x.getBoundingClientRect();return {l:r.left,r:r.right,w:r.width,t:x.textContent.trim()}}),legacyBadgeDisplay:ib?getComputedStyle(ib).display:null,authMode:d.body.classList.contains('v159-auth-mode'),kpis:d.querySelectorAll('.kpi').length},status:{...window.__LTS_V159_STATUS,state:window.__LTS_V159_STATUS.state}}});
+            const dims=await page.evaluate(()=>{const f=document.getElementById('prototype'),d=f.contentDocument,ib=d.querySelector('.candidate-badge');return {outer:{sw:document.documentElement.scrollWidth,cw:document.documentElement.clientWidth},inner:{sw:d.documentElement.scrollWidth,cw:d.documentElement.clientWidth,nav:[...d.querySelectorAll('#mobileNav [data-route]')].map(x=>{const r=x.getBoundingClientRect();return {l:r.left,r:r.right,w:r.width,t:x.textContent.trim()}}),legacyBadgeDisplay:ib?getComputedStyle(ib).display:null,authMode:d.body.classList.contains('v159-auth-mode'),kpis:d.querySelectorAll('.kpi').length},status:{version:window.__LTS_V159_STATUS.version,state:window.__LTS_V159_STATUS.state,dataReady:window.__LTS_V159_STATUS.dataReady}}});
             if(dims.outer.sw>dims.outer.cw+4||dims.inner.sw>dims.inner.cw+4) throw new Error(name+': overflow '+JSON.stringify(dims));
+            if(dims.status.state!=='app'||dims.status.dataReady!==true||dims.inner.authMode) throw new Error(name+': prototype masked '+JSON.stringify(dims));
             if(width<=820){if(dims.inner.nav.length!==6) throw new Error(name+': nav count '+dims.inner.nav.length);for(const n of dims.inner.nav){if(n.l<-1||n.r>width+1||n.w<40) throw new Error(name+': clipped nav '+JSON.stringify(n));}}
             if(dims.inner.legacyBadgeDisplay!=='none') throw new Error(name+': legacy badge visible '+JSON.stringify(dims.inner));
             if(dims.inner.kpis!==5) throw new Error(name+': KPI count '+dims.inner.kpis);
@@ -83,11 +85,11 @@ jobs:
             const page=await browser.newPage({viewport:{width:390,height:844}});
             await page.goto('http://127.0.0.1:8000/wip35-v159-candidate.html',{waitUntil:'domcontentloaded',timeout:25000});
             await page.waitForFunction(()=>window.__LTS_V159_STATUS,null,{timeout:12000});
-            await page.waitForTimeout(9000);
-            const out=await page.evaluate(()=>{const f=document.getElementById('prototype'),d=f?.contentDocument;return {status:{...window.__LTS_V159_STATUS,state:window.__LTS_V159_STATUS?.state,checks:window.__LTS_V159_STATUS?.checks},authMode:!!d?.body.classList.contains('v159-auth-mode'),dashVisible:!!d?.getElementById('dashboard')&&getComputedStyle(d.getElementById('dashboard')).display!=='none',frameVisible:!!d?.getElementById('routeFrame')&&getComputedStyle(d.getElementById('routeFrame')).display!=='none',outerOverflow:document.documentElement.scrollWidth-document.documentElement.clientWidth,innerOverflow:d?d.documentElement.scrollWidth-d.documentElement.clientWidth:null}});
+            await page.waitForTimeout(10000);
+            const out=await page.evaluate(()=>{const f=document.getElementById('prototype'),d=f?.contentDocument;return {status:{version:window.__LTS_V159_STATUS?.version,state:window.__LTS_V159_STATUS?.state,checks:window.__LTS_V159_STATUS?.checks,dataReady:window.__LTS_V159_STATUS?.dataReady,synthetic:window.__LTS_V159_STATUS?.synthetic_financial_values_added,authTruth:window.__LTS_V159_STATUS?.auth_truthful},authMode:!!d?.body.classList.contains('v159-auth-mode'),dashVisible:!!d?.getElementById('dashboard')&&getComputedStyle(d.getElementById('dashboard')).display!=='none',frameVisible:!!d?.getElementById('routeFrame')&&getComputedStyle(d.getElementById('routeFrame')).display!=='none',outerOverflow:document.documentElement.scrollWidth-document.documentElement.clientWidth,innerOverflow:d?d.documentElement.scrollWidth-d.documentElement.clientWidth:null}});
             if(out.outerOverflow>4||(out.innerOverflow!=null&&out.innerOverflow>4)) throw new Error('unauth overflow '+JSON.stringify(out));
             if(out.status.state==='login'&&(!out.authMode||out.dashVisible||!out.frameVisible)) throw new Error('login truthfulness failed '+JSON.stringify(out));
-            if(out.status.synthetic_financial_values_added!==false||out.status.auth_truthful!==true) throw new Error('truth contract '+JSON.stringify(out));
+            if(out.status.synthetic!==false||out.status.authTruth!==true) throw new Error('truth contract '+JSON.stringify(out));
             fs.writeFileSync('v159-no-fixture.json',JSON.stringify(out,null,2));
             await browser.close();
           })().catch(e=>{console.error(e);process.exit(1)});
