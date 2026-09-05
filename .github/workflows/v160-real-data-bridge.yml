@@ -18,7 +18,7 @@ jobs:
           python - <<'PY'
           from pathlib import Path
           s=Path('wip35-v160-candidate.html').read_text(encoding='utf-8')
-          for x in ['wip35-v156-candidate.html?','v160-real-data-bridge-v2','recursive_frame_scan:true','dashboard_rpc:\'lts_browser_dashboard_cockpit_v1\'','read_only_bridge:true','empty_dashboard_forbidden:true','native_route_owner:true','mobile_nav_six_fixed:true','synthetic_financial_values_added:false','repeat(6,minmax(0,1fr))']:
+          for x in ['wip35-v156-candidate.html?','v160-real-data-bridge-v2','recursive_frame_scan:true','dashboard_rpc:\'lts_browser_dashboard_cockpit_v1\'','read_only_bridge:true','empty_dashboard_forbidden:true','native_route_owner:true','mobile_nav_six_fixed:true','synthetic_financial_values_added:false','repeat(6,minmax(0,1fr))','v160Route']:
               assert x in s, x
           assert 'index.html?v158-native-core' not in s
           assert 'document.write' not in s
@@ -49,7 +49,8 @@ jobs:
             if(values.length!==5||values.some(v=>v.trim()==='—'))throw new Error(name+': KPI bridge failed '+JSON.stringify(values));
             const labels=await host.locator('.kpi label').allTextContents();
             for(const x of ['Dinheiro em contas','Contas + curto prazo','RSUs vested','FGTS','Despesas (mês)'])if(!labels.includes(x))throw new Error(name+': missing '+x);
-            const selector=width<=820?'#mobileNav [data-route]':'#sideNav [data-route]';
+            const selector=width<=820?'#mobileNav [data-v160-route]':'#sideNav [data-v160-route]';
+            await host.locator(selector).first().waitFor({state:'visible',timeout:5000});
             for(const dest of ['Fluxo Diário','Despesas','Patrimônio','Cartões','Atualizações']){
               await host.locator(selector).filter({hasText:dest}).first().click();
               await page.waitForFunction(d=>window.__LTS_V160_STATUS?.state==='native'&&window.__LTS_V160_STATUS?.routeState?.dest===d,dest,{timeout:5000});
@@ -58,7 +59,7 @@ jobs:
             }
             await host.locator(selector).filter({hasText:'Dashboard'}).first().click();
             await page.waitForFunction(()=>window.__LTS_V160_STATUS?.state==='app'&&window.__LTS_V160_STATUS?.routeState?.dest==='Dashboard',null,{timeout:5000});
-            const out=await page.evaluate(()=>{const f=document.getElementById('prototype'),d=f.contentDocument,dash=d.getElementById('dashboard'),rf=d.getElementById('routeFrame');return {status:{state:window.__LTS_V160_STATUS.state,dataReady:window.__LTS_V160_STATUS.dataReady,route:window.__LTS_V160_STATUS.routeState,synthetic:window.__LTS_V160_STATUS.synthetic_financial_values_added,readOnly:window.__LTS_V160_STATUS.read_only_bridge},dashVisible:dash?getComputedStyle(dash).display!=='none':false,frameVisible:rf?getComputedStyle(rf).display!=='none':false,outer:[document.documentElement.scrollWidth,document.documentElement.clientWidth],inner:[d.documentElement.scrollWidth,d.documentElement.clientWidth],nav:[...d.querySelectorAll('#mobileNav [data-route]')].map(x=>{const r=x.getBoundingClientRect();return {l:r.left,r:r.right,w:r.width}})}});
+            const out=await page.evaluate(()=>{const f=document.getElementById('prototype'),d=f.contentDocument,dash=d.getElementById('dashboard'),rf=d.getElementById('routeFrame');return {status:{state:window.__LTS_V160_STATUS.state,dataReady:window.__LTS_V160_STATUS.dataReady,route:window.__LTS_V160_STATUS.routeState,synthetic:window.__LTS_V160_STATUS.synthetic_financial_values_added,readOnly:window.__LTS_V160_STATUS.read_only_bridge},dashVisible:dash?getComputedStyle(dash).display!=='none':false,frameVisible:rf?getComputedStyle(rf).display!=='none':false,outer:[document.documentElement.scrollWidth,document.documentElement.clientWidth],inner:[d.documentElement.scrollWidth,d.documentElement.clientWidth],nav:[...d.querySelectorAll('#mobileNav [data-v160-route]')].map(x=>{const r=x.getBoundingClientRect();return {l:r.left,r:r.right,w:r.width}})}});
             if(out.status.state!=='app'||!out.status.dataReady||out.status.route?.dest!=='Dashboard'||!out.status.route?.ok||out.status.synthetic!==false||out.status.readOnly!==true||!out.dashVisible||out.frameVisible)throw new Error(name+': dashboard return '+JSON.stringify(out));
             if(out.outer[0]>out.outer[1]+4||out.inner[0]>out.inner[1]+4)throw new Error(name+': overflow '+JSON.stringify(out));
             if(width<=820){if(out.nav.length!==6)throw new Error(name+': nav count '+out.nav.length);for(const n of out.nav)if(n.l<-1||n.r>width+1||n.w<40)throw new Error(name+': clipped '+JSON.stringify(n));}
