@@ -4,19 +4,21 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 
 Canonical persistent project list. Never remove an open financial, documentary, classification, reconciliation or product dependency during compaction. Detailed immutable evidence remains in `backups/`, `HISTORICAL_RECOVERY_LOG.md`, `PLANNING_EXCEL_TO_CURRENT_AUDIT_2026-08-30.md`, `NEXT_HOMOLOGATION_GATE.md` and release checkpoints.
 
-## P0 — current release v155 — 04/09/2026
-- [x] v154 visual direction retained but v154 rejected after real iPhone homologation because navigation was unreliable and nullable financial fields were rendered as false zeros.
-- [x] Root cause fixed in v155 without restarting architecture: null-safe read normalization, D+3 recovery only from eligible evidenced components, missing monthly spend rendered as unavailable rather than zero, action-count evidence fallback, and retrying navigation across all six established routes.
-- [x] Candidate: `wip35-v155-candidate.html` + `wip35-v155-runtime.js`.
-- [x] Branch deterministic browser gate `33928444995`: SUCCESS; physical desktop/mobile clicks across Dashboard, Fluxo Diário, Despesas, Patrimônio, Cartões, Atualizações; false-zero guard; D+3 component recovery; no page-level horizontal overflow.
-- [x] Exact-main v155 gate `33928619024`: SUCCESS.
-- [x] v155 integrated to `main` by normal fast-forward; no force.
-- [x] Controlled fixed-homologation exposure commit `5a8f43cefdacf5eb4a2817dfedd8dbcd58a57f47`.
-- [x] Exact exposure v155 gate `33929115651`: SUCCESS.
-- [x] Exact exposure Pages `33929115081`: SUCCESS.
-- [x] `homologacao-current.json` points to v155 / `wip35-v155-candidate.html` / `promotion_status:not_promoted`.
+## P0 — current release v157 — 05/09/2026
+- [x] v154 established the accepted official-reference visual direction; v155 corrected false-zero/navigation defects; v156 removed permanent runtime churn and established the liquidity-first Dashboard.
+- [x] Real iPhone homologation rejected v156 because financial data did not load and navigation remained inoperable.
+- [x] v157 corrects the mobile/WebKit boot path without restarting architecture: static shell, no dynamic v154 fetch/string reconstruction, no `document.write`, no `setInterval`, no `MutationObserver`, bounded boot/model read/route retries.
+- [x] Candidate: `wip35-v157-candidate.html`; source branch `v157-ios-webkit-nav-recovery`.
+- [x] Branch WebKit runs `33970332769` and exact staged-head `33970468539`: SUCCESS.
+- [x] WebKit iPhone-equivalent 390×844 touch gate physically navigated Fluxo Diário → Despesas → Patrimônio → Cartões → Atualizações → Dashboard; 20-second steady state passed with no repeated Dashboard patching, material DOM churn or page-level horizontal overflow.
+- [x] WebKit no-fixture smoke booted the existing core, stayed responsive and physically opened Fluxo Diário; Chromium desktop 1312×1199 parity smoke passed.
+- [x] v157 integrated/exposed on `main` at `cb0b4420c030c6336db59249e11bf1307e9ce500` by normal fast-forward; no force.
+- [x] Exact-main v157 WebKit gate `33970591125`: SUCCESS.
+- [x] Exact-main Pages `33970589882`: SUCCESS.
+- [x] `homologacao-current.json` points to v157 / `wip35-v157-candidate.html` / `promotion_status:not_promoted`.
+- [x] Immutable checkpoint: `backups/WIP35_V157_IOS_WEBKIT_HOMOLOGATION_CHECKPOINT_2026-09-05.md`.
 - [x] Public `index.html` remains protected and unchanged; public promotion is NOT authorized.
-- [ ] Material authenticated user homologation of v155 on the fixed URL.
+- [ ] Material authenticated real-iPhone homologation of v157 on the fixed URL: real data must load and all six routes must work.
 - [ ] Real authenticated visual/data E2E remains pending and must not be claimed.
 
 ## P0 — FGTS documentary refresh / conservative rule
@@ -38,6 +40,8 @@ Canonical persistent project list. Never remove an open financial, documentary, 
 ## 1. Dashboard / planejamento incorporado
 - [x] Product framing: `Sua vida financeira, em uma tela.`.
 - [x] Primary liquidity: available realizable through D+3; bank cash, D0 and vested RSU D+3 stay separated.
+- [x] Liquidity-first KPI row: dinheiro em contas; contas + curto prazo; vested RSUs; FGTS; despesas do mês. Pending actions remain a compact shortcut rather than a primary KPI.
+- [x] `Contas + curto prazo` arithmetic is evidence-only: `bank_cash + d0` when both exist, otherwise `through_d3 - vested` only when both exist; missing evidence stays unavailable.
 - [x] FGTS separate/restricted; never current D+3 cash.
 - [x] Redundant top-level Planejamento removed; planning remains inside Dashboard/liquidity view.
 - [~] Revalidate first-negative date and management/action date under the current conservative FGTS rule; show both separately when they differ.
@@ -138,7 +142,8 @@ Canonical persistent project list. Never remove an open financial, documentary, 
 - [x] Backend fingerprint `85a1b60816a5b84dfe3b41341ed27948`.
 - [x] v14 293/293; v15 67/67; v16 19/19; v17 32/32; staged 411 checks / 35 suites + supplemental v143 16/16.
 - [x] v146 repeated navigation regression: 10 × 7 destinations × desktop/mobile = 140 physical clicks.
-- [x] v155 exact exposure gate validates complete six-route deterministic desktop/mobile navigation plus false-zero guards.
+- [x] v155 false-zero/navigation deterministic gate passed; v156 performance gate removed permanent runtime churn.
+- [x] v157 exact-main WebKit gate validates static iOS-safe boot, complete six-route mobile navigation, 20-second steady state, no-fixture boot/route responsiveness and desktop parity.
 - [~] Performance work only after correctness/parity; transaction search must solve timeout by server-side filtering rather than larger broad fetch.
 
 ## 11. Historical continuity / backups / product quality
@@ -148,7 +153,7 @@ Canonical persistent project list. Never remove an open financial, documentary, 
 - [~] Preserve balance visual emphasis, compact Atualizações, official-reference Dashboard language, no large whitespace regressions, mobile/desktop usability.
 
 ## 12. Current user-dependent decisions / blockers
-- [ ] Material authenticated homologation of current v155 fixed candidate.
+- [ ] Material authenticated real-iPhone homologation of current v157 fixed candidate.
 - [ ] Human classification only where evidence remains insufficient.
 - [ ] New money-changing assumptions not already explicitly supplied by the user.
 - [ ] Append-only reversal semantics before cancellation/reversal UI.
