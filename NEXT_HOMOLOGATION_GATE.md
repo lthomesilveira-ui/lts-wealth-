@@ -2,48 +2,54 @@
 
 Purpose: evidence-backed sequence before asking the user to inspect a material candidate. Keep aligned with `PROJECT_MASTER_BACKLOG.md`, `LTS_WEALTH_CONTINUITY_HANDOFF.md` and immutable checkpoints.
 
-## Current release baseline — v155 — 04/09/2026
+## Current release baseline — v157 — 05/09/2026
 - Public fallback: WIP35-v136 in `index.html`, unchanged; protected blob remains `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
-- Fixed homologation manifest points to **v155** through `wip35-v155-candidate.html`.
-- v155 integrated baseline: `3f54c4df145d4ec81a9b61513a9fecd28f93f3ef`.
-- Controlled exposure commit: `5a8f43cefdacf5eb4a2817dfedd8dbcd58a57f47`.
+- Fixed homologation manifest points to **v157** through `wip35-v157-candidate.html`.
+- v157 source branch: `v157-ios-webkit-nav-recovery`.
+- Candidate commit: `c88955095a9e07de72b11921cdc45a7edce7f6a0`.
+- WebKit workflow commit: `89c5be2915936e8838c7322a045a0636c46012dd`.
+- Integrated/exposed main SHA: `cb0b4420c030c6336db59249e11bf1307e9ce500`.
 - `promotion_status:not_promoted`; public root promotion is NOT AUTHORIZED / NOT DONE.
 - Authenticated visual/data E2E: PENDING / NOT CLAIMED.
-- Pre-exposure immutable evidence: `backups/WIP35_V155_FUNCTIONAL_RECOVERY_CHECKPOINT_2026-09-04.md`.
-- Exposure evidence: `backups/WIP35_V155_HOMOLOGATION_EXPOSURE_CHECKPOINT_2026-09-04.md`.
+- Immutable evidence: `backups/WIP35_V157_IOS_WEBKIT_HOMOLOGATION_CHECKPOINT_2026-09-05.md`.
 
-## Why v154 was rejected
-- Its visual direction was materially closer to the official reference, but real iPhone homologation exposed functional defects.
-- Route controls were not reliably functional.
-- Nullable financial fields were converted with `Number(null) === 0`, creating false zeros in D+3 / monthly expenses / action-count presentation.
-- The prior visual fixture gate was therefore insufficient as product-readiness evidence.
+## Why v156 was rejected
+- v156 correctly removed the permanent runtime churn that had caused the v155 `page isn't responding` symptom and established the intended liquidity-first Dashboard.
+- Real iPhone homologation nevertheless showed a material failure not caught by the earlier browser gate: financial data did not load and navigation remained inoperable.
+- Therefore v156 is not product-ready and its real-device failure supersedes deterministic Chromium confidence.
 
-## v155 correction contract
-- Reuses the v154 official-reference shell; no architecture restart.
-- Null-safe financial display: missing values remain missing, never fabricated as R$0,00.
-- D+3 can recover only from already-evidenced eligible components `bank_cash + d0 + d3_vested` where explicit D+3 is null/zero and component evidence is identifiable/nonzero; FGTS is never included.
-- Monthly spend missing → `—` + explicit unavailable-data message.
-- Action count may fall back to existing `top_actions` evidence when `actionable_count` is absent/zero but actions exist.
-- Navigation retries nested application readiness for all six established routes: Dashboard, Fluxo Diário, Despesas, Patrimônio, Cartões, Atualizações.
-- No new financial writer was added.
+## v157 correction contract
+- Preserve the accepted official-reference visual direction and liquidity-first product hierarchy; do not restart architecture.
+- Replace the fragile dynamic shell reconstruction with a static iOS-safe shell.
+- Do not fetch and string-rewrite `wip35-v154-candidate.html` at runtime.
+- No `document.write`, permanent `setInterval`, or `MutationObserver`.
+- Use the existing same-origin core through `wip35-v151-candidate.html?v157-parent`.
+- Boot, financial-model read and route retries are bounded.
+- Preserve null-safe financial display: missing evidence remains `—`, never fabricated R$0,00.
+- `Contas + curto prazo` uses only evidenced arithmetic: `bank_cash + d0` when both exist, otherwise `through_d3 - vested` only when both exist.
+- FGTS remains separate / approximately D+30 and never D+3.
+- No new financial/backend writer is introduced.
 
 ## Exact release evidence
-- Branch functional gate `33928444995`: SUCCESS; desktop 1312×1199 + mobile 390×844; physical all-six-route click sequence; false-zero guard; D+3 component-recovery guard; no page-level horizontal overflow.
-- Branch artifact `9957671192`; digest `sha256:144662d3e31ac02d983ab24f507c8b3c4c9f9c731e31f534a77c5a150e531248`.
-- Same branch run included a no-fixture boot/navigation smoke; CI was unauthenticated and had no usable financial read model, so this is not authenticated E2E.
-- Exact-main v155 functional gate `33928619024`: SUCCESS.
-- Integration Pages `33928618809`: SUCCESS.
-- Exact exposure v155 functional gate `33929115651`: SUCCESS.
-- Exact exposure Pages `33929115081`: SUCCESS.
+- Branch WebKit run `33970332769`: SUCCESS.
+- Exact staged branch-head WebKit run `33970468539`: SUCCESS.
+- WebKit iPhone-equivalent 390×844 touch gate physically navigated Fluxo Diário → Despesas → Patrimônio → Cartões → Atualizações → Dashboard.
+- WebKit fixture-backed Dashboard loaded the five liquidity-first KPIs: Dinheiro em contas, Contas + curto prazo, RSUs vested, FGTS, Despesas (mês).
+- WebKit steady-state test remained responsive for 20 seconds with no repeated Dashboard patching, material DOM churn or page-level horizontal overflow.
+- WebKit no-fixture smoke booted the existing core, remained responsive for 12 seconds and physically opened Fluxo Diário.
+- Chromium desktop 1312×1199 parity smoke passed.
+- Exact-main v157 WebKit run `33970591125`: SUCCESS.
+- Exact-main Pages run `33970589882`: SUCCESS.
+- CI is unauthenticated. These gates do not prove the real authenticated financial session and are not represented as authenticated E2E.
 
-## Current material user gate — v155
-1. Open the fixed homologation URL on iPhone and allow the Dashboard to settle.
-2. Confirm the interface remains in the official-reference visual language and is not an old v151/v152/v153 layout.
-3. Physically navigate Dashboard → Fluxo Diário → Despesas → Patrimônio → Cartões → Atualizações → Dashboard; no dead buttons or route trap.
-4. Check `Disponível D+3`: it must show an evidenced value when available; if unavailable it must not fabricate R$0,00. FGTS must never be included in D+3.
-5. Check `Despesas (mês)`: an unavailable monthly read must show unavailable/`—`, not a false R$0,00.
-6. Check `Ações pendentes`: the headline and updates-in-queue evidence must not contradict each other through a false zero.
-7. Inspect mobile viewport for horizontal page overflow, inaccessible nav controls or large blank-space regression.
+## Current material user gate — v157
+1. Open the fixed homologation URL on the real iPhone and allow the Dashboard to settle for at least 20–30 seconds.
+2. Confirm that real financial data loads. Missing evidence may show `—`; fabricated R$0,00 is not acceptable.
+3. Physically navigate Dashboard → Fluxo Diário → Despesas → Patrimônio → Cartões → Atualizações → Dashboard; no dead controls, route trap or blank route.
+4. Confirm the page remains responsive and does not reproduce the prior `page isn't responding` behavior.
+5. Check the liquidity-first hierarchy: Dinheiro em contas; Contas + curto prazo; vested RSUs; FGTS; despesas do mês. Pending actions should remain secondary.
+6. FGTS must remain separate from D+3 and identified as restricted / approximately D+30.
+7. Inspect mobile viewport for page-level horizontal overflow or large blank-space regression.
 8. Do not perform a real financial write merely for QA. Existing review/approval guardrails remain.
 9. Public promotion remains a separate explicit authorization and cannot be inferred from homologation approval.
 
@@ -55,7 +61,7 @@ Purpose: evidence-backed sequence before asking the user to inspect a material c
 - First-negative date and management/action date must be revalidated under the conservative FGTS rule and shown separately if different.
 
 ## Open blockers retained
-- Material authenticated user homologation of v155.
+- Material authenticated real-iPhone homologation of v157.
 - Real authenticated visual/data E2E.
 - Real authenticated classification save→refresh/resolved disappearance/self-heal/`O que mudou`.
 - Real authenticated PDF/image interpretation→review.
