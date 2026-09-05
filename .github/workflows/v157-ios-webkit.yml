@@ -1,0 +1,109 @@
+name: LTS v157 iOS WebKit recovery
+on:
+  push:
+    branches: [v157-ios-webkit-nav-recovery, main]
+    paths:
+      - 'wip35-v157-candidate.html'
+      - '.github/workflows/v157-ios-webkit.yml'
+      - 'homologacao-current.json'
+  workflow_dispatch:
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - name: Static iOS-safe contract
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          s=Path('wip35-v157-candidate.html').read_text(encoding='utf-8')
+          for x in ['static_shell:true','dynamic_shell_fetch:false','document_write:false','set_interval:false','mutation_observer:false','bounded_boot:true','bounded_data_poll:true','webkit_target:true','liquidity_first:true','wip35-v151-candidate.html?v157-parent']:
+              assert x in s, x
+          assert "fetch('wip35-v154-candidate.html'" not in s
+          assert 'document.write' not in s
+          assert 'setInterval(' not in s
+          assert 'new MutationObserver' not in s
+          print('v157_static=PASS')
+          PY
+      - name: Install Playwright browsers
+        run: |
+          npm init -y >/dev/null 2>&1
+          npm i playwright@1.55.0 >/dev/null 2>&1
+          npx playwright install --with-deps webkit chromium >/dev/null
+      - name: Serve
+        run: python3 -m http.server 8000 >/tmp/lts-v157-http.log 2>&1 &
+      - name: WebKit iPhone-equivalent physical gate
+        run: |
+          node <<'NODE'
+          const { webkit }=require('playwright');
+          const fs=require('fs');
+          (async()=>{
+            const browser=await webkit.launch({headless:true});
+            const page=await browser.newPage({viewport:{width:390,height:844},isMobile:true,hasTouch:true});
+            const errors=[];page.on('pageerror',e=>errors.push(String(e)));
+            await page.goto('http://127.0.0.1:8000/wip35-v157-candidate.html?runtimeFixture=1',{waitUntil:'domcontentloaded',timeout:25000});
+            await page.waitForFunction(()=>window.__LTS_V157_BOOT?.ok===true,null,{timeout:15000});
+            await page.waitForFunction(()=>window.__LTS_V157_DATA_STATE?.loaded===true,null,{timeout:15000});
+            await page.waitForSelector('#mobileNav [data-route]',{state:'visible',timeout:10000});
+            const status=await page.evaluate(()=>window.__LTS_V157_STATUS);
+            if(!status.static_shell||status.dynamic_shell_fetch||status.document_write||status.set_interval||status.mutation_observer) throw new Error('unsafe runtime '+JSON.stringify(status));
+            const labels=await page.locator('.kpi label').allTextContents();
+            for(const x of ['Dinheiro em contas','Contas + curto prazo','RSUs vested','FGTS','Despesas (mês)']) if(!labels.includes(x)) throw new Error('missing KPI '+x);
+            const routes=[];
+            for(const dest of ['Fluxo Diário','Despesas','Patrimônio','Cartões','Atualizações','Dashboard']){
+              const b=page.locator('#mobileNav [data-route]').filter({hasText:dest}).first();
+              await b.tap();
+              await page.waitForTimeout(950);
+              const state=await page.evaluate(()=>window.__LTS_V157_ROUTE_STATE||null);
+              if(!state||state.dest!==dest||state.ok!==true) throw new Error('route '+dest+' failed '+JSON.stringify(state));
+              routes.push(state);
+            }
+            const before=await page.evaluate(()=>({nodes:document.querySelectorAll('*').length,patches:window.__LTS_V157_DATA_STATE?.patchCount||0}));
+            await page.waitForTimeout(20000);
+            const after=await page.evaluate(()=>({nodes:document.querySelectorAll('*').length,patches:window.__LTS_V157_DATA_STATE?.patchCount||0,responsive:true,sw:document.documentElement.scrollWidth,cw:document.documentElement.clientWidth}));
+            if(after.sw>after.cw+8) throw new Error('horizontal overflow '+JSON.stringify(after));
+            if(after.patches>before.patches+1) throw new Error('repeated patching '+JSON.stringify({before,after}));
+            if(Math.abs(after.nodes-before.nodes)>30) throw new Error('DOM churn '+JSON.stringify({before,after}));
+            await page.screenshot({path:'v157-webkit-mobile.png',fullPage:true});
+            fs.writeFileSync('v157-webkit.json',JSON.stringify({pass:true,authenticated:false,status,labels,routes,before,after,errors},null,2));
+            await browser.close();
+          })().catch(e=>{console.error(e);process.exit(1)});
+          NODE
+      - name: WebKit no-fixture boot and route smoke
+        run: |
+          node <<'NODE'
+          const { webkit }=require('playwright');
+          const fs=require('fs');
+          (async()=>{
+            const browser=await webkit.launch({headless:true});
+            const page=await browser.newPage({viewport:{width:390,height:844},isMobile:true,hasTouch:true});
+            const errors=[];page.on('pageerror',e=>errors.push(String(e)));
+            await page.goto('http://127.0.0.1:8000/wip35-v157-candidate.html',{waitUntil:'domcontentloaded',timeout:25000});
+            await page.waitForFunction(()=>window.__LTS_V157_BOOT?.ok===true,null,{timeout:15000});
+            await page.waitForSelector('#mobileNav [data-route]',{state:'visible',timeout:10000});
+            await page.waitForTimeout(12000);
+            const b=page.locator('#mobileNav [data-route]').filter({hasText:'Fluxo Diário'}).first();await b.tap();await page.waitForTimeout(1500);
+            const route=await page.evaluate(()=>window.__LTS_V157_ROUTE_STATE||null);
+            if(!route||route.dest!=='Fluxo Diário'||route.ok!==true) throw new Error('no-fixture route failed '+JSON.stringify(route));
+            const ping=await page.evaluate(()=>new Promise(r=>setTimeout(()=>r('ok'),30)));if(ping!=='ok')throw new Error('event loop unresponsive');
+            fs.writeFileSync('v157-webkit-no-fixture.json',JSON.stringify({pass:true,authenticated:false,route,ping,errors,boot:await page.evaluate(()=>window.__LTS_V157_BOOT)},null,2));
+            await browser.close();
+          })().catch(e=>{console.error(e);process.exit(1)});
+          NODE
+      - name: Chromium desktop parity smoke
+        run: |
+          node <<'NODE'
+          const { chromium }=require('playwright');
+          (async()=>{const browser=await chromium.launch({headless:true});const page=await browser.newPage({viewport:{width:1312,height:1199}});await page.goto('http://127.0.0.1:8000/wip35-v157-candidate.html?runtimeFixture=1',{waitUntil:'domcontentloaded',timeout:25000});await page.waitForFunction(()=>window.__LTS_V157_DATA_STATE?.loaded===true,null,{timeout:15000});const dims=await page.evaluate(()=>({sw:document.documentElement.scrollWidth,cw:document.documentElement.clientWidth,kpis:document.querySelectorAll('.kpi').length}));if(dims.sw>dims.cw+8||dims.kpis!==5)throw new Error(JSON.stringify(dims));await page.screenshot({path:'v157-chromium-desktop.png',fullPage:true});await browser.close()})().catch(e=>{console.error(e);process.exit(1)});
+          NODE
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: wip35-v157-ios-webkit
+          path: |
+            v157-webkit-mobile.png
+            v157-chromium-desktop.png
+            v157-webkit.json
+            v157-webkit-no-fixture.json
+          if-no-files-found: warn
