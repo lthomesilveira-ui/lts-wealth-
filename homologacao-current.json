@@ -1,13 +1,13 @@
 {
   "schema": 1,
-  "version": "v159",
-  "path": "wip35-v159-candidate.html",
-  "candidate_head": "35b7368fccc9576c4848278f6908f726b8b90049",
+  "version": "v160",
+  "path": "wip35-v160-candidate.html",
+  "candidate_head": "9f49c8637796d0e56b012896bedb55f5e29259c1",
   "public_fallback": "index.html",
   "promotion_status": "not_promoted",
-  "candidate_sha": "35b7368fccc9576c4848278f6908f726b8b90049",
-  "exposed_from_main_sha": "35b7368fccc9576c4848278f6908f726b8b90049",
-  "exposure_mode": "v159_prototype_aligned_dashboard_real_core_candidate_homologation",
-  "gate_status": "v159-branch-pass_prototype-dashboard-visible-when-data-ready-pass_data-state-precedes-legacy-login-pass_six-routes-desktop-chromium-pass_six-routes-iphone-webkit-pass_mobile-nav-six-visible-pass_no-overflow-pass_unauth-auth-truth-smoke-pass_no-synthetic-financial-values-pass_authenticated-e2e-not-claimed",
-  "updated_at": "2026-09-05T18:28:00Z"
+  "candidate_sha": "9f49c8637796d0e56b012896bedb55f5e29259c1",
+  "exposed_from_main_sha": "9f49c8637796d0e56b012896bedb55f5e29259c1",
+  "exposure_mode": "v160_real_data_bridge_truthful_fallback_candidate_homologation",
+  "gate_status": "v160-branch-pass_real-data-bridge-pass_five-kpis-fixture-pass_six-routes-desktop-chromium-pass_six-routes-iphone-webkit-pass_mobile-nav-six-visible-pass_no-overflow-pass_truthful-fallback-pass_no-synthetic-financial-values-pass_authenticated-e2e-not-claimed",
+  "updated_at": "2026-09-05T21:06:00Z"
 }
