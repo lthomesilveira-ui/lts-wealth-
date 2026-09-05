@@ -1,13 +1,13 @@
 {
   "schema": 1,
-  "version": "v156",
-  "path": "wip35-v156-candidate.html",
-  "candidate_head": "3b1c61e5a9a1b594aad27884ad92288da35067ed",
+  "version": "v157",
+  "path": "wip35-v157-candidate.html",
+  "candidate_head": "89c5be2915936e8838c7322a045a0636c46012dd",
   "public_fallback": "index.html",
   "promotion_status": "not_promoted",
-  "candidate_sha": "3b1c61e5a9a1b594aad27884ad92288da35067ed",
-  "exposed_from_main_sha": "3b1c61e5a9a1b594aad27884ad92288da35067ed",
-  "exposure_mode": "v156_performance_liquidity_dashboard_candidate_homologation",
-  "gate_status": "v156-branch-and-exact-main-performance-liquidity-gate-pass_12s-steady-state-desktop-mobile_all-six-routes-physical-clicks-pass_no-fixture-12s-responsiveness-pass_bounded-poll-no-interval-no-mutationobserver_pages-pass_authenticated-e2e-not-claimed",
-  "updated_at": "2026-09-05T13:14:00Z"
+  "candidate_sha": "89c5be2915936e8838c7322a045a0636c46012dd",
+  "exposed_from_main_sha": null,
+  "exposure_mode": "v157_static_ios_webkit_recovery_candidate_homologation",
+  "gate_status": "v157-branch-webkit-iphone-equivalent-pass_all-six-mobile-routes-pass_no-fixture-webkit-boot-route-pass_20s-steady-state-pass_chromium-desktop-parity-pass_static-shell-no-dynamic-fetch-no-document-write_authenticated-e2e-not-claimed",
+  "updated_at": "2026-09-05T13:59:00Z"
 }
