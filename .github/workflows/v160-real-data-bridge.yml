@@ -52,7 +52,7 @@ jobs:
             const selector=width<=820?'#mobileNav [data-route]':'#sideNav [data-route]';
             for(const dest of ['Fluxo Diário','Despesas','Patrimônio','Cartões','Atualizações']){
               await host.locator(selector).filter({hasText:dest}).first().click();
-              await page.waitForFunction(d=>window.__LTS_V160_STATUS?.state==='native'&&window.__LTS_V160_STATUS?.routeState?.dest===d,null,dest,{timeout:5000});
+              await page.waitForFunction(d=>window.__LTS_V160_STATUS?.state==='native'&&window.__LTS_V160_STATUS?.routeState?.dest===d,dest,{timeout:5000});
               const route=await page.evaluate(()=>{const f=document.getElementById('prototype'),d=f.contentDocument,dash=d.getElementById('dashboard'),rf=d.getElementById('routeFrame');return {state:window.__LTS_V160_STATUS.state,route:window.__LTS_V160_STATUS.routeState,dashVisible:dash?getComputedStyle(dash).display!=='none':false,frameVisible:rf?getComputedStyle(rf).display!=='none':false}});
               if(route.state!=='native'||!route.route?.ok||route.route.dest!==dest||route.dashVisible||!route.frameVisible)throw new Error(name+': native route failed '+dest+' '+JSON.stringify(route));
             }
