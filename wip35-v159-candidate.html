@@ -16,13 +16,13 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#f2f5f8}
 <div id="v159Badge">CANDIDATA v159 · protótipo + núcleo real</div>
 <script>
 (()=>{'use strict';
-const VERSION='v159',frame=document.getElementById('prototype');
+const frame=document.getElementById('prototype');
 const norm=s=>String(s??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim().toLowerCase();
 const wired=new WeakSet(),styled=new WeakSet();let state='boot',checks=0;
 function wire(f){try{if(!f||wired.has(f))return;f.addEventListener('load',()=>burst(0),{passive:true});wired.add(f)}catch(e){}}
 function v156(){try{return frame.contentDocument&&frame.contentWindow?{d:frame.contentDocument,w:frame.contentWindow}:null}catch(e){return null}}
 function coreChain(){const root=v156();if(!root)return [];const xs=[root];try{let f=root.d.getElementById('routeFrame');for(let i=0;i<28&&f;i++){wire(f);const d=f.contentDocument,w=f.contentWindow;if(!d||!w)break;xs.push({d,w,f});const nf=d.getElementById('shell')||d.getElementById('app')||d.getElementById('routeFrame')||d.querySelector('iframe');if(!nf||!nf.contentDocument||!nf.contentWindow)break;f=nf}}catch(e){}return xs}
-function styleRoot(root){try{if(!root?.d||styled.has(root.d))return;const st=root.d.createElement('style');st.id='v159-host-css';st.textContent=`
+function styleRoot(root){try{if(!root?.d||styled.has(root.d))return;const st=root.d.createElement('style');st.id='v159-host-css';st.textContent=`.candidate-badge{display:none!important}
 @media(max-width:820px){
   body:not(.v159-auth-mode){padding-bottom:64px!important}
   .mobile-nav{overflow:hidden!important;display:grid!important;grid-template-columns:repeat(6,minmax(0,1fr))!important;padding-left:0!important;padding-right:0!important}
@@ -37,10 +37,10 @@ function styleRoot(root){try{if(!root?.d||styled.has(root.d))return;const st=roo
 }`;(root.d.head||root.d.documentElement).appendChild(st);styled.add(root.d)}catch(e){}}
 function hideLegacyBadges(xs){for(const z of xs.slice(1)){try{if(z.d.getElementById('v159-hide-old-badges'))continue;const st=z.d.createElement('style');st.id='v159-hide-old-badges';st.textContent='#badge,.candidate-badge{display:none!important}';(z.d.head||z.d.documentElement).appendChild(st);z.d.querySelectorAll('.brand small').forEach(x=>x.textContent='WIP35-v159 · Homologação');z.d.querySelectorAll('.footer').forEach(x=>x.textContent='Versão WIP35-v159')}catch(e){}}}
 function detect(xs){const z=xs[xs.length-1];if(!z)return 'boot';try{const txt=norm(z.d.body?.innerText||'');const login=!!z.d.querySelector('input[type="password"],input[name*="password" i]')||((/entrar|login|acessar/.test(txt))&&!!z.d.querySelector('form,input'));if(login)return 'login';const D=z.w.D;const app=!!(D&&typeof D==='object'&&Object.keys(D).length)||!!z.w.__V150_EXP?.data||!!z.d.getElementById('A');return app?'app':'boot'}catch(e){return 'boot'}}
-function apply(){checks++;const root=v156();if(!root)return false;styleRoot(root);const xs=coreChain();hideLegacyBadges(xs);try{const b=root.d.querySelector('.candidate-badge');if(b)b.textContent='CANDIDATA v159 · protótipo + núcleo real';root.d.title='LTS Wealth · Homologação v159';root.w.__LTS_TOP_CANDIDATE_VERSION='v159'}catch(e){}const next=detect(xs);if(next==='login'){try{root.d.body.classList.add('v159-auth-mode');const dash=root.d.getElementById('dashboard'),rf=root.d.getElementById('routeFrame');if(dash)dash.style.display='none';if(rf)rf.style.display='block'}catch(e){}}else if(next==='app'){try{root.d.body.classList.remove('v159-auth-mode')}catch(e){}}state=next;return next!=='boot'}
+function apply(){checks++;const root=v156();if(!root)return false;styleRoot(root);const xs=coreChain();hideLegacyBadges(xs);try{root.d.title='LTS Wealth · Homologação v159';root.w.__LTS_TOP_CANDIDATE_VERSION='v159'}catch(e){}const next=detect(xs);if(next==='login'){try{root.d.body.classList.add('v159-auth-mode');const dash=root.d.getElementById('dashboard'),rf=root.d.getElementById('routeFrame');if(dash)dash.style.display='none';if(rf)rf.style.display='block'}catch(e){}}else if(next==='app'){try{root.d.body.classList.remove('v159-auth-mode')}catch(e){}}state=next;return next!=='boot'}
 function burst(i=0){apply();if(i<56&&state==='boot')setTimeout(()=>burst(i+1),Math.min(100+i*12,420))}
 frame.addEventListener('load',()=>burst(0),{passive:true});document.addEventListener('visibilitychange',()=>{if(!document.hidden)burst(0)});window.addEventListener('focus',()=>burst(0),{passive:true});setTimeout(()=>burst(0),0);
-window.__LTS_V159_STATUS={version:'v159-prototype-dashboard-real-core-v2',visual_baseline:'v156',auth_truthful:true,synthetic_financial_values_added:false,mobile_nav_six_fixed:true,permanent_polling:false,authenticated_e2e_claimed:false,get state(){return state},get checks(){return checks}};
+window.__LTS_V159_STATUS={version:'v159-prototype-dashboard-real-core-v3',visual_baseline:'v156',auth_truthful:true,synthetic_financial_values_added:false,mobile_nav_six_fixed:true,permanent_polling:false,authenticated_e2e_claimed:false,get state(){return state},get checks(){return checks}};
 })();
 </script>
 </body>
