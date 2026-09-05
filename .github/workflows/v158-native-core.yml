@@ -18,7 +18,8 @@ jobs:
           python - <<'PY'
           from pathlib import Path
           s=Path('wip35-v158-candidate.html').read_text(encoding='utf-8')
-          assert 'index.html?v158-native-core' in s
+          assert 'wip35-v151-candidate.html?v158-native-core' in s
+          assert 'index.html?v158-native-core' not in s
           assert 'shadow_dashboard:false' in s
           assert 'native_data_owner:true' in s
           assert 'native_route_owner:true' in s
@@ -50,10 +51,11 @@ jobs:
             await page.goto('http://127.0.0.1:8000/wip35-v158-candidate.html',{waitUntil:'domcontentloaded',timeout:25000});
             await page.waitForSelector('#core',{state:'attached',timeout:5000});
             await page.waitForFunction(()=>window.__LTS_V158_STATUS?.pass===true,null,{timeout:16000});
-            const out=await page.evaluate(()=>({status:window.__LTS_V158_STATUS,frames:document.querySelectorAll('iframe').length,syntheticKpis:document.querySelectorAll('.kpi,.kp').length,sw:document.documentElement.scrollWidth,cw:document.documentElement.clientWidth}));
+            const out=await page.evaluate(()=>({status:window.__LTS_V158_STATUS,frames:document.querySelectorAll('iframe').length,syntheticKpis:document.querySelectorAll('.kpi,.kp').length,sw:document.documentElement.scrollWidth,cw:document.documentElement.clientWidth,src:document.getElementById('core')?.getAttribute('src')}));
             if(out.frames!==1)throw new Error('expected one native core frame '+JSON.stringify(out));
             if(out.syntheticKpis!==0)throw new Error('top-level synthetic financial UI detected '+JSON.stringify(out));
             if(out.sw>out.cw+4)throw new Error('top-level overflow '+JSON.stringify(out));
+            if(out.src!=='wip35-v151-candidate.html?v158-native-core')throw new Error('wrong native core target '+JSON.stringify(out));
             if(!['authentication_required_in_this_browser_context','core_ready'].includes(out.status.auth_state))throw new Error('invalid auth state '+JSON.stringify(out));
             await page.screenshot({path:'v158-webkit-mobile.png',fullPage:true});
             fs.writeFileSync('v158-webkit.json',JSON.stringify({pass:true,authenticated:false,...out,errors},null,2));
@@ -69,8 +71,8 @@ jobs:
             const page=await browser.newPage({viewport:{width:1312,height:1199}});
             await page.goto('http://127.0.0.1:8000/wip35-v158-candidate.html',{waitUntil:'domcontentloaded',timeout:25000});
             await page.waitForFunction(()=>window.__LTS_V158_STATUS?.pass===true,null,{timeout:16000});
-            const out=await page.evaluate(()=>({frames:document.querySelectorAll('iframe').length,sw:document.documentElement.scrollWidth,cw:document.documentElement.clientWidth,status:window.__LTS_V158_STATUS}));
-            if(out.frames!==1||out.sw>out.cw+4)throw new Error(JSON.stringify(out));
+            const out=await page.evaluate(()=>({frames:document.querySelectorAll('iframe').length,sw:document.documentElement.scrollWidth,cw:document.documentElement.clientWidth,status:window.__LTS_V158_STATUS,src:document.getElementById('core')?.getAttribute('src')}));
+            if(out.frames!==1||out.sw>out.cw+4||out.src!=='wip35-v151-candidate.html?v158-native-core')throw new Error(JSON.stringify(out));
             await browser.close();
           })().catch(e=>{console.error(e);process.exit(1)});
           NODE
