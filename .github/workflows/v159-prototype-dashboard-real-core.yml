@@ -18,7 +18,7 @@ jobs:
           python - <<'PY'
           from pathlib import Path
           s=Path('wip35-v159-candidate.html').read_text(encoding='utf-8')
-          for x in ['wip35-v156-candidate.html','v159-prototype-dashboard-real-core-v1','visual_baseline:\'v156\'','auth_truthful:true','mobile_nav_six_fixed:true','synthetic_financial_values_added:false','v159-auth-mode','repeat(6,minmax(0,1fr))']:
+          for x in ['wip35-v156-candidate.html?v159-host','v159-prototype-dashboard-real-core-v2','visual_baseline:\'v156\'','auth_truthful:true','mobile_nav_six_fixed:true','synthetic_financial_values_added:false','v159-auth-mode','repeat(6,minmax(0,1fr))']:
               assert x in s, x
           assert "setInterval(" not in s
           assert "new MutationObserver" not in s
@@ -42,25 +42,26 @@ jobs:
             const page=await browser.newPage({viewport:{width,height}});
             await page.goto('http://127.0.0.1:8000/wip35-v159-candidate.html?runtimeFixture=1&visualFixture=1',{waitUntil:'domcontentloaded',timeout:25000});
             await page.waitForFunction(()=>window.__LTS_V159_STATUS?.visual_baseline==='v156',null,{timeout:12000});
-            await page.waitForFunction(()=>window.__LTS_V156_DATA_STATE?.patchCount>=1,null,{timeout:12000});
-            await page.waitForSelector('.kpis .kpi',{state:'visible',timeout:12000});
-            const labels=await page.locator('.kpi label').allTextContents();
+            const host=page.frameLocator('#prototype');
+            await host.locator('.kpis .kpi').first().waitFor({state:'visible',timeout:15000});
+            await page.waitForFunction(()=>document.getElementById('prototype')?.contentWindow?.__LTS_V156_DATA_STATE?.patchCount>=1,null,{timeout:15000});
+            const labels=await host.locator('.kpi label').allTextContents();
             for(const x of ['Dinheiro em contas','Contas + curto prazo','RSUs vested','FGTS','Despesas (mês)']) if(!labels.includes(x)) throw new Error(name+': missing KPI '+x+' '+JSON.stringify(labels));
             const title=await page.title();if(!/v159/i.test(title)) throw new Error(name+': wrong title '+title);
             const selector=width<=820?'#mobileNav [data-route]':'#sideNav [data-route]';
             const routes=[];
             for(const dest of ['Fluxo Diário','Despesas','Patrimônio','Cartões','Atualizações','Dashboard']){
-              const b=page.locator(selector).filter({hasText:dest}).first();
-              await b.click();await page.waitForTimeout(900);
-              const state=await page.evaluate(()=>window.__LTS_V156_ROUTE_STATE||null);
-              if(!state||state.dest!==dest||state.ok!==true) throw new Error(name+': route '+dest+' failed '+JSON.stringify(state));
-              routes.push({dest,state});
+              const b=host.locator(selector).filter({hasText:dest}).first();
+              await b.click();await page.waitForTimeout(950);
+              const routeState=await page.evaluate(()=>document.getElementById('prototype')?.contentWindow?.__LTS_V156_ROUTE_STATE||null);
+              if(!routeState||routeState.dest!==dest||routeState.ok!==true) throw new Error(name+': route '+dest+' failed '+JSON.stringify(routeState));
+              routes.push({dest,state:routeState});
             }
-            const dims=await page.evaluate(()=>({sw:document.documentElement.scrollWidth,cw:document.documentElement.clientWidth,nav:[...document.querySelectorAll('#mobileNav [data-route]')].map(x=>{const r=x.getBoundingClientRect();return {l:r.left,r:r.right,w:r.width,t:x.textContent.trim()}}),badge:document.querySelector('.candidate-badge')?.textContent||'',authMode:document.body.classList.contains('v159-auth-mode'),kpis:document.querySelectorAll('.kpi').length}));
-            if(dims.sw>dims.cw+4) throw new Error(name+': page overflow '+JSON.stringify(dims));
-            if(width<=820){if(dims.nav.length!==6) throw new Error(name+': nav count '+dims.nav.length);for(const n of dims.nav){if(n.l<-1||n.r>width+1||n.w<40) throw new Error(name+': clipped nav '+JSON.stringify(n));}}
-            if(!/v159/i.test(dims.badge)) throw new Error(name+': badge not v159 '+dims.badge);
-            if(dims.kpis!==5) throw new Error(name+': KPI count '+dims.kpis);
+            const dims=await page.evaluate(()=>{const f=document.getElementById('prototype'),d=f.contentDocument;return {outer:{sw:document.documentElement.scrollWidth,cw:document.documentElement.clientWidth},inner:{sw:d.documentElement.scrollWidth,cw:d.documentElement.clientWidth,nav:[...d.querySelectorAll('#mobileNav [data-route]')].map(x=>{const r=x.getBoundingClientRect();return {l:r.left,r:r.right,w:r.width,t:x.textContent.trim()}}),badge:d.querySelector('.candidate-badge')?.textContent||'',authMode:d.body.classList.contains('v159-auth-mode'),kpis:d.querySelectorAll('.kpi').length},status:{...window.__LTS_V159_STATUS,state:window.__LTS_V159_STATUS.state}}});
+            if(dims.outer.sw>dims.outer.cw+4||dims.inner.sw>dims.inner.cw+4) throw new Error(name+': overflow '+JSON.stringify(dims));
+            if(width<=820){if(dims.inner.nav.length!==6) throw new Error(name+': nav count '+dims.inner.nav.length);for(const n of dims.inner.nav){if(n.l<-1||n.r>width+1||n.w<40) throw new Error(name+': clipped nav '+JSON.stringify(n));}}
+            if(!/v159/i.test(dims.inner.badge)) throw new Error(name+': inner badge not v159 '+dims.inner.badge);
+            if(dims.inner.kpis!==5) throw new Error(name+': KPI count '+dims.inner.kpis);
             await page.screenshot({path:`v159-${name}.png`,fullPage:true});
             await browser.close();return {labels,routes,dims};
           }
@@ -82,8 +83,8 @@ jobs:
             await page.goto('http://127.0.0.1:8000/wip35-v159-candidate.html',{waitUntil:'domcontentloaded',timeout:25000});
             await page.waitForFunction(()=>window.__LTS_V159_STATUS,null,{timeout:12000});
             await page.waitForTimeout(9000);
-            const out=await page.evaluate(()=>({status:{...window.__LTS_V159_STATUS,state:window.__LTS_V159_STATUS?.state,checks:window.__LTS_V159_STATUS?.checks},authMode:document.body.classList.contains('v159-auth-mode'),dashVisible:!!document.getElementById('dashboard')&&getComputedStyle(document.getElementById('dashboard')).display!=='none',frameVisible:!!document.getElementById('routeFrame')&&getComputedStyle(document.getElementById('routeFrame')).display!=='none',overflow:document.documentElement.scrollWidth-document.documentElement.clientWidth}));
-            if(out.overflow>4) throw new Error('unauth overflow '+JSON.stringify(out));
+            const out=await page.evaluate(()=>{const f=document.getElementById('prototype'),d=f?.contentDocument;return {status:{...window.__LTS_V159_STATUS,state:window.__LTS_V159_STATUS?.state,checks:window.__LTS_V159_STATUS?.checks},authMode:!!d?.body.classList.contains('v159-auth-mode'),dashVisible:!!d?.getElementById('dashboard')&&getComputedStyle(d.getElementById('dashboard')).display!=='none',frameVisible:!!d?.getElementById('routeFrame')&&getComputedStyle(d.getElementById('routeFrame')).display!=='none',outerOverflow:document.documentElement.scrollWidth-document.documentElement.clientWidth,innerOverflow:d?d.documentElement.scrollWidth-d.documentElement.clientWidth:null}});
+            if(out.outerOverflow>4||(out.innerOverflow!=null&&out.innerOverflow>4)) throw new Error('unauth overflow '+JSON.stringify(out));
             if(out.status.state==='login'&&(!out.authMode||out.dashVisible||!out.frameVisible)) throw new Error('login truthfulness failed '+JSON.stringify(out));
             if(out.status.synthetic_financial_values_added!==false||out.status.auth_truthful!==true) throw new Error('truth contract '+JSON.stringify(out));
             fs.writeFileSync('v159-no-fixture.json',JSON.stringify(out,null,2));
