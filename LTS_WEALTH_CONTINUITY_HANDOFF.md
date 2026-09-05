@@ -24,38 +24,45 @@ This file exists so project continuity never depends on chat context. Always re-
 - Public fallback remains WIP35-v136; protected `index.html` blob remains `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
 - Public promotion remains unauthorized/not done.
 
-## Current release — v158 native-core/auth/mobile recovery
+## Current release — v160 real-data bridge / truthful fallback
 - v154 established the accepted official-reference visual direction.
 - v155 corrected false-zero/navigation defects but later showed runtime slowness.
 - v156 removed permanent runtime churn and established the liquidity-first Dashboard, but real iPhone homologation showed no financial data and inoperable routes.
-- v157 targeted WebKit and passed deterministic gates, but material real-iPhone evidence rejected it: top financial KPIs remained `—`, `Despesas (mês)` status text overlapped and bottom navigation was clipped with `Atualizações` not fully accessible.
-- The v157 screenshot was captured inside an Instagram in-app browser context. Do not assume from that alone whether authentication was shared with Safari/another context.
-- The definite v157 product defect was that its synthetic/shadow Dashboard could mask the native core authentication/data state behind an empty financial presentation.
-- v158 removes that shadow financial Dashboard. The candidate layer owns no financial KPI values.
-- Source branch: `v158-native-core-auth-mobile-recovery`.
-- Candidate: `wip35-v158-candidate.html`.
-- Branch staged head: `ecc7feb534921a93ac54064cd7e743d841a2486c`.
-- Controlled exposure head: `aa5495f0cb230acc9d167f5577e1c5576641efc5`.
-- `homologacao-current.json` points to v158 and `promotion_status:not_promoted`.
-- Branch v158 native-core/WebKit run `33973465268`: SUCCESS.
-- Exact-main/exposure v158 run `33973672077`: SUCCESS.
-- Exact exposure GitHub Pages run `33973671958`: SUCCESS.
-- Immutable checkpoint: `backups/WIP35_V158_NATIVE_CORE_AUTH_MOBILE_RECOVERY_CHECKPOINT_2026-09-05.md`.
-- Authenticated real-device/data E2E remains pending/not claimed.
+- v157 targeted WebKit and passed deterministic gates, but real-iPhone evidence rejected it.
+- v158 removed the shadow financial Dashboard and recovered truthful native/auth fallback through the existing nested core.
+- v159 improved prototype/mobile presentation and six-route fit, but real-iPhone evidence still showed all five liquidity-first KPIs as `—`.
+- v160 corrects the release-readiness defect exposed by v159: a Dashboard is not considered ready unless material financial cockpit data exists.
+- Source branch: `v160-real-data-bridge`.
+- Candidate: `wip35-v160-candidate.html`.
+- Final staged candidate head: `9f49c8637796d0e56b012896bedb55f5e29259c1`.
+- Controlled exposure commit: `cbc4bc9d7e4798a9e97b80feb7510af535ac6d43`.
+- `homologacao-current.json` points to v160 and `promotion_status:not_promoted`.
+- Branch v160 Chromium/WebKit run `33991299085`: SUCCESS.
+- Exact-main v160 run `33992238668`: SUCCESS.
+- Exact GitHub Pages run `33992238643`: SUCCESS.
+- Immutable checkpoint: `backups/WIP35_V160_REAL_DATA_BRIDGE_HOMOLOGATION_CHECKPOINT_2026-09-05.md`.
+- Authenticated physical-iPhone financial/data E2E remains pending/not claimed.
 
-## v158 runtime contract
-- Load exactly one full-screen same-origin native/proven core through `index.html?v158-native-core`.
-- Native core owns authentication, financial data, state and route behavior.
-- Unauthenticated browser context must expose native login rather than a synthetic Dashboard full of dashes.
-- Authenticated context must expose native app/data; candidate must not synthesize financial values.
-- Mobile adaptation is limited to one fixed row of six established routes: Dashboard, Fluxo Diário, Despesas, Patrimônio, Cartões, Atualizações.
-- No `document.write`, permanent `setInterval` or `MutationObserver`; bounded retry burst only.
-- Public `index.html` itself is not changed by v158.
+## v160 runtime contract
+- Keep the liquidity-first/official-reference Dashboard baseline rather than inventing a new product architecture.
+- Recursively traverse the bounded same-origin frame chain to find the existing application state and RPC-capable layer.
+- Reuse existing read-only RPC `lts_browser_dashboard_cockpit_v1` when financial cockpit data is not already present.
+- Prototype Dashboard can become visible only after material financial data exists.
+- If material cockpit data is unavailable, the native/login/core state must surface; a prototype Dashboard containing only `—` is forbidden as a successful state.
+- v160 owns the six candidate route controls exclusively to prevent nested navigation-handler races.
+- Six routes remain: Dashboard, Fluxo Diário, Despesas, Patrimônio, Cartões, Atualizações.
+- Mobile navigation remains one fixed six-item row without clipping/overflow.
+- `synthetic_financial_values_added:false`; v160 does not fabricate user-facing financial values.
+- No financial/backend writer is introduced.
+- No `document.write`, permanent `setInterval` or `MutationObserver` is introduced.
+- Public `index.html` is unchanged.
 
 ## Deterministic evidence / limits
-- v158 WebKit iPhone-equivalent gate validates exactly one native core frame, zero top-level synthetic KPI cards, truthful native authentication state, no top-level horizontal overflow and mobile single-row navigation policy.
-- Chromium desktop native-core smoke passes.
-- CI is unauthenticated and cannot prove the user's actual financial session. Do not reinterpret this as authenticated E2E.
+- Branch run `33991299085` validates Chromium desktop and WebKit iPhone-equivalent controlled bridge behavior, all five KPI slots, six physical route controls, Dashboard return, candidate route ownership, no clipping and no horizontal overflow.
+- No-fixture branch gate verifies truthful fallback: absent material cockpit data, the empty prototype Dashboard cannot remain exposed and the native/core state remains visible.
+- Exact-main run `33992238668` passed on exposure head `cbc4bc9d7e4798a9e97b80feb7510af535ac6d43`.
+- Exact GitHub Pages deployment `33992238643` passed on the same exposure head.
+- CI is unauthenticated and cannot prove the user's actual authenticated financial session. Do not reinterpret these results as authenticated physical-device E2E.
 
 ## Official visual / Dashboard target
 - Original Dashboard source: 1312×1199; SHA-256 `0e5293a98bf3fce30b27ba508afdb2f17d82700a6134372938eaff38da73c06b`.
@@ -108,29 +115,28 @@ This file exists so project continuity never depends on chat context. Always re-
 - Provider-neutral private architecture QA 14/14; no real consent/token/provider.
 - Need written pricing/support/SLA/product×bank for Itaú/Bradesco/C6; no provider commitment without explicit user decision.
 - Backend fingerprint `85a1b60816a5b84dfe3b41341ed27948`; staged 411 checks / 35 suites + supplemental v143 16/16.
-- v146 navigation regression 140 physical Playwright clicks remains historical evidence; v158 adds native-core/auth-truth/WebKit mobile gates.
+- v146 navigation regression 140 physical Playwright clicks remains historical evidence; v160 adds evidence-driven financial readiness, exclusive route ownership and truthful fallback gates.
 
-## Current material gate
-- Real authenticated physical-iPhone homologation of v158 is the current release gate.
-- Expected behavior is truthful: browser context without session shows native login; authenticated context shows native app/data.
-- After authentication, Dashboard → Fluxo Diário → Despesas → Patrimônio → Cartões → Atualizações → Dashboard must work without clipping, dead controls or route traps.
+## Current material state
+- v160 is technically delivered to the fixed homologation URL with branch, exact-main and exact-Pages deterministic gates green.
+- The invalid success condition seen on v159 — visible Dashboard with five `—` KPIs — is no longer accepted by the release layer.
+- Authenticated physical-iPhone financial/data E2E remains an explicit evidence gap and must not be claimed as completed.
 - Public promotion is separate and requires explicit user authorization.
 
 ## Open backlog that must always remain visible
-- Material authenticated physical-iPhone homologation of current v158 candidate.
-- Real authenticated visual/data E2E.
-- Public promotion only after explicit user approval.
-- Real authenticated PDF/image interpretation→review.
+- Authenticated physical-iPhone financial/data E2E when material real-device evidence is needed.
 - Real authenticated classification lifecycle.
+- Real authenticated PDF/image interpretation→review.
 - Natural liquidity authenticated save→refresh→visible.
 - Append-only cancellation/reversal semantics.
 - Server-side transaction search + total + Excel-compatible CSV.
 - Expense density/insight refinement and evidence-only reduction of `A classificar`.
 - Mastercard/Visa documentary recovery.
-- All CIPÓ blockers listed above.
+- Planning/FGTS recalculation under no-future-accrual rule, separating first-negative and management/action dates.
+- CIPÓ consortium R$303,60 delta; different-date arithmetic R$6.654,50 = R$6.502,70 + R$151,80; condominium source; raw R$1.780.358 / dedup R$1.312.268 gaps; duplicate excess R$3.531,70; no fabricated post-2029 TR; no automatic taxable/net-gain conclusion.
 - Volvo exact trim/km.
-- Open Finance pricing/SLA/product×bank.
-- Planning/FGTS recalculation under no-future-accrual rule.
+- Open Finance pricing/SLA/product×bank; no provider/consent/spend decision without explicit user authorization.
+- Public promotion only after explicit user approval.
 - Performance only after correctness/parity.
 - Audit of all project dependencies/improvements since 07/07/2026 so none disappear across chats.
 - Preserve official-reference visual language, compact Atualizações, no large whitespace regressions, mobile/desktop usability, fixed links, backup and traceability.
