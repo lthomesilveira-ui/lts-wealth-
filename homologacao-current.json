@@ -1,13 +1,13 @@
 {
   "schema": 1,
-  "version": "v155",
-  "path": "wip35-v155-candidate.html",
-  "candidate_head": "3f54c4df145d4ec81a9b61513a9fecd28f93f3ef",
+  "version": "v156",
+  "path": "wip35-v156-candidate.html",
+  "candidate_head": "3b1c61e5a9a1b594aad27884ad92288da35067ed",
   "public_fallback": "index.html",
   "promotion_status": "not_promoted",
-  "candidate_sha": "3f54c4df145d4ec81a9b61513a9fecd28f93f3ef",
-  "exposed_from_main_sha": "3f54c4df145d4ec81a9b61513a9fecd28f93f3ef",
-  "exposure_mode": "v155_functional_recovery_candidate_homologation",
-  "gate_status": "v155-branch-and-exact-main-functional-gate-pass_all-six-routes-desktop-mobile-physical-clicks-pass_false-zero-guard-pass_d3-component-recovery-pass_no-fixture-boot-navigation-pass_pages-pass_authenticated-e2e-not-claimed",
-  "updated_at": "2026-09-04T23:19:00Z"
+  "candidate_sha": "3b1c61e5a9a1b594aad27884ad92288da35067ed",
+  "exposed_from_main_sha": "3b1c61e5a9a1b594aad27884ad92288da35067ed",
+  "exposure_mode": "v156_performance_liquidity_dashboard_candidate_homologation",
+  "gate_status": "v156-branch-and-exact-main-performance-liquidity-gate-pass_12s-steady-state-desktop-mobile_all-six-routes-physical-clicks-pass_no-fixture-12s-responsiveness-pass_bounded-poll-no-interval-no-mutationobserver_pages-pass_authenticated-e2e-not-claimed",
+  "updated_at": "2026-09-05T13:14:00Z"
 }
