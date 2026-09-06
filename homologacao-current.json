@@ -2,12 +2,12 @@
   "schema": 1,
   "version": "canonical-v1",
   "path": "canonical-app.html",
-  "candidate_head": "d2422975a1bf037aa6d9cf6fb583eab70d832796",
+  "candidate_head": "21a026846ada00b4d78186dececc23206c048a7a",
   "public_fallback": "index.html",
   "promotion_status": "not_promoted",
-  "candidate_sha": "d2422975a1bf037aa6d9cf6fb583eab70d832796",
-  "exposed_from_main_sha": "d2422975a1bf037aa6d9cf6fb583eab70d832796",
-  "exposure_mode": "canonical_single_frontend_liquidity_ui_gated_homologation",
-  "gate_status": "canonical-gate-34053651814-pass_desktop-chromium-pass_mobile-webkit-pass_five-kpis-pass_six-routes-pass_flow-account-switch-pass_expense-dual-lens-pass_expense-drilldown-pass_transaction-search-pass_csv-ready-pass_classification-readonly-fixture-pass_documents-area-pass_liquidity-preview-pass_neutral-effect-r0-pass_fixture-writer-disabled-pass_no-overflow-pass_no-iframe-pass_unauthenticated-truth-pass_authenticated-e2e-not-claimed",
-  "updated_at": "2026-09-06T19:55:00Z"
+  "candidate_sha": "21a026846ada00b4d78186dececc23206c048a7a",
+  "exposed_from_main_sha": "21a026846ada00b4d78186dececc23206c048a7a",
+  "exposure_mode": "canonical_single_frontend_dashboard_fidelity_liquidity_ui_gated_homologation",
+  "gate_status": "canonical-gate-34056854438-pass_dashboard-fidelity-css-pass_nine-panel-density-pass_expense-rank-border-pass_desktop-chromium-pass_mobile-webkit-pass_five-kpis-pass_six-routes-pass_flow-account-switch-pass_expense-dual-lens-pass_expense-drilldown-pass_transaction-search-pass_csv-ready-pass_classification-readonly-fixture-pass_documents-area-pass_liquidity-preview-pass_neutral-effect-r0-pass_fixture-writer-disabled-pass_no-overflow-pass_no-iframe-pass_unauthenticated-truth-pass_authenticated-e2e-not-claimed",
+  "updated_at": "2026-09-06T20:13:00Z"
 }
