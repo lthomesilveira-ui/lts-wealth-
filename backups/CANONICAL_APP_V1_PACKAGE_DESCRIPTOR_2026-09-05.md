@@ -1,0 +1,5 @@
+# This marker exists only so the canonical implementation package has an immutable package descriptor.
+app_blob: 8f135025f5b21be74270479c73e9c2ee10cd62b0
+implementation_note_blob: dd5a08ca38c173c0186950b34ab71059fe7a8e0e
+workflow_blob: 1068e8ef9af6bde18649f08c49c63221ec11d7af
+base_branch_head: a1f84478c4faa416bcabaa71386c80adb170ee9e

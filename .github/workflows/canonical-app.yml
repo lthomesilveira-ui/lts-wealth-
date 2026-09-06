@@ -1,0 +1,95 @@
+name: Canonical app gate
+
+on:
+  push:
+    branches: [canonical-app-v1]
+    paths:
+      - canonical-app.html
+      - .github/workflows/canonical-app.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  canonical-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install Playwright
+        run: |
+          npm init -y >/dev/null 2>&1
+          npm install --silent playwright@1.55.0
+          npx playwright install --with-deps chromium webkit
+      - name: Static contract
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          s=Path('canonical-app.html').read_text()
+          assert '<iframe' not in s
+          assert 'document.write' not in s
+          assert 'MutationObserver' not in s
+          assert 'setInterval(' not in s
+          for r in ['Dashboard','Fluxo Diário','Despesas','Patrimônio','Cartões','Atualizações']:
+              assert r in s
+          for rpc in ['lts_browser_product_v1','lts_browser_dashboard_cockpit_v1']:
+              assert rpc in s
+          assert "['Dinheiro em contas'" not in s  # labels are rendered, not fixture schema
+          for label in ['Dinheiro em contas','Contas + curto prazo','RSUs vested','FGTS','Despesas (mês)','Evolução do Patrimônio Líquido','Distribuição do Patrimônio','Posição por Banco','Fluxo de Caixa','Principais Despesas','Próximos Compromissos','Planejamento – Visão de Caixa','Atualizações Pendentes']:
+              assert label in s
+          print('static contract ok')
+          PY
+      - name: Browser contract
+        run: |
+          cat > /tmp/canonical-test.js <<'JS'
+          const {chromium, webkit}=require('playwright');
+          const {spawn}=require('child_process');
+          const path=require('path');
+          const server=spawn('python3',['-m','http.server','4173','--bind','127.0.0.1'],{stdio:'inherit'});
+          const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+          const routes=['Dashboard','Fluxo Diário','Despesas','Patrimônio','Cartões','Atualizações'];
+          async function run(browserType,name,viewport){
+            const browser=await browserType.launch({headless:true});
+            const page=await browser.newPage({viewport});
+            await page.goto('http://127.0.0.1:4173/canonical-app.html?fixture=1',{waitUntil:'networkidle'});
+            await page.waitForFunction(()=>window.__LTS_CANONICAL_STATUS?.ready===true);
+            const st=await page.evaluate(()=>window.__LTS_CANONICAL_STATUS);
+            if(st.iframe_count!==0)throw new Error(name+': iframe detected');
+            if(!st.fixture||!st.data_ready)throw new Error(name+': fixture not ready');
+            const kpis=await page.locator('.kpi strong').allTextContents();
+            if(kpis.length!==5||kpis.some(x=>!x.trim()||x.trim()==='—'))throw new Error(name+': KPI gate '+JSON.stringify(kpis));
+            for(const route of routes){
+              const nav=viewport.width<=820?page.locator('.mobile-nav [data-route="'+route+'"]'):page.locator('.sidebar [data-route="'+route+'"]');
+              await nav.click();
+              await page.waitForTimeout(60);
+              const title=(await page.locator('.page-title h1').textContent())?.trim();
+              if(title!==route)throw new Error(name+': route '+route+' got '+title);
+            }
+            const metrics=await page.evaluate(()=>({sw:document.documentElement.scrollWidth,cw:document.documentElement.clientWidth,iframes:document.querySelectorAll('iframe').length,nav:[...document.querySelectorAll('.mobile-nav button')].map(b=>{const r=b.getBoundingClientRect();return {l:r.left,r:r.right,w:r.width}})}));
+            if(metrics.sw>metrics.cw+1)throw new Error(name+': horizontal overflow '+JSON.stringify(metrics));
+            if(metrics.iframes!==0)throw new Error(name+': iframe after nav');
+            if(viewport.width<=820){
+              if(metrics.nav.length!==6)throw new Error(name+': mobile nav count');
+              if(metrics.nav.some(r=>r.l<-.5||r.r>viewport.width+.5||r.w<=0))throw new Error(name+': clipped mobile nav '+JSON.stringify(metrics.nav));
+            }
+            await page.goto('http://127.0.0.1:4173/canonical-app.html',{waitUntil:'domcontentloaded'});
+            await page.waitForTimeout(400);
+            const login=await page.locator('#loginForm').count();
+            const fakeDashboard=await page.locator('#dashboard-view').count();
+            if(login!==1||fakeDashboard!==0)throw new Error(name+': unauthenticated truth failed');
+            await browser.close();
+          }
+          (async()=>{try{await sleep(700);await run(chromium,'chromium-desktop',{width:1312,height:1199});await run(webkit,'webkit-mobile',{width:390,height:844});console.log('canonical browser gate ok')}finally{server.kill('SIGTERM')}})().catch(e=>{console.error(e);process.exit(1)});
+          JS
+          node /tmp/canonical-test.js
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: canonical-app-gate
+          path: |
+            canonical-app.html
