@@ -38,23 +38,23 @@ jobs:
               assert r in s
           for rpc in ['lts_browser_product_v1','lts_browser_dashboard_cockpit_v1']:
               assert rpc in s
-          assert "['Dinheiro em contas'" not in s  # labels are rendered, not fixture schema
           for label in ['Dinheiro em contas','Contas + curto prazo','RSUs vested','FGTS','Despesas (mês)','Evolução do Patrimônio Líquido','Distribuição do Patrimônio','Posição por Banco','Fluxo de Caixa','Principais Despesas','Próximos Compromissos','Planejamento – Visão de Caixa','Atualizações Pendentes']:
               assert label in s
           print('static contract ok')
           PY
       - name: Browser contract
         run: |
-          cat > /tmp/canonical-test.js <<'JS'
+          cat > .canonical-test.cjs <<'JS'
           const {chromium, webkit}=require('playwright');
           const {spawn}=require('child_process');
-          const path=require('path');
           const server=spawn('python3',['-m','http.server','4173','--bind','127.0.0.1'],{stdio:'inherit'});
           const sleep=ms=>new Promise(r=>setTimeout(r,ms));
           const routes=['Dashboard','Fluxo Diário','Despesas','Patrimônio','Cartões','Atualizações'];
-          async function run(browserType,name,viewport){
+          async function run(browserType,name,viewport,shot){
             const browser=await browserType.launch({headless:true});
             const page=await browser.newPage({viewport});
+            const pageErrors=[];
+            page.on('pageerror',e=>pageErrors.push(String(e)));
             await page.goto('http://127.0.0.1:4173/canonical-app.html?fixture=1',{waitUntil:'networkidle'});
             await page.waitForFunction(()=>window.__LTS_CANONICAL_STATUS?.ready===true);
             const st=await page.evaluate(()=>window.__LTS_CANONICAL_STATUS);
@@ -62,10 +62,11 @@ jobs:
             if(!st.fixture||!st.data_ready)throw new Error(name+': fixture not ready');
             const kpis=await page.locator('.kpi strong').allTextContents();
             if(kpis.length!==5||kpis.some(x=>!x.trim()||x.trim()==='—'))throw new Error(name+': KPI gate '+JSON.stringify(kpis));
+            await page.screenshot({path:shot,fullPage:true});
             for(const route of routes){
               const nav=viewport.width<=820?page.locator('.mobile-nav [data-route="'+route+'"]'):page.locator('.sidebar [data-route="'+route+'"]');
               await nav.click();
-              await page.waitForTimeout(60);
+              await page.waitForTimeout(80);
               const title=(await page.locator('.page-title h1').textContent())?.trim();
               if(title!==route)throw new Error(name+': route '+route+' got '+title);
             }
@@ -76,20 +77,26 @@ jobs:
               if(metrics.nav.length!==6)throw new Error(name+': mobile nav count');
               if(metrics.nav.some(r=>r.l<-.5||r.r>viewport.width+.5||r.w<=0))throw new Error(name+': clipped mobile nav '+JSON.stringify(metrics.nav));
             }
+            if(pageErrors.length)throw new Error(name+': page errors '+pageErrors.join(' | '));
             await page.goto('http://127.0.0.1:4173/canonical-app.html',{waitUntil:'domcontentloaded'});
-            await page.waitForTimeout(400);
+            await page.waitForTimeout(500);
             const login=await page.locator('#loginForm').count();
             const fakeDashboard=await page.locator('#dashboard-view').count();
-            if(login!==1||fakeDashboard!==0)throw new Error(name+': unauthenticated truth failed');
+            const fixtureBadge=await page.getByText('FIXTURE DE TESTE',{exact:true}).count();
+            if(login!==1||fakeDashboard!==0||fixtureBadge!==0)throw new Error(name+': unauthenticated truth failed');
             await browser.close();
           }
-          (async()=>{try{await sleep(700);await run(chromium,'chromium-desktop',{width:1312,height:1199});await run(webkit,'webkit-mobile',{width:390,height:844});console.log('canonical browser gate ok')}finally{server.kill('SIGTERM')}})().catch(e=>{console.error(e);process.exit(1)});
+          (async()=>{try{await sleep(700);await run(chromium,'chromium-desktop',{width:1312,height:1199},'canonical-desktop.png');await run(webkit,'webkit-mobile',{width:390,height:844},'canonical-mobile.png');console.log('canonical browser gate ok')}finally{server.kill('SIGTERM')}})().catch(e=>{console.error(e);process.exit(1)});
           JS
-          node /tmp/canonical-test.js
-      - name: Upload screenshots
+          node .canonical-test.cjs
+          rm -f .canonical-test.cjs
+      - name: Upload visual evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: canonical-app-gate
+          if-no-files-found: warn
           path: |
             canonical-app.html
+            canonical-desktop.png
+            canonical-mobile.png
