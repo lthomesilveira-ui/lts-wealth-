@@ -5,6 +5,7 @@ on:
     branches: [canonical-app-v1]
     paths:
       - canonical-app.html
+      - canonical-liquidity.js
       - .github/workflows/canonical-app.yml
   workflow_dispatch:
 
@@ -31,10 +32,14 @@ jobs:
           from pathlib import Path
           import re
           s=Path('canonical-app.html').read_text()
+          l=Path('canonical-liquidity.js').read_text()
           assert '<iframe' not in s
           assert 'document.write' not in s
           assert 'MutationObserver' not in s
           assert 'setInterval(' not in s
+          assert 'canonical-liquidity.js?v=20260906-1' in s
+          assert 'MutationObserver' not in l
+          assert 'setInterval(' not in l
           for r in ['Dashboard','Fluxo Diário','Despesas','Patrimônio','Cartões','Atualizações']:
               assert r in s
           for rpc in [
@@ -44,6 +49,12 @@ jobs:
               'lts_browser_document_lifecycle_v1','lts_browser_semantic_feedback_v1'
           ]:
               assert rpc in s, rpc
+          for rpc in [
+              'lts_browser_liquidity_movement_options_v1',
+              'lts_browser_preview_liquidity_movement_v1',
+              'lts_browser_apply_liquidity_movement_v1'
+          ]:
+              assert rpc in l, rpc
           for label in [
               'Dinheiro em contas','Contas + curto prazo','RSUs vested','FGTS','Despesas (mês)',
               'Evolução do Patrimônio Líquido','Distribuição do Patrimônio','Posição por Banco',
@@ -52,11 +63,14 @@ jobs:
               'Classificações que realmente precisam de decisão','Documentos','Natureza × contexto','CIPÓ 396'
           ]:
               assert label in s, label
+          for label in ['Aplicar / resgatar','Efeito econômico: R$ 0,00','Confirmar movimentação']:
+              assert label in l, label
           scripts=re.findall(r'<script(?: [^>]*)?>(.*?)</script>',s,re.S)
           Path('/tmp/canonical-script.js').write_text('\n'.join(scripts))
           print('static contract ok')
           PY
           node --check /tmp/canonical-script.js
+          node --check canonical-liquidity.js
       - name: Browser contract
         run: |
           cat > .canonical-test.cjs <<'JS'
@@ -120,6 +134,16 @@ jobs:
             if(await page.locator('.search-result').count()!==1)throw new Error(name+': transaction search result missing');
             if(await page.locator('#ledgerExport').isDisabled())throw new Error(name+': CSV export not enabled after result');
             if(await page.getByText('Documentos',{exact:true}).count()<1)throw new Error(name+': documents area missing');
+            await page.waitForSelector('#liquidityMovementCard');
+            if(await page.locator('#liquidityMovementCard').count()!==1)throw new Error(name+': liquidity movement card missing');
+            await page.locator('#liqType').selectOption('application');
+            await page.locator('#liqAccount').selectOption('fixture-itau');
+            await page.locator('#liqAsset').selectOption('fixture-cofrinho');
+            await page.locator('#liqAmount').fill('5 mil');
+            await page.locator('#liqPreviewBtn').click();
+            await page.waitForSelector('#liqPreview');
+            if(!(await page.locator('#liqPreview').textContent()).includes('R$ 0,00'))throw new Error(name+': liquidity neutral preview missing');
+            if(await page.locator('#liqApply').count()!==0)throw new Error(name+': fixture liquidity writer unexpectedly enabled');
             if(!mobile)await page.screenshot({path:'canonical-updates.png',fullPage:true});
 
             await route(page,'Dashboard',mobile);
@@ -157,6 +181,7 @@ jobs:
           if-no-files-found: warn
           path: |
             canonical-app.html
+            canonical-liquidity.js
             canonical-desktop.png
             canonical-mobile.png
             canonical-updates.png
