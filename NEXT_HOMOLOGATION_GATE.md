@@ -7,10 +7,10 @@ Purpose: evidence-backed sequence before asking the user to inspect a material c
 - Fixed homologation: `https://lthomesilveira-ui.github.io/lts-wealth-/homologacao.html`.
 - Fixed homologation manifest selects **canonical-v1** through `canonical-app.html`.
 - Canonical frontend is a single application; no v150/v151/v156/v160 iframe/wrapper chain is part of the primary product.
-- Current gated canonical liquidity UI source is on `canonical-app-v1`; `canonical-app.html` blob `4d847449208dd80bf31e74238c79a0dd411cda38` plus `canonical-liquidity.js` blob `eee099e254569d955a64216edce1322613882644`.
-- Deterministic liquidity UI gate `34053651814`: **SUCCESS** in Chromium desktop 1312×1199 and WebKit mobile 390×844.
-- Gate artifact `9995321790`, digest `sha256:443efb8995d2be17450a2406acfc59357954b000a2e9fea543261d47d08a8d66`.
-- Current immutable evidence: `backups/CANONICAL_APP_V1_LIQUIDITY_UI_GATE_CHECKPOINT_2026-09-06.md`.
+- Current gated Dashboard-fidelity source is on `canonical-app-v1`; `canonical-app.html` blob `b16aa50d54d7f7253129a4d15cc281efe2b45b92` plus `canonical-dashboard-fidelity.css` blob `c45416536c79a35a7f8547acab4a52c07e4ddf50` and the previously gated liquidity module.
+- Deterministic Dashboard fidelity gate `34056854438`: **SUCCESS** in Chromium desktop 1312×1199 and WebKit mobile 390×844; prior liquidity coverage remains inside the same permanent gate.
+- Gate artifact `9996230152`, digest `sha256:57755a6347d756b743eb8668863b62002fc065d590378ac18800a964b0c5d8d0`.
+- Current immutable evidence: `backups/CANONICAL_APP_V1_DASHBOARD_FIDELITY_GATE_CHECKPOINT_2026-09-06.md`.
 - `promotion_status:not_promoted`; public root promotion is NOT AUTHORIZED / NOT DONE.
 - Authenticated physical-iPhone visual/data E2E: PENDING / NOT CLAIMED.
 

@@ -56,7 +56,8 @@ Canonical persistent project list. Never remove an open financial, documentary, 
 - [x] `Contas + curto prazo` arithmetic evidence-only: `bank_cash + d0` when both exist, otherwise `through_d3 - vested` only when both exist; missing evidence stays unavailable.
 - [x] FGTS separate/restricted; future RSUs excluded before vest/settlement.
 - [x] Planning displays distinct management/action and first-negative fields.
-- [~] Dashboard visual parity with the approved 1312×1199 official reference remains P0: navigation breadth, top-card framing, historical chart presentation, month controls, card density and secondary details still require refinement without inventing financial values.
+- [x] Dashboard fidelity pass 1 gated in run `34056854438` on Chromium desktop 1312×1199 + WebKit mobile 390×844; artifact `9996230152`; checkpoint `backups/CANONICAL_APP_V1_DASHBOARD_FIDELITY_GATE_CHECKPOINT_2026-09-06.md`.
+- [~] Dashboard visual parity with the approved 1312×1199 official reference remains P0: continue real-data visual richness, navigation/detail refinement and chart presentation without fake modules or synthetic user-facing financial series.
 - [ ] Any new money-changing assumption/scenario requires explicit user decision unless already explicitly stated.
 
 ## 2. Despesas — natureza × contexto/pessoa

@@ -156,3 +156,14 @@ This is deterministic fixture/unauthenticated evidence, not authenticated physic
 
 ## User action now
 NONE. Continue autonomous Dashboard/product-quality work. User may test the fixed homologation when a material candidate is published, but engineering work must not wait for that QA.
+
+
+## Latest dashboard fidelity gate — 06/09/2026
+- Presentation-only fidelity layer: `canonical-dashboard-fidelity.css`.
+- Gated source `6126bfbf108be1f3206279723425a5435c5e2631`; post-gate cleanup `aec1059ef40a0fe1a7c6c5fe560936abef0b87d0`.
+- Gate `34056854438`: SUCCESS on Chromium desktop 1312×1199 and WebKit mobile 390×844.
+- Artifact `9996230152`, digest `sha256:57755a6347d756b743eb8668863b62002fc065d590378ac18800a964b0c5d8d0`.
+- Checkpoint: `backups/CANONICAL_APP_V1_DASHBOARD_FIDELITY_GATE_CHECKPOINT_2026-09-06.md`.
+- Visual review: materially closer to approved reference, but pixel-perfect parity is not claimed. No fake routes or synthetic user-facing financial series were introduced.
+- Real authenticated liquidity save→refresh→visible and authenticated physical-iPhone E2E remain pending/unclaimed.
+- `index.html` remains protected/not promoted.
