@@ -8,9 +8,8 @@ on:
       - 'homologacao-current.json'
       - 'canonical-app.html'
       - 'canonical-dashboard-fidelity.css'
-      - 'canonical-dashboard-gate.js'
       - 'canonical-liquidity.js'
-      - 'scripts/canonical-app-gate.mjs'
+      - '.github/workflows/canonical-app.yml'
       - 'wip35-v137-candidate.html'
       - 'wip35-v138-candidate.html'
       - 'wip35-v138-cockpits.js'
@@ -71,27 +70,34 @@ jobs:
       - name: Validate canonical product contract
         if: steps.candidate.outputs.mode == 'canonical'
         run: |
-          node --check canonical-dashboard-gate.js
           node --check canonical-liquidity.js
-          node --check scripts/canonical-app-gate.mjs
           python - <<'PY'
           from pathlib import Path
+          import re
           html=Path('canonical-app.html').read_text(encoding='utf-8')
+          liq=Path('canonical-liquidity.js').read_text(encoding='utf-8')
           css=Path('canonical-dashboard-fidelity.css').read_text(encoding='utf-8')
           required_html=[
-            'canonical-dashboard-fidelity.css',
-            'canonical-dashboard-gate.js',
-            'canonical-liquidity.js',
+            'canonical-dashboard-fidelity.css?v=20260906-1',
+            'canonical-liquidity.js?v=20260906-1',
             'Dashboard','Fluxo Diário','Despesas','Patrimônio','Cartões','Atualizações'
           ]
-          required_css=['.dashboard-grid','.kpi-grid','.wealth-bars']
-          forbidden=['<iframe','document.write(','MutationObserver(']
+          required_css=['#dashboard-view .grid-main','#dashboard-view .rank-row.clickable']
+          forbidden_html=['<iframe','document.write','MutationObserver','setInterval(']
+          forbidden_liq=['MutationObserver','setInterval(']
           missing=[x for x in required_html if x not in html]+[x for x in required_css if x not in css]
-          leaked=[x for x in forbidden if x.lower() in html.lower()]
+          leaked=[x for x in forbidden_html if x in html]+[x for x in forbidden_liq if x in liq]
           assert not missing, 'canonical markers missing: '+repr(missing)
           assert not leaked, 'forbidden canonical markers: '+repr(leaked)
+          for rpc in ['lts_browser_product_v1','lts_browser_dashboard_cockpit_v1','lts_browser_transactions_v1','lts_browser_expense_context_lens_v1','lts_browser_wealth_detail_v1','lts_browser_card_history_coverage_v1','lts_browser_document_lifecycle_v1','lts_browser_semantic_feedback_v1']:
+              assert rpc in html, rpc
+          for rpc in ['lts_browser_liquidity_movement_options_v1','lts_browser_preview_liquidity_movement_v1','lts_browser_apply_liquidity_movement_v1']:
+              assert rpc in liq, rpc
+          scripts=re.findall(r'<script(?: [^>]*)?>(.*?)</script>',html,re.S)
+          Path('/tmp/canonical-script.js').write_text('\n'.join(scripts),encoding='utf-8')
           print('canonical_product_static=PASS')
           PY
+          node --check /tmp/canonical-script.js
       - name: Parse and validate isolated v142 fallback candidate
         if: steps.candidate.outputs.mode == 'legacy'
         run: python .github/scripts/lts_candidate_smoke.py
