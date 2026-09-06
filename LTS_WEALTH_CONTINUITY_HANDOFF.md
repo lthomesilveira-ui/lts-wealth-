@@ -1,15 +1,15 @@
 # LTS Wealth — Continuity Handoff
 
-Last materially refreshed: 2026-09-05 (America/Sao_Paulo)
+Last materially refreshed: 2026-09-06 (America/Sao_Paulo)
 
-This file exists so project continuity never depends on chat context. Always re-fetch `main`, the active branch, `PROJECT_MASTER_BACKLOG.md`, `NEXT_HOMOLOGATION_GATE.md`, this file and the latest immutable checkpoint before every repository write.
+This file exists so project continuity never depends on chat context. Always re-fetch `main`, active branch, `PROJECT_MASTER_BACKLOG.md`, `NEXT_HOMOLOGATION_GATE.md`, this file and the latest immutable checkpoint before every repository write.
 
 ## Conduct
 - Preserve every open financial, documentary, classification, reconciliation and product dependency; never compact it away.
 - Project updates use exactly `Concluído / Em execução / Próximos passos`.
 - No microbuilds; package coherent changes.
 - Never invent financial amounts, classifications, merchants, competence, recurrence, reconciliation, valuation, tax or economic-effect rules.
-- Ask the user only when a real financial/classification/documentary decision is required; otherwise advance autonomously.
+- Ask the user only when a real financial/classification/documentary/provider/consent decision is required; otherwise advance autonomously.
 - Test before user homologation; do not delegate basic QA.
 - Never claim authenticated visual/data E2E unless actually executed.
 - Public `index.html` remains protected; no promotion without explicit user approval.
@@ -24,119 +24,146 @@ This file exists so project continuity never depends on chat context. Always re-
 - Public fallback remains WIP35-v136; protected `index.html` blob remains `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
 - Public promotion remains unauthorized/not done.
 
-## Current release — v160 real-data bridge / truthful fallback
-- v154 established the accepted official-reference visual direction.
-- v155 corrected false-zero/navigation defects but later showed runtime slowness.
-- v156 removed permanent runtime churn and established the liquidity-first Dashboard, but real iPhone homologation showed no financial data and inoperable routes.
-- v157 targeted WebKit and passed deterministic gates, but real-iPhone evidence rejected it.
-- v158 removed the shadow financial Dashboard and recovered truthful native/auth fallback through the existing nested core.
-- v159 improved prototype/mobile presentation and six-route fit, but real-iPhone evidence still showed all five liquidity-first KPIs as `—`.
-- v160 corrects the release-readiness defect exposed by v159: a Dashboard is not considered ready unless material financial cockpit data exists.
-- Source branch: `v160-real-data-bridge`.
-- Candidate: `wip35-v160-candidate.html`.
-- Final staged candidate head: `9f49c8637796d0e56b012896bedb55f5e29259c1`.
-- Controlled exposure commit: `cbc4bc9d7e4798a9e97b80feb7510af535ac6d43`.
-- `homologacao-current.json` points to v160 and `promotion_status:not_promoted`.
-- Branch v160 Chromium/WebKit run `33991299085`: SUCCESS.
-- Exact-main v160 run `33992238668`: SUCCESS.
-- Exact GitHub Pages run `33992238643`: SUCCESS.
-- Immutable checkpoint: `backups/WIP35_V160_REAL_DATA_BRIDGE_HOMOLOGATION_CHECKPOINT_2026-09-05.md`.
-- Authenticated physical-iPhone financial/data E2E remains pending/not claimed.
+## Current primary product — canonical app v1
+The primary product line is now the single canonical frontend `canonical-app.html`. The v154→v160 wrapper lineage remains historical evidence only and must not be reintroduced as the product architecture.
 
-## v160 runtime contract
-- Keep the liquidity-first/official-reference Dashboard baseline rather than inventing a new product architecture.
-- Recursively traverse the bounded same-origin frame chain to find the existing application state and RPC-capable layer.
-- Reuse existing read-only RPC `lts_browser_dashboard_cockpit_v1` when financial cockpit data is not already present.
-- Prototype Dashboard can become visible only after material financial data exists.
-- If material cockpit data is unavailable, the native/login/core state must surface; a prototype Dashboard containing only `—` is forbidden as a successful state.
-- v160 owns the six candidate route controls exclusively to prevent nested navigation-handler races.
-- Six routes remain: Dashboard, Fluxo Diário, Despesas, Patrimônio, Cartões, Atualizações.
-- Mobile navigation remains one fixed six-item row without clipping/overflow.
-- `synthetic_financial_values_added:false`; v160 does not fabricate user-facing financial values.
-- No financial/backend writer is introduced.
-- No `document.write`, permanent `setInterval` or `MutationObserver` is introduced.
-- Public `index.html` is unchanged.
+Current facts:
+- single frontend; no release iframe/wrapper chain;
+- direct Supabase authentication/RPC integration;
+- same app owns Dashboard, Fluxo Diário, Despesas, Patrimônio, Cartões and Atualizações;
+- functional app source commit `f0c7737aecefc3e1f64c501502a0cdee2abeb9ca`;
+- app size 79,339 bytes; SHA-256 `2ce0e6e92575c8ca11bc8178f54bc13a6b6c8bf05b0b75bc9b05046c1c1638f8`;
+- canonical functional gate `34003647351`: SUCCESS;
+- gate artifact `9980249754`, digest `sha256:10aaad7ea9b27920562d32ce69462249fdd3d03818caffe2fe3d985527b6b5e0`;
+- fixed homologation exposure commit `e6f3ab7421d5b7cb1986df768835f9d826536d9d`;
+- exact Pages deployment `34003976631`: SUCCESS;
+- fixed homologation selects `canonical-v1` / `canonical-app.html` / `promotion_status:not_promoted`;
+- immutable checkpoint: `backups/CANONICAL_APP_V1_FUNCTIONAL_HOMOLOGATION_CHECKPOINT_2026-09-06.md`;
+- authenticated physical-iPhone financial/data E2E remains pending/not claimed.
 
-## Deterministic evidence / limits
-- Branch run `33991299085` validates Chromium desktop and WebKit iPhone-equivalent controlled bridge behavior, all five KPI slots, six physical route controls, Dashboard return, candidate route ownership, no clipping and no horizontal overflow.
-- No-fixture branch gate verifies truthful fallback: absent material cockpit data, the empty prototype Dashboard cannot remain exposed and the native/core state remains visible.
-- Exact-main run `33992238668` passed on exposure head `cbc4bc9d7e4798a9e97b80feb7510af535ac6d43`.
-- Exact GitHub Pages deployment `33992238643` passed on the same exposure head.
-- CI is unauthenticated and cannot prove the user's actual authenticated financial session. Do not reinterpret these results as authenticated physical-device E2E.
+## Deterministic canonical evidence
+Run `34003647351` validates in Chromium desktop 1312×1199 and WebKit 390×844:
+- five liquidity-first KPI cards under controlled fixture;
+- six physical routes and return to Dashboard;
+- Fluxo account switching;
+- Despesas nature × context, drilldown and historical period selector;
+- Patrimônio / FGTS;
+- Cartões;
+- Atualizações classification queue, incremental transaction search, result total, CSV enablement and document lifecycle surface;
+- no iframe;
+- no horizontal overflow;
+- mobile six-item navigation not clipped;
+- no page errors;
+- unauthenticated no-fixture state exposes the real login.
+
+This is deterministic fixture/unauthenticated evidence, not authenticated physical-device E2E.
 
 ## Official visual / Dashboard target
-- Original Dashboard source: 1312×1199; SHA-256 `0e5293a98bf3fce30b27ba508afdb2f17d82700a6134372938eaff38da73c06b`.
-- Product target remains dark desktop rail, light dense executive canvas, compact spacing and persistent usable mobile navigation.
-- Liquidity-first hierarchy remains: `Dinheiro em contas`, `Contas + curto prazo`, `RSUs vested`, `FGTS`, `Despesas (mês)`; pending actions secondary.
-- Visual reference defines hierarchy/density/language, not financial values.
+- Authoritative reference: original 1312×1199 image, SHA-256 `0e5293a98bf3fce30b27ba508afdb2f17d82700a6134372938eaff38da73c06b`.
+- Target remains dark desktop rail, light dense executive canvas, compact spacing and intentional mobile layout.
+- Liquidity-first hierarchy: `Dinheiro em contas`, `Contas + curto prazo`, `RSUs vested`, `FGTS`, `Despesas (mês)`; pending actions secondary.
+- Reference defines hierarchy/density/language, not financial values.
 
 ## Current financial/product invariants
 ### Dashboard / Planning / FGTS
-- Primary liquidity is available realizable through D+3; bank cash, D0 and vested RSU D+3 remain separated.
-- `Contas + curto prazo` arithmetic may use only evidenced components: `bank_cash + d0` when both exist, otherwise `through_d3 - vested` only when both exist; missing evidence stays unavailable.
-- FGTS exact documentary balance: R$22.432,31 at 21/08/2026; restricted/approximately D+30; never D+3.
-- No future FGTS deposits/accrual are projected.
-- Historical R$17.509,05 + R$3.700/month and dependent R$32.309,05 request-date / old worst-case figures are historical evidence only.
-- Revalidate first-negative and management/action dates under the conservative rule and display them separately when different.
+- Bank cash: R$15.794,43.
+- D0: R$42.929,50.
+- Current vested D+3: R$12.909,65.
+- Liquidity through D+3: R$71.633,58.
+- `Contas + curto prazo` remains evidence-only arithmetic.
+- FGTS exact documentary balance: R$22.432,31 at 21/08/2026; restricted / approximately D+30; never D+3.
+- No future FGTS deposit/accrual projection.
+- Current audited planning: request FGTS by 30/11/2026; management/action point 30/12/2026; first uncovered gap 30/01/2027; worst before FGTS -R$25.782,39; worst after current documentary FGTS -R$3.350,08.
+- `dashboard_planning_first_negative_alias` normalizes the first-negative field without changing arithmetic.
+- Historical R$3.700/month FGTS accrual and dependent R$32.309,05 outputs are historical only.
 - Future RSUs remain excluded until vest/settlement.
 
+### RSU / Organon
+- Current documentary position 03/09/2026: 184,483 shares / R$12.909,65 / D+3.
+- Previous 18/08/2026 snapshot: 459,483 shares / R$32.772,30; historical only.
+- Current metadata records a 275-share reduction after the prior snapshot and a user-confirmed sale, but exact trade settlement date/price/proceeds for that reduction remain pending documentary reconciliation.
+- Brokerage cash R$2.862,67 at 03/09/2026 is separately `available_unclassified` and excluded from D0/D3 until transfer latency is evidenced.
+- Do not invent quantity/gross/fees/FX for historical proceeds where evidence is incomplete.
+
 ### Despesas
-- Invariant R$8.623.752,53; analytical cache 3.860/3.860 exact.
+- Economic invariant R$8.623.752,53; analytical cache 3.860/3.860 exact.
 - Nature and context/person/cost center are distinct dimensions.
-- Periods: current year, 12 months, since 2023, since 2013 where evidence exists.
-- Context→nature and nature→context drilldowns are read-only and show detail only where evidence exists.
-- Evidence hierarchy: explicit user rule → exact/consistent LTS history → public merchant research → manual review.
-- Marketplaces/intermediaries stay manual where purchase purpose is unproven.
-- Density/ranking/decision-useful insights and evidence-only reduction of `A classificar` remain open.
+- Canonical route consumes `lts_browser_expense_context_lens_v1` and keeps read-only drilldowns/historical periods.
+- Classification hierarchy: explicit user rule → exact/consistent LTS history → public merchant research → manual review.
+- Marketplace/intermediary alone never proves purchase purpose.
+- Continue decision-useful density/ranking and evidence-only reduction of `A classificar`.
 
-### Atualizações / search / documents
-- Atualizações remains a compact action center/checklist; no large blank whitespace or buried actions.
-- `Lançamento por texto` routes to existing `Entradas` preview; no automatic posting; explicit approval required.
-- Server-side transaction search through `lts_browser_transactions_v1` remains in progress: incremental typing, supported history from 10/10/2013 + future existing launches, total, read-only results, Excel-compatible CSV export.
-- Backend evidence for `Mastercard`: 239 rows from 01/11/2013 to 12/04/2028.
-- Filename never infers account/card/competence/date/value and upload alone never posts financial facts.
-- Real authenticated PDF/image interpret→review remains pending.
+### Atualizações / search / documents / classification
+- Compact prioritized action center; no large blank whitespace or buried actions.
+- `Lançamento por texto` remains preview/review first; no automatic posting.
+- Server-side incremental search uses `lts_browser_transactions_v1`, includes total and Excel-compatible CSV; deterministic UI gate passed.
+- Mastercard backend search evidence remains 239 rows spanning 01/11/2013–12/04/2028.
+- Classification writer `lts_browser_semantic_feedback_v1`; canonical lifecycle wiring performs save → product refresh/read verification.
+- Document lifecycle reader `lts_browser_document_lifecycle_v1` is surfaced in canonical Atualizações.
+- Real authenticated classification, transaction-search and PDF/image interpret→review E2E remain pending/unclaimed.
 
-### Fluxo Diário / liquidity input
-- Mandatory Itaú, Bradesco, C6 and Consolidado; history from 2013 where supported.
+### Fluxo Diário / liquidity input / mutation semantics
+- Mandatory Consolidado, Itaú, Bradesco, C6.
 - `Saldo anterior | Entradas | Saídas | Saldo final`; facts > projections; scenarios never facts; stale anchors cannot reanchor; cards do not feed their own forecast.
 - Bank↔liquidity-asset transfer consolidated economic effect zero.
-- Natural input parser supports `5 mil`, `R$5.000`, `5000`, `3k`, `R$1.250,50`; never guess account/asset; preview before explicit confirmation.
-- Authenticated save→refresh→visible and append-only reversal semantics remain open.
+- Natural input never guesses account/asset and requires reviewed preview before write.
+- Authenticated liquidity save → refresh → visible remains pending.
+- Append-only edit/cancel/split semantics are proven: current-event overlays append to `lts_flow_event_operation`; legacy overrides append to `projecao_op`; mutations append to `lts_flow_mutation_audit`; source facts are not destructively rewritten.
+- `lts_fix86_legacy_guardrails_qa_v4` passes 10/10 including `flow_mutations_append_only_operational`.
+- This closes append-only cancel/edit/split semantics. A separate user-facing undo/reversal action is not claimed/enabled without an explicit append-only reversal contract.
 
-### Cards / RSU / CIPÓ / Volvo
-- Cards certified allocation 38 cycles / 650 rows / R$885.855,19; aggregate fallback 314 rows / R$2.650.846,36 aggregate-only; C6 Aug/2024 R$66,70 gap explicit.
-- Mastercard/Visa incomplete historical months remain documentary-recovery work; never pattern-fill.
-- RSU vested 459.483 units / R$32.772,30 / D+3; 283-unit sale net R$19.095,04; R$578,68 remains unexplained/unitemized.
-- CIPÓ unresolved: consortium R$303,60 delta; different-date arithmetic R$6.654,50 = R$6.502,70 + R$151,80; condominium source absent; raw gap R$1.780.358; dedup gap R$1.312.268; duplicate excess R$3.531,70. Never fabricate post-2029 TR or automatically treat market-minus-cost as taxable/net gain.
-- Volvo financing 60 × R$2.886,43 from 08/09/2026 to 08/08/2031 exactly once economically; exact trim/km remains open before valuation refinement.
+### Cartões
+- Canonical route consumes `lts_browser_card_history_coverage_v1`.
+- Certified allocation 38 cycles / 650 rows / R$885.855,19.
+- Aggregate fallback 314 rows / R$2.650.846,36 remains aggregate-only.
+- C6 Aug/2024 explicit R$66,70 gap remains.
+- Mastercard/Visa incomplete historical months remain documentary recovery only; never pattern-fill purchases.
 
-### Open Finance / QA
-- Provider-neutral private architecture QA 14/14; no real consent/token/provider.
-- Need written pricing/support/SLA/product×bank for Itaú/Bradesco/C6; no provider commitment without explicit user decision.
-- Backend fingerprint `85a1b60816a5b84dfe3b41341ed27948`; staged 411 checks / 35 suites + supplemental v143 16/16.
-- v146 navigation regression 140 physical Playwright clicks remains historical evidence; v160 adds evidence-driven financial readiness, exclusive route ownership and truthful fallback gates.
+### CIPÓ 396
+- Canonical Patrimônio route consumes current wealth detail and exposes CIPÓ evidence where available.
+- Consortium ledger proves distinct entries R$6.654,50 on 12/05/2023 and R$151,80 on 15/05/2023; never present them as same-date arithmetic.
+- R$303,60 consortium delta remains unresolved; Visa Infinite R$303,60 rows are not valid consortium evidence.
+- Condominium source/formula/cutoff absent.
+- Raw gap R$1.780.358; dedup gap R$1.312.268; duplicate excess R$3.531,70 unresolved.
+- Never fabricate post-2029 TR; market-minus-cost is not automatically taxable/net gain.
 
-## Current material state
-- v160 is technically delivered to the fixed homologation URL with branch, exact-main and exact-Pages deterministic gates green.
-- The invalid success condition seen on v159 — visible Dashboard with five `—` KPIs — is no longer accepted by the release layer.
-- Authenticated physical-iPhone financial/data E2E remains an explicit evidence gap and must not be claimed as completed.
-- Public promotion is separate and requires explicit user authorization.
+### Volvo
+- Bradesco financing 60 × R$2.886,43, first 08/09/2026, last 08/08/2031, exactly once economically.
+- Exact trim/version and km remain required before valuation refinement.
+
+### Open Finance
+- Provider-neutral architecture QA 14/14.
+- Browser status RPC `lts_browser_open_finance_status_v1` is provider-neutral and exposes architecture/connections/sync health without storing bank credentials/provider secrets in LTS tables.
+- Provider data is staged/reconciled before canonical financial effect.
+- No provider activated/selected by project decision, no consent/token/commercial commitment claimed.
+- Need written pricing, support/SLA, exact product×bank coverage for Itaú/Bradesco/C6, data scope, history depth, refresh/webhook behavior, consent renewal, errors and sandbox quality.
+- Provider/spend/consent remains an explicit future user decision.
+
+## Historical release lineage retained, not current
+- v154: accepted visual direction.
+- v155: false-zero/navigation corrections; later slowness.
+- v156: liquidity-first Dashboard; rejected on real iPhone.
+- v157: WebKit recovery; deterministic pass, real-device rejection.
+- v158: truthful auth/core fallback but product regression.
+- v159: presentation restored; real iPhone still unavailable KPI data.
+- v160: material-data readiness / truthful fallback; superseded by canonical single-frontend architecture.
 
 ## Open backlog that must always remain visible
-- Authenticated physical-iPhone financial/data E2E when material real-device evidence is needed.
+- Authenticated physical-iPhone canonical financial/data E2E.
 - Real authenticated classification lifecycle.
 - Real authenticated PDF/image interpretation→review.
-- Natural liquidity authenticated save→refresh→visible.
-- Append-only cancellation/reversal semantics.
-- Server-side transaction search + total + Excel-compatible CSV.
+- Real authenticated server-side search/CSV E2E.
+- Natural-liquidity authenticated save→refresh→visible.
+- User-facing reversal/undo only after explicit append-only reversal contract; cancel/edit/split are already proven append-only.
 - Expense density/insight refinement and evidence-only reduction of `A classificar`.
 - Mastercard/Visa documentary recovery.
-- Planning/FGTS recalculation under no-future-accrual rule, separating first-negative and management/action dates.
-- CIPÓ consortium R$303,60 delta; different-date arithmetic R$6.654,50 = R$6.502,70 + R$151,80; condominium source; raw R$1.780.358 / dedup R$1.312.268 gaps; duplicate excess R$3.531,70; no fabricated post-2029 TR; no automatic taxable/net-gain conclusion.
+- Current/historical RSU sale documentary detail where not evidenced.
+- CIPÓ R$303,60 delta, condominium source, raw/dedup gaps, duplicate excess.
 - Volvo exact trim/km.
-- Open Finance pricing/SLA/product×bank; no provider/consent/spend decision without explicit user authorization.
+- Open Finance pricing/SLA/product×bank comparison; no provider/consent/spend without explicit authorization.
+- Audit all dependencies/improvements back to 07/07/2026.
 - Public promotion only after explicit user approval.
-- Performance only after correctness/parity.
-- Audit of all project dependencies/improvements since 07/07/2026 so none disappear across chats.
-- Preserve official-reference visual language, compact Atualizações, no large whitespace regressions, mobile/desktop usability, fixed links, backup and traceability.
+- Preserve official-reference visual language, mobile/desktop usability, backup/restore and traceability.
+
+## User action now
+NONE. Continue autonomous technical/documentary/reconciliation work until a genuine user decision or authenticated physical-device final gate is the blocker.
