@@ -1,0 +1,69 @@
+name: Canonical dashboard documentation sync once
+
+on:
+  push:
+    branches: [canonical-app-v1]
+    paths:
+      - .github/workflows/canonical-dashboard-doc-sync-once.yml
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: canonical-app-v1
+          fetch-depth: 0
+      - name: Re-fetch and verify continuity state
+        run: |
+          git fetch origin main canonical-app-v1
+          test "$(git hash-object PROJECT_MASTER_BACKLOG.md)" = "6a9c3ca23f7ffb064a1a892b5bddb02f67b57e78"
+          test "$(git hash-object NEXT_HOMOLOGATION_GATE.md)" = "0f87542fa720c83c06b655ffc962d7ae809298df"
+          test "$(git hash-object LTS_WEALTH_CONTINUITY_HANDOFF.md)" = "1b99b9dd68df919ae89b6010734be3bd3f5c2da7"
+          test "$(git hash-object backups/CANONICAL_APP_V1_DASHBOARD_FIDELITY_GATE_CHECKPOINT_2026-09-06.md)" = "4c642f3c9a4351da21c92f52fa9bc12adef74e54"
+          test "$(git hash-object index.html)" = "a130eafe5f7ee5b7f60a95b5ff988669d0c401d9"
+      - name: Synchronize backlog gate and handoff
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          p=Path('PROJECT_MASTER_BACKLOG.md')
+          s=p.read_text()
+          old='- [~] Dashboard visual parity with the approved 1312×1199 official reference remains P0: navigation breadth, top-card framing, historical chart presentation, month controls, card density and secondary details still require refinement without inventing financial values.'
+          new='- [x] Dashboard fidelity pass 1 gated in run `34056854438` on Chromium desktop 1312×1199 + WebKit mobile 390×844; artifact `9996230152`; checkpoint `backups/CANONICAL_APP_V1_DASHBOARD_FIDELITY_GATE_CHECKPOINT_2026-09-06.md`.\n- [~] Dashboard visual parity with the approved 1312×1199 official reference remains P0: continue real-data visual richness, navigation/detail refinement and chart presentation without fake modules or synthetic user-facing financial series.'
+          assert old in s
+          p.write_text(s.replace(old,new,1))
+
+          p=Path('NEXT_HOMOLOGATION_GATE.md')
+          s=p.read_text()
+          replacements={
+            '- Current gated canonical liquidity UI source is on `canonical-app-v1`; `canonical-app.html` blob `4d847449208dd80bf31e74238c79a0dd411cda38` plus `canonical-liquidity.js` blob `eee099e254569d955a64216edce1322613882644`.':'- Current gated Dashboard-fidelity source is on `canonical-app-v1`; `canonical-app.html` blob `b16aa50d54d7f7253129a4d15cc281efe2b45b92` plus `canonical-dashboard-fidelity.css` blob `c45416536c79a35a7f8547acab4a52c07e4ddf50` and the previously gated liquidity module.',
+            '- Deterministic liquidity UI gate `34053651814`: **SUCCESS** in Chromium desktop 1312×1199 and WebKit mobile 390×844.':'- Deterministic Dashboard fidelity gate `34056854438`: **SUCCESS** in Chromium desktop 1312×1199 and WebKit mobile 390×844; prior liquidity coverage remains inside the same permanent gate.',
+            '- Gate artifact `9995321790`, digest `sha256:443efb8995d2be17450a2406acfc59357954b000a2e9fea543261d47d08a8d66`.':'- Gate artifact `9996230152`, digest `sha256:57755a6347d756b743eb8668863b62002fc065d590378ac18800a964b0c5d8d0`.',
+            '- Current immutable evidence: `backups/CANONICAL_APP_V1_LIQUIDITY_UI_GATE_CHECKPOINT_2026-09-06.md`.':'- Current immutable evidence: `backups/CANONICAL_APP_V1_DASHBOARD_FIDELITY_GATE_CHECKPOINT_2026-09-06.md`.'
+          }
+          for old,new in replacements.items():
+              assert old in s, old
+              s=s.replace(old,new,1)
+          p.write_text(s)
+
+          p=Path('LTS_WEALTH_CONTINUITY_HANDOFF.md')
+          s=p.read_text()
+          marker='## Latest dashboard fidelity gate — 06/09/2026'
+          if marker not in s:
+              s += '\n\n'+marker+'\n- Presentation-only fidelity layer: `canonical-dashboard-fidelity.css`.\n- Gated source `6126bfbf108be1f3206279723425a5435c5e2631`; post-gate cleanup `aec1059ef40a0fe1a7c6c5fe560936abef0b87d0`.\n- Gate `34056854438`: SUCCESS on Chromium desktop 1312×1199 and WebKit mobile 390×844.\n- Artifact `9996230152`, digest `sha256:57755a6347d756b743eb8668863b62002fc065d590378ac18800a964b0c5d8d0`.\n- Checkpoint: `backups/CANONICAL_APP_V1_DASHBOARD_FIDELITY_GATE_CHECKPOINT_2026-09-06.md`.\n- Visual review: materially closer to approved reference, but pixel-perfect parity is not claimed. No fake routes or synthetic user-facing financial series were introduced.\n- Real authenticated liquidity save→refresh→visible and authenticated physical-iPhone E2E remain pending/unclaimed.\n- `index.html` remains protected/not promoted.\n'
+          p.write_text(s)
+          PY
+          git diff --check
+      - name: Commit synchronized continuity docs
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add PROJECT_MASTER_BACKLOG.md NEXT_HOMOLOGATION_GATE.md LTS_WEALTH_CONTINUITY_HANDOFF.md
+          git diff --cached --check
+          git commit -m "Synchronize dashboard fidelity continuity docs"
+          git push origin HEAD:canonical-app-v1
