@@ -1,13 +1,13 @@
 {
   "schema": 1,
-  "version": "v160",
-  "path": "wip35-v160-candidate.html",
-  "candidate_head": "9f49c8637796d0e56b012896bedb55f5e29259c1",
+  "version": "canonical-v1",
+  "path": "canonical-app.html",
+  "candidate_head": "f0c7737aecefc3e1f64c501502a0cdee2abeb9ca",
   "public_fallback": "index.html",
   "promotion_status": "not_promoted",
-  "candidate_sha": "9f49c8637796d0e56b012896bedb55f5e29259c1",
-  "exposed_from_main_sha": "9f49c8637796d0e56b012896bedb55f5e29259c1",
-  "exposure_mode": "v160_real_data_bridge_truthful_fallback_candidate_homologation",
-  "gate_status": "v160-branch-pass_real-data-bridge-pass_five-kpis-fixture-pass_six-routes-desktop-chromium-pass_six-routes-iphone-webkit-pass_mobile-nav-six-visible-pass_no-overflow-pass_truthful-fallback-pass_no-synthetic-financial-values-pass_authenticated-e2e-not-claimed",
-  "updated_at": "2026-09-05T21:06:00Z"
+  "candidate_sha": "f0c7737aecefc3e1f64c501502a0cdee2abeb9ca",
+  "exposed_from_main_sha": "pending-fast-forward",
+  "exposure_mode": "canonical_single_frontend_functional_homologation",
+  "gate_status": "canonical-gate-34003647351-pass_desktop-chromium-pass_mobile-webkit-pass_five-kpis-pass_six-routes-pass_flow-account-switch-pass_expense-dual-lens-pass_expense-drilldown-pass_transaction-search-pass_csv-ready-pass_classification-readonly-fixture-pass_documents-area-pass_no-overflow-pass_no-iframe-pass_unauthenticated-truth-pass_authenticated-e2e-not-claimed",
+  "updated_at": "2026-09-06T01:27:00Z"
 }
