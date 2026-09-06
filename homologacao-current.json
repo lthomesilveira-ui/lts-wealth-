@@ -2,12 +2,12 @@
   "schema": 1,
   "version": "canonical-v1",
   "path": "canonical-app.html",
-  "candidate_head": "f0c7737aecefc3e1f64c501502a0cdee2abeb9ca",
+  "candidate_head": "d2422975a1bf037aa6d9cf6fb583eab70d832796",
   "public_fallback": "index.html",
   "promotion_status": "not_promoted",
-  "candidate_sha": "f0c7737aecefc3e1f64c501502a0cdee2abeb9ca",
-  "exposed_from_main_sha": "e6f3ab7421d5b7cb1986df768835f9d826536d9d",
-  "exposure_mode": "canonical_single_frontend_functional_homologation",
-  "gate_status": "canonical-gate-34003647351-pass_desktop-chromium-pass_mobile-webkit-pass_five-kpis-pass_six-routes-pass_flow-account-switch-pass_expense-dual-lens-pass_expense-drilldown-pass_transaction-search-pass_csv-ready-pass_classification-readonly-fixture-pass_documents-area-pass_no-overflow-pass_no-iframe-pass_unauthenticated-truth-pass_authenticated-e2e-not-claimed",
-  "updated_at": "2026-09-06T01:30:00Z"
+  "candidate_sha": "d2422975a1bf037aa6d9cf6fb583eab70d832796",
+  "exposed_from_main_sha": "d2422975a1bf037aa6d9cf6fb583eab70d832796",
+  "exposure_mode": "canonical_single_frontend_liquidity_ui_gated_homologation",
+  "gate_status": "canonical-gate-34053651814-pass_desktop-chromium-pass_mobile-webkit-pass_five-kpis-pass_six-routes-pass_flow-account-switch-pass_expense-dual-lens-pass_expense-drilldown-pass_transaction-search-pass_csv-ready-pass_classification-readonly-fixture-pass_documents-area-pass_liquidity-preview-pass_neutral-effect-r0-pass_fixture-writer-disabled-pass_no-overflow-pass_no-iframe-pass_unauthenticated-truth-pass_authenticated-e2e-not-claimed",
+  "updated_at": "2026-09-06T19:55:00Z"
 }
