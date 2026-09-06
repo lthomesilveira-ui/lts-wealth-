@@ -18,6 +18,9 @@ Canonical persistent project list. Never remove an open financial, documentary, 
 - [x] Canonical exposure commit `e6f3ab7421d5b7cb1986df768835f9d826536d9d`; exact Pages deployment `34003976631`: SUCCESS.
 - [x] Immutable checkpoint `backups/CANONICAL_APP_V1_FUNCTIONAL_HOMOLOGATION_CHECKPOINT_2026-09-06.md`.
 - [x] Public `index.html` remains protected and unchanged; public promotion is NOT authorized.
+- [x] Canonical Atualizações now exposes reviewed Aplicar/Resgatar bank↔cash-investment preview with explicit account/asset/value/date, equal-and-opposite legs, R$0 economic effect, explicit confirmation and post-write readback.
+- [x] Liquidity UI deterministic gate `34053651814`: SUCCESS on Chromium desktop + WebKit mobile; artifact `9995321790`; checkpoint `backups/CANONICAL_APP_V1_LIQUIDITY_UI_GATE_CHECKPOINT_2026-09-06.md`.
+- [ ] Real authenticated liquidity save→refresh→visible remains pending because deterministic fixture never posts financial facts.
 - [ ] Authenticated physical-iPhone financial/data E2E of the canonical app remains pending and must not be claimed.
 
 ## Historical release evidence retained
@@ -53,6 +56,7 @@ Canonical persistent project list. Never remove an open financial, documentary, 
 - [x] `Contas + curto prazo` arithmetic evidence-only: `bank_cash + d0` when both exist, otherwise `through_d3 - vested` only when both exist; missing evidence stays unavailable.
 - [x] FGTS separate/restricted; future RSUs excluded before vest/settlement.
 - [x] Planning displays distinct management/action and first-negative fields.
+- [~] Dashboard visual parity with the approved 1312×1199 official reference remains P0: navigation breadth, top-card framing, historical chart presentation, month controls, card density and secondary details still require refinement without inventing financial values.
 - [ ] Any new money-changing assumption/scenario requires explicit user decision unless already explicitly stated.
 
 ## 2. Despesas — natureza × contexto/pessoa
@@ -105,6 +109,7 @@ Canonical persistent project list. Never remove an open financial, documentary, 
 ## 6. Natural liquidity input / mutation contract
 - [x] Parser supports `5 mil`, `R$5.000`, `5000`, `3k`, `R$1.250,50`.
 - [x] Never guess account/asset; preview both legs/before-after/economic effect R$0; explicit confirmation before write.
+- [x] Canonical Atualizações UI now implements application/redemption selection, backend options, preview, confirmation/idempotency and post-write product/cockpit readback; fixture writer is disabled.
 - [ ] Authenticated liquidity save→refresh→visible remains pending.
 - [x] Append-only edit/cancel/split semantics proven: current-event operations append to `lts_flow_event_operation`; legacy overrides append to `projecao_op`; mutation audit appends to `lts_flow_mutation_audit`; source facts are not destructively rewritten.
 - [x] Effective readers apply latest active operation and cancelled/split originals do not reappear as effective facts.
@@ -163,6 +168,7 @@ Canonical persistent project list. Never remove an open financial, documentary, 
 - [x] v14 293/293; v15 67/67; v16 19/19; v17 32/32; staged 411 checks / 35 suites + supplemental v143 16/16.
 - [x] v146 historical navigation regression: 140 physical clicks.
 - [x] Canonical gate `34003647351` covers single-frontend Chromium/WebKit functional behavior and truthful no-fixture auth fallback.
+- [x] Canonical liquidity UI gate `34053651814` additionally covers Aplicar/Resgatar preview and remains green on Chromium/WebKit.
 - [x] Canonical Pages exposure deployment `34003976631`: SUCCESS.
 - [x] Current transversal legacy guardrail QA `lts_fix86_legacy_guardrails_qa_v4`: 10/10 PASS.
 - [ ] Authenticated physical-device financial/data E2E remains open and explicitly unclaimed.
@@ -180,8 +186,6 @@ Canonical persistent project list. Never remove an open financial, documentary, 
 - [ ] Human classification only where evidence remains insufficient.
 - [ ] New money-changing assumptions not already explicitly supplied by the user.
 - [ ] User-facing undo/reversal semantics beyond the proven append-only cancel/edit/split contract.
-- [ ] Volvo refinement when exact trim/km evidence is available.
-- [ ] Open Finance provider/consent/spend decision after provider comparison.
-- [ ] Public promotion only after explicit user approval.
+- [ ] Provider/commercial/consent decision for real Open Finance activation.
 
-Until one of these is the genuine blocker, continue autonomous technical/documentary work and test before asking the user to inspect anything.
+No other engineering task should wait for the user.
