@@ -1,0 +1,52 @@
+name: Canonical dashboard fidelity integrate once
+
+on:
+  push:
+    branches: [canonical-app-v1]
+    paths:
+      - .github/workflows/canonical-dashboard-fidelity-integrate-once.yml
+
+permissions:
+  contents: write
+
+jobs:
+  integrate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: canonical-app-v1
+          fetch-depth: 0
+      - name: Re-fetch continuity and verify protected state
+        run: |
+          git fetch origin main canonical-app-v1
+          test "$(git hash-object canonical-app.html)" = "4d847449208dd80bf31e74238c79a0dd411cda38"
+          test "$(git hash-object index.html)" = "a130eafe5f7ee5b7f60a95b5ff988669d0c401d9"
+          test "$(git hash-object backups/CANONICAL_APP_V1_LIQUIDITY_UI_GATE_CHECKPOINT_2026-09-06.md)" = "c7978928b4d032f3e7b7bee7194cf340074c4eb6"
+          test -s canonical-dashboard-fidelity.css
+          grep -q "Master Backlog" PROJECT_MASTER_BACKLOG.md
+          grep -q "Next Homologation Gate" NEXT_HOMOLOGATION_GATE.md
+          grep -q "Continuity Handoff" LTS_WEALTH_CONTINUITY_HANDOFF.md
+      - name: Wire dashboard fidelity stylesheet
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('canonical-app.html')
+          s=p.read_text()
+          tag='<link rel="stylesheet" href="canonical-dashboard-fidelity.css?v=20260906-1">'
+          if tag not in s:
+              assert s.count('</head>') == 1
+              s=s.replace('</head>',tag+'\n</head>')
+          p.write_text(s)
+          PY
+          git diff --check
+          grep -q 'canonical-dashboard-fidelity.css?v=20260906-1' canonical-app.html
+      - name: Commit dashboard fidelity integration
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add canonical-app.html
+          git diff --cached --check
+          git commit -m "Wire canonical dashboard fidelity layer"
+          git push origin HEAD:canonical-app-v1
