@@ -19,7 +19,9 @@
     if(!r.ok)throw new Error('manifest '+r.status);
     const m=await r.json();
     const path=String(m.path||'');
-    if(!/^wip35-v\d+-candidate\.html$/.test(path))throw new Error('target inválido');
+    const legacy=/^wip35-v\d+-candidate\.html$/.test(path);
+    const canonical=path==='canonical-app.html';
+    if(!legacy&&!canonical)throw new Error('target inválido');
     const stamp=encodeURIComponent(String(m.candidate_head||m.version||'current'));
     location.replace('./'+path+'?homologacao='+stamp+'&ts='+nonce);
   }catch(e){
