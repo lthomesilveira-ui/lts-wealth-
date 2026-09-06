@@ -38,7 +38,6 @@ jobs:
               assert html.count('</body>') == 1
               html=html.replace('</body>',tag+'\n</body>')
           Path('canonical-app.html').write_text(html)
-
           p=Path('.github/workflows/canonical-app.yml')
           s=p.read_text()
           if '      - canonical-liquidity.js\n' not in s:
@@ -52,17 +51,19 @@ jobs:
           marker="            if(await page.getByText('Documentos',{exact:true}).count()<1)throw new Error(name+': documents area missing');\n"
           if 'liquidity movement card missing' not in s:
               assert marker in s
-              extra="""            await page.waitForSelector('#liquidityMovementCard');
-            if(await page.locator('#liquidityMovementCard').count()!==1)throw new Error(name+': liquidity movement card missing');
-            await page.locator('#liqType').selectOption('application');
-            await page.locator('#liqAccount').selectOption('fixture-itau');
-            await page.locator('#liqAsset').selectOption('fixture-cofrinho');
-            await page.locator('#liqAmount').fill('5 mil');
-            await page.locator('#liqPreviewBtn').click();
-            await page.waitForSelector('#liqPreview');
-            if(!(await page.locator('#liqPreview').textContent()).includes('R$ 0,00'))throw new Error(name+': liquidity neutral preview missing');
-            if(await page.locator('#liqApply').count()!==0)throw new Error(name+': fixture liquidity writer unexpectedly enabled');
-"""
+              extra='\n'.join([
+                  "            await page.waitForSelector('#liquidityMovementCard');",
+                  "            if(await page.locator('#liquidityMovementCard').count()!==1)throw new Error(name+': liquidity movement card missing');",
+                  "            await page.locator('#liqType').selectOption('application');",
+                  "            await page.locator('#liqAccount').selectOption('fixture-itau');",
+                  "            await page.locator('#liqAsset').selectOption('fixture-cofrinho');",
+                  "            await page.locator('#liqAmount').fill('5 mil');",
+                  "            await page.locator('#liqPreviewBtn').click();",
+                  "            await page.waitForSelector('#liqPreview');",
+                  "            if(!(await page.locator('#liqPreview').textContent()).includes('R$ 0,00'))throw new Error(name+': liquidity neutral preview missing');",
+                  "            if(await page.locator('#liqApply').count()!==0)throw new Error(name+': fixture liquidity writer unexpectedly enabled');",
+                  ""
+              ])
               s=s.replace(marker,marker+extra,1)
           p.write_text(s)
           PY
