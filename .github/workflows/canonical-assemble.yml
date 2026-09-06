@@ -1,0 +1,74 @@
+name: Assemble canonical functional package
+
+on:
+  push:
+    branches: [canonical-app-v1]
+    paths:
+      - '.canonical-payload-*.b64'
+      - '.github/workflows/canonical-assemble.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  assemble:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: canonical-app-v1
+          fetch-depth: 0
+      - name: Reconstruct canonical app
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f .canonical-payload-1.b64
+          test -f .canonical-payload-2.b64
+          test -f .canonical-payload-3.b64
+          test -f .canonical-payload-4.b64
+          cat .canonical-payload-1.b64 .canonical-payload-2.b64 .canonical-payload-3.b64 .canonical-payload-4.b64 \
+            | base64 -d | gzip -dc > canonical-app.html.new
+          got="$(sha256sum canonical-app.html.new | awk '{print $1}')"
+          test "$got" = "2ce0e6e92575c8ca11bc8178f54bc13a6b6c8bf05b0b75bc9b05046c1c1638f8"
+          test "$(wc -c < canonical-app.html.new)" = "79339"
+          mv canonical-app.html.new canonical-app.html
+      - name: Static functional contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          s=Path('canonical-app.html').read_text()
+          assert '<iframe' not in s
+          assert 'document.write' not in s
+          assert 'MutationObserver' not in s
+          assert 'setInterval(' not in s
+          for r in ['Dashboard','Fluxo Diário','Despesas','Patrimônio','Cartões','Atualizações']:
+              assert r in s
+          for rpc in [
+              'lts_browser_product_v1','lts_browser_dashboard_cockpit_v1',
+              'lts_browser_transactions_v1','lts_browser_expense_context_lens_v1',
+              'lts_browser_wealth_detail_v1','lts_browser_card_history_coverage_v1',
+              'lts_browser_document_lifecycle_v1','lts_browser_semantic_feedback_v1'
+          ]:
+              assert rpc in s, rpc
+          for label in ['Encontrar lançamentos','Exportar para Excel (CSV)','Classificações que realmente precisam de decisão','Documentos','Natureza','Contexto / pessoa','CIPÓ 396']:
+              assert label in s, label
+          scripts=re.findall(r'<script(?: [^>]*)?>(.*?)</script>',s,re.S)
+          Path('/tmp/canonical-script.js').write_text('\n'.join(scripts))
+          print('static functional contract ok')
+          PY
+          node --check /tmp/canonical-script.js
+      - name: Commit assembled package and remove staging
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add canonical-app.html
+          git rm .canonical-payload-1.b64 .canonical-payload-2.b64 .canonical-payload-3.b64 .canonical-payload-4.b64
+          git rm .github/workflows/canonical-assemble.yml
+          git commit -m 'Assemble canonical functional app package'
+          git push origin HEAD:canonical-app-v1
