@@ -1,11 +1,16 @@
 name: LTS candidate smoke
 on:
   push:
-    branches: [main, v143-life-real-feedback]
+    branches: [main, canonical-app-v1, v143-life-real-feedback]
     paths:
       - 'index.html'
       - 'homologacao.html'
       - 'homologacao-current.json'
+      - 'canonical-app.html'
+      - 'canonical-dashboard-fidelity.css'
+      - 'canonical-dashboard-gate.js'
+      - 'canonical-liquidity.js'
+      - 'scripts/canonical-app-gate.mjs'
       - 'wip35-v137-candidate.html'
       - 'wip35-v138-candidate.html'
       - 'wip35-v138-cockpits.js'
@@ -38,24 +43,60 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Validate fixed homologation entrypoint
+      - id: candidate
+        name: Validate fixed homologation entrypoint
         run: |
           python - <<'PY'
-          import json, pathlib, re
+          import json, os, pathlib, re
           root = pathlib.Path('.')
           manifest = json.loads((root / 'homologacao-current.json').read_text(encoding='utf-8'))
           target = str(manifest.get('path') or '')
-          assert re.fullmatch(r'wip35-v\d+-candidate\.html', target), target
+          version = str(manifest.get('version') or '')
+          if target == 'canonical-app.html':
+              assert version == 'canonical-v1', (version, target)
+              mode = 'canonical'
+          else:
+              assert re.fullmatch(r'wip35-v\d+-candidate\.html', target), target
+              mode = 'legacy'
           assert (root / target).exists(), target
           bootstrap = (root / 'homologacao.html').read_text(encoding='utf-8')
           assert 'homologacao-current.json' in bootstrap
           assert "cache:'no-store'" in bootstrap
           assert 'Date.now()' in bootstrap
-          print('fixed_homologation_entrypoint=PASS target=' + target)
+          with open(os.environ['GITHUB_OUTPUT'], 'a', encoding='utf-8') as fh:
+              fh.write(f'mode={mode}\n')
+              fh.write(f'target={target}\n')
+          print(f'fixed_homologation_entrypoint=PASS mode={mode} version={version} target={target}')
+          PY
+      - name: Validate canonical product contract
+        if: steps.candidate.outputs.mode == 'canonical'
+        run: |
+          node --check canonical-dashboard-gate.js
+          node --check canonical-liquidity.js
+          node --check scripts/canonical-app-gate.mjs
+          python - <<'PY'
+          from pathlib import Path
+          html=Path('canonical-app.html').read_text(encoding='utf-8')
+          css=Path('canonical-dashboard-fidelity.css').read_text(encoding='utf-8')
+          required_html=[
+            'canonical-dashboard-fidelity.css',
+            'canonical-dashboard-gate.js',
+            'canonical-liquidity.js',
+            'Dashboard','Fluxo Diário','Despesas','Patrimônio','Cartões','Atualizações'
+          ]
+          required_css=['.dashboard-grid','.kpi-grid','.wealth-bars']
+          forbidden=['<iframe','document.write(','MutationObserver(']
+          missing=[x for x in required_html if x not in html]+[x for x in required_css if x not in css]
+          leaked=[x for x in forbidden if x.lower() in html.lower()]
+          assert not missing, 'canonical markers missing: '+repr(missing)
+          assert not leaked, 'forbidden canonical markers: '+repr(leaked)
+          print('canonical_product_static=PASS')
           PY
       - name: Parse and validate isolated v142 fallback candidate
+        if: steps.candidate.outputs.mode == 'legacy'
         run: python .github/scripts/lts_candidate_smoke.py
       - name: Validate audited Dashboard cockpit layer
+        if: steps.candidate.outputs.mode == 'legacy'
         run: |
           node --check wip35-v142-dashboard-cockpit.js
           python - <<'PY'
@@ -69,6 +110,7 @@ jobs:
           print('dashboard_cockpit_static=PASS')
           PY
       - name: Validate reviewed liquidity UI layer
+        if: steps.candidate.outputs.mode == 'legacy'
         run: |
           node --check wip35-v142-liquidity-ui-v2.js
           python - <<'PY'
@@ -85,6 +127,7 @@ jobs:
           print('liquidity_ui_static=PASS')
           PY
       - name: Validate action-first final polish layer
+        if: steps.candidate.outputs.mode == 'legacy'
         run: |
           node --check wip35-v142-final-polish.js
           python - <<'PY'
@@ -98,6 +141,7 @@ jobs:
           print('final_polish_static=PASS')
           PY
       - name: Validate v143 real-life feedback layer
+        if: steps.candidate.outputs.mode == 'legacy'
         run: |
           node --check wip35-v143-life-real.js
           node --check wip35-v143-feedback-polish.js
@@ -121,12 +165,15 @@ jobs:
           print('v143_life_real_static=PASS')
           PY
       - name: Audit inherited button wiring contracts
+        if: steps.candidate.outputs.mode == 'legacy'
         run: node .github/scripts/lts_button_contract_audit.js
       - name: Install headless browser
+        if: steps.candidate.outputs.mode == 'legacy'
         run: |
           npm install --no-save playwright@1.55.0
           npx playwright install --with-deps chromium
       - name: Run local v142 fallback browser smoke
+        if: steps.candidate.outputs.mode == 'legacy'
         run: |
           python3 -m http.server 8765 >/tmp/lts-http.log 2>&1 &
           SERVER_PID=$!
@@ -134,6 +181,7 @@ jobs:
           sleep 1
           node .github/scripts/lts_candidate_browser_smoke.js
       - name: Run v143 runtime and navigation smoke
+        if: steps.candidate.outputs.mode == 'legacy'
         run: |
           python3 -m http.server 8766 >/tmp/lts-http-v143.log 2>&1 &
           SERVER_PID=$!
@@ -142,7 +190,7 @@ jobs:
           sed 's/8765/8766/g' .github/scripts/lts_v143_browser_smoke.js >/tmp/lts_v143_browser_smoke.js
           NODE_PATH="$PWD/node_modules" node /tmp/lts_v143_browser_smoke.js
       - name: Upload smoke evidence
-        if: always()
+        if: always() && steps.candidate.outputs.mode == 'legacy'
         uses: actions/upload-artifact@v4
         with:
           name: wip35-v143-candidate-smoke
