@@ -6,6 +6,7 @@ on:
     paths:
       - canonical-app.html
       - canonical-liquidity.js
+      - canonical-dashboard-fidelity.css
       - .github/workflows/canonical-app.yml
   workflow_dispatch:
 
@@ -33,11 +34,16 @@ jobs:
           import re
           s=Path('canonical-app.html').read_text()
           l=Path('canonical-liquidity.js').read_text()
+          d=Path('canonical-dashboard-fidelity.css').read_text()
           assert '<iframe' not in s
           assert 'document.write' not in s
           assert 'MutationObserver' not in s
           assert 'setInterval(' not in s
           assert 'canonical-liquidity.js?v=20260906-1' in s
+          assert 'canonical-dashboard-fidelity.css?v=20260906-1' in s
+          assert len(d) > 1000
+          assert '#dashboard-view .grid-main' in d
+          assert '#dashboard-view .rank-row.clickable' in d
           assert 'MutationObserver' not in l
           assert 'setInterval(' not in l
           for r in ['Dashboard','Fluxo Diário','Despesas','Patrimônio','Cartões','Atualizações']:
@@ -102,6 +108,17 @@ jobs:
             }
             const kpis=await page.locator('.kpi strong').allTextContents();
             if(kpis.length!==5||kpis.some(x=>!x.trim()||x.trim()==='—'))throw new Error(name+': KPI gate '+JSON.stringify(kpis));
+            const fidelity=await page.evaluate(()=>{
+              const rank=document.querySelector('#dashboard-view .rank-row.clickable');
+              return {
+                css:[...document.styleSheets].some(s=>String(s.href||'').includes('canonical-dashboard-fidelity.css')),
+                panels:document.querySelectorAll('#dashboard-view .panel').length,
+                rankBorder:rank?getComputedStyle(rank).borderLeftWidth:null
+              };
+            });
+            if(!fidelity.css)throw new Error(name+': dashboard fidelity stylesheet missing');
+            if(fidelity.panels<9)throw new Error(name+': dashboard panel density '+JSON.stringify(fidelity));
+            if(!mobile&&fidelity.rankBorder!=='0px')throw new Error(name+': dashboard expense ranking border regression '+JSON.stringify(fidelity));
             await page.screenshot({path:shot,fullPage:true});
 
             await route(page,'Fluxo Diário',mobile);
@@ -182,6 +199,7 @@ jobs:
           path: |
             canonical-app.html
             canonical-liquidity.js
+            canonical-dashboard-fidelity.css
             canonical-desktop.png
             canonical-mobile.png
             canonical-updates.png
