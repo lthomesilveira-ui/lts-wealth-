@@ -25,7 +25,7 @@ This file exists so project continuity never depends on chat context. Always re-
 - Public promotion remains unauthorized/not done.
 
 ## Current primary product — canonical app v1
-The primary product line is now the single canonical frontend `canonical-app.html`. The v154→v160 wrapper lineage remains historical evidence only and must not be reintroduced as the product architecture.
+The primary product line is the single canonical frontend `canonical-app.html`. The v154→v160 wrapper lineage is historical evidence only and must not be reintroduced as the product architecture.
 
 Current facts:
 - single frontend; no release iframe/wrapper chain;
@@ -38,7 +38,7 @@ Current facts:
 - fixed homologation exposure commit `e6f3ab7421d5b7cb1986df768835f9d826536d9d`;
 - exact Pages deployment `34003976631`: SUCCESS;
 - fixed homologation selects `canonical-v1` / `canonical-app.html` / `promotion_status:not_promoted`;
-- immutable checkpoint: `backups/CANONICAL_APP_V1_FUNCTIONAL_HOMOLOGATION_CHECKPOINT_2026-09-06.md`;
+- latest immutable checkpoint: `backups/CANONICAL_APP_V1_CONTINUITY_RECONCILIATION_CHECKPOINT_2026-09-06.md`;
 - authenticated physical-iPhone financial/data E2E remains pending/not claimed.
 
 ## Deterministic canonical evidence
@@ -66,12 +66,9 @@ This is deterministic fixture/unauthenticated evidence, not authenticated physic
 
 ## Current financial/product invariants
 ### Dashboard / Planning / FGTS
-- Bank cash: R$15.794,43.
-- D0: R$42.929,50.
-- Current vested D+3: R$12.909,65.
-- Liquidity through D+3: R$71.633,58.
+- Bank cash R$15.794,43; D0 R$42.929,50; current vested D+3 R$12.909,65; liquidity through D+3 R$71.633,58.
 - `Contas + curto prazo` remains evidence-only arithmetic.
-- FGTS exact documentary balance: R$22.432,31 at 21/08/2026; restricted / approximately D+30; never D+3.
+- FGTS exact documentary balance R$22.432,31 at 21/08/2026; restricted / approximately D+30; never D+3.
 - No future FGTS deposit/accrual projection.
 - Current audited planning: request FGTS by 30/11/2026; management/action point 30/12/2026; first uncovered gap 30/01/2027; worst before FGTS -R$25.782,39; worst after current documentary FGTS -R$3.350,08.
 - `dashboard_planning_first_negative_alias` normalizes the first-negative field without changing arithmetic.
@@ -87,7 +84,7 @@ This is deterministic fixture/unauthenticated evidence, not authenticated physic
 
 ### Despesas
 - Economic invariant R$8.623.752,53; analytical cache 3.860/3.860 exact.
-- Nature and context/person/cost center are distinct dimensions.
+- Nature and context/person/cost center distinct.
 - Canonical route consumes `lts_browser_expense_context_lens_v1` and keeps read-only drilldowns/historical periods.
 - Classification hierarchy: explicit user rule → exact/consistent LTS history → public merchant research → manual review.
 - Marketplace/intermediary alone never proves purchase purpose.
@@ -97,32 +94,30 @@ This is deterministic fixture/unauthenticated evidence, not authenticated physic
 - Compact prioritized action center; no large blank whitespace or buried actions.
 - `Lançamento por texto` remains preview/review first; no automatic posting.
 - Server-side incremental search uses `lts_browser_transactions_v1`, includes total and Excel-compatible CSV; deterministic UI gate passed.
-- Mastercard backend search evidence remains 239 rows spanning 01/11/2013–12/04/2028.
+- Mastercard backend evidence: 239 rows spanning 01/11/2013–12/04/2028.
 - Classification writer `lts_browser_semantic_feedback_v1`; canonical lifecycle wiring performs save → product refresh/read verification.
 - Document lifecycle reader `lts_browser_document_lifecycle_v1` is surfaced in canonical Atualizações.
 - Real authenticated classification, transaction-search and PDF/image interpret→review E2E remain pending/unclaimed.
 
 ### Fluxo Diário / liquidity input / mutation semantics
 - Mandatory Consolidado, Itaú, Bradesco, C6.
-- `Saldo anterior | Entradas | Saídas | Saldo final`; facts > projections; scenarios never facts; stale anchors cannot reanchor; cards do not feed their own forecast.
+- Facts > projections; scenarios never facts; stale anchors cannot reanchor; cards do not feed their own forecast.
 - Bank↔liquidity-asset transfer consolidated economic effect zero.
 - Natural input never guesses account/asset and requires reviewed preview before write.
 - Authenticated liquidity save → refresh → visible remains pending.
-- Append-only edit/cancel/split semantics are proven: current-event overlays append to `lts_flow_event_operation`; legacy overrides append to `projecao_op`; mutations append to `lts_flow_mutation_audit`; source facts are not destructively rewritten.
+- Append-only edit/cancel/split semantics proven: current-event overlays append to `lts_flow_event_operation`; legacy overrides append to `projecao_op`; mutations append to `lts_flow_mutation_audit`; source facts are not destructively rewritten.
 - `lts_fix86_legacy_guardrails_qa_v4` passes 10/10 including `flow_mutations_append_only_operational`.
-- This closes append-only cancel/edit/split semantics. A separate user-facing undo/reversal action is not claimed/enabled without an explicit append-only reversal contract.
+- Separate user-facing undo/reversal is not claimed/enabled without an explicit append-only reversal contract.
 
 ### Cartões
-- Canonical route consumes `lts_browser_card_history_coverage_v1`.
 - Certified allocation 38 cycles / 650 rows / R$885.855,19.
 - Aggregate fallback 314 rows / R$2.650.846,36 remains aggregate-only.
 - C6 Aug/2024 explicit R$66,70 gap remains.
 - Mastercard/Visa incomplete historical months remain documentary recovery only; never pattern-fill purchases.
 
 ### CIPÓ 396
-- Canonical Patrimônio route consumes current wealth detail and exposes CIPÓ evidence where available.
-- Consortium ledger proves distinct entries R$6.654,50 on 12/05/2023 and R$151,80 on 15/05/2023; never present them as same-date arithmetic.
-- R$303,60 consortium delta remains unresolved; Visa Infinite R$303,60 rows are not valid consortium evidence.
+- Distinct consortium entries R$6.654,50 on 12/05/2023 and R$151,80 on 15/05/2023; never present as same-date arithmetic.
+- R$303,60 consortium delta unresolved; Visa Infinite R$303,60 rows are not consortium evidence.
 - Condominium source/formula/cutoff absent.
 - Raw gap R$1.780.358; dedup gap R$1.312.268; duplicate excess R$3.531,70 unresolved.
 - Never fabricate post-2029 TR; market-minus-cost is not automatically taxable/net gain.
@@ -133,20 +128,13 @@ This is deterministic fixture/unauthenticated evidence, not authenticated physic
 
 ### Open Finance
 - Provider-neutral architecture QA 14/14.
-- Browser status RPC `lts_browser_open_finance_status_v1` is provider-neutral and exposes architecture/connections/sync health without storing bank credentials/provider secrets in LTS tables.
-- Provider data is staged/reconciled before canonical financial effect.
-- No provider activated/selected by project decision, no consent/token/commercial commitment claimed.
-- Need written pricing, support/SLA, exact product×bank coverage for Itaú/Bradesco/C6, data scope, history depth, refresh/webhook behavior, consent renewal, errors and sandbox quality.
-- Provider/spend/consent remains an explicit future user decision.
+- `lts_browser_open_finance_status_v1` exposes architecture/connections/sync health; provider records are staged/reconciled before canonical financial effect; no bank credentials/provider secrets are stored in LTS tables under the current contract.
+- No provider selected/activated by project decision; no consent/token/commercial commitment claimed.
+- Need written pricing/support/SLA, exact product×bank coverage for Itaú/Bradesco/C6, scope, history depth, refresh/webhooks, consent renewal, errors and sandbox quality.
+- Provider/spend/consent remains a future user decision.
 
 ## Historical release lineage retained, not current
-- v154: accepted visual direction.
-- v155: false-zero/navigation corrections; later slowness.
-- v156: liquidity-first Dashboard; rejected on real iPhone.
-- v157: WebKit recovery; deterministic pass, real-device rejection.
-- v158: truthful auth/core fallback but product regression.
-- v159: presentation restored; real iPhone still unavailable KPI data.
-- v160: material-data readiness / truthful fallback; superseded by canonical single-frontend architecture.
+- v154 accepted visual direction; v155 false-zero/navigation correction; v156 liquidity-first but rejected real iPhone; v157 WebKit deterministic pass but real-device rejection; v158 truthful fallback/product regression; v159 presentation restored but KPI data unavailable on real iPhone; v160 material-data readiness/truthful fallback; canonical app supersedes all as primary architecture.
 
 ## Open backlog that must always remain visible
 - Authenticated physical-iPhone canonical financial/data E2E.
@@ -154,7 +142,7 @@ This is deterministic fixture/unauthenticated evidence, not authenticated physic
 - Real authenticated PDF/image interpretation→review.
 - Real authenticated server-side search/CSV E2E.
 - Natural-liquidity authenticated save→refresh→visible.
-- User-facing reversal/undo only after explicit append-only reversal contract; cancel/edit/split are already proven append-only.
+- User-facing undo/reversal only after explicit append-only reversal contract; cancel/edit/split already proven append-only.
 - Expense density/insight refinement and evidence-only reduction of `A classificar`.
 - Mastercard/Visa documentary recovery.
 - Current/historical RSU sale documentary detail where not evidenced.
