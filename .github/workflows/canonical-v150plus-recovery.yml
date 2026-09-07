@@ -81,8 +81,13 @@ jobs:
             if(!(await page.locator('.fr-build').textContent()).includes('V150+'))throw new Error(label+': wrong build marker');
             if(await page.locator('[data-account]').count()!==4)throw new Error(label+': bank tabs');
             if(await page.locator('[data-preset]').count()!==10)throw new Error(label+': period presets');
-            if(await page.locator('.fr-row').count()<5)throw new Error(label+': flow rows');
+            const materialRows=await page.locator('.fr-row').count();
+            if(materialRows<4)throw new Error(label+': material flow rows '+materialRows);
             if(!mobile&&await page.locator('.fr-table th').count()!==13)throw new Error(label+': consolidated 13-column contract');
+            await page.locator('#frEmpty').click();
+            const allRows=await page.locator('.fr-row').count();
+            if(allRows<25)throw new Error(label+': show-empty contract '+allRows);
+            await page.locator('#frEmpty').click();
             await page.locator('[data-expand]').first().click();
             if(await page.locator('.fr-detail').count()!==1)throw new Error(label+': daily expansion');
             await page.locator('[data-account="Itaú"]').click();
