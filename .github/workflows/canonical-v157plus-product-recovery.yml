@@ -1,0 +1,145 @@
+name: Canonical V157+ product recovery gate
+
+on:
+  push:
+    branches: [canonical-v157plus-product-recovery]
+    paths:
+      - canonical-app.html
+      - canonical-dashboard-fidelity.css
+      - canonical-liquidity.js
+      - canonical-liquidity-core.js
+      - canonical-flow-v157.js
+      - canonical-product-v157.js
+      - .github/workflows/canonical-v157plus-product-recovery.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  product-recovery:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Static product contract
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          app=Path('canonical-app.html').read_text()
+          loader=Path('canonical-liquidity.js').read_text()
+          core=Path('canonical-liquidity-core.js').read_text()
+          flow=Path('canonical-flow-v157.js').read_text()
+          product=Path('canonical-product-v157.js').read_text()
+          assert '<iframe' not in app
+          assert 'document.write' not in app
+          assert 'canonical-product-v157.js' in loader
+          assert 'canonical-flow-v157.js' in loader
+          assert 'canonical-flow-v150.js' not in loader
+          for rpc in ['lts_browser_liquidity_movement_options_v1','lts_browser_preview_liquidity_movement_v1','lts_browser_apply_liquidity_movement_v1']:
+              assert rpc in core, rpc
+          for x in ['lts_browser_flow_v8','LTS v1.3','Histórico / período','Movimentos do dia','RSUs futuras','Cash Awards futuros','lts_browser_flow_event_editor_v1','lts_browser_flow_mutate_v1']:
+              assert x in flow, x
+          for x in ['Dinheiro em contas','Contas + curto prazo','RSUs vested','FGTS','Despesas (mês)','Evolução da Liquidez','Quanto você gastou — e como isso evoluiu.','Mês a mês','Ano a ano','Cobertura do histórico','Quanto você tem, quanto deve e quanto é seu.','Conferência de fatura, não análise de gasto.']:
+              assert x in product, x
+          for s in [loader,core,flow,product]:
+              assert 'MutationObserver' not in s
+              assert 'setInterval(' not in s
+          print('static V157+ product contract ok')
+          PY
+          node --check canonical-liquidity.js
+          node --check canonical-liquidity-core.js
+          node --check canonical-flow-v157.js
+          node --check canonical-product-v157.js
+      - name: Install Playwright
+        run: |
+          npm init -y >/dev/null 2>&1
+          npm install --silent playwright@1.55.0
+          npx playwright install --with-deps chromium webkit
+      - name: Browser product contract
+        run: |
+          cat > .v157-product-test.cjs <<'JS'
+          const {chromium,webkit}=require('playwright');
+          const {spawn}=require('child_process');
+          const server=spawn('python3',['-m','http.server','4173','--bind','127.0.0.1'],{stdio:'inherit'});
+          const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+          function rb(page,name,mobile){return mobile?page.locator('.mobile-nav [data-route="'+name+'"]'):page.locator('.sidebar [data-route="'+name+'"]')}
+          async function route(page,name,mobile){await rb(page,name,mobile).click();await page.waitForTimeout(250)}
+          async function waitProduct(page,r){await page.waitForFunction(route=>window.__LTS_CANONICAL_PRODUCT_V157_STATUS?.ready===true&&window.__LTS_CANONICAL_PRODUCT_V157_STATUS?.route===route,r)}
+          async function run(type,label,viewport){
+            const mobile=viewport.width<=820;
+            const browser=await type.launch({headless:true});
+            const page=await browser.newPage({viewport});
+            const errors=[];page.on('pageerror',e=>errors.push(String(e)));
+            await page.goto('http://127.0.0.1:4173/canonical-app.html?fixture=1',{waitUntil:'networkidle'});
+            await page.waitForFunction(()=>window.__LTS_CANONICAL_STATUS?.ready===true);
+            await page.waitForFunction(()=>window.__LTS_CANONICAL_RECOVERY_STATUS?.product_loaded===true&&window.__LTS_CANONICAL_RECOVERY_STATUS?.flow_loaded===true);
+            await waitProduct(page,'Dashboard');
+            const labels=await page.locator('.pv-kpi label').allTextContents();
+            const expected=['Dinheiro em contas','Contas + curto prazo','RSUs vested','FGTS','Despesas (mês)'];
+            if(JSON.stringify(labels)!==JSON.stringify(expected))throw new Error(label+': dashboard KPI contract '+JSON.stringify(labels));
+            if(await page.locator('iframe').count())throw new Error(label+': iframe');
+            if(!(await page.locator('body').innerText()).includes('Evolução da Liquidez'))throw new Error(label+': liquidity hierarchy');
+            await page.screenshot({path:'v157-dashboard-'+label+'.png',fullPage:true});
+
+            await route(page,'Fluxo Diário',mobile);
+            await page.waitForFunction(()=>window.__LTS_CANONICAL_FLOW_V157_STATUS?.ready===true);
+            if(!(await page.locator('.fv-build').textContent()).includes('LTS v1.3'))throw new Error(label+': build marker');
+            if(await page.locator('[data-account]').count()!==4)throw new Error(label+': bank tabs');
+            if(await page.locator('[data-preset]').count()!==10)throw new Error(label+': period presets');
+            if(!mobile&&await page.locator('.fv-table th').count()!==14)throw new Error(label+': flow columns');
+            const bodyText=(await page.locator('.fv').innerText()).toLowerCase();
+            for(const forbidden of ['baseline funcional','fix86','legacy'])if(bodyText.includes(forbidden))throw new Error(label+': technical text '+forbidden);
+            for(const required of ['histórico / período','rsus futuras','cash awards futuros'])if(!bodyText.includes(required))throw new Error(label+': missing '+required);
+            await page.locator('[data-expand]').first().click();
+            if(!(await page.locator('.fv-detail').innerText()).includes('Movimentos do dia'))throw new Error(label+': movement drill label');
+            await page.screenshot({path:'v157-flow-'+label+'.png',fullPage:true});
+
+            await route(page,'Despesas',mobile);await waitProduct(page,'Despesas');
+            let t=await page.locator('.pv').innerText();
+            for(const x of ['Quanto você gastou — e como isso evoluiu.','Mês a mês','Ano a ano','Cobertura do histórico'])if(!t.includes(x))throw new Error(label+': expense '+x);
+            await page.screenshot({path:'v157-expenses-'+label+'.png',fullPage:true});
+
+            await route(page,'Patrimônio',mobile);await waitProduct(page,'Patrimônio');
+            t=await page.locator('.pv').innerText();
+            for(const x of ['Quanto você tem, quanto deve e quanto é seu.','RSUs vested','RSUs futuras','Cash Awards futuros','CIPÓ 396','Volvo'])if(!t.includes(x))throw new Error(label+': wealth '+x);
+            await page.screenshot({path:'v157-wealth-'+label+'.png',fullPage:true});
+
+            await route(page,'Cartões',mobile);await waitProduct(page,'Cartões');
+            t=await page.locator('.pv').innerText();
+            for(const x of ['Conferência de fatura, não análise de gasto.','Cobertura histórica','Histórico por cartão / ano'])if(!t.includes(x))throw new Error(label+': cards '+x);
+            await page.screenshot({path:'v157-cards-'+label+'.png',fullPage:true});
+
+            await route(page,'Atualizações',mobile);await page.waitForTimeout(350);
+            const title=(await page.locator('.page-title h1').textContent())?.trim();if(title!=='Atualizações')throw new Error(label+': updates route '+title);
+            await route(page,'Dashboard',mobile);await waitProduct(page,'Dashboard');
+            const metrics=await page.evaluate(()=>({sw:document.documentElement.scrollWidth,cw:document.documentElement.clientWidth,iframes:document.querySelectorAll('iframe').length}));
+            if(metrics.sw>metrics.cw+1)throw new Error(label+': overflow '+JSON.stringify(metrics));
+            if(metrics.iframes)throw new Error(label+': iframe after navigation');
+            if(errors.length)throw new Error(label+': page errors '+errors.join(' | '));
+            await page.goto('http://127.0.0.1:4173/canonical-app.html',{waitUntil:'domcontentloaded'});await page.waitForTimeout(800);
+            if(await page.locator('#loginForm').count()!==1)throw new Error(label+': real login missing');
+            if(await page.locator('.pv-kpi').count())throw new Error(label+': fake financial UI unauthenticated');
+            await browser.close();
+          }
+          (async()=>{try{await sleep(700);await run(chromium,'desktop',{width:1312,height:1199});await run(webkit,'mobile',{width:390,height:844});console.log('V157+ product browser gate ok')}finally{server.kill('SIGTERM')}})().catch(e=>{console.error(e);process.exit(1)});
+          JS
+          node .v157-product-test.cjs
+          rm -f .v157-product-test.cjs
+      - name: Upload V157+ recovery evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: canonical-v157plus-product-recovery
+          if-no-files-found: warn
+          path: |
+            canonical-app.html
+            canonical-dashboard-fidelity.css
+            canonical-liquidity.js
+            canonical-liquidity-core.js
+            canonical-flow-v157.js
+            canonical-product-v157.js
+            v157-*.png
