@@ -1,14 +1,14 @@
 {
   "schema": 1,
   "version": "canonical-v1",
-  "build": "CANONICAL v1.1 · Recovery V150+",
+  "build": "CANONICAL v1.3 · Product Recovery V157+",
   "path": "canonical-app.html",
-  "candidate_head": "7638d748e5ba01e54349bf31297140f37c06a9cd",
+  "candidate_head": "c44d401497e14d842d433a302006ff5648b956a9",
   "public_fallback": "index.html",
   "promotion_status": "not_promoted",
-  "candidate_sha": "7638d748e5ba01e54349bf31297140f37c06a9cd",
-  "exposed_from_main_sha": "7638d748e5ba01e54349bf31297140f37c06a9cd",
-  "exposure_mode": "canonical_single_frontend_v150plus_mobile_flow_fix86_recovery_dashboard_pass4",
-  "gate_status": "v150plus-recovery-34155382394-pass_desktop-chromium-pass_mobile-webkit-pass_four-accounts-pass_13-column-consolidated-flow-pass_rsu-layer-pass_fix86-aliases-pass_mobile-route-ownership-pass_authenticated-e2e-not-claimed",
-  "updated_at": "2026-09-07T19:46:00Z"
+  "candidate_sha": "c44d401497e14d842d433a302006ff5648b956a9",
+  "exposed_from_main_sha": "c44d401497e14d842d433a302006ff5648b956a9",
+  "exposure_mode": "canonical_single_frontend_v157plus_product_recovery_permanent_modular_gate_dashboard_pass4",
+  "gate_status": "v157plus-recovery-34170935882-pass_candidate-smoke-34170935887-pass_canonical-gate-34171231918-pass_canonical-candidate-smoke-34171231935-pass_main-candidate-smoke-34171338575-pass_pages-34171338335-pass_desktop-chromium-pass_mobile-webkit-pass_four-accounts-pass_product-surfaces-pass_updates-search-csv-documents-liquidity-neutral-preview-pass_authenticated-e2e-not-claimed",
+  "updated_at": "2026-09-07T23:51:00Z"
 }
