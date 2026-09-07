@@ -159,3 +159,16 @@
 }
 
 /* Pass 4 structural candidate: gate trigger only; presentation rules live with the candidate HTML. */
+
+/* Fidelity pass 4 final polish — period hierarchy + mobile cash-flow spacing. */
+@media (min-width:821px){
+  .asof{min-width:170px}
+  .asof>span{display:grid;grid-template-rows:auto auto;line-height:1.05}
+  .asof b{display:block;white-space:nowrap}
+  .asof small{display:block;margin-top:4px;white-space:nowrap;font-size:7px;color:#8290a2;font-weight:650}
+}
+@media (max-width:820px){
+  #dashboard-view .flow-bars{height:170px;padding-top:30px}
+  #dashboard-view .flow-col i{max-height:112px}
+  #dashboard-view .flow-col b{margin-bottom:3px}
+}
