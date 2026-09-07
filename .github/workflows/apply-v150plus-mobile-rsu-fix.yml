@@ -1,0 +1,119 @@
+name: Apply V150+ mobile RSU recovery fix
+
+on:
+  push:
+    branches: [canonical-v150plus-mobile-rsu-fix]
+    paths: [.github/workflows/apply-v150plus-mobile-rsu-fix.yml]
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Re-fetch operational truth before write
+        run: |
+          git fetch origin main canonical-v150plus-mobile-rsu-fix
+          test -f PROJECT_MASTER_BACKLOG.md
+          test -f NEXT_HOMOLOGATION_GATE.md
+          test -f LTS_WEALTH_CONTINUITY_HANDOFF.md
+          test -f CANONICAL_DELIVERY_MASTER_PLAN.md
+          test -f backups/CANONICAL_APP_V1_DASHBOARD_FIDELITY_PASS4_CHECKPOINT_2026-09-07.md
+          git merge-base --is-ancestor origin/main HEAD
+      - name: Apply coherent mobile RSU package
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          flowp=Path('canonical-flow-v150.js')
+          flow=flowp.read_text()
+          old_build="BUILD='CANONICAL v1.1 · Recovery V150+'"
+          new_build="BUILD='CANONICAL v1.2 · Recovery V150+ · Mobile RSU'"
+          assert old_build in flow
+          flow=flow.replace(old_build,new_build,1)
+
+          # Make the deterministic future fixture use the same field names as the real FIX86 v14 cache.
+          for old,new in [
+              ('saldo_anterior_operacional:p','saldo_anterior:p'),
+              ('entradas_operacionais:en','entradas:en'),
+              ('saidas_operacionais:out','saidas:out'),
+              ('saldo_final_operacional:b','saldo_final:b')]:
+              assert old in flow, old
+              flow=flow.replace(old,new,1)
+
+          old_vals="function vals(x,prev){const c=x.fix86_columns||{},all=displayEvents(String(x.date)),ev=cashEvents(String(x.date)),en=ev.filter(e=>n(eAmt(e))>0).reduce((a,e)=>a+n(eAmt(e)),0),out=Math.abs(ev.filter(e=>n(eAmt(e))<0).reduce((a,e)=>a+n(eAmt(e)),0));if(S.account==='Consolidado'){const fin=num(c.saldo_final_operacional??x.Consolidado?.bank_balance),pv=num(c.saldo_anterior_operacional??prev?.fix86_columns?.saldo_final_operacional??prev?.Consolidado?.bank_balance),historicalEventTruth=x._hist&&all.length>0;return{pv,en:historicalEventTruth?en:num(c.entradas_operacionais??en),out:historicalEventTruth?out:num(c.saidas_operacionais??out),fin,c,ev:all}}const z=bank(x),pz=prev?bank(prev):{},fin=num(z.operational_balance??z.balance),net=n(z.operational_net??z.net);return{pv:num(pz.operational_balance??pz.balance)??(fin!=null&&!x._hist?fin-net:null),en,out,fin,c,ev:all}}"
+          new_vals="function vals(x,prev){const c=x.fix86_columns||{},all=displayEvents(String(x.date)),ev=cashEvents(String(x.date)),en=ev.filter(e=>n(eAmt(e))>0).reduce((a,e)=>a+n(eAmt(e)),0),out=Math.abs(ev.filter(e=>n(eAmt(e))<0).reduce((a,e)=>a+n(eAmt(e)),0));if(S.account==='Consolidado'){const fin=num(c.saldo_final_operacional??c.saldo_final??x.Consolidado?.bank_balance),pv=num(c.saldo_anterior_operacional??c.saldo_anterior??prev?.fix86_columns?.saldo_final_operacional??prev?.fix86_columns?.saldo_final??prev?.Consolidado?.bank_balance),historicalEventTruth=x._hist&&all.length>0;return{pv,en:historicalEventTruth?en:num(c.entradas_operacionais??c.entradas??en),out:historicalEventTruth?out:num(c.saidas_operacionais??c.saidas??out),fin,c,ev:all}}const z=bank(x),pz=prev?bank(prev):{},fin=num(z.operational_balance??z.balance),net=n(z.operational_net??z.net);return{pv:num(pz.operational_balance??pz.balance)??(fin!=null&&!x._hist?fin-net:null),en,out,fin,c,ev:all}}"
+          assert old_vals in flow
+          flow=flow.replace(old_vals,new_vals,1)
+          flowp.write_text(flow)
+
+          loader="""(()=>{'use strict';
+const BUILD='CANONICAL v1.2 · Recovery V150+ · Mobile RSU';
+const CORE_CONTRACT=['lts_browser_liquidity_movement_options_v1','lts_browser_preview_liquidity_movement_v1','lts_browser_apply_liquidity_movement_v1'];
+const FLOW_CONTRACT=['lts_browser_flow_v6','WIP35-v150','Últimos 5 dias','Próximos 90 dias','Histórico / movimentos'];
+let flowPromise=null;
+function load(src,id){return new Promise((resolve,reject)=>{if(document.getElementById(id)){resolve();return}const s=document.createElement('script');s.id=id;s.src=src;s.async=false;s.onload=resolve;s.onerror=()=>reject(new Error('Falha ao carregar '+src));document.body.appendChild(s)})}
+function canonicalReady(){return window.__LTS_CANONICAL_STATUS?.ready===true}
+function mark(extra){window.__LTS_CANONICAL_RECOVERY_STATUS={ready:true,build:BUILD,core_contract:CORE_CONTRACT.length,flow_contract:FLOW_CONTRACT.length,flow_loaded:!!document.getElementById('canonicalFlowV150'),...(extra||{})}}
+function ensureFlow(){if(flowPromise)return flowPromise;flowPromise=load('canonical-flow-v150.js?v=20260907-recovery-v150plus-mobile-rsu-2','canonicalFlowV150').then(()=>{mark({flow_loaded:true});return true}).catch(e=>{flowPromise=null;mark({flow_loaded:false,error:String(e?.message||e)});throw e});return flowPromise}
+function waitReady(tryNo=0){if(canonicalReady())return ensureFlow();if(tryNo>=80)return Promise.resolve(false);return new Promise(r=>setTimeout(r,250)).then(()=>waitReady(tryNo+1))}
+document.addEventListener('click',e=>{if(e.target.closest?.('[data-route="Fluxo Diário"]')){setTimeout(()=>{canonicalReady()?ensureFlow().catch(()=>{}):waitReady(0).catch(()=>{})},0)}},true);
+window.addEventListener('hashchange',()=>{if(decodeURIComponent(location.hash.slice(1))==='Fluxo Diário'){canonicalReady()?ensureFlow().catch(()=>{}):waitReady(0).catch(()=>{})}});
+(async()=>{try{await load('canonical-liquidity-core.js?v=20260907-recovery-v150plus-mobile-rsu-2','canonicalLiquidityCore');mark({flow_loaded:false});waitReady(0).catch(e=>mark({flow_loaded:false,error:String(e?.message||e)}))}catch(e){console.error('LTS canonical recovery loader',e);window.__LTS_CANONICAL_RECOVERY_STATUS={ready:false,build:BUILD,error:String(e?.message||e)}}})();
+})();
+"""
+          Path('canonical-liquidity.js').write_text(loader)
+
+          wp=Path('.github/workflows/canonical-v150plus-recovery.yml')
+          w=wp.read_text()
+          assert 'branches: [canonical-v150plus-recovery]' in w
+          w=w.replace('branches: [canonical-v150plus-recovery]','branches: [canonical-v150plus-recovery, canonical-v150plus-mobile-rsu-fix]',1)
+          assert 'CANONICAL v1.1 · Recovery V150+' in w
+          w=w.replace('CANONICAL v1.1 · Recovery V150+','CANONICAL v1.2 · Recovery V150+ · Mobile RSU')
+          needle="          assert 'canonical-flow-v150.js' in loader\n"
+          insert="          assert 'canonical-flow-v150.js' in loader\n          assert '__LTS_CANONICAL_STATUS' in loader\n          assert 'saldo_anterior_operacional??c.saldo_anterior' in flow\n          assert 'saldo_final_operacional??c.saldo_final' in flow\n"
+          assert needle in w
+          w=w.replace(needle,insert,1)
+          needle2="            if(materialRows<4)throw new Error(label+': material flow rows '+materialRows);\n"
+          insert2="            if(materialRows<4)throw new Error(label+': material flow rows '+materialRows);\n            const firstText=await page.locator('.fr-row').first().textContent();\n            if(!firstText.includes('R$ 15.794,43'))throw new Error(label+': opening balance alias regression '+firstText);\n            if(mobile&&(!firstText.includes('RSU vested')||!firstText.includes('R$ 12.909,65')))throw new Error(label+': mobile RSU layer regression '+firstText);\n"
+          assert needle2 in w
+          w=w.replace(needle2,insert2,1)
+
+          delayed="""      - name: Delayed canonical ownership regression
+        run: |
+          cat > recovery-delayed.html <<'HTML'
+          <!doctype html><html><body><section class="view"><div class="page-title"><h1>Fluxo Diário</h1></div></section>
+          <script>window.__LTS_CANONICAL_STATUS={ready:false};setTimeout(()=>{document.querySelector('.view').innerHTML='<div class="page-title"><h1>Fluxo Diário</h1></div><div id="legacyFlow">legacy simplified flow</div>';window.__LTS_CANONICAL_STATUS={ready:true}},1200)</script>
+          <script src="canonical-liquidity.js"></script></body></html>
+          HTML
+          cat > .delayed-test.cjs <<'JS'
+          const {webkit}=require('playwright');const {spawn}=require('child_process');
+          const server=spawn('python3',['-m','http.server','4174','--bind','127.0.0.1'],{stdio:'inherit'});
+          (async()=>{try{await new Promise(r=>setTimeout(r,500));const b=await webkit.launch({headless:true});const p=await b.newPage({viewport:{width:390,height:844}});await p.goto('http://127.0.0.1:4174/recovery-delayed.html?fixture=1#Fluxo%20Diário');await p.waitForTimeout(700);if(await p.locator('.fr').count())throw new Error('recovery mounted before canonical readiness');await p.waitForFunction(()=>window.__LTS_CANONICAL_STATUS?.ready===true);await p.waitForFunction(()=>window.__LTS_CANONICAL_FLOW_V150_STATUS?.ready===true);if(await p.locator('#legacyFlow').count())throw new Error('legacy flow retained after canonical readiness');const t=await p.locator('.fr-row').first().textContent();if(!t.includes('R$ 15.794,43')||!t.includes('RSU vested')||!t.includes('R$ 12.909,65'))throw new Error('mobile financial ladder regression '+t);await b.close();console.log('delayed ownership regression ok')}finally{server.kill('SIGTERM')}})().catch(e=>{console.error(e);process.exit(1)});
+          JS
+          node .delayed-test.cjs
+          rm -f .delayed-test.cjs recovery-delayed.html
+"""
+          upload='      - name: Upload recovery evidence\n'
+          assert upload in w
+          w=w.replace(upload,delayed+upload,1)
+          wp.write_text(w)
+
+          # Self-clean so this atomic applier cannot run again.
+          Path('.github/workflows/apply-v150plus-mobile-rsu-fix.yml').unlink()
+          PY
+          node --check canonical-flow-v150.js
+          node --check canonical-liquidity.js
+          git diff --check
+      - name: Commit atomic package
+        run: |
+          git config user.name lthomesilveira-ui
+          git config user.email l.thomesilveira@gmail.com
+          git add canonical-flow-v150.js canonical-liquidity.js .github/workflows/canonical-v150plus-recovery.yml .github/workflows/apply-v150plus-mobile-rsu-fix.yml
+          git commit -m "Fix V150+ mobile opening balance and RSU ownership"
+          git push origin HEAD:canonical-v150plus-mobile-rsu-fix
