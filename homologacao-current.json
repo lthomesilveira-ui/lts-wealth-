@@ -1,13 +1,14 @@
 {
   "schema": 1,
-  "version": "canonical-v1.1-v150plus-recovery",
+  "version": "canonical-v1",
+  "build": "CANONICAL v1.1 · Recovery V150+",
   "path": "canonical-app.html",
-  "candidate_head": "b4514ebcf1090aa977d1bd328473e4e33112868b",
+  "candidate_head": "7638d748e5ba01e54349bf31297140f37c06a9cd",
   "public_fallback": "index.html",
   "promotion_status": "not_promoted",
-  "candidate_sha": "b4514ebcf1090aa977d1bd328473e4e33112868b",
-  "exposed_from_main_sha": "b4514ebcf1090aa977d1bd328473e4e33112868b",
-  "exposure_mode": "canonical_single_frontend_v150plus_flow_recovery_dashboard_pass4",
-  "gate_status": "v150plus-recovery-34152816803-pass_desktop-chromium-pass_mobile-webkit-pass_four-accounts-pass_ten-periods-pass_13-column-consolidated-flow-pass_daily-expansion-pass_historical-truth-pass_no-overflow-pass_no-iframe-pass_candidate-smoke-34153114543-pass_pages-34153114385-pass_authenticated-e2e-not-claimed",
-  "updated_at": "2026-09-07T18:58:33Z"
+  "candidate_sha": "7638d748e5ba01e54349bf31297140f37c06a9cd",
+  "exposed_from_main_sha": "7638d748e5ba01e54349bf31297140f37c06a9cd",
+  "exposure_mode": "canonical_single_frontend_v150plus_mobile_flow_fix86_recovery_dashboard_pass4",
+  "gate_status": "v150plus-recovery-34155382394-pass_desktop-chromium-pass_mobile-webkit-pass_four-accounts-pass_13-column-consolidated-flow-pass_rsu-layer-pass_fix86-aliases-pass_mobile-route-ownership-pass_authenticated-e2e-not-claimed",
+  "updated_at": "2026-09-07T19:46:00Z"
 }
