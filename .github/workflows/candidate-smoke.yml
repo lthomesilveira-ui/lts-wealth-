@@ -1,7 +1,7 @@
 name: LTS candidate smoke
 on:
   push:
-    branches: [main, canonical-app-v1, v143-life-real-feedback]
+    branches: [main, canonical-app-v1, canonical-v157plus-product-recovery, v143-life-real-feedback]
     paths:
       - 'index.html'
       - 'homologacao.html'
@@ -9,7 +9,12 @@ on:
       - 'canonical-app.html'
       - 'canonical-dashboard-fidelity.css'
       - 'canonical-liquidity.js'
+      - 'canonical-liquidity-core.js'
+      - 'canonical-flow-v157.js'
+      - 'canonical-product-v157.js'
+      - 'canonical-presentation-v157.js'
       - '.github/workflows/canonical-app.yml'
+      - '.github/scripts/lts_canonical_v157plus_browser_gate.js'
       - 'wip35-v137-candidate.html'
       - 'wip35-v138-candidate.html'
       - 'wip35-v138-cockpits.js'
@@ -71,11 +76,20 @@ jobs:
         if: steps.candidate.outputs.mode == 'canonical'
         run: |
           node --check canonical-liquidity.js
+          node --check canonical-liquidity-core.js
+          node --check canonical-flow-v157.js
+          node --check canonical-product-v157.js
+          node --check canonical-presentation-v157.js
+          node --check .github/scripts/lts_canonical_v157plus_browser_gate.js
           python - <<'PY'
           from pathlib import Path
           import re
           html=Path('canonical-app.html').read_text(encoding='utf-8')
           liq=Path('canonical-liquidity.js').read_text(encoding='utf-8')
+          core=Path('canonical-liquidity-core.js').read_text(encoding='utf-8')
+          flow=Path('canonical-flow-v157.js').read_text(encoding='utf-8')
+          product=Path('canonical-product-v157.js').read_text(encoding='utf-8')
+          presentation=Path('canonical-presentation-v157.js').read_text(encoding='utf-8')
           css=Path('canonical-dashboard-fidelity.css').read_text(encoding='utf-8')
           required_html=[
             'canonical-dashboard-fidelity.css?v=20260906-1',
@@ -83,16 +97,23 @@ jobs:
             'Dashboard','Fluxo Diário','Despesas','Patrimônio','Cartões','Atualizações'
           ]
           required_css=['#dashboard-view .grid-main','#dashboard-view .rank-row.clickable']
+          required_loader=['canonical-liquidity-core.js','canonical-flow-v157.js','canonical-product-v157.js','canonical-presentation-v157.js']
+          required_flow=['lts_browser_flow_v8','LTS v1.3','Histórico / período','Movimentos do dia','RSUs futuras','Cash Awards futuros','lts_browser_flow_event_editor_v1','lts_browser_flow_mutate_v1']
+          required_product=['Dinheiro em contas','Contas + curto prazo','RSUs vested','FGTS','Despesas (mês)','Evolução da Liquidez','Quanto você gastou — e como isso evoluiu.','Mês a mês','Ano a ano','Cobertura do histórico','Quanto você tem, quanto deve e quanto é seu.','Conferência de fatura, não análise de gasto.']
+          required_presentation=['presentation-polish-v1','__LTS_V157_PRESENTATION_STATUS','__LTS_V157_POLISH_STATUS']
           forbidden_html=['<iframe','document.write','MutationObserver','setInterval(']
-          forbidden_liq=['MutationObserver','setInterval(']
-          missing=[x for x in required_html if x not in html]+[x for x in required_css if x not in css]
-          leaked=[x for x in forbidden_html if x in html]+[x for x in forbidden_liq if x in liq]
+          forbidden_modules=['MutationObserver','setInterval(']
+          missing=([x for x in required_html if x not in html]+[x for x in required_css if x not in css]
+                   +[x for x in required_loader if x not in liq]+[x for x in required_flow if x not in flow]
+                   +[x for x in required_product if x not in product]+[x for x in required_presentation if x not in presentation])
+          leaked=[x for x in forbidden_html if x in html]+[x for module in [liq,core,flow,product,presentation] for x in forbidden_modules if x in module]
           assert not missing, 'canonical markers missing: '+repr(missing)
           assert not leaked, 'forbidden canonical markers: '+repr(leaked)
+          assert 'canonical-flow-v150.js' not in liq
           for rpc in ['lts_browser_product_v1','lts_browser_dashboard_cockpit_v1','lts_browser_transactions_v1','lts_browser_expense_context_lens_v1','lts_browser_wealth_detail_v1','lts_browser_card_history_coverage_v1','lts_browser_document_lifecycle_v1','lts_browser_semantic_feedback_v1']:
               assert rpc in html, rpc
           for rpc in ['lts_browser_liquidity_movement_options_v1','lts_browser_preview_liquidity_movement_v1','lts_browser_apply_liquidity_movement_v1']:
-              assert rpc in liq, rpc
+              assert rpc in core, rpc
           scripts=re.findall(r'<script(?: [^>]*)?>(.*?)</script>',html,re.S)
           Path('/tmp/canonical-script.js').write_text('\n'.join(scripts),encoding='utf-8')
           print('canonical_product_static=PASS')

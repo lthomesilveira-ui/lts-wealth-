@@ -10,6 +10,7 @@ on:
       - canonical-liquidity-core.js
       - canonical-flow-v157.js
       - canonical-product-v157.js
+      - canonical-presentation-v157.js
       - .github/workflows/canonical-v157plus-product-recovery.yml
   workflow_dispatch:
 
@@ -34,10 +35,12 @@ jobs:
           core=Path('canonical-liquidity-core.js').read_text()
           flow=Path('canonical-flow-v157.js').read_text()
           product=Path('canonical-product-v157.js').read_text()
+          presentation=Path('canonical-presentation-v157.js').read_text()
           assert '<iframe' not in app
           assert 'document.write' not in app
           assert 'canonical-product-v157.js' in loader
           assert 'canonical-flow-v157.js' in loader
+          assert 'canonical-presentation-v157.js' in loader
           assert 'canonical-flow-v150.js' not in loader
           for rpc in ['lts_browser_liquidity_movement_options_v1','lts_browser_preview_liquidity_movement_v1','lts_browser_apply_liquidity_movement_v1']:
               assert rpc in core, rpc
@@ -45,7 +48,9 @@ jobs:
               assert x in flow, x
           for x in ['Dinheiro em contas','Contas + curto prazo','RSUs vested','FGTS','Despesas (mês)','Evolução da Liquidez','Quanto você gastou — e como isso evoluiu.','Mês a mês','Ano a ano','Cobertura do histórico','Quanto você tem, quanto deve e quanto é seu.','Conferência de fatura, não análise de gasto.']:
               assert x in product, x
-          for s in [loader,core,flow,product]:
+          for x in ['presentation-polish-v1','__LTS_V157_PRESENTATION_STATUS','__LTS_V157_POLISH_STATUS']:
+              assert x in presentation, x
+          for s in [loader,core,flow,product,presentation]:
               assert 'MutationObserver' not in s
               assert 'setInterval(' not in s
           print('static V157+ product contract ok')
@@ -54,6 +59,7 @@ jobs:
           node --check canonical-liquidity-core.js
           node --check canonical-flow-v157.js
           node --check canonical-product-v157.js
+          node --check canonical-presentation-v157.js
       - name: Install Playwright
         run: |
           npm init -y >/dev/null 2>&1
@@ -76,7 +82,8 @@ jobs:
             const errors=[];page.on('pageerror',e=>errors.push(String(e)));
             await page.goto('http://127.0.0.1:4173/canonical-app.html?fixture=1',{waitUntil:'networkidle'});
             await page.waitForFunction(()=>window.__LTS_CANONICAL_STATUS?.ready===true);
-            await page.waitForFunction(()=>window.__LTS_CANONICAL_RECOVERY_STATUS?.product_loaded===true&&window.__LTS_CANONICAL_RECOVERY_STATUS?.flow_loaded===true);
+            await page.waitForFunction(()=>window.__LTS_CANONICAL_RECOVERY_STATUS?.product_loaded===true&&window.__LTS_CANONICAL_RECOVERY_STATUS?.flow_loaded===true&&window.__LTS_CANONICAL_RECOVERY_STATUS?.presentation_loaded===true);
+            await page.waitForFunction(()=>window.__LTS_V157_PRESENTATION_STATUS?.ready===true);
             await waitProduct(page,'Dashboard');
             const labels=await page.locator('.pv-kpi label').allTextContents();
             const expected=['Dinheiro em contas','Contas + curto prazo','RSUs vested','FGTS','Despesas (mês)'];
@@ -142,4 +149,5 @@ jobs:
             canonical-liquidity-core.js
             canonical-flow-v157.js
             canonical-product-v157.js
+            canonical-presentation-v157.js
             v157-*.png

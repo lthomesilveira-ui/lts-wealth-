@@ -6,7 +6,12 @@ on:
     paths:
       - canonical-app.html
       - canonical-liquidity.js
+      - canonical-liquidity-core.js
+      - canonical-flow-v157.js
+      - canonical-product-v157.js
+      - canonical-presentation-v157.js
       - canonical-dashboard-fidelity.css
+      - .github/scripts/lts_canonical_v157plus_browser_gate.js
       - .github/workflows/canonical-app.yml
   workflow_dispatch:
 
@@ -34,6 +39,10 @@ jobs:
           import re
           s=Path('canonical-app.html').read_text()
           l=Path('canonical-liquidity.js').read_text()
+          c=Path('canonical-liquidity-core.js').read_text()
+          f=Path('canonical-flow-v157.js').read_text()
+          p=Path('canonical-product-v157.js').read_text()
+          v=Path('canonical-presentation-v157.js').read_text()
           d=Path('canonical-dashboard-fidelity.css').read_text()
           assert '<iframe' not in s
           assert 'document.write' not in s
@@ -41,11 +50,15 @@ jobs:
           assert 'setInterval(' not in s
           assert 'canonical-liquidity.js?v=20260906-1' in s
           assert 'canonical-dashboard-fidelity.css?v=20260906-1' in s
+          for module in ['canonical-liquidity-core.js','canonical-flow-v157.js','canonical-product-v157.js','canonical-presentation-v157.js']:
+              assert module in l, module
+          assert 'canonical-flow-v150.js' not in l
           assert len(d) > 1000
           assert '#dashboard-view .grid-main' in d
           assert '#dashboard-view .rank-row.clickable' in d
-          assert 'MutationObserver' not in l
-          assert 'setInterval(' not in l
+          for module in [l,c,f,p,v]:
+              assert 'MutationObserver' not in module
+              assert 'setInterval(' not in module
           for r in ['Dashboard','Fluxo Diário','Despesas','Patrimônio','Cartões','Atualizações']:
               assert r in s
           for rpc in [
@@ -60,7 +73,13 @@ jobs:
               'lts_browser_preview_liquidity_movement_v1',
               'lts_browser_apply_liquidity_movement_v1'
           ]:
-              assert rpc in l, rpc
+              assert rpc in c, rpc
+          for marker in ['lts_browser_flow_v8','LTS v1.3','Histórico / período','Movimentos do dia','RSUs futuras','Cash Awards futuros','lts_browser_flow_event_editor_v1','lts_browser_flow_mutate_v1']:
+              assert marker in f, marker
+          for marker in ['Dinheiro em contas','Contas + curto prazo','RSUs vested','FGTS','Despesas (mês)','Evolução da Liquidez','Quanto você gastou — e como isso evoluiu.','Mês a mês','Ano a ano','Cobertura do histórico','Quanto você tem, quanto deve e quanto é seu.','Conferência de fatura, não análise de gasto.']:
+              assert marker in p, marker
+          for marker in ['presentation-polish-v1','__LTS_V157_PRESENTATION_STATUS','__LTS_V157_POLISH_STATUS']:
+              assert marker in v, marker
           for label in [
               'Dinheiro em contas','Contas + curto prazo','RSUs vested','FGTS','Despesas (mês)',
               'Evolução do Patrimônio Líquido','Distribuição do Patrimônio','Posição por Banco',
@@ -70,126 +89,20 @@ jobs:
           ]:
               assert label in s, label
           for label in ['Aplicar / resgatar','Efeito econômico: R$ 0,00','Confirmar movimentação']:
-              assert label in l, label
+              assert label in c, label
           scripts=re.findall(r'<script(?: [^>]*)?>(.*?)</script>',s,re.S)
           Path('/tmp/canonical-script.js').write_text('\n'.join(scripts))
           print('static contract ok')
           PY
           node --check /tmp/canonical-script.js
           node --check canonical-liquidity.js
+          node --check canonical-liquidity-core.js
+          node --check canonical-flow-v157.js
+          node --check canonical-product-v157.js
+          node --check canonical-presentation-v157.js
+          node --check .github/scripts/lts_canonical_v157plus_browser_gate.js
       - name: Browser contract
-        run: |
-          cat > .canonical-test.cjs <<'JS'
-          const {chromium, webkit}=require('playwright');
-          const {spawn}=require('child_process');
-          const server=spawn('python3',['-m','http.server','4173','--bind','127.0.0.1'],{stdio:'inherit'});
-          const sleep=ms=>new Promise(r=>setTimeout(r,ms));
-          const routes=['Dashboard','Fluxo Diário','Despesas','Patrimônio','Cartões','Atualizações'];
-          const navFor=(page,route,mobile)=>mobile?page.locator('.mobile-nav [data-route="'+route+'"]'):page.locator('.sidebar [data-route="'+route+'"]');
-          async function route(page,route,mobile){
-            await navFor(page,route,mobile).click();
-            await page.waitForTimeout(100);
-            const title=(await page.locator('.page-title h1').textContent())?.trim();
-            if(title!==route)throw new Error('route '+route+' got '+title);
-          }
-          async function run(browserType,name,viewport,shot){
-            const mobile=viewport.width<=820;
-            const browser=await browserType.launch({headless:true});
-            const page=await browser.newPage({viewport});
-            const pageErrors=[];
-            page.on('pageerror',e=>pageErrors.push(String(e)));
-            await page.goto('http://127.0.0.1:4173/canonical-app.html?fixture=1',{waitUntil:'networkidle'});
-            await page.waitForFunction(()=>window.__LTS_CANONICAL_STATUS?.ready===true);
-            const st=await page.evaluate(()=>window.__LTS_CANONICAL_STATUS);
-            if(st.iframe_count!==0)throw new Error(name+': iframe detected');
-            if(!st.fixture||!st.data_ready)throw new Error(name+': fixture not ready');
-            for(const flag of ['server_search','classification_lifecycle','expense_context_lens','wealth_detail','card_coverage','document_lifecycle']){
-              if(st[flag]!==true)throw new Error(name+': capability flag '+flag+' missing');
-            }
-            const kpis=await page.locator('.kpi strong').allTextContents();
-            if(kpis.length!==5||kpis.some(x=>!x.trim()||x.trim()==='—'))throw new Error(name+': KPI gate '+JSON.stringify(kpis));
-            const fidelity=await page.evaluate(()=>{
-              const rank=document.querySelector('#dashboard-view .rank-row.clickable');
-              return {
-                css:[...document.styleSheets].some(s=>String(s.href||'').includes('canonical-dashboard-fidelity.css')),
-                panels:document.querySelectorAll('#dashboard-view .panel').length,
-                rankBorder:rank?getComputedStyle(rank).borderLeftWidth:null
-              };
-            });
-            if(!fidelity.css)throw new Error(name+': dashboard fidelity stylesheet missing');
-            if(fidelity.panels<9)throw new Error(name+': dashboard panel density '+JSON.stringify(fidelity));
-            if(!mobile&&fidelity.rankBorder!=='0px')throw new Error(name+': dashboard expense ranking border regression '+JSON.stringify(fidelity));
-            await page.screenshot({path:shot,fullPage:true});
-
-            await route(page,'Fluxo Diário',mobile);
-            if(await page.locator('.table tbody tr').count()<5)throw new Error(name+': flow rows missing');
-            await page.locator('#flowAccount').selectOption({label:'Itaú'});
-            if(await page.locator('.table tbody tr').count()<5)throw new Error(name+': bank flow switch failed');
-
-            await route(page,'Despesas',mobile);
-            await page.waitForFunction(()=>document.body.textContent.includes('Natureza × contexto'));
-            if(await page.locator('.lens-row').count()<2)throw new Error(name+': expense lens missing');
-            await page.locator('[data-lens-kind="nature"]').first().click();
-            if(await page.locator('.drill-card').count()!==1)throw new Error(name+': expense drilldown missing');
-            await page.locator('#expensePeriod').selectOption('2013');
-            await page.waitForFunction(()=>document.querySelector('#expensePeriod')?.value==='2013');
-
-            await route(page,'Patrimônio',mobile);
-            if(await page.getByText('Patrimônio líquido',{exact:true}).count()!==1)throw new Error(name+': wealth summary missing');
-            if(await page.getByText('FGTS',{exact:true}).count()<1)throw new Error(name+': wealth FGTS missing');
-
-            await route(page,'Cartões',mobile);
-            if(await page.getByText('Faturas abertas',{exact:true}).count()!==1)throw new Error(name+': cards summary missing');
-            if(await page.getByText('Próximo vencimento',{exact:true}).count()!==1)throw new Error(name+': cards due missing');
-
-            await route(page,'Atualizações',mobile);
-            if(await page.locator('.class-row').count()<3)throw new Error(name+': classification queue missing');
-            if(await page.locator('.class-save:not([disabled])').count()!==0)throw new Error(name+': fixture writer unexpectedly enabled');
-            const term=page.locator('#ledgerTerm');
-            await term.fill('Mastercard');
-            await page.waitForFunction(()=>document.querySelector('#ledgerMeta')?.textContent?.includes('1 lançamento'));
-            if(await page.locator('.search-result').count()!==1)throw new Error(name+': transaction search result missing');
-            if(await page.locator('#ledgerExport').isDisabled())throw new Error(name+': CSV export not enabled after result');
-            if(await page.getByText('Documentos',{exact:true}).count()<1)throw new Error(name+': documents area missing');
-            await page.waitForSelector('#liquidityMovementCard');
-            if(await page.locator('#liquidityMovementCard').count()!==1)throw new Error(name+': liquidity movement card missing');
-            await page.locator('#liqType').selectOption('application');
-            await page.locator('#liqAccount').selectOption('fixture-itau');
-            await page.locator('#liqAsset').selectOption('fixture-cofrinho');
-            await page.locator('#liqAmount').fill('5 mil');
-            await page.locator('#liqPreviewBtn').click();
-            await page.waitForSelector('#liqPreview');
-            if(!(await page.locator('#liqPreview').textContent()).includes('R$ 0,00'))throw new Error(name+': liquidity neutral preview missing');
-            if(await page.locator('#liqApply').count()!==0)throw new Error(name+': fixture liquidity writer unexpectedly enabled');
-            if(!mobile)await page.screenshot({path:'canonical-updates.png',fullPage:true});
-
-            await route(page,'Dashboard',mobile);
-            const metrics=await page.evaluate(()=>({sw:document.documentElement.scrollWidth,cw:document.documentElement.clientWidth,iframes:document.querySelectorAll('iframe').length,nav:[...document.querySelectorAll('.mobile-nav button')].map(b=>{const r=b.getBoundingClientRect();return {l:r.left,r:r.right,w:r.width}})}));
-            if(metrics.sw>metrics.cw+1)throw new Error(name+': horizontal overflow '+JSON.stringify(metrics));
-            if(metrics.iframes!==0)throw new Error(name+': iframe after nav');
-            if(mobile){
-              if(metrics.nav.length!==6)throw new Error(name+': mobile nav count');
-              if(metrics.nav.some(r=>r.l<-.5||r.r>viewport.width+.5||r.w<=0))throw new Error(name+': clipped mobile nav '+JSON.stringify(metrics.nav));
-            }
-            if(pageErrors.length)throw new Error(name+': page errors '+pageErrors.join(' | '));
-
-            await page.goto('http://127.0.0.1:4173/canonical-app.html',{waitUntil:'domcontentloaded'});
-            await page.waitForTimeout(500);
-            const login=await page.locator('#loginForm').count();
-            const fakeDashboard=await page.locator('#dashboard-view').count();
-            const fixtureBadge=await page.getByText('FIXTURE DE TESTE',{exact:true}).count();
-            if(login!==1||fakeDashboard!==0||fixtureBadge!==0)throw new Error(name+': unauthenticated truth failed');
-            await browser.close();
-          }
-          (async()=>{try{
-            await sleep(700);
-            await run(chromium,'chromium-desktop',{width:1312,height:1199},'canonical-desktop.png');
-            await run(webkit,'webkit-mobile',{width:390,height:844},'canonical-mobile.png');
-            console.log('canonical functional browser gate ok');
-          }finally{server.kill('SIGTERM')}})().catch(e=>{console.error(e);process.exit(1)});
-          JS
-          node .canonical-test.cjs
-          rm -f .canonical-test.cjs
+        run: node .github/scripts/lts_canonical_v157plus_browser_gate.js
       - name: Upload visual evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -199,7 +112,9 @@ jobs:
           path: |
             canonical-app.html
             canonical-liquidity.js
+            canonical-liquidity-core.js
+            canonical-flow-v157.js
+            canonical-product-v157.js
+            canonical-presentation-v157.js
             canonical-dashboard-fidelity.css
-            canonical-desktop.png
-            canonical-mobile.png
-            canonical-updates.png
+            canonical-*.png
