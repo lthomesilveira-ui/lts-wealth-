@@ -8,7 +8,7 @@
   .nav button{height:42px;padding:0 11px;border-radius:9px;font-size:12px}
   .view{max-width:1510px;padding:17px 20px 30px}
   .page-head{min-height:72px}
-  .page-title h1{font-size:31px;margin-bottom:6px}
+  .page-title h1{font-size:31px;margin:0 0 6px}
   .page-title p{font-size:13px}
   .asof{min-height:38px;padding:9px 13px;border-radius:9px;background:#fff}
   #dashboard-view .status-pill{min-height:30px;display:flex;align-items:center;padding:7px 10px}
@@ -130,7 +130,6 @@
   #dashboard-view .info-item{font-size:8.5px;line-height:1.35}
 }
 
-
 /* Fidelity pass 3 — closer approved reference using only real/evidenced data. */
 @media (min-width:821px){
   .sidebar .side-copy{display:none}
@@ -158,3 +157,5 @@
   #dashboard-view .panel-badge{display:inline-grid;place-items:center;min-width:17px;height:17px;padding:0 4px;margin-left:3px;border-radius:999px;background:#e84632;color:#fff;font-size:7.5px;line-height:1;vertical-align:2px}
   #dashboard-view .fgts .info-list{min-height:0}
 }
+
+/* Pass 4 structural candidate: gate trigger only; presentation rules live with the candidate HTML. */
