@@ -1,0 +1,130 @@
+name: Canonical V150+ recovery gate
+
+on:
+  push:
+    branches: [canonical-v150plus-recovery]
+    paths:
+      - canonical-app.html
+      - canonical-liquidity.js
+      - canonical-liquidity-core.js
+      - canonical-flow-v150.js
+      - canonical-dashboard-fidelity.css
+      - .github/workflows/canonical-v150plus-recovery.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  recovery-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Static recovery contract
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          app=Path('canonical-app.html').read_text()
+          loader=Path('canonical-liquidity.js').read_text()
+          core=Path('canonical-liquidity-core.js').read_text()
+          flow=Path('canonical-flow-v150.js').read_text()
+          assert '<iframe' not in app
+          assert 'document.write' not in app
+          assert 'canonical-liquidity.js?v=20260906-1' in app
+          assert 'canonical-liquidity-core.js' in loader
+          assert 'canonical-flow-v150.js' in loader
+          for rpc in ['lts_browser_liquidity_movement_options_v1','lts_browser_preview_liquidity_movement_v1','lts_browser_apply_liquidity_movement_v1']:
+              assert rpc in core, rpc
+          for x in ['lts_browser_flow_v6','CANONICAL v1.1 · Recovery V150+','Últimos 5 dias','Últimos 30 dias','Últimos 60 dias','Últimos 90 dias','Próximos 5 dias','Próximos 30 dias','Próximos 60 dias','Próximos 90 dias','Fim do ano','Histórico / movimentos']:
+              assert x.lower() in flow.lower(), x
+          for x in ['D0/D1','Posição antes RSUs','RSU vested','Posição curto prazo','Liq. D+30','FGTS','RSUs futuras','Posição econ. total']:
+              assert x in flow, x
+          for s in [loader,core,flow]:
+              assert 'MutationObserver' not in s
+              assert 'setInterval(' not in s
+          print('static recovery contract ok')
+          PY
+          node --check canonical-liquidity.js
+          node --check canonical-liquidity-core.js
+          node --check canonical-flow-v150.js
+      - name: Install Playwright
+        run: |
+          npm init -y >/dev/null 2>&1
+          npm install --silent playwright@1.55.0
+          npx playwright install --with-deps chromium webkit
+      - name: Browser recovery contract
+        run: |
+          cat > .recovery-test.cjs <<'JS'
+          const {chromium,webkit}=require('playwright');
+          const {spawn}=require('child_process');
+          const server=spawn('python3',['-m','http.server','4173','--bind','127.0.0.1'],{stdio:'inherit'});
+          const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+          const routeButton=(page,route,mobile)=>mobile?page.locator('.mobile-nav [data-route="'+route+'"]'):page.locator('.sidebar [data-route="'+route+'"]');
+          async function route(page,name,mobile){await routeButton(page,name,mobile).click();await page.waitForTimeout(220);const title=(await page.locator('.page-title h1').textContent())?.trim();if(title!==name)throw new Error('route '+name+' got '+title)}
+          async function run(type,label,viewport,shot){
+            const mobile=viewport.width<=820;
+            const browser=await type.launch({headless:true});
+            const page=await browser.newPage({viewport});
+            const errors=[];page.on('pageerror',e=>errors.push(String(e)));
+            await page.goto('http://127.0.0.1:4173/canonical-app.html?fixture=1',{waitUntil:'networkidle'});
+            await page.waitForFunction(()=>window.__LTS_CANONICAL_STATUS?.ready===true);
+            await page.waitForFunction(()=>window.__LTS_CANONICAL_RECOVERY_STATUS?.ready===true);
+            if(await page.locator('iframe').count())throw new Error(label+': iframe');
+            if(await page.locator('.kpi strong').count()!==5)throw new Error(label+': dashboard KPI count');
+            await route(page,'Fluxo Diário',mobile);
+            await page.waitForFunction(()=>window.__LTS_CANONICAL_FLOW_V150_STATUS?.ready===true);
+            if(await page.locator('.fr-build').count()!==1)throw new Error(label+': visible build marker missing');
+            if(!(await page.locator('.fr-build').textContent()).includes('V150+'))throw new Error(label+': wrong build marker');
+            if(await page.locator('[data-account]').count()!==4)throw new Error(label+': bank tabs');
+            if(await page.locator('[data-preset]').count()!==10)throw new Error(label+': period presets');
+            if(await page.locator('.fr-row').count()<5)throw new Error(label+': flow rows');
+            if(!mobile&&await page.locator('.fr-table th').count()!==13)throw new Error(label+': consolidated 13-column contract');
+            await page.locator('[data-expand]').first().click();
+            if(await page.locator('.fr-detail').count()!==1)throw new Error(label+': daily expansion');
+            await page.locator('[data-account="Itaú"]').click();
+            if(!mobile&&await page.locator('.fr-table th').count()!==5)throw new Error(label+': bank 5-column contract');
+            await page.locator('[data-preset="last30"]').click();
+            await page.waitForFunction(()=>window.__LTS_CANONICAL_FLOW_V150_STATUS?.ready===true && window.__LTS_CANONICAL_FLOW_V150_STATUS?.from==='2026-08-09');
+            await page.locator('[data-account="Consolidado"]').click();
+            await page.screenshot({path:shot,fullPage:true});
+            for(const r of ['Despesas','Patrimônio','Cartões','Atualizações'])await route(page,r,mobile);
+            await page.waitForSelector('#liquidityMovementCard');
+            await page.locator('#liqType').selectOption('application');
+            await page.locator('#liqAccount').selectOption('fixture-itau');
+            await page.locator('#liqAsset').selectOption('fixture-cofrinho');
+            await page.locator('#liqAmount').fill('5 mil');
+            await page.locator('#liqPreviewBtn').click();
+            await page.waitForSelector('#liqPreview');
+            if(!(await page.locator('#liqPreview').textContent()).includes('R$ 0,00'))throw new Error(label+': liquidity preview regression');
+            await route(page,'Dashboard',mobile);
+            const metrics=await page.evaluate(()=>({sw:document.documentElement.scrollWidth,cw:document.documentElement.clientWidth,iframes:document.querySelectorAll('iframe').length}));
+            if(metrics.sw>metrics.cw+1)throw new Error(label+': horizontal overflow '+JSON.stringify(metrics));
+            if(metrics.iframes)throw new Error(label+': iframe after navigation');
+            if(errors.length)throw new Error(label+': page errors '+errors.join(' | '));
+            await page.goto('http://127.0.0.1:4173/canonical-app.html',{waitUntil:'domcontentloaded'});await page.waitForTimeout(700);
+            if(await page.locator('#loginForm').count()!==1)throw new Error(label+': real unauthenticated login missing');
+            if(await page.locator('#dashboard-view').count()!==0)throw new Error(label+': fake unauthenticated dashboard');
+            await browser.close();
+          }
+          (async()=>{try{await sleep(700);await run(chromium,'desktop',{width:1312,height:1199},'recovery-flow-desktop.png');await run(webkit,'mobile',{width:390,height:844},'recovery-flow-mobile.png');console.log('V150+ recovery browser gate ok')}finally{server.kill('SIGTERM')}})().catch(e=>{console.error(e);process.exit(1)});
+          JS
+          node .recovery-test.cjs
+          rm -f .recovery-test.cjs
+      - name: Upload recovery evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: canonical-v150plus-recovery-gate
+          if-no-files-found: warn
+          path: |
+            canonical-app.html
+            canonical-liquidity.js
+            canonical-liquidity-core.js
+            canonical-flow-v150.js
+            canonical-dashboard-fidelity.css
+            recovery-flow-desktop.png
+            recovery-flow-mobile.png
