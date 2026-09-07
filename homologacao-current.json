@@ -1,13 +1,13 @@
 {
   "schema": 1,
-  "version": "canonical-v1",
+  "version": "canonical-v1.1-v150plus-recovery",
   "path": "canonical-app.html",
-  "candidate_head": "e729a0527f462d7bd3fcf12fea90a3ff6be2e1e2",
+  "candidate_head": "b4514ebcf1090aa977d1bd328473e4e33112868b",
   "public_fallback": "index.html",
   "promotion_status": "not_promoted",
-  "candidate_sha": "e729a0527f462d7bd3fcf12fea90a3ff6be2e1e2",
-  "exposed_from_main_sha": "e729a0527f462d7bd3fcf12fea90a3ff6be2e1e2",
-  "exposure_mode": "canonical_single_frontend_dashboard_fidelity_pass3_liquidity_ui_gated_homologation",
-  "gate_status": "canonical-gate-34072901577-pass_dashboard-fidelity-pass3-pass_desktop-chromium-pass_mobile-webkit-pass_five-kpis-pass_six-routes-pass_flow-account-switch-pass_expense-dual-lens-pass_expense-drilldown-pass_transaction-search-pass_csv-ready-pass_classification-readonly-fixture-pass_documents-area-pass_liquidity-preview-pass_neutral-effect-r0-pass_fixture-writer-disabled-pass_no-overflow-pass_no-iframe-pass_unauthenticated-truth-pass_branch-smoke-34072901585-pass_main-smoke-34073209498-pass_pages-34073208973-pass_authenticated-e2e-not-claimed",
-  "updated_at": "2026-09-07T01:46:00Z"
+  "candidate_sha": "b4514ebcf1090aa977d1bd328473e4e33112868b",
+  "exposed_from_main_sha": "b4514ebcf1090aa977d1bd328473e4e33112868b",
+  "exposure_mode": "canonical_single_frontend_v150plus_flow_recovery_dashboard_pass4",
+  "gate_status": "v150plus-recovery-34152816803-pass_desktop-chromium-pass_mobile-webkit-pass_four-accounts-pass_ten-periods-pass_13-column-consolidated-flow-pass_daily-expansion-pass_historical-truth-pass_no-overflow-pass_no-iframe-pass_candidate-smoke-34153114543-pass_pages-34153114385-pass_authenticated-e2e-not-claimed",
+  "updated_at": "2026-09-07T18:58:33Z"
 }
