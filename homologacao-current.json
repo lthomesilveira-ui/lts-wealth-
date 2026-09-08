@@ -1,14 +1,14 @@
 {
   "schema": 1,
   "version": "canonical-v1",
-  "build": "CANONICAL v1.14 · Revisão documental: vínculo × evidência",
+  "build": "CANONICAL v1.15 · Dashboard 1312×1199 sem rolagem",
   "path": "canonical-app.html",
-  "candidate_head": "0d50699af5aa5b950ff889a1fc6becfee209ce06",
+  "candidate_head": "a0a2675e6a9c9b3ffe4d9b0bc1fab222a48bc347",
   "public_fallback": "index.html",
   "promotion_status": "not_promoted",
-  "candidate_sha": "0d50699af5aa5b950ff889a1fc6becfee209ce06",
-  "exposed_from_main_sha": "0d50699af5aa5b950ff889a1fc6becfee209ce06",
-  "exposure_mode": "canonical_single_frontend_v114_document_interpretation_review_readonly_plus_v113_classification_first_guided_document_intake_plus_v112_reviewed_input_plus_v111_layered_liquidity_plus_v110_decision_truth_plus_v19_flow_parity",
-  "gate_status": "active-gate-34250450654-pass_active-candidate-smoke-34250450670-pass_canonical-gate-34250649137-pass_canonical-candidate-smoke-34250649010-pass_main-candidate-smoke-34250977997-pass_pages-34250976391-pass_v149-association-versus-evidence-readonly_backend-owner-scoped-authenticated-no-financial-writer_flow-v150-parity_authenticated-real-document-review-not-claimed_physical-iphone-not-claimed",
-  "updated_at": "2026-09-08T16:26:41Z"
+  "candidate_sha": "a0a2675e6a9c9b3ffe4d9b0bc1fab222a48bc347",
+  "exposed_from_main_sha": "a0a2675e6a9c9b3ffe4d9b0bc1fab222a48bc347",
+  "exposure_mode": "canonical_single_frontend_v115_approved_1312x1199_dashboard_density_plus_v114_document_interpretation_review_readonly_plus_v113_classification_first_guided_document_intake_plus_v112_reviewed_input_plus_v111_layered_liquidity_plus_v110_decision_truth_plus_v19_flow_parity",
+  "gate_status": "active-gate-34256124696-pass_active-candidate-smoke-34256124706-pass_canonical-gate-34256598442-pass_canonical-candidate-smoke-34256598444-pass_main-candidate-smoke-34256889054-pass_pages-34256887644-pass_dashboard-approved-1312x1199-single-screen_flow-v150-parity_authenticated-real-not-claimed_physical-iphone-not-claimed",
+  "updated_at": "2026-09-08T17:26:44.485Z"
 }
