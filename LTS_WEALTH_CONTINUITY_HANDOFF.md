@@ -1,6 +1,6 @@
 # LTS Wealth — Continuity Handoff
 
-Last materially refreshed: 2026-09-08 16:21 BRT (America/Sao_Paulo)
+Last materially refreshed: 2026-09-08 17:46 BRT (America/Sao_Paulo)
 
 This file exists so project continuity never depends on chat context. Always re-fetch `main`, active branch, `PROJECT_MASTER_BACKLOG.md`, `NEXT_HOMOLOGATION_GATE.md`, this file and the latest immutable checkpoint before every repository write.
 
@@ -24,7 +24,16 @@ This file exists so project continuity never depends on chat context. Always re-
 - Public fallback remains WIP35-v136; protected `index.html` blob remains `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
 - Public promotion remains unauthorized/not done.
 
-## Current exposed product — canonical v1.17 Product Language
+## Current exposed product — canonical v1.18 Flow History + Horizon
+- Exact product `692535276fe7948c386349254151538c0c9eddf8`; fixed-manifest exposure `65cb675b613b70b7a26f97f86938a0b3ac72b584`; active recovery, `canonical-app-v1` and `main` are aligned by normal fast-forward.
+- Contracts `historical-opening-from-close-and-net-v1`, `today-marker-without-row-band-v1` and `future-through-2029-plus-d30-v1` close the recovered 01/01 opening, yellow-row and 2029/D+30 gaps while preserving the rich V150/V151+ Flow floor.
+- Supabase migration `canonical_flow_horizon_and_slice_guard_2026_09_08` is applied; exact requested coverage fails loudly instead of selecting a loose cache. No financial fact was changed.
+- Recovery/canonical gates `34274496763` / `34274793717`, smokes `34274496830` / `34274793697`, main smoke/Pages `34275276745` / `34275275447` and post-manifest main smoke/Pages `34276115233` / `34276114848`: SUCCESS.
+- Fixed homologation resolves to `canonical-app.html?homologacao=692535276fe7948c386349254151538c0c9eddf8`, loads `?v=20260908-flow18`, renders the truthful blank login and uses zero iframes.
+- Latest immutable checkpoint: `backups/CANONICAL_APP_V118_FLOW_HISTORY_HORIZON_CHECKPOINT_2026-09-08.md`.
+- Authenticated real mutation/readback/document lifecycles, physical-iPhone E2E and public-root promotion remain open/not claimed.
+
+## Protected predecessor — canonical v1.17 Product Language
 - Exact remote product `e4cea67563ac379d5bf47d02d20846699194a002`, product tree `9037c73840167b1cfe1d36e2b8cc2b6f90d101f7`; fixed-manifest exposure `06fdcbba8f1cbcae6af2ebf153a2291915195f96`, exposure tree `4d3a917076380bfc81d8a0a74842d97eb1fe38f9`; all three release branches share the exposure through normal no-force fast-forward.
 - Contract `user-facing-product-language-v1` removes internal build/release labels from every normal product route while keeping internal diagnostics available to the gates.
 - Fluxo no longer shows a fixed build badge; Patrimônio/Cartões headers show data recency rather than module releases; Central de Gestão shows data-loading state rather than a build identifier.

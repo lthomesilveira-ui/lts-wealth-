@@ -4,6 +4,16 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 
 Canonical persistent project list. Never remove an open financial, documentary, classification, reconciliation or product dependency during compaction. Detailed immutable evidence remains in `backups/`, `HISTORICAL_RECOVERY_LOG.md`, `PLANNING_EXCEL_TO_CURRENT_AUDIT_2026-08-30.md`, `NEXT_HOMOLOGATION_GATE.md` and release checkpoints.
 
+## P0 — V150/V151+ Flow history and horizon / canonical v1.18 — 08/09/2026
+- [x] Corrected 01/01/2026 opening-balance presentation without mixing `Realizado` and projection; real backend evidence proves opening `216994.21`, net `-2120.00`, close `214874.21`.
+- [x] Removed the rejected yellow full-row `Hoje` band while preserving the left expansion control, validated column order and discrete current-day marker.
+- [x] Extended exact future-cache coverage through requested end + D+30 and proved a real 31/12/2029 row; migration `canonical_flow_horizon_and_slice_guard_2026_09_08` is applied.
+- [x] Audited both original workbooks read-only at 31/12/2026 and 31/12/2029. Preserved their exact scenario snapshots as evidence without claiming equality or reviving obsolete future FGTS accrual.
+- [x] Exact product `692535276fe7948c386349254151538c0c9eddf8`; exposure `65cb675b613b70b7a26f97f86938a0b3ac72b584`; all three release branches aligned by normal fast-forward.
+- [x] Recovery/canonical gates and all candidate/Pages runs are SUCCESS; fixed link browser-verified on `?v=20260908-flow18`.
+- [x] Immutable checkpoint `backups/CANONICAL_APP_V118_FLOW_HISTORY_HORIZON_CHECKPOINT_2026-09-08.md`.
+- [ ] Authenticated real mutation/readback, full real-data walkthrough and physical-iPhone E2E remain open/not claimed.
+
 ## P0 — Product language / canonical v1.17 — 08/09/2026
 - [x] Removed fixed build/version badges and technical release labels from all normal canonical routes under `user-facing-product-language-v1`.
 - [x] Preserved internal version diagnostics for gates while changing no financial values, calculations, classifications, documents, writers or route ownership.
@@ -19,11 +29,11 @@ Canonical persistent project list. Never remove an open financial, documentary, 
 - [x] Consolidated recovered Homologação/Execução product, Flow, classification, documentary, financial and operating decisions in `backups/TWO_MONTH_FEEDBACK_RECOVERY_CHECKPOINT_2026-09-08.md`.
 - [x] Protected V150–V152 as the rich Flow floor and V153 as the material visible regression point; later improvements must be additive.
 - [x] Recorded V147 classification-first, V148 save→refresh→`O que mudou`, V149 read-only evidence review and Fix85 precedence/raw-evidence constraints.
-- [ ] Explain/correct the 01/01/2026 zero/negative balance behavior without confusing `Realizado` and projection.
-- [ ] Verify the rejected yellow band reported on 24/08 is absent while retaining the validated `+` position and column order.
+- [x] Explain/correct the 01/01/2026 zero/negative balance behavior without confusing `Realizado` and projection; closed in canonical v1.18.
+- [x] Verify the rejected yellow band reported on 24/08 is absent while retaining the validated `+` position and column order; closed in canonical v1.18.
 - [ ] Investigate the R$0,01 Bradesco discrepancy and 06/08 Cofrinho event from raw/documentary evidence.
 - [ ] Keep the 12/08 Bradesco R$0,17 interval and Cofrinho R$186,10 timing as explicit documentary gaps until proved.
-- [ ] Produce original-versus-app comparisons for 31/12/2026 and 31/12/2029; no recovered result currently validates either date.
+- [x] Produce bounded original-versus-app evidence for 31/12/2026 and 31/12/2029; v1.18 inventories exact workbook scenario rows and proves the app's exact horizon coverage without asserting false numeric parity.
 - [~] Complete the whole-app UX audit after evidence-led correctness gaps, then implement one coherent gated package rather than isolated microchanges.
 
 ## P0 — V151 Planning decision recovery / canonical v1.16 — 08/09/2026

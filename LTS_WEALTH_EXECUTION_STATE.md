@@ -12,18 +12,23 @@ Purpose: compact operational bootstrap so project execution never depends on a l
 7. Before a repository write, freshness-check `main`, active branch, this file, and the SHAs of `PROJECT_MASTER_BACKLOG.md`, `NEXT_HOMOLOGATION_GATE.md`, `LTS_WEALTH_CONTINUITY_HANDOFF.md`, `CANONICAL_DELIVERY_MASTER_PLAN.md` and latest immutable checkpoint. Use line-limited reads; fully re-read only a file whose SHA changed or whose relevant section is needed.
 8. After every material package, gate, integration or newly discovered blocker, update this file so a chat may be abandoned/restarted at any moment without reconstruction work.
 
-## Current execution state — 08/09/2026 16:21 BRT
+## Current execution state — 08/09/2026 17:46 BRT
 - Repo: `lthomesilveira-ui/lts-wealth-`; active recovery branch remains `canonical-v157plus-product-recovery`.
-- Canonical v1.17 exact remote product is `e4cea67563ac379d5bf47d02d20846699194a002`, tree `9037c73840167b1cfe1d36e2b8cc2b6f90d101f7`; fixed-manifest exposure is `06fdcbba8f1cbcae6af2ebf153a2291915195f96`, tree `4d3a917076380bfc81d8a0a74842d97eb1fe38f9`. `main`, `canonical-app-v1` and the active branch share the exposure through normal no-force fast-forward.
-- V1.17 closes user-facing technical-version leakage under contract `user-facing-product-language-v1`: fixed build badges and header release labels are absent from every normal route while internal version data remains available for diagnostics/gates.
-- The permanent gate now rejects any user route that exposes an `LTS`, `CANONICAL` or `WIP35` release label/build badge. No financial value, calculation, classification, documentary rule, writer or route ownership changed.
-- V1.17 preserves v1.16 first-negative/management separation, v1.15 density, v1.14 V149 read-only review, v1.13 classification-first guided intake, v1.12 reviewed input, v1.11 layered liquidity, v1.10 decision truth, v1.9 V150/V151+ Flow parity, v1.8 single-owner Despesas and the protected Supabase baseline.
-- Product recovery gate/smoke `34267339089` / `34267339099`, canonical gate/smoke `34267537086` / `34267537120`, main smoke/Pages `34267717067` / `34267715832`: SUCCESS. Post-exposure active/canonical/main smokes `34267927974` / `34267929858` / `34267932211` and Pages `34267929912`: SUCCESS.
-- Recovery artifact `10072405055`, digest `sha256:200786a5aee8034f91f7b625234a10900cb7e444ca754c1a5f4354177e0537a4`; canonical artifact `10072479667`, digest `sha256:b135f99fbc2b64a029d5c462865d8e4461f93667bc0fdf1b73e0ca29c6dff4a7`; product/exposure Pages artifacts `10072497570` / `10072584498` with digests `sha256:76738dc52c4522e405866f203e4711269b6adf1fd97538c28563f64ec7580048` / `sha256:89d724b71905784ff47dac2fc36fda196c4f9b2e159533e49340da7a654ec478`.
-- Fixed URL resolves to `canonical-app.html?homologacao=e4cea675…#Dashboard`, loads `?v=20260908-ux17`, renders truthful blank signed-out login, uses zero iframes and exposes no fixture badge, technical build label, raw JWT or application error.
-- Latest immutable evidence: `backups/CANONICAL_APP_V117_PRODUCT_LANGUAGE_CHECKPOINT_2026-09-08.md`; recovered two-month decision ledger: `backups/TWO_MONTH_FEEDBACK_RECOVERY_CHECKPOINT_2026-09-08.md`.
+- Canonical v1.18 exact remote product is `692535276fe7948c386349254151538c0c9eddf8`; fixed-manifest exposure is `65cb675b613b70b7a26f97f86938a0b3ac72b584`. `main`, `canonical-app-v1` and the active branch share the exposure through normal no-force fast-forward.
+- V1.18 closes the recovered 01/01/2026 Flow regression, removes the rejected yellow `Hoje` row band and extends exact future coverage through 31/12/2029 plus D+30 under contracts `historical-opening-from-close-and-net-v1`, `today-marker-without-row-band-v1` and `future-through-2029-plus-d30-v1`.
+- Supabase migration `canonical_flow_horizon_and_slice_guard_2026_09_08` is applied: exact cache coverage reaches the requested end plus D+30, loose reselection is gone and failure is explicit. No financial fact was mutated.
+- V1.18 preserves v1.17 product language, v1.16 planning distinction, v1.15 density, v1.14 V149 review, v1.13 hierarchy/intake, v1.12 reviewed input, v1.11 liquidity layers, v1.10 decision truth and the rich V150/V151+ Flow interactions.
+- Recovery gate/smoke `34274496763` / `34274496830`, canonical gate/smoke `34274793717` / `34274793697`, main smoke/Pages `34275276745` / `34275275447`, post-manifest main smoke/Pages `34276115233` / `34276114848`: SUCCESS.
+- Recovery artifact `10075192280`, digest `sha256:950d4f6923d895d0521ebb2389ef7bf0e5267cbf126de7810f429e87522dc587`.
+- Fixed URL resolves to `canonical-app.html?homologacao=692535276fe7948c386349254151538c0c9eddf8`, loads `?v=20260908-flow18`, renders truthful blank signed-out login and uses zero iframes.
+- Latest immutable evidence: `backups/CANONICAL_APP_V118_FLOW_HISTORY_HORIZON_CHECKPOINT_2026-09-08.md`; recovered two-month ledger: `backups/TWO_MONTH_FEEDBACK_RECOVERY_CHECKPOINT_2026-09-08.md`.
 - Authenticated real data/write/document/backup lifecycles, physical-iPhone E2E and public-root promotion remain open/not claimed. No approved standalone Reports visual was recovered, so none may be invented.
 - Public `index.html` remains protected at blob `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`; public-root promotion is not authorized.
+
+## Prior canonical v1.17 state — retained as evidence
+- Exact remote product `e4cea67563ac379d5bf47d02d20846699194a002`; fixed-manifest exposure `06fdcbba8f1cbcae6af2ebf153a2291915195f96`.
+- Contract `user-facing-product-language-v1` removes technical release labels from normal product routes while preserving internal diagnostics.
+- Immutable evidence: `backups/CANONICAL_APP_V117_PRODUCT_LANGUAGE_CHECKPOINT_2026-09-08.md`.
 
 ## Prior canonical v1.16 state — retained as evidence
 - Canonical v1.16 exact remote product is `4028321fed599496d29798e3e2d1c47c48bc54d1`, tree `0776d7e4de0f63eae13ad92f01fc47acc799e148`; fixed-manifest exposure is `d9a63c96e2674f7bf8d615e29643598bd8146537`, tree `0c2dc3c7c38051f8c11008f35651aebf405149f3`.

@@ -2,12 +2,13 @@
 
 Purpose: evidence-backed sequence before asking the user to inspect a material candidate. Keep aligned with `PROJECT_MASTER_BACKLOG.md`, `LTS_WEALTH_CONTINUITY_HANDOFF.md` and immutable checkpoints.
 
-## Current canonical baseline — 08/09/2026 16:21 BRT
+## Current canonical baseline — 08/09/2026 17:46 BRT
 - Public fallback: WIP35-v136 in `index.html`, unchanged; protected blob remains `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
 - Fixed homologation: `https://lthomesilveira-ui.github.io/lts-wealth-/homologacao.html`.
-- Fixed homologation selects **canonical v1.17 product language** through `canonical-app.html`, exact product `e4cea67563ac379d5bf47d02d20846699194a002`, product tree `9037c73840167b1cfe1d36e2b8cc2b6f90d101f7`, exposure `06fdcbba8f1cbcae6af2ebf153a2291915195f96`; public `index.html` is unchanged.
+- Fixed homologation selects **canonical v1.18 Flow history + horizon** through `canonical-app.html`, exact product `692535276fe7948c386349254151538c0c9eddf8`, exposure `65cb675b613b70b7a26f97f86938a0b3ac72b584`; public `index.html` is unchanged.
 - Canonical frontend is a single application; no v150/v151/v156/v160 iframe/wrapper chain is part of the primary product.
-- Current gated modules: `canonical-liquidity-core.js`, `canonical-flow-v157.js`, `canonical-product-v157.js`, `canonical-presentation-v157.js`, `canonical-capabilities-v161.js`, `canonical-reviewed-input-v112.js`, plus the V1.17 product-language guard, V1.16 V151 planning distinction, V1.15 Dashboard density, V1.14 read-only document-review and V1.13 Updates/intake contracts in `canonical-app.html`.
+- Current gated modules: `canonical-liquidity-core.js`, `canonical-flow-v157.js`, `canonical-product-v157.js`, `canonical-presentation-v157.js`, `canonical-capabilities-v161.js`, `canonical-reviewed-input-v112.js`, plus V1.18 history/horizon, V1.17 product language, V1.16 planning distinction, V1.15 density, V1.14 document review and V1.13 Updates/intake contracts.
+- V1.18 recovery/canonical gates `34274496763` / `34274793717`, main smoke/Pages `34275276745` / `34275275447`, post-manifest main smoke/Pages `34276115233` / `34276114848`: SUCCESS. Fixed-link browser verification loads `?v=20260908-flow18` at exact product `692535276…`.
 - Modular recovery gate `34170935882` and permanent canonical gate `34171231918`: **SUCCESS** in Chromium desktop 1312×1199 and WebKit mobile 390×844.
 - Active/canonical/main candidate smokes `34170935887` / `34171231935` / `34171338575` and Pages `34171338335`: **SUCCESS**.
 - Post-manifest active/canonical/main candidate smokes `34171452083` / `34171452913` / `34171453488` and Pages `34171452759`: **SUCCESS**.
