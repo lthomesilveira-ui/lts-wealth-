@@ -1,14 +1,14 @@
 {
   "schema": 1,
   "version": "canonical-v1",
-  "build": "CANONICAL v1.7 · Route Continuity + DoD Receipt",
+  "build": "CANONICAL v1.8 · Unified Expenses Decision Workbench",
   "path": "canonical-app.html",
-  "candidate_head": "e618ef48e22872ce718c7932872e2316e5660f67",
+  "candidate_head": "870acc37f220592c77b488be32315af284b52427",
   "public_fallback": "index.html",
   "promotion_status": "not_promoted",
-  "candidate_sha": "e618ef48e22872ce718c7932872e2316e5660f67",
-  "exposed_from_main_sha": "e618ef48e22872ce718c7932872e2316e5660f67",
-  "exposure_mode": "canonical_single_frontend_v17_route_session_continuity_and_dod_receipt",
-  "gate_status": "v157plus-recovery-34190659782-pass_active-candidate-smoke-34190659780-pass_canonical-gate-34191017877-pass_canonical-candidate-smoke-34191017858-pass_main-candidate-smoke-34191216218-pass_pages-34191215874-pass_route-refresh-deeplink-back-forward_management-pane-restored_definition-of-done-receipt-pass_authenticated-real-e2e-not-claimed_physical-iphone-not-claimed",
-  "updated_at": "2026-09-08T05:37:30Z"
+  "candidate_sha": "870acc37f220592c77b488be32315af284b52427",
+  "exposed_from_main_sha": "870acc37f220592c77b488be32315af284b52427",
+  "exposure_mode": "canonical_single_frontend_v18_unified_expenses_history_nature_context",
+  "gate_status": "active-gate-34199824400-pass_active-candidate-smoke-34199824442-pass_canonical-gate-34200253901-pass_canonical-candidate-smoke-34200253918-pass_expense-single-owner-history-nature-context-month-drilldown_desktop-chromium-mobile-webkit_authenticated-real-e2e-not-claimed_physical-iphone-not-claimed",
+  "updated_at": "2026-09-08T07:40:00Z"
 }
