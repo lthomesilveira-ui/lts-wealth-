@@ -48,7 +48,7 @@ jobs:
           assert 'canonical-capabilities-v161.js' in loader
           assert 'canonical-capabilities-v161.js?v=20260908-continuity7' in loader
           assert 'canonical-flow-v150.js' not in loader
-          for x in ['canonical-dashboard-fidelity.css?v=20260908-expenses8','canonical-liquidity.js?v=20260908-flow-parity9','single-owner-history-nature-context-v1','Quanto você gasta — e para quem é cada gasto.','reference-toolbar-signals-drilldowns-v1','canonical-route-session-continuity-v1','data-dashboard-reload','data-mg-shortcut','Receitas','Relatórios','Configurações']:
+          for x in ['canonical-dashboard-fidelity.css?v=20260908-dashboard-truth10','canonical-liquidity.js?v=20260908-dashboard-truth10','single-owner-history-nature-context-v1','Quanto você gasta — e para quem é cada gasto.','reference-fact-projection-commitments-v2','fact-before-asof-projection-after-asof-v1','product-commitments-plus-card-due','canonical-route-session-continuity-v1','data-dashboard-reload','data-mg-shortcut','Receitas','Relatórios','Configurações']:
               assert x in app, x
           for rpc in ['lts_browser_liquidity_movement_options_v1','lts_browser_preview_liquidity_movement_v1','lts_browser_apply_liquidity_movement_v1']:
               assert rpc in core, rpc

@@ -96,10 +96,10 @@ jobs:
           css=Path('canonical-dashboard-fidelity.css').read_text(encoding='utf-8')
           gate=Path('.github/scripts/lts_canonical_v157plus_browser_gate.js').read_text(encoding='utf-8')
           required_html=[
-            'canonical-dashboard-fidelity.css?v=20260908-expenses8',
-            'canonical-liquidity.js?v=20260908-flow-parity9',
+            'canonical-dashboard-fidelity.css?v=20260908-dashboard-truth10',
+            'canonical-liquidity.js?v=20260908-dashboard-truth10',
             'single-owner-history-nature-context-v1','Quanto você gasta — e para quem é cada gasto.',
-            'reference-toolbar-signals-drilldowns-v1','canonical-route-session-continuity-v1','data-dashboard-reload','data-mg-shortcut',
+            'reference-fact-projection-commitments-v2','fact-before-asof-projection-after-asof-v1','product-commitments-plus-card-due','canonical-route-session-continuity-v1','data-dashboard-reload','data-mg-shortcut',
             'Dashboard','Fluxo Diário','Despesas','Patrimônio','Cartões','Atualizações'
           ]
           required_css=['#dashboard-view .grid-main','#dashboard-view .rank-row.clickable']

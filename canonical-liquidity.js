@@ -1,5 +1,5 @@
 (()=>{'use strict';
-const BUILD='LTS v1.9';
+const BUILD='LTS v1.10';
 const CORE_CONTRACT=['lts_browser_liquidity_movement_options_v1','lts_browser_preview_liquidity_movement_v1','lts_browser_apply_liquidity_movement_v1'];
 const FLOW_CONTRACT=['lts_browser_flow_v8','v150-validated-flow-plus-v157-liquidity-v1','Histórico / período','Movimentos do dia','Dividir / substituir','inline-card-settlement-v150','RSUs futuras','Cash Awards futuros'];
 const PRODUCT_CONTRACT=['Dinheiro em contas','Contas + curto prazo','RSUs vested','FGTS','Despesas (mês)','Quanto você gasta — e para quem é cada gasto.','Quanto você tem, quanto deve e quanto é seu.','Conferência de fatura, não análise de gasto.'];

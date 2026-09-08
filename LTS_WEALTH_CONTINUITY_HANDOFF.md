@@ -1,6 +1,6 @@
 # LTS Wealth — Continuity Handoff
 
-Last materially refreshed: 2026-09-08 08:31 BRT (America/Sao_Paulo)
+Last materially refreshed: 2026-09-08 09:10 BRT (America/Sao_Paulo)
 
 This file exists so project continuity never depends on chat context. Always re-fetch `main`, active branch, `PROJECT_MASTER_BACKLOG.md`, `NEXT_HOMOLOGATION_GATE.md`, this file and the latest immutable checkpoint before every repository write.
 
@@ -24,7 +24,15 @@ This file exists so project continuity never depends on chat context. Always re-
 - Public fallback remains WIP35-v136; protected `index.html` blob remains `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
 - Public promotion remains unauthorized/not done.
 
-## Current primary product — canonical v1.9 Flow parity exposure
+## Current candidate — canonical v1.10 Dashboard Decision Truth
+- Base/recovery truth: all release branches were freshness-verified at v1.9 closure `3858739e73ebdedffbe06766c05fdbc9c59f91d6` before work began; v1.9 product `6aba220…` remains the exposed rollback baseline.
+- New Dashboard contract `reference-fact-projection-commitments-v2` distinguishes the observed position through `as_of` from later projections in both charts; projected path/points are dashed/outlined and carry explicit accessible semantics.
+- `Próximos Compromissos` no longer reads `cockpit.work.top_actions`. Its only sources are card `next_due` and `product.commitments.commitments` rows with explicit `next_due`; missing next dates are omitted rather than inferred from historical start dates.
+- Operational review tasks remain in `Atualizações`. Commitment actions route to `Fluxo Diário`, where the v1.9 V150/V151+ interaction contract remains unchanged.
+- Local permanent Chromium gate is PASS in desktop 1312×1199 and mobile 390×844 after full six-route, Flow, Dashboard, Central de Gestão and auth-truth regression. CI WebKit, remote publication, branch promotion and fixed-manifest exposure remain pending and unclaimed.
+- No user action is required for this release sequence; continue autonomously unless a real financial/provider/consent decision becomes necessary.
+
+## Current exposed primary product — canonical v1.9 Flow parity
 The primary product line is the single canonical frontend `canonical-app.html`. The v154→v160 wrapper lineage is historical evidence only and must not be reintroduced as the product architecture.
 
 Current facts:

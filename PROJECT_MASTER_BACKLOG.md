@@ -4,6 +4,16 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 
 Canonical persistent project list. Never remove an open financial, documentary, classification, reconciliation or product dependency during compaction. Detailed immutable evidence remains in `backups/`, `HISTORICAL_RECOVERY_LOG.md`, `PLANNING_EXCEL_TO_CURRENT_AUDIT_2026-08-30.md`, `NEXT_HOMOLOGATION_GATE.md` and release checkpoints.
 
+## P0 — Dashboard decision truth / canonical v1.10 — 08/09/2026
+- [x] Reconciled the approved Dashboard model with the live backend contracts instead of copying illustrative values from the reference image.
+- [x] Split both liquidity charts into observed position through `as_of` and dashed projection afterward, using horizon date/status/basis and explicit visual/accessible semantics.
+- [x] Removed `work.top_actions` from `Próximos Compromissos`; that panel now consumes only the next card invoice plus rows with an explicit `next_due` from `product.commitments.commitments`.
+- [x] Kept classification, card-review and planning tasks in `Atualizações`, preventing operational work from being presented as a financial obligation.
+- [x] Added physical commitment→Flow navigation and deterministic assertions for two charts, observed/projected point counts, commitment source, task non-leakage and desktop/mobile overflow.
+- [x] Local permanent gate PASS in Chromium 1312×1199 and 390×844; reviewed desktop/mobile evidence preserves the official hierarchy and the V150/V151+ Flow contract.
+- [~] Publish to `canonical-v157plus-product-recovery` and require CI Chromium/WebKit plus candidate smoke before canonical/main promotion and fixed-manifest exposure.
+- [ ] Authenticated real-data Dashboard verification and physical-iPhone evidence remain explicitly open/not claimed.
+
 ## P0 — V150 Flow interaction parity / canonical v1.9 — 08/09/2026
 - [x] Audited release history V150–V160 and located the material regression at V153; V150–V152 retained the richer Flow while V154–V160 solved other visual/data/session concerns without restoring it completely.
 - [x] Ported validated behavior into the single canonical frontend without restoring wrapper architecture: inline card-invoice summary/full detail, semantic movement labels, salary-withholding presentation, transfer direction, Hoje, complete next-five-day view and preserved scroll.

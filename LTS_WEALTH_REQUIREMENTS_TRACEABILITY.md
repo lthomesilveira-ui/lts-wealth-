@@ -1,6 +1,6 @@
 # LTS Wealth — Matriz de Requisitos, Decisões e Validações
 
-Última auditoria material: 08/09/2026 08:31 BRT (America/Sao_Paulo)
+Última auditoria material: 08/09/2026 09:10 BRT (America/Sao_Paulo)
 
 Objetivo: impedir que briefing, decisões, dados, validações ou pendências se percam entre chats, versões ou trocas de arquitetura. Esta matriz complementa `PROJECT_MASTER_BACKLOG.md`; ela não substitui os checkpoints imutáveis nem a evidência financeira.
 
@@ -53,6 +53,8 @@ O Dashboard a entregar não é uma das versões antigas isoladamente. É a combi
 
 Os valores impressos na imagem oficial são ilustrativos. Nenhum valor da referência pode ser copiado para o app sem evidência LTS.
 
+Semântica vinculante: pontos até `as_of` podem ser apresentados como posição observada somente quando o contrato os identifica dessa forma; datas posteriores são projeções e precisam de linguagem/traço visual distinto. `Próximos Compromissos` representa obrigações documentadas — vencimento de cartão e contratos com `next_due` explícito — e nunca tarefas de revisão, classificação ou planejamento.
+
 ### Linhagem dos modelos de Dashboard
 
 | Modelo | Papel preservado | Situação atual |
@@ -68,6 +70,7 @@ Os valores impressos na imagem oficial são ilustrativos. Nenhum valor da refer�
 | Canonical v1.7 Route Continuity + DoD Receipt | Preserva integralmente Pass 6, restaura rota/painel após refresh/sessão/back-forward e produz um recibo único da definição de pronto. | `VERDE_AUTOMATICO`; recibo mantém E2E autenticado, iPhone físico e promoção pública explicitamente abertos. |
 | Canonical v1.8 Unified Expenses | Remove o segundo dono de Despesas e reúne histórico mensal/anual, natureza × contexto, semântica de `Não atribuído`, insights evidenciados e drill-down de mês/item. | `VERDE_AUTOMATICO` em Chromium/WebKit e exposto na homologação fixa; E2E autenticado/iPhone físico continuam abertos. |
 | Canonical v1.9 V150 Flow Parity | Porta as interações validadas V150–V152 para a aplicação única atual, preservando o modelo posterior de liquidez e sem restaurar wrappers. | `VERDE_AUTOMATICO` em Chromium/WebKit; produto `6aba220…` exposto no manifesto fixo por `90aad3a…`, com E2E autenticado/iPhone físico ainda abertos. |
+| Canonical v1.10 Dashboard Decision Truth | Preserva toda a linha v1.9 e torna explícitas as fronteiras observado×projetado e compromisso financeiro×tarefa operacional. | Candidato local `VERDE_AUTOMATICO` em Chromium desktop/mobile; CI WebKit, publicação e exposição ainda pendentes. |
 
 ### Hierarquia desktop obrigatória
 
@@ -106,6 +109,7 @@ Os valores impressos na imagem oficial são ilustrativos. Nenhum valor da refer�
 | DASH-01 | Dashboard visualmente alinhado à referência oficial 1312×1199. | Pass 6 restaura ordem de navegação, competência/as-of, `Hoje`, cinco sinais de evidência, posição bancária e drill-downs; não é pixel-perfect. | Gates `34185954453` e `34186087590`, artefatos desktop/mobile e smokes pós-exposição verdes. | Referência `VALIDADO_USUARIO`; URL fixa verificada deslogada no alvo exato. | `ABERTO_ENGENHARIA`: detalhe pixel-level, gráficos históricos com evidência e E2E real. |
 | DASH-02 | Cinco KPIs liquidity-first com valor real e sem falso zero. | Implementado. | Gate determinístico. | Dados reais completos no iPhone não provados. | E2E autenticado; indisponível deve continuar explícito. |
 | DASH-03 | Planejamento mostra data de ação/gestão separada da primeira insuficiência. | Implementado no read model/UI. | Gate de alias/Planning. | Regra financeira atual documentada. | Revalidar no E2E e manter sem projeção futura de FGTS. |
+| DASH-04 | Gráficos não podem apresentar projeção como fato; compromissos financeiros não podem ser derivados de tarefas operacionais. | V1.10 usa `as_of` + status/basis dos horizontes para série observada/projetada; compromissos vêm de fatura `next_due` + `product.commitments.commitments[].next_due`; tarefas ficam em Atualizações. | Gate local percorre 2 gráficos, pontos/traços, fonte e contagem de compromissos, ausência de vazamento de 3 tarefas e navegação para Flow em desktop/mobile. | Sem alterar valores/regras financeiras e sem inferir `first_date` como próximo vencimento. | CI Chromium/WebKit e E2E autenticado real ainda pendentes. |
 | AUTH-01 | Autenticação e sessão na mesma aplicação; erro visível e seguro. | Implementado; JWT futuro tenta espera/refresh/reset seguro e preserva a rota pretendida até o retorno ao login. | WebKit com sessão persistida futura + gates canônicos v1.7. | Erro real foi reportado em iPhone; correção ainda não retestada no aparelho. | `IMPLEMENTADO_NAO_E2E_REAL`. |
 | NAV-01 | Navegação por intenção e rotas úteis próprias. | Desktop segue onze intenções da referência; mobile preserva seis rotas físicas canônicas. `Receitas` referencia o Flow comprovado. | Regressão física Pass 6 + continuidade v1.7 em Chromium/WebKit. | Modelo por intenção veio do fix85 e da referência oficial. | E2E autenticado físico continua pendente. |
 | NAV-02 | Financiamentos, Planejamento, Receitas/Entradas, Recorrências, Compromissos, Simulações, Conciliação, Relatórios, Documentos e Configurações não podem desaparecer. | As dez capacidades estão visíveis na Central de Gestão dentro de `Atualizações`; desktop também recebe atalhos secundários e mobile mantém seis rotas. | Gates `34185954453` e `34186087590` certificam presença, troca de painéis, responsividade, estado de formulário e ausência de overflow. | Briefing/artefatos antigos exigem essas capacidades; ainda não homologadas com sessão real. | `IMPLEMENTADO_NAO_E2E_REAL`: provar cada leitor/ação aplicável em sessão autenticada. |
@@ -168,8 +172,8 @@ Os valores impressos na imagem oficial são ilustrativos. Nenhum valor da refer�
 
 ### P0 executável agora
 
-1. integrar/expor v1.9 somente após gates Chromium/WebKit, preservando a paridade V150 do Flow e as 14 camadas posteriores;
-2. preservar o baseline Pass 6 e continuar convergência pixel/detail do Dashboard com dados reais ou estado indisponível honesto;
+1. publicar o candidato v1.10 na branch de recuperação e exigir gates Chromium/WebKit antes de promover/expor;
+2. preservar o baseline Pass 6 e a v1.9 V150 Flow parity enquanto fecha a semântica observado×projetado e compromisso×tarefa do Dashboard;
 3. manter Despesas v1.8 regression-protected e melhorar Atualizações sem regressão de densidade ou evidência;
 4. manter rota/sessão e o recibo único regression-protected, fechando novas linhas automáticas quando surgirem requisitos;
 5. manter o novo baseline Supabase regression-protected e revisar leaked-password protection em uma janela controlada de Auth.

@@ -52,11 +52,13 @@ jobs:
           assert 'MutationObserver' not in s
           assert 'setInterval(' not in s
           assert 'canonical-liquidity.js?v=' in s
-          assert 'canonical-dashboard-fidelity.css?v=20260908-expenses8' in s
-          assert 'canonical-liquidity.js?v=20260908-flow-parity9' in s
+          assert 'canonical-dashboard-fidelity.css?v=20260908-dashboard-truth10' in s
+          assert 'canonical-liquidity.js?v=20260908-dashboard-truth10' in s
           assert 'single-owner-history-nature-context-v1' in s
           assert 'Quanto você gasta — e para quem é cada gasto.' in s
-          assert 'reference-toolbar-signals-drilldowns-v1' in s
+          assert 'reference-fact-projection-commitments-v2' in s
+          assert 'fact-before-asof-projection-after-asof-v1' in s
+          assert 'product-commitments-plus-card-due' in s
           assert 'canonical-route-session-continuity-v1' in s
           assert 'data-dashboard-reload' in s
           for module in ['canonical-liquidity-core.js','canonical-flow-v157.js','canonical-product-v157.js','canonical-presentation-v157.js','canonical-capabilities-v161.js?v=20260908-continuity7']:

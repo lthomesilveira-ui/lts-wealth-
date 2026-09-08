@@ -2,7 +2,7 @@
 
 Purpose: evidence-backed sequence before asking the user to inspect a material candidate. Keep aligned with `PROJECT_MASTER_BACKLOG.md`, `LTS_WEALTH_CONTINUITY_HANDOFF.md` and immutable checkpoints.
 
-## Current canonical baseline — 08/09/2026 08:31 BRT
+## Current canonical baseline — 08/09/2026 09:10 BRT
 - Public fallback: WIP35-v136 in `index.html`, unchanged; protected blob remains `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
 - Fixed homologation: `https://lthomesilveira-ui.github.io/lts-wealth-/homologacao.html`.
 - Fixed homologation selects **CANONICAL v1.9 · V150 Flow Interaction Parity** through `canonical-app.html`, exact product package `6aba220653a9053cf304ab11bf931db38ccc1b75`, exposure `90aad3a754e69708fcc9e03a5bb32835281e2925`; public `index.html` is unchanged.
@@ -31,6 +31,15 @@ Purpose: evidence-backed sequence before asking the user to inspect a material c
 - Durable briefing/decision map: `LTS_WEALTH_REQUIREMENTS_TRACEABILITY.md`.
 - `promotion_status:not_promoted`; public root promotion is NOT AUTHORIZED / NOT DONE.
 - Authenticated physical-iPhone visual/data E2E: PENDING / NOT CLAIMED.
+
+## Canonical v1.10 Dashboard Decision Truth — current release candidate
+- Exact base is v1.9 closure `3858739e73ebdedffbe06766c05fdbc9c59f91d6`; no public-root change and no wrapper reintroduction.
+- Dashboard contract is `reference-fact-projection-commitments-v2`: both liquidity charts render observed position through `as_of` separately from a dashed later projection, with explicit legend, accessible label and horizon labels.
+- `Próximos Compromissos` consumes only the next card invoice plus `product.commitments.commitments` rows carrying an explicit `next_due`. `work.top_actions` stays in `Atualizações` and cannot leak into the commitment panel.
+- Commitment rows and “Ver todos” physically navigate to `Fluxo Diário`; the gate returns to Dashboard and rechecks route ownership/readiness.
+- Local permanent Chromium gate is PASS at 1312×1199 and 390×844, including the unchanged V150 Flow parity suite, all six routes, dashboard reload/drill-downs, mobile overflow and truthful unauthenticated state.
+- Release gate still required before exposure: recovery product gate + candidate smoke in CI Chromium/WebKit; only then canonical/main fast-forward promotion, Pages, exact-manifest exposure and fixed-URL verification.
+- Authenticated real-data/write and physical-iPhone evidence remain OPEN / NOT CLAIMED.
 
 ## Canonical v1.9 Flow-parity baseline — selected for fixed exposure
 - Release audit proves V150–V152 retained the rich Flow and V153 was the material simplification point; V154–V160 remain valuable evidence for later visual/data/session improvements.

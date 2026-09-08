@@ -44,14 +44,14 @@ function finalizeReceipt() {
   receipt.claim_boundary.deterministic_fixture = 'PASS';
   receipt.requirements = {
     architecture: { status: 'PASS', evidence: 'single canonical frontend; zero iframes' },
-    dashboard: { status: 'PASS_AUTOMATED', evidence: 'approved hierarchy and liquidity-first contract on desktop/mobile' },
+    dashboard: { status: 'PASS_AUTOMATED', evidence: 'approved hierarchy, liquidity-first contract, fact/projection chart semantics and documentary commitments on desktop/mobile' },
     flow: { status: 'PASS_AUTOMATED', evidence: 'V150 interaction parity plus V157 liquidity layers: four account views, five-day horizon, semantic movements, inline invoice, append-only split and preserved scroll' },
     expenses: { status: 'PASS_AUTOMATED', evidence: 'single-owner month/year history, nature x context, unassigned semantics and item drilldown' },
     cards: { status: 'PASS_AUTOMATED', evidence: 'current/next invoice and certified historical coverage' },
     wealth: { status: 'PASS_AUTOMATED', evidence: 'RSU, CIPÓ, Volvo and debt/asset separation' },
     updates: { status: 'PASS_AUTOMATED', evidence: 'priority queue, server-search surface, classification and documents' },
     recurrences: { status: 'PASS_AUTOMATED', evidence: 'historical evidence never auto-creates facts' },
-    commitments: { status: 'PASS_AUTOMATED', evidence: 'Dashboard and Flow-linked commitments' },
+    commitments: { status: 'PASS_AUTOMATED', evidence: 'documented product commitments plus card due date; review tasks remain in Updates' },
     simulations: { status: 'PASS_AUTOMATED_READ_ONLY', evidence: 'scenario calculation without fact mutation' },
     reconciliation: { status: 'PASS_AUTOMATED', evidence: 'R$ 0.00 acceptance rule and explicit review boundary' },
     reports: { status: 'PASS_AUTOMATED', evidence: 'executive JSON and recurrence CSV controls' },
@@ -299,11 +299,36 @@ async function assertManagementContract(page, label) {
 async function assertDashboardContract(page, label, mobile) {
   const contract = await page.locator('#dashboard-view').getAttribute('data-dashboard-contract');
   const status = await page.evaluate(() => window.__LTS_CANONICAL_DASHBOARD_STATUS);
-  if (contract !== 'reference-toolbar-signals-drilldowns-v1'
+  if (contract !== 'reference-fact-projection-commitments-v2'
       || status?.ready !== true
       || status?.contract !== contract
-      || status?.reference !== 'approved-1312x1199-liquidity-first') {
+      || status?.reference !== 'approved-1312x1199-liquidity-first'
+      || status?.projection_contract !== 'fact-before-asof-projection-after-asof-v1'
+      || status?.commitment_source !== 'product-commitments-plus-card-due'
+      || status?.observed_points !== 1
+      || status?.projected_points !== 5
+      || status?.commitment_rows !== 3
+      || status?.update_rows !== 3) {
     throw new Error(`${label}: Dashboard fidelity status ${JSON.stringify({ contract, status })}`);
+  }
+
+  const charts = page.locator('#dashboard-view [data-liquidity-chart="fact-projection-v1"]');
+  if (await charts.count() !== 2) throw new Error(`${label}: fact/projection charts missing`);
+  for (const chart of await charts.all()) {
+    if (await chart.getAttribute('data-observed-points') !== '1'
+        || await chart.getAttribute('data-projected-points') !== '5'
+        || await chart.locator('.series.projected').count() !== 1
+        || await chart.locator('.point.observed').count() !== 1
+        || await chart.locator('.point.projected').count() !== 5) {
+      throw new Error(`${label}: fact/projection visual semantics missing`);
+    }
+  }
+  const commitmentText = await page.locator('#dashboard-view .commit-list').innerText();
+  for (const expected of ['Próxima fatura', 'Parcela contratual', 'Compromisso documentado']) {
+    if (!containsText(commitmentText, expected)) throw new Error(`${label}: documentary commitment missing ${expected}`);
+  }
+  for (const reviewTask of ['Revisar 5 lançamentos sem categoria', 'Confirmar despesas de cartão', 'Revisar planejamento 2027']) {
+    if (containsText(commitmentText, reviewTask)) throw new Error(`${label}: review task leaked into commitments: ${reviewTask}`);
   }
 
   if (await page.locator('#dashboard-view [data-dashboard-reload]').count() !== 1) {
@@ -343,8 +368,26 @@ async function assertDashboardContract(page, label, mobile) {
   await page.locator('#dashboard-view [data-dashboard-reload]').click();
   await page.waitForFunction(expected => (
     window.__LTS_CANONICAL_DASHBOARD_STATUS?.reload_count === expected
-      && document.querySelector('#dashboard-view')?.dataset.dashboardContract === 'reference-toolbar-signals-drilldowns-v1'
+      && document.querySelector('#dashboard-view')?.dataset.dashboardContract === 'reference-fact-projection-commitments-v2'
   ), beforeReload + 1);
+  await waitProduct(page, 'Dashboard');
+
+  const commitmentCard = page.locator('#dashboard-view .panel').filter({ hasText: 'Próximos Compromissos' });
+  const commitmentAction = commitmentCard.locator('.panel-title [data-route="Fluxo Diário"]');
+  if (await commitmentAction.count() !== 1) throw new Error(`${label}: commitment Flow action missing`);
+  await commitmentAction.click();
+  await page.waitForTimeout(350);
+  const commitmentRoute = await page.evaluate(() => ({
+    hash: decodeURIComponent(location.hash.slice(1)),
+    title: document.querySelector('.page-title h1')?.textContent?.trim(),
+    route: window.__LTS_CANONICAL_ROUTE_STATUS?.current,
+    product: window.__LTS_CANONICAL_PRODUCT_V157_STATUS?.route
+  }));
+  if (commitmentRoute.hash !== 'Fluxo Diário' || commitmentRoute.title !== 'Fluxo Diário') {
+    throw new Error(`${label}: commitment Flow action failed ${JSON.stringify(commitmentRoute)}`);
+  }
+  await page.waitForFunction(() => window.__LTS_CANONICAL_FLOW_V157_STATUS?.ready === true);
+  await openRoute(page, 'Dashboard', mobile);
   await waitProduct(page, 'Dashboard');
 
   await page.locator('#dashboard-view [data-mg-shortcut="planning"]').click();
