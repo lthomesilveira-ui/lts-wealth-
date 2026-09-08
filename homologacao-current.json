@@ -1,14 +1,14 @@
 {
   "schema": 1,
   "version": "canonical-v1",
-  "build": "CANONICAL v1.17 · Linguagem de produto unificada",
+  "build": "CANONICAL v1.18 · Fluxo histórico e horizonte restaurados",
   "path": "canonical-app.html",
-  "candidate_head": "e4cea67563ac379d5bf47d02d20846699194a002",
+  "candidate_head": "692535276fe7948c386349254151538c0c9eddf8",
   "public_fallback": "index.html",
   "promotion_status": "not_promoted",
-  "candidate_sha": "e4cea67563ac379d5bf47d02d20846699194a002",
-  "exposed_from_main_sha": "e4cea67563ac379d5bf47d02d20846699194a002",
-  "exposure_mode": "canonical_single_frontend_v117_user_facing_product_language_plus_v116_v151_first_negative_management_separation_plus_v115_approved_1312x1199_dashboard_density_plus_v114_document_interpretation_review_readonly_plus_v113_classification_first_guided_document_intake_plus_v112_reviewed_input_plus_v111_layered_liquidity_plus_v110_decision_truth_plus_v19_flow_parity",
-  "gate_status": "active-gate-34267339089-pass_active-candidate-smoke-34267339099-pass_canonical-gate-34267537086-pass_canonical-candidate-smoke-34267537120-pass_main-candidate-smoke-34267717067-pass_pages-34267715832-pass_no-internal-release-labels_dashboard-approved-1312x1199-single-screen_flow-v150-parity_authenticated-real-not-claimed_physical-iphone-not-claimed",
-  "updated_at": "2026-09-08T19:14:05Z"
+  "candidate_sha": "692535276fe7948c386349254151538c0c9eddf8",
+  "exposed_from_main_sha": "692535276fe7948c386349254151538c0c9eddf8",
+  "exposure_mode": "canonical_single_frontend_v118_flow_history_horizon_plus_v117_user_facing_product_language_plus_v116_v151_first_negative_management_separation_plus_v115_approved_1312x1199_dashboard_density_plus_v114_document_interpretation_review_readonly_plus_v113_classification_first_guided_document_intake_plus_v112_reviewed_input_plus_v111_layered_liquidity_plus_v110_decision_truth_plus_v19_flow_parity",
+  "gate_status": "active-gate-34274496763-pass_active-candidate-smoke-34274496830-pass_canonical-gate-34274793717-pass_canonical-candidate-smoke-34274793697-pass_main-candidate-smoke-34275276745-pass_pages-34275275447-pass_flow-01012026-history_flow-31122029-horizon_d30-covered_no-yellow-today-band_authenticated-real-writes-not-claimed_physical-iphone-not-claimed",
+  "updated_at": "2026-09-08T20:35:51Z"
 }
