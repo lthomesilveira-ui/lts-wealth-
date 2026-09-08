@@ -11,6 +11,8 @@ on:
       - canonical-flow-v157.js
       - canonical-product-v157.js
       - canonical-presentation-v157.js
+      - canonical-capabilities-v161.js
+      - .github/scripts/lts_canonical_v157plus_browser_gate.js
       - .github/workflows/canonical-v157plus-product-recovery.yml
   workflow_dispatch:
 
@@ -36,11 +38,13 @@ jobs:
           flow=Path('canonical-flow-v157.js').read_text()
           product=Path('canonical-product-v157.js').read_text()
           presentation=Path('canonical-presentation-v157.js').read_text()
+          capabilities=Path('canonical-capabilities-v161.js').read_text()
           assert '<iframe' not in app
           assert 'document.write' not in app
           assert 'canonical-product-v157.js' in loader
           assert 'canonical-flow-v157.js' in loader
           assert 'canonical-presentation-v157.js' in loader
+          assert 'canonical-capabilities-v161.js' in loader
           assert 'canonical-flow-v150.js' not in loader
           for rpc in ['lts_browser_liquidity_movement_options_v1','lts_browser_preview_liquidity_movement_v1','lts_browser_apply_liquidity_movement_v1']:
               assert rpc in core, rpc
@@ -50,7 +54,9 @@ jobs:
               assert x in product, x
           for x in ['presentation-polish-v1','__LTS_V157_PRESENTATION_STATUS','__LTS_V157_POLISH_STATUS']:
               assert x in presentation, x
-          for s in [loader,core,flow,product,presentation]:
+          for x in ['__LTS_CANONICAL_CAPABILITIES_STATUS','Planejamento','Entradas & compromissos','Recorrências','Simulações','Conciliação','Relatórios','Backup & restauração','Configurações & integrações','Financiamentos','Documentos']:
+              assert x in capabilities, x
+          for s in [loader,core,flow,product,presentation,capabilities]:
               assert 'MutationObserver' not in s
               assert 'setInterval(' not in s
           print('static V157+ product contract ok')
@@ -60,93 +66,15 @@ jobs:
           node --check canonical-flow-v157.js
           node --check canonical-product-v157.js
           node --check canonical-presentation-v157.js
+          node --check canonical-capabilities-v161.js
+          node --check .github/scripts/lts_canonical_v157plus_browser_gate.js
       - name: Install Playwright
         run: |
           npm init -y >/dev/null 2>&1
           npm install --silent playwright@1.55.0
           npx playwright install --with-deps chromium webkit
       - name: Browser product contract
-        run: |
-          cat > .v157-product-test.cjs <<'JS'
-          const {chromium,webkit}=require('playwright');
-          const {spawn}=require('child_process');
-          const server=spawn('python3',['-m','http.server','4173','--bind','127.0.0.1'],{stdio:'inherit'});
-          const sleep=ms=>new Promise(r=>setTimeout(r,ms));
-          function rb(page,name,mobile){return mobile?page.locator('.mobile-nav [data-route="'+name+'"]'):page.locator('.sidebar [data-route="'+name+'"]')}
-          async function route(page,name,mobile){await rb(page,name,mobile).click();await page.waitForTimeout(250)}
-          async function waitProduct(page,r){await page.waitForFunction(route=>window.__LTS_CANONICAL_PRODUCT_V157_STATUS?.ready===true&&window.__LTS_CANONICAL_PRODUCT_V157_STATUS?.route===route,r)}
-          async function run(type,label,viewport){
-            const mobile=viewport.width<=820;
-            const browser=await type.launch({headless:true});
-            const page=await browser.newPage({viewport});
-            const errors=[];page.on('pageerror',e=>errors.push(String(e)));
-            await page.goto('http://127.0.0.1:4173/canonical-app.html?fixture=1',{waitUntil:'networkidle'});
-            await page.waitForFunction(()=>window.__LTS_CANONICAL_STATUS?.ready===true);
-            await page.waitForFunction(()=>window.__LTS_CANONICAL_RECOVERY_STATUS?.product_loaded===true&&window.__LTS_CANONICAL_RECOVERY_STATUS?.flow_loaded===true&&window.__LTS_CANONICAL_RECOVERY_STATUS?.presentation_loaded===true);
-            await page.waitForFunction(()=>window.__LTS_V157_PRESENTATION_STATUS?.ready===true);
-            await waitProduct(page,'Dashboard');
-            const labels=await page.locator('#dashboard-view .kpi label').allTextContents();
-            const expected=['Dinheiro em contas','Contas + curto prazo','RSUs vested','FGTS','Despesas (mês)'];
-            if(JSON.stringify(labels)!==JSON.stringify(expected))throw new Error(label+': dashboard KPI contract '+JSON.stringify(labels));
-            if(await page.locator('iframe').count())throw new Error(label+': iframe');
-            if(!(await page.locator('body').innerText()).includes('Evolução da Liquidez'))throw new Error(label+': liquidity hierarchy');
-            await page.screenshot({path:'v157-dashboard-'+label+'.png',fullPage:true});
-
-            await route(page,'Fluxo Diário',mobile);
-            await page.waitForFunction(()=>window.__LTS_CANONICAL_FLOW_V157_STATUS?.ready===true);
-            if(!(await page.locator('.fv-build').textContent()).includes('LTS v1.3'))throw new Error(label+': build marker');
-            if(await page.locator('[data-account]').count()!==4)throw new Error(label+': bank tabs');
-            if(await page.locator('[data-preset]').count()!==10)throw new Error(label+': period presets');
-            if(!mobile&&await page.locator('.fv-table th').count()!==14)throw new Error(label+': flow columns');
-            const bodyText=(await page.locator('.fv').innerText()).toLowerCase();
-            for(const forbidden of ['baseline funcional','fix86','legacy'])if(bodyText.includes(forbidden))throw new Error(label+': technical text '+forbidden);
-            for(const required of ['histórico / período','rsus futuras','cash awards futuros'])if(!bodyText.includes(required))throw new Error(label+': missing '+required);
-            await page.locator('[data-expand]').first().click();
-            if(!(await page.locator('.fv-detail').innerText()).includes('Movimentos do dia'))throw new Error(label+': movement drill label');
-            await page.screenshot({path:'v157-flow-'+label+'.png',fullPage:true});
-
-            await route(page,'Despesas',mobile);await waitProduct(page,'Despesas');
-            let t=await page.locator('.pv').innerText();
-            for(const x of ['Quanto você gastou — e como isso evoluiu.','Mês a mês','Ano a ano','Cobertura do histórico'])if(!t.includes(x))throw new Error(label+': expense '+x);
-            await page.screenshot({path:'v157-expenses-'+label+'.png',fullPage:true});
-
-            await route(page,'Patrimônio',mobile);await waitProduct(page,'Patrimônio');
-            t=await page.locator('.pv').innerText();
-            for(const x of ['Quanto você tem, quanto deve e quanto é seu.','RSUs vested','RSUs futuras','Cash Awards futuros','CIPÓ 396','Volvo'])if(!t.includes(x))throw new Error(label+': wealth '+x);
-            await page.screenshot({path:'v157-wealth-'+label+'.png',fullPage:true});
-
-            await route(page,'Cartões',mobile);await waitProduct(page,'Cartões');
-            t=await page.locator('.pv').innerText();
-            for(const x of ['Conferência de fatura, não análise de gasto.','Cobertura histórica','Histórico por cartão / ano'])if(!t.includes(x))throw new Error(label+': cards '+x);
-            await page.screenshot({path:'v157-cards-'+label+'.png',fullPage:true});
-
-            await route(page,'Atualizações',mobile);await page.waitForTimeout(350);
-            const title=(await page.locator('.page-title h1').textContent())?.trim();if(title!=='Atualizações')throw new Error(label+': updates route '+title);
-            await route(page,'Dashboard',mobile);await waitProduct(page,'Dashboard');
-            const metrics=await page.evaluate(()=>({sw:document.documentElement.scrollWidth,cw:document.documentElement.clientWidth,iframes:document.querySelectorAll('iframe').length}));
-            if(metrics.sw>metrics.cw+1)throw new Error(label+': overflow '+JSON.stringify(metrics));
-            if(metrics.iframes)throw new Error(label+': iframe after navigation');
-            if(errors.length)throw new Error(label+': page errors '+errors.join(' | '));
-            await page.goto('http://127.0.0.1:4173/canonical-app.html',{waitUntil:'domcontentloaded'});await page.waitForTimeout(800);
-            if(await page.locator('#loginForm').count()!==1)throw new Error(label+': real login missing');
-            if(await page.locator('#dashboard-view .kpi').count())throw new Error(label+': fake financial UI unauthenticated');
-            await browser.close();
-          }
-          async function jwtClockRecovery(){
-            const browser=await webkit.launch({headless:true});const page=await browser.newPage({viewport:{width:390,height:844}});
-            try{
-              await page.route('https://tadhkamnwtsbdozwkyut.supabase.co/rest/v1/rpc/**',route=>route.fulfill({status:401,contentType:'application/json',headers:{'access-control-allow-origin':'*'},body:JSON.stringify({message:'JWT issued at future'})}));
-              await page.addInitScript(()=>localStorage.setItem('lts_supabase_session_v1',JSON.stringify({access_token:'future-token',expires_at:Math.floor(Date.now()/1000)+3600,user:{id:'fixture-session-recovery'}})));
-              await page.goto('http://127.0.0.1:4173/canonical-app.html',{waitUntil:'domcontentloaded'});await page.waitForSelector('#loginForm',{timeout:12000});
-              const r=await page.evaluate(()=>({stored:localStorage.getItem('lts_supabase_session_v1'),status:window.__LTS_CANONICAL_SESSION_STATUS,body:document.body.innerText}));
-              if(r.stored!==null||r.status?.reset!==true||r.status?.reason!=='jwt-clock')throw new Error('JWT recovery did not reset the invalid session '+JSON.stringify(r.status));
-              if(!r.body.includes('Sua sessão foi renovada por segurança. Entre novamente.')||r.body.includes('JWT issued at future'))throw new Error('JWT recovery user message');
-            }finally{await browser.close()}
-          }
-          (async()=>{try{await sleep(700);await run(chromium,'desktop',{width:1312,height:1199});await run(webkit,'mobile',{width:390,height:844});await jwtClockRecovery();console.log('V157+ product browser gate ok')}finally{server.kill('SIGTERM')}})().catch(e=>{console.error(e);process.exit(1)});
-          JS
-          node .v157-product-test.cjs
-          rm -f .v157-product-test.cjs
+        run: node .github/scripts/lts_canonical_v157plus_browser_gate.js
       - name: Upload V157+ recovery evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -161,4 +89,5 @@ jobs:
             canonical-flow-v157.js
             canonical-product-v157.js
             canonical-presentation-v157.js
-            v157-*.png
+            canonical-capabilities-v161.js
+            canonical-*.png
