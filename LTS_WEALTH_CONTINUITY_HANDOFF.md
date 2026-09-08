@@ -1,6 +1,6 @@
 # LTS Wealth — Continuity Handoff
 
-Last materially refreshed: 2026-09-08 04:42 BRT (America/Sao_Paulo)
+Last materially refreshed: 2026-09-08 08:22 BRT (America/Sao_Paulo)
 
 This file exists so project continuity never depends on chat context. Always re-fetch `main`, active branch, `PROJECT_MASTER_BACKLOG.md`, `NEXT_HOMOLOGATION_GATE.md`, this file and the latest immutable checkpoint before every repository write.
 
@@ -24,14 +24,14 @@ This file exists so project continuity never depends on chat context. Always re-
 - Public fallback remains WIP35-v136; protected `index.html` blob remains `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
 - Public promotion remains unauthorized/not done.
 
-## Current primary product — canonical v1.8 exposed / canonical v1.9 Flow candidate
+## Current primary product — canonical v1.9 Flow parity exposure
 The primary product line is the single canonical frontend `canonical-app.html`. The v154→v160 wrapper lineage is historical evidence only and must not be reintroduced as the product architecture.
 
 Current facts:
 - single frontend; no release iframe/wrapper chain;
 - direct Supabase authentication/RPC integration;
 - same app owns Dashboard, Fluxo Diário, Despesas, Patrimônio, Cartões and Atualizações;
-- V157+ modular baseline, v1.7 route/session receipt, v1.6 capability recovery, Dashboard Fidelity Pass 6, iPhone future-JWT recovery and the bounded Supabase security baseline remain preserved; current product package is `870acc37f220592c77b488be32315af284b52427`, exposure `352a4fe9716bff063a67dae2e01a0f484d6ac80e`;
+- V157+ modular baseline, v1.8 unified expenses, v1.7 route/session receipt, v1.6 capability recovery, Dashboard Fidelity Pass 6, iPhone future-JWT recovery and the bounded Supabase security baseline remain preserved; current product package is `6aba220653a9053cf304ab11bf931db38ccc1b75`;
 - Despesas is owned only by `canonical-app`: month/year history, nature × context, evidence-led insights, explicit `Não atribuído` semantics and item/month drilldown are one responsive surface; product module ownership is Patrimônio/Cartões only;
 - current changed blobs: `canonical-app.html` `92507f55f4de291c17e49a5b430bedcb33018506`, `canonical-liquidity.js` `8a8caba73c0f6a08710328c19e38bec6c6aab7e9`, `canonical-capabilities-v161.js` `da479e1c5215b593b7bb43d2df5d64dc939e19e2`, permanent gate `f48fc1520f1e50d7071f21be6648a2293fc21e6f`, recovery workflow `9a558c4574eb6439b1eeca0f34400fec2012cdd5`;
 - modular recovery gate `34170935882` and permanent canonical gate `34171231918`: SUCCESS in Chromium desktop 1312×1199 and WebKit mobile 390×844;
@@ -40,16 +40,18 @@ Current facts:
 - post-exposure active/canonical/main smokes `34186663110` / `34186664337` / `34186664887` and Pages `34186664347`: SUCCESS;
 - route/receipt recovery/candidate `34190659782` / `34190659780`, canonical gate/candidate `34191017877` / `34191017858`, main candidate/Pages `34191216218` / `34191215874`: SUCCESS;
 - post-v1.7-exposure active/canonical/main smokes `34191461669` / `34191462282` / `34191463017` and Pages `34191462402`: SUCCESS;
-- fixed homologation exposes canonical v1.8 through `canonical-app.html` / `promotion_status:not_promoted`, verified with expenses-v8 assets, unified expense contract and no iframe;
+- this release advances fixed homologation to canonical v1.9 through `canonical-app.html` / `promotion_status:not_promoted`; public `index.html` remains protected;
 - unified-expenses gates are green: active `34199824400`, canonical `34200253901`, main candidate/Pages `34200706521` / `34200704967`;
-- latest immutable checkpoint: `backups/CANONICAL_APP_V18_UNIFIED_EXPENSES_CHECKPOINT_2026-09-08.md`;
+- canonical v1.9 recovery/candidate `34219446266` / `34219446256`, canonical gate/candidate `34219669569` / `34219669492`, main candidate/Pages `34219911180` / `34219909612`: SUCCESS;
+- live product-SHA verification loaded `canonical-liquidity.js?v=20260908-flow-parity9` and truthful login with no unauthenticated fixture values;
+- latest immutable checkpoint: `backups/CANONICAL_APP_V19_V150_FLOW_PARITY_CHECKPOINT_2026-09-08.md`;
 - authenticated physical-iPhone financial/data E2E remains pending/not claimed.
 
-## Canonical v1.9 Flow interaction recovery — candidate under gate
+## Canonical v1.9 Flow interaction recovery — green and selected for fixed homologation
 - Git-history audit recovered the exact V150–V160 lineage: V150–V152 kept inline invoice detail, rich semantic movements, projection split and interaction continuity; V153 simplified the visible Flow; V154–V160 focused on visual/data/session recovery without fully restoring those behaviors.
 - `canonical-flow-v157.js` now carries contract `v150-validated-flow-plus-v157-liquidity-v1`, preserving `lts_browser_flow_v8`, four account views, ten periods and 14 consolidated liquidity/economic layers.
 - Restored canonical interactions: dedicated Hoje, five complete future days, expansion scroll preservation, inline reconciled invoice summary/full detail, semantic transfer/net-salary labels and append-only edit/duplicate/split/cancel with live split sum.
-- Permanent gate now covers these interactions and Flow-specific mobile overflow. Local Chromium desktop/mobile is PASS; WebKit CI, fixed homologation exposure, authenticated real mutations/invoices and physical iPhone are not pre-claimed.
+- Permanent gate covers these interactions and Flow-specific mobile overflow. Local Chromium desktop/mobile and CI Chromium/WebKit are PASS; fixed-manifest exposure is in this release package. Authenticated real mutations/invoices and physical iPhone remain explicitly open/not claimed.
 
 ## Canonical v1.7 — route/session continuity and one readiness receipt
 - `canonical-route-session-continuity-v1` resolves the intended route before the first RPC/render and stores only allowlisted navigation state in `sessionStorage`.

@@ -1,14 +1,14 @@
 {
   "schema": 1,
   "version": "canonical-v1",
-  "build": "CANONICAL v1.8 · Unified Expenses Decision Workbench",
+  "build": "CANONICAL v1.9 · V150 Flow Interaction Parity",
   "path": "canonical-app.html",
-  "candidate_head": "870acc37f220592c77b488be32315af284b52427",
+  "candidate_head": "6aba220653a9053cf304ab11bf931db38ccc1b75",
   "public_fallback": "index.html",
   "promotion_status": "not_promoted",
-  "candidate_sha": "870acc37f220592c77b488be32315af284b52427",
-  "exposed_from_main_sha": "870acc37f220592c77b488be32315af284b52427",
-  "exposure_mode": "canonical_single_frontend_v18_unified_expenses_history_nature_context",
-  "gate_status": "active-gate-34199824400-pass_active-candidate-smoke-34199824442-pass_canonical-gate-34200253901-pass_canonical-candidate-smoke-34200253918-pass_expense-single-owner-history-nature-context-month-drilldown_desktop-chromium-mobile-webkit_authenticated-real-e2e-not-claimed_physical-iphone-not-claimed",
-  "updated_at": "2026-09-08T07:40:00Z"
+  "candidate_sha": "6aba220653a9053cf304ab11bf931db38ccc1b75",
+  "exposed_from_main_sha": "6aba220653a9053cf304ab11bf931db38ccc1b75",
+  "exposure_mode": "canonical_single_frontend_v19_v150_flow_parity_plus_v157_liquidity",
+  "gate_status": "active-gate-34219446266-pass_active-candidate-smoke-34219446256-pass_canonical-gate-34219669569-pass_canonical-candidate-smoke-34219669492-pass_main-candidate-smoke-34219911180-pass_pages-34219909612-pass_flow-v150-parity_desktop-chromium-mobile-webkit_authenticated-real-e2e-not-claimed_physical-iphone-not-claimed",
+  "updated_at": "2026-09-08T11:22:00Z"
 }

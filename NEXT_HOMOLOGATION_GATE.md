@@ -2,10 +2,10 @@
 
 Purpose: evidence-backed sequence before asking the user to inspect a material candidate. Keep aligned with `PROJECT_MASTER_BACKLOG.md`, `LTS_WEALTH_CONTINUITY_HANDOFF.md` and immutable checkpoints.
 
-## Current canonical baseline — 08/09/2026 04:42 BRT
+## Current canonical baseline — 08/09/2026 08:22 BRT
 - Public fallback: WIP35-v136 in `index.html`, unchanged; protected blob remains `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
 - Fixed homologation: `https://lthomesilveira-ui.github.io/lts-wealth-/homologacao.html`.
-- Fixed homologation manifest selects **CANONICAL v1.8 · Unified Expenses Decision Workbench** through `canonical-app.html`, exact product package `870acc37f220592c77b488be32315af284b52427`, exposure `352a4fe9716bff063a67dae2e01a0f484d6ac80e`.
+- This release selects **CANONICAL v1.9 · V150 Flow Interaction Parity** through `canonical-app.html`, exact product package `6aba220653a9053cf304ab11bf931db38ccc1b75`; public `index.html` is unchanged.
 - Canonical frontend is a single application; no v150/v151/v156/v160 iframe/wrapper chain is part of the primary product.
 - Current gated modules: `canonical-liquidity-core.js`, `canonical-flow-v157.js`, `canonical-product-v157.js`, `canonical-presentation-v157.js`, `canonical-capabilities-v161.js`.
 - Modular recovery gate `34170935882` and permanent canonical gate `34171231918`: **SUCCESS** in Chromium desktop 1312×1199 and WebKit mobile 390×844.
@@ -23,17 +23,20 @@ Purpose: evidence-backed sequence before asking the user to inspect a material c
 - Unified-expenses active gate/candidate `34199824400` / `34199824442`, canonical gate/candidate `34200253901` / `34200253918`, post-manifest active/canonical smokes `34200631320` / `34200627680`, main candidate/Pages `34200706521` / `34200704967`: SUCCESS.
 - The expense gate now proves one visible owner plus month/year history, nature × context, `Não atribuído` meaning and item/month drilldown in Chromium/WebKit.
 - Browser verification of the fixed URL resolved to `canonical-app.html?homologacao=e618ef48e22872ce718c7932872e2316e5660f67#Dashboard` and rendered `canonical-liquidity.js?v=20260908-continuity7`, truthful login, zero unauthenticated KPI cards and no iframe.
-- Current immutable evidence: `backups/CANONICAL_APP_V18_UNIFIED_EXPENSES_CHECKPOINT_2026-09-08.md`.
+- Canonical v1.9 recovery/candidate `34219446266` / `34219446256`, canonical gate/candidate `34219669569` / `34219669492`, main candidate/Pages `34219911180` / `34219909612`: SUCCESS.
+- V1.9 evidence artifacts: recovery `10053154126` / `sha256:711c1d2d19d558d9caf6d0cd40bdddc47416b344353851ed8884344e7d355a17`; canonical `10053239237` / `sha256:fdc1d83505d2ccd1cf8529aec088518e42e344115c24c7c13eb3f789f01e6a0f`.
+- Direct live verification of `canonical-app.html?homologacao=6aba220…` loaded Flow asset `?v=20260908-flow-parity9`, truthful login and no iframe/fixture financial content.
+- Current immutable evidence: `backups/CANONICAL_APP_V19_V150_FLOW_PARITY_CHECKPOINT_2026-09-08.md`.
 - Durable briefing/decision map: `LTS_WEALTH_REQUIREMENTS_TRACEABILITY.md`.
 - `promotion_status:not_promoted`; public root promotion is NOT AUTHORIZED / NOT DONE.
 - Authenticated physical-iPhone visual/data E2E: PENDING / NOT CLAIMED.
 
-## Canonical v1.9 Flow-parity candidate — pre-exposure
+## Canonical v1.9 Flow-parity baseline — selected for fixed exposure
 - Release audit proves V150–V152 retained the rich Flow and V153 was the material simplification point; V154–V160 remain valuable evidence for later visual/data/session improvements.
 - Candidate contract `v150-validated-flow-plus-v157-liquidity-v1` ports approved interactions into the single canonical frontend without bringing back a wrapper.
 - Restored: Hoje, exactly five future days, scroll preservation, semantic movement/transfer/net-salary labels, inline reconciled card-invoice summary/full detail and append-only edit/duplicate/split/cancel.
 - Preserved: `lts_browser_flow_v8`, four account views, ten periods, 14 consolidated liquidity/economic layers and mobile liquidity cards.
-- Local deterministic Chromium desktop/mobile gate is PASS, including fixture write denial and Flow-specific mobile overflow. Branch CI WebKit, candidate smoke and fixed-manifest exposure are still required before calling this the homologation baseline.
+- Local deterministic Chromium desktop/mobile and branch CI Chromium/WebKit are PASS, including fixture write denial and Flow-specific mobile overflow. The remaining automatic step is the post-manifest smoke/Pages confirmation; authenticated real-data/write and physical-iPhone proof remain separate and open.
 
 ## Route/session continuity + unified receipt gate
 - The intended route is resolved before the first RPC/render and stored as navigation state only in `sessionStorage`; no financial value is persisted there.
