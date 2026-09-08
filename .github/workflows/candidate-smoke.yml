@@ -96,8 +96,9 @@ jobs:
           css=Path('canonical-dashboard-fidelity.css').read_text(encoding='utf-8')
           gate=Path('.github/scripts/lts_canonical_v157plus_browser_gate.js').read_text(encoding='utf-8')
           required_html=[
-            'canonical-dashboard-fidelity.css?v=20260908-pass6',
-            'canonical-liquidity.js?v=20260908-continuity7',
+            'canonical-dashboard-fidelity.css?v=20260908-expenses8',
+            'canonical-liquidity.js?v=20260908-expenses8',
+            'single-owner-history-nature-context-v1','Quanto você gasta — e para quem é cada gasto.',
             'reference-toolbar-signals-drilldowns-v1','canonical-route-session-continuity-v1','data-dashboard-reload','data-mg-shortcut',
             'Dashboard','Fluxo Diário','Despesas','Patrimônio','Cartões','Atualizações'
           ]
@@ -118,6 +119,7 @@ jobs:
           assert not missing, 'canonical markers missing: '+repr(missing)
           assert not leaked, 'forbidden canonical markers: '+repr(leaked)
           assert 'canonical-flow-v150.js' not in liq
+          assert "const ROUTES=['Patrimônio','Cartões']" in product
           for rpc in ['lts_browser_product_v1','lts_browser_dashboard_cockpit_v1','lts_browser_transactions_v1','lts_browser_expense_context_lens_v1','lts_browser_wealth_detail_v1','lts_browser_card_history_coverage_v1','lts_browser_document_lifecycle_v1','lts_browser_semantic_feedback_v1']:
               assert rpc in html, rpc
           for rpc in ['lts_browser_liquidity_movement_options_v1','lts_browser_preview_liquidity_movement_v1','lts_browser_apply_liquidity_movement_v1']:

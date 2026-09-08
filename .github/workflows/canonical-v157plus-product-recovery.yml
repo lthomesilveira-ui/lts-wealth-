@@ -48,7 +48,7 @@ jobs:
           assert 'canonical-capabilities-v161.js' in loader
           assert 'canonical-capabilities-v161.js?v=20260908-continuity7' in loader
           assert 'canonical-flow-v150.js' not in loader
-          for x in ['canonical-dashboard-fidelity.css?v=20260908-pass6','canonical-liquidity.js?v=20260908-continuity7','reference-toolbar-signals-drilldowns-v1','canonical-route-session-continuity-v1','data-dashboard-reload','data-mg-shortcut','Receitas','Relatórios','Configurações']:
+          for x in ['canonical-dashboard-fidelity.css?v=20260908-expenses8','canonical-liquidity.js?v=20260908-expenses8','single-owner-history-nature-context-v1','Quanto você gasta — e para quem é cada gasto.','reference-toolbar-signals-drilldowns-v1','canonical-route-session-continuity-v1','data-dashboard-reload','data-mg-shortcut','Receitas','Relatórios','Configurações']:
               assert x in app, x
           for rpc in ['lts_browser_liquidity_movement_options_v1','lts_browser_preview_liquidity_movement_v1','lts_browser_apply_liquidity_movement_v1']:
               assert rpc in core, rpc
@@ -56,6 +56,7 @@ jobs:
               assert x in flow, x
           for x in ['Dinheiro em contas','Contas + curto prazo','RSUs vested','FGTS','Despesas (mês)','Evolução da Liquidez','Quanto você gastou — e como isso evoluiu.','Mês a mês','Ano a ano','Cobertura do histórico','Quanto você tem, quanto deve e quanto é seu.','Conferência de fatura, não análise de gasto.']:
               assert x in product, x
+          assert "const ROUTES=['Patrimônio','Cartões']" in product
           for x in ['presentation-polish-v1','__LTS_V157_PRESENTATION_STATUS','__LTS_V157_POLISH_STATUS']:
               assert x in presentation, x
           for x in ['LTS v1.6 · Central de Gestão','__LTS_CANONICAL_CAPABILITIES_STATUS','session-persisted-management-pane-v1','data-mg-shortcut','Planejamento','Entradas & compromissos','Recorrências','Simulações','Conciliação','Relatórios','Backup & restauração','Configurações & integrações','Financiamentos','Documentos']:
