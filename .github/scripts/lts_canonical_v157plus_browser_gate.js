@@ -15,6 +15,41 @@ async function assertNoTechnicalVersionLeak(page, label, route) {
     throw new Error(`${label}: ${route} exposes a technical build badge`);
   }
 }
+async function assertUxClosure(page, label, mobile) {
+  await page.waitForFunction(() => window.__LTS_CANONICAL_UX_STATUS?.ready === true);
+  const state = await page.evaluate(({ mobile }) => {
+    const root = mobile ? '.mobile-nav' : '.sidebar';
+    const active = document.querySelector(`${root} [data-route].active`);
+    const authMessage = window.__LTS_SAFE_USER_ERROR?.(new Error('JWT issued at future'), 'Falha genérica', 'gate-auth');
+    const genericMessage = window.__LTS_SAFE_USER_ERROR?.(new Error('PGRST technical detail 404'), 'Não foi possível concluir agora.', 'gate-generic');
+    const navFont = mobile ? Number.parseFloat(getComputedStyle(document.querySelector('.mobile-nav button')).fontSize) : null;
+    return {
+      contract: window.__LTS_CANONICAL_UX_STATUS?.contract,
+      appContract: window.__LTS_CANONICAL_STATUS?.ux_closure_contract,
+      recoveryContract: window.__LTS_CANONICAL_RECOVERY_STATUS?.ux_closure_contract,
+      activeCurrent: active?.getAttribute('aria-current'),
+      authMessage,
+      genericMessage,
+      diagnosticRecorded: Array.isArray(window.__LTS_CANONICAL_DIAGNOSTICS) && window.__LTS_CANONICAL_DIAGNOSTICS.length >= 2,
+      navFont,
+      body: document.body.innerText
+    };
+  }, { mobile });
+  if (state.contract !== 'safe-errors-accessible-controls-readable-mobile-v1'
+      || state.appContract !== state.contract
+      || state.recoveryContract !== state.contract) {
+    throw new Error(`${label}: UX closure contract ${JSON.stringify(state)}`);
+  }
+  if (state.activeCurrent !== 'page') throw new Error(`${label}: active navigation lacks aria-current`);
+  if (state.authMessage !== 'Sua sessão precisa ser renovada. Entre novamente.' || state.authMessage.includes('JWT')) {
+    throw new Error(`${label}: authentication error is not safely translated ${state.authMessage}`);
+  }
+  if (state.genericMessage !== 'Não foi possível concluir agora.' || !state.diagnosticRecorded) {
+    throw new Error(`${label}: safe diagnostic boundary ${JSON.stringify(state)}`);
+  }
+  if (/PGRST technical detail 404|JWT issued at future/.test(state.body)) throw new Error(`${label}: raw technical error reached the UI`);
+  if (mobile && state.navFont < 8) throw new Error(`${label}: mobile navigation text below readability floor ${state.navFont}`);
+}
 const receiptPath = 'canonical-definition-of-done-receipt.json';
 const localChromiumExecutable = process.env.LTS_CHROMIUM_EXECUTABLE || '';
 const localChromiumOnly = process.env.LTS_LOCAL_CHROMIUM_ONLY === '1';
@@ -68,7 +103,7 @@ function finalizeReceipt() {
     reports: { status: 'PASS_AUTOMATED', evidence: 'executive JSON and recurrence CSV controls' },
     backup_restore: { status: 'PASS_CONTROLS_ONLY', evidence: 'checksum/stage/preview/confirmation controls; real apply remains open' },
     route_session_continuity: { status: 'PASS_AUTOMATED', evidence: 'deep link, refresh, pane restore, back/forward and safe JWT reset' },
-    performance_ux: { status: 'PASS_AUTOMATED', evidence: 'bounded browser waits, no console/page errors, no horizontal overflow, no desktop dashboard vertical overflow at 1312x1199 and no internal release labels on user-facing routes' },
+    performance_ux: { status: 'PASS_AUTOMATED', evidence: 'bounded browser waits, no console/page errors, no horizontal overflow, no desktop dashboard vertical overflow at 1312x1199, safe user errors, accessible control states, visible focus and readable mobile controls' },
     authenticated_real_data: { status: 'OPEN', evidence: 'not executed by fixture browser gate' },
     authenticated_write_lifecycles: { status: 'OPEN', evidence: 'financial writes remain disabled in fixture' },
     physical_iphone: { status: 'OPEN', evidence: 'not executed by CI WebKit' },
@@ -114,7 +149,7 @@ async function expandFlowDay(page, day) {
 async function assertFlowParity(page, label, mobile) {
   const status = await page.evaluate(() => window.__LTS_CANONICAL_FLOW_V157_STATUS);
   if (status?.contract !== 'v150-validated-flow-plus-v157-liquidity-v1'
-      || status?.build !== 'LTS v1.18'
+      || status?.build !== 'LTS v1.19'
       || status?.historical_opening_contract !== 'historical-opening-from-close-and-net-v1'
       || status?.today_marker_contract !== 'today-marker-without-row-band-v1'
       || status?.future_horizon_contract !== 'future-through-2029-plus-d30-v1'
@@ -127,7 +162,8 @@ async function assertFlowParity(page, label, mobile) {
   if (await page.locator('.fv-build').count()) throw new Error(`${label}: technical Flow build marker leaked`);
   if (await page.locator('#fvToday').count() !== 1) throw new Error(`${label}: dedicated Hoje action missing`);
   if (await page.locator('[data-account]').count() !== 4) throw new Error(`${label}: four-bank tabs missing`);
-  if (await page.locator('[data-preset]').count() !== 10) throw new Error(`${label}: period presets missing`);
+  if (await page.locator('[data-preset]').count() !== 9) throw new Error(`${label}: period presets missing or duplicated`);
+  if (await page.locator('[data-preset="today"]').count()) throw new Error(`${label}: duplicate Hoje preset returned`);
   if (!mobile && await page.locator('.fv-table th').count() !== 14) throw new Error(`${label}: consolidated Flow columns`);
 
   const flowText = (await page.locator('.fv').innerText()).toLowerCase();
@@ -194,6 +230,7 @@ async function assertFlowParity(page, label, mobile) {
     throw new Error(`${label}: projection action tabs ${JSON.stringify(tabs)}`);
   }
   await page.locator('#fvModalBg [data-fv-mode="split"]').click();
+  await page.waitForFunction(() => document.querySelector('#fvModalBg [data-fv-mode="split"]')?.getAttribute('aria-pressed') === 'true');
   if (await page.locator('#fvModalBg [data-fv-part]').count() !== 2) throw new Error(`${label}: split starts with two parts`);
   await page.locator('#fvModalBg [data-fv-part-add]').click();
   if (await page.locator('#fvModalBg [data-fv-part]').count() !== 3) throw new Error(`${label}: split add part failed`);
@@ -212,6 +249,10 @@ async function assertFlowParity(page, label, mobile) {
   if (mutation.writer_called !== false || mutation.payload?.parts?.length !== 2) {
     throw new Error(`${label}: fixture split write boundary ${JSON.stringify(mutation)}`);
   }
+  await detail.locator('[data-event-actions]').click();
+  await page.waitForSelector('#fvModalBg');
+  await page.keyboard.press('Escape');
+  await page.waitForSelector('#fvModalBg', { state: 'detached' });
 
   await page.locator('#fvFrom').fill('2026-01-01');
   await page.locator('#fvTo').fill('2026-01-01');
@@ -268,8 +309,8 @@ async function assertUpdatesContract(page, label) {
     throw new Error(`${label}: classification-first hierarchy ${JSON.stringify(hierarchy)}`);
   }
   const recovery = await page.evaluate(() => window.__LTS_CANONICAL_RECOVERY_STATUS);
-  if (recovery?.build !== 'LTS v1.18' || recovery?.updates_contract !== 4 || recovery?.document_review_contract !== 4 || recovery?.dashboard_density_contract !== 1 || recovery?.planning_decision_contract !== 1 || recovery?.product_language_contract !== 'user-facing-product-language-v1') {
-    throw new Error(`${label}: v1.17 recovery contract ${JSON.stringify(recovery)}`);
+  if (recovery?.build !== 'LTS v1.19' || recovery?.updates_contract !== 4 || recovery?.document_review_contract !== 4 || recovery?.dashboard_density_contract !== 1 || recovery?.planning_decision_contract !== 1 || recovery?.product_language_contract !== 'user-facing-product-language-v1' || recovery?.ux_closure_contract !== 'safe-errors-accessible-controls-readable-mobile-v1') {
+    throw new Error(`${label}: v1.19 recovery contract ${JSON.stringify(recovery)}`);
   }
   const inputStatus = await page.evaluate(() => window.__LTS_CANONICAL_REVIEWED_INPUT_STATUS);
   if (inputStatus?.ready !== true
@@ -772,6 +813,7 @@ async function run(browserType, label, viewport) {
     await openRoute(page, 'Fluxo Diário', mobile);
     await page.waitForFunction(() => window.__LTS_CANONICAL_FLOW_V157_STATUS?.ready === true);
     await assertFlowParity(page, label, mobile);
+    await assertUxClosure(page, label, mobile);
     await assertNoTechnicalVersionLeak(page, label, 'Fluxo Diário');
     await page.screenshot({ path: `canonical-flow-${label}.png`, fullPage: true });
 
@@ -836,6 +878,7 @@ async function run(browserType, label, viewport) {
 
     await openRoute(page, 'Dashboard', mobile);
     await waitProduct(page, 'Dashboard');
+    await assertUxClosure(page, label, mobile);
     const metrics = await page.evaluate(() => ({
       scrollWidth: document.documentElement.scrollWidth,
       clientWidth: document.documentElement.clientWidth,
@@ -860,6 +903,8 @@ async function run(browserType, label, viewport) {
     await page.goto(baseUrl, { waitUntil: 'domcontentloaded' });
     await page.waitForTimeout(800);
     if (await page.locator('#loginForm').count() !== 1) throw new Error(`${label}: real login missing`);
+    if (await page.locator('label[for="email"],label[for="password"]').count() !== 2) throw new Error(`${label}: login labels are not associated`);
+    if (await page.locator('#loginMsg[aria-live="polite"]').count() !== 1) throw new Error(`${label}: login feedback is not announced`);
     if (await page.locator('#dashboard-view .kpi').count()) throw new Error(`${label}: fake financial UI unauthenticated`);
     if (await page.getByText('FIXTURE DE TESTE', { exact: true }).count()) throw new Error(`${label}: fixture badge leaked`);
     receipt.suites[label] = {

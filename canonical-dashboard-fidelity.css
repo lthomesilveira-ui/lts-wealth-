@@ -320,3 +320,36 @@
   #expenses-view [data-expense-month]{font-size:11px}
   #expenses-view .expense-detail-list{max-height:none}
 }
+
+/* Canonical UX closure: visible focus, readable mobile controls and reduced motion. */
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible,[tabindex]:focus-visible{
+  outline:3px solid #4b91e5!important;
+  outline-offset:2px!important;
+}
+
+@media (max-width:820px){
+  .mobile-nav button{min-height:44px;font-size:8px!important;line-height:1.15!important}
+  .mobile-nav button svg{width:17px!important;height:17px!important}
+  .fv-chip,.fv-today-btn,.fv-action,.fv-modal-tab,.mg-tab,.mg-button,.ri-primary,.liq-primary,.secondary-btn,.doc-upload,.class-save{
+    min-height:40px;
+    font-size:9px!important;
+  }
+  .fv-exp{min-width:38px!important;min-height:38px!important;width:38px!important;height:38px!important}
+  .fv-period input,.fv-period select,.fv-form input,.fv-form select,.ri-entry textarea,.ri-fields input,.ri-fields select,.liq-field input,.liq-field select,.mg-field input,.doc-field input,.doc-field select,.search-line input,.class-actions select{
+    min-height:44px!important;
+    font-size:16px!important;
+  }
+  .fv-foot,.fv-status,.fv-period-label,.fv-event small,.fv-invoice-note,.fv-editor-hint,.fv-split-sum,
+  .pv-row span,.pv-note,.pv-title small,.mg-head p,.mg-cap small,.mg-row small,.mg-note,.mg-message,
+  .ri-help,.ri-preview-head span,.ri-warning,.ri-guard,.ri-confirm,.ri-success,.ri-error,
+  .liq-meta,.liq-preview-head span,.liq-leg span,.liq-leg small,.liq-neutral,.liq-confirm,.liq-success,.liq-error,
+  .updates-section-copy,.updates-secondary>summary span,.updates-secondary-section>p,.doc-contract,.doc-message,.doc-review-head p,.doc-review-box small,.doc-evidence label,.search-meta,.search-result small,.class-main>small,.class-fact,.class-msg,.list-row span{
+    font-size:9px!important;
+    line-height:1.45!important;
+  }
+}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto!important}
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+}
