@@ -63,6 +63,7 @@ async function openManagementPane(page, pane) {
 
 async function assertManagementContract(page, label) {
   await page.waitForFunction(() => window.__LTS_CANONICAL_CAPABILITIES_STATUS?.loaded === true);
+  await openManagementPane(page, 'overview');
   const recovery = await page.evaluate(() => window.__LTS_CANONICAL_RECOVERY_STATUS);
   if (recovery?.capabilities_loaded !== true || recovery?.capability_contract !== 10) {
     throw new Error(`${label}: capability loader contract ${JSON.stringify(recovery)}`);
