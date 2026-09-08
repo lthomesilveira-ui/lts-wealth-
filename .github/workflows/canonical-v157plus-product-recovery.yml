@@ -132,7 +132,18 @@ jobs:
             if(await page.locator('#dashboard-view .kpi').count())throw new Error(label+': fake financial UI unauthenticated');
             await browser.close();
           }
-          (async()=>{try{await sleep(700);await run(chromium,'desktop',{width:1312,height:1199});await run(webkit,'mobile',{width:390,height:844});console.log('V157+ product browser gate ok')}finally{server.kill('SIGTERM')}})().catch(e=>{console.error(e);process.exit(1)});
+          async function jwtClockRecovery(){
+            const browser=await webkit.launch({headless:true});const page=await browser.newPage({viewport:{width:390,height:844}});
+            try{
+              await page.route('https://tadhkamnwtsbdozwkyut.supabase.co/rest/v1/rpc/**',route=>route.fulfill({status:401,contentType:'application/json',headers:{'access-control-allow-origin':'*'},body:JSON.stringify({message:'JWT issued at future'})}));
+              await page.addInitScript(()=>localStorage.setItem('lts_supabase_session_v1',JSON.stringify({access_token:'future-token',expires_at:Math.floor(Date.now()/1000)+3600,user:{id:'fixture-session-recovery'}})));
+              await page.goto('http://127.0.0.1:4173/canonical-app.html',{waitUntil:'domcontentloaded'});await page.waitForSelector('#loginForm',{timeout:12000});
+              const r=await page.evaluate(()=>({stored:localStorage.getItem('lts_supabase_session_v1'),status:window.__LTS_CANONICAL_SESSION_STATUS,body:document.body.innerText}));
+              if(r.stored!==null||r.status?.reset!==true||r.status?.reason!=='jwt-clock')throw new Error('JWT recovery did not reset the invalid session '+JSON.stringify(r.status));
+              if(!r.body.includes('Sua sessão foi renovada por segurança. Entre novamente.')||r.body.includes('JWT issued at future'))throw new Error('JWT recovery user message');
+            }finally{await browser.close()}
+          }
+          (async()=>{try{await sleep(700);await run(chromium,'desktop',{width:1312,height:1199});await run(webkit,'mobile',{width:390,height:844});await jwtClockRecovery();console.log('V157+ product browser gate ok')}finally{server.kill('SIGTERM')}})().catch(e=>{console.error(e);process.exit(1)});
           JS
           node .v157-product-test.cjs
           rm -f .v157-product-test.cjs

@@ -173,11 +173,47 @@ async function run(browserType, label, viewport) {
   }
 }
 
+async function runJwtClockRecovery(browserType) {
+  const browser = await browserType.launch({ headless: true });
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  try {
+    await page.route('https://tadhkamnwtsbdozwkyut.supabase.co/rest/v1/rpc/**', route => route.fulfill({
+      status: 401,
+      contentType: 'application/json',
+      headers: { 'access-control-allow-origin': '*' },
+      body: JSON.stringify({ message: 'JWT issued at future' })
+    }));
+    await page.addInitScript(() => localStorage.setItem('lts_supabase_session_v1', JSON.stringify({
+      access_token: 'future-token',
+      expires_at: Math.floor(Date.now() / 1000) + 3600,
+      user: { id: 'fixture-session-recovery' }
+    })));
+    await page.goto(baseUrl, { waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('#loginForm', { timeout: 12000 });
+    const recovery = await page.evaluate(() => ({
+      storedSession: localStorage.getItem('lts_supabase_session_v1'),
+      status: window.__LTS_CANONICAL_SESSION_STATUS,
+      body: document.body.innerText
+    }));
+    if (recovery.storedSession !== null) throw new Error('WebKit JWT recovery kept the invalid session');
+    if (recovery.status?.reset !== true || recovery.status?.reason !== 'jwt-clock') {
+      throw new Error(`WebKit JWT recovery status ${JSON.stringify(recovery.status)}`);
+    }
+    if (!recovery.body.includes('Sua sessão foi renovada por segurança. Entre novamente.')) {
+      throw new Error('WebKit JWT recovery guidance missing');
+    }
+    if (recovery.body.includes('JWT issued at future')) throw new Error('raw JWT error leaked to the user');
+  } finally {
+    await browser.close();
+  }
+}
+
 (async () => {
   try {
     await sleep(700);
     await run(chromium, 'desktop', { width: 1312, height: 1199 });
     await run(webkit, 'mobile', { width: 390, height: 844 });
+    await runJwtClockRecovery(webkit);
     console.log('canonical V157+ permanent browser gate ok');
   } finally {
     server.kill('SIGTERM');
