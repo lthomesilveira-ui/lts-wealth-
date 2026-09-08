@@ -28,6 +28,13 @@ Purpose: evidence-backed sequence before asking the user to inspect a material c
 - `promotion_status:not_promoted`; public root promotion is NOT AUTHORIZED / NOT DONE.
 - Authenticated physical-iPhone visual/data E2E: PENDING / NOT CLAIMED.
 
+## Canonical v1.9 Flow-parity candidate — pre-exposure
+- Release audit proves V150–V152 retained the rich Flow and V153 was the material simplification point; V154–V160 remain valuable evidence for later visual/data/session improvements.
+- Candidate contract `v150-validated-flow-plus-v157-liquidity-v1` ports approved interactions into the single canonical frontend without bringing back a wrapper.
+- Restored: Hoje, exactly five future days, scroll preservation, semantic movement/transfer/net-salary labels, inline reconciled card-invoice summary/full detail and append-only edit/duplicate/split/cancel.
+- Preserved: `lts_browser_flow_v8`, four account views, ten periods, 14 consolidated liquidity/economic layers and mobile liquidity cards.
+- Local deterministic Chromium desktop/mobile gate is PASS, including fixture write denial and Flow-specific mobile overflow. Branch CI WebKit, candidate smoke and fixed-manifest exposure are still required before calling this the homologation baseline.
+
 ## Route/session continuity + unified receipt gate
 - The intended route is resolved before the first RPC/render and stored as navigation state only in `sessionStorage`; no financial value is persisted there.
 - Refresh, signed-out login, future-JWT reset, browser back/forward, direct deep links and bfcache preserve or safely canonicalize the intended route.

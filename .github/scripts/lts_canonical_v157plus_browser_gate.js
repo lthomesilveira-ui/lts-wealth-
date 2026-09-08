@@ -8,6 +8,8 @@ const server = spawn('python3', ['-m', 'http.server', port, '--bind', '127.0.0.1
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 const containsText = (value, expected) => String(value).toLocaleLowerCase('pt-BR').includes(String(expected).toLocaleLowerCase('pt-BR'));
 const receiptPath = 'canonical-definition-of-done-receipt.json';
+const localChromiumExecutable = process.env.LTS_CHROMIUM_EXECUTABLE || '';
+const localChromiumOnly = process.env.LTS_LOCAL_CHROMIUM_ONLY === '1';
 const receipt = {
   schema_version: 1,
   contract: 'lts-canonical-definition-of-done-receipt-v1',
@@ -30,6 +32,12 @@ function saveReceipt() {
   writeFileSync(receiptPath, JSON.stringify(receipt, null, 2) + '\n', 'utf8');
 }
 
+function launchOptions(browserType) {
+  const options = { headless: true };
+  if (browserType === chromium && localChromiumExecutable) options.executablePath = localChromiumExecutable;
+  return options;
+}
+
 function finalizeReceipt() {
   receipt.gate_status = 'PASS';
   receipt.delivery_status = 'AUTOMATED_GATE_PASS_REAL_E2E_OPEN';
@@ -37,7 +45,7 @@ function finalizeReceipt() {
   receipt.requirements = {
     architecture: { status: 'PASS', evidence: 'single canonical frontend; zero iframes' },
     dashboard: { status: 'PASS_AUTOMATED', evidence: 'approved hierarchy and liquidity-first contract on desktop/mobile' },
-    flow: { status: 'PASS_AUTOMATED', evidence: 'past/today/future layers, four account views and movement drilldown' },
+    flow: { status: 'PASS_AUTOMATED', evidence: 'V150 interaction parity plus V157 liquidity layers: four account views, five-day horizon, semantic movements, inline invoice, append-only split and preserved scroll' },
     expenses: { status: 'PASS_AUTOMATED', evidence: 'single-owner month/year history, nature x context, unassigned semantics and item drilldown' },
     cards: { status: 'PASS_AUTOMATED', evidence: 'current/next invoice and certified historical coverage' },
     wealth: { status: 'PASS_AUTOMATED', evidence: 'RSU, CIPÓ, Volvo and debt/asset separation' },
@@ -75,6 +83,122 @@ async function waitProduct(page, route) {
     window.__LTS_CANONICAL_PRODUCT_V157_STATUS?.ready === true
       && window.__LTS_CANONICAL_PRODUCT_V157_STATUS?.route === expected
   ), route);
+}
+
+async function waitFlowRange(page, from, to) {
+  await page.waitForFunction(({ from, to }) => {
+    const status = window.__LTS_CANONICAL_FLOW_V157_STATUS;
+    return status?.ready === true && status?.from === from && status?.to === to;
+  }, { from, to });
+}
+
+async function expandFlowDay(page, day) {
+  const button = page.locator(`[data-expand="${day}"]`);
+  if (await button.count() !== 1) throw new Error(`Flow day ${day} missing`);
+  if (await button.getAttribute('aria-expanded') !== 'true') await button.click();
+  await page.waitForSelector(`#fv-${day} + .fv-detail`);
+  return page.locator(`#fv-${day} + .fv-detail`);
+}
+
+async function assertFlowParity(page, label, mobile) {
+  const status = await page.evaluate(() => window.__LTS_CANONICAL_FLOW_V157_STATUS);
+  if (status?.contract !== 'v150-validated-flow-plus-v157-liquidity-v1'
+      || status?.split_action !== true
+      || status?.invoice_drilldown !== true
+      || status?.semantic_labels !== true
+      || status?.scroll_preservation !== true) {
+    throw new Error(`${label}: Flow parity status ${JSON.stringify(status)}`);
+  }
+  if (!(await page.locator('.fv-build').textContent()).includes('LTS v1.9')) throw new Error(`${label}: build marker missing`);
+  if (await page.locator('#fvToday').count() !== 1) throw new Error(`${label}: dedicated Hoje action missing`);
+  if (await page.locator('[data-account]').count() !== 4) throw new Error(`${label}: four-bank tabs missing`);
+  if (await page.locator('[data-preset]').count() !== 10) throw new Error(`${label}: period presets missing`);
+  if (!mobile && await page.locator('.fv-table th').count() !== 14) throw new Error(`${label}: consolidated Flow columns`);
+
+  const flowText = (await page.locator('.fv').innerText()).toLowerCase();
+  for (const forbidden of ['baseline funcional', 'fix86', 'legacy']) {
+    if (flowText.includes(forbidden)) throw new Error(`${label}: technical text leaked ${forbidden}`);
+  }
+  for (const required of ['histórico / período', 'rsus futuras', 'cash awards futuros']) {
+    if (!flowText.includes(required)) throw new Error(`${label}: Flow layer missing ${required}`);
+  }
+
+  await page.locator('[data-preset="next5"]').click();
+  await waitFlowRange(page, '2026-09-07', '2026-09-11');
+  if (await page.locator('.fv-table tbody .fv-row').count() !== 5) throw new Error(`${label}: Próximos 5 dias must show five days`);
+
+  if (!mobile) {
+    await page.evaluate(() => { document.querySelector('.fv-scroll').scrollLeft = 360; });
+    await expandFlowDay(page, '2026-09-07');
+    await page.waitForFunction(() => Math.abs(document.querySelector('.fv-scroll').scrollLeft - 360) < 2);
+  }
+
+  let detail = await expandFlowDay(page, '2026-09-09');
+  if (!(await detail.innerText()).includes('Movimentos do dia')) throw new Error(`${label}: Flow drilldown missing`);
+  await detail.locator('[data-card-detail]').click();
+  await page.waitForSelector('[data-invoice-contract="inline-card-settlement-v150"]');
+  let invoice = page.locator('[data-invoice-contract="inline-card-settlement-v150"]');
+  let text = await invoice.innerText();
+  for (const required of ['Resumo da fatura', 'Fatura conciliada', 'Créditos', 'Caixa × detalhe', 'Acessar fatura completa']) {
+    if (!text.includes(required)) throw new Error(`${label}: inline invoice missing ${required}`);
+  }
+  await invoice.locator('[data-card-full]').click();
+  invoice = page.locator('[data-invoice-contract="inline-card-settlement-v150"]');
+  if (!(await invoice.innerText()).includes('Fatura completa') || await invoice.locator('.fv-purchase').count() !== 2) {
+    throw new Error(`${label}: full inline invoice contract`);
+  }
+  await page.screenshot({ path: `canonical-flow-invoice-${label}.png`, fullPage: true });
+  await invoice.locator('[data-card-summary]').click();
+  await page.locator('[data-card-close]').click();
+
+  detail = await expandFlowDay(page, '2026-09-10');
+  text = await detail.innerText();
+  if (!text.includes('Transferência própria') || !text.includes('neutra no consolidado')) {
+    throw new Error(`${label}: internal transfer semantics missing`);
+  }
+
+  await page.locator('[data-preset="next30"]').click();
+  await waitFlowRange(page, '2026-09-07', '2026-10-06');
+  detail = await expandFlowDay(page, '2026-09-12');
+  text = await detail.innerText();
+  if (!text.includes('Salário líquido') || !text.includes('Coopharma')) throw new Error(`${label}: net salary semantics missing`);
+
+  detail = await expandFlowDay(page, '2026-09-15');
+  await detail.locator('[data-event-actions]').click();
+  await page.waitForSelector('#fvModalBg');
+  const tabs = await page.locator('#fvModalBg [data-fv-mode]').allTextContents();
+  if (JSON.stringify(tabs) !== JSON.stringify(['Editar', 'Duplicar', 'Dividir / substituir'])) {
+    throw new Error(`${label}: projection action tabs ${JSON.stringify(tabs)}`);
+  }
+  await page.locator('#fvModalBg [data-fv-mode="split"]').click();
+  if (await page.locator('#fvModalBg [data-fv-part]').count() !== 2) throw new Error(`${label}: split starts with two parts`);
+  await page.locator('#fvModalBg [data-fv-part-add]').click();
+  if (await page.locator('#fvModalBg [data-fv-part]').count() !== 3) throw new Error(`${label}: split add part failed`);
+  await page.locator('#fvModalBg [data-fv-part-remove="2"]').click();
+  if (await page.locator('#fvModalBg [data-fv-part]').count() !== 2) throw new Error(`${label}: split remove part failed`);
+  await page.locator('#fvModalBg [data-fv-part-amount="0"]').fill('7000');
+  await page.locator('#fvModalBg [data-fv-part-amount="1"]').fill('7000');
+  const splitSum = (await page.locator('#fvModalBg .fv-split-sum').innerText()).replace(/\s+/g, ' ');
+  if (!splitSum.includes('R$ 14.000,00')) {
+    throw new Error(`${label}: split sum feedback not updated`);
+  }
+  await page.screenshot({ path: `canonical-flow-split-${label}.png`, fullPage: true });
+  await page.locator('#fvModalBg [data-fv-save]').click();
+  await page.waitForFunction(() => window.__LTS_CANONICAL_FLOW_MUTATION_FIXTURE?.action === 'split');
+  const mutation = await page.evaluate(() => window.__LTS_CANONICAL_FLOW_MUTATION_FIXTURE);
+  if (mutation.writer_called !== false || mutation.payload?.parts?.length !== 2) {
+    throw new Error(`${label}: fixture split write boundary ${JSON.stringify(mutation)}`);
+  }
+
+  await page.locator('[data-account="Itaú"]').click();
+  if (await page.locator('.fv-table tbody .fv-row').count() < 1) throw new Error(`${label}: bank Flow switch failed`);
+  if (mobile) {
+    const width = await page.evaluate(() => ({
+      scroll: document.documentElement.scrollWidth,
+      client: document.documentElement.clientWidth
+    }));
+    if (width.scroll > width.client + 1) throw new Error(`${label}: Flow horizontal overflow ${JSON.stringify(width)}`);
+  }
 }
 
 async function assertUpdatesContract(page, label) {
@@ -275,9 +399,21 @@ async function assertRouteContinuity(page, label, mobile) {
       && window.__LTS_CANONICAL_CAPABILITIES_STATUS?.active === 'reports'
   ));
   await page.goForward();
-  await waitProduct(page, 'Patrimônio');
-  if ((await page.locator('.page-title h1').textContent())?.trim() !== 'Patrimônio') {
-    throw new Error(`${label}: forward navigation did not restore Patrimônio`);
+  try {
+    await page.waitForFunction(() => (
+      document.querySelector('.pv-head h1')?.textContent?.trim() === 'Patrimônio'
+        && window.__LTS_CANONICAL_ROUTE_STATUS?.current === 'Patrimônio'
+        && window.__LTS_CANONICAL_PRODUCT_V157_STATUS?.route === 'Patrimônio'
+    ), null, { timeout: 8000 });
+  } catch {
+    const forward = await page.evaluate(() => ({
+      href: location.href,
+      title: document.querySelector('.pv-head h1, .page-title h1')?.textContent?.trim() || null,
+      route: window.__LTS_CANONICAL_ROUTE_STATUS || null,
+      product: window.__LTS_CANONICAL_PRODUCT_V157_STATUS || null,
+      body: document.body.innerText.slice(0, 500)
+    }));
+    throw new Error(`${label}: forward navigation did not restore Patrimônio ${JSON.stringify(forward)}`);
   }
 
   await page.goto(`${baseUrl}?fixture=1#${encodeURIComponent('Cartões')}`, { waitUntil: 'networkidle' });
@@ -316,7 +452,7 @@ async function assertRouteContinuity(page, label, mobile) {
 async function run(browserType, label, viewport) {
   const startedAt = Date.now();
   const mobile = viewport.width <= 820;
-  const browser = await browserType.launch({ headless: true });
+  const browser = await browserType.launch(launchOptions(browserType));
   const page = await browser.newPage({ viewport });
   const errors = [];
   page.on('pageerror', error => errors.push(`pageerror:${String(error)}`));
@@ -358,21 +494,7 @@ async function run(browserType, label, viewport) {
 
     await openRoute(page, 'Fluxo Diário', mobile);
     await page.waitForFunction(() => window.__LTS_CANONICAL_FLOW_V157_STATUS?.ready === true);
-    if (!(await page.locator('.fv-build').textContent()).includes('LTS v1.3')) throw new Error(`${label}: build marker missing`);
-    if (await page.locator('[data-account]').count() !== 4) throw new Error(`${label}: four-bank tabs missing`);
-    if (await page.locator('[data-preset]').count() !== 10) throw new Error(`${label}: period presets missing`);
-    if (!mobile && await page.locator('.fv-table th').count() !== 14) throw new Error(`${label}: consolidated Flow columns`);
-    const flowText = (await page.locator('.fv').innerText()).toLowerCase();
-    for (const forbidden of ['baseline funcional', 'fix86', 'legacy']) {
-      if (flowText.includes(forbidden)) throw new Error(`${label}: technical text leaked ${forbidden}`);
-    }
-    for (const required of ['histórico / período', 'rsus futuras', 'cash awards futuros']) {
-      if (!flowText.includes(required)) throw new Error(`${label}: Flow layer missing ${required}`);
-    }
-    await page.locator('[data-expand]').first().click();
-    if (!(await page.locator('.fv-detail').innerText()).includes('Movimentos do dia')) throw new Error(`${label}: Flow drilldown missing`);
-    await page.locator('[data-account="Itaú"]').click();
-    if (await page.locator('.fv-table tbody .fv-row').count() < 1) throw new Error(`${label}: bank Flow switch failed`);
+    await assertFlowParity(page, label, mobile);
     await page.screenshot({ path: `canonical-flow-${label}.png`, fullPage: true });
 
     await openRoute(page, 'Despesas', mobile);
@@ -460,7 +582,7 @@ async function run(browserType, label, viewport) {
     if (await page.getByText('FIXTURE DE TESTE', { exact: true }).count()) throw new Error(`${label}: fixture badge leaked`);
     receipt.suites[label] = {
       status: 'PASS',
-      engine: label === 'mobile' ? 'webkit' : 'chromium',
+      engine: browserType.name(),
       viewport,
       duration_ms: Date.now() - startedAt,
       route_continuity: routeContinuity,
@@ -473,7 +595,7 @@ async function run(browserType, label, viewport) {
 }
 
 async function runJwtClockRecovery(browserType) {
-  const browser = await browserType.launch({ headless: true });
+  const browser = await browserType.launch(launchOptions(browserType));
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   try {
     await page.route('https://tadhkamnwtsbdozwkyut.supabase.co/rest/v1/rpc/**', route => route.fulfill({
@@ -511,7 +633,7 @@ async function runJwtClockRecovery(browserType) {
     }
     receipt.suites.session_recovery = {
       status: 'PASS',
-      engine: 'webkit',
+      engine: browserType.name(),
       viewport: { width: 390, height: 844 },
       future_jwt_reset: true,
       raw_error_hidden: true,
@@ -527,8 +649,9 @@ async function runJwtClockRecovery(browserType) {
   try {
     await sleep(700);
     await run(chromium, 'desktop', { width: 1312, height: 1199 });
-    await run(webkit, 'mobile', { width: 390, height: 844 });
-    await runJwtClockRecovery(webkit);
+    const mobileEngine = localChromiumOnly ? chromium : webkit;
+    await run(mobileEngine, 'mobile', { width: 390, height: 844 });
+    await runJwtClockRecovery(mobileEngine);
     finalizeReceipt();
     console.log('canonical V157+ permanent browser gate ok');
   } catch (error) {

@@ -53,7 +53,7 @@ jobs:
           assert 'setInterval(' not in s
           assert 'canonical-liquidity.js?v=' in s
           assert 'canonical-dashboard-fidelity.css?v=20260908-expenses8' in s
-          assert 'canonical-liquidity.js?v=20260908-expenses8' in s
+          assert 'canonical-liquidity.js?v=20260908-flow-parity9' in s
           assert 'single-owner-history-nature-context-v1' in s
           assert 'Quanto você gasta — e para quem é cada gasto.' in s
           assert 'reference-toolbar-signals-drilldowns-v1' in s
@@ -84,7 +84,7 @@ jobs:
               'lts_browser_apply_liquidity_movement_v1'
           ]:
               assert rpc in c, rpc
-          for marker in ['lts_browser_flow_v8','LTS v1.3','Histórico / período','Movimentos do dia','RSUs futuras','Cash Awards futuros','lts_browser_flow_event_editor_v1','lts_browser_flow_mutate_v1']:
+          for marker in ['lts_browser_flow_v8','lts_browser_card_settlement_detail_v2','LTS v1.9','v150-validated-flow-plus-v157-liquidity-v1','Histórico / período','Movimentos do dia','Dividir / substituir','inline-card-settlement-v150','RSUs futuras','Cash Awards futuros','lts_browser_flow_event_editor_v1','lts_browser_flow_mutate_v1']:
               assert marker in f, marker
           for marker in ['Dinheiro em contas','Contas + curto prazo','RSUs vested','FGTS','Despesas (mês)','Evolução da Liquidez','Quanto você gastou — e como isso evoluiu.','Mês a mês','Ano a ano','Cobertura do histórico','Quanto você tem, quanto deve e quanto é seu.','Conferência de fatura, não análise de gasto.']:
               assert marker in p, marker

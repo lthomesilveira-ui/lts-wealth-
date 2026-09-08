@@ -1,6 +1,6 @@
 # LTS Wealth — Canonical Delivery Master Plan
 
-Last refreshed: 2026-09-08 04:42 BRT
+Last refreshed: 2026-09-08 08:05 BRT
 Active implementation branch: `canonical-v157plus-product-recovery` (aligned with `canonical-app-v1` and `main` on canonical v1.8 unified expenses plus the bounded Supabase security checkpoint)
 
 Purpose: this is the execution-order view of the LTS Wealth backlog. It does not replace documentary evidence or immutable checkpoints. `PROJECT_MASTER_BACKLOG.md` remains the complete persistent dependency list. This file makes the remaining work explicit so product delivery does not get lost behind release mechanics.
@@ -81,9 +81,12 @@ The LTS Wealth app is not considered delivered until all P0 items below are comp
 - [x] Canonical UI for Itaú, Bradesco, C6 and Consolidado.
 - [x] Preserve Saldo anterior | Entradas | Saídas | Saldo final hierarchy.
 - [x] Facts > projections; scenarios never facts; stale anchors cannot reanchor.
-- [x] Card invoices do not duplicate underlying expenses.
+- [x] V150 parity restored on the canonical line: Hoje, complete next-five-day view, scroll preservation and semantic movement labels.
+- [x] Card-payment rows open reconciled invoice summary/full detail inline and do not duplicate underlying expenses.
+- [x] Projection actions expose append-only edit, duplicate, split/replace and cancel with 2–12 validated parts and visible sum.
 - [x] Bank↔liquidity-asset transfers have consolidated economic effect zero.
 - [x] Historical bank is never inferred without evidence.
+- [ ] Close real authenticated invoice and mutation readback plus physical-iPhone evidence.
 
 ### P1.2 Despesas
 - [x] Bring the existing R$8.623.752,53 invariant and 3.860/3.860 analytical cache into the canonical UI.
@@ -210,12 +213,13 @@ Open Finance is still part of the product roadmap. It was not cancelled; work wa
 - [ ] Preserve fixed homologation/public links.
 
 ## Execution order from now
-1. Preserve Dashboard Fidelity Pass 6, route/session continuity and the automatic receipt as the protected canonical baseline.
-2. Continue Dashboard/Despesas/Atualizações refinement against real evidence without changing financial truth or reintroducing wrapper ownership.
-3. Execute real authenticated desktop and physical-iPhone lifecycles for Dashboard, Flow, search/CSV, classification, liquidity, documents and backup/restore; use them to close the corresponding receipt rows.
-4. Keep the Supabase security baseline regression-protected and review leaked-password protection in a controlled Auth window.
-5. Continue documentary gaps and Open Finance provider evidence, while provider/consent/spend waits for explicit user decision.
-6. Promote `index.html` only after the complete receipt and explicit user authorization.
+1. Gate and expose canonical v1.9 Flow parity through the fixed homologation path while preserving the public-root boundary.
+2. Preserve Dashboard Fidelity Pass 6, route/session continuity and the automatic receipt as the protected canonical baseline.
+3. Continue Dashboard/Despesas/Atualizações refinement against real evidence without changing financial truth or reintroducing wrapper ownership.
+4. Execute real authenticated desktop and physical-iPhone lifecycles for Dashboard, Flow, search/CSV, classification, liquidity, documents and backup/restore; use them to close the corresponding receipt rows.
+5. Keep the Supabase security baseline regression-protected and review leaked-password protection in a controlled Auth window.
+6. Continue documentary gaps and Open Finance provider evidence, while provider/consent/spend waits for explicit user decision.
+7. Promote `index.html` only after the complete receipt and explicit user authorization.
 
 ## Current user action
 NONE. Continue autonomous work until a real financial/classification/provider/consent decision is necessary or a materially testable canonical app is ready.

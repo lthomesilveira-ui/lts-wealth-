@@ -4,6 +4,14 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 
 Canonical persistent project list. Never remove an open financial, documentary, classification, reconciliation or product dependency during compaction. Detailed immutable evidence remains in `backups/`, `HISTORICAL_RECOVERY_LOG.md`, `PLANNING_EXCEL_TO_CURRENT_AUDIT_2026-08-30.md`, `NEXT_HOMOLOGATION_GATE.md` and release checkpoints.
 
+## P0 — V150 Flow interaction parity / canonical v1.9 — 08/09/2026
+- [x] Audited release history V150–V160 and located the material regression at V153; V150–V152 retained the richer Flow while V154–V160 solved other visual/data/session concerns without restoring it completely.
+- [x] Ported validated behavior into the single canonical frontend without restoring wrapper architecture: inline card-invoice summary/full detail, semantic movement labels, salary-withholding presentation, transfer direction, Hoje, complete next-five-day view and preserved scroll.
+- [x] Restored append-only projection actions Editar, Duplicar, Dividir/substituir and Excluir, including 2–12 split parts, validation and live sum; backend contracts remain `lts_browser_flow_event_editor_v1` / `lts_browser_flow_mutate_v1`.
+- [x] Preserved later capabilities: `lts_browser_flow_v8`, Consolidado/Itaú/Bradesco/C6, ten period presets, 14 consolidated liquidity/economic columns and purpose-built mobile liquidity layers.
+- [x] Expanded the permanent gate to exercise invoice, split, semantics, scroll and mobile Flow overflow; local Chromium desktop 1312×1199 and mobile 390×844 PASS.
+- [ ] Require branch CI Chromium/WebKit and candidate smoke before fixed homologation exposure; authenticated real-data/write and physical-iPhone evidence remain explicitly open.
+
 ## P0 — Unified Despesas decision workbench / canonical v1.8 — 08/09/2026
 - [x] Removed the post-load renderer conflict; `canonical-app` is the sole owner of Despesas and the product module is restricted to Patrimônio/Cartões.
 - [x] Combined monthly/yearly history, nature × context/person/cost-center, evidence-led insights, explicit `Não atribuído` semantics and month/item drilldown.
@@ -195,7 +203,10 @@ Canonical persistent project list. Never remove an open financial, documentary, 
 - [x] `Saldo anterior | Entradas | Saídas | Saldo final`; balances visually differentiated.
 - [x] Facts beat projections; scenarios never facts; stale anchors cannot reanchor; cards do not feed their own forecast.
 - [x] Bank↔liquidity-asset transfer consolidated economic effect zero.
-- [ ] Never infer historical bank without evidence.
+- [x] Restore inline reconciled card-invoice detail without counting payment plus purchases twice.
+- [x] Restore semantic movement labels, transfer direction, net-salary evidence, Hoje/five-day behavior and scroll preservation.
+- [x] Restore append-only edit/duplicate/split/cancel projection actions; fixture gate cannot write.
+- [x] Never infer historical bank without evidence; absent balance remains unavailable.
 - [ ] Real authenticated physical-device visual/data E2E remains open.
 
 ## 6. Natural liquidity input / mutation contract

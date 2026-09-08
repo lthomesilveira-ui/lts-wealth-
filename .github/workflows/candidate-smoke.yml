@@ -97,14 +97,14 @@ jobs:
           gate=Path('.github/scripts/lts_canonical_v157plus_browser_gate.js').read_text(encoding='utf-8')
           required_html=[
             'canonical-dashboard-fidelity.css?v=20260908-expenses8',
-            'canonical-liquidity.js?v=20260908-expenses8',
+            'canonical-liquidity.js?v=20260908-flow-parity9',
             'single-owner-history-nature-context-v1','Quanto você gasta — e para quem é cada gasto.',
             'reference-toolbar-signals-drilldowns-v1','canonical-route-session-continuity-v1','data-dashboard-reload','data-mg-shortcut',
             'Dashboard','Fluxo Diário','Despesas','Patrimônio','Cartões','Atualizações'
           ]
           required_css=['#dashboard-view .grid-main','#dashboard-view .rank-row.clickable']
           required_loader=['canonical-liquidity-core.js','canonical-flow-v157.js','canonical-product-v157.js','canonical-presentation-v157.js','canonical-capabilities-v161.js?v=20260908-continuity7']
-          required_flow=['lts_browser_flow_v8','LTS v1.3','Histórico / período','Movimentos do dia','RSUs futuras','Cash Awards futuros','lts_browser_flow_event_editor_v1','lts_browser_flow_mutate_v1']
+          required_flow=['lts_browser_flow_v8','lts_browser_card_settlement_detail_v2','LTS v1.9','v150-validated-flow-plus-v157-liquidity-v1','Histórico / período','Movimentos do dia','Dividir / substituir','inline-card-settlement-v150','RSUs futuras','Cash Awards futuros','lts_browser_flow_event_editor_v1','lts_browser_flow_mutate_v1']
           required_product=['Dinheiro em contas','Contas + curto prazo','RSUs vested','FGTS','Despesas (mês)','Evolução da Liquidez','Quanto você gastou — e como isso evoluiu.','Mês a mês','Ano a ano','Cobertura do histórico','Quanto você tem, quanto deve e quanto é seu.','Conferência de fatura, não análise de gasto.']
           required_presentation=['presentation-polish-v1','__LTS_V157_PRESENTATION_STATUS','__LTS_V157_POLISH_STATUS']
           required_capabilities=['LTS v1.6 · Central de Gestão','__LTS_CANONICAL_CAPABILITIES_STATUS','session-persisted-management-pane-v1','Planejamento','Entradas & compromissos','Recorrências','Simulações','Conciliação','Relatórios','Backup & restauração','Configurações & integrações','Financiamentos','Documentos']

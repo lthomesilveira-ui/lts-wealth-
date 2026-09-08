@@ -12,9 +12,12 @@ Purpose: compact operational bootstrap so project execution never depends on a l
 7. Before a repository write, freshness-check `main`, active branch, this file, and the SHAs of `PROJECT_MASTER_BACKLOG.md`, `NEXT_HOMOLOGATION_GATE.md`, `LTS_WEALTH_CONTINUITY_HANDOFF.md`, `CANONICAL_DELIVERY_MASTER_PLAN.md` and latest immutable checkpoint. Use line-limited reads; fully re-read only a file whose SHA changed or whose relevant section is needed.
 8. After every material package, gate, integration or newly discovered blocker, update this file so a chat may be abandoned/restarted at any moment without reconstruction work.
 
-## Current execution state — 08/09/2026 04:42 BRT
+## Current execution state — 08/09/2026 08:05 BRT
 - Repo: `lthomesilveira-ui/lts-wealth-`; active recovery branch remains `canonical-v157plus-product-recovery`.
-- `main`, `canonical-app-v1` and `canonical-v157plus-product-recovery` are aligned at canonical v1.8 exposure `352a4fe9716bff063a67dae2e01a0f484d6ac80e`.
+- `main`, `canonical-app-v1` and `canonical-v157plus-product-recovery` were freshness-verified aligned at canonical v1.8 checkpoint `3979c4f7318da9c2c00053be3b71e175a7df55ea`; fixed homologation still exposes product package `870acc37f220592c77b488be32315af284b52427` through manifest exposure `352a4fe9716bff063a67dae2e01a0f484d6ac80e`.
+- Canonical v1.9 candidate in this package restores the validated V150 Flow interactions on top of the later canonical liquidity model under contract `v150-validated-flow-plus-v157-liquidity-v1`: inline card-invoice detail, append-only edit/duplicate/split, semantic movement labels, net salary evidence, internal-transfer direction, dedicated `Hoje`, five complete future days and scroll preservation.
+- The V150→V160 audit established the exact loss point: V150–V152 retained the rich protected Flow; V153 replaced it with a reduced native five-column surface; V154–V160 fixed presentation/data/session concerns without restoring all those interactions. The wrapper architecture remains retired; only validated behavior was ported into the single canonical frontend.
+- The permanent gate now exercises the restored Flow in addition to the six-route product: 14 consolidated layers, four account views, five-day horizon, inline invoice summary/full detail, semantic transfer/salary labels, split add/remove/sum, fixture write boundary and mobile Flow overflow. Local Chromium 1312×1199 and Chromium 390×844 are PASS; CI WebKit and branch integration remain the next release gate and are not pre-claimed.
 - Exact product package: `870acc37f220592c77b488be32315af284b52427`; Dashboard Fidelity Pass 6, canonical v1.7 route/session receipt, canonical v1.6 capability recovery, iPhone future-JWT recovery and the bounded Supabase security baseline remain preserved underneath it.
 - Despesas now has one DOM owner (`canonical-app`): month/year history, nature × context, evidence-led insights, `Não atribuído` semantics and item/month drilldown coexist in one gated responsive route. `canonical-product-v157.js` is limited to Patrimônio and Cartões.
 - Unified-expenses active gate/candidate `34199824400` / `34199824442`, canonical gate/candidate `34200253901` / `34200253918`, post-manifest active/canonical smokes `34200631320` / `34200627680`, main candidate/Pages `34200706521` / `34200704967`: **SUCCESS**.
@@ -60,12 +63,12 @@ Purpose: compact operational bootstrap so project execution never depends on a l
 - Historical v144–v160 workflows remain manually/branch runnable but no longer run automatically on `main`; their wrapper-specific failures are not canonical release gates.
 
 ## Current immediate execution sequence
-1. Keep `main`, `canonical-app-v1` and `canonical-v157plus-product-recovery` aligned by normal no-force updates only.
+1. Integrate the canonical v1.9 Flow-parity candidate into `canonical-v157plus-product-recovery`, require the permanent Chromium/WebKit gate and candidate smoke to pass, then expose it through the fixed homologation manifest without changing public `index.html`.
 2. Use `LTS_WEALTH_REQUIREMENTS_TRACEABILITY.md` as the durable map from briefing → implementation → validation → pending; append recovered facts rather than relying on chat memory.
 3. Treat Dashboard Fidelity Pass 6 as the current protected baseline; continue only evidence-led pixel/detail convergence, never copy financial values from the reference.
 4. Treat the bounded Supabase RLS/SECURITY DEFINER package as the protected security baseline; leaked-password protection remains a separate controlled Auth-setting change.
 5. Keep the route/session continuity contract and unified receipt regression-protected; the automatic gate is complete, while its authenticated-real/physical-device rows remain honestly open.
-6. Keep the v1.8 single-owner Despesas route regression-protected; continue remaining Dashboard/Atualizações product quality and execute real write/search/document/backup-restore lifecycles when an authenticated browser identity is available.
+6. Keep the v1.8 single-owner Despesas route and v1.9 V150 Flow-parity contract regression-protected; continue remaining Dashboard/Atualizações product quality and execute real write/search/document/backup-restore lifecycles when an authenticated browser identity is available.
 7. Keep authenticated physical-iPhone E2E explicitly unclaimed until actually performed.
 8. Preserve `promotion_status:not_promoted` and protected `index.html` until explicit user authorization.
 
@@ -81,7 +84,7 @@ Purpose: compact operational bootstrap so project execution never depends on a l
 - Six real routes: Dashboard, Fluxo Diário, Despesas, Patrimônio, Cartões, Atualizações.
 - Financing, Planning, Revenues/Inputs, Recurrences, Commitments, Simulations, Reconciliation, Reports, Documents and Settings remain required capabilities even when grouped under the six primary routes; do not silently delete them.
 - Daily-use target is replacement of the Excel, with reliable past/today/90-day Flow and automatic release receipts; that target is not complete until the real authenticated gates are closed.
-- Flow: Consolidado/Itaú/Bradesco/C6, historical coverage where evidenced, operational balance + liquidity layers, expandable movements, internal transfers neutral in consolidated economics.
+- Flow: Consolidado/Itaú/Bradesco/C6, historical coverage where evidenced, operational balance + 14 consolidated liquidity layers, expandable movements, inline reconciled card detail, semantic labels, dedicated Hoje/five-day horizon, append-only edit/duplicate/split and internal transfers neutral in consolidated economics.
 - Original source files remain unchanged; no re-entry; historical/reconciliation difference tolerance remains R$0.00.
 - Daily balance chain, Realized versus Projected separation, Review for ambiguity, append-only ledger, idempotent ingestion and human approval remain binding domain rules.
 - No invented amount, merchant, classification, recurrence, competence, valuation, tax or documentary fact.

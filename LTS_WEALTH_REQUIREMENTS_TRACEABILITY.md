@@ -1,6 +1,6 @@
 # LTS Wealth — Matriz de Requisitos, Decisões e Validações
 
-Última auditoria material: 08/09/2026 02:44 BRT (America/Sao_Paulo)
+Última auditoria material: 08/09/2026 08:05 BRT (America/Sao_Paulo)
 
 Objetivo: impedir que briefing, decisões, dados, validações ou pendências se percam entre chats, versões ou trocas de arquitetura. Esta matriz complementa `PROJECT_MASTER_BACKLOG.md`; ela não substitui os checkpoints imutáveis nem a evidência financeira.
 
@@ -98,9 +98,10 @@ Os valores impressos na imagem oficial são ilustrativos. Nenhum valor da refer�
 | DATA-03 | Diferença de reconciliação aceitável `R$ 0,00`. | Núcleo/backend historicamente reconciliado. | v0.2: 2 anos, diferença máxima zero, 31 itens, três bancos; gates posteriores preservam invariantes. | Sem nova divergência autorizada. | E2E da UI canônica ainda deve provar consumo coerente do dado real. |
 | DOM-01 | Daily balance chain; Realizado ≠ Projetado; ambiguidade vai para Revisão. | Regras de Flow/FIX86 preservadas. | Gates de Flow, planning e classificação. | Baseline Domain Model v1.2 de 16/07. | Não converter cenário em fato. |
 | DOM-02 | Ledger append-only, ingestão idempotente, bruto preservado e Advisor read-only; confirmação humana para mutação. | Contratos de writer/readback e audit tables existentes. | Cancel/edit/split 10/10; writers com rollback/idempotência. | Regra histórica explícita. | UI de undo/reversal continua desabilitada até contrato append-only explícito. |
-| FLOW-01 | Fluxo passado/hoje/futuro, horizonte operacional de 90 dias, prioridade absoluta de confiabilidade. | Rota canônica e `lts_browser_flow_v8`. | Desktop/mobile; presets, colunas, expansão e troca de conta. | Uso real ainda não fechado. | E2E autenticado físico e verificação de refresh/session. |
+| FLOW-01 | Fluxo passado/hoje/futuro, horizonte operacional de 90 dias, prioridade absoluta de confiabilidade. | Rota canônica, `lts_browser_flow_v8` e contrato `v150-validated-flow-plus-v157-liquidity-v1`; botão Hoje e próximos cinco dias completos restaurados. | Gate local Chromium desktop/mobile: presets, 14 colunas consolidadas, cinco dias, expansão e troca de conta. | Uso real ainda não fechado. | CI WebKit desta versão e E2E autenticado físico. |
 | FLOW-02 | Consolidado + Itaú + Bradesco + C6, sem inferir banco ausente. | Implementado. | Gate físico de seleção das quatro visões. | Regra original e atual. | Provar com dados reais no iPhone. |
-| FLOW-03 | Transferência interna e banco↔ativo têm efeito econômico consolidado zero; fatura não duplica despesa. | Implementado nos leitores/movimentos. | Preview de duas pernas e invariantes verdes. | Regra original. | Save→refresh autenticado ainda pendente. |
+| FLOW-03 | Transferência interna e banco↔ativo têm efeito econômico consolidado zero; pagamento de fatura não duplica despesa. | Implementado nos leitores/movimentos; o débito da fatura abre resumo/composição conciliada dentro do dia via `lts_browser_card_settlement_detail_v2`. | Gate percorre direção/neutro da transferência, resumo, total, créditos, delta caixa×detalhe e fatura completa. | Regra original e comportamento V150 recuperado. | Save→refresh e fatura real autenticados ainda pendentes. |
+| FLOW-04 | Projeção pode ser editada, duplicada, dividida/substituída ou cancelada sem apagar a origem. | UI canônica usa `lts_browser_flow_event_editor_v1` + `lts_browser_flow_mutate_v1`; divisão suporta 2–12 partes e soma visível. | Gate executa tabs, adicionar/remover partes, soma e confirma `writer_called:false` na fixture; backend append-only permanece comprovado. | Comportamento V150 recuperado; nenhum write financeiro real usado no teste. | E2E autenticado de edit/duplicate/split/cancel e readback. |
 | DASH-01 | Dashboard visualmente alinhado à referência oficial 1312×1199. | Pass 6 restaura ordem de navegação, competência/as-of, `Hoje`, cinco sinais de evidência, posição bancária e drill-downs; não é pixel-perfect. | Gates `34185954453` e `34186087590`, artefatos desktop/mobile e smokes pós-exposição verdes. | Referência `VALIDADO_USUARIO`; URL fixa verificada deslogada no alvo exato. | `ABERTO_ENGENHARIA`: detalhe pixel-level, gráficos históricos com evidência e E2E real. |
 | DASH-02 | Cinco KPIs liquidity-first com valor real e sem falso zero. | Implementado. | Gate determinístico. | Dados reais completos no iPhone não provados. | E2E autenticado; indisponível deve continuar explícito. |
 | DASH-03 | Planejamento mostra data de ação/gestão separada da primeira insuficiência. | Implementado no read model/UI. | Gate de alias/Planning. | Regra financeira atual documentada. | Revalidar no E2E e manter sem projeção futura de FGTS. |
@@ -125,7 +126,7 @@ Os valores impressos na imagem oficial são ilustrativos. Nenhum valor da refer�
 | SEC-01 | Superfície Supabase deve aplicar menor privilégio, RLS e ownership guard sem quebrar RPCs autenticadas. | Migração `20260908045049` aplicada: RLS deny-by-default em 13/13 tabelas, 12 helpers de `user_id` arbitrário internos, Flow v7-v10 authenticated-only, defaults de cliente fechados e `service_role` preservado. | Pós-condições 13/13, 12/12, 4/4, zero SECURITY DEFINER anônimo e zero autenticado sem guard direto; regressão autenticada Flow v8/Dashboard/produto em rollback; Advisor revisto. | No-policy INFO é intencional nas tabelas internas; 65 avisos authenticated SECURITY DEFINER correspondem a RPCs de navegador guardadas. Proteção contra senhas vazadas segue desativada. | `IMPLEMENTADO_REGREDIDO`: manter o gate; revisar/ativar leaked-password protection em janela controlada de Auth. |
 | REL-01 | Homologação fixa preservada; root público separado e protegido. | Homologação aponta ao produto `e618ef48e22872ce718c7932872e2316e5660f67`; exposição `33da29ab0818c9dd59dca45f68d3680ed153f6af`; `index.html` intacto. | Smokes/Pages pré e pós-exposição verdes; URL fixa verificada com asset continuity-v7, login limpo, zero KPIs deslogados e nenhum iframe. | Promoção não autorizada. | Continuar `not_promoted` até autorização explícita. |
 
-## V150 e V151 — preservação explícita
+## V150–V160 — preservação explícita e ponto de regressão
 
 ### V150
 
@@ -147,14 +148,30 @@ Os valores impressos na imagem oficial são ilustrativos. Nenhum valor da refer�
 - gates herdados passaram, mas o smoke específico V151 teve falhas intermediárias até correções de ownership/observer;
 - o wrapper V151 é histórico; suas capacidades aprovadas pertencem à aplicação canônica.
 
+### Auditoria cronológica V152–V160
+
+| Versão | Evidência de release | Resultado relevante para o produto atual |
+| --- | --- | --- |
+| V152 | candidato `16319fe`, exposição `598d53a` | Herdou o Flow rico de V150/V151; não é a origem da perda. |
+| V153 | candidato `8527de9`, exposição/follow-up `a2eb869` | Introduziu shell nativo mais simples e reduziu o Flow visível às cinco colunas básicas; este é o ponto material da regressão. |
+| V154 | exposição visual `30c92d1` | Consolidou direção visual; não restaurou fatura inline/divisão/rótulos do Flow. |
+| V155 | recuperação funcional `5a8f43c` | Corrigiu falsos zeros e navegação de dados reais; Flow rico continuou incompleto. |
+| V156 | liquidez/performance `f3e0fde` | Reforçou liquidez e desempenho, mas não recuperou todas as interações V150. |
+| V157 | iOS/WebKit `cb0b442` | Cobriu classe de compatibilidade móvel; não equivaleu à homologação física autenticada. |
+| V158 | native core `aa5495f` | Avançou arquitetura nativa/fallback honesto; ainda sem a paridade completa do Flow. |
+| V159 | protótipo real-core `70619ad` | Recuperou apresentação, mas a prova material de KPI no iPhone continuou insuficiente. |
+| V160 | real-data bridge `cbc4bc9` | Melhorou readiness por dado material e fallback; a paridade V150 do Flow permaneceu ausente. |
+| Canônica v1.9 | contrato `v150-validated-flow-plus-v157-liquidity-v1` | Porta apenas o comportamento validado para a aplicação única atual e preserva `lts_browser_flow_v8`, quatro contas e 14 camadas; não reintroduz wrappers. |
+
 ## Pendências ordenadas sem depender do chat
 
 ### P0 executável agora
 
-1. preservar o baseline Pass 6 e continuar convergência pixel/detail do Dashboard com dados reais ou estado indisponível honesto;
-2. manter Despesas v1.8 regression-protected e melhorar Atualizações sem regressão de densidade ou evidência;
-3. manter rota/sessão e o recibo único regression-protected, fechando novas linhas automáticas quando surgirem requisitos;
-4. manter o novo baseline Supabase regression-protected e revisar leaked-password protection em uma janela controlada de Auth.
+1. integrar/expor v1.9 somente após gates Chromium/WebKit, preservando a paridade V150 do Flow e as 14 camadas posteriores;
+2. preservar o baseline Pass 6 e continuar convergência pixel/detail do Dashboard com dados reais ou estado indisponível honesto;
+3. manter Despesas v1.8 regression-protected e melhorar Atualizações sem regressão de densidade ou evidência;
+4. manter rota/sessão e o recibo único regression-protected, fechando novas linhas automáticas quando surgirem requisitos;
+5. manter o novo baseline Supabase regression-protected e revisar leaked-password protection em uma janela controlada de Auth.
 
 ### P0 que exige sessão/evidência real no gate final
 

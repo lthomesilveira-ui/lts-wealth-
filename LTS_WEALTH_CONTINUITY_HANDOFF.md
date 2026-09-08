@@ -24,7 +24,7 @@ This file exists so project continuity never depends on chat context. Always re-
 - Public fallback remains WIP35-v136; protected `index.html` blob remains `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
 - Public promotion remains unauthorized/not done.
 
-## Current primary product — canonical v1.8 / unified expenses
+## Current primary product — canonical v1.8 exposed / canonical v1.9 Flow candidate
 The primary product line is the single canonical frontend `canonical-app.html`. The v154→v160 wrapper lineage is historical evidence only and must not be reintroduced as the product architecture.
 
 Current facts:
@@ -44,6 +44,12 @@ Current facts:
 - unified-expenses gates are green: active `34199824400`, canonical `34200253901`, main candidate/Pages `34200706521` / `34200704967`;
 - latest immutable checkpoint: `backups/CANONICAL_APP_V18_UNIFIED_EXPENSES_CHECKPOINT_2026-09-08.md`;
 - authenticated physical-iPhone financial/data E2E remains pending/not claimed.
+
+## Canonical v1.9 Flow interaction recovery — candidate under gate
+- Git-history audit recovered the exact V150–V160 lineage: V150–V152 kept inline invoice detail, rich semantic movements, projection split and interaction continuity; V153 simplified the visible Flow; V154–V160 focused on visual/data/session recovery without fully restoring those behaviors.
+- `canonical-flow-v157.js` now carries contract `v150-validated-flow-plus-v157-liquidity-v1`, preserving `lts_browser_flow_v8`, four account views, ten periods and 14 consolidated liquidity/economic layers.
+- Restored canonical interactions: dedicated Hoje, five complete future days, expansion scroll preservation, inline reconciled invoice summary/full detail, semantic transfer/net-salary labels and append-only edit/duplicate/split/cancel with live split sum.
+- Permanent gate now covers these interactions and Flow-specific mobile overflow. Local Chromium desktop/mobile is PASS; WebKit CI, fixed homologation exposure, authenticated real mutations/invoices and physical iPhone are not pre-claimed.
 
 ## Canonical v1.7 — route/session continuity and one readiness receipt
 - `canonical-route-session-continuity-v1` resolves the intended route before the first RPC/render and stores only allowlisted navigation state in `sessionStorage`.
