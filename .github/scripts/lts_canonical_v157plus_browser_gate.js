@@ -44,7 +44,7 @@ function finalizeReceipt() {
   receipt.claim_boundary.deterministic_fixture = 'PASS';
   receipt.requirements = {
     architecture: { status: 'PASS', evidence: 'single canonical frontend; zero iframes' },
-    dashboard: { status: 'PASS_AUTOMATED', evidence: 'approved hierarchy, four current-liquidity quadrants, layered fact/base/RSU/FGTS chart semantics and documentary commitments on desktop/mobile' },
+    dashboard: { status: 'PASS_AUTOMATED', evidence: 'approved hierarchy, four current-liquidity quadrants, layered fact/base/RSU/FGTS chart semantics, documentary commitments and approved 1312x1199 desktop single-screen density' },
     flow: { status: 'PASS_AUTOMATED', evidence: 'V150 interaction parity plus V157 liquidity layers: four account views, five-day horizon, semantic movements, inline invoice, append-only split and preserved scroll' },
     expenses: { status: 'PASS_AUTOMATED', evidence: 'single-owner month/year history, nature x context, unassigned semantics and item drilldown' },
     cards: { status: 'PASS_AUTOMATED', evidence: 'current/next invoice and certified historical coverage' },
@@ -60,7 +60,7 @@ function finalizeReceipt() {
     reports: { status: 'PASS_AUTOMATED', evidence: 'executive JSON and recurrence CSV controls' },
     backup_restore: { status: 'PASS_CONTROLS_ONLY', evidence: 'checksum/stage/preview/confirmation controls; real apply remains open' },
     route_session_continuity: { status: 'PASS_AUTOMATED', evidence: 'deep link, refresh, pane restore, back/forward and safe JWT reset' },
-    performance_ux: { status: 'PASS_AUTOMATED', evidence: 'bounded browser waits, no console/page errors, no horizontal overflow' },
+    performance_ux: { status: 'PASS_AUTOMATED', evidence: 'bounded browser waits, no console/page errors, no horizontal overflow and no desktop dashboard vertical overflow at 1312x1199' },
     authenticated_real_data: { status: 'OPEN', evidence: 'not executed by fixture browser gate' },
     authenticated_write_lifecycles: { status: 'OPEN', evidence: 'financial writes remain disabled in fixture' },
     physical_iphone: { status: 'OPEN', evidence: 'not executed by CI WebKit' },
@@ -231,8 +231,8 @@ async function assertUpdatesContract(page, label) {
     throw new Error(`${label}: classification-first hierarchy ${JSON.stringify(hierarchy)}`);
   }
   const recovery = await page.evaluate(() => window.__LTS_CANONICAL_RECOVERY_STATUS);
-  if (recovery?.build !== 'LTS v1.14' || recovery?.updates_contract !== 4 || recovery?.document_review_contract !== 4) {
-    throw new Error(`${label}: v1.14 recovery contract ${JSON.stringify(recovery)}`);
+  if (recovery?.build !== 'LTS v1.15' || recovery?.updates_contract !== 4 || recovery?.document_review_contract !== 4 || recovery?.dashboard_density_contract !== 1) {
+    throw new Error(`${label}: v1.15 recovery contract ${JSON.stringify(recovery)}`);
   }
   const inputStatus = await page.evaluate(() => window.__LTS_CANONICAL_REVIEWED_INPUT_STATUS);
   if (inputStatus?.ready !== true
@@ -424,11 +424,14 @@ async function assertManagementContract(page, label) {
 
 async function assertDashboardContract(page, label, mobile) {
   const contract = await page.locator('#dashboard-view').getAttribute('data-dashboard-contract');
+  const densityContract = await page.locator('#dashboard-view').getAttribute('data-dashboard-density-contract');
   const status = await page.evaluate(() => window.__LTS_CANONICAL_DASHBOARD_STATUS);
   if (contract !== 'reference-layered-liquidity-commitments-v3'
+      || densityContract !== 'approved-1312x1199-single-screen-v1'
       || status?.ready !== true
       || status?.contract !== contract
       || status?.reference !== 'approved-1312x1199-liquidity-first'
+      || status?.density_contract !== densityContract
       || status?.projection_contract !== 'fact-before-asof-projection-after-asof-v1'
       || status?.liquidity_layer_contract !== 'current-base-scheduled-rsu-restricted-fgts-v1'
       || status?.current_anchor_source !== 'cockpit-liquidity-through-d3'
@@ -439,7 +442,7 @@ async function assertDashboardContract(page, label, mobile) {
       || status?.restricted_points !== 5
       || status?.commitment_rows !== 3
       || status?.update_rows !== 3) {
-    throw new Error(`${label}: Dashboard fidelity status ${JSON.stringify({ contract, status })}`);
+    throw new Error(`${label}: Dashboard fidelity status ${JSON.stringify({ contract, densityContract, status })}`);
   }
 
   const charts = page.locator('#dashboard-view [data-liquidity-chart="layered-fact-projection-v2"]');
@@ -463,7 +466,7 @@ async function assertDashboardContract(page, label, mobile) {
   if (await legends.count() !== 2) throw new Error(`${label}: layered liquidity legends missing`);
   for (const legend of await legends.all()) {
     const legendText = await legend.innerText();
-    for (const expected of ['Posição em', 'Base operacional projetada', 'Com vestings programados', 'Com FGTS documental D+30']) {
+    for (const expected of ['Posição atual', 'Base operacional', 'Vestings programados', 'FGTS documental D+30']) {
       if (!containsText(legendText, expected)) throw new Error(`${label}: liquidity legend missing ${expected}`);
     }
   }
@@ -472,8 +475,18 @@ async function assertDashboardContract(page, label, mobile) {
     if (!containsText(layerValues, expected)) throw new Error(`${label}: current liquidity composition missing ${expected}`);
   }
   const liquidityPanelBox = await page.locator('#dashboard-view .grid-main > .panel').first().boundingBox();
-  if (!liquidityPanelBox || liquidityPanelBox.height > (mobile ? 410 : 360)) {
+  if (!liquidityPanelBox || liquidityPanelBox.height > (mobile ? 410 : 315)) {
     throw new Error(`${label}: liquidity panel height regression ${JSON.stringify(liquidityPanelBox)}`);
+  }
+  if (!mobile) {
+    const desktopFit = await page.evaluate(() => ({
+      scrollHeight: document.documentElement.scrollHeight,
+      viewportHeight: window.innerHeight,
+      dashboardBottom: Math.ceil(document.querySelector('#dashboard-view')?.getBoundingClientRect().bottom || 0)
+    }));
+    if (desktopFit.scrollHeight > desktopFit.viewportHeight || desktopFit.dashboardBottom > desktopFit.viewportHeight) {
+      throw new Error(`${label}: approved 1312x1199 single-screen density regression ${JSON.stringify(desktopFit)}`);
+    }
   }
   const commitmentText = await page.locator('#dashboard-view .commit-list').innerText();
   for (const expected of ['Próxima fatura', 'Parcela contratual', 'Compromisso documentado']) {
