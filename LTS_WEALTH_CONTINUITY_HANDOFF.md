@@ -166,3 +166,11 @@ NONE. Continue autonomous Dashboard/product-quality work. User may test the fixe
 - Fixed homologation was directly verified; Dashboard parity remains P0 and pixel-perfect parity is not claimed.
 - Real authenticated liquidity save→refresh→visible and authenticated physical-iPhone E2E remain pending/unclaimed.
 - `index.html` remains protected/not promoted.
+
+## Dashboard Fidelity Pass 5 — 07/09/2026
+- Root cause removed: `canonical-product-v157.js` no longer replaces the Dashboard after the canonical app renders it; the module remains responsible for Despesas, Patrimônio and Cartões enrichment.
+- Canonical Dashboard now keeps the five liquidity-first KPI contract inside the denser approved-reference hierarchy.
+- Product source `6eca5c3785cd5dca69a2aa8f610312eefbb2a669`; exact gated target `eff928cb88e01ba3c5c88b8a8a8c4e8fa5d89f5d`; exposure `a808d855aa6687a893a51598db8f5fad4faf1cbb`.
+- Recovery gate `34173223977`, permanent canonical gate `34173482173`, final active/canonical/main smokes and Pages: SUCCESS; all post-exposure smokes and Pages are also green.
+- Fixed homologation was directly verified at the exact target with Pass 5 asset and truthful unauthenticated login.
+- Dashboard pixel-perfect parity and authenticated physical-iPhone financial/data E2E remain explicitly unclaimed.

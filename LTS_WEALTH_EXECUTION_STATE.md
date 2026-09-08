@@ -12,22 +12,24 @@ Purpose: compact operational bootstrap so project execution never depends on a l
 7. Before a repository write, freshness-check `main`, active branch, this file, and the SHAs of `PROJECT_MASTER_BACKLOG.md`, `NEXT_HOMOLOGATION_GATE.md`, `LTS_WEALTH_CONTINUITY_HANDOFF.md`, `CANONICAL_DELIVERY_MASTER_PLAN.md` and latest immutable checkpoint. Use line-limited reads; fully re-read only a file whose SHA changed or whose relevant section is needed.
 8. After every material package, gate, integration or newly discovered blocker, update this file so a chat may be abandoned/restarted at any moment without reconstruction work.
 
-## Current execution state — 07/09/2026 21:15 BRT
+## Current execution state — 07/09/2026 21:35 BRT
 - Repo: `lthomesilveira-ui/lts-wealth-`.
-- Exposed product baseline shared by `main`, `canonical-app-v1` and `canonical-v157plus-product-recovery`: `3b3048fa4660868e161582fcd8704438a13e300c` — gated V157+ recovery exposed through the fixed homologation manifest; later documentation/CI-trigger checkpoints do not change that product target; public root still protected.
+- Exposed product baseline shared by `main`, `canonical-app-v1` and `canonical-v157plus-product-recovery`: `a808d855aa6687a893a51598db8f5fad4faf1cbb` — Dashboard Fidelity Pass 5 exposed through the fixed homologation manifest; public root still protected.
 - Active recovery branch: `canonical-v157plus-product-recovery`.
-- Product/gate implementation commit: `76f888dc0e668fb0e768c8cc825f56778f043f50`; green canonical baseline and manifest target: `c44d401497e14d842d433a302006ff5648b956a9`; exposure manifest commit: `3b3048fa4660868e161582fcd8704438a13e300c`.
+- V157+ recovery implementation: `76f888dc0e668fb0e768c8cc825f56778f043f50`; Dashboard owner/fidelity implementation: `6eca5c3785cd5dca69a2aa8f610312eefbb2a669`; exact green manifest target: `eff928cb88e01ba3c5c88b8a8a8c4e8fa5d89f5d`; exposure manifest commit: `a808d855aa6687a893a51598db8f5fad4faf1cbb`.
 - V157+ recovery gate run `34160992326`: **SUCCESS**.
 - V157+ presentation-polish gate run `34161414516`: **SUCCESS**.
 - V157+ modular recovery gate run `34170935882`: **SUCCESS** in desktop Chromium 1312×1199 and mobile WebKit 390×844.
 - Active candidate smoke `34170935887`, permanent canonical gate `34171231918`, canonical candidate smoke `34171231935`, main candidate smoke `34171338575` and Pages `34171338335`: **SUCCESS**.
 - Post-manifest candidate smokes on active `34171452083`, canonical `34171452913`, main `34171453488`, and Pages `34171452759`: **SUCCESS**.
+- Dashboard Pass 5 recovery gate `34173223977`, final active candidate smoke `34173481335`, permanent canonical gate `34173482173`, canonical candidate smoke `34173482194`, main candidate smoke `34173586238` and Pages `34173586282`: **SUCCESS**.
+- Pass 5 exposure smokes active `34173674961`, canonical `34173674230`, main `34173673390`, and Pages `34173673353`: **SUCCESS**.
 - Permanent canonical gate now validates the split `canonical-liquidity-core.js`, `canonical-flow-v157.js`, `canonical-product-v157.js` and `canonical-presentation-v157.js` architecture while retaining prior classification, search/CSV, document and neutral liquidity-movement contracts.
 - Recovery covers the richer Flow contract, executive Despesas/Patrimônio/Cartões surfaces, mobile Flow layers, visible build identification and the canonical single-frontend architecture.
 - Current Flow recovery uses backend `lts_browser_flow_v8`; deterministic gate is green. Authenticated physical-iPhone financial/data E2E is still **not claimed**.
-- Dashboard remains P0 for visual convergence to the approved 1312×1199 reference; do not roll it back to the historical wrapper architecture.
+- Dashboard now remains owned by the dense canonical app instead of being replaced after load by the simplified V157+ module. Its five liquidity-first KPIs and reference-level section hierarchy are gated; further pixel-level convergence remains P0.
 - Public `index.html` remains protected; public-root promotion is not authorized.
-- Fixed homologation `https://lthomesilveira-ui.github.io/lts-wealth-/homologacao.html` resolves to `canonical-app.html?homologacao=c44d401497e14d842d433a302006ff5648b956a9`; live verification showed the canonical script and truthful unauthenticated login, not fixture financial content.
+- Fixed homologation `https://lthomesilveira-ui.github.io/lts-wealth-/homologacao.html` resolves to `canonical-app.html?homologacao=eff928cb88e01ba3c5c88b8a8a8c4e8fa5d89f5d`; live verification showed the Pass 5 canonical script and truthful unauthenticated login, not fixture financial content.
 - Historical v144–v160 workflows remain manually/branch runnable but no longer run automatically on `main`; their wrapper-specific failures are not canonical release gates.
 
 ## Immediate next execution sequence

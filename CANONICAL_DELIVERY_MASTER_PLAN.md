@@ -5,6 +5,8 @@ Active implementation branch: `canonical-v157plus-product-recovery` (aligned wit
 
 Purpose: this is the execution-order view of the LTS Wealth backlog. It does not replace documentary evidence or immutable checkpoints. `PROJECT_MASTER_BACKLOG.md` remains the complete persistent dependency list. This file makes the remaining work explicit so product delivery does not get lost behind release mechanics.
 
+Current milestone: Dashboard Fidelity Pass 5 is exposed. The canonical app owns the Dashboard without post-load replacement, and Chromium/WebKit gates preserve the five liquidity-first KPIs plus the approved-reference section hierarchy. Pixel-level convergence and real-data refinement remain active P0.
+
 ## Definition of DONE for the app
 The LTS Wealth app is not considered delivered until all P0 items below are complete together in one canonical application:
 - one canonical frontend, not a wrapper/iframe chain over historical releases;

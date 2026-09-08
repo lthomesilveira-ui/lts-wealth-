@@ -4,6 +4,16 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 
 Canonical persistent project list. Never remove an open financial, documentary, classification, reconciliation or product dependency during compaction. Detailed immutable evidence remains in `backups/`, `HISTORICAL_RECOVERY_LOG.md`, `PLANNING_EXCEL_TO_CURRENT_AUDIT_2026-08-30.md`, `NEXT_HOMOLOGATION_GATE.md` and release checkpoints.
 
+## P0 — Dashboard Fidelity Pass 5 — 07/09/2026
+- [x] Removed the post-load simplified Dashboard replacement; the dense canonical Dashboard is again the single owner of that route.
+- [x] Preserved the five liquidity-first KPIs while restoring the approved-reference section density: liquidity evolution, asset distribution, bank position, cash flow, top expenses, commitments, planning, FGTS and pending updates.
+- [x] Product source `6eca5c3785cd5dca69a2aa8f610312eefbb2a669`; exact gated target `eff928cb88e01ba3c5c88b8a8a8c4e8fa5d89f5d`; exposure `a808d855aa6687a893a51598db8f5fad4faf1cbb`.
+- [x] Recovery `34173223977`, permanent canonical `34173482173`, final active/canonical/main smokes `34173481335` / `34173482194` / `34173586238`, and Pages `34173586282`: SUCCESS.
+- [x] Post-exposure active/canonical/main smokes `34173674961` / `34173674230` / `34173673390` and Pages `34173673353`: SUCCESS.
+- [x] Fixed homologation browser-verified at the exact gated target with Pass 5 asset and truthful unauthenticated login.
+- [x] Immutable checkpoint `backups/CANONICAL_APP_V157PLUS_DASHBOARD_FIDELITY_PASS5_CHECKPOINT_2026-09-07.md`.
+- [~] Continue pixel-level Dashboard convergence and real-data detail refinement; pixel-perfect parity is not yet claimed.
+
 ## P0 — V157+ product-recovery exposure — 07/09/2026
 - [x] Canonical V157+ split modules are the permanent product line: `canonical-liquidity-core.js`, `canonical-flow-v157.js`, `canonical-product-v157.js`, `canonical-presentation-v157.js`.
 - [x] Product/gate implementation `76f888dc0e668fb0e768c8cc825f56778f043f50`; gated manifest target `c44d401497e14d842d433a302006ff5648b956a9`; exposure commit `3b3048fa4660868e161582fcd8704438a13e300c`.
