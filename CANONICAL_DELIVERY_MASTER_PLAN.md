@@ -1,11 +1,11 @@
 # LTS Wealth — Canonical Delivery Master Plan
 
-Last refreshed: 2026-09-08 11:16 BRT
-Active implementation branch: `canonical-v157plus-product-recovery` (canonical v1.12 product `70c49b1b50b7faca09b71889e14d33183a7f9092`; fixed-manifest exposure `adac528dbde6d0dcd6268a52c780d3abf43dc9a9`; shared documentation/checkpoint closure follows by normal fast-forward)
+Last refreshed: 2026-09-08 12:27 BRT
+Active implementation branch: `canonical-v157plus-product-recovery` (canonical v1.13 product `6d2b546b5e32d9ac09013cbd682e261e3f41ccac`; product tree `ae4710f80a7ed60c6e0b00c801b9814143edc84a`; fixed-manifest exposure `6a25aa99ab9548ef001870d9303d65700a0da8ec`; shared documentation/checkpoint closure follows by normal fast-forward)
 
 Purpose: this is the execution-order view of the LTS Wealth backlog. It does not replace documentary evidence or immutable checkpoints. `PROJECT_MASTER_BACKLOG.md` remains the complete persistent dependency list. This file makes the remaining work explicit so product delivery does not get lost behind release mechanics.
 
-Current milestone: canonical v1.12 preserves v1.11 liquidity layers, v1.10 decision truth and the v1.9 V150 Flow-parity baseline, then restores the V150 reviewed `Lançamento por texto` surface that canonical v1.11 omitted. Local Chromium, recovery/canonical Chromium+WebKit, all pre/post-exposure smokes and Pages are green; the fixed URL resolves to the exact v1.12 product. Authenticated real lifecycles, physical-device evidence and remaining pixel-level detail remain P0.
+Current milestone: canonical v1.13 preserves the v1.12→v1.9 line and restores the approved V147 classification-first Updates hierarchy plus guided, explicitly associated private document intake. Local Chromium, recovery/canonical Chromium+WebKit, all pre/post-exposure smokes and Pages are green; the fixed URL resolves to the exact v1.13 product. Authenticated real lifecycles, physical-device evidence and remaining pixel-level detail remain P0.
 
 ## Definition of DONE for the app
 The LTS Wealth app is not considered delivered until all P0 items below are complete together in one canonical application:
@@ -131,17 +131,21 @@ The LTS Wealth app is not considered delivered until all P0 items below are comp
 - [x] Existing evidence: Mastercard returns 239 rows spanning 01/11/2013 to 12/04/2028.
 
 ### P2.2 Classification lifecycle
+- [x] Classification is the foreground action in `Atualizações`; documents/secondary work remain under collapsed `Outras ações que precisam de você` per V147.
 - [ ] Real authenticated save → refresh → resolved disappearance / retry / `O que mudou`.
 - [ ] Evidence hierarchy stays: user-confirmed rule > exact/consistent LTS history > public merchant research > manual review.
 - [ ] Marketplaces/intermediaries never determine purchase purpose alone.
 
 ### P2.3 Documents / interpretation
+- [x] Guided type selection and explicit association UI implemented under `classification-first-guided-document-intake-v1`.
+- [x] Private `lts-documents` upload + `lts_browser_register_document_v2` registration path implemented; cleanup is attempted if registration fails.
+- [x] Same-route Documentos navigation opens the collapsed section without rerendering/erasing mounted Updates modules.
 - [ ] Real authenticated PDF/image interpret → review.
-- [ ] Bank statement association: institution/account + competence.
-- [ ] Card statement association: card + competence.
-- [ ] Financing association: commitment + exact as-of.
-- [ ] Filename never determines financial facts.
-- [ ] Upload alone never posts financial data.
+- [x] Bank statement association: institution/account + competence.
+- [x] Card statement association: card + competence.
+- [x] Financing association: commitment + exact as-of.
+- [x] Filename never determines financial facts.
+- [x] Upload alone never posts financial data.
 
 ### P2.4 Natural liquidity input / reversals
 - [ ] Real authenticated save → refresh → visible result.
@@ -219,8 +223,8 @@ Open Finance is still part of the product roadmap. It was not cancelled; work wa
 - [ ] Preserve fixed homologation/public links.
 
 ## Execution order from now
-1. Preserve canonical v1.12 product `70c49b1…` and exposure `adac528…` as the current product baseline.
-2. Preserve v1.12 reviewed input, v1.11 liquidity layers, v1.10 decision truth, v1.9 Flow parity, Dashboard Fidelity Pass 6, route/session continuity and the automatic receipt as protected regression baselines.
+1. Preserve canonical v1.13 product `6d2b546…` and exposure `6a25aa9…` as the current product baseline.
+2. Preserve v1.13 classification-first guided document intake, v1.12 reviewed input, v1.11 liquidity layers, v1.10 decision truth, v1.9 Flow parity, Dashboard Fidelity Pass 6, route/session continuity and the automatic receipt as protected regression baselines.
 3. Continue the two-project historical audit and evidence-led Dashboard/Despesas/Atualizações refinement without changing financial truth, confusing scenarios with facts or reintroducing wrapper ownership.
 4. Execute real authenticated desktop and physical-iPhone lifecycles for Dashboard, Flow, search/CSV, classification, liquidity, documents and backup/restore; use them to close the corresponding receipt rows.
 5. Keep the Supabase security baseline regression-protected and review leaked-password protection in a controlled Auth window.

@@ -1,6 +1,6 @@
 # LTS Wealth — Continuity Handoff
 
-Last materially refreshed: 2026-09-08 11:16 BRT (America/Sao_Paulo)
+Last materially refreshed: 2026-09-08 12:27 BRT (America/Sao_Paulo)
 
 This file exists so project continuity never depends on chat context. Always re-fetch `main`, active branch, `PROJECT_MASTER_BACKLOG.md`, `NEXT_HOMOLOGATION_GATE.md`, this file and the latest immutable checkpoint before every repository write.
 
@@ -24,7 +24,20 @@ This file exists so project continuity never depends on chat context. Always re-
 - Public fallback remains WIP35-v136; protected `index.html` blob remains `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
 - Public promotion remains unauthorized/not done.
 
-## Current exposed product — canonical v1.12 Reviewed Text Input
+## Current exposed product — canonical v1.13 Classification-first Updates + Guided Document Intake
+- Exact remote product `6d2b546b5e32d9ac09013cbd682e261e3f41ccac`, product tree `ae4710f80a7ed60c6e0b00c801b9814143edc84a`; fixed-manifest exposure `6a25aa99ab9548ef001870d9303d65700a0da8ec`, exposure tree `ebc49406160e31f2d988825392fe642fb35e85df`; all three release branches share the exposure through normal no-force fast-forward.
+- V147 is the recovered product source for the `Atualizações` hierarchy: classification is foreground; `Outras ações que precisam de você` is collapsed and contains documents/secondary management work. A documents-first layout was rejected.
+- Contract `classification-first-guided-document-intake-v1` requires explicit type and association before upload. Bank statement requires institution/account+competence; card statement requires card+competence; financing requires commitment+exact as-of; other document accepts an optional note and remains manual review.
+- Filename never determines a financial fact and upload never posts one. Real confirmed uploads target private bucket `lts-documents`, register through `lts_browser_register_document_v2`, and attempt object cleanup if registration fails.
+- A same-route anchor/remount defect found by the permanent gate was fixed: Documentos now opens its enclosing collapsed section and scrolls without replacing the route DOM or erasing the reviewed-input/liquidity/management modules.
+- V1.13 preserves v1.12 reviewed input, v1.11 liquidity layers, v1.10 decision truth, v1.9 V150/V151+ Flow parity and every canonical route/session/security baseline.
+- Product recovery gate/smoke `34242926042` / `34242925889`, canonical gate/smoke `34243185722` / `34243185837`, main smoke/Pages `34243383377` / `34243381614`: SUCCESS. Post-exposure active/canonical/main smokes `34243737853` / `34243795334` / `34244113857` and Pages `34244111908`: SUCCESS.
+- Recovery artifact `10062796446` / `sha256:bb51419f7772a7504b4556bb89d017b8297165d3f01d92f0cb8ff26bd92d1667`; canonical artifact `10062906709` / `sha256:3f19198c6ab8256323cdc7b9b56b19401cd39e0c823322d5c1e5bf5524f99480`.
+- Fixed homologation resolves to `canonical-app.html?homologacao=6d2b546…#Dashboard`, loads `?v=20260908-updates13`, renders truthful signed-out login, and exposes no iframe, fixture KPI or application error.
+- Latest immutable checkpoint: `backups/CANONICAL_APP_V113_CLASSIFICATION_FIRST_DOCUMENT_INTAKE_CHECKPOINT_2026-09-08.md`.
+- Real authenticated upload/register/readback/interpretation, authenticated writes/search, physical-iPhone E2E and public-root promotion remain explicitly open/not claimed. No final approved standalone Reports visual was recovered; do not invent one.
+
+## Protected predecessor — canonical v1.12 Reviewed Text Input
 - Exact product `70c49b1b50b7faca09b71889e14d33183a7f9092`; fixed-manifest exposure `adac528dbde6d0dcd6268a52c780d3abf43dc9a9`; all three release branches share both through normal fast-forward.
 - Historical audit found that V150 exposed `Lançamento por texto`, while the v1.11 canonical `Atualizações` route omitted it despite documentation saying it was implemented. V1.12 restores the missing product surface without restoring wrappers.
 - Contract `review-before-explicit-apply-v1`: phrase interpretation only proposes values; date, value, nature, account/card, category, context, counterparty and description are editable; required evidence is shown before approval.
@@ -49,6 +62,7 @@ This file exists so project continuity never depends on chat context. Always re-
 - This predecessor remains immutable evidence; continue autonomously unless a real financial/provider/consent decision becomes necessary.
 
 ## Recovered explicit user feedback — preserve across chats
+- V147: classification is the primary `Atualizações` action; documents and other secondary work belong under the collapsed `Outras ações que precisam de você`. Document association must be explicit and type-specific before interpretation; upload alone does not launch a financial fact.
 - 24/08: Flow `+` at left; validated columns retained; open Itaú invoice enters the total and transaction detail consolidates only after closure.
 - 04–05/09: visually plausible releases with broken buttons/data on iPhone were rejected; automatic/visual proof cannot be relabelled as real-device validation.
 - 05/09: V155 visual direction was liked, but Dashboard hierarchy must prioritize bank cash, accounts + short-term, vested RSUs and FGTS; net worth follows; expenses combine consolidated reading and detail; actions stay discreet/clickable; cash evolution separates account, short-term, RSU and FGTS layers.
@@ -167,13 +181,14 @@ This is deterministic fixture/unauthenticated evidence, not authenticated physic
 - Continue decision-useful density/ranking and evidence-only reduction of `A classificar`.
 
 ### Atualizações / search / documents / classification
-- Compact prioritized action center; no large blank whitespace or buried actions.
+- Classification-first prioritized action center; no large blank whitespace or buried primary action. `Outras ações que precisam de você` is collapsed by default and contains documents/secondary management work.
 - `Lançamento por texto` remains preview/review first; no automatic posting.
 - Server-side incremental search uses `lts_browser_transactions_v1`, includes total and Excel-compatible CSV; deterministic UI gate passed.
 - Mastercard backend evidence: 239 rows spanning 01/11/2013–12/04/2028.
 - Classification writer `lts_browser_semantic_feedback_v1`; canonical lifecycle wiring performs save → product refresh/read verification.
-- Document lifecycle reader `lts_browser_document_lifecycle_v1` is surfaced in canonical Atualizações.
-- Real authenticated classification, transaction-search and PDF/image interpret→review E2E remain pending/unclaimed.
+- Guided intake enforces bank/account+competence, card+competence, financing commitment+as-of or other/manual linkage before private upload; filename is never evidence and no auto-post path exists.
+- Document register writer `lts_browser_register_document_v2` and lifecycle reader `lts_browser_document_lifecycle_v1` are surfaced in canonical Atualizações; registration failure attempts Storage cleanup.
+- Real authenticated classification, transaction-search and PDF/image upload→register→interpret→review E2E remain pending/unclaimed.
 
 ### Fluxo Diário / mutation semantics
 - Mandatory Consolidado, Itaú, Bradesco, C6.

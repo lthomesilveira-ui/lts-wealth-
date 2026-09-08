@@ -2,12 +2,12 @@
 
 Purpose: evidence-backed sequence before asking the user to inspect a material candidate. Keep aligned with `PROJECT_MASTER_BACKLOG.md`, `LTS_WEALTH_CONTINUITY_HANDOFF.md` and immutable checkpoints.
 
-## Current canonical baseline — 08/09/2026 11:16 BRT
+## Current canonical baseline — 08/09/2026 12:27 BRT
 - Public fallback: WIP35-v136 in `index.html`, unchanged; protected blob remains `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
 - Fixed homologation: `https://lthomesilveira-ui.github.io/lts-wealth-/homologacao.html`.
-- Fixed homologation selects **CANONICAL v1.12 · Reviewed Text Input** through `canonical-app.html`, exact product `70c49b1b50b7faca09b71889e14d33183a7f9092`, exposure `adac528dbde6d0dcd6268a52c780d3abf43dc9a9`; public `index.html` is unchanged.
+- Fixed homologation selects **CANONICAL v1.13 · Classification-first Updates + Guided Document Intake** through `canonical-app.html`, exact product `6d2b546b5e32d9ac09013cbd682e261e3f41ccac`, product tree `ae4710f80a7ed60c6e0b00c801b9814143edc84a`, exposure `6a25aa99ab9548ef001870d9303d65700a0da8ec`; public `index.html` is unchanged.
 - Canonical frontend is a single application; no v150/v151/v156/v160 iframe/wrapper chain is part of the primary product.
-- Current gated modules: `canonical-liquidity-core.js`, `canonical-flow-v157.js`, `canonical-product-v157.js`, `canonical-presentation-v157.js`, `canonical-capabilities-v161.js`, `canonical-reviewed-input-v112.js`.
+- Current gated modules: `canonical-liquidity-core.js`, `canonical-flow-v157.js`, `canonical-product-v157.js`, `canonical-presentation-v157.js`, `canonical-capabilities-v161.js`, `canonical-reviewed-input-v112.js`, plus the V1.13 Updates/document contract in `canonical-app.html`.
 - Modular recovery gate `34170935882` and permanent canonical gate `34171231918`: **SUCCESS** in Chromium desktop 1312×1199 and WebKit mobile 390×844.
 - Active/canonical/main candidate smokes `34170935887` / `34171231935` / `34171338575` and Pages `34171338335`: **SUCCESS**.
 - Post-manifest active/canonical/main candidate smokes `34171452083` / `34171452913` / `34171453488` and Pages `34171452759`: **SUCCESS**.
@@ -39,12 +39,25 @@ Purpose: evidence-backed sequence before asking the user to inspect a material c
 - V1.12 post-exposure active/canonical/main smokes `34236480960` / `34236541857` / `34236635343` and Pages `34236635451`: SUCCESS.
 - V1.12 artifacts: recovery `10059792070` / `sha256:db41ecbe329e9166c60241a4461fd33ef963aedd3a7953ac072356cbcc0e3eae`; canonical `10059891042` / `sha256:a84c36b967cba64d524241a19a476d7a9747386046b7bb86799f4b8a328e34eb`.
 - Fixed-URL live verification resolved to `canonical-app.html?homologacao=70c49b1…#Dashboard`, loaded `canonical-liquidity.js?v=20260908-input12`, truthful signed-out login, zero iframe and no unauthenticated fixture Dashboard.
-- Current immutable evidence: `backups/CANONICAL_APP_V112_REVIEWED_TEXT_INPUT_CHECKPOINT_2026-09-08.md`.
+- V1.13 recovery gate/smoke `34242926042` / `34242925889`, canonical gate/smoke `34243185722` / `34243185837`, main smoke/Pages `34243383377` / `34243381614`: SUCCESS.
+- V1.13 post-exposure active/canonical/main smokes `34243737853` / `34243795334` / `34244113857` and Pages `34244111908`: SUCCESS.
+- V1.13 artifacts: recovery `10062796446` / `sha256:bb51419f7772a7504b4556bb89d017b8297165d3f01d92f0cb8ff26bd92d1667`; canonical `10062906709` / `sha256:3f19198c6ab8256323cdc7b9b56b19401cd39e0c823322d5c1e5bf5524f99480`; exposure Pages `10063227934` / `sha256:ab16d51a56c57d5cdb80b37fa72ee8b25b7e4b8caf95a6d7d36f7890bf07b2a3`.
+- Fixed-URL live verification resolved to `canonical-app.html?homologacao=6d2b546…#Dashboard`, loaded both `?v=20260908-updates13` assets, truthful signed-out login, zero iframe, zero fixture KPI and no application error.
+- Current immutable evidence: `backups/CANONICAL_APP_V113_CLASSIFICATION_FIRST_DOCUMENT_INTAKE_CHECKPOINT_2026-09-08.md`.
 - Durable briefing/decision map: `LTS_WEALTH_REQUIREMENTS_TRACEABILITY.md`.
 - `promotion_status:not_promoted`; public root promotion is NOT AUTHORIZED / NOT DONE.
 - Authenticated physical-iPhone visual/data E2E: PENDING / NOT CLAIMED.
 
-## Canonical v1.12 Reviewed Text Input — selected for fixed exposure
+## Canonical v1.13 Classification-first Updates + Guided Document Intake — selected for fixed exposure
+- Exact product is `6d2b546b5e32d9ac09013cbd682e261e3f41ccac`; fixed-manifest exposure is `6a25aa99ab9548ef001870d9303d65700a0da8ec`; no public-root change and no wrapper reintroduction.
+- V147 establishes the binding hierarchy: classification first; document/secondary work under collapsed `Outras ações que precisam de você`.
+- Guided association is explicit before upload: bank account+competence, card+competence, financing commitment+as-of, or other/manual note. Filename never supplies financial facts.
+- Real confirmed upload targets the private `lts-documents` bucket and registers through `lts_browser_register_document_v2`; registration failure attempts cleanup and upload never auto-posts a financial transaction.
+- Same-route Documentos navigation opens the collapsed owner without remounting/erasing the reviewed-input, liquidity or management modules.
+- The permanent gate verifies the hierarchy, guided form, 50 MB/type guards, anchor behavior, responsive layout and fixture writer prohibition on desktop/mobile while retaining the entire v1.12→v1.9 suite.
+- Authenticated real upload/register/readback/interpretation and physical-iPhone evidence remain OPEN / NOT CLAIMED.
+
+## Canonical v1.12 Reviewed Text Input — protected predecessor
 - Exact base is the v1.11 closure `23ac0307bf675e9507b8d366ebc6dd3c92d81569`; no public-root change and no wrapper reintroduction.
 - V150 had a reviewed launch-by-text entry point; canonical v1.11 lost the visible surface. V1.12 restores it inside `Atualizações` under `review-before-explicit-apply-v1`.
 - The gate tests editable parsing for five BRL formats, date/nature/account/card/category/context, missing-evidence warnings, explicit confirmation and the fixture prohibition on writer calls.
@@ -122,14 +135,15 @@ Purpose: evidence-backed sequence before asking the user to inspect a material c
 - Despesas keeps nature distinct from context/person and supports read-only drilldown/historical periods.
 - Patrimônio consumes current wealth detail, including RSU, FGTS, CIPÓ 396 and Volvo surfaces where evidence exists.
 - Cartões distinguishes certified detail from aggregate fallback.
-- Atualizações includes compact action center, server-side transaction search, total, Excel-compatible CSV, classification lifecycle wiring, document lifecycle visibility and reviewed bank↔cash-investment Aplicar/Resgatar.
+- Atualizações is classification-first; reviewed input, server-side search/CSV and classification remain visible, while documents/secondary management work are under collapsed `Outras ações que precisam de você`.
+- Guided document intake requires type-specific explicit association, uses private upload plus registration/lifecycle contracts and never turns upload into an automatic financial fact.
 - Liquidity movement UI never guesses account or asset, previews both legs, shows economic effect R$0, requires explicit confirmation and re-reads product/cockpit after a real write.
 - Missing evidence remains unavailable; no merchant/category/account/valuation/competence is invented.
 - No iframe, `document.write`, permanent `setInterval` or `MutationObserver` in the canonical product.
 - Public `index.html` remains unchanged.
 
 ## Exact deterministic evidence
-Current route/receipt recovery gate `34190659782` and permanent canonical gate `34191017877`: **SUCCESS**. Dashboard Pass 6, V157+ and v1.6 capability evidence remains preserved.
+Current V1.13 recovery gate `34242926042` and permanent canonical gate `34243185722`: **SUCCESS**. Dashboard Pass 6, V157+ and every v1.12→v1.6 capability/receipt baseline remains preserved.
 
 Validated in Chromium desktop 1312×1199 and WebKit mobile 390×844:
 - five KPI cards populated under controlled fixture;
@@ -138,7 +152,7 @@ Validated in Chromium desktop 1312×1199 and WebKit mobile 390×844:
 - Despesas nature × context, drilldown and period selector;
 - Patrimônio / FGTS surface;
 - Cartões surface;
-- Atualizações classification queue, incremental Mastercard search, result total, CSV enablement and document lifecycle area;
+- Atualizações classification-first queue, incremental Mastercard search, result total, CSV enablement, collapsed secondary actions and guided document-intake/lifecycle area;
 - Aplicar/Resgatar card mounts exactly once;
 - application preview accepts `5 mil` and shows equal/opposite bank/asset legs with economic effect R$0;
 - fixture writer remains disabled, preventing accidental financial mutation;

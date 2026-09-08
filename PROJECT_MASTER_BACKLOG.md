@@ -4,6 +4,20 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 
 Canonical persistent project list. Never remove an open financial, documentary, classification, reconciliation or product dependency during compaction. Detailed immutable evidence remains in `backups/`, `HISTORICAL_RECOVERY_LOG.md`, `PLANNING_EXCEL_TO_CURRENT_AUDIT_2026-08-30.md`, `NEXT_HOMOLOGATION_GATE.md` and release checkpoints.
 
+## P0 — Classification-first Updates + guided document intake / canonical v1.13 — 08/09/2026
+- [x] Recovered the binding V147 hierarchy: classification is foreground; `Outras ações que precisam de você` is collapsed and owns documents plus secondary management work. The rejected documents-above-classification layout is not the target.
+- [x] Added stable hosts for reviewed input, liquidity movement and Central de Gestão so asynchronous modules coexist without taking ownership of the whole route.
+- [x] Added guided bank/card/financing/other document intake under contract `classification-first-guided-document-intake-v1`, with explicit association fields before upload and an optional note for other/manual documents.
+- [x] Kept filename non-authoritative and upload non-financial. Real confirmed upload uses private bucket `lts-documents`, then `lts_browser_register_document_v2`; failed registration attempts object cleanup.
+- [x] Added 50 MB/format guard, review summary and no-auto-post language; fixture mode disables file/upload and the gate proves `writer_called:false` / `write_accepted:false`.
+- [x] Found and fixed same-route target navigation that rerendered `Atualizações` and erased mounted modules. Anchors now open enclosing details and scroll without a full route render.
+- [x] Local Chromium desktop/mobile permanent gate, script parsing, button audit 197/197 and candidate smoke: PASS; `index.html` protected hash unchanged.
+- [x] Exact remote product `6d2b546b5e32d9ac09013cbd682e261e3f41ccac`, tree `ae4710f80a7ed60c6e0b00c801b9814143edc84a`; exposure `6a25aa99ab9548ef001870d9303d65700a0da8ec`, tree `ebc49406160e31f2d988825392fe642fb35e85df`; all three branches aligned by normal no-force fast-forward.
+- [x] Product recovery gate/smoke `34242926042` / `34242925889`, canonical gate/smoke `34243185722` / `34243185837`, main smoke/Pages `34243383377` / `34243381614`: SUCCESS.
+- [x] Post-exposure active/canonical/main smokes `34243737853` / `34243795334` / `34244113857` and Pages `34244111908`: SUCCESS; fixed URL loads exact v1.13 assets with truthful signed-out state, zero iframe and no fixture KPI.
+- [x] Artifacts: recovery `10062796446` / `sha256:bb51419f7772a7504b4556bb89d017b8297165d3f01d92f0cb8ff26bd92d1667`; canonical `10062906709` / `sha256:3f19198c6ab8256323cdc7b9b56b19401cd39e0c823322d5c1e5bf5524f99480`.
+- [ ] Real authenticated upload→register→lifecycle/readback→interpret/review and physical-iPhone evidence remain open/not claimed.
+
 ## P0 — V150 reviewed text-input recovery / canonical v1.12 — 08/09/2026
 - [x] Re-audited the V150→canonical line and found a concrete regression: `wip35-v150-recomposition.js` exposed `Lançamento por texto`, while canonical v1.11 documentation claimed the capability but the rendered `Atualizações` route omitted it.
 - [x] Restored the capability inside the single canonical frontend with contract `review-before-explicit-apply-v1`: natural phrase → editable preview → required-field review → explicit confirmation.
@@ -222,7 +236,7 @@ Canonical persistent project list. Never remove an open financial, documentary, 
 - [ ] Real authenticated classification save→refresh→resolved disappearance/self-heal remains pending.
 
 ## 4. Atualizações / Input / documents / transaction search
-- [x] Atualizações compact checklist/action center; no large blank whitespace or buried actions.
+- [x] Atualizações classification-first: classification remains foreground; `Outras ações que precisam de você` is collapsed and contains documents/secondary work.
 - [x] `Lançamento por texto` keeps preview/review semantics; no automatic posting.
 - [x] Date/value/account-or-card mandatory before approval; liquidity/RSU movements are not revenue/expense.
 - [x] Server-side incremental transaction search through `lts_browser_transactions_v1` implemented in canonical frontend.
@@ -233,8 +247,8 @@ Canonical persistent project list. Never remove an open financial, documentary, 
 - [x] Explicit document association preserved: statement→account/institution+competence; card statement→card+competence; financing→commitment+exact as-of; other docs→manual review.
 - [x] Filename never determines account/card/competence/date/value; upload alone never posts financial data.
 - [x] Interpretation separates user-provided linkage from extracted reading; extraction remains evidence only.
-- [x] Canonical Atualizações consumes `lts_browser_document_lifecycle_v1`.
-- [ ] Real authenticated PDF/image interpret→review remains pending/unclaimed.
+- [x] Canonical Atualizações provides guided private upload, registers through `lts_browser_register_document_v2`, consumes `lts_browser_document_lifecycle_v1` and attempts Storage cleanup if registration fails.
+- [ ] Real authenticated PDF/image upload→register→lifecycle/readback→interpret→review remains pending/unclaimed.
 
 ## 5. Fluxo Diário / FIX86
 - [x] Mandatory Consolidado, Itaú, Bradesco, C6; history from 2013 where supported.
