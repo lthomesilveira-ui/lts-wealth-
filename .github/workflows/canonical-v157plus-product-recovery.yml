@@ -85,7 +85,7 @@ jobs:
             await page.waitForFunction(()=>window.__LTS_CANONICAL_RECOVERY_STATUS?.product_loaded===true&&window.__LTS_CANONICAL_RECOVERY_STATUS?.flow_loaded===true&&window.__LTS_CANONICAL_RECOVERY_STATUS?.presentation_loaded===true);
             await page.waitForFunction(()=>window.__LTS_V157_PRESENTATION_STATUS?.ready===true);
             await waitProduct(page,'Dashboard');
-            const labels=await page.locator('.pv-kpi label').allTextContents();
+            const labels=await page.locator('#dashboard-view .kpi label').allTextContents();
             const expected=['Dinheiro em contas','Contas + curto prazo','RSUs vested','FGTS','Despesas (mês)'];
             if(JSON.stringify(labels)!==JSON.stringify(expected))throw new Error(label+': dashboard KPI contract '+JSON.stringify(labels));
             if(await page.locator('iframe').count())throw new Error(label+': iframe');
@@ -129,7 +129,7 @@ jobs:
             if(errors.length)throw new Error(label+': page errors '+errors.join(' | '));
             await page.goto('http://127.0.0.1:4173/canonical-app.html',{waitUntil:'domcontentloaded'});await page.waitForTimeout(800);
             if(await page.locator('#loginForm').count()!==1)throw new Error(label+': real login missing');
-            if(await page.locator('.pv-kpi').count())throw new Error(label+': fake financial UI unauthenticated');
+            if(await page.locator('#dashboard-view .kpi').count())throw new Error(label+': fake financial UI unauthenticated');
             await browser.close();
           }
           (async()=>{try{await sleep(700);await run(chromium,'desktop',{width:1312,height:1199});await run(webkit,'mobile',{width:390,height:844});console.log('V157+ product browser gate ok')}finally{server.kill('SIGTERM')}})().catch(e=>{console.error(e);process.exit(1)});

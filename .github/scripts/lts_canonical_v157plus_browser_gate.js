@@ -82,12 +82,12 @@ async function run(browserType, label, viewport) {
       if (canonicalStatus[flag] !== true) throw new Error(`${label}: capability flag ${flag} missing`);
     }
 
-    const labels = await page.locator('.pv-kpi label').allTextContents();
+    const labels = await page.locator('#dashboard-view .kpi label').allTextContents();
     const expected = ['Dinheiro em contas', 'Contas + curto prazo', 'RSUs vested', 'FGTS', 'Despesas (mês)'];
     if (JSON.stringify(labels) !== JSON.stringify(expected)) throw new Error(`${label}: Dashboard KPI contract ${JSON.stringify(labels)}`);
     if (await page.locator('iframe').count()) throw new Error(`${label}: iframe detected`);
-    const dashboardText = await page.locator('.pv').innerText();
-    for (const text of ['Evolução da Liquidez', 'Posição por Banco', 'Patrimônio Líquido', 'Planejamento · Visão de Caixa', 'FGTS de contingência']) {
+    const dashboardText = await page.locator('#dashboard-view').innerText();
+    for (const text of ['Evolução da Liquidez', 'Distribuição do Patrimônio', 'Posição por Banco', 'Fluxo de Caixa', 'Principais Despesas', 'Próximos Compromissos', 'Planejamento – Visão de Caixa', 'FGTS', 'Atualizações Pendentes']) {
       if (!dashboardText.includes(text)) throw new Error(`${label}: Dashboard hierarchy missing ${text}`);
     }
     await page.screenshot({ path: `canonical-dashboard-${label}.png`, fullPage: true });
@@ -166,7 +166,7 @@ async function run(browserType, label, viewport) {
     await page.goto(baseUrl, { waitUntil: 'domcontentloaded' });
     await page.waitForTimeout(800);
     if (await page.locator('#loginForm').count() !== 1) throw new Error(`${label}: real login missing`);
-    if (await page.locator('.pv-kpi').count()) throw new Error(`${label}: fake financial UI unauthenticated`);
+    if (await page.locator('#dashboard-view .kpi').count()) throw new Error(`${label}: fake financial UI unauthenticated`);
     if (await page.getByText('FIXTURE DE TESTE', { exact: true }).count()) throw new Error(`${label}: fixture badge leaked`);
   } finally {
     await browser.close();
