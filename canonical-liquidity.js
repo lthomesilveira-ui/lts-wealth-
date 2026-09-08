@@ -1,5 +1,5 @@
 (()=>{'use strict';
-const BUILD='LTS v1.17';
+const BUILD='LTS v1.18';
 const CORE_CONTRACT=['lts_browser_liquidity_movement_options_v1','lts_browser_preview_liquidity_movement_v1','lts_browser_apply_liquidity_movement_v1'];
 const FLOW_CONTRACT=['lts_browser_flow_v8','v150-validated-flow-plus-v157-liquidity-v1','Histórico / período','Movimentos do dia','Dividir / substituir','inline-card-settlement-v150','RSUs futuras','Cash Awards futuros'];
 const PRODUCT_CONTRACT=['Dinheiro em contas','Contas + curto prazo','RSUs vested','FGTS','Despesas (mês)','Quanto você gasta — e para quem é cada gasto.','Quanto você tem, quanto deve e quanto é seu.','Conferência de fatura, não análise de gasto.'];
@@ -17,11 +17,11 @@ function mark(extra){const presentationLoaded=!!document.getElementById('canonic
 function ensureModules(){
   if(modulesPromise)return modulesPromise;
   modulesPromise=Promise.all([
-    load('canonical-product-v157.js?v=20260908-ux17','canonicalProductV157'),
-    load('canonical-flow-v157.js?v=20260908-ux17','canonicalFlowV157')
-  ]).then(()=>load('canonical-presentation-v157.js?v=20260908-ux17','canonicalPresentationV157')).then(()=>load('canonical-capabilities-v161.js?v=20260908-ux17','canonicalCapabilitiesV161')).then(()=>load('canonical-reviewed-input-v112.js?v=20260908-ux17','canonicalReviewedInputV112')).then(()=>{mark({flow_loaded:true,product_loaded:true,presentation_loaded:true,polish_loaded:true,capabilities_loaded:true,reviewed_input_loaded:true});return true}).catch(e=>{modulesPromise=null;mark({error:String(e?.message||e)});throw e});
+    load('canonical-product-v157.js?v=20260908-flow18','canonicalProductV157'),
+    load('canonical-flow-v157.js?v=20260908-flow18','canonicalFlowV157')
+  ]).then(()=>load('canonical-presentation-v157.js?v=20260908-flow18','canonicalPresentationV157')).then(()=>load('canonical-capabilities-v161.js?v=20260908-flow18','canonicalCapabilitiesV161')).then(()=>load('canonical-reviewed-input-v112.js?v=20260908-flow18','canonicalReviewedInputV112')).then(()=>{mark({flow_loaded:true,product_loaded:true,presentation_loaded:true,polish_loaded:true,capabilities_loaded:true,reviewed_input_loaded:true});return true}).catch(e=>{modulesPromise=null;mark({error:String(e?.message||e)});throw e});
   return modulesPromise;
 }
 function waitReady(tryNo=0){if(canonicalReady())return ensureModules();if(tryNo>=80)return Promise.resolve(false);return new Promise(r=>setTimeout(r,250)).then(()=>waitReady(tryNo+1))}
-(async()=>{try{await load('canonical-liquidity-core.js?v=20260908-ux17','canonicalLiquidityCore');mark({flow_loaded:false,product_loaded:false,presentation_loaded:false,polish_loaded:false});waitReady(0).catch(e=>mark({error:String(e?.message||e)}))}catch(e){console.error('LTS module loader',e);window.__LTS_CANONICAL_RECOVERY_STATUS={ready:false,build:BUILD,error:String(e?.message||e)}}})();
+(async()=>{try{await load('canonical-liquidity-core.js?v=20260908-flow18','canonicalLiquidityCore');mark({flow_loaded:false,product_loaded:false,presentation_loaded:false,polish_loaded:false});waitReady(0).catch(e=>mark({error:String(e?.message||e)}))}catch(e){console.error('LTS module loader',e);window.__LTS_CANONICAL_RECOVERY_STATUS={ready:false,build:BUILD,error:String(e?.message||e)}}})();
 })();

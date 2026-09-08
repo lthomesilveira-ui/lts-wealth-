@@ -1,5 +1,5 @@
 (()=>{'use strict';
-const STORE='lts_supabase_session_v1',U='https://tadhkamnwtsbdozwkyut.supabase.co',K='sb_publishable__p3SAbpThUIKtDr7A4llPw_AVkOaNkm',FIXTURE=new URLSearchParams(location.search).get('fixture')==='1',BUILD='LTS v1.17';
+const STORE='lts_supabase_session_v1',U='https://tadhkamnwtsbdozwkyut.supabase.co',K='sb_publishable__p3SAbpThUIKtDr7A4llPw_AVkOaNkm',FIXTURE=new URLSearchParams(location.search).get('fixture')==='1',BUILD='LTS v1.18';
 const ROUTES=['Patrimônio','Cartões'];
 const S={product:null,cockpit:null,expense:null,expenseMonth:null,wealth:null,cards:null,loading:new Set(),errors:{},seq:0};
 const arr=v=>Array.isArray(v)?v:[],finite=v=>v===null||v===undefined||v===''?null:(Number.isFinite(Number(v))?Number(v):null),esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])),money=v=>finite(v)==null?'—':new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL',maximumFractionDigits:2}).format(Number(v)),fmt=d=>{const p=String(d||'').slice(0,10).split('-');return p.length===3?p.reverse().join('/'):'—'},compact=v=>finite(v)==null?'—':new Intl.NumberFormat('pt-BR',{notation:'compact',maximumFractionDigits:2}).format(Number(v));

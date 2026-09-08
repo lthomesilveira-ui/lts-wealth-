@@ -1,6 +1,6 @@
 (()=>{'use strict';
 const FIXTURE=new URLSearchParams(location.search).get('fixture')==='1';
-const BUILD='LTS v1.17';
+const BUILD='LTS v1.18';
 const PANE_STORE='lts_canonical_management_pane_v1';
 const PANES=['overview','planning','recurring','scenario','reconciliation','reports','backup','settings'];
 function storedPane(){try{const p=sessionStorage.getItem(PANE_STORE);return PANES.includes(p)?p:'overview'}catch{return'overview'}}

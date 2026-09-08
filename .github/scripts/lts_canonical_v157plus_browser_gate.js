@@ -114,7 +114,10 @@ async function expandFlowDay(page, day) {
 async function assertFlowParity(page, label, mobile) {
   const status = await page.evaluate(() => window.__LTS_CANONICAL_FLOW_V157_STATUS);
   if (status?.contract !== 'v150-validated-flow-plus-v157-liquidity-v1'
-      || status?.build !== 'LTS v1.17'
+      || status?.build !== 'LTS v1.18'
+      || status?.historical_opening_contract !== 'historical-opening-from-close-and-net-v1'
+      || status?.today_marker_contract !== 'today-marker-without-row-band-v1'
+      || status?.future_horizon_contract !== 'future-through-2029-plus-d30-v1'
       || status?.split_action !== true
       || status?.invoice_drilldown !== true
       || status?.semantic_labels !== true
@@ -138,6 +141,13 @@ async function assertFlowParity(page, label, mobile) {
   await page.locator('[data-preset="next5"]').click();
   await waitFlowRange(page, '2026-09-07', '2026-09-11');
   if (await page.locator('.fv-table tbody .fv-row').count() !== 5) throw new Error(`${label}: Próximos 5 dias must show five days`);
+  if (await page.locator('#fv-2026-09-07 .fv-today').count() !== 1) throw new Error(`${label}: discrete Hoje marker missing`);
+  if (!mobile) {
+    const todayBackgrounds = await page.locator('#fv-2026-09-07 > td').evaluateAll(cells => cells.map(cell => getComputedStyle(cell).backgroundColor));
+    if (todayBackgrounds.some(color => color !== 'rgb(255, 255, 255)')) {
+      throw new Error(`${label}: rejected full-row Hoje band returned ${JSON.stringify(todayBackgrounds)}`);
+    }
+  }
 
   if (!mobile) {
     await page.evaluate(() => { document.querySelector('.fv-scroll').scrollLeft = 360; });
@@ -202,6 +212,23 @@ async function assertFlowParity(page, label, mobile) {
     throw new Error(`${label}: fixture split write boundary ${JSON.stringify(mutation)}`);
   }
 
+  await page.locator('#fvFrom').fill('2026-01-01');
+  await page.locator('#fvTo').fill('2026-01-01');
+  await page.locator('#fvApply').click();
+  await waitFlowRange(page, '2026-01-01', '2026-01-01');
+  const yearBoundaryCells = (await page.locator('#fv-2026-01-01 > td').allTextContents()).map(value => value.replace(/\s+/g, ' ').trim());
+  if (!yearBoundaryCells[1]?.includes('R$ 15.794,43')
+      || !yearBoundaryCells[3]?.includes('R$ 600,00')
+      || !yearBoundaryCells[4]?.includes('R$ 15.194,43')) {
+    throw new Error(`${label}: 01/01 historical opening regression ${JSON.stringify(yearBoundaryCells.slice(0, 5))}`);
+  }
+
+  await page.locator('#fvFrom').fill('2029-12-31');
+  await page.locator('#fvTo').fill('2029-12-31');
+  await page.locator('#fvApply').click();
+  await waitFlowRange(page, '2029-12-31', '2029-12-31');
+  if (await page.locator('#fv-2029-12-31').count() !== 1) throw new Error(`${label}: 31/12/2029 horizon missing`);
+
   await page.locator('[data-account="Itaú"]').click();
   if (await page.locator('.fv-table tbody .fv-row').count() < 1) throw new Error(`${label}: bank Flow switch failed`);
   if (mobile) {
@@ -240,7 +267,7 @@ async function assertUpdatesContract(page, label) {
     throw new Error(`${label}: classification-first hierarchy ${JSON.stringify(hierarchy)}`);
   }
   const recovery = await page.evaluate(() => window.__LTS_CANONICAL_RECOVERY_STATUS);
-  if (recovery?.build !== 'LTS v1.17' || recovery?.updates_contract !== 4 || recovery?.document_review_contract !== 4 || recovery?.dashboard_density_contract !== 1 || recovery?.planning_decision_contract !== 1 || recovery?.product_language_contract !== 'user-facing-product-language-v1') {
+  if (recovery?.build !== 'LTS v1.18' || recovery?.updates_contract !== 4 || recovery?.document_review_contract !== 4 || recovery?.dashboard_density_contract !== 1 || recovery?.planning_decision_contract !== 1 || recovery?.product_language_contract !== 'user-facing-product-language-v1') {
     throw new Error(`${label}: v1.17 recovery contract ${JSON.stringify(recovery)}`);
   }
   const inputStatus = await page.evaluate(() => window.__LTS_CANONICAL_REVIEWED_INPUT_STATUS);
