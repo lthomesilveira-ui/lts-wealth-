@@ -1,6 +1,6 @@
 (()=>{'use strict';
 const FIXTURE=new URLSearchParams(location.search).get('fixture')==='1';
-const BUILD='LTS v1.12 · Lançamento revisado';
+const BUILD='LTS v1.17';
 const CONTRACT='review-before-explicit-apply-v1';
 const SUCCESS_KEY='lts_canonical_reviewed_input_success_v1';
 const state={draft:'',preview:null,busy:false,error:'',message:'',key:null,writerCalled:false,writeAccepted:false};

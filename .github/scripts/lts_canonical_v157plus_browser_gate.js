@@ -7,6 +7,14 @@ const baseUrl = `http://127.0.0.1:${port}/canonical-app.html`;
 const server = spawn('python3', ['-m', 'http.server', port, '--bind', '127.0.0.1'], { stdio: 'inherit' });
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 const containsText = (value, expected) => String(value).toLocaleLowerCase('pt-BR').includes(String(expected).toLocaleLowerCase('pt-BR'));
+async function assertNoTechnicalVersionLeak(page, label, route) {
+  const surface = await page.locator('body').innerText();
+  const leak = surface.match(/\b(?:LTS|CANONICAL|WIP35)[ \t]+v?\d+(?:\.\d+)*/i);
+  if (leak) throw new Error(`${label}: ${route} exposes internal version ${leak[0]}`);
+  if (await page.locator('.fv-build,.pv-build').count()) {
+    throw new Error(`${label}: ${route} exposes a technical build badge`);
+  }
+}
 const receiptPath = 'canonical-definition-of-done-receipt.json';
 const localChromiumExecutable = process.env.LTS_CHROMIUM_EXECUTABLE || '';
 const localChromiumOnly = process.env.LTS_LOCAL_CHROMIUM_ONLY === '1';
@@ -60,7 +68,7 @@ function finalizeReceipt() {
     reports: { status: 'PASS_AUTOMATED', evidence: 'executive JSON and recurrence CSV controls' },
     backup_restore: { status: 'PASS_CONTROLS_ONLY', evidence: 'checksum/stage/preview/confirmation controls; real apply remains open' },
     route_session_continuity: { status: 'PASS_AUTOMATED', evidence: 'deep link, refresh, pane restore, back/forward and safe JWT reset' },
-    performance_ux: { status: 'PASS_AUTOMATED', evidence: 'bounded browser waits, no console/page errors, no horizontal overflow and no desktop dashboard vertical overflow at 1312x1199' },
+    performance_ux: { status: 'PASS_AUTOMATED', evidence: 'bounded browser waits, no console/page errors, no horizontal overflow, no desktop dashboard vertical overflow at 1312x1199 and no internal release labels on user-facing routes' },
     authenticated_real_data: { status: 'OPEN', evidence: 'not executed by fixture browser gate' },
     authenticated_write_lifecycles: { status: 'OPEN', evidence: 'financial writes remain disabled in fixture' },
     physical_iphone: { status: 'OPEN', evidence: 'not executed by CI WebKit' },
@@ -106,20 +114,21 @@ async function expandFlowDay(page, day) {
 async function assertFlowParity(page, label, mobile) {
   const status = await page.evaluate(() => window.__LTS_CANONICAL_FLOW_V157_STATUS);
   if (status?.contract !== 'v150-validated-flow-plus-v157-liquidity-v1'
+      || status?.build !== 'LTS v1.17'
       || status?.split_action !== true
       || status?.invoice_drilldown !== true
       || status?.semantic_labels !== true
       || status?.scroll_preservation !== true) {
     throw new Error(`${label}: Flow parity status ${JSON.stringify(status)}`);
   }
-  if (!(await page.locator('.fv-build').textContent()).includes('LTS v1.9')) throw new Error(`${label}: build marker missing`);
+  if (await page.locator('.fv-build').count()) throw new Error(`${label}: technical Flow build marker leaked`);
   if (await page.locator('#fvToday').count() !== 1) throw new Error(`${label}: dedicated Hoje action missing`);
   if (await page.locator('[data-account]').count() !== 4) throw new Error(`${label}: four-bank tabs missing`);
   if (await page.locator('[data-preset]').count() !== 10) throw new Error(`${label}: period presets missing`);
   if (!mobile && await page.locator('.fv-table th').count() !== 14) throw new Error(`${label}: consolidated Flow columns`);
 
   const flowText = (await page.locator('.fv').innerText()).toLowerCase();
-  for (const forbidden of ['baseline funcional', 'fix86', 'legacy']) {
+  for (const forbidden of ['baseline funcional', 'fix86', 'legacy', 'lts v1.', 'canonical v', 'wip35']) {
     if (flowText.includes(forbidden)) throw new Error(`${label}: technical text leaked ${forbidden}`);
   }
   for (const required of ['histórico / período', 'rsus futuras', 'cash awards futuros']) {
@@ -231,8 +240,8 @@ async function assertUpdatesContract(page, label) {
     throw new Error(`${label}: classification-first hierarchy ${JSON.stringify(hierarchy)}`);
   }
   const recovery = await page.evaluate(() => window.__LTS_CANONICAL_RECOVERY_STATUS);
-  if (recovery?.build !== 'LTS v1.16' || recovery?.updates_contract !== 4 || recovery?.document_review_contract !== 4 || recovery?.dashboard_density_contract !== 1 || recovery?.planning_decision_contract !== 1) {
-    throw new Error(`${label}: v1.16 recovery contract ${JSON.stringify(recovery)}`);
+  if (recovery?.build !== 'LTS v1.17' || recovery?.updates_contract !== 4 || recovery?.document_review_contract !== 4 || recovery?.dashboard_density_contract !== 1 || recovery?.planning_decision_contract !== 1 || recovery?.product_language_contract !== 'user-facing-product-language-v1') {
+    throw new Error(`${label}: v1.17 recovery contract ${JSON.stringify(recovery)}`);
   }
   const inputStatus = await page.evaluate(() => window.__LTS_CANONICAL_REVIEWED_INPUT_STATUS);
   if (inputStatus?.ready !== true
@@ -729,11 +738,13 @@ async function run(browserType, label, viewport) {
       if (!dashboardText.includes(text)) throw new Error(`${label}: Dashboard hierarchy missing ${text}`);
     }
     await assertDashboardContract(page, label, mobile);
+    await assertNoTechnicalVersionLeak(page, label, 'Dashboard');
     await page.screenshot({ path: `canonical-dashboard-${label}.png`, fullPage: true });
 
     await openRoute(page, 'Fluxo Diário', mobile);
     await page.waitForFunction(() => window.__LTS_CANONICAL_FLOW_V157_STATUS?.ready === true);
     await assertFlowParity(page, label, mobile);
+    await assertNoTechnicalVersionLeak(page, label, 'Fluxo Diário');
     await page.screenshot({ path: `canonical-flow-${label}.png`, fullPage: true });
 
     await openRoute(page, 'Despesas', mobile);
@@ -767,6 +778,7 @@ async function run(browserType, label, viewport) {
     for (const required of ['Detalhe do mês', 'Moradia', 'Casa', 'Campo ausente continua ausente']) {
       if (!text.includes(required)) throw new Error(`${label}: expense month detail missing ${required}`);
     }
+    await assertNoTechnicalVersionLeak(page, label, 'Despesas');
     await page.screenshot({ path: `canonical-expenses-${label}.png`, fullPage: true });
 
     await openRoute(page, 'Patrimônio', mobile);
@@ -775,6 +787,7 @@ async function run(browserType, label, viewport) {
     for (const required of ['Quanto você tem, quanto deve e quanto é seu.', 'RSUs vested', 'RSUs futuras', 'Cash Awards futuros', 'CIPÓ 396', 'Volvo']) {
       if (!text.includes(required)) throw new Error(`${label}: wealth surface missing ${required}`);
     }
+    await assertNoTechnicalVersionLeak(page, label, 'Patrimônio');
     await page.screenshot({ path: `canonical-wealth-${label}.png`, fullPage: true });
 
     await openRoute(page, 'Cartões', mobile);
@@ -783,12 +796,14 @@ async function run(browserType, label, viewport) {
     for (const required of ['Conferência de fatura, não análise de gasto.', 'Cobertura histórica', 'Histórico por cartão / ano', '12/09/2026']) {
       if (!text.includes(required)) throw new Error(`${label}: cards surface missing ${required}`);
     }
+    await assertNoTechnicalVersionLeak(page, label, 'Cartões');
     await page.screenshot({ path: `canonical-cards-${label}.png`, fullPage: true });
 
     await openRoute(page, 'Atualizações', mobile);
     await page.waitForTimeout(350);
     await assertUpdatesContract(page, label);
     await assertManagementContract(page, label);
+    await assertNoTechnicalVersionLeak(page, label, 'Atualizações');
     await page.screenshot({ path: `canonical-updates-${label}.png`, fullPage: true });
 
     await openRoute(page, 'Dashboard', mobile);
