@@ -1,11 +1,11 @@
 # LTS Wealth — Canonical Delivery Master Plan
 
-Last refreshed: 2026-09-07 23:35 BRT
-Active implementation branch: `canonical-v157plus-product-recovery` (aligned with `canonical-app-v1` and `main` at capability-recovery exposure `39689a3ba6648eeb633cddec8feee26b7d8f6766`)
+Last refreshed: 2026-09-08 01:26 BRT
+Active implementation branch: `canonical-v157plus-product-recovery` (aligned with `canonical-app-v1` and `main` at Dashboard Fidelity Pass 6 exposure `4d3c7bc912a672ae7353c7028d8b05d047961dd5`)
 
 Purpose: this is the execution-order view of the LTS Wealth backlog. It does not replace documentary evidence or immutable checkpoints. `PROJECT_MASTER_BACKLOG.md` remains the complete persistent dependency list. This file makes the remaining work explicit so product delivery does not get lost behind release mechanics.
 
-Current milestone: canonical v1.6 capability recovery is exposed at exact product target `501fb48265b02a5416f0fc198a54abf8688ddd14`. Dashboard Fidelity Pass 5 and the bounded `JWT issued at future` recovery remain preserved. The recovered briefing, Dashboard models and V150/V151 decisions are cross-referenced in `LTS_WEALTH_REQUIREMENTS_TRACEABILITY.md`; ten secondary capabilities are now discoverable in Central de Gestão and deterministically gated. Dashboard reference convergence, controlled Supabase security hardening and real authenticated lifecycles remain active P0.
+Current milestone: canonical v1.6 Dashboard Fidelity Pass 6 is exposed at exact product target `9ae0ee37ab3332415523eeee287cdbf75102e1c4`. Capability recovery and the bounded `JWT issued at future` recovery remain preserved. The recovered briefing, Dashboard models and V150/V151 decisions are cross-referenced in `LTS_WEALTH_REQUIREMENTS_TRACEABILITY.md`; approved-reference navigation, period controls, evidence-labelled KPIs and real drill-downs are now deterministic in desktop/mobile. Pixel-level detail convergence, controlled Supabase security hardening and real authenticated lifecycles remain active P0.
 
 ## Definition of DONE for the app
 The LTS Wealth app is not considered delivered until all P0 items below are complete together in one canonical application:
@@ -30,13 +30,13 @@ The LTS Wealth app is not considered delivered until all P0 items below are comp
 - [x] Add explicit loading, unauthenticated, error and data-ready states.
 
 ### P0.2 Dashboard — approved visual contract
-- [~] Build the Dashboard directly against the approved 1312×1199 official reference; functional hierarchy is gated and presentation parity remains P0.
-- [~] Desktop: dark left rail + light dense executive canvas + compact spacing; continue visual convergence.
+- [~] Build the Dashboard directly against the approved 1312×1199 official reference; Pass 6 closes the major structural gaps while pixel-perfect parity remains open.
+- [x] Desktop Pass 6: dark left rail, approved-reference intent order, light dense executive canvas, compact spacing and month/as-of toolbar.
 - [x] Mobile: purpose-built responsive hierarchy; no squeezed desktop canvas.
 - [x] Five primary KPIs: Dinheiro em contas; Contas + curto prazo; RSUs vested; FGTS; Despesas (mês).
 - [x] Real values only; missing evidence stays unavailable, never false R$0,00.
-- [~] Dense executive sections: functional surfaces exist; continue reference-level chart/detail fidelity.
-- [ ] Expense/category drill-down from Dashboard where evidence exists.
+- [~] Dense executive sections: working hierarchy, bank rows and decision drill-downs exist; continue evidence-backed historical chart/detail fidelity.
+- [x] Expense/category route drill-down from Dashboard where evidence exists.
 - [x] First cash-negative date and management/action date displayed separately when different.
 - [x] FGTS rule preserved: R$22.432,31 at 21/08/2026, restricted ~D+30, never D+3, no future accrual projection.
 
@@ -59,12 +59,12 @@ The LTS Wealth app is not considered delivered until all P0 items below are comp
 - [ ] Authenticated physical-iPhone post-fix financial/data E2E.
 
 ### P0.5 Product-level QA before asking the user
-- [ ] Desktop visual parity gate against approved reference hierarchy/density.
+- [x] Desktop structural visual gate against approved reference hierarchy/density; pixel-perfect comparison remains separate and unclaimed.
 - [x] Mobile WebKit gate for layout, scrolling, route fit and event-loop responsiveness.
 - [x] Six-route physical navigation regression.
 - [x] No-horizontal-overflow and no-sustained-DOM-churn checks.
 - [x] Auth-truth / missing-data truth checks.
-- [x] Fixed homologation points to the exact green canonical V157+ candidate; public promotion remains separate and unauthorized.
+- [x] Fixed homologation points to the exact green canonical v1.6 Pass 6 candidate; public promotion remains separate and unauthorized.
 
 ### P0.6 Supabase security hardening
 - [x] Inventory the 13 `public` tables currently reported with RLS disabled.
@@ -208,7 +208,7 @@ Open Finance is still part of the product roadmap. It was not cancelled; work wa
 - [ ] Preserve fixed homologation/public links.
 
 ## Execution order from now
-1. Finish P0 Dashboard reference convergence without changing financial truth.
+1. Preserve Dashboard Fidelity Pass 6 and continue only evidence-led pixel/detail convergence without changing financial truth.
 2. Deliver the contract-preserving Supabase RLS / SECURITY DEFINER / Auth hardening package and regression proof.
 3. Close route/session restoration and the single automatic definition-of-done receipt.
 4. Execute real authenticated desktop and physical-iPhone lifecycles for Dashboard, Flow, search/CSV, classification, liquidity, documents and backup/restore.

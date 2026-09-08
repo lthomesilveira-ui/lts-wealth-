@@ -4,6 +4,19 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 
 Canonical persistent project list. Never remove an open financial, documentary, classification, reconciliation or product dependency during compaction. Detailed immutable evidence remains in `backups/`, `HISTORICAL_RECOVERY_LOG.md`, `PLANNING_EXCEL_TO_CURRENT_AUDIT_2026-08-30.md`, `NEXT_HOMOLOGATION_GATE.md` and release checkpoints.
 
+## P0 — Dashboard Fidelity Pass 6 — 08/09/2026
+- [x] Recovered the approved-reference desktop navigation order without creating fake product ownership: Dashboard, Fluxo Diário, Despesas, Receitas, Cartões, Patrimônio, Planejamento, Atualizações, Relatórios, Documentos and Configurações. `Receitas` resolves to the evidenced Flow rather than inventing a new ledger.
+- [x] Added month/as-of controls and a working `Hoje` reload while preserving the five liquidity-first KPIs and honest missing-data behavior.
+- [x] Added evidence labels for account count, D0, D+3, D+30 and reliable month comparison; the comparison is withheld when the backend does not certify it.
+- [x] Added working bank rows and Dashboard drill-downs into Flow, Despesas, Patrimônio, Atualizações and Planning/Central de Gestão.
+- [x] Preserved all ten v1.6 briefing capabilities and fixed delayed remounts that could erase a selected mobile scenario.
+- [x] Exact product target `9ae0ee37ab3332415523eeee287cdbf75102e1c4`; exposure `4d3c7bc912a672ae7353c7028d8b05d047961dd5`.
+- [x] Recovery/candidate `34185954453` / `34185954506`, canonical gate/candidate `34186087590` / `34186087628`, main candidate/Pages `34186301851` / `34186300869`: SUCCESS.
+- [x] Post-exposure active/canonical/main smokes `34186663110` / `34186664337` / `34186664887` and Pages `34186664347`: SUCCESS.
+- [x] Visual evidence reviewed at 1312×1199 and 390×844; URL fixa browser-verified with Pass 6 assets, clean login, zero unauthenticated KPI cards and no iframe.
+- [x] Immutable checkpoint `backups/CANONICAL_APP_V161_DASHBOARD_FIDELITY_PASS6_CHECKPOINT_2026-09-08.md`.
+- [~] Continue evidence-led pixel/detail convergence and real-data richness; pixel-perfect parity and authenticated physical-iPhone E2E remain unclaimed.
+
 ## P0 — briefing capability recovery / canonical v1.6 — 07/09/2026
 - [x] Converted the recovered secondary-capability inventory into one navigable Central de Gestão inside `Atualizações`, while preserving the six-route mobile contract.
 - [x] Exposed all ten required capabilities: Planejamento, Entradas & compromissos, Recorrências, Simulações, Conciliação, Relatórios, Backup & restauração, Configurações & integrações, Financiamentos and Documentos.
@@ -37,7 +50,7 @@ Canonical persistent project list. Never remove an open financial, documentary, 
 - [x] Post-exposure active/canonical/main smokes `34173674961` / `34173674230` / `34173673390` and Pages `34173673353`: SUCCESS.
 - [x] Fixed homologation browser-verified at the exact gated target with Pass 5 asset and truthful unauthenticated login.
 - [x] Immutable checkpoint `backups/CANONICAL_APP_V157PLUS_DASHBOARD_FIDELITY_PASS5_CHECKPOINT_2026-09-07.md`.
-- [~] Continue pixel-level Dashboard convergence and real-data detail refinement; pixel-perfect parity is not yet claimed.
+- [x] Superseded as the current visual baseline by Dashboard Fidelity Pass 6; Pass 5 remains immutable evidence.
 
 ## P0 — V157+ product-recovery exposure — 07/09/2026
 - [x] Canonical V157+ split modules are the permanent product line: `canonical-liquidity-core.js`, `canonical-flow-v157.js`, `canonical-product-v157.js`, `canonical-presentation-v157.js`.
@@ -49,7 +62,7 @@ Canonical persistent project list. Never remove an open financial, documentary, 
 - [x] Immutable checkpoint `backups/CANONICAL_V157PLUS_PRODUCT_RECOVERY_EXPOSURE_CHECKPOINT_2026-09-07.md`.
 - [x] Public `index.html` remains protected and unchanged; `promotion_status:not_promoted`.
 - [ ] Authenticated physical-iPhone financial/data E2E remains pending and must not be claimed.
-- [~] Dashboard visual parity and remaining report/updates product recovery remain the active P0.
+- [~] Remaining evidence-led Dashboard refinement, security hardening and authenticated lifecycle proof remain active P0.
 
 ## P0 — current canonical functional baseline — 06/09/2026
 - [x] Wrapper line v154→v160 is historical only; it is no longer the primary product architecture.

@@ -2,10 +2,10 @@
 
 Purpose: evidence-backed sequence before asking the user to inspect a material candidate. Keep aligned with `PROJECT_MASTER_BACKLOG.md`, `LTS_WEALTH_CONTINUITY_HANDOFF.md` and immutable checkpoints.
 
-## Current canonical baseline — 07/09/2026 23:35 BRT
+## Current canonical baseline — 08/09/2026 01:26 BRT
 - Public fallback: WIP35-v136 in `index.html`, unchanged; protected blob remains `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
 - Fixed homologation: `https://lthomesilveira-ui.github.io/lts-wealth-/homologacao.html`.
-- Fixed homologation manifest selects **CANONICAL v1.6 · Briefing Capability Recovery** through `canonical-app.html`, exact product target `501fb48265b02a5416f0fc198a54abf8688ddd14`, exposure `39689a3ba6648eeb633cddec8feee26b7d8f6766`.
+- Fixed homologation manifest selects **CANONICAL v1.6 · Dashboard Fidelity Pass 6** through `canonical-app.html`, exact product target `9ae0ee37ab3332415523eeee287cdbf75102e1c4`, exposure `4d3c7bc912a672ae7353c7028d8b05d047961dd5`.
 - Canonical frontend is a single application; no v150/v151/v156/v160 iframe/wrapper chain is part of the primary product.
 - Current gated modules: `canonical-liquidity-core.js`, `canonical-flow-v157.js`, `canonical-product-v157.js`, `canonical-presentation-v157.js`, `canonical-capabilities-v161.js`.
 - Modular recovery gate `34170935882` and permanent canonical gate `34171231918`: **SUCCESS** in Chromium desktop 1312×1199 and WebKit mobile 390×844.
@@ -15,9 +15,10 @@ Purpose: evidence-backed sequence before asking the user to inspect a material c
 - Future-JWT recovery `34174520963`, permanent canonical gate `34174620205`, active/canonical/main smokes and Pages are SUCCESS; WebKit explicitly covers persisted future-token recovery.
 - Post-exposure active/canonical/main smokes `34175144495` / `34175143351` / `34175143758` and Pages `34175143251`: SUCCESS.
 - Briefing-capability recovery/candidate `34179625830` / `34179625805`, canonical gate/candidate `34179823179` / `34179823167`, main candidate/Pages `34179954294` / `34179953893`: SUCCESS.
-- Post-exposure active/canonical/main smokes `34180090300` / `34180147055` / `34180249928` and Pages `34180249315`: SUCCESS.
-- Browser verification of the fixed URL resolved to `canonical-app.html?homologacao=501fb48265b02a5416f0fc198a54abf8688ddd14` and rendered `canonical-liquidity.js?v=20260908-capabilities1` + truthful login with no fixture financial UI.
-- Current immutable evidence: `backups/CANONICAL_APP_V161_BRIEFING_CAPABILITY_RECOVERY_CHECKPOINT_2026-09-07.md`.
+- Dashboard Pass 6 recovery/candidate `34185954453` / `34185954506`, canonical gate/candidate `34186087590` / `34186087628`, main candidate/Pages `34186301851` / `34186300869`: SUCCESS.
+- Post-exposure active/canonical/main smokes `34186663110` / `34186664337` / `34186664887` and Pages `34186664347`: SUCCESS.
+- Browser verification of the fixed URL resolved to `canonical-app.html?homologacao=9ae0ee37ab3332415523eeee287cdbf75102e1c4` and rendered `canonical-dashboard-fidelity.css?v=20260908-pass6` + `canonical-liquidity.js?v=20260908-fidelity6`, truthful login, zero unauthenticated KPI cards and no iframe.
+- Current immutable evidence: `backups/CANONICAL_APP_V161_DASHBOARD_FIDELITY_PASS6_CHECKPOINT_2026-09-08.md`.
 - Durable briefing/decision map: `LTS_WEALTH_REQUIREMENTS_TRACEABILITY.md`.
 - `promotion_status:not_promoted`; public root promotion is NOT AUTHORIZED / NOT DONE.
 - Authenticated physical-iPhone visual/data E2E: PENDING / NOT CLAIMED.
@@ -32,6 +33,14 @@ Purpose: evidence-backed sequence before asking the user to inspect a material c
 - Executive JSON and recurrence CSV exports are present; fixture mode blocks backup export and restore writes.
 - Real restore path requires client checksum verification, backend staging/preview, exact phrase and a second confirmation; it remains unclaimed with real authenticated data.
 - Settings exposes provider-neutral Open Finance state; provider, consent and spend remain explicit future decisions.
+
+## Dashboard Fidelity Pass 6 gate
+- Desktop navigation follows the approved-reference intent order while the mobile bar remains exactly six destinations; `Receitas` aliases the evidenced Flow and does not invent a separate financial source.
+- Month/as-of controls and the `Hoje` reload are visible and physically exercised.
+- Five evidence-labelled signals distinguish account count, D0, D+3, FGTS D+30 and a month comparison only when certified.
+- Bank position rows and decision panels open real product routes; Planning opens the corresponding Central de Gestão pane.
+- The permanent browser gate covers both Chromium 1312×1199 and WebKit 390×844, including all v1.6 management panes.
+- A delayed remount race discovered by the canonical gate was fixed so a mobile scenario selection is not discarded before calculation.
 
 ## iPhone session recovery gate
 - Real-device symptom: fatal surface disclosed `JWT issued at future` instead of recovering or renewing the session.
@@ -60,7 +69,7 @@ Purpose: evidence-backed sequence before asking the user to inspect a material c
 - Public `index.html` remains unchanged.
 
 ## Exact deterministic evidence
-Current capability recovery gate `34179625830` and permanent canonical gate `34179823179`: **SUCCESS**. Earlier V157+ modular evidence remains preserved.
+Current Pass 6 recovery gate `34185954453` and permanent canonical gate `34186087590`: **SUCCESS**. Earlier V157+ and v1.6 capability evidence remains preserved.
 
 Validated in Chromium desktop 1312×1199 and WebKit mobile 390×844:
 - five KPI cards populated under controlled fixture;
@@ -83,8 +92,8 @@ Validated in Chromium desktop 1312×1199 and WebKit mobile 390×844:
 
 These are deterministic fixture/unauthenticated gates. They do not prove the user's authenticated physical-iPhone session and must not be represented as authenticated E2E.
 
-## Dashboard visual fidelity — next P0
-The approved original 1312×1199 image remains authoritative for presentation hierarchy/density. Current deterministic screenshot still differs materially in navigation breadth, top-card framing, monthly controls, historical wealth-chart presentation, density and secondary card details. The next coherent package must close those presentation gaps without using the reference image as a source of financial facts.
+## Dashboard visual fidelity — protected Pass 6 baseline / remaining P0
+The approved original 1312×1199 image remains authoritative for presentation hierarchy/density. Pass 6 closes the largest structural gaps: navigation breadth, month/as-of controls, five evidence-labelled cards, bank position and working drill-downs. Pixel-perfect parity, richer evidence-backed historical chart detail and real authenticated data presentation remain open; the reference image is never a source of financial facts.
 
 ## Current Planning / FGTS invariant
 Current audited contract under the conservative no-future-accrual rule:

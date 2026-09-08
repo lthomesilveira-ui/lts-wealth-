@@ -1,6 +1,6 @@
 # LTS Wealth — Continuity Handoff
 
-Last materially refreshed: 2026-09-07 23:35 BRT (America/Sao_Paulo)
+Last materially refreshed: 2026-09-08 01:26 BRT (America/Sao_Paulo)
 
 This file exists so project continuity never depends on chat context. Always re-fetch `main`, active branch, `PROJECT_MASTER_BACKLOG.md`, `NEXT_HOMOLOGATION_GATE.md`, this file and the latest immutable checkpoint before every repository write.
 
@@ -24,21 +24,21 @@ This file exists so project continuity never depends on chat context. Always re-
 - Public fallback remains WIP35-v136; protected `index.html` blob remains `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
 - Public promotion remains unauthorized/not done.
 
-## Current primary product — canonical app V157+ / capability recovery v1.6
+## Current primary product — canonical v1.6 / Dashboard Fidelity Pass 6
 The primary product line is the single canonical frontend `canonical-app.html`. The v154→v160 wrapper lineage is historical evidence only and must not be reintroduced as the product architecture.
 
 Current facts:
 - single frontend; no release iframe/wrapper chain;
 - direct Supabase authentication/RPC integration;
 - same app owns Dashboard, Fluxo Diário, Despesas, Patrimônio, Cartões and Atualizações;
-- V157+ modular baseline, Dashboard Pass 5 and iPhone future-JWT recovery remain preserved; current product target is `501fb48265b02a5416f0fc198a54abf8688ddd14`, exposure `39689a3ba6648eeb633cddec8feee26b7d8f6766`;
-- current changed blobs: `canonical-app.html` `c84cfa9d54cd299819ca5e64cb63af20217dd296`, `canonical-liquidity.js` `a0020ffd755dd493d7c807b554d78456dd0f1e09`, `canonical-capabilities-v161.js` `d55e0ada107df185d806404225599c38143d64f8`, permanent gate `5bd646bb0b6de1bad5d1460f395d78dd9181681d`, recovery workflow `e454012063aacdb9f32fd14c522eb29371567a74`;
+- V157+ modular baseline, v1.6 capability recovery and iPhone future-JWT recovery remain preserved; current product target is `9ae0ee37ab3332415523eeee287cdbf75102e1c4`, exposure `4d3c7bc912a672ae7353c7028d8b05d047961dd5`;
+- current changed blobs: `canonical-app.html` `2f324ac819f10d178a904f622b195221cd68bb92`, `canonical-liquidity.js` `b94b15d43dedef1d7bdf401ec9f2e96ae6eca183`, `canonical-capabilities-v161.js` `227649940f86741a1abce55c1dd4938bcd82b04a`, Dashboard CSS `719b30c7b35ec20aedb84235fb5b1da4a27614dc`, permanent gate `8998c9904b62a56134633409178683b1b2c5ff5f`, recovery workflow `e4c7b522e2d1fdfc9a97375969fe1877ed04311c`;
 - modular recovery gate `34170935882` and permanent canonical gate `34171231918`: SUCCESS in Chromium desktop 1312×1199 and WebKit mobile 390×844;
 - all active/canonical/main candidate smokes and both pre/post-manifest Pages deployments are green; exact run inventory is in the immutable checkpoint;
-- current capability recovery/candidate `34179625830` / `34179625805`, canonical gate/candidate `34179823179` / `34179823167`, main candidate/Pages `34179954294` / `34179953893`: SUCCESS;
-- post-exposure active/canonical/main smokes `34180090300` / `34180147055` / `34180249928` and Pages `34180249315`: SUCCESS;
-- fixed homologation is `canonical-app.html?homologacao=501fb48265b02a5416f0fc198a54abf8688ddd14` / `promotion_status:not_promoted`, browser-verified with capabilities1 asset and truthful login;
-- latest immutable checkpoint: `backups/CANONICAL_APP_V161_BRIEFING_CAPABILITY_RECOVERY_CHECKPOINT_2026-09-07.md`;
+- Pass 6 recovery/candidate `34185954453` / `34185954506`, canonical gate/candidate `34186087590` / `34186087628`, main candidate/Pages `34186301851` / `34186300869`: SUCCESS;
+- post-exposure active/canonical/main smokes `34186663110` / `34186664337` / `34186664887` and Pages `34186664347`: SUCCESS;
+- fixed homologation is `canonical-app.html?homologacao=9ae0ee37ab3332415523eeee287cdbf75102e1c4` / `promotion_status:not_promoted`, browser-verified with Pass 6 CSS/loader, truthful login, zero unauthenticated KPIs and no iframe;
+- latest immutable checkpoint: `backups/CANONICAL_APP_V161_DASHBOARD_FIDELITY_PASS6_CHECKPOINT_2026-09-08.md`;
 - authenticated physical-iPhone financial/data E2E remains pending/not claimed.
 
 ## Canonical v1.6 — recovered briefing capabilities
@@ -79,8 +79,8 @@ This is deterministic fixture/unauthenticated evidence, not authenticated physic
 - Authoritative reference: original 1312×1199 approved image, SHA-256 `0e5293a98bf3fce30b27ba508afdb2f17d82700a6134372938eaff38da73c06b`.
 - Target remains dark desktop rail, light dense executive canvas, compact spacing and intentional mobile layout.
 - Liquidity-first hierarchy remains evidence-led.
-- Current deterministic screenshot still differs materially from the approved reference in navigation breadth, top-card framing, historical chart presentation, month controls, density and several secondary details.
-- Dashboard fidelity is therefore the next absolute P0; the approved image defines presentation/hierarchy, never financial values.
+- Pass 6 closes the major structural differences in navigation breadth, month/as-of controls, top KPI evidence, bank position and working decision drill-downs.
+- Pixel-perfect parity, richer evidence-backed historical chart detail and authenticated real-data presentation remain open; the approved image defines presentation/hierarchy, never financial values.
 
 ## Current financial/product invariants
 ### Dashboard / Planning / FGTS
@@ -166,7 +166,7 @@ This is deterministic fixture/unauthenticated evidence, not authenticated physic
 - v154 accepted visual direction; v155 false-zero/navigation correction; v156 liquidity-first but rejected real iPhone; v157 WebKit deterministic pass but real-device rejection; v158 truthful fallback/product regression; v159 presentation restored but KPI data unavailable on real iPhone; v160 material-data readiness/truthful fallback; canonical app supersedes all as primary architecture.
 
 ## Open backlog that must always remain visible
-- Dashboard fidelity to approved reference — current absolute P0.
+- Evidence-led Dashboard detail convergence beyond the protected Pass 6 baseline; pixel-perfect parity is not claimed.
 - Supabase RLS/SECURITY DEFINER/auth hardening with contract-preserving regression coverage.
 - Authenticated physical-iPhone canonical financial/data E2E.
 - Real authenticated liquidity save→refresh→visible.
@@ -186,6 +186,14 @@ This is deterministic fixture/unauthenticated evidence, not authenticated physic
 
 ## User action now
 NONE. Continue autonomous Dashboard/product-quality work. User may test the fixed homologation when a material candidate is published, but engineering work must not wait for that QA.
+
+## Dashboard Fidelity Pass 6 — 08/09/2026
+- Approved-reference desktop intent order, month/as-of controls, working `Hoje` reload, five evidence labels, bank rows and real route drill-downs are implemented without changing the liquidity-first financial contract.
+- Mobile preserves exactly six primary destinations and exposes the period controls without clipping; Central de Gestão keeps all ten recovered briefing capabilities.
+- The canonical gate found and blocked a mobile scenario race caused by redundant delayed remounts; the product now preserves form state and both browser gates are green after the fix.
+- Product target `9ae0ee37ab3332415523eeee287cdbf75102e1c4`; homologation exposure `4d3c7bc912a672ae7353c7028d8b05d047961dd5`; all pre/post-exposure smokes and Pages are green.
+- Active artifact `10040515495`, digest `sha256:e8b4403df49125b5251f751378e4e84f7c9704abac55c40d8324e05a895009a2`; canonical artifact `10040555899`, digest `sha256:e3d4685de0887ce0711f42fd16adcbecd33ef0311466749383b4d0c45bca7883`.
+- Browser verification of the fixed URL showed Pass 6 assets, clean login, no unauthenticated financial KPI and no iframe. Authenticated physical-iPhone financial/data E2E and pixel-perfect parity remain unclaimed.
 
 
 ## Latest product-recovery exposure — 07/09/2026
