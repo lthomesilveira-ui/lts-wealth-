@@ -4,6 +4,21 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 
 Canonical persistent project list. Never remove an open financial, documentary, classification, reconciliation or product dependency during compaction. Detailed immutable evidence remains in `backups/`, `HISTORICAL_RECOVERY_LOG.md`, `PLANNING_EXCEL_TO_CURRENT_AUDIT_2026-08-30.md`, `NEXT_HOMOLOGATION_GATE.md` and release checkpoints.
 
+## P0 — V151 Planning decision recovery / canonical v1.16 — 08/09/2026
+- [x] Re-audited the V151 planning sources and the official 1312×1199 Dashboard reference; identified that canonical v1.15 reduced first-negative and management dates to low-emphasis pills instead of the approved decision cue.
+- [x] Added contract `v151-first-negative-management-separation-v1` without changing any financial value or restoring wrapper architecture.
+- [x] The planning callout now distinguishes the first projected negative date from the earlier management-action date and explains their temporal order.
+- [x] A red chart point/guide is allowed only when an exact horizon row matches the first-negative date and has evidenced `base < 0`; absent that evidence, the UI remains date-only and never interpolates a value.
+- [x] Deterministic fixture proves management `01/12/2026`, first negative `12/01/2027`, management-first ordering and no false marker in the overview chart.
+- [x] Approved desktop canvas remains exactly 1312×1199; planning panel and both four-layer legends remain within the density contract. Mobile stays intentionally scrollable with no horizontal clipping.
+- [x] Local permanent Chromium gate, JS/YAML parsing and `git diff --check`: PASS; `index.html` protected hash unchanged.
+- [x] Exact remote product `4028321fed599496d29798e3e2d1c47c48bc54d1`, tree `0776d7e4de0f63eae13ad92f01fc47acc799e148`; exposure `d9a63c96e2674f7bf8d615e29643598bd8146537`, tree `0c2dc3c7c38051f8c11008f35651aebf405149f3`; all three branches aligned by normal no-force fast-forward.
+- [x] Product recovery gate/smoke `34262013499` / `34262013502`, canonical gate/smoke `34262279303` / `34262278639`, main smoke/Pages `34262576921` / `34262575286`: SUCCESS.
+- [x] Post-exposure active/canonical/main smokes `34262885534` / `34262887519` / `34262889285` and Pages `34262887576`: SUCCESS; fixed URL loads exact v1.16 assets with truthful blank signed-out login, zero iframe/fixture/JWT leakage.
+- [x] Artifacts: recovery `10070303869` / `sha256:4dc750647554451639e78d7bc4af15de8690b81fdf28f48b4e7908088632140b`; canonical `10070422301` / `sha256:5ac0f9b13f98820ab7ed87c79debdc8643703d0d82df9fbfa6e01689106492da`; exposure Pages `10070593792` / `sha256:6c3e77988732f9852214e6c7eabb1f934973ad8e60616eb6d04c85faa625bbbc`.
+- [x] Immutable checkpoint `backups/CANONICAL_APP_V116_PLANNING_DECISION_CHECKPOINT_2026-09-08.md`.
+- [ ] Revalidate planning dates/value with authenticated real data and on a physical iPhone; both remain open/not claimed.
+
 ## P0 — Approved Dashboard desktop density / canonical v1.15 — 08/09/2026
 - [x] Compared the canonical Dashboard against the official 1312×1199 reference and isolated a measurable 126 px desktop overflow: canonical v1.14 document height was 1325 px.
 - [x] Added contract `approved-1312x1199-single-screen-v1` without changing financial values, observed/projected semantics, commitments, routes or mobile ownership.

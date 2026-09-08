@@ -1,6 +1,6 @@
 # LTS Wealth — Continuity Handoff
 
-Last materially refreshed: 2026-09-08 14:31 BRT (America/Sao_Paulo)
+Last materially refreshed: 2026-09-08 15:33 BRT (America/Sao_Paulo)
 
 This file exists so project continuity never depends on chat context. Always re-fetch `main`, active branch, `PROJECT_MASTER_BACKLOG.md`, `NEXT_HOMOLOGATION_GATE.md`, this file and the latest immutable checkpoint before every repository write.
 
@@ -24,18 +24,22 @@ This file exists so project continuity never depends on chat context. Always re-
 - Public fallback remains WIP35-v136; protected `index.html` blob remains `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
 - Public promotion remains unauthorized/not done.
 
-## Current exposed product — canonical v1.15 Dashboard Density
-- Exact remote product `a0a2675e6a9c9b3ffe4d9b0bc1fab222a48bc347`, product tree `667ef2fcae8c5630b5a60b4d62ee2986ad438e92`; fixed-manifest exposure `b1998a9178ef3a8eec90dd47aa21e31dad8c868a`, exposure tree `f8a68fa98658f1718eccfd6b716f4607ad2d516e`; all three release branches share the exposure through normal no-force fast-forward.
-- Official Dashboard evidence establishes a 1312×1199 complete executive canvas. V1.14 measured 1325 px at that viewport; v1.15 closes the exact 126 px overflow and ends at 1199 px, with Dashboard bottom at 1184 px.
-- Contract `approved-1312x1199-single-screen-v1` compresses only desktop chart/legend vertical footprint. Main liquidity panel is 295 px, planning panel 297 px and both four-layer legends remain one-line/readable.
-- Mobile 390×844 remains intentionally scrollable, keeps all cards and interaction targets and has no horizontal clipping.
-- The permanent gate rejects desktop height overflow, Dashboard bottom overflow, a main liquidity panel over 315 px or loss of any current/base/vesting/FGTS legend item.
-- V1.15 preserves v1.14 V149 read-only review, v1.13 classification-first guided intake, v1.12 reviewed input, v1.11 liquidity layers, v1.10 decision truth, v1.9 V150/V151+ Flow parity and every canonical route/session/security baseline.
-- Product recovery gate/smoke `34256124696` / `34256124706`, canonical gate/smoke `34256598442` / `34256598444`, main smoke/Pages `34256889054` / `34256887644`: SUCCESS. Post-exposure active/canonical/main smokes `34257179939` / `34257183053` / `34257139985` and Pages `34257139795`: SUCCESS.
-- Recovery artifact `10067974348` / `sha256:302bccf618422a2d0a2ade4fd696441a71f8c490707be3aa54f75afce974412d`; canonical artifact `10068181842` / `sha256:1b2c2310394b6d834d88ba015d596648e88ae517489b54f40e89c7c17e6380d5`; exposure Pages `10068319425` / `sha256:9820c15422ab8226db2edd51490ba328b08d933a6c1b07f05a50f3614db1f228`.
-- Fixed homologation resolves to `canonical-app.html?homologacao=a0a2675…#Dashboard`, loads `?v=20260908-dashboard-density15`, renders truthful signed-out login with blank fields and exposes no iframe, fixture badge, raw JWT or application error.
-- Latest immutable checkpoint: `backups/CANONICAL_APP_V115_DASHBOARD_DENSITY_CHECKPOINT_2026-09-08.md`.
+## Current exposed product — canonical v1.16 V151 Planning Decision Recovery
+- Exact remote product `4028321fed599496d29798e3e2d1c47c48bc54d1`, product tree `0776d7e4de0f63eae13ad92f01fc47acc799e148`; fixed-manifest exposure `d9a63c96e2674f7bf8d615e29643598bd8146537`, exposure tree `0c2dc3c7c38051f8c11008f35651aebf405149f3`; all three release branches share the exposure through normal no-force fast-forward.
+- Contract `v151-first-negative-management-separation-v1` restores the V151 distinction between the first projected negative date and the earlier management-action date as an explicit planning decision signal.
+- A red chart point/guide is rendered only when the exact first-negative horizon row exists and its evidenced `base` is below zero. Otherwise the product presents the date without fabricating/interpolating a value.
+- The approved Dashboard remains exactly 1312×1199 on desktop; both four-layer legends remain readable. Mobile 390×844 remains intentionally scrollable without horizontal clipping.
+- V1.16 preserves v1.15 density, v1.14 V149 read-only review, v1.13 classification-first guided intake, v1.12 reviewed input, v1.11 liquidity layers, v1.10 decision truth, v1.9 V150/V151+ Flow parity and every canonical route/session/security baseline.
+- Product recovery gate/smoke `34262013499` / `34262013502`, canonical gate/smoke `34262279303` / `34262278639`, main smoke/Pages `34262576921` / `34262575286`: SUCCESS. Post-exposure active/canonical/main smokes `34262885534` / `34262887519` / `34262889285` and Pages `34262887576`: SUCCESS.
+- Recovery artifact `10070303869` / `sha256:4dc750647554451639e78d7bc4af15de8690b81fdf28f48b4e7908088632140b`; canonical artifact `10070422301` / `sha256:5ac0f9b13f98820ab7ed87c79debdc8643703d0d82df9fbfa6e01689106492da`; exposure Pages `10070593792` / `sha256:6c3e77988732f9852214e6c7eabb1f934973ad8e60616eb6d04c85faa625bbbc`.
+- Fixed homologation resolves to `canonical-app.html?homologacao=4028321…#Dashboard`, loads `?v=20260908-planning16`, renders truthful signed-out login with blank fields and exposes no iframe, fixture badge, raw JWT or application error.
+- Latest immutable checkpoint: `backups/CANONICAL_APP_V116_PLANNING_DECISION_CHECKPOINT_2026-09-08.md`.
 - Authenticated real lifecycles, physical-iPhone E2E and public-root promotion remain explicitly open/not claimed. No approved standalone Reports visual was recovered; do not invent one.
+
+## Protected predecessor — canonical v1.15 Dashboard Density
+- Exact remote product `a0a2675e6a9c9b3ffe4d9b0bc1fab222a48bc347`; fixed-manifest exposure `b1998a9178ef3a8eec90dd47aa21e31dad8c868a`.
+- Contract `approved-1312x1199-single-screen-v1` closed the measured desktop overflow while preserving the four liquidity layers and mobile composition.
+- Immutable checkpoint: `backups/CANONICAL_APP_V115_DASHBOARD_DENSITY_CHECKPOINT_2026-09-08.md`.
 
 ## Protected predecessor — canonical v1.14 Document Interpretation Review
 - Exact remote product `0d50699af5aa5b950ff889a1fc6becfee209ce06`, product tree `f086c6878f4737a10c6865768241e9d2c4adc326`; fixed-manifest exposure `ac5d4674920615c6c5e5947d4ab721f538679a0c`, exposure tree `e4d9796e6646a2265ca62c5de4b7058ac6b487cb`; all three release branches share the exposure through normal no-force fast-forward.
