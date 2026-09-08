@@ -1,11 +1,11 @@
 # LTS Wealth — Canonical Delivery Master Plan
 
-Last refreshed: 2026-09-08 08:22 BRT
-Active implementation branch: `canonical-v157plus-product-recovery` (aligned with `canonical-app-v1` and `main` on canonical v1.9 product commit `6aba220653a9053cf304ab11bf931db38ccc1b75`)
+Last refreshed: 2026-09-08 08:31 BRT
+Active implementation branch: `canonical-v157plus-product-recovery` (aligned with `canonical-app-v1` and `main` on canonical v1.9 exposure `90aad3a754e69708fcc9e03a5bb32835281e2925`, product `6aba220653a9053cf304ab11bf931db38ccc1b75`)
 
 Purpose: this is the execution-order view of the LTS Wealth backlog. It does not replace documentary evidence or immutable checkpoints. `PROJECT_MASTER_BACKLOG.md` remains the complete persistent dependency list. This file makes the remaining work explicit so product delivery does not get lost behind release mechanics.
 
-Current milestone: canonical v1.9 product `6aba220653a9053cf304ab11bf931db38ccc1b75` restores validated V150 Flow interactions while preserving unified Despesas, Dashboard Fidelity Pass 6, capability recovery, route/session receipt, bounded `JWT issued at future` recovery and the Supabase RLS/SECURITY DEFINER baseline. Pre-exposure recovery/canonical Chromium+WebKit gates and main Pages are green; fixed-manifest selection is in this release package. Pixel-level Dashboard detail and receipt rows requiring real authenticated lifecycles and physical-device evidence remain active P0.
+Current milestone: canonical v1.9 product `6aba220653a9053cf304ab11bf931db38ccc1b75`, exposed at `90aad3a754e69708fcc9e03a5bb32835281e2925`, restores validated V150 Flow interactions while preserving unified Despesas, Dashboard Fidelity Pass 6, capability recovery, route/session receipt, bounded `JWT issued at future` recovery and the Supabase RLS/SECURITY DEFINER baseline. Recovery/canonical Chromium+WebKit gates, pre/post-exposure smokes and Pages are green; the fixed URL resolves to the exact product. Pixel-level Dashboard detail and receipt rows requiring real authenticated lifecycles and physical-device evidence remain active P0.
 
 ## Definition of DONE for the app
 The LTS Wealth app is not considered delivered until all P0 items below are complete together in one canonical application:
@@ -213,7 +213,7 @@ Open Finance is still part of the product roadmap. It was not cancelled; work wa
 - [ ] Preserve fixed homologation/public links.
 
 ## Execution order from now
-1. Complete canonical v1.9 post-manifest smokes/Pages and verify the fixed homologation path resolves to exact product `6aba220…`, preserving the public-root boundary.
+1. Preserve canonical v1.9 product/exposure as the regression baseline and continue Dashboard/Atualizações engineering without changing financial truth or the public-root boundary.
 2. Preserve Dashboard Fidelity Pass 6, route/session continuity and the automatic receipt as the protected canonical baseline.
 3. Continue Dashboard/Despesas/Atualizações refinement against real evidence without changing financial truth or reintroducing wrapper ownership.
 4. Execute real authenticated desktop and physical-iPhone lifecycles for Dashboard, Flow, search/CSV, classification, liquidity, documents and backup/restore; use them to close the corresponding receipt rows.

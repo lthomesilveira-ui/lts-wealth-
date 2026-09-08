@@ -1,6 +1,6 @@
 # LTS Wealth — Matriz de Requisitos, Decisões e Validações
 
-Última auditoria material: 08/09/2026 08:22 BRT (America/Sao_Paulo)
+Última auditoria material: 08/09/2026 08:31 BRT (America/Sao_Paulo)
 
 Objetivo: impedir que briefing, decisões, dados, validações ou pendências se percam entre chats, versões ou trocas de arquitetura. Esta matriz complementa `PROJECT_MASTER_BACKLOG.md`; ela não substitui os checkpoints imutáveis nem a evidência financeira.
 
@@ -67,7 +67,7 @@ Os valores impressos na imagem oficial são ilustrativos. Nenhum valor da refer�
 | Canonical v1.6 Dashboard Fidelity Pass 6 | Recupera ordem de navegação da referência, competência/as-of, `Hoje`, sinais de evidência e drill-downs reais; preserva os dez contratos de gestão. | `VERDE_AUTOMATICO` em Chromium/WebKit e exposto na homologação fixa; paridade pixel-perfect e E2E autenticado continuam abertos. |
 | Canonical v1.7 Route Continuity + DoD Receipt | Preserva integralmente Pass 6, restaura rota/painel após refresh/sessão/back-forward e produz um recibo único da definição de pronto. | `VERDE_AUTOMATICO`; recibo mantém E2E autenticado, iPhone físico e promoção pública explicitamente abertos. |
 | Canonical v1.8 Unified Expenses | Remove o segundo dono de Despesas e reúne histórico mensal/anual, natureza × contexto, semântica de `Não atribuído`, insights evidenciados e drill-down de mês/item. | `VERDE_AUTOMATICO` em Chromium/WebKit e exposto na homologação fixa; E2E autenticado/iPhone físico continuam abertos. |
-| Canonical v1.9 V150 Flow Parity | Porta as interações validadas V150–V152 para a aplicação única atual, preservando o modelo posterior de liquidez e sem restaurar wrappers. | `VERDE_AUTOMATICO` em Chromium/WebKit; produto `6aba220…` selecionado pelo manifesto fixo, com E2E autenticado/iPhone físico ainda abertos. |
+| Canonical v1.9 V150 Flow Parity | Porta as interações validadas V150–V152 para a aplicação única atual, preservando o modelo posterior de liquidez e sem restaurar wrappers. | `VERDE_AUTOMATICO` em Chromium/WebKit; produto `6aba220…` exposto no manifesto fixo por `90aad3a…`, com E2E autenticado/iPhone físico ainda abertos. |
 
 ### Hierarquia desktop obrigatória
 
@@ -125,7 +125,7 @@ Os valores impressos na imagem oficial são ilustrativos. Nenhum valor da refer�
 | UX-01 | Mobile 390px/768px/desktop, sem overflow, travamento, observador recursivo ou UI escondida. | Implementado/gated na linha canônica, incluindo persistência de rota/painel. | Chromium/WebKit, sem churn/overflow/error; refresh/back-forward/deep-link v1.7. | iPhone real revelou falha de sessão fora do gate anterior. | Revalidar E2E físico final; regressão determinística de estado já está fechada. |
 | OF-01 | Open Finance provider-neutral, staging/reconciliação antes de efeito financeiro, sem segredo no cliente. | Arquitetura QA 14/14. | Contratos/ACL/backend. | Nenhum consentimento/fornecedor autorizado. | Pesquisa de preço/SLA/cobertura; decisão e consentimento são `AGUARDA_DECISAO`. |
 | SEC-01 | Superfície Supabase deve aplicar menor privilégio, RLS e ownership guard sem quebrar RPCs autenticadas. | Migração `20260908045049` aplicada: RLS deny-by-default em 13/13 tabelas, 12 helpers de `user_id` arbitrário internos, Flow v7-v10 authenticated-only, defaults de cliente fechados e `service_role` preservado. | Pós-condições 13/13, 12/12, 4/4, zero SECURITY DEFINER anônimo e zero autenticado sem guard direto; regressão autenticada Flow v8/Dashboard/produto em rollback; Advisor revisto. | No-policy INFO é intencional nas tabelas internas; 65 avisos authenticated SECURITY DEFINER correspondem a RPCs de navegador guardadas. Proteção contra senhas vazadas segue desativada. | `IMPLEMENTADO_REGREDIDO`: manter o gate; revisar/ativar leaked-password protection em janela controlada de Auth. |
-| REL-01 | Homologação fixa preservada; root público separado e protegido. | Manifesto desta entrega aponta ao produto v1.9 `6aba220653a9053cf304ab11bf931db38ccc1b75`; `index.html` intacto. | Gates pré-exposição e Pages verdes; URL direta do produto verificou asset `flow-parity9`, login limpo, zero fixture financeira deslogada e nenhum iframe. | Promoção não autorizada. | Confirmar smoke/Pages pós-manifesto e continuar `not_promoted` até autorização explícita. |
+| REL-01 | Homologação fixa preservada; root público separado e protegido. | Manifesto exposto em `90aad3a754e69708fcc9e03a5bb32835281e2925` aponta ao produto v1.9 `6aba220653a9053cf304ab11bf931db38ccc1b75`; `index.html` intacto. | Gates pré e pós-exposição/Pages verdes; URL fixa verificou asset `flow-parity9`, login limpo, zero fixture financeira deslogada e nenhum iframe. | Promoção não autorizada. | Continuar `not_promoted` até autorização explícita. |
 
 ## V150–V160 — preservação explícita e ponto de regressão
 

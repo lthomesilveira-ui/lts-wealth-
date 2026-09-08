@@ -1,6 +1,6 @@
 # LTS Wealth — Continuity Handoff
 
-Last materially refreshed: 2026-09-08 08:22 BRT (America/Sao_Paulo)
+Last materially refreshed: 2026-09-08 08:31 BRT (America/Sao_Paulo)
 
 This file exists so project continuity never depends on chat context. Always re-fetch `main`, active branch, `PROJECT_MASTER_BACKLOG.md`, `NEXT_HOMOLOGATION_GATE.md`, this file and the latest immutable checkpoint before every repository write.
 
@@ -31,7 +31,7 @@ Current facts:
 - single frontend; no release iframe/wrapper chain;
 - direct Supabase authentication/RPC integration;
 - same app owns Dashboard, Fluxo Diário, Despesas, Patrimônio, Cartões and Atualizações;
-- V157+ modular baseline, v1.8 unified expenses, v1.7 route/session receipt, v1.6 capability recovery, Dashboard Fidelity Pass 6, iPhone future-JWT recovery and the bounded Supabase security baseline remain preserved; current product package is `6aba220653a9053cf304ab11bf931db38ccc1b75`;
+- V157+ modular baseline, v1.8 unified expenses, v1.7 route/session receipt, v1.6 capability recovery, Dashboard Fidelity Pass 6, iPhone future-JWT recovery and the bounded Supabase security baseline remain preserved; current product package is `6aba220653a9053cf304ab11bf931db38ccc1b75`, fixed-manifest exposure `90aad3a754e69708fcc9e03a5bb32835281e2925`;
 - Despesas is owned only by `canonical-app`: month/year history, nature × context, evidence-led insights, explicit `Não atribuído` semantics and item/month drilldown are one responsive surface; product module ownership is Patrimônio/Cartões only;
 - current changed blobs: `canonical-app.html` `92507f55f4de291c17e49a5b430bedcb33018506`, `canonical-liquidity.js` `8a8caba73c0f6a08710328c19e38bec6c6aab7e9`, `canonical-capabilities-v161.js` `da479e1c5215b593b7bb43d2df5d64dc939e19e2`, permanent gate `f48fc1520f1e50d7071f21be6648a2293fc21e6f`, recovery workflow `9a558c4574eb6439b1eeca0f34400fec2012cdd5`;
 - modular recovery gate `34170935882` and permanent canonical gate `34171231918`: SUCCESS in Chromium desktop 1312×1199 and WebKit mobile 390×844;
@@ -40,10 +40,11 @@ Current facts:
 - post-exposure active/canonical/main smokes `34186663110` / `34186664337` / `34186664887` and Pages `34186664347`: SUCCESS;
 - route/receipt recovery/candidate `34190659782` / `34190659780`, canonical gate/candidate `34191017877` / `34191017858`, main candidate/Pages `34191216218` / `34191215874`: SUCCESS;
 - post-v1.7-exposure active/canonical/main smokes `34191461669` / `34191462282` / `34191463017` and Pages `34191462402`: SUCCESS;
-- this release advances fixed homologation to canonical v1.9 through `canonical-app.html` / `promotion_status:not_promoted`; public `index.html` remains protected;
+- fixed homologation exposes canonical v1.9 through `canonical-app.html` / `promotion_status:not_promoted`; public `index.html` remains protected;
 - unified-expenses gates are green: active `34199824400`, canonical `34200253901`, main candidate/Pages `34200706521` / `34200704967`;
 - canonical v1.9 recovery/candidate `34219446266` / `34219446256`, canonical gate/candidate `34219669569` / `34219669492`, main candidate/Pages `34219911180` / `34219909612`: SUCCESS;
-- live product-SHA verification loaded `canonical-liquidity.js?v=20260908-flow-parity9` and truthful login with no unauthenticated fixture values;
+- post-exposure active/canonical/main smokes `34220841617` / `34220895671` / `34220950755` and Pages `34220949477`: SUCCESS;
+- live fixed-URL verification resolved to product `6aba220…`, loaded `canonical-liquidity.js?v=20260908-flow-parity9`, used no iframe and rendered truthful login with no unauthenticated fixture values;
 - latest immutable checkpoint: `backups/CANONICAL_APP_V19_V150_FLOW_PARITY_CHECKPOINT_2026-09-08.md`;
 - authenticated physical-iPhone financial/data E2E remains pending/not claimed.
 
