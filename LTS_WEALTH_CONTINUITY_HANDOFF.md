@@ -1,6 +1,6 @@
 # LTS Wealth — Continuity Handoff
 
-Last materially refreshed: 2026-09-08 09:10 BRT (America/Sao_Paulo)
+Last materially refreshed: 2026-09-08 09:29 BRT (America/Sao_Paulo)
 
 This file exists so project continuity never depends on chat context. Always re-fetch `main`, active branch, `PROJECT_MASTER_BACKLOG.md`, `NEXT_HOMOLOGATION_GATE.md`, this file and the latest immutable checkpoint before every repository write.
 
@@ -24,15 +24,18 @@ This file exists so project continuity never depends on chat context. Always re-
 - Public fallback remains WIP35-v136; protected `index.html` blob remains `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
 - Public promotion remains unauthorized/not done.
 
-## Current candidate — canonical v1.10 Dashboard Decision Truth
-- Base/recovery truth: all release branches were freshness-verified at v1.9 closure `3858739e73ebdedffbe06766c05fdbc9c59f91d6` before work began; v1.9 product `6aba220…` remains the exposed rollback baseline.
+## Current exposed product — canonical v1.10 Dashboard Decision Truth
+- Exact product `de4362d90560424a332f77ce22e665729cd7d88f`; fixed-manifest exposure `661be37ea45425a30dd3a35c7605d1921db94559`; all three release branches were promoted only by normal fast-forward and this documentation/checkpoint closure is their next common commit.
 - New Dashboard contract `reference-fact-projection-commitments-v2` distinguishes the observed position through `as_of` from later projections in both charts; projected path/points are dashed/outlined and carry explicit accessible semantics.
 - `Próximos Compromissos` no longer reads `cockpit.work.top_actions`. Its only sources are card `next_due` and `product.commitments.commitments` rows with explicit `next_due`; missing next dates are omitted rather than inferred from historical start dates.
 - Operational review tasks remain in `Atualizações`. Commitment actions route to `Fluxo Diário`, where the v1.9 V150/V151+ interaction contract remains unchanged.
-- Local permanent Chromium gate is PASS in desktop 1312×1199 and mobile 390×844 after full six-route, Flow, Dashboard, Central de Gestão and auth-truth regression. CI WebKit, remote publication, branch promotion and fixed-manifest exposure remain pending and unclaimed.
+- Local Chromium and recovery/canonical CI Chromium+WebKit are PASS in desktop 1312×1199 and mobile 390×844 after full six-route, Flow, Dashboard, Central de Gestão and auth-truth regression.
+- Pre-exposure recovery gate/smoke `34225155424` / `34225155422`, canonical gate/smoke `34225365210` / `34225365141`, main smoke/Pages `34225542803` / `34225541791`: SUCCESS. Post-exposure active/canonical/main smokes `34225917363` / `34225967201` / `34226016981` and Pages `34226016118`: SUCCESS.
+- Fixed homologation browser verification resolved to `canonical-app.html?homologacao=de4362d…#Dashboard`, loaded `dashboard-truth10`, rendered the truthful signed-out login and exposed no iframe or fixture financial content.
+- Latest immutable checkpoint: `backups/CANONICAL_APP_V110_DASHBOARD_DECISION_TRUTH_CHECKPOINT_2026-09-08.md`.
 - No user action is required for this release sequence; continue autonomously unless a real financial/provider/consent decision becomes necessary.
 
-## Current exposed primary product — canonical v1.9 Flow parity
+## Protected prior baseline — canonical v1.9 Flow parity
 The primary product line is the single canonical frontend `canonical-app.html`. The v154→v160 wrapper lineage is historical evidence only and must not be reintroduced as the product architecture.
 
 Current facts:

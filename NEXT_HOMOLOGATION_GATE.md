@@ -2,10 +2,10 @@
 
 Purpose: evidence-backed sequence before asking the user to inspect a material candidate. Keep aligned with `PROJECT_MASTER_BACKLOG.md`, `LTS_WEALTH_CONTINUITY_HANDOFF.md` and immutable checkpoints.
 
-## Current canonical baseline — 08/09/2026 09:10 BRT
+## Current canonical baseline — 08/09/2026 09:29 BRT
 - Public fallback: WIP35-v136 in `index.html`, unchanged; protected blob remains `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
 - Fixed homologation: `https://lthomesilveira-ui.github.io/lts-wealth-/homologacao.html`.
-- Fixed homologation selects **CANONICAL v1.9 · V150 Flow Interaction Parity** through `canonical-app.html`, exact product package `6aba220653a9053cf304ab11bf931db38ccc1b75`, exposure `90aad3a754e69708fcc9e03a5bb32835281e2925`; public `index.html` is unchanged.
+- Fixed homologation selects **CANONICAL v1.10 · Dashboard Decision Truth** through `canonical-app.html`, exact product `de4362d90560424a332f77ce22e665729cd7d88f`, exposure `661be37ea45425a30dd3a35c7605d1921db94559`; public `index.html` is unchanged.
 - Canonical frontend is a single application; no v150/v151/v156/v160 iframe/wrapper chain is part of the primary product.
 - Current gated modules: `canonical-liquidity-core.js`, `canonical-flow-v157.js`, `canonical-product-v157.js`, `canonical-presentation-v157.js`, `canonical-capabilities-v161.js`.
 - Modular recovery gate `34170935882` and permanent canonical gate `34171231918`: **SUCCESS** in Chromium desktop 1312×1199 and WebKit mobile 390×844.
@@ -27,18 +27,22 @@ Purpose: evidence-backed sequence before asking the user to inspect a material c
 - Post-exposure active/canonical/main smokes `34220841617` / `34220895671` / `34220950755` and Pages `34220949477`: SUCCESS.
 - V1.9 evidence artifacts: recovery `10053154126` / `sha256:711c1d2d19d558d9caf6d0cd40bdddc47416b344353851ed8884344e7d355a17`; canonical `10053239237` / `sha256:fdc1d83505d2ccd1cf8529aec088518e42e344115c24c7c13eb3f789f01e6a0f`.
 - Fixed-URL live verification resolved to `canonical-app.html?homologacao=6aba220…`, loaded Flow asset `?v=20260908-flow-parity9`, truthful login and no iframe/fixture financial content.
-- Current immutable evidence: `backups/CANONICAL_APP_V19_V150_FLOW_PARITY_CHECKPOINT_2026-09-08.md`.
+- V1.10 recovery gate/smoke `34225155424` / `34225155422`, canonical gate/smoke `34225365210` / `34225365141`, main smoke/Pages `34225542803` / `34225541791`: SUCCESS.
+- V1.10 post-exposure active/canonical/main smokes `34225917363` / `34225967201` / `34226016981` and Pages `34226016118`: SUCCESS.
+- V1.10 artifacts: recovery `10055417140` / `sha256:46b285161dd778294e9d5161bbe6faa71d96e7bb31188b6b25bcc5adb608e33b`; canonical `10055499807` / `sha256:a255c1a04e8a5b7f33ef5a199ad3b24c34fdd1bf8ed7f05245026f520373a841`.
+- Fixed-URL live verification resolved to `canonical-app.html?homologacao=de4362d…#Dashboard`, loaded `canonical-liquidity.js?v=20260908-dashboard-truth10`, truthful signed-out login, zero iframe and no unauthenticated fixture Dashboard.
+- Current immutable evidence: `backups/CANONICAL_APP_V110_DASHBOARD_DECISION_TRUTH_CHECKPOINT_2026-09-08.md`.
 - Durable briefing/decision map: `LTS_WEALTH_REQUIREMENTS_TRACEABILITY.md`.
 - `promotion_status:not_promoted`; public root promotion is NOT AUTHORIZED / NOT DONE.
 - Authenticated physical-iPhone visual/data E2E: PENDING / NOT CLAIMED.
 
-## Canonical v1.10 Dashboard Decision Truth — current release candidate
+## Canonical v1.10 Dashboard Decision Truth — selected for fixed exposure
 - Exact base is v1.9 closure `3858739e73ebdedffbe06766c05fdbc9c59f91d6`; no public-root change and no wrapper reintroduction.
 - Dashboard contract is `reference-fact-projection-commitments-v2`: both liquidity charts render observed position through `as_of` separately from a dashed later projection, with explicit legend, accessible label and horizon labels.
 - `Próximos Compromissos` consumes only the next card invoice plus `product.commitments.commitments` rows carrying an explicit `next_due`. `work.top_actions` stays in `Atualizações` and cannot leak into the commitment panel.
 - Commitment rows and “Ver todos” physically navigate to `Fluxo Diário`; the gate returns to Dashboard and rechecks route ownership/readiness.
-- Local permanent Chromium gate is PASS at 1312×1199 and 390×844, including the unchanged V150 Flow parity suite, all six routes, dashboard reload/drill-downs, mobile overflow and truthful unauthenticated state.
-- Release gate still required before exposure: recovery product gate + candidate smoke in CI Chromium/WebKit; only then canonical/main fast-forward promotion, Pages, exact-manifest exposure and fixed-URL verification.
+- Local Chromium and recovery/canonical CI Chromium+WebKit are PASS at 1312×1199 and 390×844, including the unchanged V150 Flow parity suite, all six routes, dashboard reload/drill-downs, mobile overflow and truthful unauthenticated state.
+- Exact product and exposure were promoted by normal no-force fast-forward; all pre/post-exposure smokes and Pages are PASS, and the fixed URL has been verified on the V1.10 asset.
 - Authenticated real-data/write and physical-iPhone evidence remain OPEN / NOT CLAIMED.
 
 ## Canonical v1.9 Flow-parity baseline — selected for fixed exposure

@@ -11,7 +11,10 @@ Canonical persistent project list. Never remove an open financial, documentary, 
 - [x] Kept classification, card-review and planning tasks in `Atualizações`, preventing operational work from being presented as a financial obligation.
 - [x] Added physical commitment→Flow navigation and deterministic assertions for two charts, observed/projected point counts, commitment source, task non-leakage and desktop/mobile overflow.
 - [x] Local permanent gate PASS in Chromium 1312×1199 and 390×844; reviewed desktop/mobile evidence preserves the official hierarchy and the V150/V151+ Flow contract.
-- [~] Publish to `canonical-v157plus-product-recovery` and require CI Chromium/WebKit plus candidate smoke before canonical/main promotion and fixed-manifest exposure.
+- [x] Exact product `de4362d90560424a332f77ce22e665729cd7d88f`; fixed-manifest exposure `661be37ea45425a30dd3a35c7605d1921db94559`; all three branches promoted by normal fast-forward.
+- [x] Recovery gate/smoke `34225155424` / `34225155422`, canonical gate/smoke `34225365210` / `34225365141`, main smoke/Pages `34225542803` / `34225541791`: SUCCESS.
+- [x] Post-exposure active/canonical/main smokes `34225917363` / `34225967201` / `34226016981` and Pages `34226016118`: SUCCESS; fixed URL verified on exact V1.10 asset with truthful signed-out state and zero iframe/fixture data.
+- [x] Immutable checkpoint `backups/CANONICAL_APP_V110_DASHBOARD_DECISION_TRUTH_CHECKPOINT_2026-09-08.md`.
 - [ ] Authenticated real-data Dashboard verification and physical-iPhone evidence remain explicitly open/not claimed.
 
 ## P0 — V150 Flow interaction parity / canonical v1.9 — 08/09/2026
