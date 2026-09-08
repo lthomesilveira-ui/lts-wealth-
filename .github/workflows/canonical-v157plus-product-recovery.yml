@@ -39,15 +39,16 @@ jobs:
           product=Path('canonical-product-v157.js').read_text()
           presentation=Path('canonical-presentation-v157.js').read_text()
           capabilities=Path('canonical-capabilities-v161.js').read_text()
+          gate=Path('.github/scripts/lts_canonical_v157plus_browser_gate.js').read_text()
           assert '<iframe' not in app
           assert 'document.write' not in app
           assert 'canonical-product-v157.js' in loader
           assert 'canonical-flow-v157.js' in loader
           assert 'canonical-presentation-v157.js' in loader
           assert 'canonical-capabilities-v161.js' in loader
-          assert 'canonical-capabilities-v161.js?v=20260908-fidelity6' in loader
+          assert 'canonical-capabilities-v161.js?v=20260908-continuity7' in loader
           assert 'canonical-flow-v150.js' not in loader
-          for x in ['canonical-dashboard-fidelity.css?v=20260908-pass6','canonical-liquidity.js?v=20260908-fidelity6','reference-toolbar-signals-drilldowns-v1','data-dashboard-reload','data-mg-shortcut','Receitas','Relatórios','Configurações']:
+          for x in ['canonical-dashboard-fidelity.css?v=20260908-pass6','canonical-liquidity.js?v=20260908-continuity7','reference-toolbar-signals-drilldowns-v1','canonical-route-session-continuity-v1','data-dashboard-reload','data-mg-shortcut','Receitas','Relatórios','Configurações']:
               assert x in app, x
           for rpc in ['lts_browser_liquidity_movement_options_v1','lts_browser_preview_liquidity_movement_v1','lts_browser_apply_liquidity_movement_v1']:
               assert rpc in core, rpc
@@ -57,8 +58,10 @@ jobs:
               assert x in product, x
           for x in ['presentation-polish-v1','__LTS_V157_PRESENTATION_STATUS','__LTS_V157_POLISH_STATUS']:
               assert x in presentation, x
-          for x in ['LTS v1.6 · Central de Gestão','__LTS_CANONICAL_CAPABILITIES_STATUS','data-mg-shortcut','Planejamento','Entradas & compromissos','Recorrências','Simulações','Conciliação','Relatórios','Backup & restauração','Configurações & integrações','Financiamentos','Documentos']:
+          for x in ['LTS v1.6 · Central de Gestão','__LTS_CANONICAL_CAPABILITIES_STATUS','session-persisted-management-pane-v1','data-mg-shortcut','Planejamento','Entradas & compromissos','Recorrências','Simulações','Conciliação','Relatórios','Backup & restauração','Configurações & integrações','Financiamentos','Documentos']:
               assert x in capabilities, x
+          for x in ['lts-canonical-definition-of-done-receipt-v1','route_session_continuity','AUTOMATED_GATE_PASS_REAL_E2E_OPEN']:
+              assert x in gate, x
           for s in [loader,core,flow,product,presentation,capabilities]:
               assert 'MutationObserver' not in s
               assert 'setInterval(' not in s
@@ -93,4 +96,5 @@ jobs:
             canonical-product-v157.js
             canonical-presentation-v157.js
             canonical-capabilities-v161.js
+            canonical-definition-of-done-receipt.json
             canonical-*.png

@@ -46,15 +46,18 @@ jobs:
           v=Path('canonical-presentation-v157.js').read_text()
           g=Path('canonical-capabilities-v161.js').read_text()
           d=Path('canonical-dashboard-fidelity.css').read_text()
+          gate=Path('.github/scripts/lts_canonical_v157plus_browser_gate.js').read_text()
           assert '<iframe' not in s
           assert 'document.write' not in s
           assert 'MutationObserver' not in s
           assert 'setInterval(' not in s
           assert 'canonical-liquidity.js?v=' in s
           assert 'canonical-dashboard-fidelity.css?v=20260908-pass6' in s
+          assert 'canonical-liquidity.js?v=20260908-continuity7' in s
           assert 'reference-toolbar-signals-drilldowns-v1' in s
+          assert 'canonical-route-session-continuity-v1' in s
           assert 'data-dashboard-reload' in s
-          for module in ['canonical-liquidity-core.js','canonical-flow-v157.js','canonical-product-v157.js','canonical-presentation-v157.js','canonical-capabilities-v161.js?v=20260908-fidelity6']:
+          for module in ['canonical-liquidity-core.js','canonical-flow-v157.js','canonical-product-v157.js','canonical-presentation-v157.js','canonical-capabilities-v161.js?v=20260908-continuity7']:
               assert module in l, module
           assert 'canonical-flow-v150.js' not in l
           assert len(d) > 1000
@@ -84,8 +87,10 @@ jobs:
               assert marker in p, marker
           for marker in ['presentation-polish-v1','__LTS_V157_PRESENTATION_STATUS','__LTS_V157_POLISH_STATUS']:
               assert marker in v, marker
-          for marker in ['LTS v1.6 · Central de Gestão','__LTS_CANONICAL_CAPABILITIES_STATUS','Planejamento','Entradas & compromissos','Recorrências','Simulações','Conciliação','Relatórios','Backup & restauração','Configurações & integrações','Financiamentos','Documentos']:
+          for marker in ['LTS v1.6 · Central de Gestão','__LTS_CANONICAL_CAPABILITIES_STATUS','session-persisted-management-pane-v1','Planejamento','Entradas & compromissos','Recorrências','Simulações','Conciliação','Relatórios','Backup & restauração','Configurações & integrações','Financiamentos','Documentos']:
               assert marker in g, marker
+          for marker in ['lts-canonical-definition-of-done-receipt-v1','route_session_continuity','AUTOMATED_GATE_PASS_REAL_E2E_OPEN']:
+              assert marker in gate, marker
           for label in [
               'Dinheiro em contas','Contas + curto prazo','RSUs vested','FGTS','Despesas (mês)',
               'Evolução da Liquidez','Distribuição do Patrimônio','Posição por Banco',
@@ -124,4 +129,5 @@ jobs:
             canonical-product-v157.js
             canonical-presentation-v157.js
             canonical-dashboard-fidelity.css
+            canonical-definition-of-done-receipt.json
             canonical-*.png

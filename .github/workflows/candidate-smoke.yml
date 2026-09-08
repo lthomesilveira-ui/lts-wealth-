@@ -94,24 +94,26 @@ jobs:
           presentation=Path('canonical-presentation-v157.js').read_text(encoding='utf-8')
           capabilities=Path('canonical-capabilities-v161.js').read_text(encoding='utf-8')
           css=Path('canonical-dashboard-fidelity.css').read_text(encoding='utf-8')
+          gate=Path('.github/scripts/lts_canonical_v157plus_browser_gate.js').read_text(encoding='utf-8')
           required_html=[
             'canonical-dashboard-fidelity.css?v=20260908-pass6',
-            'canonical-liquidity.js?v=20260908-fidelity6',
-            'reference-toolbar-signals-drilldowns-v1','data-dashboard-reload','data-mg-shortcut',
+            'canonical-liquidity.js?v=20260908-continuity7',
+            'reference-toolbar-signals-drilldowns-v1','canonical-route-session-continuity-v1','data-dashboard-reload','data-mg-shortcut',
             'Dashboard','Fluxo Diário','Despesas','Patrimônio','Cartões','Atualizações'
           ]
           required_css=['#dashboard-view .grid-main','#dashboard-view .rank-row.clickable']
-          required_loader=['canonical-liquidity-core.js','canonical-flow-v157.js','canonical-product-v157.js','canonical-presentation-v157.js','canonical-capabilities-v161.js?v=20260908-fidelity6']
+          required_loader=['canonical-liquidity-core.js','canonical-flow-v157.js','canonical-product-v157.js','canonical-presentation-v157.js','canonical-capabilities-v161.js?v=20260908-continuity7']
           required_flow=['lts_browser_flow_v8','LTS v1.3','Histórico / período','Movimentos do dia','RSUs futuras','Cash Awards futuros','lts_browser_flow_event_editor_v1','lts_browser_flow_mutate_v1']
           required_product=['Dinheiro em contas','Contas + curto prazo','RSUs vested','FGTS','Despesas (mês)','Evolução da Liquidez','Quanto você gastou — e como isso evoluiu.','Mês a mês','Ano a ano','Cobertura do histórico','Quanto você tem, quanto deve e quanto é seu.','Conferência de fatura, não análise de gasto.']
           required_presentation=['presentation-polish-v1','__LTS_V157_PRESENTATION_STATUS','__LTS_V157_POLISH_STATUS']
-          required_capabilities=['LTS v1.6 · Central de Gestão','__LTS_CANONICAL_CAPABILITIES_STATUS','Planejamento','Entradas & compromissos','Recorrências','Simulações','Conciliação','Relatórios','Backup & restauração','Configurações & integrações','Financiamentos','Documentos']
+          required_capabilities=['LTS v1.6 · Central de Gestão','__LTS_CANONICAL_CAPABILITIES_STATUS','session-persisted-management-pane-v1','Planejamento','Entradas & compromissos','Recorrências','Simulações','Conciliação','Relatórios','Backup & restauração','Configurações & integrações','Financiamentos','Documentos']
+          required_gate=['lts-canonical-definition-of-done-receipt-v1','route_session_continuity','AUTOMATED_GATE_PASS_REAL_E2E_OPEN']
           forbidden_html=['<iframe','document.write','MutationObserver','setInterval(']
           forbidden_modules=['MutationObserver','setInterval(']
           missing=([x for x in required_html if x not in html]+[x for x in required_css if x not in css]
                    +[x for x in required_loader if x not in liq]+[x for x in required_flow if x not in flow]
                    +[x for x in required_product if x not in product]+[x for x in required_presentation if x not in presentation]
-                   +[x for x in required_capabilities if x not in capabilities])
+                   +[x for x in required_capabilities if x not in capabilities]+[x for x in required_gate if x not in gate])
           leaked=[x for x in forbidden_html if x in html]+[x for module in [liq,core,flow,product,presentation,capabilities] for x in forbidden_modules if x in module]
           assert not missing, 'canonical markers missing: '+repr(missing)
           assert not leaked, 'forbidden canonical markers: '+repr(leaked)

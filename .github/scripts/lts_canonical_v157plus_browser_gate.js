@@ -1,11 +1,64 @@
 const { chromium, webkit } = require('playwright');
 const { spawn } = require('child_process');
+const { writeFileSync } = require('fs');
 
 const port = process.env.LTS_CANONICAL_GATE_PORT || '4173';
 const baseUrl = `http://127.0.0.1:${port}/canonical-app.html`;
 const server = spawn('python3', ['-m', 'http.server', port, '--bind', '127.0.0.1'], { stdio: 'inherit' });
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 const containsText = (value, expected) => String(value).toLocaleLowerCase('pt-BR').includes(String(expected).toLocaleLowerCase('pt-BR'));
+const receiptPath = 'canonical-definition-of-done-receipt.json';
+const receipt = {
+  schema_version: 1,
+  contract: 'lts-canonical-definition-of-done-receipt-v1',
+  generated_at: new Date().toISOString(),
+  source_sha: process.env.GITHUB_SHA || null,
+  gate_status: 'RUNNING',
+  delivery_status: 'NOT_COMPLETE',
+  suites: {},
+  requirements: {},
+  claim_boundary: {
+    deterministic_fixture: 'IN_PROGRESS',
+    authenticated_real_data: 'NOT_CLAIMED',
+    authenticated_writes: 'NOT_CLAIMED',
+    physical_iphone: 'NOT_CLAIMED',
+    public_root: 'NOT_PROMOTED'
+  }
+};
+
+function saveReceipt() {
+  writeFileSync(receiptPath, JSON.stringify(receipt, null, 2) + '\n', 'utf8');
+}
+
+function finalizeReceipt() {
+  receipt.gate_status = 'PASS';
+  receipt.delivery_status = 'AUTOMATED_GATE_PASS_REAL_E2E_OPEN';
+  receipt.claim_boundary.deterministic_fixture = 'PASS';
+  receipt.requirements = {
+    architecture: { status: 'PASS', evidence: 'single canonical frontend; zero iframes' },
+    dashboard: { status: 'PASS_AUTOMATED', evidence: 'approved hierarchy and liquidity-first contract on desktop/mobile' },
+    flow: { status: 'PASS_AUTOMATED', evidence: 'past/today/future layers, four account views and movement drilldown' },
+    expenses: { status: 'PASS_AUTOMATED', evidence: 'month/year history and evidence coverage' },
+    cards: { status: 'PASS_AUTOMATED', evidence: 'current/next invoice and certified historical coverage' },
+    wealth: { status: 'PASS_AUTOMATED', evidence: 'RSU, CIPÓ, Volvo and debt/asset separation' },
+    updates: { status: 'PASS_AUTOMATED', evidence: 'priority queue, server-search surface, classification and documents' },
+    recurrences: { status: 'PASS_AUTOMATED', evidence: 'historical evidence never auto-creates facts' },
+    commitments: { status: 'PASS_AUTOMATED', evidence: 'Dashboard and Flow-linked commitments' },
+    simulations: { status: 'PASS_AUTOMATED_READ_ONLY', evidence: 'scenario calculation without fact mutation' },
+    reconciliation: { status: 'PASS_AUTOMATED', evidence: 'R$ 0.00 acceptance rule and explicit review boundary' },
+    reports: { status: 'PASS_AUTOMATED', evidence: 'executive JSON and recurrence CSV controls' },
+    backup_restore: { status: 'PASS_CONTROLS_ONLY', evidence: 'checksum/stage/preview/confirmation controls; real apply remains open' },
+    route_session_continuity: { status: 'PASS_AUTOMATED', evidence: 'deep link, refresh, pane restore, back/forward and safe JWT reset' },
+    performance_ux: { status: 'PASS_AUTOMATED', evidence: 'bounded browser waits, no console/page errors, no horizontal overflow' },
+    authenticated_real_data: { status: 'OPEN', evidence: 'not executed by fixture browser gate' },
+    authenticated_write_lifecycles: { status: 'OPEN', evidence: 'financial writes remain disabled in fixture' },
+    physical_iphone: { status: 'OPEN', evidence: 'not executed by CI WebKit' },
+    public_root_promotion: { status: 'BLOCKED_USER_DECISION', evidence: 'index.html remains protected' }
+  };
+  saveReceipt();
+}
+
+saveReceipt();
 
 function routeButton(page, route, mobile) {
   const root = mobile ? '.mobile-nav' : '.sidebar';
@@ -180,7 +233,88 @@ async function assertDashboardContract(page, label, mobile) {
   await waitProduct(page, 'Dashboard');
 }
 
+async function assertRouteContinuity(page, label, mobile) {
+  await openRoute(page, 'Atualizações', mobile);
+  await page.waitForFunction(() => (
+    document.querySelector('.page-title h1')?.textContent?.trim() === 'Atualizações'
+      && window.__LTS_CANONICAL_CAPABILITIES_STATUS?.loaded === true
+  ));
+  await openManagementPane(page, 'reports');
+  await page.reload({ waitUntil: 'networkidle' });
+  await page.waitForFunction(() => (
+    window.__LTS_CANONICAL_STATUS?.ready === true
+      && window.__LTS_CANONICAL_ROUTE_STATUS?.current === 'Atualizações'
+      && window.__LTS_CANONICAL_CAPABILITIES_STATUS?.loaded === true
+      && window.__LTS_CANONICAL_CAPABILITIES_STATUS?.active === 'reports'
+  ));
+
+  let continuity = await page.evaluate(() => ({
+    route: window.__LTS_CANONICAL_ROUTE_STATUS,
+    pane: window.__LTS_CANONICAL_CAPABILITIES_STATUS,
+    title: document.querySelector('.page-title h1')?.textContent?.trim(),
+    routeStore: sessionStorage.getItem('lts_canonical_route_v1'),
+    paneStore: sessionStorage.getItem('lts_canonical_management_pane_v1')
+  }));
+  if (continuity.route?.contract !== 'canonical-route-session-continuity-v1'
+      || continuity.route?.ready !== true
+      || continuity.route?.current !== 'Atualizações'
+      || continuity.title !== 'Atualizações'
+      || continuity.routeStore !== 'Atualizações'
+      || continuity.pane?.pane_contract !== 'session-persisted-management-pane-v1'
+      || continuity.pane?.pane_persisted !== true
+      || continuity.paneStore !== 'reports') {
+    throw new Error(`${label}: route/pane refresh continuity ${JSON.stringify(continuity)}`);
+  }
+
+  await openRoute(page, 'Patrimônio', mobile);
+  await waitProduct(page, 'Patrimônio');
+  await page.goBack();
+  await page.waitForFunction(() => (
+    document.querySelector('.page-title h1')?.textContent?.trim() === 'Atualizações'
+      && window.__LTS_CANONICAL_ROUTE_STATUS?.current === 'Atualizações'
+      && window.__LTS_CANONICAL_CAPABILITIES_STATUS?.active === 'reports'
+  ));
+  await page.goForward();
+  await waitProduct(page, 'Patrimônio');
+  if ((await page.locator('.page-title h1').textContent())?.trim() !== 'Patrimônio') {
+    throw new Error(`${label}: forward navigation did not restore Patrimônio`);
+  }
+
+  await page.goto(`${baseUrl}?fixture=1#${encodeURIComponent('Cartões')}`, { waitUntil: 'networkidle' });
+  await page.waitForFunction(() => window.__LTS_CANONICAL_STATUS?.ready === true);
+  await waitProduct(page, 'Cartões');
+  if (await page.evaluate(() => window.__LTS_CANONICAL_ROUTE_STATUS?.current) !== 'Cartões') {
+    throw new Error(`${label}: direct deep link did not restore Cartões`);
+  }
+
+  await page.goto(`${baseUrl}?fixture=1#rota-invalida`, { waitUntil: 'networkidle' });
+  await page.waitForFunction(() => (
+    window.__LTS_CANONICAL_STATUS?.ready === true
+      && window.__LTS_CANONICAL_ROUTE_STATUS?.current === 'Dashboard'
+      && document.querySelector('.page-title h1')?.textContent?.trim() === 'Dashboard'
+  ));
+  continuity = await page.evaluate(() => ({
+    hash: location.hash,
+    route: window.__LTS_CANONICAL_ROUTE_STATUS,
+    title: document.querySelector('.page-title h1')?.textContent?.trim()
+  }));
+  if (decodeURIComponent(continuity.hash.slice(1)) !== 'Dashboard'
+      || continuity.route?.current !== 'Dashboard'
+      || continuity.title !== 'Dashboard') {
+    throw new Error(`${label}: invalid route fallback ${JSON.stringify(continuity)}`);
+  }
+
+  return {
+    refresh_route: 'Atualizações',
+    restored_pane: 'reports',
+    back_forward: true,
+    direct_deep_link: 'Cartões',
+    invalid_route_fallback: 'Dashboard'
+  };
+}
+
 async function run(browserType, label, viewport) {
+  const startedAt = Date.now();
   const mobile = viewport.width <= 820;
   const browser = await browserType.launch({ headless: true });
   const page = await browser.newPage({ viewport });
@@ -294,11 +428,22 @@ async function run(browserType, label, viewport) {
     }
     if (errors.length) throw new Error(`${label}: browser errors ${errors.join(' | ')}`);
 
+    const routeContinuity = await assertRouteContinuity(page, label, mobile);
+
     await page.goto(baseUrl, { waitUntil: 'domcontentloaded' });
     await page.waitForTimeout(800);
     if (await page.locator('#loginForm').count() !== 1) throw new Error(`${label}: real login missing`);
     if (await page.locator('#dashboard-view .kpi').count()) throw new Error(`${label}: fake financial UI unauthenticated`);
     if (await page.getByText('FIXTURE DE TESTE', { exact: true }).count()) throw new Error(`${label}: fixture badge leaked`);
+    receipt.suites[label] = {
+      status: 'PASS',
+      engine: label === 'mobile' ? 'webkit' : 'chromium',
+      viewport,
+      duration_ms: Date.now() - startedAt,
+      route_continuity: routeContinuity,
+      coverage: ['Dashboard', 'Fluxo Diário', 'Despesas', 'Patrimônio', 'Cartões', 'Atualizações', 'Central de Gestão', 'truthful unauthenticated state']
+    };
+    saveReceipt();
   } finally {
     await browser.close();
   }
@@ -319,11 +464,13 @@ async function runJwtClockRecovery(browserType) {
       expires_at: Math.floor(Date.now() / 1000) + 3600,
       user: { id: 'fixture-session-recovery' }
     })));
-    await page.goto(baseUrl, { waitUntil: 'domcontentloaded' });
+    await page.goto(`${baseUrl}#${encodeURIComponent('Patrimônio')}`, { waitUntil: 'domcontentloaded' });
     await page.waitForSelector('#loginForm', { timeout: 12000 });
     const recovery = await page.evaluate(() => ({
       storedSession: localStorage.getItem('lts_supabase_session_v1'),
       status: window.__LTS_CANONICAL_SESSION_STATUS,
+      route: window.__LTS_CANONICAL_ROUTE_STATUS,
+      hash: location.hash,
       body: document.body.innerText
     }));
     if (recovery.storedSession !== null) throw new Error('WebKit JWT recovery kept the invalid session');
@@ -334,6 +481,20 @@ async function runJwtClockRecovery(browserType) {
       throw new Error('WebKit JWT recovery guidance missing');
     }
     if (recovery.body.includes('JWT issued at future')) throw new Error('raw JWT error leaked to the user');
+    if (recovery.route?.contract !== 'canonical-route-session-continuity-v1'
+        || recovery.route?.current !== 'Patrimônio'
+        || decodeURIComponent(recovery.hash.slice(1)) !== 'Patrimônio') {
+      throw new Error(`WebKit JWT recovery lost intended route ${JSON.stringify(recovery.route)}`);
+    }
+    receipt.suites.session_recovery = {
+      status: 'PASS',
+      engine: 'webkit',
+      viewport: { width: 390, height: 844 },
+      future_jwt_reset: true,
+      raw_error_hidden: true,
+      intended_route_preserved: 'Patrimônio'
+    };
+    saveReceipt();
   } finally {
     await browser.close();
   }
@@ -345,7 +506,14 @@ async function runJwtClockRecovery(browserType) {
     await run(chromium, 'desktop', { width: 1312, height: 1199 });
     await run(webkit, 'mobile', { width: 390, height: 844 });
     await runJwtClockRecovery(webkit);
+    finalizeReceipt();
     console.log('canonical V157+ permanent browser gate ok');
+  } catch (error) {
+    receipt.gate_status = 'FAIL';
+    receipt.delivery_status = 'BLOCKED_BY_AUTOMATED_GATE';
+    receipt.failure = String(error?.message || error).replace(/Bearer\s+[^\s]+/gi, 'Bearer [redacted]');
+    saveReceipt();
+    throw error;
   } finally {
     server.kill('SIGTERM');
   }
