@@ -1,14 +1,14 @@
 {
   "schema": 1,
   "version": "canonical-v1",
-  "build": "CANONICAL v1.4 · Dashboard Fidelity Pass 5",
+  "build": "CANONICAL v1.5 · iPhone Session Recovery",
   "path": "canonical-app.html",
-  "candidate_head": "eff928cb88e01ba3c5c88b8a8a8c4e8fa5d89f5d",
+  "candidate_head": "abe6180d37657cc47bf18036f524a95ff262df13",
   "public_fallback": "index.html",
   "promotion_status": "not_promoted",
-  "candidate_sha": "eff928cb88e01ba3c5c88b8a8a8c4e8fa5d89f5d",
-  "exposed_from_main_sha": "eff928cb88e01ba3c5c88b8a8a8c4e8fa5d89f5d",
-  "exposure_mode": "canonical_single_frontend_v157plus_dashboard_owner_fidelity_pass5",
-  "gate_status": "v157plus-recovery-34173223977-pass_active-candidate-smoke-34173481335-pass_canonical-gate-34173482173-pass_canonical-candidate-smoke-34173482194-pass_main-candidate-smoke-34173586238-pass_pages-34173586282-pass_dashboard-canonical-owner-pass_desktop-chromium-pass_mobile-webkit-pass_six-routes-pass_updates-search-csv-documents-liquidity-neutral-preview-pass_authenticated-e2e-not-claimed",
-  "updated_at": "2026-09-08T00:31:55Z"
+  "candidate_sha": "abe6180d37657cc47bf18036f524a95ff262df13",
+  "exposed_from_main_sha": "abe6180d37657cc47bf18036f524a95ff262df13",
+  "exposure_mode": "canonical_single_frontend_v157plus_iphone_jwt_session_recovery",
+  "gate_status": "v157plus-recovery-34174520963-pass_active-candidate-smoke-34174520971-pass_canonical-gate-34174620205-pass_canonical-candidate-smoke-34174620102-pass_main-candidate-smoke-34174717328-pass_pages-34174716172-pass_persisted-future-jwt-mobile-webkit-recovery-pass_session-reset-safe-login-pass_raw-jwt-error-not-exposed_authenticated-e2e-not-claimed",
+  "updated_at": "2026-09-08T00:59:11.027Z"
 }
