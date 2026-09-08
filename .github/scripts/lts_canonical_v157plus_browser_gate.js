@@ -49,7 +49,8 @@ function finalizeReceipt() {
     expenses: { status: 'PASS_AUTOMATED', evidence: 'single-owner month/year history, nature x context, unassigned semantics and item drilldown' },
     cards: { status: 'PASS_AUTOMATED', evidence: 'current/next invoice and certified historical coverage' },
     wealth: { status: 'PASS_AUTOMATED', evidence: 'RSU, CIPÓ, Volvo and debt/asset separation' },
-    updates: { status: 'PASS_AUTOMATED', evidence: 'priority queue, reviewed text-input preview, server-search surface, classification and documents' },
+    updates: { status: 'PASS_AUTOMATED', evidence: 'V147/V150-compatible classification-first hierarchy, reviewed text input, liquidity, server-side search and collapsed secondary actions' },
+    document_intake: { status: 'PASS_AUTOMATED_PREVIEW', evidence: 'guided type/entity/period association, private intake controls, fixture writer prohibition and no automatic financial posting' },
     reviewed_input: { status: 'PASS_AUTOMATED_PREVIEW', evidence: 'V150 launch-by-text restored with editable review, mandatory fields, explicit confirmation and fixture write prohibition' },
     recurrences: { status: 'PASS_AUTOMATED', evidence: 'historical evidence never auto-creates facts' },
     commitments: { status: 'PASS_AUTOMATED', evidence: 'documented product commitments plus card due date; review tasks remain in Updates' },
@@ -205,12 +206,33 @@ async function assertFlowParity(page, label, mobile) {
 async function assertUpdatesContract(page, label) {
   const title = (await page.locator('.page-title h1').textContent())?.trim();
   if (title !== 'Atualizações') throw new Error(`${label}: updates route ${title}`);
+  if (await page.locator('#updates-view').getAttribute('data-updates-contract') !== 'classification-first-guided-document-intake-v1') {
+    throw new Error(`${label}: updates hierarchy contract missing`);
+  }
   if (await page.locator('.class-row').count() < 3) throw new Error(`${label}: classification queue missing`);
   if (await page.locator('.class-save:not([disabled])').count() !== 0) {
     throw new Error(`${label}: fixture classification writer unexpectedly enabled`);
   }
 
   await page.waitForSelector('#reviewedInputCard');
+  await page.waitForSelector('#liquidityMovementCard');
+  await page.waitForSelector('#management-panel');
+  const hierarchy = await page.evaluate(() => {
+    const selectors = ['#classification-panel', '#reviewedInputCard', '#liquidityMovementCard', '.search-box', '#updatesOtherActions', '#management-panel'];
+    const nodes = selectors.map(selector => document.querySelector(selector));
+    return {
+      present: nodes.map(Boolean),
+      ordered: nodes.every((node, index) => index === nodes.length - 1 || Boolean(node?.compareDocumentPosition(nodes[index + 1]) & Node.DOCUMENT_POSITION_FOLLOWING)),
+      otherOpen: document.querySelector('#updatesOtherActions')?.open === true
+    };
+  });
+  if (hierarchy.present.some(value => !value) || hierarchy.ordered !== true || hierarchy.otherOpen !== false) {
+    throw new Error(`${label}: classification-first hierarchy ${JSON.stringify(hierarchy)}`);
+  }
+  const recovery = await page.evaluate(() => window.__LTS_CANONICAL_RECOVERY_STATUS);
+  if (recovery?.build !== 'LTS v1.13' || recovery?.updates_contract !== 4) {
+    throw new Error(`${label}: v1.13 recovery contract ${JSON.stringify(recovery)}`);
+  }
   const inputStatus = await page.evaluate(() => window.__LTS_CANONICAL_REVIEWED_INPUT_STATUS);
   if (inputStatus?.ready !== true
       || inputStatus?.contract !== 'review-before-explicit-apply-v1'
@@ -259,7 +281,42 @@ async function assertUpdatesContract(page, label) {
   await page.waitForFunction(() => document.querySelector('#ledgerMeta')?.textContent?.includes('1 lançamento'));
   if (await page.locator('.search-result').count() !== 1) throw new Error(`${label}: transaction search result missing`);
   if (await page.locator('#ledgerExport').isDisabled()) throw new Error(`${label}: CSV export not enabled`);
-  if (await page.getByText('Documentos', { exact: true }).count() < 1) throw new Error(`${label}: documents area missing`);
+  const otherActions = page.locator('#updatesOtherActions');
+  await otherActions.locator('summary').click();
+  await page.waitForFunction(() => document.querySelector('#updatesOtherActions')?.open === true);
+  if (await page.locator('#documents-panel').count() !== 1) throw new Error(`${label}: documents area missing`);
+  if (await page.locator('#documentType').count() !== 1 || await page.locator('#documentFile').count() !== 1 || await page.locator('#documentUploadButton').count() !== 1) {
+    throw new Error(`${label}: guided document intake controls missing`);
+  }
+  if (!(await page.locator('#documentFile').isDisabled()) || !(await page.locator('#documentUploadButton').isDisabled())) {
+    throw new Error(`${label}: fixture document writer unexpectedly enabled`);
+  }
+  await page.locator('#documentType').selectOption('bank_statement');
+  await page.locator('#documentTarget').fill('Itaú');
+  await page.locator('#documentCompetence').fill('2026-08');
+  const documentStatus = await page.evaluate(() => window.__LTS_CANONICAL_DOCUMENT_INTAKE_STATUS);
+  if (documentStatus?.ready !== true
+      || documentStatus?.contract !== 'classification-first-guided-document-intake-v1'
+      || documentStatus?.fixture !== true
+      || documentStatus?.association_valid !== true
+      || documentStatus?.writer !== 'lts_browser_register_document_v2'
+      || documentStatus?.storage_bucket !== 'lts-documents'
+      || documentStatus?.writer_called !== false
+      || documentStatus?.write_accepted !== false
+      || documentStatus?.auto_posts_financial_facts !== false
+      || documentStatus?.upload_enabled !== false) {
+    throw new Error(`${label}: guided document intake status ${JSON.stringify(documentStatus)}`);
+  }
+  const documentGuard = await page.locator('#documents-panel').innerText();
+  for (const required of ['Associação antes do upload', 'entra em revisão', 'não cria lançamento financeiro automaticamente', 'upload e registro estão bloqueados']) {
+    if (!containsText(documentGuard, required)) throw new Error(`${label}: document intake guard missing ${required}`);
+  }
+  const documentAnchor = page.locator('.sidebar [data-anchor="documents-panel"]');
+  if (await documentAnchor.isVisible()) {
+    await otherActions.evaluate(node => { node.open = false; });
+    await documentAnchor.click();
+    await page.waitForFunction(() => document.querySelector('#updatesOtherActions')?.open === true);
+  }
 
   await page.waitForSelector('#liquidityMovementCard');
   if (await page.locator('#liquidityMovementCard').count() !== 1) throw new Error(`${label}: liquidity card multiplicity`);
