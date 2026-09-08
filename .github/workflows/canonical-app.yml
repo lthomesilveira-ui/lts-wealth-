@@ -54,8 +54,8 @@ jobs:
           assert 'MutationObserver' not in s
           assert 'setInterval(' not in s
           assert 'canonical-liquidity.js?v=' in s
-          assert 'canonical-dashboard-fidelity.css?v=20260908-updates13' in s
-          assert 'canonical-liquidity.js?v=20260908-updates13' in s
+          assert 'canonical-dashboard-fidelity.css?v=20260908-doc-review14' in s
+          assert 'canonical-liquidity.js?v=20260908-doc-review14' in s
           assert 'single-owner-history-nature-context-v1' in s
           assert 'Quanto você gasta — e para quem é cada gasto.' in s
           assert 'reference-layered-liquidity-commitments-v3' in s
@@ -65,9 +65,9 @@ jobs:
           assert 'product-commitments-plus-card-due' in s
           assert 'canonical-route-session-continuity-v1' in s
           assert 'data-dashboard-reload' in s
-          for module in ['canonical-liquidity-core.js?v=20260908-updates13','canonical-flow-v157.js','canonical-product-v157.js','canonical-presentation-v157.js','canonical-capabilities-v161.js?v=20260908-updates13','canonical-reviewed-input-v112.js?v=20260908-updates13']:
+          for module in ['canonical-liquidity-core.js?v=20260908-doc-review14','canonical-flow-v157.js','canonical-product-v157.js','canonical-presentation-v157.js','canonical-capabilities-v161.js?v=20260908-doc-review14','canonical-reviewed-input-v112.js?v=20260908-doc-review14']:
               assert module in l, module
-          for marker in ['LTS v1.13','UPDATES_CONTRACT']:
+          for marker in ['LTS v1.14','UPDATES_CONTRACT','DOCUMENT_REVIEW_CONTRACT']:
               assert marker in l, marker
           assert 'canonical-flow-v150.js' not in l
           assert "const ROUTES=['Patrimônio','Cartões']" in p
@@ -83,6 +83,7 @@ jobs:
               'lts_browser_product_v1','lts_browser_dashboard_cockpit_v1',
               'lts_browser_transactions_v1','lts_browser_expense_context_lens_v1',
               'lts_browser_wealth_detail_v1','lts_browser_card_history_coverage_v1',
+              'lts_browser_document_review_queue_v1',
               'lts_browser_document_lifecycle_v1','lts_browser_register_document_v2','lts_browser_semantic_feedback_v1'
           ]:
               assert rpc in s, rpc

@@ -51,6 +51,7 @@ function finalizeReceipt() {
     wealth: { status: 'PASS_AUTOMATED', evidence: 'RSU, CIPÓ, Volvo and debt/asset separation' },
     updates: { status: 'PASS_AUTOMATED', evidence: 'V147/V150-compatible classification-first hierarchy, reviewed text input, liquidity, server-side search and collapsed secondary actions' },
     document_intake: { status: 'PASS_AUTOMATED_PREVIEW', evidence: 'guided type/entity/period association, private intake controls, fixture writer prohibition and no automatic financial posting' },
+    document_review: { status: 'PASS_AUTOMATED_READ_ONLY', evidence: 'V149 association-versus-extraction comparison, bounded evidence preview, missing-link warning, no controls and no financial writer' },
     reviewed_input: { status: 'PASS_AUTOMATED_PREVIEW', evidence: 'V150 launch-by-text restored with editable review, mandatory fields, explicit confirmation and fixture write prohibition' },
     recurrences: { status: 'PASS_AUTOMATED', evidence: 'historical evidence never auto-creates facts' },
     commitments: { status: 'PASS_AUTOMATED', evidence: 'documented product commitments plus card due date; review tasks remain in Updates' },
@@ -230,8 +231,8 @@ async function assertUpdatesContract(page, label) {
     throw new Error(`${label}: classification-first hierarchy ${JSON.stringify(hierarchy)}`);
   }
   const recovery = await page.evaluate(() => window.__LTS_CANONICAL_RECOVERY_STATUS);
-  if (recovery?.build !== 'LTS v1.13' || recovery?.updates_contract !== 4) {
-    throw new Error(`${label}: v1.13 recovery contract ${JSON.stringify(recovery)}`);
+  if (recovery?.build !== 'LTS v1.14' || recovery?.updates_contract !== 4 || recovery?.document_review_contract !== 4) {
+    throw new Error(`${label}: v1.14 recovery contract ${JSON.stringify(recovery)}`);
   }
   const inputStatus = await page.evaluate(() => window.__LTS_CANONICAL_REVIEWED_INPUT_STATUS);
   if (inputStatus?.ready !== true
@@ -310,6 +311,29 @@ async function assertUpdatesContract(page, label) {
   const documentGuard = await page.locator('#documents-panel').innerText();
   for (const required of ['Associação antes do upload', 'entra em revisão', 'não cria lançamento financeiro automaticamente', 'upload e registro estão bloqueados']) {
     if (!containsText(documentGuard, required)) throw new Error(`${label}: document intake guard missing ${required}`);
+  }
+  const review = page.locator('[data-document-review-contract="v149-evidence-review-readonly-canonical-v1"]');
+  if (await review.count() !== 1 || await review.getAttribute('data-write-allowed') !== 'false') {
+    throw new Error(`${label}: document review contract missing or writable`);
+  }
+  const reviewStatus = await page.evaluate(() => window.__LTS_CANONICAL_DOCUMENT_REVIEW_STATUS);
+  if (reviewStatus?.ready !== true
+      || reviewStatus?.contract !== 'v149-evidence-review-readonly-canonical-v1'
+      || reviewStatus?.queue_documents !== 2
+      || reviewStatus?.shown_documents !== 2
+      || reviewStatus?.evidence_rows < 12
+      || reviewStatus?.write_allowed !== false
+      || reviewStatus?.writer_called !== false
+      || reviewStatus?.rpc_calls !== 0
+      || reviewStatus?.fixture !== true) {
+    throw new Error(`${label}: document review status ${JSON.stringify(reviewStatus)}`);
+  }
+  if (await review.locator('button,input,select,textarea').count() !== 0 || await review.locator('.doc-review-item').count() !== 2) {
+    throw new Error(`${label}: document review must be read-only with two fixture cases`);
+  }
+  const reviewText = await review.innerText();
+  for (const required of ['Vínculo informado por você', 'Leitura extraída do arquivo', 'Itaú', '2026-09', 'Somente leitura', 'não aprova', 'não reconcilia', 'não classifica', 'não grava fatos financeiros', 'compromisso/financiamento', 'data da posição']) {
+    if (!containsText(reviewText, required)) throw new Error(`${label}: document review evidence missing ${required}`);
   }
   const documentAnchor = page.locator('.sidebar [data-anchor="documents-panel"]');
   if (await documentAnchor.isVisible()) {
