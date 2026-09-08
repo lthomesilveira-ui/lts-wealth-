@@ -1,14 +1,14 @@
 {
   "schema": 1,
   "version": "canonical-v1",
-  "build": "CANONICAL v1.16 · Planejamento V151 recuperado",
+  "build": "CANONICAL v1.17 · Linguagem de produto unificada",
   "path": "canonical-app.html",
-  "candidate_head": "4028321fed599496d29798e3e2d1c47c48bc54d1",
+  "candidate_head": "e4cea67563ac379d5bf47d02d20846699194a002",
   "public_fallback": "index.html",
   "promotion_status": "not_promoted",
-  "candidate_sha": "4028321fed599496d29798e3e2d1c47c48bc54d1",
-  "exposed_from_main_sha": "4028321fed599496d29798e3e2d1c47c48bc54d1",
-  "exposure_mode": "canonical_single_frontend_v116_v151_first_negative_management_separation_plus_v115_approved_1312x1199_dashboard_density_plus_v114_document_interpretation_review_readonly_plus_v113_classification_first_guided_document_intake_plus_v112_reviewed_input_plus_v111_layered_liquidity_plus_v110_decision_truth_plus_v19_flow_parity",
-  "gate_status": "active-gate-34262013499-pass_active-candidate-smoke-34262013502-pass_canonical-gate-34262279303-pass_canonical-candidate-smoke-34262278639-pass_main-candidate-smoke-34262576921-pass_pages-34262575286-pass_v151-first-negative-management-separation_dashboard-approved-1312x1199-single-screen_flow-v150-parity_authenticated-real-not-claimed_physical-iphone-not-claimed",
-  "updated_at": "2026-09-08T18:22:41Z"
+  "candidate_sha": "e4cea67563ac379d5bf47d02d20846699194a002",
+  "exposed_from_main_sha": "e4cea67563ac379d5bf47d02d20846699194a002",
+  "exposure_mode": "canonical_single_frontend_v117_user_facing_product_language_plus_v116_v151_first_negative_management_separation_plus_v115_approved_1312x1199_dashboard_density_plus_v114_document_interpretation_review_readonly_plus_v113_classification_first_guided_document_intake_plus_v112_reviewed_input_plus_v111_layered_liquidity_plus_v110_decision_truth_plus_v19_flow_parity",
+  "gate_status": "active-gate-34267339089-pass_active-candidate-smoke-34267339099-pass_canonical-gate-34267537086-pass_canonical-candidate-smoke-34267537120-pass_main-candidate-smoke-34267717067-pass_pages-34267715832-pass_no-internal-release-labels_dashboard-approved-1312x1199-single-screen_flow-v150-parity_authenticated-real-not-claimed_physical-iphone-not-claimed",
+  "updated_at": "2026-09-08T19:14:05Z"
 }
