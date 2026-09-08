@@ -75,8 +75,12 @@ async function assertManagementContract(page, label) {
 
   await openManagementPane(page, 'planning');
   let text = await page.locator('#managementDetail').innerText();
+  await page.screenshot({ path: `canonical-management-planning-${label}.png`, fullPage: true });
   for (const required of ['Primeira insuficiência', 'Pior posição', 'FGTS', 'Fatos prevalecem sobre projeções']) {
-    if (!text.includes(required)) throw new Error(`${label}: planning management detail missing ${required}`);
+    if (!text.includes(required)) {
+      const state = await page.evaluate(() => window.__LTS_CANONICAL_CAPABILITIES_STATUS);
+      throw new Error(`${label}: planning management detail missing ${required}; state=${JSON.stringify(state)}; detail=${JSON.stringify(text.slice(0, 1000))}`);
+    }
   }
 
   await openManagementPane(page, 'recurring');
