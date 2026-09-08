@@ -1,14 +1,14 @@
 {
   "schema": 1,
   "version": "canonical-v1",
-  "build": "CANONICAL v1.10 · Dashboard Decision Truth",
+  "build": "CANONICAL v1.11 · Layered Liquidity",
   "path": "canonical-app.html",
-  "candidate_head": "de4362d90560424a332f77ce22e665729cd7d88f",
+  "candidate_head": "8a9c675ed3940da19a10c04e56249a315576045a",
   "public_fallback": "index.html",
   "promotion_status": "not_promoted",
-  "candidate_sha": "de4362d90560424a332f77ce22e665729cd7d88f",
-  "exposed_from_main_sha": "de4362d90560424a332f77ce22e665729cd7d88f",
-  "exposure_mode": "canonical_single_frontend_v110_dashboard_fact_projection_commitments_plus_v19_flow_parity",
-  "gate_status": "active-gate-34225155424-pass_active-candidate-smoke-34225155422-pass_canonical-gate-34225365210-pass_canonical-candidate-smoke-34225365141-pass_main-candidate-smoke-34225542803-pass_pages-34225541791-pass_dashboard-fact-projection-commitments_flow-v150-parity_desktop-chromium-mobile-webkit_authenticated-real-e2e-not-claimed_physical-iphone-not-claimed",
-  "updated_at": "2026-09-08T12:22:58Z"
+  "candidate_sha": "8a9c675ed3940da19a10c04e56249a315576045a",
+  "exposed_from_main_sha": "8a9c675ed3940da19a10c04e56249a315576045a",
+  "exposure_mode": "canonical_single_frontend_v111_layered_liquidity_plus_v110_decision_truth_plus_v19_flow_parity",
+  "gate_status": "active-gate-34229899061-pass_active-candidate-smoke-34229899074-pass_canonical-gate-34230146792-pass_canonical-candidate-smoke-34230146827-pass_main-candidate-smoke-34230384306-pass_pages-34230382218-pass_layered-liquidity_flow-v150-parity_desktop-chromium-mobile-webkit_authenticated-real-e2e-not-claimed_physical-iphone-not-claimed",
+  "updated_at": "2026-09-08T13:11:33Z"
 }
