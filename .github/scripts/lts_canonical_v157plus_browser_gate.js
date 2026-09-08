@@ -9,7 +9,7 @@ const containsText = (value, expected) => String(value).toLocaleLowerCase('pt-BR
 
 function routeButton(page, route, mobile) {
   const root = mobile ? '.mobile-nav' : '.sidebar';
-  return page.locator(`${root} [data-route="${route}"]`);
+  return page.locator(`${root} [data-route="${route}"]:not([data-nav-alias])`);
 }
 
 async function openRoute(page, route, mobile) {
