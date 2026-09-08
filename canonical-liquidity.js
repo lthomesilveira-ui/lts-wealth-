@@ -2,7 +2,7 @@
 const BUILD='LTS v1.3';
 const CORE_CONTRACT=['lts_browser_liquidity_movement_options_v1','lts_browser_preview_liquidity_movement_v1','lts_browser_apply_liquidity_movement_v1'];
 const FLOW_CONTRACT=['lts_browser_flow_v8','Histórico / período','Movimentos do dia','RSUs futuras','Cash Awards futuros'];
-const PRODUCT_CONTRACT=['Dinheiro em contas','Contas + curto prazo','RSUs vested','FGTS','Despesas (mês)','Quanto você gastou — e como isso evoluiu.','Quanto você tem, quanto deve e quanto é seu.','Conferência de fatura, não análise de gasto.'];
+const PRODUCT_CONTRACT=['Dinheiro em contas','Contas + curto prazo','RSUs vested','FGTS','Despesas (mês)','Quanto você gasta — e para quem é cada gasto.','Quanto você tem, quanto deve e quanto é seu.','Conferência de fatura, não análise de gasto.'];
 const CAPABILITY_CONTRACT=['Planejamento','Entradas & compromissos','Recorrências','Simulações','Conciliação','Relatórios','Backup & restauração','Configurações & integrações','Financiamentos','Documentos'];
 let modulesPromise=null;
 function load(src,id){return new Promise((resolve,reject)=>{if(document.getElementById(id)){resolve();return}const s=document.createElement('script');s.id=id;s.src=src;s.async=false;s.onload=resolve;s.onerror=()=>reject(new Error('Falha ao carregar '+src));document.body.appendChild(s)})}
@@ -11,7 +11,7 @@ function mark(extra){const presentationLoaded=!!document.getElementById('canonic
 function ensureModules(){
   if(modulesPromise)return modulesPromise;
   modulesPromise=Promise.all([
-    load('canonical-product-v157.js?v=20260908-session6','canonicalProductV157'),
+    load('canonical-product-v157.js?v=20260908-expenses8','canonicalProductV157'),
     load('canonical-flow-v157.js?v=20260908-session6','canonicalFlowV157')
   ]).then(()=>load('canonical-presentation-v157.js?v=20260908-session6','canonicalPresentationV157')).then(()=>load('canonical-capabilities-v161.js?v=20260908-continuity7','canonicalCapabilitiesV161')).then(()=>{mark({flow_loaded:true,product_loaded:true,presentation_loaded:true,polish_loaded:true,capabilities_loaded:true});return true}).catch(e=>{modulesPromise=null;mark({error:String(e?.message||e)});throw e});
   return modulesPromise;

@@ -38,7 +38,7 @@ function finalizeReceipt() {
     architecture: { status: 'PASS', evidence: 'single canonical frontend; zero iframes' },
     dashboard: { status: 'PASS_AUTOMATED', evidence: 'approved hierarchy and liquidity-first contract on desktop/mobile' },
     flow: { status: 'PASS_AUTOMATED', evidence: 'past/today/future layers, four account views and movement drilldown' },
-    expenses: { status: 'PASS_AUTOMATED', evidence: 'month/year history and evidence coverage' },
+    expenses: { status: 'PASS_AUTOMATED', evidence: 'single-owner month/year history, nature x context, unassigned semantics and item drilldown' },
     cards: { status: 'PASS_AUTOMATED', evidence: 'current/next invoice and certified historical coverage' },
     wealth: { status: 'PASS_AUTOMATED', evidence: 'RSU, CIPÓ, Volvo and debt/asset separation' },
     updates: { status: 'PASS_AUTOMATED', evidence: 'priority queue, server-search surface, classification and documents' },
@@ -376,13 +376,31 @@ async function run(browserType, label, viewport) {
     await page.screenshot({ path: `canonical-flow-${label}.png`, fullPage: true });
 
     await openRoute(page, 'Despesas', mobile);
-    await waitProduct(page, 'Despesas');
-    let text = await page.locator('.pv').innerText();
-    for (const required of ['Quanto você gastou — e como isso evoluiu.', 'Mês a mês', 'Ano a ano', 'Cobertura do histórico']) {
+    await page.waitForFunction(() => window.__LTS_CANONICAL_EXPENSE_STATUS?.ready === true);
+    const expenseStatus = await page.evaluate(() => window.__LTS_CANONICAL_EXPENSE_STATUS);
+    if (expenseStatus.owner !== 'canonical-app'
+        || expenseStatus.contract !== 'single-owner-history-nature-context-v1'
+        || expenseStatus.history_months < 3
+        || expenseStatus.history_years < 3
+        || expenseStatus.nature_rows < 1
+        || expenseStatus.context_rows < 1
+        || expenseStatus.errors.length) {
+      throw new Error(`${label}: expense contract ${JSON.stringify(expenseStatus)}`);
+    }
+    let text = await page.locator('#expenses-view').innerText();
+    for (const required of ['Quanto você gasta — e para quem é cada gasto.', 'Maior natureza', 'Maior contexto evidenciado', 'Cobertura de contexto', 'Variação mensal', 'Natureza × contexto', 'Natureza do gasto', 'Contexto / pessoa / centro de custo', 'Não atribuído · o que realmente significa', 'Mês a mês', 'Ano a ano', 'Cobertura do histórico']) {
       if (!text.includes(required)) throw new Error(`${label}: expense surface missing ${required}`);
     }
-    await page.locator('[data-exp-month]').first().click();
-    await page.waitForSelector('[data-close-month]');
+    await page.locator('[data-lens-kind="nature"]').first().click();
+    if (!(await page.locator('.drill-card').innerText()).includes('Onde aparece')) throw new Error(`${label}: nature drilldown missing`);
+    await page.locator('[data-lens-kind="context"]').first().click();
+    if (!(await page.locator('.drill-card').innerText()).includes('Do que é composto')) throw new Error(`${label}: context drilldown missing`);
+    await page.locator('[data-expense-month]').first().click();
+    await page.waitForSelector('[data-expense-month-close]');
+    text = await page.locator('.expense-month-detail').innerText();
+    for (const required of ['Detalhe do mês', 'Moradia', 'Casa', 'Campo ausente continua ausente']) {
+      if (!text.includes(required)) throw new Error(`${label}: expense month detail missing ${required}`);
+    }
     await page.screenshot({ path: `canonical-expenses-${label}.png`, fullPage: true });
 
     await openRoute(page, 'Patrimônio', mobile);
