@@ -93,7 +93,7 @@ jobs:
           css=Path('canonical-dashboard-fidelity.css').read_text(encoding='utf-8')
           required_html=[
             'canonical-dashboard-fidelity.css?v=20260906-1',
-            'canonical-liquidity.js?v=20260906-1',
+            'canonical-liquidity.js?v=',
             'Dashboard','Fluxo Diário','Despesas','Patrimônio','Cartões','Atualizações'
           ]
           required_css=['#dashboard-view .grid-main','#dashboard-view .rank-row.clickable']

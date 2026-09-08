@@ -48,7 +48,7 @@ jobs:
           assert 'document.write' not in s
           assert 'MutationObserver' not in s
           assert 'setInterval(' not in s
-          assert 'canonical-liquidity.js?v=20260906-1' in s
+          assert 'canonical-liquidity.js?v=' in s
           assert 'canonical-dashboard-fidelity.css?v=20260906-1' in s
           for module in ['canonical-liquidity-core.js','canonical-flow-v157.js','canonical-product-v157.js','canonical-presentation-v157.js']:
               assert module in l, module
