@@ -157,17 +157,18 @@ This is deterministic fixture/unauthenticated evidence, not authenticated physic
 - Provider/spend/consent remains a future user decision.
 
 ### Supabase security hardening
-- Current audit found 13 `public` tables with RLS disabled: `lts_asset_market_valuation`, `lts_card_history_recovery_staging`, `lts_card_history_recovery_target`, `lts_category_alias`, `lts_dashboard_cockpit_cache`, `lts_external_reference_fact`, `lts_flow_future_read_cache_v2`, `lts_homologation_stage_evidence`, `lts_projection_audit_component`, `lts_projection_audit_rule`, `lts_semantic_amount_signature`, `lts_taxonomy_ambiguity_guard`, `lts_ui_artifacts`.
-- Exact privilege checks returned no direct SELECT or INSERT/UPDATE/DELETE privilege for either `anon` or `authenticated` on all 13; no direct client-table exposure was demonstrated.
-- Do not blindly enable RLS or revoke every SECURITY DEFINER execution: canonical browser reads depend on authenticated RPC boundaries. First map every function to `auth.uid()`/allowed-user guards, then apply policies and run full authenticated regressions.
-- Supabase advisor also reports leaked-password protection disabled; include it in the controlled auth-hardening package.
+- Migration `20260908045049 canonical_security_rls_and_flow_helper_acl_2026_09_08` is applied. The 13 audited tables now have RLS and no direct `PUBLIC`/`anon`/`authenticated` DML grants.
+- The audit found 12 internal SECURITY DEFINER Flow/cache helpers that accepted explicit arbitrary `user_id` and inherited client EXECUTE through postgres defaults. They are now internal-only. Browser Flow wrappers v7-v10 remain authenticated-only and derive the user through `lts_browser_assert_user_v1`.
+- Postflight returned 13/13 RLS, 12/12 helpers closed, 4/4 wrappers authenticated-only, zero anonymous SECURITY DEFINER execution and zero authenticated SECURITY DEFINER functions without a direct allowlist/JWT/user guard. Default client grants are zero; `service_role` remains preserved.
+- Authenticated transactional regression passed for Flow v8, Dashboard cockpit and product contract, then rolled back. Advisor no longer reports RLS-disabled or anonymous SECURITY DEFINER findings. No-policy INFO notices on the 13 internal tables are intentional deny-by-default behavior.
+- Leaked-password protection remains disabled and must be handled as a separate controlled Auth-setting change.
 
 ## Historical release lineage retained, not current
 - v154 accepted visual direction; v155 false-zero/navigation correction; v156 liquidity-first but rejected real iPhone; v157 WebKit deterministic pass but real-device rejection; v158 truthful fallback/product regression; v159 presentation restored but KPI data unavailable on real iPhone; v160 material-data readiness/truthful fallback; canonical app supersedes all as primary architecture.
 
 ## Open backlog that must always remain visible
 - Evidence-led Dashboard detail convergence beyond the protected Pass 6 baseline; pixel-perfect parity is not claimed.
-- Supabase RLS/SECURITY DEFINER/auth hardening with contract-preserving regression coverage.
+- Controlled Auth review/enablement of leaked-password protection; database RLS/SECURITY DEFINER hardening is closed and must remain regression-protected.
 - Authenticated physical-iPhone canonical financial/data E2E.
 - Real authenticated liquidity save→refresh→visible.
 - Real authenticated classification lifecycle.

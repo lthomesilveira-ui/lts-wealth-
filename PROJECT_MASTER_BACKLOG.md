@@ -17,6 +17,16 @@ Canonical persistent project list. Never remove an open financial, documentary, 
 - [x] Immutable checkpoint `backups/CANONICAL_APP_V161_DASHBOARD_FIDELITY_PASS6_CHECKPOINT_2026-09-08.md`.
 - [~] Continue evidence-led pixel/detail convergence and real-data richness; pixel-perfect parity and authenticated physical-iPhone E2E remain unclaimed.
 
+## P0 — Supabase RLS / SECURITY DEFINER hardening — 08/09/2026
+- [x] Audited the 13 RLS-disabled tables and the client-executable SECURITY DEFINER surface; the decisive exposure was 12 internal Flow/cache helpers accepting an arbitrary `user_id`, not direct table grants.
+- [x] Applied migration `20260908045049 canonical_security_rls_and_flow_helper_acl_2026_09_08`: RLS on all 13 internal tables, client table grants revoked, 12 helpers internal-only and Flow browser wrappers v7-v10 authenticated-only.
+- [x] Hardened future postgres-owned defaults in `public`: zero default function/table/sequence grants remain for `PUBLIC`, `anon` or `authenticated`; `service_role` access is preserved.
+- [x] Postflight: 13/13 tables with RLS and no direct client DML, 12/12 helpers closed, 4/4 wrappers authenticated-only, zero anonymous SECURITY DEFINER reachability and zero authenticated SECURITY DEFINER functions without a direct allowlist/JWT/user guard.
+- [x] Transactional authenticated rollback regression passed for Flow v8, Dashboard cockpit and the product contract.
+- [x] Security Advisor rechecked: no RLS-disabled or anonymous SECURITY DEFINER findings. Its 13 new no-policy INFO notices represent intentional deny-by-default internal tables; 65 signed-in SECURITY DEFINER warnings map to guarded browser RPCs.
+- [ ] Enable/review leaked-password protection under a controlled Auth change window; this provider setting was not changed by the database migration.
+- [x] Immutable checkpoint `backups/CANONICAL_SUPABASE_RLS_SECURITY_DEFINER_HARDENING_CHECKPOINT_2026-09-08.md`.
+
 ## P0 — briefing capability recovery / canonical v1.6 — 07/09/2026
 - [x] Converted the recovered secondary-capability inventory into one navigable Central de Gestão inside `Atualizações`, while preserving the six-route mobile contract.
 - [x] Exposed all ten required capabilities: Planejamento, Entradas & compromissos, Recorrências, Simulações, Conciliação, Relatórios, Backup & restauração, Configurações & integrações, Financiamentos and Documentos.
@@ -232,8 +242,8 @@ Canonical persistent project list. Never remove an open financial, documentary, 
 - [x] Canonical liquidity UI gate `34053651814` additionally covers Aplicar/Resgatar preview and remains green on Chromium/WebKit.
 - [x] Canonical Pages exposure deployment `34003976631`: SUCCESS.
 - [x] Current transversal legacy guardrail QA `lts_fix86_legacy_guardrails_qa_v4`: 10/10 PASS.
-- [~] Supabase hardening audit: 13 `public` tables have RLS disabled, but `anon` and `authenticated` have no direct SELECT/write privileges on any of them. Design per-table policies and review every signed-in executable `SECURITY DEFINER` function before changing RLS/grants; do not mass-enable or mass-revoke in a way that breaks the authenticated browser RPC boundary.
-- [ ] Enable/review leaked-password protection and complete the broader Supabase security-advisor inventory under a controlled authentication regression package.
+- [x] Supabase RLS/ACL hardening applied and contract-regressed: 13/13 audited tables protected, 12/12 arbitrary-user helpers internal-only, guarded browser RPC boundary preserved and secure object defaults installed.
+- [ ] Enable/review leaked-password protection under a controlled Auth change window; continue reviewing every newly introduced signed-in SECURITY DEFINER function against the guarded browser-RPC rule.
 - [ ] Authenticated physical-device financial/data E2E remains open and explicitly unclaimed.
 - [~] Continue performance work after correctness/parity; search already uses server-side filtering rather than broad fetch.
 

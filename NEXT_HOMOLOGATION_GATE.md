@@ -149,6 +149,6 @@ A separate user-facing **undo/reversal** action is not claimed or enabled until 
 - CIPÓ unresolved items listed above.
 - Volvo exact trim/version and km before valuation refinement.
 - Open Finance written pricing/support/SLA/product×bank coverage for Itaú/Bradesco/C6; no consent/spend/credential/provider commitment without explicit user decision.
-- Supabase hardening: 13 public tables have RLS disabled, currently with no direct `anon`/`authenticated` read or write privileges. Design/test per-table RLS and review signed-in executable SECURITY DEFINER functions before changing privileges; leaked-password protection is also pending review.
+- Supabase database hardening is closed at migration `20260908045049`: 13/13 audited tables use deny-by-default RLS, 12/12 arbitrary-user helpers are internal-only, guarded browser RPCs retained authenticated access and transactional contract regression passed. Leaked-password protection remains a separate controlled Auth-setting review.
 - Continue historical dependency audit back to 07/07/2026.
 - Public promotion only after explicit user approval.

@@ -1,6 +1,6 @@
 # LTS Wealth — Matriz de Requisitos, Decisões e Validações
 
-Última auditoria material: 08/09/2026 01:26 BRT (America/Sao_Paulo)
+Última auditoria material: 08/09/2026 01:56 BRT (America/Sao_Paulo)
 
 Objetivo: impedir que briefing, decisões, dados, validações ou pendências se percam entre chats, versões ou trocas de arquitetura. Esta matriz complementa `PROJECT_MASTER_BACKLOG.md`; ela não substitui os checkpoints imutáveis nem a evidência financeira.
 
@@ -119,7 +119,7 @@ Os valores impressos na imagem oficial são ilustrativos. Nenhum valor da refer�
 | QA-02 | N7/N9: investimento pode ser `nao_aplicavel` quando escopo oficial restrito não compara com LIQ multi-instituição; N8 preservado. | Contrato histórico registrado. | Build 36: meta 232 aprovados, 0 reprovados, 2 N/A, total 234, três execuções idênticas. | Autorizado em 06/08. | Garantir que auditorias futuras não convertam N/A em aprovado. |
 | UX-01 | Mobile 390px/768px/desktop, sem overflow, travamento, observador recursivo ou UI escondida. | Implementado/gated na linha canônica. | Chromium/WebKit, sem churn/overflow/error. | iPhone real revelou falha de sessão fora do gate anterior. | Acrescentar regressões de estado persistido/refresh e E2E físico final. |
 | OF-01 | Open Finance provider-neutral, staging/reconciliação antes de efeito financeiro, sem segredo no cliente. | Arquitetura QA 14/14. | Contratos/ACL/backend. | Nenhum consentimento/fornecedor autorizado. | Pesquisa de preço/SLA/cobertura; decisão e consentimento são `AGUARDA_DECISAO`. |
-| SEC-01 | Superfície Supabase deve aplicar menor privilégio, RLS e ownership guard sem quebrar RPCs autenticadas. | Auditoria identificou 13 tabelas `public` sem RLS; nenhuma concede leitura ou escrita direta a `anon`/`authenticated`. Mudança de política ainda não aplicada. | Consulta exata de RLS/privilégios + Security Advisor; inventário persistido no checkpoint v1.6. | Nenhuma exposição direta dessas tabelas foi demonstrada; proteção contra senhas vazadas também está desativada. | `ABERTO_ENGENHARIA`: mapear cada SECURITY DEFINER, desenhar RLS por tabela, testar regressão autenticada e só então aplicar o pacote. |
+| SEC-01 | Superfície Supabase deve aplicar menor privilégio, RLS e ownership guard sem quebrar RPCs autenticadas. | Migração `20260908045049` aplicada: RLS deny-by-default em 13/13 tabelas, 12 helpers de `user_id` arbitrário internos, Flow v7-v10 authenticated-only, defaults de cliente fechados e `service_role` preservado. | Pós-condições 13/13, 12/12, 4/4, zero SECURITY DEFINER anônimo e zero autenticado sem guard direto; regressão autenticada Flow v8/Dashboard/produto em rollback; Advisor revisto. | No-policy INFO é intencional nas tabelas internas; 65 avisos authenticated SECURITY DEFINER correspondem a RPCs de navegador guardadas. Proteção contra senhas vazadas segue desativada. | `IMPLEMENTADO_REGREDIDO`: manter o gate; revisar/ativar leaked-password protection em janela controlada de Auth. |
 | REL-01 | Homologação fixa preservada; root público separado e protegido. | Homologação aponta ao produto `9ae0ee37ab3332415523eeee287cdbf75102e1c4`; exposição `4d3c7bc912a672ae7353c7028d8b05d047961dd5`; `index.html` intacto. | Smokes/Pages pré e pós-exposição verdes; URL fixa verificada com assets Pass 6, login limpo, zero KPIs deslogados e nenhum iframe. | Promoção não autorizada. | Continuar `not_promoted` até autorização explícita. |
 
 ## V150 e V151 — preservação explícita
@@ -149,10 +149,10 @@ Os valores impressos na imagem oficial são ilustrativos. Nenhum valor da refer�
 ### P0 executável agora
 
 1. preservar o baseline Pass 6 e continuar convergência pixel/detail do Dashboard com dados reais ou estado indisponível honesto;
-2. mapear e testar o pacote Supabase RLS/SECURITY DEFINER/Auth antes de qualquer mudança de política;
-3. completar recuperação de rota após refresh/restauração de sessão;
-4. ampliar o receipt automático para a definição de pronto completa;
-5. melhorar Despesas/Atualizações sem regressão de densidade ou evidência.
+2. completar recuperação de rota após refresh/restauração de sessão;
+3. ampliar o receipt automático para a definição de pronto completa;
+4. melhorar Despesas/Atualizações sem regressão de densidade ou evidência;
+5. manter o novo baseline Supabase regression-protected e revisar leaked-password protection em uma janela controlada de Auth.
 
 ### P0 que exige sessão/evidência real no gate final
 
