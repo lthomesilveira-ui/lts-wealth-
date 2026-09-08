@@ -1,14 +1,14 @@
 {
   "schema": 1,
   "version": "canonical-v1",
-  "build": "CANONICAL v1.12 · Reviewed Text Input",
+  "build": "CANONICAL v1.13 · Classification-first Updates + Guided Document Intake",
   "path": "canonical-app.html",
-  "candidate_head": "70c49b1b50b7faca09b71889e14d33183a7f9092",
+  "candidate_head": "6d2b546b5e32d9ac09013cbd682e261e3f41ccac",
   "public_fallback": "index.html",
   "promotion_status": "not_promoted",
-  "candidate_sha": "70c49b1b50b7faca09b71889e14d33183a7f9092",
-  "exposed_from_main_sha": "70c49b1b50b7faca09b71889e14d33183a7f9092",
-  "exposure_mode": "canonical_single_frontend_v112_reviewed_text_input_plus_v111_layered_liquidity_plus_v110_decision_truth_plus_v19_flow_parity",
-  "gate_status": "active-gate-34235638676-pass_active-candidate-smoke-34235638646-pass_canonical-gate-34235911409-pass_canonical-candidate-smoke-34235911280-pass_main-candidate-smoke-34236205811-pass_pages-34236204118-pass_reviewed-text-input-preview-no-fixture-write_flow-v150-parity_desktop-chromium-mobile-webkit_authenticated-real-write-not-claimed_physical-iphone-not-claimed",
-  "updated_at": "2026-09-08T14:07:32Z"
+  "candidate_sha": "6d2b546b5e32d9ac09013cbd682e261e3f41ccac",
+  "exposed_from_main_sha": "6d2b546b5e32d9ac09013cbd682e261e3f41ccac",
+  "exposure_mode": "canonical_single_frontend_v113_classification_first_guided_document_intake_plus_v112_reviewed_input_plus_v111_layered_liquidity_plus_v110_decision_truth_plus_v19_flow_parity",
+  "gate_status": "active-gate-34242926042-pass_active-candidate-smoke-34242925889-pass_canonical-gate-34243185722-pass_canonical-candidate-smoke-34243185837-pass_main-candidate-smoke-34243383377-pass_pages-34243381614-pass_classification-first-guided-document-intake-no-fixture-write_flow-v150-parity_authenticated-real-upload-not-claimed_physical-iphone-not-claimed",
+  "updated_at": "2026-09-08T15:15:31Z"
 }
