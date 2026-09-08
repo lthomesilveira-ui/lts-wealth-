@@ -12,7 +12,22 @@ Purpose: compact operational bootstrap so project execution never depends on a l
 7. Before a repository write, freshness-check `main`, active branch, this file, and the SHAs of `PROJECT_MASTER_BACKLOG.md`, `NEXT_HOMOLOGATION_GATE.md`, `LTS_WEALTH_CONTINUITY_HANDOFF.md`, `CANONICAL_DELIVERY_MASTER_PLAN.md` and latest immutable checkpoint. Use line-limited reads; fully re-read only a file whose SHA changed or whose relevant section is needed.
 8. After every material package, gate, integration or newly discovered blocker, update this file so a chat may be abandoned/restarted at any moment without reconstruction work.
 
-## Current execution state — 08/09/2026 12:27 BRT
+## Current execution state — 08/09/2026 13:35 BRT
+- Repo: `lthomesilveira-ui/lts-wealth-`; active recovery branch remains `canonical-v157plus-product-recovery`.
+- Canonical v1.14 exact remote product is `0d50699af5aa5b950ff889a1fc6becfee209ce06`, tree `f086c6878f4737a10c6865768241e9d2c4adc326`; fixed-manifest exposure is `ac5d4674920615c6c5e5947d4ab721f538679a0c`, tree `e4d9796e6646a2265ca62c5de4b7058ac6b487cb`. `main`, `canonical-app-v1` and the active branch share the exposure through normal no-force fast-forward.
+- V1.14 restores the read-only V149 document interpretation review under contract `v149-evidence-review-readonly-canonical-v1`: every card separates `Vínculo informado por você` from `Leitura extraída do arquivo`, shows bounded escaped evidence and warns when association is missing.
+- The review surface is explicitly `Somente leitura`, contains no button/input and cannot approve, reconcile, classify, replace the supplied association or write a financial fact. Fixture proof requires `write_allowed:false` and `financial_writer_called:false`.
+- Browser RPC `lts_browser_document_review_queue_v1` calls `lts_browser_assert_user_v1`; its internal stable reader `lts_document_review_queue_v1` is owner-scoped, service-role-only, clamps 1–6 documents, caps entries at 25 and bounds JSON roots at 32 KB.
+- Migration `canonical_document_review_read_model_2026_09_08` is applied. Privileges are authenticated/service-role only for the guarded browser wrapper, service-role only for the non-definer internal reader, and no `anon` access. Zero-UUID and unauthenticated probes passed their expected read/no-write and `42501 unauthorized` boundaries.
+- V1.14 preserves v1.13 classification-first guided intake, v1.12 reviewed input, v1.11 layered liquidity, v1.10 decision truth, v1.9 V150/V151+ Flow parity, v1.8 single-owner Despesas, route/session continuity and the protected Supabase baseline.
+- Product recovery gate/smoke `34250450654` / `34250450670`, canonical gate/smoke `34250649137` / `34250649010`, main smoke/Pages `34250977997` / `34250976391`: SUCCESS. Post-exposure active/canonical/main smokes `34251224292` / `34251281745` / `34251333462` and Pages `34251332488`: SUCCESS.
+- Recovery artifact `10065805910`, digest `sha256:50a3687a1ff0d86dc74c0c8a7d2be6066b0b47a5634f1f392692237de30322c7`; canonical artifact `10065921441`, digest `sha256:7a292b5f5ce280ebac2f57ae53520d45bf37fcaa2d145a6351100e0f2f2a4a18`; exposure Pages artifact `10066100348`, digest `sha256:8d3f15e7be00a045f48066859f833bf2b79df7a23eac652742090056ae6fb36e`.
+- Fixed URL browser verification resolved to `canonical-app.html?homologacao=0d50699…#Dashboard`, loaded the `?v=20260908-doc-review14` assets, rendered truthful signed-out login, used zero iframes and exposed no fixture badge, raw JWT or application error.
+- Latest immutable evidence: `backups/CANONICAL_APP_V114_DOCUMENT_INTERPRETATION_REVIEW_CHECKPOINT_2026-09-08.md`.
+- Authenticated real upload→register→interpretation→review/readback, authenticated financial writes/search, physical-iPhone E2E and public-root promotion remain open/not claimed. No approved standalone Reports visual was recovered, so none may be invented.
+- Public `index.html` remains protected at blob `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`; public-root promotion is not authorized.
+
+## Prior canonical v1.13 state — retained as evidence
 - Repo: `lthomesilveira-ui/lts-wealth-`; active recovery branch remains `canonical-v157plus-product-recovery`.
 - Canonical v1.13 exact remote product is `6d2b546b5e32d9ac09013cbd682e261e3f41ccac`, tree `ae4710f80a7ed60c6e0b00c801b9814143edc84a`; fixed-manifest exposure is `6a25aa99ab9548ef001870d9303d65700a0da8ec`, tree `ebc49406160e31f2d988825392fe642fb35e85df`. `main`, `canonical-app-v1` and the active branch share the exposure through normal no-force fast-forward.
 - V147 history establishes classification-first `Atualizações`: classification stays in the foreground; `Outras ações que precisam de você` is collapsed and contains documents plus secondary management actions. Documents-above-classification was rejected and must not return.
@@ -88,12 +103,12 @@ Purpose: compact operational bootstrap so project execution never depends on a l
 - Historical v144–v160 workflows remain manually/branch runnable but no longer run automatically on `main`; their wrapper-specific failures are not canonical release gates.
 
 ## Current immediate execution sequence
-1. Treat canonical v1.13 product `6d2b546…` and exposure `6a25aa9…` as the current protected baseline; do not regress its classification-first/document-intake contract, v1.12 reviewed input, v1.11 layered liquidity, v1.10 decision truth, v1.9 V150 Flow or public `index.html`.
+1. Treat canonical v1.14 product `0d50699…` and exposure `ac5d467…` as the current protected baseline; do not regress its V149 read-only document review, v1.13 classification-first/document-intake contract, v1.12 reviewed input, v1.11 layered liquidity, v1.10 decision truth, v1.9 V150 Flow or public `index.html`.
 2. Use `LTS_WEALTH_REQUIREMENTS_TRACEABILITY.md` as the durable map from briefing → implementation → validation → pending; append recovered facts rather than relying on chat memory.
 3. Continue the audit of both historical projects and evidence-led product detail without copying financial values from reference images; recovered feedback is binding only where explicitly attributed to the user.
 4. Treat the bounded Supabase RLS/SECURITY DEFINER package as the protected security baseline; leaked-password protection remains a separate controlled Auth-setting change.
 5. Keep the route/session continuity contract and unified receipt regression-protected; the automatic gate is complete, while its authenticated-real/physical-device rows remain honestly open.
-6. Keep the v1.8 single-owner Despesas route, v1.9 V150 Flow parity, v1.10 fact/projection/commitment semantics, v1.11 liquidity layers, v1.12 reviewed input and v1.13 classification-first/document intake regression-protected; continue remaining product quality and execute real write/search/document/backup-restore lifecycles when an authenticated browser identity is available.
+6. Keep the v1.8 single-owner Despesas route, v1.9 V150 Flow parity, v1.10 fact/projection/commitment semantics, v1.11 liquidity layers, v1.12 reviewed input, v1.13 classification-first/document intake and v1.14 read-only interpretation review regression-protected; execute the real document lifecycle and remaining write/search/backup-restore lifecycles when an authenticated browser identity is available.
 7. Keep authenticated physical-iPhone E2E explicitly unclaimed until actually performed.
 8. Preserve `promotion_status:not_promoted` and protected `index.html` until explicit user authorization.
 

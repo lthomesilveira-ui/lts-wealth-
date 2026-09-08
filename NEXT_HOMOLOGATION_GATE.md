@@ -2,12 +2,12 @@
 
 Purpose: evidence-backed sequence before asking the user to inspect a material candidate. Keep aligned with `PROJECT_MASTER_BACKLOG.md`, `LTS_WEALTH_CONTINUITY_HANDOFF.md` and immutable checkpoints.
 
-## Current canonical baseline — 08/09/2026 12:27 BRT
+## Current canonical baseline — 08/09/2026 13:35 BRT
 - Public fallback: WIP35-v136 in `index.html`, unchanged; protected blob remains `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
 - Fixed homologation: `https://lthomesilveira-ui.github.io/lts-wealth-/homologacao.html`.
-- Fixed homologation selects **CANONICAL v1.13 · Classification-first Updates + Guided Document Intake** through `canonical-app.html`, exact product `6d2b546b5e32d9ac09013cbd682e261e3f41ccac`, product tree `ae4710f80a7ed60c6e0b00c801b9814143edc84a`, exposure `6a25aa99ab9548ef001870d9303d65700a0da8ec`; public `index.html` is unchanged.
+- Fixed homologation selects **CANONICAL v1.14 · Document Interpretation Review** through `canonical-app.html`, exact product `0d50699af5aa5b950ff889a1fc6becfee209ce06`, product tree `f086c6878f4737a10c6865768241e9d2c4adc326`, exposure `ac5d4674920615c6c5e5947d4ab721f538679a0c`; public `index.html` is unchanged.
 - Canonical frontend is a single application; no v150/v151/v156/v160 iframe/wrapper chain is part of the primary product.
-- Current gated modules: `canonical-liquidity-core.js`, `canonical-flow-v157.js`, `canonical-product-v157.js`, `canonical-presentation-v157.js`, `canonical-capabilities-v161.js`, `canonical-reviewed-input-v112.js`, plus the V1.13 Updates/document contract in `canonical-app.html`.
+- Current gated modules: `canonical-liquidity-core.js`, `canonical-flow-v157.js`, `canonical-product-v157.js`, `canonical-presentation-v157.js`, `canonical-capabilities-v161.js`, `canonical-reviewed-input-v112.js`, plus the V1.13 Updates/intake and V1.14 read-only document-review contracts in `canonical-app.html`.
 - Modular recovery gate `34170935882` and permanent canonical gate `34171231918`: **SUCCESS** in Chromium desktop 1312×1199 and WebKit mobile 390×844.
 - Active/canonical/main candidate smokes `34170935887` / `34171231935` / `34171338575` and Pages `34171338335`: **SUCCESS**.
 - Post-manifest active/canonical/main candidate smokes `34171452083` / `34171452913` / `34171453488` and Pages `34171452759`: **SUCCESS**.
@@ -43,12 +43,25 @@ Purpose: evidence-backed sequence before asking the user to inspect a material c
 - V1.13 post-exposure active/canonical/main smokes `34243737853` / `34243795334` / `34244113857` and Pages `34244111908`: SUCCESS.
 - V1.13 artifacts: recovery `10062796446` / `sha256:bb51419f7772a7504b4556bb89d017b8297165d3f01d92f0cb8ff26bd92d1667`; canonical `10062906709` / `sha256:3f19198c6ab8256323cdc7b9b56b19401cd39e0c823322d5c1e5bf5524f99480`; exposure Pages `10063227934` / `sha256:ab16d51a56c57d5cdb80b37fa72ee8b25b7e4b8caf95a6d7d36f7890bf07b2a3`.
 - Fixed-URL live verification resolved to `canonical-app.html?homologacao=6d2b546…#Dashboard`, loaded both `?v=20260908-updates13` assets, truthful signed-out login, zero iframe, zero fixture KPI and no application error.
-- Current immutable evidence: `backups/CANONICAL_APP_V113_CLASSIFICATION_FIRST_DOCUMENT_INTAKE_CHECKPOINT_2026-09-08.md`.
+- V1.14 recovery gate/smoke `34250450654` / `34250450670`, canonical gate/smoke `34250649137` / `34250649010`, main smoke/Pages `34250977997` / `34250976391`: SUCCESS.
+- V1.14 post-exposure active/canonical/main smokes `34251224292` / `34251281745` / `34251333462` and Pages `34251332488`: SUCCESS.
+- V1.14 artifacts: recovery `10065805910` / `sha256:50a3687a1ff0d86dc74c0c8a7d2be6066b0b47a5634f1f392692237de30322c7`; canonical `10065921441` / `sha256:7a292b5f5ce280ebac2f57ae53520d45bf37fcaa2d145a6351100e0f2f2a4a18`; exposure Pages `10066100348` / `sha256:8d3f15e7be00a045f48066859f833bf2b79df7a23eac652742090056ae6fb36e`.
+- Fixed-URL live verification resolved to `canonical-app.html?homologacao=0d50699…#Dashboard`, loaded `?v=20260908-doc-review14`, truthful signed-out login, zero iframe, zero fixture badge/raw JWT and no application error.
+- Current immutable evidence: `backups/CANONICAL_APP_V114_DOCUMENT_INTERPRETATION_REVIEW_CHECKPOINT_2026-09-08.md`.
 - Durable briefing/decision map: `LTS_WEALTH_REQUIREMENTS_TRACEABILITY.md`.
 - `promotion_status:not_promoted`; public root promotion is NOT AUTHORIZED / NOT DONE.
 - Authenticated physical-iPhone visual/data E2E: PENDING / NOT CLAIMED.
 
-## Canonical v1.13 Classification-first Updates + Guided Document Intake — selected for fixed exposure
+## Canonical v1.14 Document Interpretation Review — selected for fixed exposure
+- Exact product is `0d50699af5aa5b950ff889a1fc6becfee209ce06`; fixed-manifest exposure is `ac5d4674920615c6c5e5947d4ab721f538679a0c`; no public-root change and no wrapper reintroduction.
+- V149 is the evidence source for a read-only association-versus-extraction review that was lost from the later canonical surface.
+- Contract `v149-evidence-review-readonly-canonical-v1` shows `Vínculo informado por você` beside `Leitura extraída do arquivo`, bounds and escapes evidence and warns explicitly when association is missing.
+- The surface is `Somente leitura`, has no input/button and cannot approve, reconcile, classify, overwrite association or post a financial fact.
+- Applied read path is `lts_browser_document_review_queue_v1` → owner-scoped bounded internal `lts_document_review_queue_v1`; the browser wrapper is JWT/user guarded and unauthenticated access fails closed.
+- The permanent gate proves two fixtures, twelve-plus evidence rows, exact no-control/no-writer boundaries and desktop/mobile layout while preserving every v1.13→v1.6 suite.
+- A real authenticated upload/register/interpretation/review readback and physical-iPhone evidence remain OPEN / NOT CLAIMED.
+
+## Canonical v1.13 Classification-first Updates + Guided Document Intake — protected predecessor
 - Exact product is `6d2b546b5e32d9ac09013cbd682e261e3f41ccac`; fixed-manifest exposure is `6a25aa99ab9548ef001870d9303d65700a0da8ec`; no public-root change and no wrapper reintroduction.
 - V147 establishes the binding hierarchy: classification first; document/secondary work under collapsed `Outras ações que precisam de você`.
 - Guided association is explicit before upload: bank account+competence, card+competence, financing commitment+as-of, or other/manual note. Filename never supplies financial facts.
@@ -143,7 +156,7 @@ Purpose: evidence-backed sequence before asking the user to inspect a material c
 - Public `index.html` remains unchanged.
 
 ## Exact deterministic evidence
-Current V1.13 recovery gate `34242926042` and permanent canonical gate `34243185722`: **SUCCESS**. Dashboard Pass 6, V157+ and every v1.12→v1.6 capability/receipt baseline remains preserved.
+Current V1.14 recovery gate `34250450654` and permanent canonical gate `34250649137`: **SUCCESS**. V1.13, Dashboard Pass 6, V157+ and every v1.12→v1.6 capability/receipt baseline remains preserved.
 
 Validated in Chromium desktop 1312×1199 and WebKit mobile 390×844:
 - five KPI cards populated under controlled fixture;
@@ -153,6 +166,7 @@ Validated in Chromium desktop 1312×1199 and WebKit mobile 390×844:
 - Patrimônio / FGTS surface;
 - Cartões surface;
 - Atualizações classification-first queue, incremental Mastercard search, result total, CSV enablement, collapsed secondary actions and guided document-intake/lifecycle area;
+- V149 document review shows supplied association versus bounded extracted evidence, missing-link warning and `Somente leitura`, with no interactive control or writer;
 - Aplicar/Resgatar card mounts exactly once;
 - application preview accepts `5 mil` and shows equal/opposite bank/asset legs with economic effect R$0;
 - fixture writer remains disabled, preventing accidental financial mutation;

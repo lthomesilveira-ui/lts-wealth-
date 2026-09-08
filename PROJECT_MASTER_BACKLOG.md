@@ -4,6 +4,21 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 
 Canonical persistent project list. Never remove an open financial, documentary, classification, reconciliation or product dependency during compaction. Detailed immutable evidence remains in `backups/`, `HISTORICAL_RECOVERY_LOG.md`, `PLANNING_EXCEL_TO_CURRENT_AUDIT_2026-08-30.md`, `NEXT_HOMOLOGATION_GATE.md` and release checkpoints.
 
+## P0 — V149 document interpretation review recovery / canonical v1.14 — 08/09/2026
+- [x] Recovered the V149 read-only review that contrasted the association supplied by the user with evidence extracted from the document; the capability had disappeared from the later canonical surface.
+- [x] Added contract `v149-evidence-review-readonly-canonical-v1` without restoring wrapper architecture or changing the V147 classification-first priority.
+- [x] Each card shows `Vínculo informado por você`, `Leitura extraída do arquivo`, bounded escaped evidence, missing-link warning and an explicit `Somente leitura` barrier.
+- [x] The review has zero buttons/inputs and cannot approve, reconcile, classify, overwrite association or post financial facts; fixture proof requires `write_allowed:false` and `financial_writer_called:false`.
+- [x] Added guarded browser RPC `lts_browser_document_review_queue_v1` plus owner-scoped bounded internal reader `lts_document_review_queue_v1`; migration `canonical_document_review_read_model_2026_09_08` applied.
+- [x] Verified privileges and failure boundaries: wrapper authenticated/service-role only behind `lts_browser_assert_user_v1`; internal reader service-role only; zero-UUID response safe; unauthenticated call fails `42501 unauthorized`.
+- [x] Local permanent gate PASS at 1312×1199 and 390×844; two fixtures, 12+ evidence rows, exact contract, zero controls/writers, no overflow; button audit remains 197/197 and `index.html` hash is unchanged.
+- [x] Exact remote product `0d50699af5aa5b950ff889a1fc6becfee209ce06`, tree `f086c6878f4737a10c6865768241e9d2c4adc326`; exposure `ac5d4674920615c6c5e5947d4ab721f538679a0c`, tree `e4d9796e6646a2265ca62c5de4b7058ac6b487cb`; all three branches aligned by normal no-force fast-forward.
+- [x] Product recovery gate/smoke `34250450654` / `34250450670`, canonical gate/smoke `34250649137` / `34250649010`, main smoke/Pages `34250977997` / `34250976391`: SUCCESS.
+- [x] Post-exposure active/canonical/main smokes `34251224292` / `34251281745` / `34251333462` and Pages `34251332488`: SUCCESS; fixed URL loads exact v1.14 assets with truthful signed-out state, zero iframe/fixture/JWT leakage.
+- [x] Artifacts: recovery `10065805910` / `sha256:50a3687a1ff0d86dc74c0c8a7d2be6066b0b47a5634f1f392692237de30322c7`; canonical `10065921441` / `sha256:7a292b5f5ce280ebac2f57ae53520d45bf37fcaa2d145a6351100e0f2f2a4a18`; exposure Pages `10066100348` / `sha256:8d3f15e7be00a045f48066859f833bf2b79df7a23eac652742090056ae6fb36e`.
+- [x] Immutable checkpoint `backups/CANONICAL_APP_V114_DOCUMENT_INTERPRETATION_REVIEW_CHECKPOINT_2026-09-08.md`.
+- [ ] Real authenticated upload→register→interpretation→review/readback and physical-iPhone evidence remain open/not claimed; no approval or financial writer is part of this surface.
+
 ## P0 — Classification-first Updates + guided document intake / canonical v1.13 — 08/09/2026
 - [x] Recovered the binding V147 hierarchy: classification is foreground; `Outras ações que precisam de você` is collapsed and owns documents plus secondary management work. The rejected documents-above-classification layout is not the target.
 - [x] Added stable hosts for reviewed input, liquidity movement and Central de Gestão so asynchronous modules coexist without taking ownership of the whole route.

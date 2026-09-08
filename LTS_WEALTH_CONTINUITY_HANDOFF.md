@@ -1,6 +1,6 @@
 # LTS Wealth — Continuity Handoff
 
-Last materially refreshed: 2026-09-08 12:27 BRT (America/Sao_Paulo)
+Last materially refreshed: 2026-09-08 13:35 BRT (America/Sao_Paulo)
 
 This file exists so project continuity never depends on chat context. Always re-fetch `main`, active branch, `PROJECT_MASTER_BACKLOG.md`, `NEXT_HOMOLOGATION_GATE.md`, this file and the latest immutable checkpoint before every repository write.
 
@@ -24,7 +24,20 @@ This file exists so project continuity never depends on chat context. Always re-
 - Public fallback remains WIP35-v136; protected `index.html` blob remains `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
 - Public promotion remains unauthorized/not done.
 
-## Current exposed product — canonical v1.13 Classification-first Updates + Guided Document Intake
+## Current exposed product — canonical v1.14 Document Interpretation Review
+- Exact remote product `0d50699af5aa5b950ff889a1fc6becfee209ce06`, product tree `f086c6878f4737a10c6865768241e9d2c4adc326`; fixed-manifest exposure `ac5d4674920615c6c5e5947d4ab721f538679a0c`, exposure tree `e4d9796e6646a2265ca62c5de4b7058ac6b487cb`; all three release branches share the exposure through normal no-force fast-forward.
+- V149 is the recovered source for a read-only association-versus-extracted-evidence review that had disappeared from the canonical surface. V1.14 restores it under `v149-evidence-review-readonly-canonical-v1` without restoring a historical wrapper.
+- Each review card separates `Vínculo informado por você` from `Leitura extraída do arquivo`, bounds/escapes extracted rows, warns when the link is missing and exposes no input/button.
+- `Somente leitura` is a hard product boundary: the review cannot approve, reconcile, classify, overwrite association or call a financial writer. Fixture proof requires `write_allowed:false` and `financial_writer_called:false`.
+- Browser RPC `lts_browser_document_review_queue_v1` is guarded by `lts_browser_assert_user_v1`; internal `lts_document_review_queue_v1` is an owner-scoped, bounded service-role-only reader. Migration `canonical_document_review_read_model_2026_09_08` is applied.
+- V1.14 preserves v1.13 guided intake and priority hierarchy, v1.12 reviewed input, v1.11 liquidity layers, v1.10 decision truth, v1.9 V150/V151+ Flow parity and every canonical route/session/security baseline.
+- Product recovery gate/smoke `34250450654` / `34250450670`, canonical gate/smoke `34250649137` / `34250649010`, main smoke/Pages `34250977997` / `34250976391`: SUCCESS. Post-exposure active/canonical/main smokes `34251224292` / `34251281745` / `34251333462` and Pages `34251332488`: SUCCESS.
+- Recovery artifact `10065805910` / `sha256:50a3687a1ff0d86dc74c0c8a7d2be6066b0b47a5634f1f392692237de30322c7`; canonical artifact `10065921441` / `sha256:7a292b5f5ce280ebac2f57ae53520d45bf37fcaa2d145a6351100e0f2f2a4a18`; exposure Pages `10066100348` / `sha256:8d3f15e7be00a045f48066859f833bf2b79df7a23eac652742090056ae6fb36e`.
+- Fixed homologation resolves to `canonical-app.html?homologacao=0d50699…#Dashboard`, loads `?v=20260908-doc-review14`, renders truthful signed-out login and exposes no iframe, fixture badge, raw JWT or application error.
+- Latest immutable checkpoint: `backups/CANONICAL_APP_V114_DOCUMENT_INTERPRETATION_REVIEW_CHECKPOINT_2026-09-08.md`.
+- A real authenticated document upload/register/interpretation/review readback, authenticated writes/search, physical-iPhone E2E and public-root promotion remain explicitly open/not claimed. No approved standalone Reports visual was recovered; do not invent one.
+
+## Protected predecessor — canonical v1.13 Classification-first Updates + Guided Document Intake
 - Exact remote product `6d2b546b5e32d9ac09013cbd682e261e3f41ccac`, product tree `ae4710f80a7ed60c6e0b00c801b9814143edc84a`; fixed-manifest exposure `6a25aa99ab9548ef001870d9303d65700a0da8ec`, exposure tree `ebc49406160e31f2d988825392fe642fb35e85df`; all three release branches share the exposure through normal no-force fast-forward.
 - V147 is the recovered product source for the `Atualizações` hierarchy: classification is foreground; `Outras ações que precisam de você` is collapsed and contains documents/secondary management work. A documents-first layout was rejected.
 - Contract `classification-first-guided-document-intake-v1` requires explicit type and association before upload. Bank statement requires institution/account+competence; card statement requires card+competence; financing requires commitment+exact as-of; other document accepts an optional note and remains manual review.
