@@ -1,6 +1,6 @@
 # LTS Wealth — Continuity Handoff
 
-Last materially refreshed: 2026-09-08 13:35 BRT (America/Sao_Paulo)
+Last materially refreshed: 2026-09-08 14:31 BRT (America/Sao_Paulo)
 
 This file exists so project continuity never depends on chat context. Always re-fetch `main`, active branch, `PROJECT_MASTER_BACKLOG.md`, `NEXT_HOMOLOGATION_GATE.md`, this file and the latest immutable checkpoint before every repository write.
 
@@ -24,7 +24,20 @@ This file exists so project continuity never depends on chat context. Always re-
 - Public fallback remains WIP35-v136; protected `index.html` blob remains `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
 - Public promotion remains unauthorized/not done.
 
-## Current exposed product — canonical v1.14 Document Interpretation Review
+## Current exposed product — canonical v1.15 Dashboard Density
+- Exact remote product `a0a2675e6a9c9b3ffe4d9b0bc1fab222a48bc347`, product tree `667ef2fcae8c5630b5a60b4d62ee2986ad438e92`; fixed-manifest exposure `b1998a9178ef3a8eec90dd47aa21e31dad8c868a`, exposure tree `f8a68fa98658f1718eccfd6b716f4607ad2d516e`; all three release branches share the exposure through normal no-force fast-forward.
+- Official Dashboard evidence establishes a 1312×1199 complete executive canvas. V1.14 measured 1325 px at that viewport; v1.15 closes the exact 126 px overflow and ends at 1199 px, with Dashboard bottom at 1184 px.
+- Contract `approved-1312x1199-single-screen-v1` compresses only desktop chart/legend vertical footprint. Main liquidity panel is 295 px, planning panel 297 px and both four-layer legends remain one-line/readable.
+- Mobile 390×844 remains intentionally scrollable, keeps all cards and interaction targets and has no horizontal clipping.
+- The permanent gate rejects desktop height overflow, Dashboard bottom overflow, a main liquidity panel over 315 px or loss of any current/base/vesting/FGTS legend item.
+- V1.15 preserves v1.14 V149 read-only review, v1.13 classification-first guided intake, v1.12 reviewed input, v1.11 liquidity layers, v1.10 decision truth, v1.9 V150/V151+ Flow parity and every canonical route/session/security baseline.
+- Product recovery gate/smoke `34256124696` / `34256124706`, canonical gate/smoke `34256598442` / `34256598444`, main smoke/Pages `34256889054` / `34256887644`: SUCCESS. Post-exposure active/canonical/main smokes `34257179939` / `34257183053` / `34257139985` and Pages `34257139795`: SUCCESS.
+- Recovery artifact `10067974348` / `sha256:302bccf618422a2d0a2ade4fd696441a71f8c490707be3aa54f75afce974412d`; canonical artifact `10068181842` / `sha256:1b2c2310394b6d834d88ba015d596648e88ae517489b54f40e89c7c17e6380d5`; exposure Pages `10068319425` / `sha256:9820c15422ab8226db2edd51490ba328b08d933a6c1b07f05a50f3614db1f228`.
+- Fixed homologation resolves to `canonical-app.html?homologacao=a0a2675…#Dashboard`, loads `?v=20260908-dashboard-density15`, renders truthful signed-out login with blank fields and exposes no iframe, fixture badge, raw JWT or application error.
+- Latest immutable checkpoint: `backups/CANONICAL_APP_V115_DASHBOARD_DENSITY_CHECKPOINT_2026-09-08.md`.
+- Authenticated real lifecycles, physical-iPhone E2E and public-root promotion remain explicitly open/not claimed. No approved standalone Reports visual was recovered; do not invent one.
+
+## Protected predecessor — canonical v1.14 Document Interpretation Review
 - Exact remote product `0d50699af5aa5b950ff889a1fc6becfee209ce06`, product tree `f086c6878f4737a10c6865768241e9d2c4adc326`; fixed-manifest exposure `ac5d4674920615c6c5e5947d4ab721f538679a0c`, exposure tree `e4d9796e6646a2265ca62c5de4b7058ac6b487cb`; all three release branches share the exposure through normal no-force fast-forward.
 - V149 is the recovered source for a read-only association-versus-extracted-evidence review that had disappeared from the canonical surface. V1.14 restores it under `v149-evidence-review-readonly-canonical-v1` without restoring a historical wrapper.
 - Each review card separates `Vínculo informado por você` from `Leitura extraída do arquivo`, bounds/escapes extracted rows, warns when the link is missing and exposes no input/button.

@@ -4,6 +4,21 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 
 Canonical persistent project list. Never remove an open financial, documentary, classification, reconciliation or product dependency during compaction. Detailed immutable evidence remains in `backups/`, `HISTORICAL_RECOVERY_LOG.md`, `PLANNING_EXCEL_TO_CURRENT_AUDIT_2026-08-30.md`, `NEXT_HOMOLOGATION_GATE.md` and release checkpoints.
 
+## P0 — Approved Dashboard desktop density / canonical v1.15 — 08/09/2026
+- [x] Compared the canonical Dashboard against the official 1312×1199 reference and isolated a measurable 126 px desktop overflow: canonical v1.14 document height was 1325 px.
+- [x] Added contract `approved-1312x1199-single-screen-v1` without changing financial values, observed/projected semantics, commitments, routes or mobile ownership.
+- [x] Reduced only desktop chart/legend footprint: main liquidity panel 350→295 px and planning panel 373→297 px; page now equals 1199 px and Dashboard bottom is 1184 px.
+- [x] Kept both four-layer legends on one readable line: current position, operating base, scheduled vestings and documentary FGTS D+30.
+- [x] Mobile remains intentionally scrollable at 390×844 with all cards/targets and no horizontal clipping.
+- [x] Permanent gate rejects desktop document/Dashboard overflow, panel height >315 px or missing legend layer while preserving every v1.14→v1.9 suite and future-JWT recovery.
+- [x] Local permanent Chromium gate, JS/YAML parsing and `git diff --check`: PASS; `index.html` protected hash unchanged.
+- [x] Exact remote product `a0a2675e6a9c9b3ffe4d9b0bc1fab222a48bc347`, tree `667ef2fcae8c5630b5a60b4d62ee2986ad438e92`; exposure `b1998a9178ef3a8eec90dd47aa21e31dad8c868a`, tree `f8a68fa98658f1718eccfd6b716f4607ad2d516e`; all three branches aligned by normal no-force fast-forward.
+- [x] Product recovery gate/smoke `34256124696` / `34256124706`, canonical gate/smoke `34256598442` / `34256598444`, main smoke/Pages `34256889054` / `34256887644`: SUCCESS.
+- [x] Post-exposure active/canonical/main smokes `34257179939` / `34257183053` / `34257139985` and Pages `34257139795`: SUCCESS; fixed URL loads exact v1.15 assets with truthful blank signed-out login, zero iframe/fixture/JWT leakage.
+- [x] Artifacts: recovery `10067974348` / `sha256:302bccf618422a2d0a2ade4fd696441a71f8c490707be3aa54f75afce974412d`; canonical `10068181842` / `sha256:1b2c2310394b6d834d88ba015d596648e88ae517489b54f40e89c7c17e6380d5`; exposure Pages `10068319425` / `sha256:9820c15422ab8226db2edd51490ba328b08d933a6c1b07f05a50f3614db1f228`.
+- [x] Immutable checkpoint `backups/CANONICAL_APP_V115_DASHBOARD_DENSITY_CHECKPOINT_2026-09-08.md`.
+- [ ] Authenticated real-data Dashboard and physical-iPhone evidence remain open/not claimed; remaining visual refinements require recovered/approved evidence and must preserve this density floor.
+
 ## P0 — V149 document interpretation review recovery / canonical v1.14 — 08/09/2026
 - [x] Recovered the V149 read-only review that contrasted the association supplied by the user with evidence extracted from the document; the capability had disappeared from the later canonical surface.
 - [x] Added contract `v149-evidence-review-readonly-canonical-v1` without restoring wrapper architecture or changing the V147 classification-first priority.
