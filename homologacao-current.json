@@ -1,14 +1,14 @@
 {
   "schema": 1,
   "version": "canonical-v1",
-  "build": "CANONICAL v1.6 · Dashboard Fidelity Pass 6",
+  "build": "CANONICAL v1.7 · Route Continuity + DoD Receipt",
   "path": "canonical-app.html",
-  "candidate_head": "9ae0ee37ab3332415523eeee287cdbf75102e1c4",
+  "candidate_head": "e618ef48e22872ce718c7932872e2316e5660f67",
   "public_fallback": "index.html",
   "promotion_status": "not_promoted",
-  "candidate_sha": "9ae0ee37ab3332415523eeee287cdbf75102e1c4",
-  "exposed_from_main_sha": "9ae0ee37ab3332415523eeee287cdbf75102e1c4",
-  "exposure_mode": "canonical_single_frontend_v161_dashboard_fidelity_pass6",
-  "gate_status": "v157plus-recovery-34185954453-pass_active-candidate-smoke-34185954506-pass_canonical-gate-34186087590-pass_canonical-candidate-smoke-34186087628-pass_main-candidate-smoke-34186301851-pass_pages-34186300869-pass_dashboard-reference-contract-pass_management-contract-10_desktop-chromium-pass_mobile-webkit-pass_form-state-preserved_authenticated-e2e-not-claimed",
-  "updated_at": "2026-09-08T04:15:40Z"
+  "candidate_sha": "e618ef48e22872ce718c7932872e2316e5660f67",
+  "exposed_from_main_sha": "e618ef48e22872ce718c7932872e2316e5660f67",
+  "exposure_mode": "canonical_single_frontend_v17_route_session_continuity_and_dod_receipt",
+  "gate_status": "v157plus-recovery-34190659782-pass_active-candidate-smoke-34190659780-pass_canonical-gate-34191017877-pass_canonical-candidate-smoke-34191017858-pass_main-candidate-smoke-34191216218-pass_pages-34191215874-pass_route-refresh-deeplink-back-forward_management-pane-restored_definition-of-done-receipt-pass_authenticated-real-e2e-not-claimed_physical-iphone-not-claimed",
+  "updated_at": "2026-09-08T05:37:30Z"
 }
