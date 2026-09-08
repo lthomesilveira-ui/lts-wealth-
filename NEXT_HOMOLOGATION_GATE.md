@@ -2,12 +2,12 @@
 
 Purpose: evidence-backed sequence before asking the user to inspect a material candidate. Keep aligned with `PROJECT_MASTER_BACKLOG.md`, `LTS_WEALTH_CONTINUITY_HANDOFF.md` and immutable checkpoints.
 
-## Current canonical baseline — 08/09/2026 15:33 BRT
+## Current canonical baseline — 08/09/2026 16:21 BRT
 - Public fallback: WIP35-v136 in `index.html`, unchanged; protected blob remains `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
 - Fixed homologation: `https://lthomesilveira-ui.github.io/lts-wealth-/homologacao.html`.
-- Fixed homologation selects **CANONICAL v1.16 · Planejamento V151 recuperado** through `canonical-app.html`, exact product `4028321fed599496d29798e3e2d1c47c48bc54d1`, product tree `0776d7e4de0f63eae13ad92f01fc47acc799e148`, exposure `d9a63c96e2674f7bf8d615e29643598bd8146537`; public `index.html` is unchanged.
+- Fixed homologation selects **canonical v1.17 product language** through `canonical-app.html`, exact product `e4cea67563ac379d5bf47d02d20846699194a002`, product tree `9037c73840167b1cfe1d36e2b8cc2b6f90d101f7`, exposure `06fdcbba8f1cbcae6af2ebf153a2291915195f96`; public `index.html` is unchanged.
 - Canonical frontend is a single application; no v150/v151/v156/v160 iframe/wrapper chain is part of the primary product.
-- Current gated modules: `canonical-liquidity-core.js`, `canonical-flow-v157.js`, `canonical-product-v157.js`, `canonical-presentation-v157.js`, `canonical-capabilities-v161.js`, `canonical-reviewed-input-v112.js`, plus the V1.16 V151 planning distinction, V1.15 Dashboard density, V1.14 read-only document-review and V1.13 Updates/intake contracts in `canonical-app.html`.
+- Current gated modules: `canonical-liquidity-core.js`, `canonical-flow-v157.js`, `canonical-product-v157.js`, `canonical-presentation-v157.js`, `canonical-capabilities-v161.js`, `canonical-reviewed-input-v112.js`, plus the V1.17 product-language guard, V1.16 V151 planning distinction, V1.15 Dashboard density, V1.14 read-only document-review and V1.13 Updates/intake contracts in `canonical-app.html`.
 - Modular recovery gate `34170935882` and permanent canonical gate `34171231918`: **SUCCESS** in Chromium desktop 1312×1199 and WebKit mobile 390×844.
 - Active/canonical/main candidate smokes `34170935887` / `34171231935` / `34171338575` and Pages `34171338335`: **SUCCESS**.
 - Post-manifest active/canonical/main candidate smokes `34171452083` / `34171452913` / `34171453488` and Pages `34171452759`: **SUCCESS**.
@@ -55,12 +55,22 @@ Purpose: evidence-backed sequence before asking the user to inspect a material c
 - V1.16 post-exposure active/canonical/main smokes `34262885534` / `34262887519` / `34262889285` and Pages `34262887576`: SUCCESS.
 - V1.16 artifacts: recovery `10070303869` / `sha256:4dc750647554451639e78d7bc4af15de8690b81fdf28f48b4e7908088632140b`; canonical `10070422301` / `sha256:5ac0f9b13f98820ab7ed87c79debdc8643703d0d82df9fbfa6e01689106492da`; exposure Pages `10070593792` / `sha256:6c3e77988732f9852214e6c7eabb1f934973ad8e60616eb6d04c85faa625bbbc`.
 - Fixed-URL live verification resolved to `canonical-app.html?homologacao=4028321…#Dashboard`, loaded `?v=20260908-planning16`, truthful signed-out login with blank fields, zero iframe, zero fixture badge/raw JWT and no application error.
-- Current immutable evidence: `backups/CANONICAL_APP_V116_PLANNING_DECISION_CHECKPOINT_2026-09-08.md`.
+- V1.17 recovery gate/smoke `34267339089` / `34267339099`, canonical gate/smoke `34267537086` / `34267537120`, main smoke/Pages `34267717067` / `34267715832`: SUCCESS.
+- V1.17 post-exposure active/canonical/main smokes `34267927974` / `34267929858` / `34267932211` and Pages `34267929912`: SUCCESS.
+- V1.17 artifacts: recovery `10072405055` / `sha256:200786a5aee8034f91f7b625234a10900cb7e444ca754c1a5f4354177e0537a4`; canonical `10072479667` / `sha256:b135f99fbc2b64a029d5c462865d8e4461f93667bc0fdf1b73e0ca29c6dff4a7`; product Pages `10072497570` / `sha256:76738dc52c4522e405866f203e4711269b6adf1fd97538c28563f64ec7580048`; exposure Pages `10072584498` / `sha256:89d724b71905784ff47dac2fc36fda196c4f9b2e159533e49340da7a654ec478`.
+- Fixed-URL live verification resolved to `canonical-app.html?homologacao=e4cea675…#Dashboard`, loaded `?v=20260908-ux17`, truthful signed-out login with blank fields, zero iframe, zero fixture/technical build badge/raw JWT and no application error.
+- Current immutable evidence: `backups/CANONICAL_APP_V117_PRODUCT_LANGUAGE_CHECKPOINT_2026-09-08.md`; recovered decision ledger: `backups/TWO_MONTH_FEEDBACK_RECOVERY_CHECKPOINT_2026-09-08.md`.
 - Durable briefing/decision map: `LTS_WEALTH_REQUIREMENTS_TRACEABILITY.md`.
 - `promotion_status:not_promoted`; public root promotion is NOT AUTHORIZED / NOT DONE.
 - Authenticated physical-iPhone visual/data E2E: PENDING / NOT CLAIMED.
 
-## Canonical v1.16 V151 Planning Decision Recovery — selected for fixed exposure
+## Canonical v1.17 Product Language — selected for fixed exposure
+- Exact product is `e4cea67563ac379d5bf47d02d20846699194a002`; fixed-manifest exposure is `06fdcbba8f1cbcae6af2ebf153a2291915195f96`; no public-root change and no wrapper reintroduction.
+- Contract `user-facing-product-language-v1` removes technical build/release labels from normal routes and retains diagnostics only for automated/internal evidence.
+- The gate rejects any visible `LTS`, `CANONICAL` or `WIP35` build/release badge while preserving every v1.16→v1.9 contract.
+- Authenticated real-data/write/document lifecycles and physical-iPhone evidence remain OPEN / NOT CLAIMED.
+
+## Canonical v1.16 V151 Planning Decision Recovery — protected predecessor
 - Exact product is `4028321fed599496d29798e3e2d1c47c48bc54d1`; fixed-manifest exposure is `d9a63c96e2674f7bf8d615e29643598bd8146537`; no public-root change and no wrapper reintroduction.
 - Contract `v151-first-negative-management-separation-v1` distinguishes the first projected negative date from the earlier management-action date in a prominent planning callout.
 - A red chart point/guide requires an exact matching horizon row whose evidenced `base` is negative. Absent that row, the product remains date-only and never interpolates a financial value.

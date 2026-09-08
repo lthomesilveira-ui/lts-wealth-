@@ -1,11 +1,11 @@
 # LTS Wealth — Canonical Delivery Master Plan
 
-Last refreshed: 2026-09-08 15:33 BRT
-Active implementation branch: `canonical-v157plus-product-recovery` (canonical v1.16 product `4028321fed599496d29798e3e2d1c47c48bc54d1`; product tree `0776d7e4de0f63eae13ad92f01fc47acc799e148`; fixed-manifest exposure `d9a63c96e2674f7bf8d615e29643598bd8146537`; shared documentation/checkpoint closure follows by normal fast-forward)
+Last refreshed: 2026-09-08 16:21 BRT
+Active implementation branch: `canonical-v157plus-product-recovery` (canonical v1.17 product `e4cea67563ac379d5bf47d02d20846699194a002`; product tree `9037c73840167b1cfe1d36e2b8cc2b6f90d101f7`; fixed-manifest exposure `06fdcbba8f1cbcae6af2ebf153a2291915195f96`; shared documentation/checkpoint closure follows by normal fast-forward)
 
 Purpose: this is the execution-order view of the LTS Wealth backlog. It does not replace documentary evidence or immutable checkpoints. `PROJECT_MASTER_BACKLOG.md` remains the complete persistent dependency list. This file makes the remaining work explicit so product delivery does not get lost behind release mechanics.
 
-Current milestone: canonical v1.16 preserves the v1.15→v1.9 line and restores the V151 distinction between the first projected negative date and the earlier management-action date without interpolating a financial value. The approved 1312×1199 density, local Chromium, recovery/canonical Chromium+WebKit, all pre/post-exposure smokes and Pages are green; the fixed URL resolves to the exact v1.16 product. Authenticated real lifecycles, physical-device evidence and remaining evidence-led product detail remain P0.
+Current milestone: canonical v1.17 preserves the complete v1.16→v1.9 line and removes internal build/release language from the normal user interface without changing financial truth. The approved 1312×1199 density, local Chromium, recovery/canonical Chromium+WebKit, all pre/post-exposure smokes and Pages are green; the fixed URL resolves to the exact v1.17 product. Authenticated real lifecycles, historical anomaly closure, holistic UX completion and physical-device evidence remain P0.
 
 ## Definition of DONE for the app
 The LTS Wealth app is not considered delivered until all P0 items below are complete together in one canonical application:
@@ -27,6 +27,7 @@ The LTS Wealth app is not considered delivered until all P0 items below are comp
 - [x] Connect directly to the existing authenticated data/RPC layer.
 - [x] Preserve backend, financial rules, history, classification rules and documentary evidence.
 - [x] Remove historical release branding/UI from the primary product surface.
+- [x] V1.17 product-language guard removes fixed build badges and technical release labels from every normal route while retaining internal diagnostics.
 - [x] Add explicit loading, unauthenticated, error and data-ready states.
 
 ### P0.2 Dashboard — approved visual contract
@@ -70,7 +71,7 @@ The LTS Wealth app is not considered delivered until all P0 items below are comp
 - [x] No-horizontal-overflow and no-sustained-DOM-churn checks.
 - [x] Auth-truth / missing-data truth checks.
 - [x] One machine-readable `lts-canonical-definition-of-done-receipt-v1` maps the recovered requirements and separates automatic PASS from authenticated-real/physical-device claims.
-- [x] Fixed homologation manifest selects exact green canonical v1.16 product `4028321…` through exposure `d9a63c9…`; public promotion remains separate and unauthorized.
+- [x] Fixed homologation manifest selects exact green canonical v1.17 product `e4cea675…` through exposure `06fdcbba…`; public promotion remains separate and unauthorized.
 
 ### P0.6 Supabase security hardening
 - [x] Inventory the 13 `public` tables currently reported with RLS disabled.
@@ -80,6 +81,13 @@ The LTS Wealth app is not considered delivered until all P0 items below are comp
 - [x] Apply migration `20260908045049` as one bounded package; preserve `service_role`, secure future object defaults and pass authenticated Flow/Dashboard/product regression inside rollback.
 - [x] Recheck Security Advisor and exact catalog postconditions: no RLS-disabled or anonymous SECURITY DEFINER findings; zero authenticated SECURITY DEFINER functions lacking a direct guard under the audited rule.
 - [ ] Review and enable leaked-password protection under a controlled Auth change window.
+
+### P0.7 Holistic UX closure
+- [~] Audit the whole application against the official Dashboard model, the recovered Homologação/Execução decisions and the validated V150–V151+ behavior floor.
+- [ ] Remove duplicated actions, technical language, dead space, unclear hierarchy and inconsistent interaction patterns only where the change preserves financial truth and auditability.
+- [ ] Confirm every primary action has a visible loading, success, empty and safe error state; do not hide missing evidence behind polished placeholders.
+- [ ] Re-run visual comparison at 1312×1199 and responsive review at 390×844 after the final coherent UX package.
+- [ ] Record final UX decisions and rejected alternatives in an immutable checkpoint before asking for material homologation.
 
 ## P1 — Core functional modules in the canonical app
 ### P1.1 Fluxo Diário
@@ -133,7 +141,8 @@ The LTS Wealth app is not considered delivered until all P0 items below are comp
 ### P2.2 Classification lifecycle
 - [x] Classification is the foreground action in `Atualizações`; documents/secondary work remain under collapsed `Outras ações que precisam de você` per V147.
 - [ ] Real authenticated save → refresh → resolved disappearance / retry / `O que mudou`.
-- [ ] Evidence hierarchy stays: user-confirmed rule > exact/consistent LTS history > public merchant research > manual review.
+- [~] Evidence precedence stays: user decision > generated classification already accepted/evidenced > reconciliation link > bounded text rule > unclassified; raw source remains immutable.
+- [ ] Public merchant research is shown only as a separate suggestion with confidence/evidence; it never proves purpose or silently promotes a classification.
 - [ ] Marketplaces/intermediaries never determine purchase purpose alone.
 
 ### P2.3 Documents / interpretation
@@ -185,6 +194,12 @@ The LTS Wealth app is not considered delivered until all P0 items below are comp
 
 ### P3.5 Historical continuity
 - [~] Audit open dependencies back to project start 07/07/2026 so no prior improvement disappears.
+- [ ] Explain/correct the 01/01/2026 zero/negative balance behavior while preserving Realizado ≠ Projetado.
+- [ ] Verify the rejected 24/08 yellow band is absent without altering the validated `+` position/column order.
+- [ ] Investigate the R$0,01 Bradesco difference and 06/08 Cofrinho event from source evidence.
+- [ ] Keep the 12/08 Bradesco R$0,17 interval and Cofrinho R$186,10 timing as documentary gaps, not inferred facts.
+- [ ] Produce original-versus-app comparisons for 31/12/2026 and 31/12/2029; no recovered result currently closes either date.
+- [x] Consolidate the recovered two-month decision ledger in `backups/TWO_MONTH_FEEDBACK_RECOVERY_CHECKPOINT_2026-09-08.md`.
 
 ## P4 — Open Finance
 Open Finance is still part of the product roadmap. It was not cancelled; work was interrupted by the unresolved app/frontend delivery problem.
@@ -225,13 +240,14 @@ Open Finance is still part of the product roadmap. It was not cancelled; work wa
 - [ ] Preserve fixed homologation/public links.
 
 ## Execution order from now
-1. Preserve canonical v1.16 product `4028321…` and exposure `d9a63c9…` as the current product baseline.
-2. Preserve v1.16 V151 planning distinction, v1.15 approved 1312×1199 single-screen Dashboard density, v1.14 V149 read-only document review, v1.13 classification-first guided intake, v1.12 reviewed input, v1.11 liquidity layers, v1.10 decision truth, v1.9 Flow parity, route/session continuity and the automatic receipt as protected regression baselines.
-3. Continue the two-project historical audit and evidence-led Dashboard/Despesas/Atualizações refinement without changing financial truth, confusing scenarios with facts or reintroducing wrapper ownership.
-4. Execute real authenticated desktop and physical-iPhone lifecycles for Dashboard, Flow, search/CSV, classification, liquidity, documents and backup/restore; use them to close the corresponding receipt rows.
-5. Keep the Supabase security baseline regression-protected and review leaked-password protection in a controlled Auth window.
-6. Continue documentary gaps and Open Finance provider evidence, while provider/consent/spend waits for explicit user decision.
-7. Promote `index.html` only after the complete receipt and explicit user authorization.
+1. Preserve canonical v1.17 product `e4cea675…` and exposure `06fdcbba…` as the current product baseline.
+2. Preserve v1.17 product language, v1.16 V151 planning distinction, v1.15 approved 1312×1199 single-screen Dashboard density, v1.14 V149 read-only document review, v1.13 classification-first guided intake, v1.12 reviewed input, v1.11 liquidity layers, v1.10 decision truth, v1.9 Flow parity, route/session continuity and the automatic receipt as protected regression baselines.
+3. Close the evidence-led 01/01/2026, 24/08 yellow-band, Bradesco/Cofrinho and 31/12/2026–31/12/2029 historical audits without inventing facts.
+4. Complete the holistic Dashboard/Flow/Despesas/Patrimônio/Cartões/Atualizações UX audit and implement one coherent regression-gated package.
+5. Execute real authenticated desktop and physical-iPhone lifecycles for Dashboard, Flow, search/CSV, classification, liquidity, documents and backup/restore; use them to close the corresponding receipt rows.
+6. Keep the Supabase security baseline regression-protected and review leaked-password protection in a controlled Auth window.
+7. Continue documentary gaps and Open Finance provider evidence, while provider/consent/spend waits for explicit user decision.
+8. Promote `index.html` only after the complete receipt and explicit user authorization.
 
 ## Current user action
 NONE. Continue autonomous work until a real financial/classification/provider/consent decision is necessary or a materially testable canonical app is ready.

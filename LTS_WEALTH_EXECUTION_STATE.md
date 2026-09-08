@@ -12,19 +12,24 @@ Purpose: compact operational bootstrap so project execution never depends on a l
 7. Before a repository write, freshness-check `main`, active branch, this file, and the SHAs of `PROJECT_MASTER_BACKLOG.md`, `NEXT_HOMOLOGATION_GATE.md`, `LTS_WEALTH_CONTINUITY_HANDOFF.md`, `CANONICAL_DELIVERY_MASTER_PLAN.md` and latest immutable checkpoint. Use line-limited reads; fully re-read only a file whose SHA changed or whose relevant section is needed.
 8. After every material package, gate, integration or newly discovered blocker, update this file so a chat may be abandoned/restarted at any moment without reconstruction work.
 
-## Current execution state — 08/09/2026 15:33 BRT
+## Current execution state — 08/09/2026 16:21 BRT
 - Repo: `lthomesilveira-ui/lts-wealth-`; active recovery branch remains `canonical-v157plus-product-recovery`.
-- Canonical v1.16 exact remote product is `4028321fed599496d29798e3e2d1c47c48bc54d1`, tree `0776d7e4de0f63eae13ad92f01fc47acc799e148`; fixed-manifest exposure is `d9a63c96e2674f7bf8d615e29643598bd8146537`, tree `0c2dc3c7c38051f8c11008f35651aebf405149f3`. `main`, `canonical-app-v1` and the active branch share the exposure through normal no-force fast-forward.
-- V1.16 closes an objective V151 planning gap under contract `v151-first-negative-management-separation-v1`: the first projected negative date and earlier management date are separate high-emphasis decision signals rather than tiny metadata pills.
-- The planning chart draws a red point/guide only for an exact evidenced horizon row whose `base` is negative. Missing exact evidence stays date-only; no value is approximated or interpolated.
-- The approved 1312×1199 Dashboard density remains exact, both four-layer liquidity legends remain visible and mobile remains intentionally scrollable without horizontal clipping.
-- V1.16 preserves v1.15 density, v1.14 V149 read-only review, v1.13 classification-first guided intake, v1.12 reviewed input, v1.11 layered liquidity, v1.10 decision truth, v1.9 V150/V151+ Flow parity, v1.8 single-owner Despesas and the protected Supabase baseline.
-- Product recovery gate/smoke `34262013499` / `34262013502`, canonical gate/smoke `34262279303` / `34262278639`, main smoke/Pages `34262576921` / `34262575286`: SUCCESS. Post-exposure active/canonical/main smokes `34262885534` / `34262887519` / `34262889285` and Pages `34262887576`: SUCCESS.
-- Recovery artifact `10070303869`, digest `sha256:4dc750647554451639e78d7bc4af15de8690b81fdf28f48b4e7908088632140b`; canonical artifact `10070422301`, digest `sha256:5ac0f9b13f98820ab7ed87c79debdc8643703d0d82df9fbfa6e01689106492da`; exposure Pages artifact `10070593792`, digest `sha256:6c3e77988732f9852214e6c7eabb1f934973ad8e60616eb6d04c85faa625bbbc`.
-- Fixed URL resolves to `canonical-app.html?homologacao=4028321…#Dashboard`, loads `?v=20260908-planning16`, renders truthful blank signed-out login, uses zero iframes and exposes no fixture badge, raw JWT or application error.
-- Latest immutable evidence: `backups/CANONICAL_APP_V116_PLANNING_DECISION_CHECKPOINT_2026-09-08.md`.
+- Canonical v1.17 exact remote product is `e4cea67563ac379d5bf47d02d20846699194a002`, tree `9037c73840167b1cfe1d36e2b8cc2b6f90d101f7`; fixed-manifest exposure is `06fdcbba8f1cbcae6af2ebf153a2291915195f96`, tree `4d3a917076380bfc81d8a0a74842d97eb1fe38f9`. `main`, `canonical-app-v1` and the active branch share the exposure through normal no-force fast-forward.
+- V1.17 closes user-facing technical-version leakage under contract `user-facing-product-language-v1`: fixed build badges and header release labels are absent from every normal route while internal version data remains available for diagnostics/gates.
+- The permanent gate now rejects any user route that exposes an `LTS`, `CANONICAL` or `WIP35` release label/build badge. No financial value, calculation, classification, documentary rule, writer or route ownership changed.
+- V1.17 preserves v1.16 first-negative/management separation, v1.15 density, v1.14 V149 read-only review, v1.13 classification-first guided intake, v1.12 reviewed input, v1.11 layered liquidity, v1.10 decision truth, v1.9 V150/V151+ Flow parity, v1.8 single-owner Despesas and the protected Supabase baseline.
+- Product recovery gate/smoke `34267339089` / `34267339099`, canonical gate/smoke `34267537086` / `34267537120`, main smoke/Pages `34267717067` / `34267715832`: SUCCESS. Post-exposure active/canonical/main smokes `34267927974` / `34267929858` / `34267932211` and Pages `34267929912`: SUCCESS.
+- Recovery artifact `10072405055`, digest `sha256:200786a5aee8034f91f7b625234a10900cb7e444ca754c1a5f4354177e0537a4`; canonical artifact `10072479667`, digest `sha256:b135f99fbc2b64a029d5c462865d8e4461f93667bc0fdf1b73e0ca29c6dff4a7`; product/exposure Pages artifacts `10072497570` / `10072584498` with digests `sha256:76738dc52c4522e405866f203e4711269b6adf1fd97538c28563f64ec7580048` / `sha256:89d724b71905784ff47dac2fc36fda196c4f9b2e159533e49340da7a654ec478`.
+- Fixed URL resolves to `canonical-app.html?homologacao=e4cea675…#Dashboard`, loads `?v=20260908-ux17`, renders truthful blank signed-out login, uses zero iframes and exposes no fixture badge, technical build label, raw JWT or application error.
+- Latest immutable evidence: `backups/CANONICAL_APP_V117_PRODUCT_LANGUAGE_CHECKPOINT_2026-09-08.md`; recovered two-month decision ledger: `backups/TWO_MONTH_FEEDBACK_RECOVERY_CHECKPOINT_2026-09-08.md`.
 - Authenticated real data/write/document/backup lifecycles, physical-iPhone E2E and public-root promotion remain open/not claimed. No approved standalone Reports visual was recovered, so none may be invented.
 - Public `index.html` remains protected at blob `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`; public-root promotion is not authorized.
+
+## Prior canonical v1.16 state — retained as evidence
+- Canonical v1.16 exact remote product is `4028321fed599496d29798e3e2d1c47c48bc54d1`, tree `0776d7e4de0f63eae13ad92f01fc47acc799e148`; fixed-manifest exposure is `d9a63c96e2674f7bf8d615e29643598bd8146537`, tree `0c2dc3c7c38051f8c11008f35651aebf405149f3`.
+- Contract `v151-first-negative-management-separation-v1` separates the exact first projected negative date from the earlier management-action date and never interpolates a missing negative value.
+- Product recovery/canonical gates `34262013499` / `34262279303` and all associated candidate, Pages and post-exposure smokes passed.
+- Immutable evidence: `backups/CANONICAL_APP_V116_PLANNING_DECISION_CHECKPOINT_2026-09-08.md`.
 
 ## Prior canonical v1.15 state — retained as evidence
 - Canonical v1.15 exact remote product is `a0a2675e6a9c9b3ffe4d9b0bc1fab222a48bc347`, tree `667ef2fcae8c5630b5a60b4d62ee2986ad438e92`; fixed-manifest exposure is `b1998a9178ef3a8eec90dd47aa21e31dad8c868a`, tree `f8a68fa98658f1718eccfd6b716f4607ad2d516e`.
@@ -116,14 +121,15 @@ Purpose: compact operational bootstrap so project execution never depends on a l
 - Historical v144–v160 workflows remain manually/branch runnable but no longer run automatically on `main`; their wrapper-specific failures are not canonical release gates.
 
 ## Current immediate execution sequence
-1. Treat canonical v1.16 product `4028321…` and exposure `d9a63c9…` as the current protected baseline; do not regress its V151 first-negative/management distinction, 1312×1199 Dashboard density, V149 read-only document review, v1.13 classification-first/document-intake contract, v1.12 reviewed input, v1.11 layered liquidity, v1.10 decision truth, v1.9 V150 Flow or public `index.html`.
+1. Treat canonical v1.17 product `e4cea675…` and exposure `06fdcbba…` as the current protected baseline; do not regress user-facing product language, V151 first-negative/management distinction, 1312×1199 Dashboard density, V149 read-only document review, v1.13 classification-first/document-intake contract, v1.12 reviewed input, v1.11 layered liquidity, v1.10 decision truth, v1.9 V150 Flow or public `index.html`.
 2. Use `LTS_WEALTH_REQUIREMENTS_TRACEABILITY.md` as the durable map from briefing → implementation → validation → pending; append recovered facts rather than relying on chat memory.
-3. Continue the audit of both historical projects and evidence-led product detail without copying financial values from reference images; recovered feedback is binding only where explicitly attributed to the user.
-4. Treat the bounded Supabase RLS/SECURITY DEFINER package as the protected security baseline; leaked-password protection remains a separate controlled Auth-setting change.
-5. Keep the route/session continuity contract and unified receipt regression-protected; the automatic gate is complete, while its authenticated-real/physical-device rows remain honestly open.
-6. Keep the v1.8 single-owner Despesas route, v1.9 V150 Flow parity, v1.10 fact/projection/commitment semantics, v1.11 liquidity layers, v1.12 reviewed input, v1.13 classification-first/document intake, v1.14 read-only interpretation review, v1.15 Dashboard density and v1.16 planning distinction regression-protected; execute the real document lifecycle and remaining write/search/backup-restore lifecycles when an authenticated browser identity is available.
-7. Keep authenticated physical-iPhone E2E explicitly unclaimed until actually performed.
-8. Preserve `promotion_status:not_promoted` and protected `index.html` until explicit user authorization.
+3. Use `backups/TWO_MONTH_FEEDBACK_RECOVERY_CHECKPOINT_2026-09-08.md` to close the evidence-led 01/01/2026, 24/08 yellow-band, Bradesco/Cofrinho and 31/12/2026–31/12/2029 audits without copying illustrative values or turning hypotheses into facts.
+4. Complete the whole-app UX audit only on top of the recovered correctness/interaction floors, then release one coherent regression-gated package.
+5. Treat the bounded Supabase RLS/SECURITY DEFINER package as the protected security baseline; leaked-password protection remains a separate controlled Auth-setting change.
+6. Keep the route/session continuity contract and unified receipt regression-protected; the automatic gate is complete, while its authenticated-real/physical-device rows remain honestly open.
+7. Keep v1.17 product language, v1.8 single-owner Despesas, v1.9 V150 Flow parity, v1.10 fact/projection/commitment semantics, v1.11 liquidity layers, v1.12 reviewed input, v1.13 classification-first/document intake, v1.14 read-only interpretation review, v1.15 Dashboard density and v1.16 planning distinction regression-protected; execute real lifecycles when an authenticated browser identity is available.
+8. Keep authenticated physical-iPhone E2E explicitly unclaimed until actually performed.
+9. Preserve `promotion_status:not_promoted` and protected `index.html` until explicit user authorization.
 
 ## Previous immediate sequence — superseded by the sequence above
 1. Keep `main`, `canonical-app-v1` and `canonical-v157plus-product-recovery` aligned by normal no-force updates only.

@@ -1,6 +1,6 @@
 # LTS Wealth — Continuity Handoff
 
-Last materially refreshed: 2026-09-08 15:33 BRT (America/Sao_Paulo)
+Last materially refreshed: 2026-09-08 16:21 BRT (America/Sao_Paulo)
 
 This file exists so project continuity never depends on chat context. Always re-fetch `main`, active branch, `PROJECT_MASTER_BACKLOG.md`, `NEXT_HOMOLOGATION_GATE.md`, this file and the latest immutable checkpoint before every repository write.
 
@@ -24,7 +24,19 @@ This file exists so project continuity never depends on chat context. Always re-
 - Public fallback remains WIP35-v136; protected `index.html` blob remains `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
 - Public promotion remains unauthorized/not done.
 
-## Current exposed product — canonical v1.16 V151 Planning Decision Recovery
+## Current exposed product — canonical v1.17 Product Language
+- Exact remote product `e4cea67563ac379d5bf47d02d20846699194a002`, product tree `9037c73840167b1cfe1d36e2b8cc2b6f90d101f7`; fixed-manifest exposure `06fdcbba8f1cbcae6af2ebf153a2291915195f96`, exposure tree `4d3a917076380bfc81d8a0a74842d97eb1fe38f9`; all three release branches share the exposure through normal no-force fast-forward.
+- Contract `user-facing-product-language-v1` removes internal build/release labels from every normal product route while keeping internal diagnostics available to the gates.
+- Fluxo no longer shows a fixed build badge; Patrimônio/Cartões headers show data recency rather than module releases; Central de Gestão shows data-loading state rather than a build identifier.
+- The permanent gate fails if any canonical route exposes an `LTS`, `CANONICAL` or `WIP35` release label/build badge. No financial values or semantics changed.
+- V1.17 preserves v1.16 planning separation, v1.15 density, v1.14 V149 review, v1.13 hierarchy/intake, v1.12 reviewed input, v1.11 liquidity layers, v1.10 decision truth, v1.9 V150/V151+ Flow parity and every canonical route/session/security baseline.
+- Recovery/canonical gates `34267339089` / `34267537086`, candidate smokes `34267339099` / `34267537120`, main smoke/Pages `34267717067` / `34267715832`, post-exposure smokes `34267927974` / `34267929858` / `34267932211` and Pages `34267929912`: SUCCESS.
+- Artifacts: recovery `10072405055` / `sha256:200786a5aee8034f91f7b625234a10900cb7e444ca754c1a5f4354177e0537a4`; canonical `10072479667` / `sha256:b135f99fbc2b64a029d5c462865d8e4461f93667bc0fdf1b73e0ca29c6dff4a7`; product/exposure Pages `10072497570` / `10072584498`.
+- Fixed homologation resolves to `canonical-app.html?homologacao=e4cea675…#Dashboard`, loads `?v=20260908-ux17`, renders a truthful blank signed-out login and exposes zero iframe, fixture badge, technical release badge, raw JWT or application error.
+- Latest immutable checkpoints: `backups/CANONICAL_APP_V117_PRODUCT_LANGUAGE_CHECKPOINT_2026-09-08.md` and `backups/TWO_MONTH_FEEDBACK_RECOVERY_CHECKPOINT_2026-09-08.md`.
+- Authenticated real lifecycles, physical-iPhone E2E and public-root promotion remain explicitly open/not claimed. No approved standalone Reports visual was recovered; do not invent one.
+
+## Protected predecessor — canonical v1.16 V151 Planning Decision Recovery
 - Exact remote product `4028321fed599496d29798e3e2d1c47c48bc54d1`, product tree `0776d7e4de0f63eae13ad92f01fc47acc799e148`; fixed-manifest exposure `d9a63c96e2674f7bf8d615e29643598bd8146537`, exposure tree `0c2dc3c7c38051f8c11008f35651aebf405149f3`; all three release branches share the exposure through normal no-force fast-forward.
 - Contract `v151-first-negative-management-separation-v1` restores the V151 distinction between the first projected negative date and the earlier management-action date as an explicit planning decision signal.
 - A red chart point/guide is rendered only when the exact first-negative horizon row exists and its evidenced `base` is below zero. Otherwise the product presents the date without fabricating/interpolating a value.

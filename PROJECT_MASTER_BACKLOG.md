@@ -4,6 +4,28 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 
 Canonical persistent project list. Never remove an open financial, documentary, classification, reconciliation or product dependency during compaction. Detailed immutable evidence remains in `backups/`, `HISTORICAL_RECOVERY_LOG.md`, `PLANNING_EXCEL_TO_CURRENT_AUDIT_2026-08-30.md`, `NEXT_HOMOLOGATION_GATE.md` and release checkpoints.
 
+## P0 — Product language / canonical v1.17 — 08/09/2026
+- [x] Removed fixed build/version badges and technical release labels from all normal canonical routes under `user-facing-product-language-v1`.
+- [x] Preserved internal version diagnostics for gates while changing no financial values, calculations, classifications, documents, writers or route ownership.
+- [x] Extended the permanent gate to reject user-facing `LTS`, `CANONICAL` or `WIP35` release/build leakage.
+- [x] Local Chromium desktop/mobile gate and all route/Flow/input/document/session regressions: PASS.
+- [x] Exact remote product `e4cea67563ac379d5bf47d02d20846699194a002`, tree `9037c73840167b1cfe1d36e2b8cc2b6f90d101f7`; exposure `06fdcbba8f1cbcae6af2ebf153a2291915195f96`, tree `4d3a917076380bfc81d8a0a74842d97eb1fe38f9`; all three branches aligned by normal no-force fast-forward.
+- [x] Recovery/canonical gates `34267339089` / `34267537086`, main Pages `34267715832`, post-exposure active/canonical/main smokes `34267927974` / `34267929858` / `34267932211` and Pages `34267929912`: SUCCESS.
+- [x] Fixed link browser-verified on exact v1.17 product/assets with truthful signed-out login, zero iframe/fixture/technical build badge/raw JWT/application error.
+- [x] Immutable checkpoint `backups/CANONICAL_APP_V117_PRODUCT_LANGUAGE_CHECKPOINT_2026-09-08.md`.
+- [ ] Authenticated-real and physical-iPhone evidence remain open/not claimed.
+
+## P0 — Two-month feedback recovery and unresolved historical audits — 08/09/2026
+- [x] Consolidated recovered Homologação/Execução product, Flow, classification, documentary, financial and operating decisions in `backups/TWO_MONTH_FEEDBACK_RECOVERY_CHECKPOINT_2026-09-08.md`.
+- [x] Protected V150–V152 as the rich Flow floor and V153 as the material visible regression point; later improvements must be additive.
+- [x] Recorded V147 classification-first, V148 save→refresh→`O que mudou`, V149 read-only evidence review and Fix85 precedence/raw-evidence constraints.
+- [ ] Explain/correct the 01/01/2026 zero/negative balance behavior without confusing `Realizado` and projection.
+- [ ] Verify the rejected yellow band reported on 24/08 is absent while retaining the validated `+` position and column order.
+- [ ] Investigate the R$0,01 Bradesco discrepancy and 06/08 Cofrinho event from raw/documentary evidence.
+- [ ] Keep the 12/08 Bradesco R$0,17 interval and Cofrinho R$186,10 timing as explicit documentary gaps until proved.
+- [ ] Produce original-versus-app comparisons for 31/12/2026 and 31/12/2029; no recovered result currently validates either date.
+- [~] Complete the whole-app UX audit after evidence-led correctness gaps, then implement one coherent gated package rather than isolated microchanges.
+
 ## P0 — V151 Planning decision recovery / canonical v1.16 — 08/09/2026
 - [x] Re-audited the V151 planning sources and the official 1312×1199 Dashboard reference; identified that canonical v1.15 reduced first-negative and management dates to low-emphasis pills instead of the approved decision cue.
 - [x] Added contract `v151-first-negative-management-separation-v1` without changing any financial value or restoring wrapper architecture.
