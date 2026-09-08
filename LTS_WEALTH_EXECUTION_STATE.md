@@ -14,7 +14,7 @@ Purpose: compact operational bootstrap so project execution never depends on a l
 
 ## Current execution state — 08/09/2026 10:15 BRT
 - Repo: `lthomesilveira-ui/lts-wealth-`; active recovery branch remains `canonical-v157plus-product-recovery`.
-- Canonical v1.11 exact product is `8a9c675ed3940da19a10c04e56249a315576045a`; fixed-manifest exposure is `04c051f19167e913079bb8e75b692f5fe430892c`. All three branches are aligned at that exposure; this documentation/checkpoint closure is the next shared fast-forward. Public `index.html` remains untouched.
+- Canonical v1.11 exact product is `8a9c675ed3940da19a10c04e56249a315576045a`; fixed-manifest exposure is `04c051f19167e913079bb8e75b692f5fe430892c`. All three branches share the product, exposure and documentation/checkpoint closure through normal fast-forward. Public `index.html` remains untouched.
 - Dashboard contract `reference-layered-liquidity-commitments-v3` preserves v1.10 decision truth and adds contract `current-base-scheduled-rsu-restricted-fgts-v1`: current evidenced position is anchored from cockpit `through_d3`; future base operational liquidity, conditional scheduled vestings and restricted FGTS D+30 remain separate series and never become current cash.
 - V1.11 pre-exposure recovery gate/smoke `34229899061` / `34229899074`, canonical gate/smoke `34230146792` / `34230146827`, main smoke/Pages `34230384306` / `34230382218`: SUCCESS. Post-exposure active/canonical/main smokes `34230610235` / `34230659383` / `34230705729` and Pages `34230705397`: SUCCESS.
 - Recovery artifact `10057369616`, digest `sha256:5939e41b70411530e1668546d83764ea48454e72598e0c1e7dc967a0414e87d2`; canonical artifact `10057455711`, digest `sha256:b3cea9b02272be1495797ed8151fadcda8c3e865929729d648c12e43017aea34`.

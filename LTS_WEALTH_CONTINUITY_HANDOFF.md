@@ -25,7 +25,7 @@ This file exists so project continuity never depends on chat context. Always re-
 - Public promotion remains unauthorized/not done.
 
 ## Current exposed product — canonical v1.11 Layered Liquidity
-- Exact product `8a9c675ed3940da19a10c04e56249a315576045a`; fixed-manifest exposure `04c051f19167e913079bb8e75b692f5fe430892c`; all three release branches were promoted only by normal fast-forward and this documentation/checkpoint closure is their next common commit.
+- Exact product `8a9c675ed3940da19a10c04e56249a315576045a`; fixed-manifest exposure `04c051f19167e913079bb8e75b692f5fe430892c`; all three release branches share the product, exposure and documentation/checkpoint closure through normal fast-forward.
 - Dashboard contract `reference-layered-liquidity-commitments-v3` preserves the observed/projected truth boundary and adds liquidity-layer contract `current-base-scheduled-rsu-restricted-fgts-v1`.
 - Cockpit `through_d3` is the evidenced current anchor. `current_liquidity_balance` is the future base; `conditional_rsu_balance` is the scheduled-vesting scenario; `restricted_total_balance` is the FGTS-inclusive contingency. Conditional/restricted paths never become the current position.
 - `Próximos Compromissos` no longer reads `cockpit.work.top_actions`. Its only sources are card `next_due` and `product.commitments.commitments` rows with explicit `next_due`; missing next dates are omitted rather than inferred from historical start dates.

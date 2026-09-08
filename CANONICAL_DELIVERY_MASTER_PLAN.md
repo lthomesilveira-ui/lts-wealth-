@@ -1,7 +1,7 @@
 # LTS Wealth — Canonical Delivery Master Plan
 
 Last refreshed: 2026-09-08 10:15 BRT
-Active implementation branch: `canonical-v157plus-product-recovery` (canonical v1.11 product `8a9c675ed3940da19a10c04e56249a315576045a`; fixed-manifest exposure `04c051f19167e913079bb8e75b692f5fe430892c`; this checkpoint closure is the next shared fast-forward)
+Active implementation branch: `canonical-v157plus-product-recovery` (canonical v1.11 product `8a9c675ed3940da19a10c04e56249a315576045a`; fixed-manifest exposure `04c051f19167e913079bb8e75b692f5fe430892c`; shared documentation/checkpoint closure follows by normal fast-forward)
 
 Purpose: this is the execution-order view of the LTS Wealth backlog. It does not replace documentary evidence or immutable checkpoints. `PROJECT_MASTER_BACKLOG.md` remains the complete persistent dependency list. This file makes the remaining work explicit so product delivery does not get lost behind release mechanics.
 
