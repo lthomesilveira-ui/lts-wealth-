@@ -377,6 +377,7 @@ async function run(browserType, label, viewport) {
 
     await openRoute(page, 'Despesas', mobile);
     await page.waitForFunction(() => window.__LTS_CANONICAL_EXPENSE_STATUS?.ready === true);
+    await page.waitForSelector('#expenses-view .expense-insights', { state: 'visible' });
     const expenseStatus = await page.evaluate(() => window.__LTS_CANONICAL_EXPENSE_STATUS);
     if (expenseStatus.owner !== 'canonical-app'
         || expenseStatus.contract !== 'single-owner-history-nature-context-v1'
