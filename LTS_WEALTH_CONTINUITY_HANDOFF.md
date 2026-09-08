@@ -1,6 +1,6 @@
 # LTS Wealth — Continuity Handoff
 
-Last materially refreshed: 2026-09-07 22:15 BRT (America/Sao_Paulo)
+Last materially refreshed: 2026-09-07 23:35 BRT (America/Sao_Paulo)
 
 This file exists so project continuity never depends on chat context. Always re-fetch `main`, active branch, `PROJECT_MASTER_BACKLOG.md`, `NEXT_HOMOLOGATION_GATE.md`, this file and the latest immutable checkpoint before every repository write.
 
@@ -24,21 +24,31 @@ This file exists so project continuity never depends on chat context. Always re-
 - Public fallback remains WIP35-v136; protected `index.html` blob remains `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
 - Public promotion remains unauthorized/not done.
 
-## Current primary product — canonical app V157+
+## Current primary product — canonical app V157+ / capability recovery v1.6
 The primary product line is the single canonical frontend `canonical-app.html`. The v154→v160 wrapper lineage is historical evidence only and must not be reintroduced as the product architecture.
 
 Current facts:
 - single frontend; no release iframe/wrapper chain;
 - direct Supabase authentication/RPC integration;
 - same app owns Dashboard, Fluxo Diário, Despesas, Patrimônio, Cartões and Atualizações;
-- V157+ modular baseline `76f888dc0e668fb0e768c8cc825f56778f043f50`; Dashboard Pass 5 preserved; iPhone session product target `abe6180d37657cc47bf18036f524a95ff262df13`; exposure `0643f57e2b2b89b8cbf3ea6ba3c58296b4614ebd`;
-- canonical blobs: `canonical-app.html` `6f3301ad728f6561ffcbac41249d0e5f78feaea7`, `canonical-dashboard-fidelity.css` `8ca76632029a80b65ced58f0cf4a5704df2c0269`, `canonical-liquidity-core.js` `f15f04df5d7ba926fcfa2ab2352294367b9767ec`, `canonical-flow-v157.js` `0be38677b4afe95a8b725e8f9fd09d443508e01a`, `canonical-product-v157.js` `bb9bfe950e5de8fc87940c8e66b50729ba6fbed8`, `canonical-presentation-v157.js` `9f50f69ca33ef5c134cd771f86a958fed2aa1d89`;
+- V157+ modular baseline, Dashboard Pass 5 and iPhone future-JWT recovery remain preserved; current product target is `501fb48265b02a5416f0fc198a54abf8688ddd14`, exposure `39689a3ba6648eeb633cddec8feee26b7d8f6766`;
+- current changed blobs: `canonical-app.html` `c84cfa9d54cd299819ca5e64cb63af20217dd296`, `canonical-liquidity.js` `a0020ffd755dd493d7c807b554d78456dd0f1e09`, `canonical-capabilities-v161.js` `d55e0ada107df185d806404225599c38143d64f8`, permanent gate `5bd646bb0b6de1bad5d1460f395d78dd9181681d`, recovery workflow `e454012063aacdb9f32fd14c522eb29371567a74`;
 - modular recovery gate `34170935882` and permanent canonical gate `34171231918`: SUCCESS in Chromium desktop 1312×1199 and WebKit mobile 390×844;
 - all active/canonical/main candidate smokes and both pre/post-manifest Pages deployments are green; exact run inventory is in the immutable checkpoint;
-- future-JWT recovery gate `34174520963`, canonical gate `34174620205`, all pre/post-exposure smokes and Pages: SUCCESS;
-- fixed homologation is `canonical-app.html?homologacao=abe6180d37657cc47bf18036f524a95ff262df13` / `promotion_status:not_promoted`, browser-verified with session6 asset and truthful login;
-- latest immutable checkpoint: `backups/CANONICAL_APP_V157PLUS_IPHONE_SESSION_RECOVERY_CHECKPOINT_2026-09-07.md`;
+- current capability recovery/candidate `34179625830` / `34179625805`, canonical gate/candidate `34179823179` / `34179823167`, main candidate/Pages `34179954294` / `34179953893`: SUCCESS;
+- post-exposure active/canonical/main smokes `34180090300` / `34180147055` / `34180249928` and Pages `34180249315`: SUCCESS;
+- fixed homologation is `canonical-app.html?homologacao=501fb48265b02a5416f0fc198a54abf8688ddd14` / `promotion_status:not_promoted`, browser-verified with capabilities1 asset and truthful login;
+- latest immutable checkpoint: `backups/CANONICAL_APP_V161_BRIEFING_CAPABILITY_RECOVERY_CHECKPOINT_2026-09-07.md`;
 - authenticated physical-iPhone financial/data E2E remains pending/not claimed.
+
+## Canonical v1.6 — recovered briefing capabilities
+- Central de Gestão is grouped inside `Atualizações`; desktop receives secondary intent links while mobile keeps exactly six primary destinations.
+- Visible inventory: Planejamento, Entradas & compromissos, Recorrências, Simulações, Conciliação, Relatórios, Backup & restauração, Configurações & integrações, Financiamentos and Documentos.
+- Real authenticated readers: `lts_browser_planning_executive_v1`, `lts_browser_recurring_future_gap_audit_v4`, `lts_browser_vesting_scenario_v1`, `lts_browser_backup_status_v1`, `lts_browser_backup_export_v1`, `lts_browser_restore_stage_v1`, `lts_browser_restore_apply_v1`, `lts_browser_open_finance_status_v1`, `lts_browser_wealth_detail_v1`, `lts_browser_document_lifecycle_v1`.
+- All ten functions deny `anon` EXECUTE and allow `authenticated` EXECUTE. This is intentional browser-RPC reachability, not proof that every historical SECURITY DEFINER function is safe.
+- Recurrence and scenario paths are read-only; planning never projects new FGTS accrual; reconciliation keeps difference R$0; fixture blocks backup/restore writes.
+- Real restore is non-destructive/staged: local checksum verification, backend preview, exact phrase, second browser confirmation and apply. Real authenticated backup/restore remains pending/unclaimed.
+- Reports expose executive JSON and recurrence CSV; the full financial backup remains separate and explicitly private.
 
 ## Durable briefing and validation map
 - `LTS_WEALTH_REQUIREMENTS_TRACEABILITY.md` is the canonical crosswalk for original briefing, Dashboard model lineage, V150/V151 decisions, implementation, automatic proof, user/real-life proof and exact gaps.
@@ -146,11 +156,18 @@ This is deterministic fixture/unauthenticated evidence, not authenticated physic
 - Need written pricing/support/SLA, exact product×bank coverage for Itaú/Bradesco/C6, scope, history depth, refresh/webhooks, consent renewal, errors and sandbox quality.
 - Provider/spend/consent remains a future user decision.
 
+### Supabase security hardening
+- Current audit found 13 `public` tables with RLS disabled: `lts_asset_market_valuation`, `lts_card_history_recovery_staging`, `lts_card_history_recovery_target`, `lts_category_alias`, `lts_dashboard_cockpit_cache`, `lts_external_reference_fact`, `lts_flow_future_read_cache_v2`, `lts_homologation_stage_evidence`, `lts_projection_audit_component`, `lts_projection_audit_rule`, `lts_semantic_amount_signature`, `lts_taxonomy_ambiguity_guard`, `lts_ui_artifacts`.
+- Exact privilege checks returned no direct SELECT or INSERT/UPDATE/DELETE privilege for either `anon` or `authenticated` on all 13; no direct client-table exposure was demonstrated.
+- Do not blindly enable RLS or revoke every SECURITY DEFINER execution: canonical browser reads depend on authenticated RPC boundaries. First map every function to `auth.uid()`/allowed-user guards, then apply policies and run full authenticated regressions.
+- Supabase advisor also reports leaked-password protection disabled; include it in the controlled auth-hardening package.
+
 ## Historical release lineage retained, not current
 - v154 accepted visual direction; v155 false-zero/navigation correction; v156 liquidity-first but rejected real iPhone; v157 WebKit deterministic pass but real-device rejection; v158 truthful fallback/product regression; v159 presentation restored but KPI data unavailable on real iPhone; v160 material-data readiness/truthful fallback; canonical app supersedes all as primary architecture.
 
 ## Open backlog that must always remain visible
 - Dashboard fidelity to approved reference — current absolute P0.
+- Supabase RLS/SECURITY DEFINER/auth hardening with contract-preserving regression coverage.
 - Authenticated physical-iPhone canonical financial/data E2E.
 - Real authenticated liquidity save→refresh→visible.
 - Real authenticated classification lifecycle.

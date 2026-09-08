@@ -4,6 +4,19 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 
 Canonical persistent project list. Never remove an open financial, documentary, classification, reconciliation or product dependency during compaction. Detailed immutable evidence remains in `backups/`, `HISTORICAL_RECOVERY_LOG.md`, `PLANNING_EXCEL_TO_CURRENT_AUDIT_2026-08-30.md`, `NEXT_HOMOLOGATION_GATE.md` and release checkpoints.
 
+## P0 — briefing capability recovery / canonical v1.6 — 07/09/2026
+- [x] Converted the recovered secondary-capability inventory into one navigable Central de Gestão inside `Atualizações`, while preserving the six-route mobile contract.
+- [x] Exposed all ten required capabilities: Planejamento, Entradas & compromissos, Recorrências, Simulações, Conciliação, Relatórios, Backup & restauração, Configurações & integrações, Financiamentos and Documentos.
+- [x] Wired real authenticated browser contracts for planning, recurrence audit, read-only vesting scenario, backup status/export, staged restore, Open Finance status, wealth detail and document lifecycle.
+- [x] Preserved guardrails: no future FGTS accrual, recurring history never auto-creates facts, scenarios remain read-only, reconciliation target is R$0, backup payload is separate/private, restore requires checksum + preview + exact phrase + second confirmation.
+- [x] Exact product target `501fb48265b02a5416f0fc198a54abf8688ddd14`; homologation exposure `39689a3ba6648eeb633cddec8feee26b7d8f6766`.
+- [x] Active recovery/candidate `34179625830` / `34179625805`, canonical gate/candidate `34179823179` / `34179823167`, main candidate/Pages `34179954294` / `34179953893`: SUCCESS.
+- [x] Post-exposure active/canonical/main smokes `34180090300` / `34180147055` / `34180249928` and Pages `34180249315`: SUCCESS.
+- [x] Desktop/mobile evidence reviewed; no horizontal overflow and all six primary mobile destinations preserved.
+- [x] Fixed homologation browser-verified at exact target `501fb482...`, capabilities loader and truthful unauthenticated login.
+- [x] Immutable checkpoint `backups/CANONICAL_APP_V161_BRIEFING_CAPABILITY_RECOVERY_CHECKPOINT_2026-09-07.md`.
+- [ ] Authenticated real-data/write/backup-restore lifecycle E2Es remain pending and must not be inferred from fixture gates.
+
 ## P0 — iPhone session recovery + durable requirements audit — 07/09/2026
 - [x] Reproduced the real-device failure class `JWT issued at future` with a persisted future-token session in WebKit 390×844.
 - [x] Centralized bounded retry, one coalesced refresh and safe session reset; raw JWT detail is no longer rendered to the user.
@@ -14,7 +27,7 @@ Canonical persistent project list. Never remove an open financial, documentary, 
 - [x] Recovered briefing, Dashboard lineage, V150/V151 scope and validation classes consolidated in `LTS_WEALTH_REQUIREMENTS_TRACEABILITY.md`.
 - [x] Immutable checkpoint `backups/CANONICAL_APP_V157PLUS_IPHONE_SESSION_RECOVERY_CHECKPOINT_2026-09-07.md`.
 - [ ] Authenticated physical-iPhone post-fix/data E2E remains pending and must not be claimed.
-- [~] Audit every briefing capability not represented as a primary canonical route; grouping is allowed, silent removal is not.
+- [x] Audit every briefing capability not represented as a primary canonical route; grouping is allowed, silent removal is not.
 
 ## P0 — Dashboard Fidelity Pass 5 — 07/09/2026
 - [x] Removed the post-load simplified Dashboard replacement; the dense canonical Dashboard is again the single owner of that route.
@@ -206,6 +219,8 @@ Canonical persistent project list. Never remove an open financial, documentary, 
 - [x] Canonical liquidity UI gate `34053651814` additionally covers Aplicar/Resgatar preview and remains green on Chromium/WebKit.
 - [x] Canonical Pages exposure deployment `34003976631`: SUCCESS.
 - [x] Current transversal legacy guardrail QA `lts_fix86_legacy_guardrails_qa_v4`: 10/10 PASS.
+- [~] Supabase hardening audit: 13 `public` tables have RLS disabled, but `anon` and `authenticated` have no direct SELECT/write privileges on any of them. Design per-table policies and review every signed-in executable `SECURITY DEFINER` function before changing RLS/grants; do not mass-enable or mass-revoke in a way that breaks the authenticated browser RPC boundary.
+- [ ] Enable/review leaked-password protection and complete the broader Supabase security-advisor inventory under a controlled authentication regression package.
 - [ ] Authenticated physical-device financial/data E2E remains open and explicitly unclaimed.
 - [~] Continue performance work after correctness/parity; search already uses server-side filtering rather than broad fetch.
 
@@ -222,5 +237,6 @@ Canonical persistent project list. Never remove an open financial, documentary, 
 - [ ] New money-changing assumptions not already explicitly supplied by the user.
 - [ ] User-facing undo/reversal semantics beyond the proven append-only cancel/edit/split contract.
 - [ ] Provider/commercial/consent decision for real Open Finance activation.
+- [ ] Public-root promotion remains a user decision; Supabase policy hardening itself is engineering work and must proceed autonomously after contract-level design/tests.
 
 No other engineering task should wait for the user.

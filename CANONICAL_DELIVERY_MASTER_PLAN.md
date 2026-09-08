@@ -1,11 +1,11 @@
 # LTS Wealth — Canonical Delivery Master Plan
 
-Last refreshed: 2026-09-07 22:15 BRT
-Active implementation branch: `canonical-v157plus-product-recovery` (aligned with `canonical-app-v1` and `main` at iPhone session exposure `0643f57e2b2b89b8cbf3ea6ba3c58296b4614ebd`)
+Last refreshed: 2026-09-07 23:35 BRT
+Active implementation branch: `canonical-v157plus-product-recovery` (aligned with `canonical-app-v1` and `main` at capability-recovery exposure `39689a3ba6648eeb633cddec8feee26b7d8f6766`)
 
 Purpose: this is the execution-order view of the LTS Wealth backlog. It does not replace documentary evidence or immutable checkpoints. `PROJECT_MASTER_BACKLOG.md` remains the complete persistent dependency list. This file makes the remaining work explicit so product delivery does not get lost behind release mechanics.
 
-Current milestone: Dashboard Fidelity Pass 5 remains exposed and the real-iPhone `JWT issued at future` failure class is corrected/gated through product target `abe6180d37657cc47bf18036f524a95ff262df13`. The recovered briefing, Dashboard models and V150/V151 decisions are now cross-referenced in `LTS_WEALTH_REQUIREMENTS_TRACEABILITY.md`. Pixel-level convergence, secondary-capability inventory and real authenticated lifecycles remain active P0.
+Current milestone: canonical v1.6 capability recovery is exposed at exact product target `501fb48265b02a5416f0fc198a54abf8688ddd14`. Dashboard Fidelity Pass 5 and the bounded `JWT issued at future` recovery remain preserved. The recovered briefing, Dashboard models and V150/V151 decisions are cross-referenced in `LTS_WEALTH_REQUIREMENTS_TRACEABILITY.md`; ten secondary capabilities are now discoverable in Central de Gestão and deterministically gated. Dashboard reference convergence, controlled Supabase security hardening and real authenticated lifecycles remain active P0.
 
 ## Definition of DONE for the app
 The LTS Wealth app is not considered delivered until all P0 items below are complete together in one canonical application:
@@ -46,7 +46,7 @@ The LTS Wealth app is not considered delivered until all P0 items below are comp
 - [x] Mobile nav shows all six destinations with no clipping/overflow.
 - [~] Route state survives refresh/session restoration appropriately; future-JWT recovery is gated, broader route restoration remains open.
 - [x] Persisted future-issued JWT receives bounded retry/refresh and safe login reset without raw error disclosure.
-- [ ] Audit discoverability/coverage of Financing, Planning, Revenues/Inputs, Recurrences, Commitments, Simulations, Reconciliation, Reports, Documents and Settings inside the six-route product.
+- [x] Financing, Planning, Revenues/Inputs, Recurrences, Commitments, Simulations, Reconciliation, Reports, Documents and Settings are discoverable in Central de Gestão inside `Atualizações`, while mobile keeps exactly six primary routes.
 - [x] No iframe navigation races or hidden historical route owners.
 
 ### P0.4 Authentication + real data
@@ -65,6 +65,14 @@ The LTS Wealth app is not considered delivered until all P0 items below are comp
 - [x] No-horizontal-overflow and no-sustained-DOM-churn checks.
 - [x] Auth-truth / missing-data truth checks.
 - [x] Fixed homologation points to the exact green canonical V157+ candidate; public promotion remains separate and unauthorized.
+
+### P0.6 Supabase security hardening
+- [x] Inventory the 13 `public` tables currently reported with RLS disabled.
+- [x] Verify exact direct privileges: neither `anon` nor `authenticated` has SELECT or INSERT/UPDATE/DELETE on those 13 tables; no direct client-table exposure was demonstrated.
+- [ ] Map every signed-in executable `SECURITY DEFINER` function to explicit `auth.uid()` / allowed-user ownership guards and intended browser contract.
+- [ ] Design per-table RLS policies without breaking security-definer read caches or authenticated browser RPCs.
+- [ ] Apply changes only as one tested package, with full authenticated reader/writer regression and rollback evidence.
+- [ ] Review and enable leaked-password protection under a controlled Auth change window.
 
 ## P1 — Core functional modules in the canonical app
 ### P1.1 Fluxo Diário
@@ -101,6 +109,7 @@ The LTS Wealth app is not considered delivered until all P0 items below are comp
 - [x] Explain why user input is needed where ambiguity remains.
 - [x] Keep text-entry preview; never auto-post without explicit approval.
 - [x] Date/value/account-or-card validation before approval.
+- [x] Central de Gestão groups ten recovered briefing capabilities without inflating the six-route mobile navigation.
 
 ## P2 — Search, classification, documents and write lifecycles
 ### P2.1 Transaction search
@@ -125,15 +134,16 @@ The LTS Wealth app is not considered delivered until all P0 items below are comp
 
 ### P2.4 Natural liquidity input / reversals
 - [ ] Real authenticated save → refresh → visible result.
-- [ ] Preserve parser for 5 mil / R$5.000 / 5000 / 3k / R$1.250,50.
-- [ ] Never guess account/asset.
-- [ ] Preview both legs, before/after and economic effect R$0 before confirmation.
+- [x] Preserve parser for 5 mil / R$5.000 / 5000 / 3k / R$1.250,50.
+- [x] Never guess account/asset.
+- [x] Preview both legs, before/after and economic effect R$0 before confirmation; fixture mode keeps the writer disabled.
 - [ ] Define append-only auditable cancellation/reversal semantics before enabling reversal UI.
 
 ## P3 — Planning, reconciliation and documentary gaps
 ### P3.1 Planning / FGTS
-- [~] Recalculate planning bridge under no-future-FGTS-accrual rule.
-- [ ] Revalidate first-negative date versus management/action date and display both when different.
+- [x] Planning executive reader/UI uses the no-future-FGTS-accrual rule.
+- [x] Display first-negative date separately from management/action date when different.
+- [ ] Revalidate both dates through a real authenticated E2E against the current material dataset.
 - [ ] Historical R$3.700/month FGTS projections remain historical only.
 
 ### P3.2 Cards historical recovery
@@ -190,19 +200,20 @@ Open Finance is still part of the product roadmap. It was not cancelled; work wa
 
 ## P5 — Production readiness / promotion
 - [ ] Performance work after correctness/parity, not before.
-- [ ] Backup/restore and traceability regression on canonical app.
+- [~] Backup/restore surface is canonical and deterministically gated with private versioned export, SHA-256, backend stage/preview, exact confirmation phrase and second browser confirmation; real authenticated export/stage/apply remains pending.
+- [ ] Traceability receipt covering the full definition of done in one run.
 - [ ] Real authenticated physical-iPhone material homologation.
 - [ ] Real authenticated desktop material homologation as needed.
 - [ ] Public `index.html` promotion only after explicit user authorization.
 - [ ] Preserve fixed homologation/public links.
 
 ## Execution order from now
-1. P0 canonical app + Dashboard + real data + navigation + mobile/desktop QA.
-2. P1 all six modules inside the same canonical app.
-3. P2 search/classification/documents/write lifecycles.
-4. P3 planning/reconciliation/documentary gaps, with documentary work continuing in parallel where safe.
-5. P4 Open Finance provider evidence and integration path; provider/consent/spend waits for explicit user decision.
-6. P5 production hardening and explicit promotion.
+1. Finish P0 Dashboard reference convergence without changing financial truth.
+2. Deliver the contract-preserving Supabase RLS / SECURITY DEFINER / Auth hardening package and regression proof.
+3. Close route/session restoration and the single automatic definition-of-done receipt.
+4. Execute real authenticated desktop and physical-iPhone lifecycles for Dashboard, Flow, search/CSV, classification, liquidity, documents and backup/restore.
+5. Continue documentary gaps and Open Finance provider evidence; provider/consent/spend waits for explicit user decision.
+6. Promote `index.html` only after the complete receipt and explicit user authorization.
 
 ## Current user action
 NONE. Continue autonomous work until a real financial/classification/provider/consent decision is necessary or a materially testable canonical app is ready.

@@ -12,18 +12,20 @@ Purpose: compact operational bootstrap so project execution never depends on a l
 7. Before a repository write, freshness-check `main`, active branch, this file, and the SHAs of `PROJECT_MASTER_BACKLOG.md`, `NEXT_HOMOLOGATION_GATE.md`, `LTS_WEALTH_CONTINUITY_HANDOFF.md`, `CANONICAL_DELIVERY_MASTER_PLAN.md` and latest immutable checkpoint. Use line-limited reads; fully re-read only a file whose SHA changed or whose relevant section is needed.
 8. After every material package, gate, integration or newly discovered blocker, update this file so a chat may be abandoned/restarted at any moment without reconstruction work.
 
-## Current execution state — 07/09/2026 22:15 BRT
-- Repo: `lthomesilveira-ui/lts-wealth-`.
-- `main`, `canonical-app-v1` and `canonical-v157plus-product-recovery` are aligned at exposure commit `0643f57e2b2b89b8cbf3ea6ba3c58296b4614ebd`; active recovery branch remains `canonical-v157plus-product-recovery`.
-- Exact iPhone session product target: `abe6180d37657cc47bf18036f524a95ff262df13`; Dashboard Fidelity Pass 5 remains preserved underneath it.
-- Real-iPhone failure `JWT issued at future` now has bounded retry, one coalesced refresh and safe cached-session reset; WebKit explicitly gates a persisted future-token session and rejects raw JWT disclosure.
-- Active recovery/candidate `34174520963` / `34174520971`, canonical gate/candidate `34174620205` / `34174620102`, main candidate/Pages `34174717328` / `34174716172`: **SUCCESS**.
-- Post-exposure active/canonical/main smokes `34175144495` / `34175143351` / `34175143758` and Pages `34175143251`: **SUCCESS**.
-- Fixed homologation resolves to `canonical-app.html?homologacao=abe6180d37657cc47bf18036f524a95ff262df13`; direct verification observed `canonical-liquidity.js?v=20260908-session6` and truthful login in a clean session.
-- Durable briefing, Dashboard lineage, V150/V151 decisions and validation classes are consolidated in `LTS_WEALTH_REQUIREMENTS_TRACEABILITY.md`.
-- Latest immutable evidence: `backups/CANONICAL_APP_V157PLUS_IPHONE_SESSION_RECOVERY_CHECKPOINT_2026-09-07.md`.
-- Authenticated physical-iPhone post-fix financial/data E2E is still **not claimed**.
-- Public `index.html` remains protected; public-root promotion is not authorized.
+## Current execution state — 07/09/2026 23:35 BRT
+- Repo: `lthomesilveira-ui/lts-wealth-`; active recovery branch remains `canonical-v157plus-product-recovery`.
+- `main`, `canonical-app-v1` and `canonical-v157plus-product-recovery` are aligned at homologation exposure `39689a3ba6648eeb633cddec8feee26b7d8f6766`.
+- Exact product target: `501fb48265b02a5416f0fc198a54abf8688ddd14`; Dashboard Fidelity Pass 5 and iPhone future-JWT recovery remain preserved underneath it.
+- `canonical-capabilities-v161.js` adds one coherent Central de Gestão inside `Atualizações`, without adding a seventh mobile route. It exposes Planejamento, Entradas & compromissos, Recorrências, Simulações, Conciliação, Relatórios, Backup & restauração, Configurações & integrações, Financiamentos and Documentos.
+- Real authenticated readers are wired for planning, recurring audit, read-only vesting scenario, backup status/export, staged restore, Open Finance status, wealth detail and document lifecycle. Scenario and recurring analysis do not write facts; restore keeps checksum, preview, exact phrase and second confirmation.
+- Active recovery/candidate `34179625830` / `34179625805`, canonical gate/candidate `34179823179` / `34179823167`, main candidate/Pages `34179954294` / `34179953893`: **SUCCESS**.
+- Post-exposure active/canonical/main smokes `34180090300` / `34180147055` / `34180249928` and Pages `34180249315`: **SUCCESS**.
+- Fixed homologation resolves to `canonical-app.html?homologacao=501fb48265b02a5416f0fc198a54abf8688ddd14`; direct verification observed `canonical-liquidity.js?v=20260908-capabilities1`, truthful login and no fixture financial UI.
+- Supabase security audit found 13 `public` tables with RLS disabled. Exact privilege checks show `anon` and `authenticated` have neither direct read nor write access to those 13 tables, so no direct client exposure was demonstrated; policy-level RLS/SECURITY DEFINER hardening remains open and must not be mass-applied blindly.
+- Durable briefing, Dashboard lineage, V150/V151 decisions and validation classes remain consolidated in `LTS_WEALTH_REQUIREMENTS_TRACEABILITY.md`.
+- Latest immutable evidence: `backups/CANONICAL_APP_V161_BRIEFING_CAPABILITY_RECOVERY_CHECKPOINT_2026-09-07.md`.
+- Authenticated physical-iPhone post-fix financial/data E2E and authenticated real backup/restore/write lifecycles are still **not claimed**.
+- Public `index.html` remains protected at blob `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`; public-root promotion is not authorized.
 
 ## Prior Dashboard Pass 5 state — retained as evidence
 - Repo: `lthomesilveira-ui/lts-wealth-`.
@@ -48,10 +50,11 @@ Purpose: compact operational bootstrap so project execution never depends on a l
 ## Current immediate execution sequence
 1. Keep `main`, `canonical-app-v1` and `canonical-v157plus-product-recovery` aligned by normal no-force updates only.
 2. Use `LTS_WEALTH_REQUIREMENTS_TRACEABILITY.md` as the durable map from briefing → implementation → validation → pending; append recovered facts rather than relying on chat memory.
-3. Audit the briefing capabilities that are not top-level canonical routes, then close Dashboard fidelity P0 against the approved 1312×1199 reference using real data only.
-4. Complete refresh/session route restoration and the remaining report/updates product recovery without reintroducing wrapper architecture.
-5. Keep authenticated physical-iPhone and real write/search/document E2Es explicitly unclaimed until actually performed.
-6. Preserve `promotion_status:not_promoted` and protected `index.html` until explicit user authorization.
+3. Continue Dashboard fidelity P0 against the approved 1312×1199 reference using real data only; the secondary-capability inventory is now navigable and gated.
+4. Design and test the Supabase RLS/SECURITY DEFINER hardening package before any DDL or privilege change; preserve current browser RPC behavior and verify every ownership guard.
+5. Complete refresh/session route restoration, the unified definition-of-done receipt and remaining Despesas/Atualizações product quality without reintroducing wrapper architecture.
+6. Keep authenticated physical-iPhone and real write/search/document/backup-restore E2Es explicitly unclaimed until actually performed.
+7. Preserve `promotion_status:not_promoted` and protected `index.html` until explicit user authorization.
 
 ## Previous immediate sequence — superseded by the sequence above
 1. Keep `main`, `canonical-app-v1` and `canonical-v157plus-product-recovery` aligned by normal no-force updates only.
