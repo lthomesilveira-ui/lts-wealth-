@@ -44,7 +44,7 @@ function finalizeReceipt() {
   receipt.claim_boundary.deterministic_fixture = 'PASS';
   receipt.requirements = {
     architecture: { status: 'PASS', evidence: 'single canonical frontend; zero iframes' },
-    dashboard: { status: 'PASS_AUTOMATED', evidence: 'approved hierarchy, four current-liquidity quadrants, layered fact/base/RSU/FGTS chart semantics, documentary commitments and approved 1312x1199 desktop single-screen density' },
+    dashboard: { status: 'PASS_AUTOMATED', evidence: 'approved hierarchy, four current-liquidity quadrants, layered fact/base/RSU/FGTS chart semantics, V151 first-negative versus management-point decision cue, documentary commitments and approved 1312x1199 desktop single-screen density' },
     flow: { status: 'PASS_AUTOMATED', evidence: 'V150 interaction parity plus V157 liquidity layers: four account views, five-day horizon, semantic movements, inline invoice, append-only split and preserved scroll' },
     expenses: { status: 'PASS_AUTOMATED', evidence: 'single-owner month/year history, nature x context, unassigned semantics and item drilldown' },
     cards: { status: 'PASS_AUTOMATED', evidence: 'current/next invoice and certified historical coverage' },
@@ -231,8 +231,8 @@ async function assertUpdatesContract(page, label) {
     throw new Error(`${label}: classification-first hierarchy ${JSON.stringify(hierarchy)}`);
   }
   const recovery = await page.evaluate(() => window.__LTS_CANONICAL_RECOVERY_STATUS);
-  if (recovery?.build !== 'LTS v1.15' || recovery?.updates_contract !== 4 || recovery?.document_review_contract !== 4 || recovery?.dashboard_density_contract !== 1) {
-    throw new Error(`${label}: v1.15 recovery contract ${JSON.stringify(recovery)}`);
+  if (recovery?.build !== 'LTS v1.16' || recovery?.updates_contract !== 4 || recovery?.document_review_contract !== 4 || recovery?.dashboard_density_contract !== 1 || recovery?.planning_decision_contract !== 1) {
+    throw new Error(`${label}: v1.16 recovery contract ${JSON.stringify(recovery)}`);
   }
   const inputStatus = await page.evaluate(() => window.__LTS_CANONICAL_REVIEWED_INPUT_STATUS);
   if (inputStatus?.ready !== true
@@ -434,6 +434,11 @@ async function assertDashboardContract(page, label, mobile) {
       || status?.density_contract !== densityContract
       || status?.projection_contract !== 'fact-before-asof-projection-after-asof-v1'
       || status?.liquidity_layer_contract !== 'current-base-scheduled-rsu-restricted-fgts-v1'
+      || status?.planning_decision_contract !== 'v151-first-negative-management-separation-v1'
+      || status?.planning_first_negative_date !== '2027-01-12'
+      || status?.planning_management_point_date !== '2026-12-01'
+      || status?.planning_management_before_negative !== true
+      || status?.planning_marker_source !== 'exact-horizon'
       || status?.current_anchor_source !== 'cockpit-liquidity-through-d3'
       || status?.commitment_source !== 'product-commitments-plus-card-due'
       || status?.observed_points !== 1
@@ -462,6 +467,27 @@ async function assertDashboardContract(page, label, mobile) {
       throw new Error(`${label}: layered liquidity visual semantics missing`);
     }
   }
+  const overviewChart = page.locator('#dashboard-view .grid-main [data-liquidity-chart="layered-fact-projection-v2"]');
+  const planningChart = page.locator('#planning-panel [data-liquidity-chart="layered-fact-projection-v2"]');
+  if (await overviewChart.getAttribute('data-first-negative-marker') !== 'none'
+      || await planningChart.getAttribute('data-first-negative-marker') !== 'exact-horizon'
+      || await planningChart.getAttribute('data-first-negative-date') !== '2027-01-12'
+      || await planningChart.locator('.planning-negative-guide').count() !== 1
+      || await planningChart.locator('.planning-negative-marker').count() !== 1) {
+    throw new Error(`${label}: V151 first-negative chart marker missing`);
+  }
+  const planningDecision = page.locator('#planning-panel [data-planning-decision-contract="v151-first-negative-management-separation-v1"]');
+  const planningDecisionText = await planningDecision.innerText();
+  if (await planningDecision.count() !== 1
+      || await planningDecision.getAttribute('data-first-negative-date') !== '2027-01-12'
+      || await planningDecision.getAttribute('data-management-point-date') !== '2026-12-01'
+      || await planningDecision.getAttribute('data-management-before-negative') !== 'true'
+      || !containsText(planningDecisionText, 'Primeiro caixa negativo')
+      || !containsText(planningDecisionText, '12/01/2027')
+      || !containsText(planningDecisionText, 'Ponto de gestão: 01/12/2026')
+      || !containsText(planningDecisionText, 'ocorre antes do saldo negativo')) {
+    throw new Error(`${label}: V151 planning decision separation ${JSON.stringify(planningDecisionText)}`);
+  }
   const legends = page.locator('#dashboard-view .liquidity-legend');
   if (await legends.count() !== 2) throw new Error(`${label}: layered liquidity legends missing`);
   for (const legend of await legends.all()) {
@@ -477,6 +503,10 @@ async function assertDashboardContract(page, label, mobile) {
   const liquidityPanelBox = await page.locator('#dashboard-view .grid-main > .panel').first().boundingBox();
   if (!liquidityPanelBox || liquidityPanelBox.height > (mobile ? 410 : 315)) {
     throw new Error(`${label}: liquidity panel height regression ${JSON.stringify(liquidityPanelBox)}`);
+  }
+  const planningPanelBox = await page.locator('#planning-panel').boundingBox();
+  if (!planningPanelBox || planningPanelBox.height > (mobile ? 430 : 315)) {
+    throw new Error(`${label}: planning panel height regression ${JSON.stringify(planningPanelBox)}`);
   }
   if (!mobile) {
     const desktopFit = await page.evaluate(() => ({

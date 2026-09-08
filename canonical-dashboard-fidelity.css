@@ -262,6 +262,24 @@
   #dashboard-view .liquidity-legend{flex-wrap:nowrap;gap:7px;margin-top:6px;padding-top:5px;font-size:7.4px;white-space:nowrap}
 }
 
+/* Fidelity pass 8 — recover the V151 first-negative / management-point distinction. */
+#planning-panel .planning-chart-stage{position:relative}
+#planning-panel .planning-decision{position:absolute;z-index:2;top:8px;right:12%;width:min(176px,48%);padding:7px 9px;border:1px solid #efc6ca;border-radius:8px;background:rgba(255,247,247,.96);box-shadow:0 4px 12px rgba(129,35,46,.08);pointer-events:none}
+#planning-panel .planning-decision span,#planning-panel .planning-decision b,#planning-panel .planning-decision small{display:block}
+#planning-panel .planning-decision span{color:#a23d48;font-size:6.5px;font-weight:900;letter-spacing:.035em;text-transform:uppercase}
+#planning-panel .planning-decision b{margin-top:2px;color:#bf2537;font-size:12px;line-height:1.05}
+#planning-panel .planning-decision small{margin-top:3px;color:#79555a;font-size:6.5px;font-weight:700;line-height:1.25}
+#planning-panel .planning-decision.neutral{border-color:#dce4eb;background:rgba(249,251,253,.96)}
+#planning-panel .planning-decision.neutral span,#planning-panel .planning-decision.neutral b{color:#617287}
+#planning-panel .planning-negative-guide{stroke:#dc3545;stroke-width:1.2;stroke-dasharray:3 4;opacity:.5;vector-effect:non-scaling-stroke}
+#planning-panel .planning-negative-marker{fill:#dc3545;stroke:#fff;stroke-width:2.2;vector-effect:non-scaling-stroke}
+
+@media (max-width:820px){
+  #planning-panel .planning-decision{top:7px;right:4%;width:min(176px,56%);padding:7px 8px}
+  #planning-panel .planning-decision b{font-size:11px}
+  #planning-panel .planning-decision small{font-size:6.2px}
+}
+
 /* Canonical expenses workbench: history + nature x context under one owner. */
 #expenses-view .page-title p{max-width:760px}
 #expenses-view .expense-insights{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}

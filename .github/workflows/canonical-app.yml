@@ -54,20 +54,21 @@ jobs:
           assert 'MutationObserver' not in s
           assert 'setInterval(' not in s
           assert 'canonical-liquidity.js?v=' in s
-          assert 'canonical-dashboard-fidelity.css?v=20260908-dashboard-density15' in s
-          assert 'canonical-liquidity.js?v=20260908-dashboard-density15' in s
+          assert 'canonical-dashboard-fidelity.css?v=20260908-planning16' in s
+          assert 'canonical-liquidity.js?v=20260908-planning16' in s
           assert 'single-owner-history-nature-context-v1' in s
           assert 'Quanto você gasta — e para quem é cada gasto.' in s
           assert 'reference-layered-liquidity-commitments-v3' in s
           assert 'fact-before-asof-projection-after-asof-v1' in s
           assert 'current-base-scheduled-rsu-restricted-fgts-v1' in s
+          assert 'v151-first-negative-management-separation-v1' in s
           assert 'layered-fact-projection-v2' in s
           assert 'product-commitments-plus-card-due' in s
           assert 'canonical-route-session-continuity-v1' in s
           assert 'data-dashboard-reload' in s
-          for module in ['canonical-liquidity-core.js?v=20260908-dashboard-density15','canonical-flow-v157.js','canonical-product-v157.js','canonical-presentation-v157.js','canonical-capabilities-v161.js?v=20260908-dashboard-density15','canonical-reviewed-input-v112.js?v=20260908-dashboard-density15']:
+          for module in ['canonical-liquidity-core.js?v=20260908-planning16','canonical-flow-v157.js','canonical-product-v157.js','canonical-presentation-v157.js','canonical-capabilities-v161.js?v=20260908-planning16','canonical-reviewed-input-v112.js?v=20260908-planning16']:
               assert module in l, module
-          for marker in ['LTS v1.15','UPDATES_CONTRACT','DOCUMENT_REVIEW_CONTRACT','DASHBOARD_DENSITY_CONTRACT']:
+          for marker in ['LTS v1.16','UPDATES_CONTRACT','DOCUMENT_REVIEW_CONTRACT','DASHBOARD_DENSITY_CONTRACT','PLANNING_DECISION_CONTRACT']:
               assert marker in l, marker
           assert 'canonical-flow-v150.js' not in l
           assert "const ROUTES=['Patrimônio','Cartões']" in p
@@ -108,7 +109,7 @@ jobs:
           for label in [
               'Dinheiro em contas','Contas + curto prazo','RSUs vested','FGTS','Despesas (mês)',
               'Evolução da Liquidez','Distribuição do Patrimônio','Posição por Banco',
-              'Fluxo de Caixa','Principais Despesas','Próximos Compromissos','Planejamento – Visão de Caixa',
+              'Fluxo de Caixa','Principais Despesas','Próximos Compromissos','Planejamento – Visão de Caixa','Primeiro caixa negativo','Ponto de gestão',
               'Atualizações Pendentes','Encontrar lançamentos','Exportar para Excel (CSV)',
               'Classificações que realmente precisam de decisão','Outras ações que precisam de você','Enviar documento','classification-first-guided-document-intake-v1','Documentos','Natureza × contexto','CIPÓ 396'
           ]:
