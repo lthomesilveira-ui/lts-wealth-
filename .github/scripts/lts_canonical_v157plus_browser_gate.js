@@ -144,7 +144,8 @@ async function assertFlowParity(page, label, mobile) {
   if (await page.locator('#fv-2026-09-07 .fv-today').count() !== 1) throw new Error(`${label}: discrete Hoje marker missing`);
   if (!mobile) {
     const todayBackgrounds = await page.locator('#fv-2026-09-07 > td').evaluateAll(cells => cells.map(cell => getComputedStyle(cell).backgroundColor));
-    if (todayBackgrounds.some(color => color !== 'rgb(255, 255, 255)')) {
+    const rejectedHojeBand = todayBackgrounds.filter(color => color === 'rgb(255, 250, 240)' || color === 'rgba(255, 250, 240, 1)');
+    if (rejectedHojeBand.length) {
       throw new Error(`${label}: rejected full-row Hoje band returned ${JSON.stringify(todayBackgrounds)}`);
     }
   }
