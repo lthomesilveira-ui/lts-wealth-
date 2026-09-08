@@ -388,8 +388,12 @@ async function run(browserType, label, viewport) {
         || expenseStatus.errors.length) {
       throw new Error(`${label}: expense contract ${JSON.stringify(expenseStatus)}`);
     }
-    let text = await page.locator('#expenses-view').innerText();
-    for (const required of ['Quanto você gasta — e para quem é cada gasto.', 'Maior natureza', 'Maior contexto evidenciado', 'Cobertura de contexto', 'Variação mensal', 'Natureza × contexto', 'Natureza do gasto', 'Contexto / pessoa / centro de custo', 'Não atribuído · o que realmente significa', 'Mês a mês', 'Ano a ano', 'Cobertura do histórico']) {
+    const insightLabels = await page.locator('#expenses-view .expense-insights span').allTextContents();
+    for (const required of ['Maior natureza', 'Maior contexto evidenciado', 'Cobertura de contexto', 'Variação mensal']) {
+      if (!insightLabels.includes(required)) throw new Error(`${label}: expense insight missing ${required}; labels=${JSON.stringify(insightLabels)}`);
+    }
+    let text = await page.locator('#expenses-view').textContent();
+    for (const required of ['Quanto você gasta — e para quem é cada gasto.', 'Natureza × contexto', 'Natureza do gasto', 'Contexto / pessoa / centro de custo', 'Não atribuído · o que realmente significa', 'Mês a mês', 'Ano a ano', 'Cobertura do histórico']) {
       if (!text.includes(required)) throw new Error(`${label}: expense surface missing ${required}`);
     }
     await page.locator('[data-lens-kind="nature"]').first().click();
