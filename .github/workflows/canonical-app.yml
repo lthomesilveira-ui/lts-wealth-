@@ -82,7 +82,7 @@ jobs:
               assert marker in v, marker
           for label in [
               'Dinheiro em contas','Contas + curto prazo','RSUs vested','FGTS','Despesas (mês)',
-              'Evolução do Patrimônio Líquido','Distribuição do Patrimônio','Posição por Banco',
+              'Evolução da Liquidez','Distribuição do Patrimônio','Posição por Banco',
               'Fluxo de Caixa','Principais Despesas','Próximos Compromissos','Planejamento – Visão de Caixa',
               'Atualizações Pendentes','Encontrar lançamentos','Exportar para Excel (CSV)',
               'Classificações que realmente precisam de decisão','Documentos','Natureza × contexto','CIPÓ 396'
