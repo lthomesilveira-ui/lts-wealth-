@@ -1,6 +1,6 @@
 # LTS Wealth — Continuity Handoff
 
-Last materially refreshed: 2026-09-08 01:26 BRT (America/Sao_Paulo)
+Last materially refreshed: 2026-09-08 02:44 BRT (America/Sao_Paulo)
 
 This file exists so project continuity never depends on chat context. Always re-fetch `main`, active branch, `PROJECT_MASTER_BACKLOG.md`, `NEXT_HOMOLOGATION_GATE.md`, this file and the latest immutable checkpoint before every repository write.
 
@@ -24,22 +24,31 @@ This file exists so project continuity never depends on chat context. Always re-
 - Public fallback remains WIP35-v136; protected `index.html` blob remains `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
 - Public promotion remains unauthorized/not done.
 
-## Current primary product — canonical v1.6 / Dashboard Fidelity Pass 6
+## Current primary product — canonical v1.7 / route-session continuity
 The primary product line is the single canonical frontend `canonical-app.html`. The v154→v160 wrapper lineage is historical evidence only and must not be reintroduced as the product architecture.
 
 Current facts:
 - single frontend; no release iframe/wrapper chain;
 - direct Supabase authentication/RPC integration;
 - same app owns Dashboard, Fluxo Diário, Despesas, Patrimônio, Cartões and Atualizações;
-- V157+ modular baseline, v1.6 capability recovery and iPhone future-JWT recovery remain preserved; current product target is `9ae0ee37ab3332415523eeee287cdbf75102e1c4`, exposure `4d3c7bc912a672ae7353c7028d8b05d047961dd5`;
-- current changed blobs: `canonical-app.html` `2f324ac819f10d178a904f622b195221cd68bb92`, `canonical-liquidity.js` `b94b15d43dedef1d7bdf401ec9f2e96ae6eca183`, `canonical-capabilities-v161.js` `227649940f86741a1abce55c1dd4938bcd82b04a`, Dashboard CSS `719b30c7b35ec20aedb84235fb5b1da4a27614dc`, permanent gate `8998c9904b62a56134633409178683b1b2c5ff5f`, recovery workflow `e4c7b522e2d1fdfc9a97375969fe1877ed04311c`;
+- V157+ modular baseline, v1.6 capability recovery, Dashboard Fidelity Pass 6, iPhone future-JWT recovery and the bounded Supabase security baseline remain preserved; current product target is `e618ef48e22872ce718c7932872e2316e5660f67`, exposure `33da29ab0818c9dd59dca45f68d3680ed153f6af`;
+- current changed blobs: `canonical-app.html` `92507f55f4de291c17e49a5b430bedcb33018506`, `canonical-liquidity.js` `8a8caba73c0f6a08710328c19e38bec6c6aab7e9`, `canonical-capabilities-v161.js` `da479e1c5215b593b7bb43d2df5d64dc939e19e2`, permanent gate `f48fc1520f1e50d7071f21be6648a2293fc21e6f`, recovery workflow `9a558c4574eb6439b1eeca0f34400fec2012cdd5`;
 - modular recovery gate `34170935882` and permanent canonical gate `34171231918`: SUCCESS in Chromium desktop 1312×1199 and WebKit mobile 390×844;
 - all active/canonical/main candidate smokes and both pre/post-manifest Pages deployments are green; exact run inventory is in the immutable checkpoint;
 - Pass 6 recovery/candidate `34185954453` / `34185954506`, canonical gate/candidate `34186087590` / `34186087628`, main candidate/Pages `34186301851` / `34186300869`: SUCCESS;
 - post-exposure active/canonical/main smokes `34186663110` / `34186664337` / `34186664887` and Pages `34186664347`: SUCCESS;
-- fixed homologation is `canonical-app.html?homologacao=9ae0ee37ab3332415523eeee287cdbf75102e1c4` / `promotion_status:not_promoted`, browser-verified with Pass 6 CSS/loader, truthful login, zero unauthenticated KPIs and no iframe;
-- latest immutable checkpoint: `backups/CANONICAL_APP_V161_DASHBOARD_FIDELITY_PASS6_CHECKPOINT_2026-09-08.md`;
+- route/receipt recovery/candidate `34190659782` / `34190659780`, canonical gate/candidate `34191017877` / `34191017858`, main candidate/Pages `34191216218` / `34191215874`: SUCCESS;
+- post-v1.7-exposure active/canonical/main smokes `34191461669` / `34191462282` / `34191463017` and Pages `34191462402`: SUCCESS;
+- fixed homologation is `canonical-app.html?homologacao=e618ef48e22872ce718c7932872e2316e5660f67#Dashboard` / `promotion_status:not_promoted`, browser-verified with continuity-v7 loader, truthful login, zero unauthenticated KPIs and no iframe;
+- latest immutable checkpoint: `backups/CANONICAL_APP_V17_ROUTE_SESSION_DOD_RECEIPT_CHECKPOINT_2026-09-08.md`;
 - authenticated physical-iPhone financial/data E2E remains pending/not claimed.
+
+## Canonical v1.7 — route/session continuity and one readiness receipt
+- `canonical-route-session-continuity-v1` resolves the intended route before the first RPC/render and stores only allowlisted navigation state in `sessionStorage`.
+- Refresh, signed-out login, future-JWT reset, direct deep links, browser back/forward and bfcache preserve or safely canonicalize route intent; invalid routes fall back to Dashboard.
+- Central de Gestão restores one of eight allowlisted panes after refresh/back without changing the six-route mobile contract.
+- The permanent browser gate emits `lts-canonical-definition-of-done-receipt-v1`; artifact `10042106418`, digest `sha256:69ef7f8af36374e9c91ae5074690d13525676d8fe8ee326024c40e381e36ed47`.
+- Receipt semantics are binding: `gate_status: PASS` means the deterministic suites passed; `delivery_status: AUTOMATED_GATE_PASS_REAL_E2E_OPEN` means authenticated real-data/write lifecycles, physical iPhone and public-root promotion are still not claimed.
 
 ## Canonical v1.6 — recovered briefing capabilities
 - Central de Gestão is grouped inside `Atualizações`; desktop receives secondary intent links while mobile keeps exactly six primary destinations.
@@ -168,6 +177,7 @@ This is deterministic fixture/unauthenticated evidence, not authenticated physic
 
 ## Open backlog that must always remain visible
 - Evidence-led Dashboard detail convergence beyond the protected Pass 6 baseline; pixel-perfect parity is not claimed.
+- Close the unified receipt rows that require authenticated real-data/write lifecycles and physical-device evidence; do not reinterpret automatic PASS as final delivery.
 - Controlled Auth review/enablement of leaked-password protection; database RLS/SECURITY DEFINER hardening is closed and must remain regression-protected.
 - Authenticated physical-iPhone canonical financial/data E2E.
 - Real authenticated liquidity save→refresh→visible.
@@ -187,6 +197,12 @@ This is deterministic fixture/unauthenticated evidence, not authenticated physic
 
 ## User action now
 NONE. Continue autonomous Dashboard/product-quality work. User may test the fixed homologation when a material candidate is published, but engineering work must not wait for that QA.
+
+## Route/session continuity + unified receipt — 08/09/2026
+- Route and management-pane intent now survive refresh/session restoration/back-forward under explicit allowlists; the future-JWT safe reset returns to login without discarding the intended product route.
+- The permanent recovery/canonical gates cover Chromium desktop 1312×1199 and WebKit mobile 390×844, including direct links, invalid-route fallback, bfcache/back-forward, selected management pane and route preservation through JWT recovery.
+- Product target `e618ef48e22872ce718c7932872e2316e5660f67`; exposure `33da29ab0818c9dd59dca45f68d3680ed153f6af`; all pre/post-exposure smokes and Pages are green.
+- The generated receipt is the single automatic evidence index, not a claim of authenticated physical-device completion. Public `index.html` remains unchanged.
 
 ## Dashboard Fidelity Pass 6 — 08/09/2026
 - Approved-reference desktop intent order, month/as-of controls, working `Hoje` reload, five evidence labels, bank rows and real route drill-downs are implemented without changing the liquidity-first financial contract.

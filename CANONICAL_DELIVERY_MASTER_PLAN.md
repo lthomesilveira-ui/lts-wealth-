@@ -1,11 +1,11 @@
 # LTS Wealth — Canonical Delivery Master Plan
 
-Last refreshed: 2026-09-08 01:56 BRT
-Active implementation branch: `canonical-v157plus-product-recovery` (aligned with `canonical-app-v1` and `main` on the Dashboard Fidelity Pass 6 product baseline plus the bounded Supabase security checkpoint)
+Last refreshed: 2026-09-08 02:44 BRT
+Active implementation branch: `canonical-v157plus-product-recovery` (aligned with `canonical-app-v1` and `main` on canonical v1.7 route/session continuity plus the bounded Supabase security checkpoint)
 
 Purpose: this is the execution-order view of the LTS Wealth backlog. It does not replace documentary evidence or immutable checkpoints. `PROJECT_MASTER_BACKLOG.md` remains the complete persistent dependency list. This file makes the remaining work explicit so product delivery does not get lost behind release mechanics.
 
-Current milestone: canonical v1.6 Dashboard Fidelity Pass 6 is exposed at exact product target `9ae0ee37ab3332415523eeee287cdbf75102e1c4`. Capability recovery and the bounded `JWT issued at future` recovery remain preserved. The recovered briefing, Dashboard models and V150/V151 decisions are cross-referenced in `LTS_WEALTH_REQUIREMENTS_TRACEABILITY.md`; approved-reference navigation, period controls, evidence-labelled KPIs and real drill-downs are deterministic in desktop/mobile. The bounded Supabase RLS/SECURITY DEFINER package is applied and contract-regressed; route/session restoration, the unified receipt, pixel-level detail and real authenticated lifecycles remain active P0.
+Current milestone: canonical v1.7 is exposed at exact product target `e618ef48e22872ce718c7932872e2316e5660f67`. Dashboard Fidelity Pass 6, capability recovery, the bounded `JWT issued at future` recovery and Supabase RLS/SECURITY DEFINER baseline remain preserved. Route/session continuity and the single machine-readable definition-of-done receipt are now deterministic in desktop/mobile. Pixel-level detail and the receipt rows that require real authenticated lifecycles and physical-device evidence remain active P0.
 
 ## Definition of DONE for the app
 The LTS Wealth app is not considered delivered until all P0 items below are complete together in one canonical application:
@@ -44,7 +44,7 @@ The LTS Wealth app is not considered delivered until all P0 items below are comp
 - [x] One router owned by the canonical app.
 - [x] All six routes work physically on desktop and mobile.
 - [x] Mobile nav shows all six destinations with no clipping/overflow.
-- [~] Route state survives refresh/session restoration appropriately; future-JWT recovery is gated, broader route restoration remains open.
+- [x] Route state survives refresh/session restoration, signed-out login, future-JWT reset, direct links, browser back/forward and bfcache; invalid routes fall back safely.
 - [x] Persisted future-issued JWT receives bounded retry/refresh and safe login reset without raw error disclosure.
 - [x] Financing, Planning, Revenues/Inputs, Recurrences, Commitments, Simulations, Reconciliation, Reports, Documents and Settings are discoverable in Central de Gestão inside `Atualizações`, while mobile keeps exactly six primary routes.
 - [x] No iframe navigation races or hidden historical route owners.
@@ -64,7 +64,8 @@ The LTS Wealth app is not considered delivered until all P0 items below are comp
 - [x] Six-route physical navigation regression.
 - [x] No-horizontal-overflow and no-sustained-DOM-churn checks.
 - [x] Auth-truth / missing-data truth checks.
-- [x] Fixed homologation points to the exact green canonical v1.6 Pass 6 candidate; public promotion remains separate and unauthorized.
+- [x] One machine-readable `lts-canonical-definition-of-done-receipt-v1` maps the recovered requirements and separates automatic PASS from authenticated-real/physical-device claims.
+- [x] Fixed homologation points to the exact green canonical v1.7 candidate; public promotion remains separate and unauthorized.
 
 ### P0.6 Supabase security hardening
 - [x] Inventory the 13 `public` tables currently reported with RLS disabled.
@@ -202,18 +203,18 @@ Open Finance is still part of the product roadmap. It was not cancelled; work wa
 ## P5 — Production readiness / promotion
 - [ ] Performance work after correctness/parity, not before.
 - [~] Backup/restore surface is canonical and deterministically gated with private versioned export, SHA-256, backend stage/preview, exact confirmation phrase and second browser confirmation; real authenticated export/stage/apply remains pending.
-- [ ] Traceability receipt covering the full definition of done in one run.
+- [~] One automatic traceability receipt now covers the recovered definition of done in one run; infrastructure and deterministic rows pass, while authenticated-real/write and physical-iPhone rows remain OPEN.
 - [ ] Real authenticated physical-iPhone material homologation.
 - [ ] Real authenticated desktop material homologation as needed.
 - [ ] Public `index.html` promotion only after explicit user authorization.
 - [ ] Preserve fixed homologation/public links.
 
 ## Execution order from now
-1. Preserve Dashboard Fidelity Pass 6 and continue only evidence-led pixel/detail convergence without changing financial truth.
-2. Close route/session restoration and the single automatic definition-of-done receipt.
-3. Execute real authenticated desktop and physical-iPhone lifecycles for Dashboard, Flow, search/CSV, classification, liquidity, documents and backup/restore.
-4. Continue Dashboard/Despesas/Atualizações product refinement against real evidence and keep the Supabase security baseline regression-protected.
-5. Review leaked-password protection in a controlled Auth window; continue documentary gaps and Open Finance provider evidence, while provider/consent/spend waits for explicit user decision.
+1. Preserve Dashboard Fidelity Pass 6, route/session continuity and the automatic receipt as the protected canonical baseline.
+2. Continue Dashboard/Despesas/Atualizações refinement against real evidence without changing financial truth or reintroducing wrapper ownership.
+3. Execute real authenticated desktop and physical-iPhone lifecycles for Dashboard, Flow, search/CSV, classification, liquidity, documents and backup/restore; use them to close the corresponding receipt rows.
+4. Keep the Supabase security baseline regression-protected and review leaked-password protection in a controlled Auth window.
+5. Continue documentary gaps and Open Finance provider evidence, while provider/consent/spend waits for explicit user decision.
 6. Promote `index.html` only after the complete receipt and explicit user authorization.
 
 ## Current user action

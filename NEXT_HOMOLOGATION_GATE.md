@@ -2,10 +2,10 @@
 
 Purpose: evidence-backed sequence before asking the user to inspect a material candidate. Keep aligned with `PROJECT_MASTER_BACKLOG.md`, `LTS_WEALTH_CONTINUITY_HANDOFF.md` and immutable checkpoints.
 
-## Current canonical baseline — 08/09/2026 01:26 BRT
+## Current canonical baseline — 08/09/2026 02:44 BRT
 - Public fallback: WIP35-v136 in `index.html`, unchanged; protected blob remains `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
 - Fixed homologation: `https://lthomesilveira-ui.github.io/lts-wealth-/homologacao.html`.
-- Fixed homologation manifest selects **CANONICAL v1.6 · Dashboard Fidelity Pass 6** through `canonical-app.html`, exact product target `9ae0ee37ab3332415523eeee287cdbf75102e1c4`, exposure `4d3c7bc912a672ae7353c7028d8b05d047961dd5`.
+- Fixed homologation manifest selects **CANONICAL v1.7 · Route Continuity + DoD Receipt** through `canonical-app.html`, exact product target `e618ef48e22872ce718c7932872e2316e5660f67`, exposure `33da29ab0818c9dd59dca45f68d3680ed153f6af`.
 - Canonical frontend is a single application; no v150/v151/v156/v160 iframe/wrapper chain is part of the primary product.
 - Current gated modules: `canonical-liquidity-core.js`, `canonical-flow-v157.js`, `canonical-product-v157.js`, `canonical-presentation-v157.js`, `canonical-capabilities-v161.js`.
 - Modular recovery gate `34170935882` and permanent canonical gate `34171231918`: **SUCCESS** in Chromium desktop 1312×1199 and WebKit mobile 390×844.
@@ -17,11 +17,21 @@ Purpose: evidence-backed sequence before asking the user to inspect a material c
 - Briefing-capability recovery/candidate `34179625830` / `34179625805`, canonical gate/candidate `34179823179` / `34179823167`, main candidate/Pages `34179954294` / `34179953893`: SUCCESS.
 - Dashboard Pass 6 recovery/candidate `34185954453` / `34185954506`, canonical gate/candidate `34186087590` / `34186087628`, main candidate/Pages `34186301851` / `34186300869`: SUCCESS.
 - Post-exposure active/canonical/main smokes `34186663110` / `34186664337` / `34186664887` and Pages `34186664347`: SUCCESS.
-- Browser verification of the fixed URL resolved to `canonical-app.html?homologacao=9ae0ee37ab3332415523eeee287cdbf75102e1c4` and rendered `canonical-dashboard-fidelity.css?v=20260908-pass6` + `canonical-liquidity.js?v=20260908-fidelity6`, truthful login, zero unauthenticated KPI cards and no iframe.
-- Current immutable evidence: `backups/CANONICAL_APP_V161_DASHBOARD_FIDELITY_PASS6_CHECKPOINT_2026-09-08.md`.
+- Route/receipt recovery/candidate `34190659782` / `34190659780`, canonical gate/candidate `34191017877` / `34191017858`, main candidate/Pages `34191216218` / `34191215874`: SUCCESS.
+- Route/receipt artifact `10042106418`, digest `sha256:69ef7f8af36374e9c91ae5074690d13525676d8fe8ee326024c40e381e36ed47`: unified receipt plus Chromium/WebKit evidence.
+- Post-v1.7-exposure active/canonical/main smokes `34191461669` / `34191462282` / `34191463017` and Pages `34191462402`: SUCCESS.
+- Browser verification of the fixed URL resolved to `canonical-app.html?homologacao=e618ef48e22872ce718c7932872e2316e5660f67#Dashboard` and rendered `canonical-liquidity.js?v=20260908-continuity7`, truthful login, zero unauthenticated KPI cards and no iframe.
+- Current immutable evidence: `backups/CANONICAL_APP_V17_ROUTE_SESSION_DOD_RECEIPT_CHECKPOINT_2026-09-08.md`.
 - Durable briefing/decision map: `LTS_WEALTH_REQUIREMENTS_TRACEABILITY.md`.
 - `promotion_status:not_promoted`; public root promotion is NOT AUTHORIZED / NOT DONE.
 - Authenticated physical-iPhone visual/data E2E: PENDING / NOT CLAIMED.
+
+## Route/session continuity + unified receipt gate
+- The intended route is resolved before the first RPC/render and stored as navigation state only in `sessionStorage`; no financial value is persisted there.
+- Refresh, signed-out login, future-JWT reset, browser back/forward, direct deep links and bfcache preserve or safely canonicalize the intended route.
+- Invalid routes fall back to Dashboard; Central de Gestão restores one of eight allowlisted panes after refresh/back.
+- The permanent browser run emits `lts-canonical-definition-of-done-receipt-v1`, covering the recovered product requirements in one machine-readable artifact.
+- A deterministic `PASS` is distinct from final delivery: the receipt keeps authenticated real data, authenticated writes, physical iPhone and public-root promotion explicitly open/not claimed.
 
 ## Briefing capability recovery gate
 - Central de Gestão mounts once inside `Atualizações`; no seventh primary mobile route is introduced.
@@ -69,7 +79,7 @@ Purpose: evidence-backed sequence before asking the user to inspect a material c
 - Public `index.html` remains unchanged.
 
 ## Exact deterministic evidence
-Current Pass 6 recovery gate `34185954453` and permanent canonical gate `34186087590`: **SUCCESS**. Earlier V157+ and v1.6 capability evidence remains preserved.
+Current route/receipt recovery gate `34190659782` and permanent canonical gate `34191017877`: **SUCCESS**. Dashboard Pass 6, V157+ and v1.6 capability evidence remains preserved.
 
 Validated in Chromium desktop 1312×1199 and WebKit mobile 390×844:
 - five KPI cards populated under controlled fixture;
@@ -138,6 +148,7 @@ A separate user-facing **undo/reversal** action is not claimed or enabled until 
 
 ## Open blockers retained
 - Authenticated physical-iPhone financial/data E2E of the canonical app when real-device evidence becomes the final gate.
+- Unified receipt authenticated-real and physical-device rows remain OPEN; `gate_status: PASS` is not final product-delivery approval.
 - Real authenticated liquidity save → refresh → visible; deterministic fixture never posts financial facts.
 - Real authenticated classification save → refresh → resolved disappearance/self-heal.
 - Real authenticated PDF/image interpretation → review.

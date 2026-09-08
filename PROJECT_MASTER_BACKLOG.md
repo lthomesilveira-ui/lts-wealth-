@@ -4,6 +4,19 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 
 Canonical persistent project list. Never remove an open financial, documentary, classification, reconciliation or product dependency during compaction. Detailed immutable evidence remains in `backups/`, `HISTORICAL_RECOVERY_LOG.md`, `PLANNING_EXCEL_TO_CURRENT_AUDIT_2026-08-30.md`, `NEXT_HOMOLOGATION_GATE.md` and release checkpoints.
 
+## P0 — Route/session continuity + unified DoD receipt — 08/09/2026
+- [x] Resolve the intended canonical route from URL/session before the first RPC and first product render; persist navigation state only, never financial data.
+- [x] Preserve route intent across refresh, signed-out login, future-JWT safe reset, browser back/forward and bfcache; canonicalize direct deep links and invalid-route fallback.
+- [x] Persist and restore the eight valid Central de Gestão panes without adding another primary mobile route.
+- [x] Generate `lts-canonical-definition-of-done-receipt-v1` in the permanent browser gate, with requirement-by-requirement status and honest claim boundaries for authenticated data/writes, physical iPhone and public promotion.
+- [x] Exact product target `e618ef48e22872ce718c7932872e2316e5660f67`; exposure `33da29ab0818c9dd59dca45f68d3680ed153f6af`.
+- [x] Recovery/candidate `34190659782` / `34190659780`, canonical gate/candidate `34191017877` / `34191017858`, main candidate/Pages `34191216218` / `34191215874`: SUCCESS.
+- [x] Receipt artifact `10042106418`, digest `sha256:69ef7f8af36374e9c91ae5074690d13525676d8fe8ee326024c40e381e36ed47`; Chromium 1312×1199 and WebKit 390×844 suites PASS.
+- [x] Post-exposure active/canonical/main smokes `34191461669` / `34191462282` / `34191463017` and Pages `34191462402`: SUCCESS.
+- [x] Fixed URL browser-verified at the exact target with continuity-v7 asset, clean login, zero unauthenticated financial KPIs and no iframe.
+- [x] Immutable checkpoint `backups/CANONICAL_APP_V17_ROUTE_SESSION_DOD_RECEIPT_CHECKPOINT_2026-09-08.md`.
+- [ ] Receipt rows that require authenticated real data/writes and physical-iPhone evidence remain open; automatic PASS does not claim final delivery.
+
 ## P0 — Dashboard Fidelity Pass 6 — 08/09/2026
 - [x] Recovered the approved-reference desktop navigation order without creating fake product ownership: Dashboard, Fluxo Diário, Despesas, Receitas, Cartões, Patrimônio, Planejamento, Atualizações, Relatórios, Documentos and Configurações. `Receitas` resolves to the evidenced Flow rather than inventing a new ledger.
 - [x] Added month/as-of controls and a working `Hoje` reload while preserving the five liquidity-first KPIs and honest missing-data behavior.
