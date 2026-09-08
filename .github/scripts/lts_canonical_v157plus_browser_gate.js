@@ -52,6 +52,59 @@ async function assertUpdatesContract(page, label) {
   if (await page.locator('#liqApply').count() !== 0) throw new Error(`${label}: fixture liquidity writer unexpectedly enabled`);
 }
 
+async function assertManagementContract(page, label) {
+  await page.waitForFunction(() => window.__LTS_CANONICAL_CAPABILITIES_STATUS?.loaded === true);
+  const recovery = await page.evaluate(() => window.__LTS_CANONICAL_RECOVERY_STATUS);
+  if (recovery?.capabilities_loaded !== true || recovery?.capability_contract !== 10) {
+    throw new Error(`${label}: capability loader contract ${JSON.stringify(recovery)}`);
+  }
+  if (await page.locator('#management-panel').count() !== 1) throw new Error(`${label}: management hub multiplicity`);
+  if (await page.locator('.mg-tab').count() !== 8) throw new Error(`${label}: management tabs missing`);
+  const overview = await page.locator('#management-panel').innerText();
+  for (const required of ['Planejamento', 'Entradas & compromissos', 'Recorrências', 'Simulações', 'Conciliação', 'Relatórios', 'Backup & restauração', 'Configurações & integrações', 'Financiamentos', 'Documentos']) {
+    if (!overview.includes(required)) throw new Error(`${label}: management overview missing ${required}`);
+  }
+
+  await page.locator('.mg-tab[data-mg-pane="planning"]').click();
+  let text = await page.locator('#managementDetail').innerText();
+  for (const required of ['Primeira insuficiência', 'Pior posição', 'FGTS', 'Fatos prevalecem sobre projeções']) {
+    if (!text.includes(required)) throw new Error(`${label}: planning management detail missing ${required}`);
+  }
+
+  await page.locator('.mg-tab[data-mg-pane="recurring"]').click();
+  text = await page.locator('#managementDetail').innerText();
+  for (const required of ['Séries recorrentes', 'Cobertas', 'Planejamento', 'Conciliação', 'Mensalidade exemplo']) {
+    if (!text.includes(required)) throw new Error(`${label}: recurring management detail missing ${required}`);
+  }
+
+  await page.locator('.mg-tab[data-mg-pane="scenario"]').click();
+  await page.locator('[data-mg-award]').first().check();
+  await page.locator('#mgRunScenario').click();
+  await page.waitForFunction(() => document.querySelector('#managementDetail')?.textContent?.includes('Valor selecionado'));
+  text = await page.locator('#managementDetail').innerText();
+  if (!text.includes('somente leitura') || !text.includes('Pior posição no cenário')) throw new Error(`${label}: read-only scenario contract`);
+
+  await page.locator('.mg-tab[data-mg-pane="reconciliation"]').click();
+  text = await page.locator('#managementDetail').innerText();
+  if (!text.includes('diferença R$ 0,00') || !text.includes('Documentos reconciliados')) throw new Error(`${label}: reconciliation contract`);
+
+  await page.locator('.mg-tab[data-mg-pane="reports"]').click();
+  if (await page.locator('#mgExportReport').count() !== 1 || await page.locator('#mgExportRecurring').count() !== 1) throw new Error(`${label}: reports export surface`);
+
+  await page.locator('.mg-tab[data-mg-pane="backup"]').click();
+  if (!(await page.locator('#mgExportBackup').isDisabled())) throw new Error(`${label}: fixture backup export unexpectedly enabled`);
+  if (!(await page.locator('#mgRestoreFile').isDisabled())) throw new Error(`${label}: fixture restore staging unexpectedly enabled`);
+  text = await page.locator('#managementDetail').innerText();
+  if (!text.includes('checksum SHA-256') || !text.includes('duas etapas') && !text.includes('prévia')) throw new Error(`${label}: backup guardrail missing`);
+
+  await page.locator('.mg-tab[data-mg-pane="settings"]').click();
+  text = await page.locator('#managementDetail').innerText();
+  for (const required of ['Arquitetura Open Finance', 'Provedor ativo', 'provider-neutral', 'decisão explícita']) {
+    if (!text.includes(required)) throw new Error(`${label}: settings guardrail missing ${required}`);
+  }
+  await page.locator('.mg-tab[data-mg-pane="overview"]').click();
+}
+
 async function run(browserType, label, viewport) {
   const mobile = viewport.width <= 820;
   const browser = await browserType.launch({ headless: true });
@@ -69,7 +122,8 @@ async function run(browserType, label, viewport) {
       const status = window.__LTS_CANONICAL_RECOVERY_STATUS;
       return status?.flow_loaded === true
         && status?.product_loaded === true
-        && status?.presentation_loaded === true;
+        && status?.presentation_loaded === true
+        && status?.capabilities_loaded === true;
     });
     await page.waitForFunction(() => window.__LTS_V157_PRESENTATION_STATUS?.ready === true);
     await waitProduct(page, 'Dashboard');
@@ -140,6 +194,7 @@ async function run(browserType, label, viewport) {
     await openRoute(page, 'Atualizações', mobile);
     await page.waitForTimeout(350);
     await assertUpdatesContract(page, label);
+    await assertManagementContract(page, label);
     await page.screenshot({ path: `canonical-updates-${label}.png`, fullPage: true });
 
     await openRoute(page, 'Dashboard', mobile);
