@@ -52,6 +52,14 @@ async function assertUpdatesContract(page, label) {
   if (await page.locator('#liqApply').count() !== 0) throw new Error(`${label}: fixture liquidity writer unexpectedly enabled`);
 }
 
+async function openManagementPane(page, pane) {
+  await page.locator(`.mg-tab[data-mg-pane="${pane}"]`).click();
+  await page.waitForFunction(expected => (
+    window.__LTS_CANONICAL_CAPABILITIES_STATUS?.active === expected
+      && document.querySelector('#managementDetail')?.textContent?.trim().length > 0
+  ), pane);
+}
+
 async function assertManagementContract(page, label) {
   await page.waitForFunction(() => window.__LTS_CANONICAL_CAPABILITIES_STATUS?.loaded === true);
   const recovery = await page.evaluate(() => window.__LTS_CANONICAL_RECOVERY_STATUS);
@@ -65,44 +73,44 @@ async function assertManagementContract(page, label) {
     if (!overview.includes(required)) throw new Error(`${label}: management overview missing ${required}`);
   }
 
-  await page.locator('.mg-tab[data-mg-pane="planning"]').click();
+  await openManagementPane(page, 'planning');
   let text = await page.locator('#managementDetail').innerText();
   for (const required of ['Primeira insuficiência', 'Pior posição', 'FGTS', 'Fatos prevalecem sobre projeções']) {
     if (!text.includes(required)) throw new Error(`${label}: planning management detail missing ${required}`);
   }
 
-  await page.locator('.mg-tab[data-mg-pane="recurring"]').click();
+  await openManagementPane(page, 'recurring');
   text = await page.locator('#managementDetail').innerText();
   for (const required of ['Séries recorrentes', 'Cobertas', 'Planejamento', 'Conciliação', 'Mensalidade exemplo']) {
     if (!text.includes(required)) throw new Error(`${label}: recurring management detail missing ${required}`);
   }
 
-  await page.locator('.mg-tab[data-mg-pane="scenario"]').click();
+  await openManagementPane(page, 'scenario');
   await page.locator('[data-mg-award]').first().check();
   await page.locator('#mgRunScenario').click();
   await page.waitForFunction(() => document.querySelector('#managementDetail')?.textContent?.includes('Valor selecionado'));
   text = await page.locator('#managementDetail').innerText();
   if (!text.includes('somente leitura') || !text.includes('Pior posição no cenário')) throw new Error(`${label}: read-only scenario contract`);
 
-  await page.locator('.mg-tab[data-mg-pane="reconciliation"]').click();
+  await openManagementPane(page, 'reconciliation');
   text = await page.locator('#managementDetail').innerText();
   if (!text.includes('diferença R$ 0,00') || !text.includes('Documentos reconciliados')) throw new Error(`${label}: reconciliation contract`);
 
-  await page.locator('.mg-tab[data-mg-pane="reports"]').click();
+  await openManagementPane(page, 'reports');
   if (await page.locator('#mgExportReport').count() !== 1 || await page.locator('#mgExportRecurring').count() !== 1) throw new Error(`${label}: reports export surface`);
 
-  await page.locator('.mg-tab[data-mg-pane="backup"]').click();
+  await openManagementPane(page, 'backup');
   if (!(await page.locator('#mgExportBackup').isDisabled())) throw new Error(`${label}: fixture backup export unexpectedly enabled`);
   if (!(await page.locator('#mgRestoreFile').isDisabled())) throw new Error(`${label}: fixture restore staging unexpectedly enabled`);
   text = await page.locator('#managementDetail').innerText();
   if (!text.includes('checksum SHA-256') || !text.includes('duas etapas') && !text.includes('prévia')) throw new Error(`${label}: backup guardrail missing`);
 
-  await page.locator('.mg-tab[data-mg-pane="settings"]').click();
+  await openManagementPane(page, 'settings');
   text = await page.locator('#managementDetail').innerText();
   for (const required of ['Arquitetura Open Finance', 'Provedor ativo', 'provider-neutral', 'decisão explícita']) {
     if (!text.includes(required)) throw new Error(`${label}: settings guardrail missing ${required}`);
   }
-  await page.locator('.mg-tab[data-mg-pane="overview"]').click();
+  await openManagementPane(page, 'overview');
 }
 
 async function run(browserType, label, viewport) {
