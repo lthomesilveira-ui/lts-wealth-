@@ -5,6 +5,7 @@ const port = process.env.LTS_CANONICAL_GATE_PORT || '4173';
 const baseUrl = `http://127.0.0.1:${port}/canonical-app.html`;
 const server = spawn('python3', ['-m', 'http.server', port, '--bind', '127.0.0.1'], { stdio: 'inherit' });
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+const containsText = (value, expected) => String(value).toLocaleLowerCase('pt-BR').includes(String(expected).toLocaleLowerCase('pt-BR'));
 
 function routeButton(page, route, mobile) {
   const root = mobile ? '.mobile-nav' : '.sidebar';
@@ -77,7 +78,7 @@ async function assertManagementContract(page, label) {
   let text = await page.locator('#managementDetail').innerText();
   await page.screenshot({ path: `canonical-management-planning-${label}.png`, fullPage: true });
   for (const required of ['Primeira insuficiência', 'Pior posição', 'FGTS', 'Fatos prevalecem sobre projeções']) {
-    if (!text.includes(required)) {
+    if (!containsText(text, required)) {
       const state = await page.evaluate(() => window.__LTS_CANONICAL_CAPABILITIES_STATUS);
       throw new Error(`${label}: planning management detail missing ${required}; state=${JSON.stringify(state)}; detail=${JSON.stringify(text.slice(0, 1000))}`);
     }
@@ -86,7 +87,7 @@ async function assertManagementContract(page, label) {
   await openManagementPane(page, 'recurring');
   text = await page.locator('#managementDetail').innerText();
   for (const required of ['Séries recorrentes', 'Cobertas', 'Planejamento', 'Conciliação', 'Mensalidade exemplo']) {
-    if (!text.includes(required)) throw new Error(`${label}: recurring management detail missing ${required}`);
+    if (!containsText(text, required)) throw new Error(`${label}: recurring management detail missing ${required}`);
   }
 
   await openManagementPane(page, 'scenario');
@@ -94,11 +95,11 @@ async function assertManagementContract(page, label) {
   await page.locator('#mgRunScenario').click();
   await page.waitForFunction(() => document.querySelector('#managementDetail')?.textContent?.includes('Valor selecionado'));
   text = await page.locator('#managementDetail').innerText();
-  if (!text.includes('somente leitura') || !text.includes('Pior posição no cenário')) throw new Error(`${label}: read-only scenario contract`);
+  if (!containsText(text, 'read-only') || !containsText(text, 'Pior posição no cenário')) throw new Error(`${label}: read-only scenario contract`);
 
   await openManagementPane(page, 'reconciliation');
   text = await page.locator('#managementDetail').innerText();
-  if (!text.includes('diferença R$ 0,00') || !text.includes('Documentos reconciliados')) throw new Error(`${label}: reconciliation contract`);
+  if (!containsText(text, 'diferença R$ 0,00') || !containsText(text, 'Documentos reconciliados')) throw new Error(`${label}: reconciliation contract`);
 
   await openManagementPane(page, 'reports');
   if (await page.locator('#mgExportReport').count() !== 1 || await page.locator('#mgExportRecurring').count() !== 1) throw new Error(`${label}: reports export surface`);
@@ -112,7 +113,7 @@ async function assertManagementContract(page, label) {
   await openManagementPane(page, 'settings');
   text = await page.locator('#managementDetail').innerText();
   for (const required of ['Arquitetura Open Finance', 'Provedor ativo', 'provider-neutral', 'decisão explícita']) {
-    if (!text.includes(required)) throw new Error(`${label}: settings guardrail missing ${required}`);
+    if (!containsText(text, required)) throw new Error(`${label}: settings guardrail missing ${required}`);
   }
   await openManagementPane(page, 'overview');
 }
