@@ -4,6 +4,17 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 
 Canonical persistent project list. Never remove an open financial, documentary, classification, reconciliation or product dependency during compaction. Detailed immutable evidence remains in `backups/`, `HISTORICAL_RECOVERY_LOG.md`, `PLANNING_EXCEL_TO_CURRENT_AUDIT_2026-08-30.md`, `NEXT_HOMOLOGATION_GATE.md` and release checkpoints.
 
+## P0 — Holistic UX closure / canonical v1.19 — 08/09/2026
+- [x] Audited Dashboard, Flow, Despesas, Patrimônio, Cartões and Atualizações against the official model, recovered Homologação/Execução ledger and protected V150/V151+ behavior floor.
+- [x] Removed the duplicated Flow `Hoje` preset while preserving the dedicated action, nine distinct presets, column order, expansion position and scroll behavior.
+- [x] Added contract `safe-errors-accessible-controls-readable-mobile-v1`: safe user errors, bounded internal-only diagnostics, associated/live login feedback, current/pressed/expanded accessibility state, modal focus/Escape behavior, visible focus and reduced motion.
+- [x] Improved 390 px legibility and touch behavior: navigation targets, Flow expansion control, 16 px form fields and minimum secondary-copy size; no horizontal clipping.
+- [x] Preserved truthful empty/unavailable states instead of synthetic financial values or decorative filler; no financial value, classification, document association or economic rule changed.
+- [x] Exact product `37781c3b11389789716781accca6c1fdabea461c`, tree `626437edfa47d12be4a061f3ff6c88e077ae2304`; exposure `59222846a5c7e67c923790da9ad4088df9781fa4`, tree `5b34ab00cecf338c51eeb97f94d339a4bb025b03`; all three release branches aligned by normal no-force fast-forward.
+- [x] Recovery/canonical gates `34279813550` / `34281714299`, pre-manifest main smoke/Pages `34281930573` / `34281929787`, post-exposure active/canonical/main smokes `34282394183` / `34282421576` / `34282451603` and Pages `34282450565`: SUCCESS.
+- [x] Fixed link browser-verified on `?v=20260908-ux19`; immutable checkpoint `backups/CANONICAL_APP_V119_UX_CLOSURE_CHECKPOINT_2026-09-08.md`.
+- [ ] Authenticated real-data/write/document/backup lifecycles and physical-iPhone E2E remain open/not claimed because the execution browser has no user session and cannot control the physical device.
+
 ## P0 — V150/V151+ Flow history and horizon / canonical v1.18 — 08/09/2026
 - [x] Corrected 01/01/2026 opening-balance presentation without mixing `Realizado` and projection; real backend evidence proves opening `216994.21`, net `-2120.00`, close `214874.21`.
 - [x] Removed the rejected yellow full-row `Hoje` band while preserving the left expansion control, validated column order and discrete current-day marker.
@@ -34,7 +45,7 @@ Canonical persistent project list. Never remove an open financial, documentary, 
 - [ ] Investigate the R$0,01 Bradesco discrepancy and 06/08 Cofrinho event from raw/documentary evidence.
 - [ ] Keep the 12/08 Bradesco R$0,17 interval and Cofrinho R$186,10 timing as explicit documentary gaps until proved.
 - [x] Produce bounded original-versus-app evidence for 31/12/2026 and 31/12/2029; v1.18 inventories exact workbook scenario rows and proves the app's exact horizon coverage without asserting false numeric parity.
-- [~] Complete the whole-app UX audit after evidence-led correctness gaps, then implement one coherent gated package rather than isolated microchanges.
+- [x] Complete the whole-app UX audit and implement one coherent gated package; closed in canonical v1.19 without inventing a standalone Reports model.
 
 ## P0 — V151 Planning decision recovery / canonical v1.16 — 08/09/2026
 - [x] Re-audited the V151 planning sources and the official 1312×1199 Dashboard reference; identified that canonical v1.15 reduced first-negative and management dates to low-emphasis pills instead of the approved decision cue.
@@ -137,7 +148,7 @@ Canonical persistent project list. Never remove an open financial, documentary, 
 - [x] Audited release history V150–V160 and located the material regression at V153; V150–V152 retained the richer Flow while V154–V160 solved other visual/data/session concerns without restoring it completely.
 - [x] Ported validated behavior into the single canonical frontend without restoring wrapper architecture: inline card-invoice summary/full detail, semantic movement labels, salary-withholding presentation, transfer direction, Hoje, complete next-five-day view and preserved scroll.
 - [x] Restored append-only projection actions Editar, Duplicar, Dividir/substituir and Excluir, including 2–12 split parts, validation and live sum; backend contracts remain `lts_browser_flow_event_editor_v1` / `lts_browser_flow_mutate_v1`.
-- [x] Preserved later capabilities: `lts_browser_flow_v8`, Consolidado/Itaú/Bradesco/C6, ten period presets, 14 consolidated liquidity/economic columns and purpose-built mobile liquidity layers.
+- [x] Preserved later capabilities: `lts_browser_flow_v8`, Consolidado/Itaú/Bradesco/C6, nine distinct period presets plus one dedicated `Hoje` action, 14 consolidated liquidity/economic columns and purpose-built mobile liquidity layers.
 - [x] Expanded the permanent gate to exercise invoice, split, semantics, scroll and mobile Flow overflow; local Chromium desktop 1312×1199 and mobile 390×844 PASS.
 - [x] Branch recovery/candidate, canonical/candidate and main smoke/Pages gates pass on exact product `6aba220653a9053cf304ab11bf931db38ccc1b75`; fixed homologation exposure `90aad3a754e69708fcc9e03a5bb32835281e2925` and all post-exposure smokes/Pages are green.
 - [ ] Real authenticated invoice/mutation readback, material-data verification and physical-iPhone evidence remain explicitly open/not claimed.

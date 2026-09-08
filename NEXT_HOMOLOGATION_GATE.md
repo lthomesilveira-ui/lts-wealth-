@@ -2,13 +2,14 @@
 
 Purpose: evidence-backed sequence before asking the user to inspect a material candidate. Keep aligned with `PROJECT_MASTER_BACKLOG.md`, `LTS_WEALTH_CONTINUITY_HANDOFF.md` and immutable checkpoints.
 
-## Current canonical baseline — 08/09/2026 17:46 BRT
+## Current canonical baseline — 08/09/2026 18:50 BRT
 - Public fallback: WIP35-v136 in `index.html`, unchanged; protected blob remains `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
 - Fixed homologation: `https://lthomesilveira-ui.github.io/lts-wealth-/homologacao.html`.
-- Fixed homologation selects **canonical v1.18 Flow history + horizon** through `canonical-app.html`, exact product `692535276fe7948c386349254151538c0c9eddf8`, exposure `65cb675b613b70b7a26f97f86938a0b3ac72b584`; public `index.html` is unchanged.
+- Fixed homologation selects **canonical v1.19 UX closure** through `canonical-app.html`, exact product `37781c3b11389789716781accca6c1fdabea461c`, exposure `59222846a5c7e67c923790da9ad4088df9781fa4`; public `index.html` is unchanged.
 - Canonical frontend is a single application; no v150/v151/v156/v160 iframe/wrapper chain is part of the primary product.
-- Current gated modules: `canonical-liquidity-core.js`, `canonical-flow-v157.js`, `canonical-product-v157.js`, `canonical-presentation-v157.js`, `canonical-capabilities-v161.js`, `canonical-reviewed-input-v112.js`, plus V1.18 history/horizon, V1.17 product language, V1.16 planning distinction, V1.15 density, V1.14 document review and V1.13 Updates/intake contracts.
-- V1.18 recovery/canonical gates `34274496763` / `34274793717`, main smoke/Pages `34275276745` / `34275275447`, post-manifest main smoke/Pages `34276115233` / `34276114848`: SUCCESS. Fixed-link browser verification loads `?v=20260908-flow18` at exact product `692535276…`.
+- Current gated modules: `canonical-liquidity-core.js`, `canonical-flow-v157.js`, `canonical-product-v157.js`, `canonical-presentation-v157.js`, `canonical-capabilities-v161.js`, `canonical-reviewed-input-v112.js`, plus V1.19 UX safety/accessibility/mobile, V1.18 history/horizon, V1.17 product language, V1.16 planning distinction, V1.15 density, V1.14 document review and V1.13 Updates/intake contracts.
+- V1.19 recovery/canonical gates `34279813550` / `34281714299`, candidate smokes `34279813574` / `34281714284`, pre-manifest main smoke/Pages `34281930573` / `34281929787`, post-exposure active/canonical/main smokes `34282394183` / `34282421576` / `34282451603` and Pages `34282450565`: SUCCESS. Fixed-link browser verification loads `?v=20260908-ux19` at exact product `37781c3b…`.
+- V1.18 recovery/canonical gates `34274496763` / `34274793717`, main smoke/Pages `34275276745` / `34275275447`, post-manifest main smoke/Pages `34276115233` / `34276114848`: SUCCESS; retained as the protected Flow history/horizon predecessor.
 - Modular recovery gate `34170935882` and permanent canonical gate `34171231918`: **SUCCESS** in Chromium desktop 1312×1199 and WebKit mobile 390×844.
 - Active/canonical/main candidate smokes `34170935887` / `34171231935` / `34171338575` and Pages `34171338335`: **SUCCESS**.
 - Post-manifest active/canonical/main candidate smokes `34171452083` / `34171452913` / `34171453488` and Pages `34171452759`: **SUCCESS**.
@@ -60,12 +61,22 @@ Purpose: evidence-backed sequence before asking the user to inspect a material c
 - V1.17 post-exposure active/canonical/main smokes `34267927974` / `34267929858` / `34267932211` and Pages `34267929912`: SUCCESS.
 - V1.17 artifacts: recovery `10072405055` / `sha256:200786a5aee8034f91f7b625234a10900cb7e444ca754c1a5f4354177e0537a4`; canonical `10072479667` / `sha256:b135f99fbc2b64a029d5c462865d8e4461f93667bc0fdf1b73e0ca29c6dff4a7`; product Pages `10072497570` / `sha256:76738dc52c4522e405866f203e4711269b6adf1fd97538c28563f64ec7580048`; exposure Pages `10072584498` / `sha256:89d724b71905784ff47dac2fc36fda196c4f9b2e159533e49340da7a654ec478`.
 - Fixed-URL live verification resolved to `canonical-app.html?homologacao=e4cea675…#Dashboard`, loaded `?v=20260908-ux17`, truthful signed-out login with blank fields, zero iframe, zero fixture/technical build badge/raw JWT and no application error.
-- Current immutable evidence: `backups/CANONICAL_APP_V117_PRODUCT_LANGUAGE_CHECKPOINT_2026-09-08.md`; recovered decision ledger: `backups/TWO_MONTH_FEEDBACK_RECOVERY_CHECKPOINT_2026-09-08.md`.
+- Current immutable evidence: `backups/CANONICAL_APP_V119_UX_CLOSURE_CHECKPOINT_2026-09-08.md`; recovered decision ledger: `backups/TWO_MONTH_FEEDBACK_RECOVERY_CHECKPOINT_2026-09-08.md`.
 - Durable briefing/decision map: `LTS_WEALTH_REQUIREMENTS_TRACEABILITY.md`.
 - `promotion_status:not_promoted`; public root promotion is NOT AUTHORIZED / NOT DONE.
 - Authenticated physical-iPhone visual/data E2E: PENDING / NOT CLAIMED.
 
-## Canonical v1.17 Product Language — selected for fixed exposure
+## Canonical v1.19 UX Closure — selected for fixed exposure
+- Exact product is `37781c3b11389789716781accca6c1fdabea461c`; fixed-manifest exposure is `59222846a5c7e67c923790da9ad4088df9781fa4`; no public-root change and no wrapper reintroduction.
+- Contract `safe-errors-accessible-controls-readable-mobile-v1` requires safe user errors, internal-only diagnostics, one `Hoje`, explicit accessibility state, keyboard/Escape modal behavior, focus/reduced-motion support and readable mobile controls/copy.
+- Desktop 1312×1199 and mobile 390×844 visual artifacts cover Dashboard, Flow and Updates; the permanent gate preserves every V1.18→V1.9 contract.
+- Authenticated real-data/write/document lifecycles and physical-iPhone evidence remain OPEN / NOT CLAIMED.
+
+## Canonical v1.18 Flow History + Horizon — protected predecessor
+- Exact product is `692535276fe7948c386349254151538c0c9eddf8`; fixed-manifest exposure is `65cb675b613b70b7a26f97f86938a0b3ac72b584`.
+- It closes 01/01/2026 historical opening, the rejected yellow `Hoje` band and exact 31/12/2029 plus D+30 coverage without changing a financial fact.
+
+## Canonical v1.17 Product Language — protected predecessor
 - Exact product is `e4cea67563ac379d5bf47d02d20846699194a002`; fixed-manifest exposure is `06fdcbba8f1cbcae6af2ebf153a2291915195f96`; no public-root change and no wrapper reintroduction.
 - Contract `user-facing-product-language-v1` removes technical build/release labels from normal routes and retains diagnostics only for automated/internal evidence.
 - The gate rejects any visible `LTS`, `CANONICAL` or `WIP35` build/release badge while preserving every v1.16→v1.9 contract.
@@ -198,7 +209,7 @@ Validated in Chromium desktop 1312×1199 and WebKit mobile 390×844:
 - five KPI cards populated under controlled fixture;
 - full Dashboard fits the approved 1312×1199 desktop canvas without document or Dashboard-bottom overflow; mobile remains scrollable and unclipped;
 - all six physical routes and return to Dashboard;
-- Fluxo supports Consolidado/Itaú/Bradesco/C6, 10 presets, 14 desktop columns, account switching and expandable movements without technical labels;
+- Fluxo supports Consolidado/Itaú/Bradesco/C6, nine distinct period presets plus one dedicated `Hoje` action, 14 desktop columns, account switching and expandable movements without technical labels;
 - Despesas nature × context, drilldown and period selector;
 - Patrimônio / FGTS surface;
 - Cartões surface;
@@ -217,8 +228,8 @@ Validated in Chromium desktop 1312×1199 and WebKit mobile 390×844:
 
 These are deterministic fixture/unauthenticated gates. They do not prove the user's authenticated physical-iPhone session and must not be represented as authenticated E2E.
 
-## Dashboard visual fidelity — protected Pass 6 baseline / remaining P0
-The approved original 1312×1199 image remains authoritative for presentation hierarchy/density. Pass 6 closes the largest structural gaps: navigation breadth, month/as-of controls, five evidence-labelled cards, bank position and working drill-downs. Pixel-perfect parity, richer evidence-backed historical chart detail and real authenticated data presentation remain open; the reference image is never a source of financial facts.
+## Dashboard visual fidelity — protected material baseline / evidence boundary
+The approved original 1312×1199 image remains authoritative for presentation hierarchy/density. Pass 6, V1.15 and V1.19 close the material structural, density and responsive gaps: navigation breadth, month/as-of controls, five evidence-labelled cards, bank position, working drill-downs and readable mobile composition. Literal pixel identity is not asserted, and the reference image is never a source of financial facts. Real authenticated data presentation remains a separate final gate.
 
 ## Current Planning / FGTS invariant
 Current audited contract under the conservative no-future-accrual rule:

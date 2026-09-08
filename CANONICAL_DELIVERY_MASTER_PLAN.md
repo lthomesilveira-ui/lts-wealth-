@@ -1,11 +1,11 @@
 # LTS Wealth — Canonical Delivery Master Plan
 
-Last refreshed: 2026-09-08 16:21 BRT
-Active implementation branch: `canonical-v157plus-product-recovery` (canonical v1.17 product `e4cea67563ac379d5bf47d02d20846699194a002`; product tree `9037c73840167b1cfe1d36e2b8cc2b6f90d101f7`; fixed-manifest exposure `06fdcbba8f1cbcae6af2ebf153a2291915195f96`; shared documentation/checkpoint closure follows by normal fast-forward)
+Last refreshed: 2026-09-08 18:50 BRT
+Active implementation branch: `canonical-v157plus-product-recovery` (canonical v1.19 product `37781c3b11389789716781accca6c1fdabea461c`; product tree `626437edfa47d12be4a061f3ff6c88e077ae2304`; fixed-manifest exposure `59222846a5c7e67c923790da9ad4088df9781fa4`; all release branches aligned by normal no-force fast-forward)
 
 Purpose: this is the execution-order view of the LTS Wealth backlog. It does not replace documentary evidence or immutable checkpoints. `PROJECT_MASTER_BACKLOG.md` remains the complete persistent dependency list. This file makes the remaining work explicit so product delivery does not get lost behind release mechanics.
 
-Current milestone: canonical v1.17 preserves the complete v1.16→v1.9 line and removes internal build/release language from the normal user interface without changing financial truth. The approved 1312×1199 density, local Chromium, recovery/canonical Chromium+WebKit, all pre/post-exposure smokes and Pages are green; the fixed URL resolves to the exact v1.17 product. Authenticated real lifecycles, historical anomaly closure, holistic UX completion and physical-device evidence remain P0.
+Current milestone: canonical v1.19 preserves the complete v1.18→v1.9 line and closes the executable holistic UX pass without changing financial truth. The approved 1312×1199 Dashboard, responsive 390×844 product, safe-error boundary, accessibility states, permanent Chromium/WebKit gates, all pre/post-exposure smokes and Pages are green; the fixed URL resolves to the exact v1.19 product. Only authenticated real lifecycles and physical-device evidence remain P0 execution gates.
 
 ## Definition of DONE for the app
 The LTS Wealth app is not considered delivered until all P0 items below are complete together in one canonical application:
@@ -31,7 +31,7 @@ The LTS Wealth app is not considered delivered until all P0 items below are comp
 - [x] Add explicit loading, unauthenticated, error and data-ready states.
 
 ### P0.2 Dashboard — approved visual contract
-- [~] Build the Dashboard directly against the approved 1312×1199 official reference; Pass 6 closes the major structural gaps while pixel-perfect parity remains open.
+- [x] Build the Dashboard directly against the approved 1312×1199 official reference; Pass 6 plus V1.15/V1.19 close material structural hierarchy, density and responsive behavior. Literal pixel identity is not asserted as a financial/product fact.
 - [x] Desktop Pass 6: dark left rail, approved-reference intent order, light dense executive canvas, compact spacing and month/as-of toolbar.
 - [x] Mobile: purpose-built responsive hierarchy; no squeezed desktop canvas.
 - [x] Five primary KPIs: Dinheiro em contas; Contas + curto prazo; RSUs vested; FGTS; Despesas (mês).
@@ -41,7 +41,7 @@ The LTS Wealth app is not considered delivered until all P0 items below are comp
 - [x] `Próximos Compromissos` is sourced only from the next card invoice and contractual rows with explicit `next_due`; review/classification/planning tasks remain in `Atualizações`.
 - [x] Layered liquidity v1.11: current anchor from cockpit `through_d3`, base projection, scheduled-vesting conditional scenario and restricted FGTS scenario remain visually and semantically separate.
 - [x] Four current-composition labels expose accounts, D0/D1, vested RSUs and restricted FGTS without summing conditional/restricted scenarios into current cash.
-- [~] Continue evidence-backed historical chart/detail fidelity and authenticated real-data proof; pixel-perfect parity remains open.
+- [x] Preserve evidence-backed historical chart/detail fidelity without synthetic values; authenticated real-data proof remains tracked separately in P0.4/P5.
 - [x] Expense/category route drill-down from Dashboard where evidence exists.
 - [x] V1.16 first-negative/management contract: dates are displayed separately and prominently when different; a chart marker requires an exact evidenced negative horizon row and is never interpolated.
 - [x] FGTS rule preserved: R$22.432,31 at 21/08/2026, restricted ~D+30, never D+3, no future accrual projection.
@@ -71,7 +71,7 @@ The LTS Wealth app is not considered delivered until all P0 items below are comp
 - [x] No-horizontal-overflow and no-sustained-DOM-churn checks.
 - [x] Auth-truth / missing-data truth checks.
 - [x] One machine-readable `lts-canonical-definition-of-done-receipt-v1` maps the recovered requirements and separates automatic PASS from authenticated-real/physical-device claims.
-- [x] Fixed homologation manifest selects exact green canonical v1.17 product `e4cea675…` through exposure `06fdcbba…`; public promotion remains separate and unauthorized.
+- [x] Fixed homologation manifest selects exact green canonical v1.19 product `37781c3b…` through exposure `59222846…`; public promotion remains separate and unauthorized.
 
 ### P0.6 Supabase security hardening
 - [x] Inventory the 13 `public` tables currently reported with RLS disabled.
@@ -83,11 +83,11 @@ The LTS Wealth app is not considered delivered until all P0 items below are comp
 - [ ] Review and enable leaked-password protection under a controlled Auth change window.
 
 ### P0.7 Holistic UX closure
-- [~] Audit the whole application against the official Dashboard model, the recovered Homologação/Execução decisions and the validated V150–V151+ behavior floor.
-- [ ] Remove duplicated actions, technical language, dead space, unclear hierarchy and inconsistent interaction patterns only where the change preserves financial truth and auditability.
-- [ ] Confirm every primary action has a visible loading, success, empty and safe error state; do not hide missing evidence behind polished placeholders.
-- [ ] Re-run visual comparison at 1312×1199 and responsive review at 390×844 after the final coherent UX package.
-- [ ] Record final UX decisions and rejected alternatives in an immutable checkpoint before asking for material homologation.
+- [x] Audit the whole application against the official Dashboard model, the recovered Homologação/Execução decisions and the validated V150–V151+ behavior floor.
+- [x] Remove duplicated actions and technical language, improve hierarchy/interaction consistency and preserve financial truth/auditability; sparse real-data routes keep truthful states rather than decorative filler.
+- [x] Gate loading/empty/error truth and translate raw provider/session/backend errors into safe guidance while retaining bounded internal diagnostics.
+- [x] Re-run visual comparison at 1312×1199 and responsive review at 390×844 after the coherent V1.19 UX package.
+- [x] Record UX decisions and rejected alternatives in `backups/CANONICAL_APP_V119_UX_CLOSURE_CHECKPOINT_2026-09-08.md`.
 
 ## P1 — Core functional modules in the canonical app
 ### P1.1 Fluxo Diário
@@ -193,12 +193,12 @@ The LTS Wealth app is not considered delivered until all P0 items below are comp
 - [ ] Volvo exact trim/version and km required before valuation refinement.
 
 ### P3.5 Historical continuity
-- [~] Audit open dependencies back to project start 07/07/2026 so no prior improvement disappears.
-- [ ] Explain/correct the 01/01/2026 zero/negative balance behavior while preserving Realizado ≠ Projetado.
-- [ ] Verify the rejected 24/08 yellow band is absent without altering the validated `+` position/column order.
+- [x] Audit dependencies back to project start 07/07/2026 through the two-month decision ledger, Git lineage and immutable checkpoints so prior improvements remain regression-protected.
+- [x] Explain/correct the 01/01/2026 zero/negative balance behavior while preserving Realizado ≠ Projetado; real backend opening is derived from certified close minus daily net.
+- [x] Verify the rejected 24/08 yellow band is absent without altering the validated `+` position/column order.
 - [ ] Investigate the R$0,01 Bradesco difference and 06/08 Cofrinho event from source evidence.
 - [ ] Keep the 12/08 Bradesco R$0,17 interval and Cofrinho R$186,10 timing as documentary gaps, not inferred facts.
-- [ ] Produce original-versus-app comparisons for 31/12/2026 and 31/12/2029; no recovered result currently closes either date.
+- [x] Inventory original-workbook versus current-app snapshots for 31/12/2026 and 31/12/2029 without claiming equality across obsolete scenario layers; exact app coverage through 31/12/2029 plus D+30 is proven.
 - [x] Consolidate the recovered two-month decision ledger in `backups/TWO_MONTH_FEEDBACK_RECOVERY_CHECKPOINT_2026-09-08.md`.
 
 ## P4 — Open Finance
@@ -237,17 +237,15 @@ Open Finance is still part of the product roadmap. It was not cancelled; work wa
 - [ ] Real authenticated physical-iPhone material homologation.
 - [ ] Real authenticated desktop material homologation as needed.
 - [ ] Public `index.html` promotion only after explicit user authorization.
-- [ ] Preserve fixed homologation/public links.
+- [x] Preserve fixed homologation/public links.
 
 ## Execution order from now
-1. Preserve canonical v1.17 product `e4cea675…` and exposure `06fdcbba…` as the current product baseline.
-2. Preserve v1.17 product language, v1.16 V151 planning distinction, v1.15 approved 1312×1199 single-screen Dashboard density, v1.14 V149 read-only document review, v1.13 classification-first guided intake, v1.12 reviewed input, v1.11 liquidity layers, v1.10 decision truth, v1.9 Flow parity, route/session continuity and the automatic receipt as protected regression baselines.
-3. Close the evidence-led 01/01/2026, 24/08 yellow-band, Bradesco/Cofrinho and 31/12/2026–31/12/2029 historical audits without inventing facts.
-4. Complete the holistic Dashboard/Flow/Despesas/Patrimônio/Cartões/Atualizações UX audit and implement one coherent regression-gated package.
-5. Execute real authenticated desktop and physical-iPhone lifecycles for Dashboard, Flow, search/CSV, classification, liquidity, documents and backup/restore; use them to close the corresponding receipt rows.
-6. Keep the Supabase security baseline regression-protected and review leaked-password protection in a controlled Auth window.
-7. Continue documentary gaps and Open Finance provider evidence, while provider/consent/spend waits for explicit user decision.
-8. Promote `index.html` only after the complete receipt and explicit user authorization.
+1. Preserve canonical v1.19 product `37781c3b…` and exposure `59222846…` as the current regression baseline.
+2. Execute real authenticated desktop and physical-iPhone lifecycles for Dashboard, Flow, search/CSV, classification, liquidity, documents and backup/restore; use them to close the corresponding receipt rows.
+3. Keep Bradesco/Cofrinho, card, RSU, CIPÓ and Volvo gaps open until documentary evidence exists; do not infer a closure.
+4. Keep the Supabase security baseline regression-protected and review leaked-password protection in a controlled Auth window.
+5. Continue Open Finance provider evidence; provider/consent/spend waits for explicit user decision.
+6. Promote `index.html` only after the complete receipt and explicit user authorization.
 
 ## Current user action
-NONE. Continue autonomous work until a real financial/classification/provider/consent decision is necessary or a materially testable canonical app is ready.
+Authenticate the fixed homologation and complete the physical-iPhone material walkthrough; these two gates cannot be executed from the unsigned automated browser. Public-root promotion remains a separate explicit authorization.

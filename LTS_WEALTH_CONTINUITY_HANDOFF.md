@@ -1,6 +1,6 @@
 # LTS Wealth — Continuity Handoff
 
-Last materially refreshed: 2026-09-08 17:46 BRT (America/Sao_Paulo)
+Last materially refreshed: 2026-09-08 18:50 BRT (America/Sao_Paulo)
 
 This file exists so project continuity never depends on chat context. Always re-fetch `main`, active branch, `PROJECT_MASTER_BACKLOG.md`, `NEXT_HOMOLOGATION_GATE.md`, this file and the latest immutable checkpoint before every repository write.
 
@@ -24,14 +24,20 @@ This file exists so project continuity never depends on chat context. Always re-
 - Public fallback remains WIP35-v136; protected `index.html` blob remains `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
 - Public promotion remains unauthorized/not done.
 
-## Current exposed product — canonical v1.18 Flow History + Horizon
-- Exact product `692535276fe7948c386349254151538c0c9eddf8`; fixed-manifest exposure `65cb675b613b70b7a26f97f86938a0b3ac72b584`; active recovery, `canonical-app-v1` and `main` are aligned by normal fast-forward.
+## Current exposed product — canonical v1.19 UX Closure
+- Exact product `37781c3b11389789716781accca6c1fdabea461c`, tree `626437edfa47d12be4a061f3ff6c88e077ae2304`; fixed-manifest exposure `59222846a5c7e67c923790da9ad4088df9781fa4`, tree `5b34ab00cecf338c51eeb97f94d339a4bb025b03`; active recovery, `canonical-app-v1` and `main` are aligned by normal no-force fast-forward.
+- Contract `safe-errors-accessible-controls-readable-mobile-v1` closes the executable holistic UX pass: one `Hoje`, safe product errors plus bounded internal diagnostics, associated/live authentication feedback, explicit accessibility state, keyboard modal behavior, visible focus, reduced motion and readable mobile controls/copy.
+- V1.19 preserves every V1.18→V1.9 product and truth contract, including the recovered 01/01 opening, rejected yellow-row removal, 31/12/2029 plus D+30 horizon and rich V150/V151+ Flow floor.
+- Recovery/canonical gates `34279813550` / `34281714299`, candidate smokes `34279813574` / `34281714284`, pre-manifest main smoke/Pages `34281930573` / `34281929787`, post-exposure active/canonical/main smokes `34282394183` / `34282421576` / `34282451603` and Pages `34282450565`: SUCCESS.
+- Fixed homologation resolves to `canonical-app.html?homologacao=37781c3b11389789716781accca6c1fdabea461c`, loads `?v=20260908-ux19`, renders the truthful blank login with associated labels/live feedback and uses zero iframes.
+- Latest immutable checkpoint: `backups/CANONICAL_APP_V119_UX_CLOSURE_CHECKPOINT_2026-09-08.md`.
+- Authenticated real mutation/readback/document lifecycles, physical-iPhone E2E and public-root promotion remain open/not claimed.
+
+## Protected predecessor — canonical v1.18 Flow History + Horizon
+- Exact product `692535276fe7948c386349254151538c0c9eddf8`; fixed-manifest exposure `65cb675b613b70b7a26f97f86938a0b3ac72b584`.
 - Contracts `historical-opening-from-close-and-net-v1`, `today-marker-without-row-band-v1` and `future-through-2029-plus-d30-v1` close the recovered 01/01 opening, yellow-row and 2029/D+30 gaps while preserving the rich V150/V151+ Flow floor.
 - Supabase migration `canonical_flow_horizon_and_slice_guard_2026_09_08` is applied; exact requested coverage fails loudly instead of selecting a loose cache. No financial fact was changed.
-- Recovery/canonical gates `34274496763` / `34274793717`, smokes `34274496830` / `34274793697`, main smoke/Pages `34275276745` / `34275275447` and post-manifest main smoke/Pages `34276115233` / `34276114848`: SUCCESS.
-- Fixed homologation resolves to `canonical-app.html?homologacao=692535276fe7948c386349254151538c0c9eddf8`, loads `?v=20260908-flow18`, renders the truthful blank login and uses zero iframes.
-- Latest immutable checkpoint: `backups/CANONICAL_APP_V118_FLOW_HISTORY_HORIZON_CHECKPOINT_2026-09-08.md`.
-- Authenticated real mutation/readback/document lifecycles, physical-iPhone E2E and public-root promotion remain open/not claimed.
+- Immutable checkpoint: `backups/CANONICAL_APP_V118_FLOW_HISTORY_HORIZON_CHECKPOINT_2026-09-08.md`.
 
 ## Protected predecessor — canonical v1.17 Product Language
 - Exact remote product `e4cea67563ac379d5bf47d02d20846699194a002`, product tree `9037c73840167b1cfe1d36e2b8cc2b6f90d101f7`; fixed-manifest exposure `06fdcbba8f1cbcae6af2ebf153a2291915195f96`, exposure tree `4d3a917076380bfc81d8a0a74842d97eb1fe38f9`; all three release branches share the exposure through normal no-force fast-forward.
@@ -284,7 +290,7 @@ This is deterministic fixture/unauthenticated evidence, not authenticated physic
 - v154 accepted visual direction; v155 false-zero/navigation correction; v156 liquidity-first but rejected real iPhone; v157 WebKit deterministic pass but real-device rejection; v158 truthful fallback/product regression; v159 presentation restored but KPI data unavailable on real iPhone; v160 material-data readiness/truthful fallback; canonical app supersedes all as primary architecture.
 
 ## Open backlog that must always remain visible
-- Evidence-led Dashboard detail convergence beyond the protected Pass 6 baseline; pixel-perfect parity is not claimed.
+- Preserve the V1.19 holistic UX closure and approved Dashboard structure; pixel-perfect identity is not claimed as an evidence fact.
 - Close the unified receipt rows that require authenticated real-data/write lifecycles and physical-device evidence; do not reinterpret automatic PASS as final delivery.
 - Controlled Auth review/enablement of leaked-password protection; database RLS/SECURITY DEFINER hardening is closed and must remain regression-protected.
 - Authenticated physical-iPhone canonical financial/data E2E.
@@ -304,7 +310,7 @@ This is deterministic fixture/unauthenticated evidence, not authenticated physic
 - Preserve official-reference visual language, mobile/desktop usability, backup/restore and traceability.
 
 ## User action now
-NONE. Continue autonomous Dashboard/product-quality work. User may test the fixed homologation when a material candidate is published, but engineering work must not wait for that QA.
+The autonomous executable package is published. Closing the remaining P0 evidence now requires an authenticated session and a physical-iPhone walkthrough; public-root promotion still requires explicit authorization.
 
 ## Route/session continuity + unified receipt — 08/09/2026
 - Route and management-pane intent now survive refresh/session restoration/back-forward under explicit allowlists; the future-JWT safe reset returns to login without discarding the intended product route.
