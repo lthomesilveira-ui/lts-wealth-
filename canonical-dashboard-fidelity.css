@@ -192,13 +192,26 @@
 #dashboard-view .bank-row span{display:block;margin-top:2px;color:#8190a2;font-size:6.8px}
 #dashboard-view .series.observed{stroke:#2f7be5;stroke-width:2.6}
 #dashboard-view .series.projected{stroke:#5d8dcc;stroke-width:2.3;stroke-dasharray:7 5}
+#dashboard-view .series.conditional{stroke:#7357c7;stroke-width:2.15;stroke-dasharray:3 4}
+#dashboard-view .series.restricted{stroke:#d39a2f;stroke-width:2.15;stroke-dasharray:2 5}
 #dashboard-view .point.observed{fill:#2f7be5;stroke:#fff;stroke-width:1.4}
 #dashboard-view .point.projected{fill:#fff;stroke:#5d8dcc;stroke-width:2}
+#dashboard-view .point.conditional{fill:#fff;stroke:#7357c7;stroke-width:1.8}
+#dashboard-view .point.restricted{fill:#fff;stroke:#d39a2f;stroke-width:1.8}
 #dashboard-view .axis-x{font-size:7px;font-weight:700;fill:#708097}
-#dashboard-view .liquidity-legend{align-items:center;gap:9px}
+#dashboard-view .liquidity-legend{align-items:center;gap:9px;flex-wrap:wrap}
 #dashboard-view .chart-key{display:inline-flex;align-items:center;gap:5px}
 #dashboard-view .chart-key:before{content:"";display:block;width:16px;border-top:2px solid #2f7be5}
 #dashboard-view .chart-key.projected:before{border-top-color:#5d8dcc;border-top-style:dashed}
+#dashboard-view .chart-key.conditional:before{border-top-color:#7357c7;border-top-style:dashed}
+#dashboard-view .chart-key.restricted:before{border-top-color:#d39a2f;border-top-style:dotted}
+#dashboard-view .liquidity-layer-values{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-top:8px;padding-top:8px;border-top:1px solid #eef2f6}
+#dashboard-view .liquidity-layer-values>span{display:grid;grid-template-columns:7px minmax(0,1fr);gap:1px 5px;align-items:center;min-width:0;color:#718197;font-size:7.3px;font-weight:750}
+#dashboard-view .liquidity-layer-values i{grid-row:1/3;width:6px;height:6px;border-radius:50%;background:#2f7be5}
+#dashboard-view .liquidity-layer-values i.layer-short{background:#5d8dcc}
+#dashboard-view .liquidity-layer-values i.layer-vested{background:#7357c7}
+#dashboard-view .liquidity-layer-values i.layer-fgts{background:#d39a2f}
+#dashboard-view .liquidity-layer-values b{grid-column:2;overflow:hidden;color:#263b53;font-size:8px;text-overflow:ellipsis;white-space:nowrap}
 #dashboard-view .commit-row{width:100%;border-right:0;border-bottom:0;border-left:0;background:transparent;color:inherit;text-align:left;cursor:pointer}
 #dashboard-view .commit-row:hover{background:#f7fafe}
 #dashboard-view .commit-row:focus-visible{outline:2px solid #4b91e5;outline-offset:2px}
@@ -236,6 +249,9 @@
   #dashboard-view .liquidity-legend{gap:6px}
   #dashboard-view .chart-key:before{width:12px}
   #dashboard-view .axis-x{font-size:6.2px}
+  #dashboard-view .liquidity-layer-values{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px 10px}
+  #dashboard-view .liquidity-layer-values>span{font-size:7px}
+  #dashboard-view .liquidity-layer-values b{font-size:7.8px}
 }
 
 /* Canonical expenses workbench: history + nature x context under one owner. */

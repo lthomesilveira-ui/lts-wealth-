@@ -52,12 +52,14 @@ jobs:
           assert 'MutationObserver' not in s
           assert 'setInterval(' not in s
           assert 'canonical-liquidity.js?v=' in s
-          assert 'canonical-dashboard-fidelity.css?v=20260908-dashboard-truth10' in s
-          assert 'canonical-liquidity.js?v=20260908-dashboard-truth10' in s
+          assert 'canonical-dashboard-fidelity.css?v=20260908-dashboard-layers11' in s
+          assert 'canonical-liquidity.js?v=20260908-dashboard-layers11' in s
           assert 'single-owner-history-nature-context-v1' in s
           assert 'Quanto você gasta — e para quem é cada gasto.' in s
-          assert 'reference-fact-projection-commitments-v2' in s
+          assert 'reference-layered-liquidity-commitments-v3' in s
           assert 'fact-before-asof-projection-after-asof-v1' in s
+          assert 'current-base-scheduled-rsu-restricted-fgts-v1' in s
+          assert 'layered-fact-projection-v2' in s
           assert 'product-commitments-plus-card-due' in s
           assert 'canonical-route-session-continuity-v1' in s
           assert 'data-dashboard-reload' in s

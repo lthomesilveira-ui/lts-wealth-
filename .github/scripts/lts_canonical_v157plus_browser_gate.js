@@ -44,7 +44,7 @@ function finalizeReceipt() {
   receipt.claim_boundary.deterministic_fixture = 'PASS';
   receipt.requirements = {
     architecture: { status: 'PASS', evidence: 'single canonical frontend; zero iframes' },
-    dashboard: { status: 'PASS_AUTOMATED', evidence: 'approved hierarchy, liquidity-first contract, fact/projection chart semantics and documentary commitments on desktop/mobile' },
+    dashboard: { status: 'PASS_AUTOMATED', evidence: 'approved hierarchy, four current-liquidity quadrants, layered fact/base/RSU/FGTS chart semantics and documentary commitments on desktop/mobile' },
     flow: { status: 'PASS_AUTOMATED', evidence: 'V150 interaction parity plus V157 liquidity layers: four account views, five-day horizon, semantic movements, inline invoice, append-only split and preserved scroll' },
     expenses: { status: 'PASS_AUTOMATED', evidence: 'single-owner month/year history, nature x context, unassigned semantics and item drilldown' },
     cards: { status: 'PASS_AUTOMATED', evidence: 'current/next invoice and certified historical coverage' },
@@ -299,29 +299,55 @@ async function assertManagementContract(page, label) {
 async function assertDashboardContract(page, label, mobile) {
   const contract = await page.locator('#dashboard-view').getAttribute('data-dashboard-contract');
   const status = await page.evaluate(() => window.__LTS_CANONICAL_DASHBOARD_STATUS);
-  if (contract !== 'reference-fact-projection-commitments-v2'
+  if (contract !== 'reference-layered-liquidity-commitments-v3'
       || status?.ready !== true
       || status?.contract !== contract
       || status?.reference !== 'approved-1312x1199-liquidity-first'
       || status?.projection_contract !== 'fact-before-asof-projection-after-asof-v1'
+      || status?.liquidity_layer_contract !== 'current-base-scheduled-rsu-restricted-fgts-v1'
+      || status?.current_anchor_source !== 'cockpit-liquidity-through-d3'
       || status?.commitment_source !== 'product-commitments-plus-card-due'
       || status?.observed_points !== 1
       || status?.projected_points !== 5
+      || status?.conditional_points !== 5
+      || status?.restricted_points !== 5
       || status?.commitment_rows !== 3
       || status?.update_rows !== 3) {
     throw new Error(`${label}: Dashboard fidelity status ${JSON.stringify({ contract, status })}`);
   }
 
-  const charts = page.locator('#dashboard-view [data-liquidity-chart="fact-projection-v1"]');
-  if (await charts.count() !== 2) throw new Error(`${label}: fact/projection charts missing`);
+  const charts = page.locator('#dashboard-view [data-liquidity-chart="layered-fact-projection-v2"]');
+  if (await charts.count() !== 2) throw new Error(`${label}: layered liquidity charts missing`);
   for (const chart of await charts.all()) {
     if (await chart.getAttribute('data-observed-points') !== '1'
         || await chart.getAttribute('data-projected-points') !== '5'
-        || await chart.locator('.series.projected').count() !== 1
-        || await chart.locator('.point.observed').count() !== 1
-        || await chart.locator('.point.projected').count() !== 5) {
-      throw new Error(`${label}: fact/projection visual semantics missing`);
+        || await chart.getAttribute('data-conditional-points') !== '5'
+        || await chart.getAttribute('data-restricted-points') !== '5'
+        || await chart.locator('.series.projected.base').count() !== 1
+        || await chart.locator('.series.conditional').count() !== 1
+        || await chart.locator('.series.restricted').count() !== 1
+        || await chart.locator('.point.base.observed').count() !== 1
+        || await chart.locator('.point.base.projected').count() !== 5
+        || await chart.locator('.point.conditional').count() !== 5
+        || await chart.locator('.point.restricted').count() !== 5) {
+      throw new Error(`${label}: layered liquidity visual semantics missing`);
     }
+  }
+  const legends = page.locator('#dashboard-view .liquidity-legend');
+  if (await legends.count() !== 2) throw new Error(`${label}: layered liquidity legends missing`);
+  for (const legend of await legends.all()) {
+    const legendText = await legend.innerText();
+    for (const expected of ['Posição em', 'Base operacional projetada', 'Com vestings programados', 'Com FGTS documental D+30']) {
+      if (!containsText(legendText, expected)) throw new Error(`${label}: liquidity legend missing ${expected}`);
+    }
+  }
+  const layerValues = await page.locator('#dashboard-view .liquidity-layer-values').innerText();
+  for (const expected of ['Contas', 'D0/D1', 'RSUs vested', 'FGTS restrito']) {
+    if (!containsText(layerValues, expected)) throw new Error(`${label}: current liquidity composition missing ${expected}`);
+  }
+  const liquidityPanelBox = await page.locator('#dashboard-view .grid-main > .panel').first().boundingBox();
+  if (!liquidityPanelBox || liquidityPanelBox.height > (mobile ? 410 : 360)) {
+    throw new Error(`${label}: liquidity panel height regression ${JSON.stringify(liquidityPanelBox)}`);
   }
   const commitmentText = await page.locator('#dashboard-view .commit-list').innerText();
   for (const expected of ['Próxima fatura', 'Parcela contratual', 'Compromisso documentado']) {
@@ -368,7 +394,7 @@ async function assertDashboardContract(page, label, mobile) {
   await page.locator('#dashboard-view [data-dashboard-reload]').click();
   await page.waitForFunction(expected => (
     window.__LTS_CANONICAL_DASHBOARD_STATUS?.reload_count === expected
-      && document.querySelector('#dashboard-view')?.dataset.dashboardContract === 'reference-fact-projection-commitments-v2'
+      && document.querySelector('#dashboard-view')?.dataset.dashboardContract === 'reference-layered-liquidity-commitments-v3'
   ), beforeReload + 1);
   await waitProduct(page, 'Dashboard');
 
