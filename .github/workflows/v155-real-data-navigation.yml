@@ -1,7 +1,7 @@
 name: LTS v155 real data navigation
 on:
   push:
-    branches: [v155-real-data-navigation-fix, main]
+    branches: [v155-real-data-navigation-fix]
     paths:
       - 'wip35-v155-candidate.html'
       - 'wip35-v155-runtime.js'

@@ -1,7 +1,7 @@
 name: LTS v147 Guided document association
 on:
   push:
-    branches: [main, v147-guided-document-association]
+    branches: [v147-guided-document-association]
     paths:
       - 'wip35-v147-candidate.html'
       - 'wip35-v147-guided-document-association.js'

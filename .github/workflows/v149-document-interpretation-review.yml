@@ -1,7 +1,7 @@
 name: LTS v149 Document interpretation review
 on:
   push:
-    branches: [v149-document-interpretation-review, main]
+    branches: [v149-document-interpretation-review]
     paths:
       - 'wip35-v149-candidate.html'
       - 'wip35-v149-document-interpretation-review.js'

@@ -1,6 +1,6 @@
 # LTS Wealth — Continuity Handoff
 
-Last materially refreshed: 2026-09-06 (America/Sao_Paulo)
+Last materially refreshed: 2026-09-07 (America/Sao_Paulo)
 
 This file exists so project continuity never depends on chat context. Always re-fetch `main`, active branch, `PROJECT_MASTER_BACKLOG.md`, `NEXT_HOMOLOGATION_GATE.md`, this file and the latest immutable checkpoint before every repository write.
 
@@ -24,19 +24,19 @@ This file exists so project continuity never depends on chat context. Always re-
 - Public fallback remains WIP35-v136; protected `index.html` blob remains `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
 - Public promotion remains unauthorized/not done.
 
-## Current primary product — canonical app v1
+## Current primary product — canonical app V157+
 The primary product line is the single canonical frontend `canonical-app.html`. The v154→v160 wrapper lineage is historical evidence only and must not be reintroduced as the product architecture.
 
 Current facts:
 - single frontend; no release iframe/wrapper chain;
 - direct Supabase authentication/RPC integration;
 - same app owns Dashboard, Fluxo Diário, Despesas, Patrimônio, Cartões and Atualizações;
-- `canonical-app.html` gated liquidity-UI blob `4d847449208dd80bf31e74238c79a0dd411cda38`;
-- `canonical-liquidity.js` blob `eee099e254569d955a64216edce1322613882644`;
-- canonical liquidity UI gate `34053651814`: SUCCESS in Chromium desktop 1312×1199 and WebKit mobile 390×844;
-- gate artifact `9995321790`, digest `sha256:443efb8995d2be17450a2406acfc59357954b000a2e9fea543261d47d08a8d66`;
-- fixed homologation remains `canonical-v1` / `canonical-app.html` / `promotion_status:not_promoted`;
-- latest immutable checkpoint: `backups/CANONICAL_APP_V1_LIQUIDITY_UI_GATE_CHECKPOINT_2026-09-06.md`;
+- gated implementation `76f888dc0e668fb0e768c8cc825f56778f043f50`; exact homologation target `c44d401497e14d842d433a302006ff5648b956a9`; exposure commit `3b3048fa4660868e161582fcd8704438a13e300c`;
+- canonical blobs: `canonical-app.html` `08680a3fad789351d3bbd7c3b44aef0af7ea9757`, `canonical-dashboard-fidelity.css` `8ca76632029a80b65ced58f0cf4a5704df2c0269`, `canonical-liquidity-core.js` `eee099e254569d955a64216edce1322613882644`, `canonical-flow-v157.js` `fefe99aa1062ad5287f0a39f7872a28d96ee0b1f`, `canonical-product-v157.js` `2eb33b2f3b5405b2e95f4a2104f267a4c46ff47c`, `canonical-presentation-v157.js` `9f50f69ca33ef5c134cd771f86a958fed2aa1d89`;
+- modular recovery gate `34170935882` and permanent canonical gate `34171231918`: SUCCESS in Chromium desktop 1312×1199 and WebKit mobile 390×844;
+- all active/canonical/main candidate smokes and both pre/post-manifest Pages deployments are green; exact run inventory is in the immutable checkpoint;
+- fixed homologation is `canonical-app.html?homologacao=c44d401497e14d842d433a302006ff5648b956a9` / `promotion_status:not_promoted`, browser-verified with truthful login;
+- latest immutable checkpoint: `backups/CANONICAL_V157PLUS_PRODUCT_RECOVERY_EXPOSURE_CHECKPOINT_2026-09-07.md`;
 - authenticated physical-iPhone financial/data E2E remains pending/not claimed.
 
 ## Deterministic canonical evidence
@@ -158,12 +158,11 @@ This is deterministic fixture/unauthenticated evidence, not authenticated physic
 NONE. Continue autonomous Dashboard/product-quality work. User may test the fixed homologation when a material candidate is published, but engineering work must not wait for that QA.
 
 
-## Latest dashboard fidelity gate — 06/09/2026
-- Presentation-only fidelity layer: `canonical-dashboard-fidelity.css`.
-- Gated source `6126bfbf108be1f3206279723425a5435c5e2631`; post-gate cleanup `aec1059ef40a0fe1a7c6c5fe560936abef0b87d0`.
-- Gate `34056854438`: SUCCESS on Chromium desktop 1312×1199 and WebKit mobile 390×844.
-- Artifact `9996230152`, digest `sha256:57755a6347d756b743eb8668863b62002fc065d590378ac18800a964b0c5d8d0`.
-- Checkpoint: `backups/CANONICAL_APP_V1_DASHBOARD_FIDELITY_GATE_CHECKPOINT_2026-09-06.md`.
-- Visual review: materially closer to approved reference, but pixel-perfect parity is not claimed. No fake routes or synthetic user-facing financial series were introduced.
+## Latest product-recovery exposure — 07/09/2026
+- Split V157+ module architecture is now covered by both the recovery and permanent canonical gates.
+- Product/gate source `76f888dc0e668fb0e768c8cc825f56778f043f50`; homologation target `c44d401497e14d842d433a302006ff5648b956a9`; manifest exposure `3b3048fa4660868e161582fcd8704438a13e300c`.
+- Recovery `34170935882`, permanent canonical `34171231918`, all active/canonical/main candidate smokes and Pages deployments: SUCCESS.
+- Historical v144–v160 workflows retain branch/manual execution but no longer auto-trigger on `main`.
+- Fixed homologation was directly verified; Dashboard parity remains P0 and pixel-perfect parity is not claimed.
 - Real authenticated liquidity save→refresh→visible and authenticated physical-iPhone E2E remain pending/unclaimed.
 - `index.html` remains protected/not promoted.

@@ -1,7 +1,7 @@
 name: LTS v158 native-core recovery
 on:
   push:
-    branches: [v158-native-core-auth-mobile-recovery, main]
+    branches: [v158-native-core-auth-mobile-recovery]
     paths:
       - 'wip35-v158-candidate.html'
       - '.github/workflows/v158-native-core.yml'

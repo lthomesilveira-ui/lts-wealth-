@@ -1,7 +1,7 @@
 # LTS Wealth — Canonical Delivery Master Plan
 
-Last refreshed: 2026-09-05
-Active implementation branch: `canonical-app-v1`
+Last refreshed: 2026-09-07
+Active implementation branch: `canonical-v157plus-product-recovery` (aligned with `canonical-app-v1` and `main` at the exposed V157+ baseline)
 
 Purpose: this is the execution-order view of the LTS Wealth backlog. It does not replace documentary evidence or immutable checkpoints. `PROJECT_MASTER_BACKLOG.md` remains the complete persistent dependency list. This file makes the remaining work explicit so product delivery does not get lost behind release mechanics.
 
@@ -19,87 +19,87 @@ The LTS Wealth app is not considered delivered until all P0 items below are comp
 
 ## P0 — Deliver the canonical app
 ### P0.1 Canonical shell / architecture
-- [~] Replace the v150/v151/v156/v160 wrapper/frame chain with one canonical app shell.
-- [ ] Connect directly to the existing authenticated data/RPC layer.
-- [ ] Preserve backend, financial rules, history, classification rules and documentary evidence.
-- [ ] Remove historical release branding/UI from the primary product surface.
-- [ ] Add explicit loading, unauthenticated, error and data-ready states.
+- [x] Replace the v150/v151/v156/v160 wrapper/frame chain with one canonical app shell.
+- [x] Connect directly to the existing authenticated data/RPC layer.
+- [x] Preserve backend, financial rules, history, classification rules and documentary evidence.
+- [x] Remove historical release branding/UI from the primary product surface.
+- [x] Add explicit loading, unauthenticated, error and data-ready states.
 
 ### P0.2 Dashboard — approved visual contract
-- [ ] Build the Dashboard directly against the approved 1312×1199 official reference.
-- [ ] Desktop: dark left rail + light dense executive canvas + compact spacing.
-- [ ] Mobile: purpose-built responsive hierarchy; no squeezed desktop canvas.
-- [ ] Five primary KPIs: Dinheiro em contas; Contas + curto prazo; RSUs vested; FGTS; Despesas (mês).
-- [ ] Real values only; missing evidence stays unavailable, never false R$0,00.
-- [ ] Dense executive sections: Evolução da Liquidez; Evolução do Patrimônio Líquido; Distribuição do Patrimônio; Posição por Banco; Principais Despesas; Próximos Compromissos; Planejamento/Visão de Caixa; FGTS; Atualizações Pendentes.
+- [~] Build the Dashboard directly against the approved 1312×1199 official reference; functional hierarchy is gated and presentation parity remains P0.
+- [~] Desktop: dark left rail + light dense executive canvas + compact spacing; continue visual convergence.
+- [x] Mobile: purpose-built responsive hierarchy; no squeezed desktop canvas.
+- [x] Five primary KPIs: Dinheiro em contas; Contas + curto prazo; RSUs vested; FGTS; Despesas (mês).
+- [x] Real values only; missing evidence stays unavailable, never false R$0,00.
+- [~] Dense executive sections: functional surfaces exist; continue reference-level chart/detail fidelity.
 - [ ] Expense/category drill-down from Dashboard where evidence exists.
-- [ ] First cash-negative date and management/action date displayed separately when different.
-- [ ] FGTS rule preserved: R$22.432,31 at 21/08/2026, restricted ~D+30, never D+3, no future accrual projection.
+- [x] First cash-negative date and management/action date displayed separately when different.
+- [x] FGTS rule preserved: R$22.432,31 at 21/08/2026, restricted ~D+30, never D+3, no future accrual projection.
 
 ### P0.3 Navigation / responsive product
-- [ ] One router owned by the canonical app.
-- [ ] All six routes work physically on desktop and mobile.
-- [ ] Mobile nav shows all six destinations with no clipping/overflow.
+- [x] One router owned by the canonical app.
+- [x] All six routes work physically on desktop and mobile.
+- [x] Mobile nav shows all six destinations with no clipping/overflow.
 - [ ] Route state survives refresh/session restoration appropriately.
-- [ ] No iframe navigation races or hidden historical route owners.
+- [x] No iframe navigation races or hidden historical route owners.
 
 ### P0.4 Authentication + real data
-- [ ] Canonical app owns login/session presentation.
-- [ ] Same authenticated session feeds Dashboard and all modules.
-- [ ] Direct read paths for cockpit, flow, expenses, wealth, cards, updates/search.
-- [ ] No synthetic financial data for visual QA outside explicit fixtures.
-- [ ] Error state must be visible and diagnosable instead of silently showing dashes.
+- [x] Canonical app owns login/session presentation.
+- [x] Same authenticated session feeds Dashboard and all modules.
+- [x] Direct read paths for cockpit, flow, expenses, wealth, cards, updates/search.
+- [x] No synthetic financial data for visual QA outside explicit fixtures.
+- [x] Error state must be visible and diagnosable instead of silently showing dashes.
 
 ### P0.5 Product-level QA before asking the user
 - [ ] Desktop visual parity gate against approved reference hierarchy/density.
-- [ ] Mobile WebKit gate for layout, scrolling, route fit and event-loop responsiveness.
-- [ ] Six-route physical navigation regression.
-- [ ] No-horizontal-overflow and no-sustained-DOM-churn checks.
-- [ ] Auth-truth / missing-data truth checks.
-- [ ] Only after these pass: fixed homologation can point to canonical candidate.
+- [x] Mobile WebKit gate for layout, scrolling, route fit and event-loop responsiveness.
+- [x] Six-route physical navigation regression.
+- [x] No-horizontal-overflow and no-sustained-DOM-churn checks.
+- [x] Auth-truth / missing-data truth checks.
+- [x] Fixed homologation points to the exact green canonical V157+ candidate; public promotion remains separate and unauthorized.
 
 ## P1 — Core functional modules in the canonical app
 ### P1.1 Fluxo Diário
-- [ ] Canonical UI for Itaú, Bradesco, C6 and Consolidado.
-- [ ] Preserve Saldo anterior | Entradas | Saídas | Saldo final hierarchy.
-- [ ] Facts > projections; scenarios never facts; stale anchors cannot reanchor.
-- [ ] Card invoices do not duplicate underlying expenses.
-- [ ] Bank↔liquidity-asset transfers have consolidated economic effect zero.
-- [ ] Historical bank is never inferred without evidence.
+- [x] Canonical UI for Itaú, Bradesco, C6 and Consolidado.
+- [x] Preserve Saldo anterior | Entradas | Saídas | Saldo final hierarchy.
+- [x] Facts > projections; scenarios never facts; stale anchors cannot reanchor.
+- [x] Card invoices do not duplicate underlying expenses.
+- [x] Bank↔liquidity-asset transfers have consolidated economic effect zero.
+- [x] Historical bank is never inferred without evidence.
 
 ### P1.2 Despesas
-- [ ] Bring the existing R$8.623.752,53 invariant and 3.860/3.860 analytical cache into the canonical UI.
-- [ ] Nature and context/person/cost center remain separate dimensions.
-- [ ] Current year, 12 months, since 2023 and since 2013 views where evidence exists.
+- [x] Bring the existing R$8.623.752,53 invariant and 3.860/3.860 analytical cache into the canonical UI.
+- [x] Nature and context/person/cost center remain separate dimensions.
+- [x] Current year, 12 months, since 2023 and since 2013 views where evidence exists.
 - [ ] Improve density, ranking and management-useful insights.
 - [ ] Reduce `A classificar` only through evidence.
 - [ ] Explain each item/context instead of presenting opaque totals.
 
 ### P1.3 Patrimônio
-- [ ] Canonical wealth summary and drilldowns.
-- [ ] RSU vested position and sale history with future awards excluded before vest/settlement.
-- [ ] FGTS temporal positions kept distinct.
-- [ ] CIPÓ 396 rich drilldown preserved without invented assumptions.
-- [ ] Volvo financing represented exactly once economically.
+- [x] Canonical wealth summary and drilldowns.
+- [x] RSU vested position and sale history with future awards excluded before vest/settlement.
+- [x] FGTS temporal positions kept distinct.
+- [x] CIPÓ 396 rich drilldown preserved without invented assumptions.
+- [x] Volvo financing represented exactly once economically.
 
 ### P1.4 Cartões
-- [ ] Canonical card view using certified detail where available and aggregate fallback only where necessary.
-- [ ] No duplicate spend via invoice + underlying transactions.
-- [ ] Explicitly label incomplete documentary months rather than filling patterns.
+- [x] Canonical card view using certified detail where available and aggregate fallback only where necessary.
+- [x] No duplicate spend via invoice + underlying transactions.
+- [x] Explicitly label incomplete documentary months rather than filling patterns.
 
 ### P1.5 Atualizações / Inputs
-- [ ] Compact prioritized checklist with no large blank gaps.
-- [ ] Evidence-backed category/context suggestions consistently throughout the list.
-- [ ] Explain why user input is needed where ambiguity remains.
-- [ ] Keep text-entry preview; never auto-post without explicit approval.
-- [ ] Date/value/account-or-card validation before approval.
+- [x] Compact prioritized checklist with no large blank gaps.
+- [x] Evidence-backed category/context suggestions consistently throughout the list.
+- [x] Explain why user input is needed where ambiguity remains.
+- [x] Keep text-entry preview; never auto-post without explicit approval.
+- [x] Date/value/account-or-card validation before approval.
 
 ## P2 — Search, classification, documents and write lifecycles
 ### P2.1 Transaction search
-- [~] Finish server-side incremental search through `lts_browser_transactions_v1`.
-- [ ] Search while typing across supported history from 10/10/2013 plus future existing launches.
-- [ ] Read-only results with total count.
-- [ ] Excel-compatible CSV export preserving available date, description, account, direction, amount, category, counterparty, cost center and source/reference.
+- [x] Finish server-side incremental search through `lts_browser_transactions_v1`.
+- [x] Search while typing across supported history from 10/10/2013 plus future existing launches.
+- [x] Read-only results with total count.
+- [x] Excel-compatible CSV export preserving available date, description, account, direction, amount, category, counterparty, cost center and source/reference.
 - [x] Existing evidence: Mastercard returns 239 rows spanning 01/11/2013 to 12/04/2028.
 
 ### P2.2 Classification lifecycle

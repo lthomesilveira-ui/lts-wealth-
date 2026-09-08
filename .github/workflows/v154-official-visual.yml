@@ -1,7 +1,7 @@
 name: LTS v154 official visual contract
 on:
   push:
-    branches: [main, v154-official-reference-contract]
+    branches: [v154-official-reference-contract]
     paths:
       - 'wip35-v154-candidate.html'
       - 'design/LTS_WEALTH_DASHBOARD_REFERENCE_OFFICIAL_2026-09-04.jpeg'

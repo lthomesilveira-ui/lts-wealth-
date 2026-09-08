@@ -4,6 +4,18 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 
 Canonical persistent project list. Never remove an open financial, documentary, classification, reconciliation or product dependency during compaction. Detailed immutable evidence remains in `backups/`, `HISTORICAL_RECOVERY_LOG.md`, `PLANNING_EXCEL_TO_CURRENT_AUDIT_2026-08-30.md`, `NEXT_HOMOLOGATION_GATE.md` and release checkpoints.
 
+## P0 — V157+ product-recovery exposure — 07/09/2026
+- [x] Canonical V157+ split modules are the permanent product line: `canonical-liquidity-core.js`, `canonical-flow-v157.js`, `canonical-product-v157.js`, `canonical-presentation-v157.js`.
+- [x] Product/gate implementation `76f888dc0e668fb0e768c8cc825f56778f043f50`; gated manifest target `c44d401497e14d842d433a302006ff5648b956a9`; exposure commit `3b3048fa4660868e161582fcd8704438a13e300c`.
+- [x] Modular recovery gate `34170935882`, permanent canonical gate `34171231918`, active/canonical/main candidate smokes `34170935887` / `34171231935` / `34171338575`, and Pages `34171338335`: SUCCESS.
+- [x] Post-manifest active/canonical/main candidate smokes `34171452083` / `34171452913` / `34171453488` and Pages `34171452759`: SUCCESS.
+- [x] Fixed homologation resolves to the exact gated V157+ baseline and was browser-verified with canonical script + truthful unauthenticated login.
+- [x] Historical v144–v160 workflow batteries no longer auto-trigger on `main`; feature-branch and manual execution remain available as historical evidence.
+- [x] Immutable checkpoint `backups/CANONICAL_V157PLUS_PRODUCT_RECOVERY_EXPOSURE_CHECKPOINT_2026-09-07.md`.
+- [x] Public `index.html` remains protected and unchanged; `promotion_status:not_promoted`.
+- [ ] Authenticated physical-iPhone financial/data E2E remains pending and must not be claimed.
+- [~] Dashboard visual parity and remaining report/updates product recovery remain the active P0.
+
 ## P0 — current canonical functional baseline — 06/09/2026
 - [x] Wrapper line v154→v160 is historical only; it is no longer the primary product architecture.
 - [x] Single canonical frontend exists at `canonical-app.html`; no iframe/release-wrapper chain is part of the canonical product.

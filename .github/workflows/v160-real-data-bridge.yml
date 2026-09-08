@@ -1,7 +1,7 @@
 name: LTS v160 real data bridge
 on:
   push:
-    branches: [v160-real-data-bridge, main]
+    branches: [v160-real-data-bridge]
     paths:
       - 'wip35-v160-candidate.html'
       - '.github/workflows/v160-real-data-bridge.yml'

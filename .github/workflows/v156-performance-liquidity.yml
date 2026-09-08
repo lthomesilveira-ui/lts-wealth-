@@ -1,7 +1,7 @@
 name: LTS v156 performance liquidity
 on:
   push:
-    branches: [v156-performance-liquidity-dashboard, main]
+    branches: [v156-performance-liquidity-dashboard]
     paths:
       - 'wip35-v156-candidate.html'
       - '.github/workflows/v156-performance-liquidity.yml'

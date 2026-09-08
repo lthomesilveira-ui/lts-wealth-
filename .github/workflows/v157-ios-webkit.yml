@@ -1,7 +1,7 @@
 name: LTS v157 iOS WebKit recovery
 on:
   push:
-    branches: [v157-ios-webkit-nav-recovery, main]
+    branches: [v157-ios-webkit-nav-recovery]
     paths:
       - 'wip35-v157-candidate.html'
       - '.github/workflows/v157-ios-webkit.yml'

@@ -1,7 +1,7 @@
 name: LTS v159 prototype dashboard real core
 on:
   push:
-    branches: [v159-prototype-dashboard-real-core, main]
+    branches: [v159-prototype-dashboard-real-core]
     paths:
       - 'wip35-v159-candidate.html'
       - '.github/workflows/v159-prototype-dashboard-real-core.yml'

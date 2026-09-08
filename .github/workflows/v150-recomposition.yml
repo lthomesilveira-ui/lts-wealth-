@@ -1,7 +1,7 @@
 name: LTS v150 Expense input dashboard recomposition
 on:
   push:
-    branches: [v150-expenses-input-dashboard-recomposition, main]
+    branches: [v150-expenses-input-dashboard-recomposition]
     paths:
       - 'wip35-v150-candidate.html'
       - 'wip35-v150-recomposition.js'
