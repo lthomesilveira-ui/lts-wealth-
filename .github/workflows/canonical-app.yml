@@ -11,6 +11,7 @@ on:
       - canonical-product-v157.js
       - canonical-presentation-v157.js
       - canonical-capabilities-v161.js
+      - canonical-reviewed-input-v112.js
       - canonical-dashboard-fidelity.css
       - .github/scripts/lts_canonical_v157plus_browser_gate.js
       - .github/workflows/canonical-app.yml
@@ -45,6 +46,7 @@ jobs:
           p=Path('canonical-product-v157.js').read_text()
           v=Path('canonical-presentation-v157.js').read_text()
           g=Path('canonical-capabilities-v161.js').read_text()
+          i=Path('canonical-reviewed-input-v112.js').read_text()
           d=Path('canonical-dashboard-fidelity.css').read_text()
           gate=Path('.github/scripts/lts_canonical_v157plus_browser_gate.js').read_text()
           assert '<iframe' not in s
@@ -52,8 +54,8 @@ jobs:
           assert 'MutationObserver' not in s
           assert 'setInterval(' not in s
           assert 'canonical-liquidity.js?v=' in s
-          assert 'canonical-dashboard-fidelity.css?v=20260908-dashboard-layers11' in s
-          assert 'canonical-liquidity.js?v=20260908-dashboard-layers11' in s
+          assert 'canonical-dashboard-fidelity.css?v=20260908-input12' in s
+          assert 'canonical-liquidity.js?v=20260908-input12' in s
           assert 'single-owner-history-nature-context-v1' in s
           assert 'Quanto você gasta — e para quem é cada gasto.' in s
           assert 'reference-layered-liquidity-commitments-v3' in s
@@ -63,14 +65,14 @@ jobs:
           assert 'product-commitments-plus-card-due' in s
           assert 'canonical-route-session-continuity-v1' in s
           assert 'data-dashboard-reload' in s
-          for module in ['canonical-liquidity-core.js','canonical-flow-v157.js','canonical-product-v157.js','canonical-presentation-v157.js','canonical-capabilities-v161.js?v=20260908-continuity7']:
+          for module in ['canonical-liquidity-core.js','canonical-flow-v157.js','canonical-product-v157.js','canonical-presentation-v157.js','canonical-capabilities-v161.js?v=20260908-continuity7','canonical-reviewed-input-v112.js?v=20260908-input12']:
               assert module in l, module
           assert 'canonical-flow-v150.js' not in l
           assert "const ROUTES=['Patrimônio','Cartões']" in p
           assert len(d) > 1000
           assert '#dashboard-view .grid-main' in d
           assert '#dashboard-view .rank-row.clickable' in d
-          for module in [l,c,f,p,v,g]:
+          for module in [l,c,f,p,v,g,i]:
               assert 'MutationObserver' not in module
               assert 'setInterval(' not in module
           for r in ['Dashboard','Fluxo Diário','Despesas','Patrimônio','Cartões','Atualizações']:
@@ -96,6 +98,8 @@ jobs:
               assert marker in v, marker
           for marker in ['LTS v1.6 · Central de Gestão','__LTS_CANONICAL_CAPABILITIES_STATUS','session-persisted-management-pane-v1','Planejamento','Entradas & compromissos','Recorrências','Simulações','Conciliação','Relatórios','Backup & restauração','Configurações & integrações','Financiamentos','Documentos']:
               assert marker in g, marker
+          for marker in ['LTS v1.12 · Lançamento revisado','review-before-explicit-apply-v1','Lançamento por texto','lts_browser_apply_reviewed_input_v1','Nada foi gravado.','requires_explicit_confirmation']:
+              assert marker in i, marker
           for marker in ['lts-canonical-definition-of-done-receipt-v1','route_session_continuity','AUTOMATED_GATE_PASS_REAL_E2E_OPEN']:
               assert marker in gate, marker
           for label in [
@@ -119,6 +123,7 @@ jobs:
           node --check canonical-product-v157.js
           node --check canonical-presentation-v157.js
           node --check canonical-capabilities-v161.js
+          node --check canonical-reviewed-input-v112.js
           node --check .github/scripts/lts_canonical_v157plus_browser_gate.js
       - name: Browser contract
         run: node .github/scripts/lts_canonical_v157plus_browser_gate.js
@@ -135,6 +140,7 @@ jobs:
             canonical-flow-v157.js
             canonical-product-v157.js
             canonical-presentation-v157.js
+            canonical-reviewed-input-v112.js
             canonical-dashboard-fidelity.css
             canonical-definition-of-done-receipt.json
             canonical-*.png

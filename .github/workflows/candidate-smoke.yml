@@ -14,6 +14,7 @@ on:
       - 'canonical-product-v157.js'
       - 'canonical-presentation-v157.js'
       - 'canonical-capabilities-v161.js'
+      - 'canonical-reviewed-input-v112.js'
       - '.github/workflows/canonical-app.yml'
       - '.github/scripts/lts_canonical_v157plus_browser_gate.js'
       - 'wip35-v137-candidate.html'
@@ -82,6 +83,7 @@ jobs:
           node --check canonical-product-v157.js
           node --check canonical-presentation-v157.js
           node --check canonical-capabilities-v161.js
+          node --check canonical-reviewed-input-v112.js
           node --check .github/scripts/lts_canonical_v157plus_browser_gate.js
           python - <<'PY'
           from pathlib import Path
@@ -93,29 +95,31 @@ jobs:
           product=Path('canonical-product-v157.js').read_text(encoding='utf-8')
           presentation=Path('canonical-presentation-v157.js').read_text(encoding='utf-8')
           capabilities=Path('canonical-capabilities-v161.js').read_text(encoding='utf-8')
+          reviewed_input=Path('canonical-reviewed-input-v112.js').read_text(encoding='utf-8')
           css=Path('canonical-dashboard-fidelity.css').read_text(encoding='utf-8')
           gate=Path('.github/scripts/lts_canonical_v157plus_browser_gate.js').read_text(encoding='utf-8')
           required_html=[
-            'canonical-dashboard-fidelity.css?v=20260908-dashboard-layers11',
-            'canonical-liquidity.js?v=20260908-dashboard-layers11',
+            'canonical-dashboard-fidelity.css?v=20260908-input12',
+            'canonical-liquidity.js?v=20260908-input12',
             'single-owner-history-nature-context-v1','Quanto você gasta — e para quem é cada gasto.',
             'reference-layered-liquidity-commitments-v3','fact-before-asof-projection-after-asof-v1','current-base-scheduled-rsu-restricted-fgts-v1','layered-fact-projection-v2','product-commitments-plus-card-due','canonical-route-session-continuity-v1','data-dashboard-reload','data-mg-shortcut',
             'Dashboard','Fluxo Diário','Despesas','Patrimônio','Cartões','Atualizações'
           ]
           required_css=['#dashboard-view .grid-main','#dashboard-view .rank-row.clickable','#dashboard-view .series.conditional','#dashboard-view .series.restricted','#dashboard-view .liquidity-layer-values']
-          required_loader=['LTS v1.11','canonical-liquidity-core.js','canonical-flow-v157.js','canonical-product-v157.js','canonical-presentation-v157.js','canonical-capabilities-v161.js?v=20260908-continuity7']
+          required_loader=['LTS v1.12','canonical-liquidity-core.js','canonical-flow-v157.js','canonical-product-v157.js','canonical-presentation-v157.js','canonical-capabilities-v161.js?v=20260908-continuity7','canonical-reviewed-input-v112.js?v=20260908-input12']
           required_flow=['lts_browser_flow_v8','lts_browser_card_settlement_detail_v2','LTS v1.9','v150-validated-flow-plus-v157-liquidity-v1','Histórico / período','Movimentos do dia','Dividir / substituir','inline-card-settlement-v150','RSUs futuras','Cash Awards futuros','lts_browser_flow_event_editor_v1','lts_browser_flow_mutate_v1']
           required_product=['Dinheiro em contas','Contas + curto prazo','RSUs vested','FGTS','Despesas (mês)','Evolução da Liquidez','Quanto você gastou — e como isso evoluiu.','Mês a mês','Ano a ano','Cobertura do histórico','Quanto você tem, quanto deve e quanto é seu.','Conferência de fatura, não análise de gasto.']
           required_presentation=['presentation-polish-v1','__LTS_V157_PRESENTATION_STATUS','__LTS_V157_POLISH_STATUS']
           required_capabilities=['LTS v1.6 · Central de Gestão','__LTS_CANONICAL_CAPABILITIES_STATUS','session-persisted-management-pane-v1','Planejamento','Entradas & compromissos','Recorrências','Simulações','Conciliação','Relatórios','Backup & restauração','Configurações & integrações','Financiamentos','Documentos']
+          required_reviewed_input=['LTS v1.12 · Lançamento revisado','review-before-explicit-apply-v1','Lançamento por texto','lts_browser_apply_reviewed_input_v1','Nada foi gravado.','requires_explicit_confirmation']
           required_gate=['lts-canonical-definition-of-done-receipt-v1','route_session_continuity','AUTOMATED_GATE_PASS_REAL_E2E_OPEN']
           forbidden_html=['<iframe','document.write','MutationObserver','setInterval(']
           forbidden_modules=['MutationObserver','setInterval(']
           missing=([x for x in required_html if x not in html]+[x for x in required_css if x not in css]
                    +[x for x in required_loader if x not in liq]+[x for x in required_flow if x not in flow]
                    +[x for x in required_product if x not in product]+[x for x in required_presentation if x not in presentation]
-                   +[x for x in required_capabilities if x not in capabilities]+[x for x in required_gate if x not in gate])
-          leaked=[x for x in forbidden_html if x in html]+[x for module in [liq,core,flow,product,presentation,capabilities] for x in forbidden_modules if x in module]
+                   +[x for x in required_capabilities if x not in capabilities]+[x for x in required_reviewed_input if x not in reviewed_input]+[x for x in required_gate if x not in gate])
+          leaked=[x for x in forbidden_html if x in html]+[x for module in [liq,core,flow,product,presentation,capabilities,reviewed_input] for x in forbidden_modules if x in module]
           assert not missing, 'canonical markers missing: '+repr(missing)
           assert not leaked, 'forbidden canonical markers: '+repr(leaked)
           assert 'canonical-flow-v150.js' not in liq

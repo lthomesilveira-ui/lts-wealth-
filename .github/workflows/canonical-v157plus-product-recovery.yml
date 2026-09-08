@@ -12,6 +12,7 @@ on:
       - canonical-product-v157.js
       - canonical-presentation-v157.js
       - canonical-capabilities-v161.js
+      - canonical-reviewed-input-v112.js
       - .github/scripts/lts_canonical_v157plus_browser_gate.js
       - .github/workflows/canonical-v157plus-product-recovery.yml
   workflow_dispatch:
@@ -39,6 +40,7 @@ jobs:
           product=Path('canonical-product-v157.js').read_text()
           presentation=Path('canonical-presentation-v157.js').read_text()
           capabilities=Path('canonical-capabilities-v161.js').read_text()
+          reviewed_input=Path('canonical-reviewed-input-v112.js').read_text()
           gate=Path('.github/scripts/lts_canonical_v157plus_browser_gate.js').read_text()
           assert '<iframe' not in app
           assert 'document.write' not in app
@@ -47,8 +49,9 @@ jobs:
           assert 'canonical-presentation-v157.js' in loader
           assert 'canonical-capabilities-v161.js' in loader
           assert 'canonical-capabilities-v161.js?v=20260908-continuity7' in loader
+          assert 'canonical-reviewed-input-v112.js?v=20260908-input12' in loader
           assert 'canonical-flow-v150.js' not in loader
-          for x in ['canonical-dashboard-fidelity.css?v=20260908-dashboard-layers11','canonical-liquidity.js?v=20260908-dashboard-layers11','single-owner-history-nature-context-v1','Quanto você gasta — e para quem é cada gasto.','reference-layered-liquidity-commitments-v3','fact-before-asof-projection-after-asof-v1','current-base-scheduled-rsu-restricted-fgts-v1','layered-fact-projection-v2','product-commitments-plus-card-due','canonical-route-session-continuity-v1','data-dashboard-reload','data-mg-shortcut','Receitas','Relatórios','Configurações']:
+          for x in ['canonical-dashboard-fidelity.css?v=20260908-input12','canonical-liquidity.js?v=20260908-input12','single-owner-history-nature-context-v1','Quanto você gasta — e para quem é cada gasto.','reference-layered-liquidity-commitments-v3','fact-before-asof-projection-after-asof-v1','current-base-scheduled-rsu-restricted-fgts-v1','layered-fact-projection-v2','product-commitments-plus-card-due','canonical-route-session-continuity-v1','data-dashboard-reload','data-mg-shortcut','Receitas','Relatórios','Configurações']:
               assert x in app, x
           for rpc in ['lts_browser_liquidity_movement_options_v1','lts_browser_preview_liquidity_movement_v1','lts_browser_apply_liquidity_movement_v1']:
               assert rpc in core, rpc
@@ -61,9 +64,11 @@ jobs:
               assert x in presentation, x
           for x in ['LTS v1.6 · Central de Gestão','__LTS_CANONICAL_CAPABILITIES_STATUS','session-persisted-management-pane-v1','data-mg-shortcut','Planejamento','Entradas & compromissos','Recorrências','Simulações','Conciliação','Relatórios','Backup & restauração','Configurações & integrações','Financiamentos','Documentos']:
               assert x in capabilities, x
+          for x in ['LTS v1.12 · Lançamento revisado','review-before-explicit-apply-v1','Lançamento por texto','lts_browser_apply_reviewed_input_v1','Nada foi gravado.','requires_explicit_confirmation']:
+              assert x in reviewed_input, x
           for x in ['lts-canonical-definition-of-done-receipt-v1','route_session_continuity','AUTOMATED_GATE_PASS_REAL_E2E_OPEN']:
               assert x in gate, x
-          for s in [loader,core,flow,product,presentation,capabilities]:
+          for s in [loader,core,flow,product,presentation,capabilities,reviewed_input]:
               assert 'MutationObserver' not in s
               assert 'setInterval(' not in s
           print('static V157+ product contract ok')
@@ -74,6 +79,7 @@ jobs:
           node --check canonical-product-v157.js
           node --check canonical-presentation-v157.js
           node --check canonical-capabilities-v161.js
+          node --check canonical-reviewed-input-v112.js
           node --check .github/scripts/lts_canonical_v157plus_browser_gate.js
       - name: Install Playwright
         run: |
@@ -97,5 +103,6 @@ jobs:
             canonical-product-v157.js
             canonical-presentation-v157.js
             canonical-capabilities-v161.js
+            canonical-reviewed-input-v112.js
             canonical-definition-of-done-receipt.json
             canonical-*.png

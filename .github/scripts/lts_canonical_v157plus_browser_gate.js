@@ -49,7 +49,8 @@ function finalizeReceipt() {
     expenses: { status: 'PASS_AUTOMATED', evidence: 'single-owner month/year history, nature x context, unassigned semantics and item drilldown' },
     cards: { status: 'PASS_AUTOMATED', evidence: 'current/next invoice and certified historical coverage' },
     wealth: { status: 'PASS_AUTOMATED', evidence: 'RSU, CIPÓ, Volvo and debt/asset separation' },
-    updates: { status: 'PASS_AUTOMATED', evidence: 'priority queue, server-search surface, classification and documents' },
+    updates: { status: 'PASS_AUTOMATED', evidence: 'priority queue, reviewed text-input preview, server-search surface, classification and documents' },
+    reviewed_input: { status: 'PASS_AUTOMATED_PREVIEW', evidence: 'V150 launch-by-text restored with editable review, mandatory fields, explicit confirmation and fixture write prohibition' },
     recurrences: { status: 'PASS_AUTOMATED', evidence: 'historical evidence never auto-creates facts' },
     commitments: { status: 'PASS_AUTOMATED', evidence: 'documented product commitments plus card due date; review tasks remain in Updates' },
     simulations: { status: 'PASS_AUTOMATED_READ_ONLY', evidence: 'scenario calculation without fact mutation' },
@@ -207,6 +208,50 @@ async function assertUpdatesContract(page, label) {
   if (await page.locator('.class-row').count() < 3) throw new Error(`${label}: classification queue missing`);
   if (await page.locator('.class-save:not([disabled])').count() !== 0) {
     throw new Error(`${label}: fixture classification writer unexpectedly enabled`);
+  }
+
+  await page.waitForSelector('#reviewedInputCard');
+  const inputStatus = await page.evaluate(() => window.__LTS_CANONICAL_REVIEWED_INPUT_STATUS);
+  if (inputStatus?.ready !== true
+      || inputStatus?.contract !== 'review-before-explicit-apply-v1'
+      || inputStatus?.fixture !== true
+      || inputStatus?.writer !== 'lts_browser_apply_reviewed_input_v1'
+      || inputStatus?.writer_called !== false
+      || inputStatus?.requires_explicit_confirmation !== true) {
+    throw new Error(`${label}: reviewed input status ${JSON.stringify(inputStatus)}`);
+  }
+  const phrase = page.locator('#riPhrase');
+  await phrase.fill('paguei R$ 850 de pediatra do Benjamin no Aeternum hoje');
+  await page.locator('#riPreviewButton').click();
+  await page.waitForSelector('#reviewedInputPreview');
+  if (await page.locator('#riAmount').inputValue() !== '850') throw new Error(`${label}: reviewed input amount parser`);
+  if (await page.locator('#riNature').inputValue() !== 'expense') throw new Error(`${label}: reviewed input nature parser`);
+  if (await page.locator('#riCard').inputValue() !== 'Visa Aeternum') throw new Error(`${label}: reviewed input card parser`);
+  if (await page.locator('#riCategory').inputValue() !== 'Saúde') throw new Error(`${label}: reviewed input category proposal`);
+  if (await page.locator('#riCost').inputValue() !== 'Benjamin') throw new Error(`${label}: reviewed input context proposal`);
+  if (await page.locator('#riApply').count() !== 0) throw new Error(`${label}: fixture reviewed-input writer unexpectedly enabled`);
+  const reviewedText = await page.locator('#reviewedInputPreview').innerText();
+  for (const required of ['Revise antes de aprovar', 'Nada foi gravado', 'nenhuma gravação é permitida']) {
+    if (!containsText(reviewedText, required)) throw new Error(`${label}: reviewed input guard missing ${required}`);
+  }
+  const amountCases = [
+    ['paguei 5 mil no Itaú hoje', '5000'],
+    ['paguei R$5.000 no Itaú hoje', '5000'],
+    ['paguei 5000 no Itaú hoje', '5000'],
+    ['recebi 3k no Bradesco amanhã', '3000'],
+    ['paguei R$1.250,50 no C6 ontem', '1250.5']
+  ];
+  for (const [sample, expected] of amountCases) {
+    await phrase.fill(sample);
+    await page.locator('#riPreviewButton').click();
+    await page.waitForSelector('#reviewedInputPreview');
+    if (await page.locator('#riAmount').inputValue() !== expected) {
+      throw new Error(`${label}: reviewed input amount case ${sample}`);
+    }
+  }
+  const finalInputStatus = await page.evaluate(() => window.__LTS_CANONICAL_REVIEWED_INPUT_STATUS);
+  if (finalInputStatus?.preview !== true || finalInputStatus?.writer_called !== false || finalInputStatus?.write_accepted !== false) {
+    throw new Error(`${label}: reviewed input fixture boundary ${JSON.stringify(finalInputStatus)}`);
   }
 
   const term = page.locator('#ledgerTerm');
@@ -537,7 +582,8 @@ async function run(browserType, label, viewport) {
       return status?.flow_loaded === true
         && status?.product_loaded === true
         && status?.presentation_loaded === true
-        && status?.capabilities_loaded === true;
+        && status?.capabilities_loaded === true
+        && status?.reviewed_input_loaded === true;
     });
     await page.waitForFunction(() => window.__LTS_V157_PRESENTATION_STATUS?.ready === true);
     await waitProduct(page, 'Dashboard');
