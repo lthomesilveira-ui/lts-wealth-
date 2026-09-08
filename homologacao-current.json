@@ -1,14 +1,14 @@
 {
   "schema": 1,
   "version": "canonical-v1",
-  "build": "CANONICAL v1.6 · Briefing Capability Recovery",
+  "build": "CANONICAL v1.6 · Dashboard Fidelity Pass 6",
   "path": "canonical-app.html",
-  "candidate_head": "501fb48265b02a5416f0fc198a54abf8688ddd14",
+  "candidate_head": "9ae0ee37ab3332415523eeee287cdbf75102e1c4",
   "public_fallback": "index.html",
   "promotion_status": "not_promoted",
-  "candidate_sha": "501fb48265b02a5416f0fc198a54abf8688ddd14",
-  "exposed_from_main_sha": "501fb48265b02a5416f0fc198a54abf8688ddd14",
-  "exposure_mode": "canonical_single_frontend_v161_briefing_capability_recovery",
-  "gate_status": "v157plus-recovery-34179625830-pass_active-candidate-smoke-34179625805-pass_canonical-gate-34179823179-pass_canonical-candidate-smoke-34179823167-pass_main-candidate-smoke-34179954294-pass_pages-34179953893-pass_management-contract-10_desktop-chromium-pass_mobile-webkit-pass_visual-evidence-reviewed_authenticated-e2e-not-claimed",
-  "updated_at": "2026-09-08T02:26:10.000Z"
+  "candidate_sha": "9ae0ee37ab3332415523eeee287cdbf75102e1c4",
+  "exposed_from_main_sha": "9ae0ee37ab3332415523eeee287cdbf75102e1c4",
+  "exposure_mode": "canonical_single_frontend_v161_dashboard_fidelity_pass6",
+  "gate_status": "v157plus-recovery-34185954453-pass_active-candidate-smoke-34185954506-pass_canonical-gate-34186087590-pass_canonical-candidate-smoke-34186087628-pass_main-candidate-smoke-34186301851-pass_pages-34186300869-pass_dashboard-reference-contract-pass_management-contract-10_desktop-chromium-pass_mobile-webkit-pass_form-state-preserved_authenticated-e2e-not-claimed",
+  "updated_at": "2026-09-08T04:15:40Z"
 }
