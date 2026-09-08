@@ -4,6 +4,18 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 
 Canonical persistent project list. Never remove an open financial, documentary, classification, reconciliation or product dependency during compaction. Detailed immutable evidence remains in `backups/`, `HISTORICAL_RECOVERY_LOG.md`, `PLANNING_EXCEL_TO_CURRENT_AUDIT_2026-08-30.md`, `NEXT_HOMOLOGATION_GATE.md` and release checkpoints.
 
+## P0 — Layered liquidity evolution / canonical v1.11 — 08/09/2026
+- [x] Recovered the explicit 05/09 user requirement that cash evolution show separate account, short-term, RSU and FGTS layers while retaining the liquidity-first V155 visual direction.
+- [x] Added a current evidenced anchor from cockpit `through_d3`, a base operational projection from `current_liquidity_balance`, a conditional scheduled-vesting series from `conditional_rsu_balance` and a restricted contingency series from `restricted_total_balance`.
+- [x] Kept future vestings conditional and FGTS restricted/D+30; neither can be promoted to observed current cash. Preserved v1.10 documentary commitments and v1.9 V150/V151+ Flow parity unchanged.
+- [x] Added explicit legend, accessible chart semantics, four current-composition labels and a regression gate for both charts, all layer/point counts, mobile/desktop panel bounds and the prior full product suite.
+- [x] Local Chromium 1312×1199 and 390×844 PASS; visual review found and fixed an FGTS CSS-class collision before release.
+- [x] Exact product `8a9c675ed3940da19a10c04e56249a315576045a`; fixed-manifest exposure `04c051f19167e913079bb8e75b692f5fe430892c`; all three branches aligned by normal fast-forward.
+- [x] Recovery gate/smoke `34229899061` / `34229899074`, canonical gate/smoke `34230146792` / `34230146827`, main smoke/Pages `34230384306` / `34230382218`: SUCCESS.
+- [x] Post-exposure active/canonical/main smokes `34230610235` / `34230659383` / `34230705729` and Pages `34230705397`: SUCCESS; fixed URL verified on the exact v1.11 asset with truthful signed-out state and zero iframe/fixture data.
+- [x] Artifacts: recovery `10057369616` / `sha256:5939e41b70411530e1668546d83764ea48454e72598e0c1e7dc967a0414e87d2`; canonical `10057455711` / `sha256:b3cea9b02272be1495797ed8151fadcda8c3e865929729d648c12e43017aea34`.
+- [ ] Authenticated real-data Dashboard verification and physical-iPhone evidence remain explicitly open/not claimed.
+
 ## P0 — Dashboard decision truth / canonical v1.10 — 08/09/2026
 - [x] Reconciled the approved Dashboard model with the live backend contracts instead of copying illustrative values from the reference image.
 - [x] Split both liquidity charts into observed position through `as_of` and dashed projection afterward, using horizon date/status/basis and explicit visual/accessible semantics.
@@ -295,6 +307,7 @@ Canonical persistent project list. Never remove an open financial, documentary, 
 
 ## 11. Historical continuity / backups / product quality
 - [~] Continue audit back to project start 07/07/2026 so no pending item disappears.
+- [x] Recovered and versioned the material 24/08, 04–05/09 and 07/09 feedback covering Flow controls/invoice semantics, V155 Dashboard hierarchy/layers, real-device failures and V150 as the functional floor.
 - [x] Preserve historical evidence from 2013 where supported.
 - [x] Preserve fixed public/homologation links and canonical backup/restore traceability.
 - [x] Canonical deterministic evidence preserves official-reference Dashboard language, compact Atualizações and mobile/desktop no-overflow behavior.

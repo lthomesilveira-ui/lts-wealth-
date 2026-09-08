@@ -1,6 +1,6 @@
 # LTS Wealth — Continuity Handoff
 
-Last materially refreshed: 2026-09-08 09:29 BRT (America/Sao_Paulo)
+Last materially refreshed: 2026-09-08 10:15 BRT (America/Sao_Paulo)
 
 This file exists so project continuity never depends on chat context. Always re-fetch `main`, active branch, `PROJECT_MASTER_BACKLOG.md`, `NEXT_HOMOLOGATION_GATE.md`, this file and the latest immutable checkpoint before every repository write.
 
@@ -24,16 +24,24 @@ This file exists so project continuity never depends on chat context. Always re-
 - Public fallback remains WIP35-v136; protected `index.html` blob remains `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
 - Public promotion remains unauthorized/not done.
 
-## Current exposed product — canonical v1.10 Dashboard Decision Truth
-- Exact product `de4362d90560424a332f77ce22e665729cd7d88f`; fixed-manifest exposure `661be37ea45425a30dd3a35c7605d1921db94559`; all three release branches were promoted only by normal fast-forward and this documentation/checkpoint closure is their next common commit.
-- New Dashboard contract `reference-fact-projection-commitments-v2` distinguishes the observed position through `as_of` from later projections in both charts; projected path/points are dashed/outlined and carry explicit accessible semantics.
+## Current exposed product — canonical v1.11 Layered Liquidity
+- Exact product `8a9c675ed3940da19a10c04e56249a315576045a`; fixed-manifest exposure `04c051f19167e913079bb8e75b692f5fe430892c`; all three release branches were promoted only by normal fast-forward and this documentation/checkpoint closure is their next common commit.
+- Dashboard contract `reference-layered-liquidity-commitments-v3` preserves the observed/projected truth boundary and adds liquidity-layer contract `current-base-scheduled-rsu-restricted-fgts-v1`.
+- Cockpit `through_d3` is the evidenced current anchor. `current_liquidity_balance` is the future base; `conditional_rsu_balance` is the scheduled-vesting scenario; `restricted_total_balance` is the FGTS-inclusive contingency. Conditional/restricted paths never become the current position.
 - `Próximos Compromissos` no longer reads `cockpit.work.top_actions`. Its only sources are card `next_due` and `product.commitments.commitments` rows with explicit `next_due`; missing next dates are omitted rather than inferred from historical start dates.
 - Operational review tasks remain in `Atualizações`. Commitment actions route to `Fluxo Diário`, where the v1.9 V150/V151+ interaction contract remains unchanged.
 - Local Chromium and recovery/canonical CI Chromium+WebKit are PASS in desktop 1312×1199 and mobile 390×844 after full six-route, Flow, Dashboard, Central de Gestão and auth-truth regression.
-- Pre-exposure recovery gate/smoke `34225155424` / `34225155422`, canonical gate/smoke `34225365210` / `34225365141`, main smoke/Pages `34225542803` / `34225541791`: SUCCESS. Post-exposure active/canonical/main smokes `34225917363` / `34225967201` / `34226016981` and Pages `34226016118`: SUCCESS.
-- Fixed homologation browser verification resolved to `canonical-app.html?homologacao=de4362d…#Dashboard`, loaded `dashboard-truth10`, rendered the truthful signed-out login and exposed no iframe or fixture financial content.
-- Latest immutable checkpoint: `backups/CANONICAL_APP_V110_DASHBOARD_DECISION_TRUTH_CHECKPOINT_2026-09-08.md`.
+- Pre-exposure recovery gate/smoke `34229899061` / `34229899074`, canonical gate/smoke `34230146792` / `34230146827`, main smoke/Pages `34230384306` / `34230382218`: SUCCESS. Post-exposure active/canonical/main smokes `34230610235` / `34230659383` / `34230705729` and Pages `34230705397`: SUCCESS.
+- Fixed homologation browser verification resolved to `canonical-app.html?homologacao=8a9c675…#Dashboard`, loaded `dashboard-layers11`, rendered the truthful signed-out login and exposed no iframe or fixture financial content.
+- Latest immutable checkpoint: `backups/CANONICAL_APP_V111_LAYERED_LIQUIDITY_CHECKPOINT_2026-09-08.md`.
 - No user action is required for this release sequence; continue autonomously unless a real financial/provider/consent decision becomes necessary.
+
+## Recovered explicit user feedback — preserve across chats
+- 24/08: Flow `+` at left; validated columns retained; open Itaú invoice enters the total and transaction detail consolidates only after closure.
+- 04–05/09: visually plausible releases with broken buttons/data on iPhone were rejected; automatic/visual proof cannot be relabelled as real-device validation.
+- 05/09: V155 visual direction was liked, but Dashboard hierarchy must prioritize bank cash, accounts + short-term, vested RSUs and FGTS; net worth follows; expenses combine consolidated reading and detail; actions stay discreet/clickable; cash evolution separates account, short-term, RSU and FGTS layers.
+- 07/09: V150 is the functional floor and V151–V153+ improvements must accumulate; missing RSUs/future RSUs and an incorrect negative previous balance are regressions; Flow keeps history/classification and user-facing language.
+- Implementation status is tracked in `LTS_WEALTH_REQUIREMENTS_TRACEABILITY.md`; explicit feedback is not silently marked user-validated merely because CI is green.
 
 ## Protected prior baseline — canonical v1.9 Flow parity
 The primary product line is the single canonical frontend `canonical-app.html`. The v154→v160 wrapper lineage is historical evidence only and must not be reintroduced as the product architecture.
@@ -51,7 +59,7 @@ Current facts:
 - post-exposure active/canonical/main smokes `34186663110` / `34186664337` / `34186664887` and Pages `34186664347`: SUCCESS;
 - route/receipt recovery/candidate `34190659782` / `34190659780`, canonical gate/candidate `34191017877` / `34191017858`, main candidate/Pages `34191216218` / `34191215874`: SUCCESS;
 - post-v1.7-exposure active/canonical/main smokes `34191461669` / `34191462282` / `34191463017` and Pages `34191462402`: SUCCESS;
-- fixed homologation exposes canonical v1.9 through `canonical-app.html` / `promotion_status:not_promoted`; public `index.html` remains protected;
+- historical v1.9 fixed-exposure evidence used `canonical-app.html` / `promotion_status:not_promoted`; the current fixed exposure is v1.11 and public `index.html` remains protected;
 - unified-expenses gates are green: active `34199824400`, canonical `34200253901`, main candidate/Pages `34200706521` / `34200704967`;
 - canonical v1.9 recovery/candidate `34219446266` / `34219446256`, canonical gate/candidate `34219669569` / `34219669492`, main candidate/Pages `34219911180` / `34219909612`: SUCCESS;
 - post-exposure active/canonical/main smokes `34220841617` / `34220895671` / `34220950755` and Pages `34220949477`: SUCCESS;

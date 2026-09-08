@@ -2,10 +2,10 @@
 
 Purpose: evidence-backed sequence before asking the user to inspect a material candidate. Keep aligned with `PROJECT_MASTER_BACKLOG.md`, `LTS_WEALTH_CONTINUITY_HANDOFF.md` and immutable checkpoints.
 
-## Current canonical baseline — 08/09/2026 09:29 BRT
+## Current canonical baseline — 08/09/2026 10:15 BRT
 - Public fallback: WIP35-v136 in `index.html`, unchanged; protected blob remains `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
 - Fixed homologation: `https://lthomesilveira-ui.github.io/lts-wealth-/homologacao.html`.
-- Fixed homologation selects **CANONICAL v1.10 · Dashboard Decision Truth** through `canonical-app.html`, exact product `de4362d90560424a332f77ce22e665729cd7d88f`, exposure `661be37ea45425a30dd3a35c7605d1921db94559`; public `index.html` is unchanged.
+- Fixed homologation selects **CANONICAL v1.11 · Layered Liquidity** through `canonical-app.html`, exact product `8a9c675ed3940da19a10c04e56249a315576045a`, exposure `04c051f19167e913079bb8e75b692f5fe430892c`; public `index.html` is unchanged.
 - Canonical frontend is a single application; no v150/v151/v156/v160 iframe/wrapper chain is part of the primary product.
 - Current gated modules: `canonical-liquidity-core.js`, `canonical-flow-v157.js`, `canonical-product-v157.js`, `canonical-presentation-v157.js`, `canonical-capabilities-v161.js`.
 - Modular recovery gate `34170935882` and permanent canonical gate `34171231918`: **SUCCESS** in Chromium desktop 1312×1199 and WebKit mobile 390×844.
@@ -31,12 +31,24 @@ Purpose: evidence-backed sequence before asking the user to inspect a material c
 - V1.10 post-exposure active/canonical/main smokes `34225917363` / `34225967201` / `34226016981` and Pages `34226016118`: SUCCESS.
 - V1.10 artifacts: recovery `10055417140` / `sha256:46b285161dd778294e9d5161bbe6faa71d96e7bb31188b6b25bcc5adb608e33b`; canonical `10055499807` / `sha256:a255c1a04e8a5b7f33ef5a199ad3b24c34fdd1bf8ed7f05245026f520373a841`.
 - Fixed-URL live verification resolved to `canonical-app.html?homologacao=de4362d…#Dashboard`, loaded `canonical-liquidity.js?v=20260908-dashboard-truth10`, truthful signed-out login, zero iframe and no unauthenticated fixture Dashboard.
-- Current immutable evidence: `backups/CANONICAL_APP_V110_DASHBOARD_DECISION_TRUTH_CHECKPOINT_2026-09-08.md`.
+- V1.11 recovery gate/smoke `34229899061` / `34229899074`, canonical gate/smoke `34230146792` / `34230146827`, main smoke/Pages `34230384306` / `34230382218`: SUCCESS.
+- V1.11 post-exposure active/canonical/main smokes `34230610235` / `34230659383` / `34230705729` and Pages `34230705397`: SUCCESS.
+- V1.11 artifacts: recovery `10057369616` / `sha256:5939e41b70411530e1668546d83764ea48454e72598e0c1e7dc967a0414e87d2`; canonical `10057455711` / `sha256:b3cea9b02272be1495797ed8151fadcda8c3e865929729d648c12e43017aea34`.
+- Fixed-URL live verification resolved to `canonical-app.html?homologacao=8a9c675…#Dashboard`, loaded `canonical-liquidity.js?v=20260908-dashboard-layers11`, truthful signed-out login, zero iframe and no unauthenticated fixture Dashboard.
+- Current immutable evidence: `backups/CANONICAL_APP_V111_LAYERED_LIQUIDITY_CHECKPOINT_2026-09-08.md`.
 - Durable briefing/decision map: `LTS_WEALTH_REQUIREMENTS_TRACEABILITY.md`.
 - `promotion_status:not_promoted`; public root promotion is NOT AUTHORIZED / NOT DONE.
 - Authenticated physical-iPhone visual/data E2E: PENDING / NOT CLAIMED.
 
-## Canonical v1.10 Dashboard Decision Truth — selected for fixed exposure
+## Canonical v1.11 Layered Liquidity — selected for fixed exposure
+- Exact base is the v1.10 closure `a4a19217dd59d83784537d623e58eeaf4d2befb2`; no public-root change and no wrapper reintroduction.
+- Dashboard contract `reference-layered-liquidity-commitments-v3` adds `current-base-scheduled-rsu-restricted-fgts-v1` while preserving `fact-before-asof-projection-after-asof-v1` and `product-commitments-plus-card-due`.
+- Current evidenced position is anchored from cockpit `through_d3`; future base uses `current_liquidity_balance`, scheduled RSUs use `conditional_rsu_balance`, and FGTS contingency uses `restricted_total_balance` only after the documented D+30 boundary.
+- Two charts, four legends/composition semantics, exact point counts and panel-height bounds are gated in desktop Chromium and mobile WebKit. The gate caught and blocked an FGTS CSS-class collision before release.
+- V150/V151+ Flow interactions, v1.10 commitment separation, all six routes, Central de Gestão, route/session recovery and truthful unauthenticated state remain in the same regression suite.
+- Authenticated real-data/write and physical-iPhone evidence remain OPEN / NOT CLAIMED.
+
+## Canonical v1.10 Dashboard Decision Truth — protected predecessor
 - Exact base is v1.9 closure `3858739e73ebdedffbe06766c05fdbc9c59f91d6`; no public-root change and no wrapper reintroduction.
 - Dashboard contract is `reference-fact-projection-commitments-v2`: both liquidity charts render observed position through `as_of` separately from a dashed later projection, with explicit legend, accessible label and horizon labels.
 - `Próximos Compromissos` consumes only the next card invoice plus `product.commitments.commitments` rows carrying an explicit `next_due`. `work.top_actions` stays in `Atualizações` and cannot leak into the commitment panel.

@@ -1,11 +1,11 @@
 # LTS Wealth — Canonical Delivery Master Plan
 
-Last refreshed: 2026-09-08 09:29 BRT
-Active implementation branch: `canonical-v157plus-product-recovery` (canonical v1.10 product `de4362d90560424a332f77ce22e665729cd7d88f`; fixed-manifest exposure `661be37ea45425a30dd3a35c7605d1921db94559`; this checkpoint closure is the next shared fast-forward)
+Last refreshed: 2026-09-08 10:15 BRT
+Active implementation branch: `canonical-v157plus-product-recovery` (canonical v1.11 product `8a9c675ed3940da19a10c04e56249a315576045a`; fixed-manifest exposure `04c051f19167e913079bb8e75b692f5fe430892c`; this checkpoint closure is the next shared fast-forward)
 
 Purpose: this is the execution-order view of the LTS Wealth backlog. It does not replace documentary evidence or immutable checkpoints. `PROJECT_MASTER_BACKLOG.md` remains the complete persistent dependency list. This file makes the remaining work explicit so product delivery does not get lost behind release mechanics.
 
-Current milestone: canonical v1.10 preserves the exposed v1.9 V150 Flow-parity baseline and corrects Dashboard decision semantics. Observed liquidity and projected liquidity are visually distinct, while `Próximos Compromissos` uses the dedicated product commitment contract plus card due date and no longer re-labels review tasks as obligations. Local Chromium, recovery/canonical Chromium+WebKit, all pre/post-exposure smokes and Pages are green; the fixed URL resolves to the exact V1.10 product. Authenticated real lifecycles, physical-device evidence and remaining pixel-level detail remain P0.
+Current milestone: canonical v1.11 preserves v1.10 decision truth and the v1.9 V150 Flow-parity baseline, then adds the recovered liquidity-layer requirement. The chart now separates current evidenced position, base operational projection, scheduled vestings as conditional and FGTS as restricted D+30. Local Chromium, recovery/canonical Chromium+WebKit, all pre/post-exposure smokes and Pages are green; the fixed URL resolves to the exact v1.11 product. Authenticated real lifecycles, physical-device evidence and remaining pixel-level detail remain P0.
 
 ## Definition of DONE for the app
 The LTS Wealth app is not considered delivered until all P0 items below are complete together in one canonical application:
@@ -38,6 +38,8 @@ The LTS Wealth app is not considered delivered until all P0 items below are comp
 - [x] Dense executive sections: working hierarchy, bank rows and decision drill-downs exist.
 - [x] Decision truth v1.10: observed liquidity through `as_of` is visually distinct from the dashed later projection and does not imply that forecast points are facts.
 - [x] `Próximos Compromissos` is sourced only from the next card invoice and contractual rows with explicit `next_due`; review/classification/planning tasks remain in `Atualizações`.
+- [x] Layered liquidity v1.11: current anchor from cockpit `through_d3`, base projection, scheduled-vesting conditional scenario and restricted FGTS scenario remain visually and semantically separate.
+- [x] Four current-composition labels expose accounts, D0/D1, vested RSUs and restricted FGTS without summing conditional/restricted scenarios into current cash.
 - [~] Continue evidence-backed historical chart/detail fidelity and authenticated real-data proof; pixel-perfect parity remains open.
 - [x] Expense/category route drill-down from Dashboard where evidence exists.
 - [x] First cash-negative date and management/action date displayed separately when different.
@@ -68,7 +70,7 @@ The LTS Wealth app is not considered delivered until all P0 items below are comp
 - [x] No-horizontal-overflow and no-sustained-DOM-churn checks.
 - [x] Auth-truth / missing-data truth checks.
 - [x] One machine-readable `lts-canonical-definition-of-done-receipt-v1` maps the recovered requirements and separates automatic PASS from authenticated-real/physical-device claims.
-- [x] Fixed homologation manifest selects exact green canonical v1.10 product `de4362d…` through exposure `661be37…`; public promotion remains separate and unauthorized.
+- [x] Fixed homologation manifest selects exact green canonical v1.11 product `8a9c675…` through exposure `04c051f…`; public promotion remains separate and unauthorized.
 
 ### P0.6 Supabase security hardening
 - [x] Inventory the 13 `public` tables currently reported with RLS disabled.
@@ -216,9 +218,9 @@ Open Finance is still part of the product roadmap. It was not cancelled; work wa
 - [ ] Preserve fixed homologation/public links.
 
 ## Execution order from now
-1. Preserve canonical v1.10 product `de4362d…` and exposure `661be37…` as the current Dashboard baseline.
-2. Preserve canonical v1.9 Flow parity, Dashboard Fidelity Pass 6, route/session continuity and the automatic receipt as protected regression baselines.
-3. Continue evidence-led Dashboard/Despesas/Atualizações refinement without changing financial truth, confusing projections with facts or reintroducing wrapper ownership.
+1. Preserve canonical v1.11 product `8a9c675…` and exposure `04c051f…` as the current Dashboard baseline.
+2. Preserve v1.11 liquidity layers, v1.10 decision truth, v1.9 Flow parity, Dashboard Fidelity Pass 6, route/session continuity and the automatic receipt as protected regression baselines.
+3. Continue the two-project historical audit and evidence-led Dashboard/Despesas/Atualizações refinement without changing financial truth, confusing scenarios with facts or reintroducing wrapper ownership.
 4. Execute real authenticated desktop and physical-iPhone lifecycles for Dashboard, Flow, search/CSV, classification, liquidity, documents and backup/restore; use them to close the corresponding receipt rows.
 5. Keep the Supabase security baseline regression-protected and review leaked-password protection in a controlled Auth window.
 6. Continue documentary gaps and Open Finance provider evidence, while provider/consent/spend waits for explicit user decision.
