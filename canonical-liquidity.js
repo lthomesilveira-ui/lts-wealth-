@@ -13,7 +13,7 @@ function ensureModules(){
   modulesPromise=Promise.all([
     load('canonical-product-v157.js?v=20260908-session6','canonicalProductV157'),
     load('canonical-flow-v157.js?v=20260908-session6','canonicalFlowV157')
-  ]).then(()=>load('canonical-presentation-v157.js?v=20260908-session6','canonicalPresentationV157')).then(()=>load('canonical-capabilities-v161.js?v=20260908-capabilities1','canonicalCapabilitiesV161')).then(()=>{mark({flow_loaded:true,product_loaded:true,presentation_loaded:true,polish_loaded:true,capabilities_loaded:true});return true}).catch(e=>{modulesPromise=null;mark({error:String(e?.message||e)});throw e});
+  ]).then(()=>load('canonical-presentation-v157.js?v=20260908-session6','canonicalPresentationV157')).then(()=>load('canonical-capabilities-v161.js?v=20260908-fidelity6','canonicalCapabilitiesV161')).then(()=>{mark({flow_loaded:true,product_loaded:true,presentation_loaded:true,polish_loaded:true,capabilities_loaded:true});return true}).catch(e=>{modulesPromise=null;mark({error:String(e?.message||e)});throw e});
   return modulesPromise;
 }
 function waitReady(tryNo=0){if(canonicalReady())return ensureModules();if(tryNo>=80)return Promise.resolve(false);return new Promise(r=>setTimeout(r,250)).then(()=>waitReady(tryNo+1))}

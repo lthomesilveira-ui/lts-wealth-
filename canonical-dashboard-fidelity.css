@@ -172,3 +172,43 @@
   #dashboard-view .flow-col i{max-height:112px}
   #dashboard-view .flow-col b{margin-bottom:3px}
 }
+
+/* Fidelity pass 6 — approved-reference controls, evidence signals and real drilldowns. */
+#dashboard-view .period-cluster{display:flex;align-items:stretch;gap:6px}
+#dashboard-view .dashboard-reload{min-width:58px;border:1px solid #e1e7ee;border-radius:9px;background:#fff;color:#344a61;display:flex;align-items:center;justify-content:center;gap:6px;padding:0 10px;font-size:8px;font-weight:850;box-shadow:0 3px 13px rgba(17,35,61,.05)}
+#dashboard-view .dashboard-reload:hover{border-color:#bdd0e3;background:#fbfdff;color:#1f5f9e}
+#dashboard-view .dashboard-reload:focus-visible,#dashboard-view .action-link:focus-visible,#dashboard-view .bank-row:focus-visible{outline:2px solid #4b91e5;outline-offset:2px}
+#dashboard-view .dashboard-reload svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.8}
+#dashboard-view .kpi-foot{position:absolute;left:15px;right:15px;bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:6px;min-width:0}
+#dashboard-view .kpi-signal{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:7.6px;font-weight:800;color:#617388}
+#dashboard-view .kpi-signal.good{color:#09835a}
+#dashboard-view .kpi-signal.warn{color:#c43e4d}
+#dashboard-view .kpi-evidence{flex:none;border-radius:999px;padding:3px 5px;background:#eef6f2;color:#39705a;font-size:6.2px;font-weight:850;text-transform:uppercase;letter-spacing:.025em}
+#dashboard-view .kpi-evidence.missing{background:#f2f4f6;color:#788697}
+#dashboard-view .action-link{border-radius:6px;padding:4px 5px;margin:-4px -5px;white-space:nowrap}
+#dashboard-view .action-link:hover{background:#eef5fd;color:#155aa8}
+#dashboard-view .bank-row[data-route]{width:100%;border-left:0;border-right:0;border-bottom:0;background:transparent;color:inherit;text-align:left}
+#dashboard-view .bank-row[data-route]:hover{background:#f7fafe}
+#dashboard-view .bank-row span{display:block;margin-top:2px;color:#8190a2;font-size:6.8px}
+
+@media (min-width:821px){
+  .sidebar .nav button[data-mg-shortcut]{height:39px;color:#aebccc;font-weight:620}
+  .sidebar .nav button[data-mg-shortcut]:hover{background:#18283d;color:#fff}
+  #dashboard-view .head-controls{align-items:stretch}
+  #dashboard-view .status-pill{align-self:stretch}
+  #dashboard-view .kpi{padding-bottom:31px}
+}
+
+@media (max-width:1180px) and (min-width:821px){
+  .sidebar .nav button[data-mg-shortcut]{height:38px;font-size:10.2px}
+  #dashboard-view .dashboard-reload{min-width:50px;padding:0 8px}
+  #dashboard-view .kpi-evidence{display:none}
+}
+
+@media (max-width:820px){
+  #dashboard-view .kpi{padding-bottom:28px}
+  #dashboard-view .kpi-foot{left:12px;right:12px;bottom:9px}
+  #dashboard-view .kpi-signal{font-size:6.9px}
+  #dashboard-view .kpi-evidence{display:none}
+  #dashboard-view .bank-row span{font-size:7px}
+}

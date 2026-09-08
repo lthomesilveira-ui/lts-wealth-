@@ -118,6 +118,67 @@ async function assertManagementContract(page, label) {
   await openManagementPane(page, 'overview');
 }
 
+async function assertDashboardContract(page, label, mobile) {
+  const contract = await page.locator('#dashboard-view').getAttribute('data-dashboard-contract');
+  const status = await page.evaluate(() => window.__LTS_CANONICAL_DASHBOARD_STATUS);
+  if (contract !== 'reference-toolbar-signals-drilldowns-v1'
+      || status?.ready !== true
+      || status?.contract !== contract
+      || status?.reference !== 'approved-1312x1199-liquidity-first') {
+    throw new Error(`${label}: Dashboard fidelity status ${JSON.stringify({ contract, status })}`);
+  }
+
+  if (await page.locator('#dashboard-view [data-dashboard-reload]').count() !== 1) {
+    throw new Error(`${label}: Dashboard Hoje control missing`);
+  }
+  if (await page.locator('#dashboard-view .kpi-signal').count() !== 5
+      || await page.locator('#dashboard-view .kpi-evidence').count() !== 5) {
+    throw new Error(`${label}: Dashboard evidence signals missing`);
+  }
+  const signals = await page.locator('#dashboard-view .kpi-signal').allTextContents();
+  for (const expected of ['3 contas evidenciadas', 'D0', 'D+3', 'D+30', '4,9% vs mês anterior']) {
+    if (!signals.some(value => containsText(value, expected))) {
+      throw new Error(`${label}: Dashboard evidence signal missing ${expected}; signals=${JSON.stringify(signals)}`);
+    }
+  }
+  if (await page.locator('#dashboard-view .bank-row[data-route="Fluxo Diário"]').count() !== 3) {
+    throw new Error(`${label}: Dashboard bank drilldowns missing`);
+  }
+  for (const route of ['Fluxo Diário', 'Despesas', 'Patrimônio', 'Atualizações']) {
+    if (await page.locator(`#dashboard-view [data-route="${route}"]`).count() < 1) {
+      throw new Error(`${label}: Dashboard action missing ${route}`);
+    }
+  }
+  if (!mobile) {
+    const labels = await page.locator('.sidebar .nav > button > span').allTextContents();
+    const expected = ['Dashboard', 'Fluxo Diário', 'Despesas', 'Receitas', 'Cartões', 'Patrimônio', 'Planejamento', 'Atualizações', 'Relatórios', 'Documentos', 'Configurações'];
+    if (JSON.stringify(labels) !== JSON.stringify(expected)) {
+      throw new Error(`${label}: reference navigation contract ${JSON.stringify(labels)}`);
+    }
+    const revenueAlias = page.locator('.sidebar [data-nav-alias="Receitas"]');
+    if (await revenueAlias.getAttribute('data-route') !== 'Fluxo Diário') {
+      throw new Error(`${label}: Receitas must resolve to the evidenced Flow`);
+    }
+  }
+
+  const beforeReload = Number(status?.reload_count || 0);
+  await page.locator('#dashboard-view [data-dashboard-reload]').click();
+  await page.waitForFunction(expected => (
+    window.__LTS_CANONICAL_DASHBOARD_STATUS?.reload_count === expected
+      && document.querySelector('#dashboard-view')?.dataset.dashboardContract === 'reference-toolbar-signals-drilldowns-v1'
+  ), beforeReload + 1);
+  await waitProduct(page, 'Dashboard');
+
+  await page.locator('#dashboard-view [data-mg-shortcut="planning"]').click();
+  await page.waitForFunction(() => (
+    document.querySelector('.page-title h1')?.textContent?.trim() === 'Atualizações'
+      && window.__LTS_CANONICAL_CAPABILITIES_STATUS?.active === 'planning'
+      && document.querySelector('#managementDetail')?.textContent?.includes('Primeira insuficiência')
+  ));
+  await openRoute(page, 'Dashboard', mobile);
+  await waitProduct(page, 'Dashboard');
+}
+
 async function run(browserType, label, viewport) {
   const mobile = viewport.width <= 820;
   const browser = await browserType.launch({ headless: true });
@@ -157,6 +218,7 @@ async function run(browserType, label, viewport) {
     for (const text of ['Evolução da Liquidez', 'Distribuição do Patrimônio', 'Posição por Banco', 'Fluxo de Caixa', 'Principais Despesas', 'Próximos Compromissos', 'Planejamento – Visão de Caixa', 'FGTS', 'Atualizações Pendentes']) {
       if (!dashboardText.includes(text)) throw new Error(`${label}: Dashboard hierarchy missing ${text}`);
     }
+    await assertDashboardContract(page, label, mobile);
     await page.screenshot({ path: `canonical-dashboard-${label}.png`, fullPage: true });
 
     await openRoute(page, 'Fluxo Diário', mobile);
