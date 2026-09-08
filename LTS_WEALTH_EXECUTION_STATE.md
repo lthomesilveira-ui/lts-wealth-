@@ -12,7 +12,20 @@ Purpose: compact operational bootstrap so project execution never depends on a l
 7. Before a repository write, freshness-check `main`, active branch, this file, and the SHAs of `PROJECT_MASTER_BACKLOG.md`, `NEXT_HOMOLOGATION_GATE.md`, `LTS_WEALTH_CONTINUITY_HANDOFF.md`, `CANONICAL_DELIVERY_MASTER_PLAN.md` and latest immutable checkpoint. Use line-limited reads; fully re-read only a file whose SHA changed or whose relevant section is needed.
 8. After every material package, gate, integration or newly discovered blocker, update this file so a chat may be abandoned/restarted at any moment without reconstruction work.
 
-## Current execution state — 07/09/2026 21:35 BRT
+## Current execution state — 07/09/2026 22:15 BRT
+- Repo: `lthomesilveira-ui/lts-wealth-`.
+- `main`, `canonical-app-v1` and `canonical-v157plus-product-recovery` are aligned at exposure commit `0643f57e2b2b89b8cbf3ea6ba3c58296b4614ebd`; active recovery branch remains `canonical-v157plus-product-recovery`.
+- Exact iPhone session product target: `abe6180d37657cc47bf18036f524a95ff262df13`; Dashboard Fidelity Pass 5 remains preserved underneath it.
+- Real-iPhone failure `JWT issued at future` now has bounded retry, one coalesced refresh and safe cached-session reset; WebKit explicitly gates a persisted future-token session and rejects raw JWT disclosure.
+- Active recovery/candidate `34174520963` / `34174520971`, canonical gate/candidate `34174620205` / `34174620102`, main candidate/Pages `34174717328` / `34174716172`: **SUCCESS**.
+- Post-exposure active/canonical/main smokes `34175144495` / `34175143351` / `34175143758` and Pages `34175143251`: **SUCCESS**.
+- Fixed homologation resolves to `canonical-app.html?homologacao=abe6180d37657cc47bf18036f524a95ff262df13`; direct verification observed `canonical-liquidity.js?v=20260908-session6` and truthful login in a clean session.
+- Durable briefing, Dashboard lineage, V150/V151 decisions and validation classes are consolidated in `LTS_WEALTH_REQUIREMENTS_TRACEABILITY.md`.
+- Latest immutable evidence: `backups/CANONICAL_APP_V157PLUS_IPHONE_SESSION_RECOVERY_CHECKPOINT_2026-09-07.md`.
+- Authenticated physical-iPhone post-fix financial/data E2E is still **not claimed**.
+- Public `index.html` remains protected; public-root promotion is not authorized.
+
+## Prior Dashboard Pass 5 state — retained as evidence
 - Repo: `lthomesilveira-ui/lts-wealth-`.
 - Exposed product baseline shared by `main`, `canonical-app-v1` and `canonical-v157plus-product-recovery`: `a808d855aa6687a893a51598db8f5fad4faf1cbb` — Dashboard Fidelity Pass 5 exposed through the fixed homologation manifest; public root still protected.
 - Active recovery branch: `canonical-v157plus-product-recovery`.
@@ -32,7 +45,15 @@ Purpose: compact operational bootstrap so project execution never depends on a l
 - Fixed homologation `https://lthomesilveira-ui.github.io/lts-wealth-/homologacao.html` resolves to `canonical-app.html?homologacao=eff928cb88e01ba3c5c88b8a8a8c4e8fa5d89f5d`; live verification showed the Pass 5 canonical script and truthful unauthenticated login, not fixture financial content.
 - Historical v144–v160 workflows remain manually/branch runnable but no longer run automatically on `main`; their wrapper-specific failures are not canonical release gates.
 
-## Immediate next execution sequence
+## Current immediate execution sequence
+1. Keep `main`, `canonical-app-v1` and `canonical-v157plus-product-recovery` aligned by normal no-force updates only.
+2. Use `LTS_WEALTH_REQUIREMENTS_TRACEABILITY.md` as the durable map from briefing → implementation → validation → pending; append recovered facts rather than relying on chat memory.
+3. Audit the briefing capabilities that are not top-level canonical routes, then close Dashboard fidelity P0 against the approved 1312×1199 reference using real data only.
+4. Complete refresh/session route restoration and the remaining report/updates product recovery without reintroducing wrapper architecture.
+5. Keep authenticated physical-iPhone and real write/search/document E2Es explicitly unclaimed until actually performed.
+6. Preserve `promotion_status:not_promoted` and protected `index.html` until explicit user authorization.
+
+## Previous immediate sequence — superseded by the sequence above
 1. Keep `main`, `canonical-app-v1` and `canonical-v157plus-product-recovery` aligned by normal no-force updates only.
 2. Continue Dashboard fidelity P0 against the approved 1312×1199 reference using real data only.
 3. Continue remaining report/updates product recovery without reintroducing wrapper architecture.
@@ -42,7 +63,11 @@ Purpose: compact operational bootstrap so project execution never depends on a l
 ## Product invariants not to lose
 - One canonical frontend; no iframe/wrapper chain as primary architecture.
 - Six real routes: Dashboard, Fluxo Diário, Despesas, Patrimônio, Cartões, Atualizações.
+- Financing, Planning, Revenues/Inputs, Recurrences, Commitments, Simulations, Reconciliation, Reports, Documents and Settings remain required capabilities even when grouped under the six primary routes; do not silently delete them.
+- Daily-use target is replacement of the Excel, with reliable past/today/90-day Flow and automatic release receipts; that target is not complete until the real authenticated gates are closed.
 - Flow: Consolidado/Itaú/Bradesco/C6, historical coverage where evidenced, operational balance + liquidity layers, expandable movements, internal transfers neutral in consolidated economics.
+- Original source files remain unchanged; no re-entry; historical/reconciliation difference tolerance remains R$0.00.
+- Daily balance chain, Realized versus Projected separation, Review for ambiguity, append-only ledger, idempotent ingestion and human approval remain binding domain rules.
 - No invented amount, merchant, classification, recurrence, competence, valuation, tax or documentary fact.
 - FGTS remains restricted/D+30 context, never automatic current cash.
 - Public fallback remains protected until explicit authorization.

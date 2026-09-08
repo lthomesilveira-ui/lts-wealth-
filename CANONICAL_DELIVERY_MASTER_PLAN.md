@@ -1,14 +1,16 @@
 # LTS Wealth — Canonical Delivery Master Plan
 
-Last refreshed: 2026-09-07
-Active implementation branch: `canonical-v157plus-product-recovery` (aligned with `canonical-app-v1` and `main` at the exposed V157+ baseline)
+Last refreshed: 2026-09-07 22:15 BRT
+Active implementation branch: `canonical-v157plus-product-recovery` (aligned with `canonical-app-v1` and `main` at iPhone session exposure `0643f57e2b2b89b8cbf3ea6ba3c58296b4614ebd`)
 
 Purpose: this is the execution-order view of the LTS Wealth backlog. It does not replace documentary evidence or immutable checkpoints. `PROJECT_MASTER_BACKLOG.md` remains the complete persistent dependency list. This file makes the remaining work explicit so product delivery does not get lost behind release mechanics.
 
-Current milestone: Dashboard Fidelity Pass 5 is exposed. The canonical app owns the Dashboard without post-load replacement, and Chromium/WebKit gates preserve the five liquidity-first KPIs plus the approved-reference section hierarchy. Pixel-level convergence and real-data refinement remain active P0.
+Current milestone: Dashboard Fidelity Pass 5 remains exposed and the real-iPhone `JWT issued at future` failure class is corrected/gated through product target `abe6180d37657cc47bf18036f524a95ff262df13`. The recovered briefing, Dashboard models and V150/V151 decisions are now cross-referenced in `LTS_WEALTH_REQUIREMENTS_TRACEABILITY.md`. Pixel-level convergence, secondary-capability inventory and real authenticated lifecycles remain active P0.
 
 ## Definition of DONE for the app
 The LTS Wealth app is not considered delivered until all P0 items below are complete together in one canonical application:
+- daily use can replace the Excel without re-entering existing data;
+- past, today and next-90-day Flow is consistent and cards, recurrences, commitments, transfers, simulations and reconciliation remain integrated;
 - one canonical frontend, not a wrapper/iframe chain over historical releases;
 - Dashboard visually aligned with the approved official reference;
 - real authenticated financial data rendered without fabricated values or false zeros;
@@ -42,7 +44,9 @@ The LTS Wealth app is not considered delivered until all P0 items below are comp
 - [x] One router owned by the canonical app.
 - [x] All six routes work physically on desktop and mobile.
 - [x] Mobile nav shows all six destinations with no clipping/overflow.
-- [ ] Route state survives refresh/session restoration appropriately.
+- [~] Route state survives refresh/session restoration appropriately; future-JWT recovery is gated, broader route restoration remains open.
+- [x] Persisted future-issued JWT receives bounded retry/refresh and safe login reset without raw error disclosure.
+- [ ] Audit discoverability/coverage of Financing, Planning, Revenues/Inputs, Recurrences, Commitments, Simulations, Reconciliation, Reports, Documents and Settings inside the six-route product.
 - [x] No iframe navigation races or hidden historical route owners.
 
 ### P0.4 Authentication + real data
@@ -51,6 +55,8 @@ The LTS Wealth app is not considered delivered until all P0 items below are comp
 - [x] Direct read paths for cockpit, flow, expenses, wealth, cards, updates/search.
 - [x] No synthetic financial data for visual QA outside explicit fixtures.
 - [x] Error state must be visible and diagnosable instead of silently showing dashes.
+- [x] Future-issued cached JWT recovery is explicit, bounded and covered in mobile WebKit.
+- [ ] Authenticated physical-iPhone post-fix financial/data E2E.
 
 ### P0.5 Product-level QA before asking the user
 - [ ] Desktop visual parity gate against approved reference hierarchy/density.

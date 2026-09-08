@@ -4,6 +4,18 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 
 Canonical persistent project list. Never remove an open financial, documentary, classification, reconciliation or product dependency during compaction. Detailed immutable evidence remains in `backups/`, `HISTORICAL_RECOVERY_LOG.md`, `PLANNING_EXCEL_TO_CURRENT_AUDIT_2026-08-30.md`, `NEXT_HOMOLOGATION_GATE.md` and release checkpoints.
 
+## P0 — iPhone session recovery + durable requirements audit — 07/09/2026
+- [x] Reproduced the real-device failure class `JWT issued at future` with a persisted future-token session in WebKit 390×844.
+- [x] Centralized bounded retry, one coalesced refresh and safe session reset; raw JWT detail is no longer rendered to the user.
+- [x] Product target `abe6180d37657cc47bf18036f524a95ff262df13`; exposure `0643f57e2b2b89b8cbf3ea6ba3c58296b4614ebd`.
+- [x] Active recovery/candidate `34174520963` / `34174520971`, canonical gate/candidate `34174620205` / `34174620102`, main candidate/Pages `34174717328` / `34174716172`: SUCCESS.
+- [x] Post-exposure active/canonical/main candidate smokes `34175144495` / `34175143351` / `34175143758` and Pages `34175143251`: SUCCESS.
+- [x] Fixed homologation browser-verified at exact target `abe6180...`, with `canonical-liquidity.js?v=20260908-session6` and truthful clean-session login.
+- [x] Recovered briefing, Dashboard lineage, V150/V151 scope and validation classes consolidated in `LTS_WEALTH_REQUIREMENTS_TRACEABILITY.md`.
+- [x] Immutable checkpoint `backups/CANONICAL_APP_V157PLUS_IPHONE_SESSION_RECOVERY_CHECKPOINT_2026-09-07.md`.
+- [ ] Authenticated physical-iPhone post-fix/data E2E remains pending and must not be claimed.
+- [~] Audit every briefing capability not represented as a primary canonical route; grouping is allowed, silent removal is not.
+
 ## P0 — Dashboard Fidelity Pass 5 — 07/09/2026
 - [x] Removed the post-load simplified Dashboard replacement; the dense canonical Dashboard is again the single owner of that route.
 - [x] Preserved the five liquidity-first KPIs while restoring the approved-reference section density: liquidity evolution, asset distribution, bank position, cash flow, top expenses, commitments, planning, FGTS and pending updates.

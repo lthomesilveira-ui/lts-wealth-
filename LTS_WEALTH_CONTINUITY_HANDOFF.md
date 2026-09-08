@@ -1,6 +1,6 @@
 # LTS Wealth — Continuity Handoff
 
-Last materially refreshed: 2026-09-07 (America/Sao_Paulo)
+Last materially refreshed: 2026-09-07 22:15 BRT (America/Sao_Paulo)
 
 This file exists so project continuity never depends on chat context. Always re-fetch `main`, active branch, `PROJECT_MASTER_BACKLOG.md`, `NEXT_HOMOLOGATION_GATE.md`, this file and the latest immutable checkpoint before every repository write.
 
@@ -31,13 +31,26 @@ Current facts:
 - single frontend; no release iframe/wrapper chain;
 - direct Supabase authentication/RPC integration;
 - same app owns Dashboard, Fluxo Diário, Despesas, Patrimônio, Cartões and Atualizações;
-- gated implementation `76f888dc0e668fb0e768c8cc825f56778f043f50`; exact homologation target `c44d401497e14d842d433a302006ff5648b956a9`; exposure commit `3b3048fa4660868e161582fcd8704438a13e300c`;
-- canonical blobs: `canonical-app.html` `08680a3fad789351d3bbd7c3b44aef0af7ea9757`, `canonical-dashboard-fidelity.css` `8ca76632029a80b65ced58f0cf4a5704df2c0269`, `canonical-liquidity-core.js` `eee099e254569d955a64216edce1322613882644`, `canonical-flow-v157.js` `fefe99aa1062ad5287f0a39f7872a28d96ee0b1f`, `canonical-product-v157.js` `2eb33b2f3b5405b2e95f4a2104f267a4c46ff47c`, `canonical-presentation-v157.js` `9f50f69ca33ef5c134cd771f86a958fed2aa1d89`;
+- V157+ modular baseline `76f888dc0e668fb0e768c8cc825f56778f043f50`; Dashboard Pass 5 preserved; iPhone session product target `abe6180d37657cc47bf18036f524a95ff262df13`; exposure `0643f57e2b2b89b8cbf3ea6ba3c58296b4614ebd`;
+- canonical blobs: `canonical-app.html` `6f3301ad728f6561ffcbac41249d0e5f78feaea7`, `canonical-dashboard-fidelity.css` `8ca76632029a80b65ced58f0cf4a5704df2c0269`, `canonical-liquidity-core.js` `f15f04df5d7ba926fcfa2ab2352294367b9767ec`, `canonical-flow-v157.js` `0be38677b4afe95a8b725e8f9fd09d443508e01a`, `canonical-product-v157.js` `bb9bfe950e5de8fc87940c8e66b50729ba6fbed8`, `canonical-presentation-v157.js` `9f50f69ca33ef5c134cd771f86a958fed2aa1d89`;
 - modular recovery gate `34170935882` and permanent canonical gate `34171231918`: SUCCESS in Chromium desktop 1312×1199 and WebKit mobile 390×844;
 - all active/canonical/main candidate smokes and both pre/post-manifest Pages deployments are green; exact run inventory is in the immutable checkpoint;
-- fixed homologation is `canonical-app.html?homologacao=c44d401497e14d842d433a302006ff5648b956a9` / `promotion_status:not_promoted`, browser-verified with truthful login;
-- latest immutable checkpoint: `backups/CANONICAL_V157PLUS_PRODUCT_RECOVERY_EXPOSURE_CHECKPOINT_2026-09-07.md`;
+- future-JWT recovery gate `34174520963`, canonical gate `34174620205`, all pre/post-exposure smokes and Pages: SUCCESS;
+- fixed homologation is `canonical-app.html?homologacao=abe6180d37657cc47bf18036f524a95ff262df13` / `promotion_status:not_promoted`, browser-verified with session6 asset and truthful login;
+- latest immutable checkpoint: `backups/CANONICAL_APP_V157PLUS_IPHONE_SESSION_RECOVERY_CHECKPOINT_2026-09-07.md`;
 - authenticated physical-iPhone financial/data E2E remains pending/not claimed.
+
+## Durable briefing and validation map
+- `LTS_WEALTH_REQUIREMENTS_TRACEABILITY.md` is the canonical crosswalk for original briefing, Dashboard model lineage, V150/V151 decisions, implementation, automatic proof, user/real-life proof and exact gaps.
+- The app-level target remains daily use without Excel, reliable past/today/90-day Flow, integrated cards/recurrences/commitments/transfers/simulations/reconciliation and zero financial divergence.
+- The six primary routes may group secondary capabilities, but Financing, Planning, Revenues/Inputs, Recurrences, Commitments, Simulations, Reconciliation, Reports, Documents and Settings must not silently disappear.
+- Historical indexed conversation recovery is partial; absence from search never authorizes removing a requirement.
+
+## iPhone future-JWT recovery
+- A real iPhone showed raw fatal `JWT issued at future`.
+- The shared canonical RPC/session layer now performs bounded clock-skew retry, one coalesced refresh and safe cached-session reset.
+- WebKit explicitly gates a persisted future token and the safe return to login without raw JWT exposure.
+- Physical authenticated post-fix/data E2E is still pending and remains honestly unclaimed.
 
 ## Deterministic canonical evidence
 Current gate preserves the prior six-route regression coverage and additionally proves the deterministic Aplicar/Resgatar preview:

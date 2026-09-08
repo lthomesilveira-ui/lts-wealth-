@@ -2,20 +2,29 @@
 
 Purpose: evidence-backed sequence before asking the user to inspect a material candidate. Keep aligned with `PROJECT_MASTER_BACKLOG.md`, `LTS_WEALTH_CONTINUITY_HANDOFF.md` and immutable checkpoints.
 
-## Current canonical baseline — 07/09/2026
+## Current canonical baseline — 07/09/2026 22:15 BRT
 - Public fallback: WIP35-v136 in `index.html`, unchanged; protected blob remains `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
 - Fixed homologation: `https://lthomesilveira-ui.github.io/lts-wealth-/homologacao.html`.
-- Fixed homologation manifest selects **CANONICAL v1.4 · Dashboard Fidelity Pass 5** through `canonical-app.html`, exact target `eff928cb88e01ba3c5c88b8a8a8c4e8fa5d89f5d`.
+- Fixed homologation manifest selects **CANONICAL v1.5 · iPhone Session Recovery** through `canonical-app.html`, exact product target `abe6180d37657cc47bf18036f524a95ff262df13`, exposure `0643f57e2b2b89b8cbf3ea6ba3c58296b4614ebd`.
 - Canonical frontend is a single application; no v150/v151/v156/v160 iframe/wrapper chain is part of the primary product.
 - Current gated modules: `canonical-liquidity-core.js`, `canonical-flow-v157.js`, `canonical-product-v157.js`, `canonical-presentation-v157.js`.
 - Modular recovery gate `34170935882` and permanent canonical gate `34171231918`: **SUCCESS** in Chromium desktop 1312×1199 and WebKit mobile 390×844.
 - Active/canonical/main candidate smokes `34170935887` / `34171231935` / `34171338575` and Pages `34171338335`: **SUCCESS**.
 - Post-manifest active/canonical/main candidate smokes `34171452083` / `34171452913` / `34171453488` and Pages `34171452759`: **SUCCESS**.
 - Dashboard Pass 5 recovery `34173223977` and permanent canonical gate `34173482173`: SUCCESS; final active/canonical/main smokes and Pages are green.
-- Browser verification of the fixed URL resolved to `canonical-app.html?homologacao=eff928cb88e01ba3c5c88b8a8a8c4e8fa5d89f5d` and rendered the Pass 5 canonical asset + truthful login with no fixture financial UI.
-- Current immutable evidence: `backups/CANONICAL_APP_V157PLUS_DASHBOARD_FIDELITY_PASS5_CHECKPOINT_2026-09-07.md`.
+- Future-JWT recovery `34174520963`, permanent canonical gate `34174620205`, active/canonical/main smokes and Pages are SUCCESS; WebKit explicitly covers persisted future-token recovery.
+- Post-exposure active/canonical/main smokes `34175144495` / `34175143351` / `34175143758` and Pages `34175143251`: SUCCESS.
+- Browser verification of the fixed URL resolved to `canonical-app.html?homologacao=abe6180d37657cc47bf18036f524a95ff262df13` and rendered `canonical-liquidity.js?v=20260908-session6` + truthful login with no fixture financial UI.
+- Current immutable evidence: `backups/CANONICAL_APP_V157PLUS_IPHONE_SESSION_RECOVERY_CHECKPOINT_2026-09-07.md`.
+- Durable briefing/decision map: `LTS_WEALTH_REQUIREMENTS_TRACEABILITY.md`.
 - `promotion_status:not_promoted`; public root promotion is NOT AUTHORIZED / NOT DONE.
 - Authenticated physical-iPhone visual/data E2E: PENDING / NOT CLAIMED.
+
+## iPhone session recovery gate
+- Real-device symptom: fatal surface disclosed `JWT issued at future` instead of recovering or renewing the session.
+- Canonical RPC path now retries once after a short clock-skew delay, coalesces one token refresh, then safely clears an unrecoverable cached session and returns to login.
+- WebKit 390×844 proves session removal, `jwt-clock` recovery status, safe guidance and absence of raw JWT detail.
+- This deterministic gate closes the reproducible failure class; it does not substitute for the final authenticated physical-iPhone data E2E.
 
 ## Why the canonical line supersedes v160
 - Real-iPhone evidence repeatedly rejected wrapper-based releases because presentation, data readiness and navigation could not be made reliable together.
