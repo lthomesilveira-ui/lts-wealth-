@@ -4,6 +4,19 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 
 Canonical persistent project list. Never remove an open financial, documentary, classification, reconciliation or product dependency during compaction. Detailed immutable evidence remains in `backups/`, `HISTORICAL_RECOVERY_LOG.md`, `PLANNING_EXCEL_TO_CURRENT_AUDIT_2026-08-30.md`, `NEXT_HOMOLOGATION_GATE.md` and release checkpoints.
 
+## P0 — V150 reviewed text-input recovery / canonical v1.12 — 08/09/2026
+- [x] Re-audited the V150→canonical line and found a concrete regression: `wip35-v150-recomposition.js` exposed `Lançamento por texto`, while canonical v1.11 documentation claimed the capability but the rendered `Atualizações` route omitted it.
+- [x] Restored the capability inside the single canonical frontend with contract `review-before-explicit-apply-v1`: natural phrase → editable preview → required-field review → explicit confirmation.
+- [x] Preserved the existing authenticated writer `lts_browser_apply_reviewed_input_v1`, idempotency key and product/cockpit readback; preview never writes, and fixture mode exposes no apply action and never calls the writer.
+- [x] Added evidence-limited parsing for relative/explicit dates, known accounts/cards, nature, category/context proposals and the five required value forms: `5 mil`, `R$5.000`, `5000`, `3k`, `R$1.250,50`.
+- [x] Kept bank↔liquidity/RSU movements in the separate reviewed Aplicar/Resgatar flow so they cannot be misposted as revenue or expense.
+- [x] Expanded the permanent desktop/mobile gate to verify preview contents, editable fields, missing-evidence warnings, confirmation guard and zero fixture writes while retaining the full v1.11/v1.10/v1.9 regression suite.
+- [x] Local Chromium PASS; exact product `70c49b1b50b7faca09b71889e14d33183a7f9092`; fixed-manifest exposure `adac528dbde6d0dcd6268a52c780d3abf43dc9a9`; all three branches aligned by normal fast-forward.
+- [x] Product recovery gate/smoke `34235638676` / `34235638646`, canonical gate/smoke `34235911409` / `34235911280`, main smoke/Pages `34236205811` / `34236204118`: SUCCESS.
+- [x] Post-exposure active/canonical/main smokes `34236480960` / `34236541857` / `34236635343` and Pages `34236635451`: SUCCESS; fixed URL resolves to the exact v1.12 product with truthful signed-out state and zero iframe/fixture data.
+- [x] Artifacts: recovery `10059792070` / `sha256:db41ecbe329e9166c60241a4461fd33ef963aedd3a7953ac072356cbcc0e3eae`; canonical `10059891042` / `sha256:a84c36b967cba64d524241a19a476d7a9747386046b7bb86799f4b8a328e34eb`.
+- [ ] Authenticated real save→readback and physical-iPhone evidence remain explicitly open/not claimed.
+
 ## P0 — Layered liquidity evolution / canonical v1.11 — 08/09/2026
 - [x] Recovered the explicit 05/09 user requirement that cash evolution show separate account, short-term, RSU and FGTS layers while retaining the liquidity-first V155 visual direction.
 - [x] Added a current evidenced anchor from cockpit `through_d3`, a base operational projection from `current_liquidity_balance`, a conditional scheduled-vesting series from `conditional_rsu_balance` and a restricted contingency series from `restricted_total_balance`.

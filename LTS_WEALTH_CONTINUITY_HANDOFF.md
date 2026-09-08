@@ -1,6 +1,6 @@
 # LTS Wealth — Continuity Handoff
 
-Last materially refreshed: 2026-09-08 10:15 BRT (America/Sao_Paulo)
+Last materially refreshed: 2026-09-08 11:16 BRT (America/Sao_Paulo)
 
 This file exists so project continuity never depends on chat context. Always re-fetch `main`, active branch, `PROJECT_MASTER_BACKLOG.md`, `NEXT_HOMOLOGATION_GATE.md`, this file and the latest immutable checkpoint before every repository write.
 
@@ -24,7 +24,19 @@ This file exists so project continuity never depends on chat context. Always re-
 - Public fallback remains WIP35-v136; protected `index.html` blob remains `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
 - Public promotion remains unauthorized/not done.
 
-## Current exposed product — canonical v1.11 Layered Liquidity
+## Current exposed product — canonical v1.12 Reviewed Text Input
+- Exact product `70c49b1b50b7faca09b71889e14d33183a7f9092`; fixed-manifest exposure `adac528dbde6d0dcd6268a52c780d3abf43dc9a9`; all three release branches share both through normal fast-forward.
+- Historical audit found that V150 exposed `Lançamento por texto`, while the v1.11 canonical `Atualizações` route omitted it despite documentation saying it was implemented. V1.12 restores the missing product surface without restoring wrappers.
+- Contract `review-before-explicit-apply-v1`: phrase interpretation only proposes values; date, value, nature, account/card, category, context, counterparty and description are editable; required evidence is shown before approval.
+- The authenticated writer remains `lts_browser_apply_reviewed_input_v1` with an idempotency key and product/cockpit readback. Preview never writes; fixture mode has no confirmation action and the permanent gate requires `writer_called:false` / `write_accepted:false`.
+- Bank↔liquidity and RSU operations remain in the separate equal-and-opposite Aplicar/Resgatar flow and cannot be converted into revenue/expense by text input.
+- Local Chromium and recovery/canonical CI Chromium+WebKit are PASS in desktop 1312×1199 and mobile 390×844, including every protected v1.11/v1.10/v1.9 regression.
+- Pre-exposure recovery gate/smoke `34235638676` / `34235638646`, canonical gate/smoke `34235911409` / `34235911280`, main smoke/Pages `34236205811` / `34236204118`: SUCCESS. Post-exposure active/canonical/main smokes `34236480960` / `34236541857` / `34236635343` and Pages `34236635451`: SUCCESS.
+- Fixed homologation resolves to `canonical-app.html?homologacao=70c49b1…#Dashboard`, loads `input12`, renders truthful signed-out login and exposes no iframe or fixture financial content.
+- Latest immutable checkpoint: `backups/CANONICAL_APP_V112_REVIEWED_TEXT_INPUT_CHECKPOINT_2026-09-08.md`.
+- Authenticated real save/readback and physical-iPhone evidence remain explicitly open/not claimed. No user action is required for the release sequence.
+
+## Protected predecessor — canonical v1.11 Layered Liquidity
 - Exact product `8a9c675ed3940da19a10c04e56249a315576045a`; fixed-manifest exposure `04c051f19167e913079bb8e75b692f5fe430892c`; all three release branches share the product, exposure and documentation/checkpoint closure through normal fast-forward.
 - Dashboard contract `reference-layered-liquidity-commitments-v3` preserves the observed/projected truth boundary and adds liquidity-layer contract `current-base-scheduled-rsu-restricted-fgts-v1`.
 - Cockpit `through_d3` is the evidenced current anchor. `current_liquidity_balance` is the future base; `conditional_rsu_balance` is the scheduled-vesting scenario; `restricted_total_balance` is the FGTS-inclusive contingency. Conditional/restricted paths never become the current position.
@@ -34,7 +46,7 @@ This file exists so project continuity never depends on chat context. Always re-
 - Pre-exposure recovery gate/smoke `34229899061` / `34229899074`, canonical gate/smoke `34230146792` / `34230146827`, main smoke/Pages `34230384306` / `34230382218`: SUCCESS. Post-exposure active/canonical/main smokes `34230610235` / `34230659383` / `34230705729` and Pages `34230705397`: SUCCESS.
 - Fixed homologation browser verification resolved to `canonical-app.html?homologacao=8a9c675…#Dashboard`, loaded `dashboard-layers11`, rendered the truthful signed-out login and exposed no iframe or fixture financial content.
 - Latest immutable checkpoint: `backups/CANONICAL_APP_V111_LAYERED_LIQUIDITY_CHECKPOINT_2026-09-08.md`.
-- No user action is required for this release sequence; continue autonomously unless a real financial/provider/consent decision becomes necessary.
+- This predecessor remains immutable evidence; continue autonomously unless a real financial/provider/consent decision becomes necessary.
 
 ## Recovered explicit user feedback — preserve across chats
 - 24/08: Flow `+` at left; validated columns retained; open Itaú invoice enters the total and transaction detail consolidates only after closure.
@@ -50,7 +62,7 @@ Current facts:
 - single frontend; no release iframe/wrapper chain;
 - direct Supabase authentication/RPC integration;
 - same app owns Dashboard, Fluxo Diário, Despesas, Patrimônio, Cartões and Atualizações;
-- V157+ modular baseline, v1.8 unified expenses, v1.7 route/session receipt, v1.6 capability recovery, Dashboard Fidelity Pass 6, iPhone future-JWT recovery and the bounded Supabase security baseline remain preserved; current product package is `6aba220653a9053cf304ab11bf931db38ccc1b75`, fixed-manifest exposure `90aad3a754e69708fcc9e03a5bb32835281e2925`;
+- V157+ modular baseline, v1.8 unified expenses, v1.7 route/session receipt, v1.6 capability recovery, Dashboard Fidelity Pass 6, iPhone future-JWT recovery and the bounded Supabase security baseline remain preserved; the historical v1.9 product package was `6aba220653a9053cf304ab11bf931db38ccc1b75`, with fixed-manifest exposure `90aad3a754e69708fcc9e03a5bb32835281e2925`;
 - Despesas is owned only by `canonical-app`: month/year history, nature × context, evidence-led insights, explicit `Não atribuído` semantics and item/month drilldown are one responsive surface; product module ownership is Patrimônio/Cartões only;
 - current changed blobs: `canonical-app.html` `92507f55f4de291c17e49a5b430bedcb33018506`, `canonical-liquidity.js` `8a8caba73c0f6a08710328c19e38bec6c6aab7e9`, `canonical-capabilities-v161.js` `da479e1c5215b593b7bb43d2df5d64dc939e19e2`, permanent gate `f48fc1520f1e50d7071f21be6648a2293fc21e6f`, recovery workflow `9a558c4574eb6439b1eeca0f34400fec2012cdd5`;
 - modular recovery gate `34170935882` and permanent canonical gate `34171231918`: SUCCESS in Chromium desktop 1312×1199 and WebKit mobile 390×844;
@@ -59,7 +71,7 @@ Current facts:
 - post-exposure active/canonical/main smokes `34186663110` / `34186664337` / `34186664887` and Pages `34186664347`: SUCCESS;
 - route/receipt recovery/candidate `34190659782` / `34190659780`, canonical gate/candidate `34191017877` / `34191017858`, main candidate/Pages `34191216218` / `34191215874`: SUCCESS;
 - post-v1.7-exposure active/canonical/main smokes `34191461669` / `34191462282` / `34191463017` and Pages `34191462402`: SUCCESS;
-- historical v1.9 fixed-exposure evidence used `canonical-app.html` / `promotion_status:not_promoted`; the current fixed exposure is v1.11 and public `index.html` remains protected;
+- historical v1.9 fixed-exposure evidence used `canonical-app.html` / `promotion_status:not_promoted`; the current fixed exposure is v1.12 and public `index.html` remains protected;
 - unified-expenses gates are green: active `34199824400`, canonical `34200253901`, main candidate/Pages `34200706521` / `34200704967`;
 - canonical v1.9 recovery/candidate `34219446266` / `34219446256`, canonical gate/candidate `34219669569` / `34219669492`, main candidate/Pages `34219911180` / `34219909612`: SUCCESS;
 - post-exposure active/canonical/main smokes `34220841617` / `34220895671` / `34220950755` and Pages `34220949477`: SUCCESS;

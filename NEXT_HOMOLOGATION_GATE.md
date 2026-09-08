@@ -2,12 +2,12 @@
 
 Purpose: evidence-backed sequence before asking the user to inspect a material candidate. Keep aligned with `PROJECT_MASTER_BACKLOG.md`, `LTS_WEALTH_CONTINUITY_HANDOFF.md` and immutable checkpoints.
 
-## Current canonical baseline — 08/09/2026 10:15 BRT
+## Current canonical baseline — 08/09/2026 11:16 BRT
 - Public fallback: WIP35-v136 in `index.html`, unchanged; protected blob remains `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
 - Fixed homologation: `https://lthomesilveira-ui.github.io/lts-wealth-/homologacao.html`.
-- Fixed homologation selects **CANONICAL v1.11 · Layered Liquidity** through `canonical-app.html`, exact product `8a9c675ed3940da19a10c04e56249a315576045a`, exposure `04c051f19167e913079bb8e75b692f5fe430892c`; public `index.html` is unchanged.
+- Fixed homologation selects **CANONICAL v1.12 · Reviewed Text Input** through `canonical-app.html`, exact product `70c49b1b50b7faca09b71889e14d33183a7f9092`, exposure `adac528dbde6d0dcd6268a52c780d3abf43dc9a9`; public `index.html` is unchanged.
 - Canonical frontend is a single application; no v150/v151/v156/v160 iframe/wrapper chain is part of the primary product.
-- Current gated modules: `canonical-liquidity-core.js`, `canonical-flow-v157.js`, `canonical-product-v157.js`, `canonical-presentation-v157.js`, `canonical-capabilities-v161.js`.
+- Current gated modules: `canonical-liquidity-core.js`, `canonical-flow-v157.js`, `canonical-product-v157.js`, `canonical-presentation-v157.js`, `canonical-capabilities-v161.js`, `canonical-reviewed-input-v112.js`.
 - Modular recovery gate `34170935882` and permanent canonical gate `34171231918`: **SUCCESS** in Chromium desktop 1312×1199 and WebKit mobile 390×844.
 - Active/canonical/main candidate smokes `34170935887` / `34171231935` / `34171338575` and Pages `34171338335`: **SUCCESS**.
 - Post-manifest active/canonical/main candidate smokes `34171452083` / `34171452913` / `34171453488` and Pages `34171452759`: **SUCCESS**.
@@ -35,12 +35,24 @@ Purpose: evidence-backed sequence before asking the user to inspect a material c
 - V1.11 post-exposure active/canonical/main smokes `34230610235` / `34230659383` / `34230705729` and Pages `34230705397`: SUCCESS.
 - V1.11 artifacts: recovery `10057369616` / `sha256:5939e41b70411530e1668546d83764ea48454e72598e0c1e7dc967a0414e87d2`; canonical `10057455711` / `sha256:b3cea9b02272be1495797ed8151fadcda8c3e865929729d648c12e43017aea34`.
 - Fixed-URL live verification resolved to `canonical-app.html?homologacao=8a9c675…#Dashboard`, loaded `canonical-liquidity.js?v=20260908-dashboard-layers11`, truthful signed-out login, zero iframe and no unauthenticated fixture Dashboard.
-- Current immutable evidence: `backups/CANONICAL_APP_V111_LAYERED_LIQUIDITY_CHECKPOINT_2026-09-08.md`.
+- V1.12 recovery gate/smoke `34235638676` / `34235638646`, canonical gate/smoke `34235911409` / `34235911280`, main smoke/Pages `34236205811` / `34236204118`: SUCCESS.
+- V1.12 post-exposure active/canonical/main smokes `34236480960` / `34236541857` / `34236635343` and Pages `34236635451`: SUCCESS.
+- V1.12 artifacts: recovery `10059792070` / `sha256:db41ecbe329e9166c60241a4461fd33ef963aedd3a7953ac072356cbcc0e3eae`; canonical `10059891042` / `sha256:a84c36b967cba64d524241a19a476d7a9747386046b7bb86799f4b8a328e34eb`.
+- Fixed-URL live verification resolved to `canonical-app.html?homologacao=70c49b1…#Dashboard`, loaded `canonical-liquidity.js?v=20260908-input12`, truthful signed-out login, zero iframe and no unauthenticated fixture Dashboard.
+- Current immutable evidence: `backups/CANONICAL_APP_V112_REVIEWED_TEXT_INPUT_CHECKPOINT_2026-09-08.md`.
 - Durable briefing/decision map: `LTS_WEALTH_REQUIREMENTS_TRACEABILITY.md`.
 - `promotion_status:not_promoted`; public root promotion is NOT AUTHORIZED / NOT DONE.
 - Authenticated physical-iPhone visual/data E2E: PENDING / NOT CLAIMED.
 
-## Canonical v1.11 Layered Liquidity — selected for fixed exposure
+## Canonical v1.12 Reviewed Text Input — selected for fixed exposure
+- Exact base is the v1.11 closure `23ac0307bf675e9507b8d366ebc6dd3c92d81569`; no public-root change and no wrapper reintroduction.
+- V150 had a reviewed launch-by-text entry point; canonical v1.11 lost the visible surface. V1.12 restores it inside `Atualizações` under `review-before-explicit-apply-v1`.
+- The gate tests editable parsing for five BRL formats, date/nature/account/card/category/context, missing-evidence warnings, explicit confirmation and the fixture prohibition on writer calls.
+- Real writes remain behind `lts_browser_apply_reviewed_input_v1`, idempotency and post-write readback. The deterministic fixture never submits a financial mutation.
+- The complete v1.11 layered-liquidity, v1.10 decision-truth and v1.9 V150 Flow suites remain green on desktop Chromium and mobile WebKit.
+- Authenticated real save/readback and physical-iPhone evidence remain OPEN / NOT CLAIMED.
+
+## Canonical v1.11 Layered Liquidity — protected predecessor
 - Exact base is the v1.10 closure `a4a19217dd59d83784537d623e58eeaf4d2befb2`; no public-root change and no wrapper reintroduction.
 - Dashboard contract `reference-layered-liquidity-commitments-v3` adds `current-base-scheduled-rsu-restricted-fgts-v1` while preserving `fact-before-asof-projection-after-asof-v1` and `product-commitments-plus-card-due`.
 - Current evidenced position is anchored from cockpit `through_d3`; future base uses `current_liquidity_balance`, scheduled RSUs use `conditional_rsu_balance`, and FGTS contingency uses `restricted_total_balance` only after the documented D+30 boundary.
