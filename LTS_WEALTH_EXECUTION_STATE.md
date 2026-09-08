@@ -12,10 +12,13 @@ Purpose: compact operational bootstrap so project execution never depends on a l
 7. Before a repository write, freshness-check `main`, active branch, this file, and the SHAs of `PROJECT_MASTER_BACKLOG.md`, `NEXT_HOMOLOGATION_GATE.md`, `LTS_WEALTH_CONTINUITY_HANDOFF.md`, `CANONICAL_DELIVERY_MASTER_PLAN.md` and latest immutable checkpoint. Use line-limited reads; fully re-read only a file whose SHA changed or whose relevant section is needed.
 8. After every material package, gate, integration or newly discovered blocker, update this file so a chat may be abandoned/restarted at any moment without reconstruction work.
 
-## Current execution state — 08/09/2026 02:44 BRT
+## Current execution state — 08/09/2026 04:42 BRT
 - Repo: `lthomesilveira-ui/lts-wealth-`; active recovery branch remains `canonical-v157plus-product-recovery`.
-- `main`, `canonical-app-v1` and `canonical-v157plus-product-recovery` are aligned at canonical v1.7 exposure `33da29ab0818c9dd59dca45f68d3680ed153f6af`.
-- Exact product target: `e618ef48e22872ce718c7932872e2316e5660f67`; Dashboard Fidelity Pass 6, canonical v1.6 capability recovery, iPhone future-JWT recovery and the bounded Supabase security baseline remain preserved underneath it.
+- `main`, `canonical-app-v1` and `canonical-v157plus-product-recovery` are aligned at canonical v1.8 exposure `352a4fe9716bff063a67dae2e01a0f484d6ac80e`.
+- Exact product package: `870acc37f220592c77b488be32315af284b52427`; Dashboard Fidelity Pass 6, canonical v1.7 route/session receipt, canonical v1.6 capability recovery, iPhone future-JWT recovery and the bounded Supabase security baseline remain preserved underneath it.
+- Despesas now has one DOM owner (`canonical-app`): month/year history, nature × context, evidence-led insights, `Não atribuído` semantics and item/month drilldown coexist in one gated responsive route. `canonical-product-v157.js` is limited to Patrimônio and Cartões.
+- Unified-expenses active gate/candidate `34199824400` / `34199824442`, canonical gate/candidate `34200253901` / `34200253918`, post-manifest active/canonical smokes `34200631320` / `34200627680`, main candidate/Pages `34200706521` / `34200704967`: **SUCCESS**.
+- Unified-expenses artifact `10045384567`, digest `sha256:d2217881f768ee07bd28c846026447571fa89b932a9af944fccfed8bba4523382`.
 - The canonical router now derives the intended route before the first RPC/render, canonicalizes deep links, persists only route state in `sessionStorage`, preserves intent through login/JWT reset/reload, handles `popstate`/bfcache and falls back safely from invalid routes. Central de Gestão also restores one of its eight valid panes across refresh/back.
 - The permanent browser gate now emits one `lts-canonical-definition-of-done-receipt-v1` JSON receipt. It maps the recovered requirements and explicitly separates `gate_status: PASS` from `delivery_status: AUTOMATED_GATE_PASS_REAL_E2E_OPEN`; authenticated real data/writes, physical iPhone and public-root promotion remain unclaimed.
 - Pass 6 now matches the approved Dashboard structure materially: exact desktop intent order, month/as-of toolbar, working `Hoje` reload, five evidence-labelled liquidity KPIs, bank rows and decision-card drill-downs. Mobile keeps six primary destinations and exposes the period controls without clipping.
@@ -27,12 +30,12 @@ Purpose: compact operational bootstrap so project execution never depends on a l
 - Route/receipt recovery/candidate `34190659782` / `34190659780`, canonical gate/candidate `34191017877` / `34191017858`, main candidate/Pages `34191216218` / `34191215874`: **SUCCESS**.
 - Route/receipt artifact `10042106418`, digest `sha256:69ef7f8af36374e9c91ae5074690d13525676d8fe8ee326024c40e381e36ed47`; desktop Chromium and mobile WebKit suites are PASS, including refresh, back/forward, direct deep link, invalid-route fallback, management-pane restore and future-JWT route preservation.
 - Post-exposure active/canonical/main smokes `34191461669` / `34191462282` / `34191463017` and Pages `34191462402`: **SUCCESS**.
-- Fixed homologation resolves to `canonical-app.html?homologacao=e618ef48e22872ce718c7932872e2316e5660f67#Dashboard`; direct verification observed `canonical-liquidity.js?v=20260908-continuity7`, truthful login, zero unauthenticated KPI cards and no iframe.
+- Fixed homologation exposes canonical v1.8 through `canonical-app.html`; direct verification observed `canonical-liquidity.js?v=20260908-expenses8`, the unified expense contract and no iframe. Clean-session/authenticated-real claims remain bounded by their separate gates.
 - Supabase hardening migration `20260908045049 canonical_security_rls_and_flow_helper_acl_2026_09_08` is applied. All 13 audited tables now have RLS and no direct client DML grants; 12 arbitrary-user internal Flow/cache helpers are no longer executable by `PUBLIC`, `anon` or `authenticated`; browser Flow v7-v10 remain `authenticated`-only behind `lts_browser_assert_user_v1`.
 - Catalog postflight returned 13/13 RLS, 12/12 helpers closed, 4/4 browser wrappers authenticated-only, zero anonymous executable `SECURITY DEFINER` functions and zero authenticated executable `SECURITY DEFINER` functions lacking a direct allowlist/JWT/user guard. Secure defaults now leave zero client default grants while preserving `service_role`.
 - Transactional authenticated regression passed for `lts_browser_flow_v8`, `lts_browser_dashboard_cockpit_v1` and `lts_browser_product_v1`, with rollback. Security Advisor no longer reports RLS-disabled or anonymous SECURITY DEFINER findings; leaked-password protection remains the controlled Auth-setting gap.
 - Durable briefing, Dashboard lineage, V150/V151 decisions and validation classes remain consolidated in `LTS_WEALTH_REQUIREMENTS_TRACEABILITY.md`.
-- Latest immutable evidence: `backups/CANONICAL_APP_V17_ROUTE_SESSION_DOD_RECEIPT_CHECKPOINT_2026-09-08.md`.
+- Latest immutable evidence: `backups/CANONICAL_APP_V18_UNIFIED_EXPENSES_CHECKPOINT_2026-09-08.md`.
 - Authenticated physical-iPhone post-fix financial/data E2E and authenticated real backup/restore/write lifecycles are still **not claimed**.
 - Public `index.html` remains protected at blob `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`; public-root promotion is not authorized.
 
@@ -62,7 +65,7 @@ Purpose: compact operational bootstrap so project execution never depends on a l
 3. Treat Dashboard Fidelity Pass 6 as the current protected baseline; continue only evidence-led pixel/detail convergence, never copy financial values from the reference.
 4. Treat the bounded Supabase RLS/SECURITY DEFINER package as the protected security baseline; leaked-password protection remains a separate controlled Auth-setting change.
 5. Keep the route/session continuity contract and unified receipt regression-protected; the automatic gate is complete, while its authenticated-real/physical-device rows remain honestly open.
-6. Continue remaining Dashboard/Despesas/Atualizações product quality and execute real write/search/document/backup-restore lifecycles when an authenticated browser identity is available, without reintroducing wrapper architecture.
+6. Keep the v1.8 single-owner Despesas route regression-protected; continue remaining Dashboard/Atualizações product quality and execute real write/search/document/backup-restore lifecycles when an authenticated browser identity is available.
 7. Keep authenticated physical-iPhone E2E explicitly unclaimed until actually performed.
 8. Preserve `promotion_status:not_promoted` and protected `index.html` until explicit user authorization.
 

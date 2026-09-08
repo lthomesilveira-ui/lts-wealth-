@@ -1,6 +1,6 @@
 # LTS Wealth — Continuity Handoff
 
-Last materially refreshed: 2026-09-08 02:44 BRT (America/Sao_Paulo)
+Last materially refreshed: 2026-09-08 04:42 BRT (America/Sao_Paulo)
 
 This file exists so project continuity never depends on chat context. Always re-fetch `main`, active branch, `PROJECT_MASTER_BACKLOG.md`, `NEXT_HOMOLOGATION_GATE.md`, this file and the latest immutable checkpoint before every repository write.
 
@@ -24,14 +24,15 @@ This file exists so project continuity never depends on chat context. Always re-
 - Public fallback remains WIP35-v136; protected `index.html` blob remains `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
 - Public promotion remains unauthorized/not done.
 
-## Current primary product — canonical v1.7 / route-session continuity
+## Current primary product — canonical v1.8 / unified expenses
 The primary product line is the single canonical frontend `canonical-app.html`. The v154→v160 wrapper lineage is historical evidence only and must not be reintroduced as the product architecture.
 
 Current facts:
 - single frontend; no release iframe/wrapper chain;
 - direct Supabase authentication/RPC integration;
 - same app owns Dashboard, Fluxo Diário, Despesas, Patrimônio, Cartões and Atualizações;
-- V157+ modular baseline, v1.6 capability recovery, Dashboard Fidelity Pass 6, iPhone future-JWT recovery and the bounded Supabase security baseline remain preserved; current product target is `e618ef48e22872ce718c7932872e2316e5660f67`, exposure `33da29ab0818c9dd59dca45f68d3680ed153f6af`;
+- V157+ modular baseline, v1.7 route/session receipt, v1.6 capability recovery, Dashboard Fidelity Pass 6, iPhone future-JWT recovery and the bounded Supabase security baseline remain preserved; current product package is `870acc37f220592c77b488be32315af284b52427`, exposure `352a4fe9716bff063a67dae2e01a0f484d6ac80e`;
+- Despesas is owned only by `canonical-app`: month/year history, nature × context, evidence-led insights, explicit `Não atribuído` semantics and item/month drilldown are one responsive surface; product module ownership is Patrimônio/Cartões only;
 - current changed blobs: `canonical-app.html` `92507f55f4de291c17e49a5b430bedcb33018506`, `canonical-liquidity.js` `8a8caba73c0f6a08710328c19e38bec6c6aab7e9`, `canonical-capabilities-v161.js` `da479e1c5215b593b7bb43d2df5d64dc939e19e2`, permanent gate `f48fc1520f1e50d7071f21be6648a2293fc21e6f`, recovery workflow `9a558c4574eb6439b1eeca0f34400fec2012cdd5`;
 - modular recovery gate `34170935882` and permanent canonical gate `34171231918`: SUCCESS in Chromium desktop 1312×1199 and WebKit mobile 390×844;
 - all active/canonical/main candidate smokes and both pre/post-manifest Pages deployments are green; exact run inventory is in the immutable checkpoint;
@@ -39,8 +40,9 @@ Current facts:
 - post-exposure active/canonical/main smokes `34186663110` / `34186664337` / `34186664887` and Pages `34186664347`: SUCCESS;
 - route/receipt recovery/candidate `34190659782` / `34190659780`, canonical gate/candidate `34191017877` / `34191017858`, main candidate/Pages `34191216218` / `34191215874`: SUCCESS;
 - post-v1.7-exposure active/canonical/main smokes `34191461669` / `34191462282` / `34191463017` and Pages `34191462402`: SUCCESS;
-- fixed homologation is `canonical-app.html?homologacao=e618ef48e22872ce718c7932872e2316e5660f67#Dashboard` / `promotion_status:not_promoted`, browser-verified with continuity-v7 loader, truthful login, zero unauthenticated KPIs and no iframe;
-- latest immutable checkpoint: `backups/CANONICAL_APP_V17_ROUTE_SESSION_DOD_RECEIPT_CHECKPOINT_2026-09-08.md`;
+- fixed homologation exposes canonical v1.8 through `canonical-app.html` / `promotion_status:not_promoted`, verified with expenses-v8 assets, unified expense contract and no iframe;
+- unified-expenses gates are green: active `34199824400`, canonical `34200253901`, main candidate/Pages `34200706521` / `34200704967`;
+- latest immutable checkpoint: `backups/CANONICAL_APP_V18_UNIFIED_EXPENSES_CHECKPOINT_2026-09-08.md`;
 - authenticated physical-iPhone financial/data E2E remains pending/not claimed.
 
 ## Canonical v1.7 — route/session continuity and one readiness receipt
@@ -223,7 +225,7 @@ NONE. Continue autonomous Dashboard/product-quality work. User may test the fixe
 - `index.html` remains protected/not promoted.
 
 ## Dashboard Fidelity Pass 5 — 07/09/2026
-- Root cause removed: `canonical-product-v157.js` no longer replaces the Dashboard after the canonical app renders it; the module remains responsible for Despesas, Patrimônio and Cartões enrichment.
+- At Pass 5, `canonical-product-v157.js` stopped replacing Dashboard. Canonical v1.8 supersedes its Despesas ownership too; the module now remains responsible only for Patrimônio and Cartões enrichment.
 - Canonical Dashboard now keeps the five liquidity-first KPI contract inside the denser approved-reference hierarchy.
 - Product source `6eca5c3785cd5dca69a2aa8f610312eefbb2a669`; exact gated target `eff928cb88e01ba3c5c88b8a8a8c4e8fa5d89f5d`; exposure `a808d855aa6687a893a51598db8f5fad4faf1cbb`.
 - Recovery gate `34173223977`, permanent canonical gate `34173482173`, final active/canonical/main smokes and Pages: SUCCESS; all post-exposure smokes and Pages are also green.

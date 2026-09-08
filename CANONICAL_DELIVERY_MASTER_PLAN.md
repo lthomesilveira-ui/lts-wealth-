@@ -1,11 +1,11 @@
 # LTS Wealth — Canonical Delivery Master Plan
 
-Last refreshed: 2026-09-08 02:44 BRT
-Active implementation branch: `canonical-v157plus-product-recovery` (aligned with `canonical-app-v1` and `main` on canonical v1.7 route/session continuity plus the bounded Supabase security checkpoint)
+Last refreshed: 2026-09-08 04:42 BRT
+Active implementation branch: `canonical-v157plus-product-recovery` (aligned with `canonical-app-v1` and `main` on canonical v1.8 unified expenses plus the bounded Supabase security checkpoint)
 
 Purpose: this is the execution-order view of the LTS Wealth backlog. It does not replace documentary evidence or immutable checkpoints. `PROJECT_MASTER_BACKLOG.md` remains the complete persistent dependency list. This file makes the remaining work explicit so product delivery does not get lost behind release mechanics.
 
-Current milestone: canonical v1.7 is exposed at exact product target `e618ef48e22872ce718c7932872e2316e5660f67`. Dashboard Fidelity Pass 6, capability recovery, the bounded `JWT issued at future` recovery and Supabase RLS/SECURITY DEFINER baseline remain preserved. Route/session continuity and the single machine-readable definition-of-done receipt are now deterministic in desktop/mobile. Pixel-level detail and the receipt rows that require real authenticated lifecycles and physical-device evidence remain active P0.
+Current milestone: canonical v1.8 is exposed at `352a4fe9716bff063a67dae2e01a0f484d6ac80e`, with product package `870acc37f220592c77b488be32315af284b52427`. Dashboard Fidelity Pass 6, capability recovery, route/session receipt, bounded `JWT issued at future` recovery and Supabase RLS/SECURITY DEFINER baseline remain preserved. Despesas now has one owner and one responsive history/nature/context decision surface. Pixel-level Dashboard detail and receipt rows requiring real authenticated lifecycles and physical-device evidence remain active P0.
 
 ## Definition of DONE for the app
 The LTS Wealth app is not considered delivered until all P0 items below are complete together in one canonical application:
@@ -65,7 +65,7 @@ The LTS Wealth app is not considered delivered until all P0 items below are comp
 - [x] No-horizontal-overflow and no-sustained-DOM-churn checks.
 - [x] Auth-truth / missing-data truth checks.
 - [x] One machine-readable `lts-canonical-definition-of-done-receipt-v1` maps the recovered requirements and separates automatic PASS from authenticated-real/physical-device claims.
-- [x] Fixed homologation points to the exact green canonical v1.7 candidate; public promotion remains separate and unauthorized.
+- [x] Fixed homologation points to the exact green canonical v1.8 candidate; public promotion remains separate and unauthorized.
 
 ### P0.6 Supabase security hardening
 - [x] Inventory the 13 `public` tables currently reported with RLS disabled.
@@ -89,9 +89,9 @@ The LTS Wealth app is not considered delivered until all P0 items below are comp
 - [x] Bring the existing R$8.623.752,53 invariant and 3.860/3.860 analytical cache into the canonical UI.
 - [x] Nature and context/person/cost center remain separate dimensions.
 - [x] Current year, 12 months, since 2023 and since 2013 views where evidence exists.
-- [ ] Improve density, ranking and management-useful insights.
+- [x] Improve density, ranking and management-useful insights in one unified history/nature/context surface.
 - [ ] Reduce `A classificar` only through evidence.
-- [ ] Explain each item/context instead of presenting opaque totals.
+- [x] Explain each item/context with bidirectional lens drilldown and monthly item detail; missing evidence remains explicit.
 
 ### P1.3 Patrimônio
 - [x] Canonical wealth summary and drilldowns.
