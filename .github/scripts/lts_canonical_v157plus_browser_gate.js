@@ -327,7 +327,10 @@ async function assertFlowParity(page, label, mobile) {
   await page.waitForSelector('#fvModalBg [data-fv-mode="duplicate"].active');
   if (await page.locator('#fvModalBg [data-fv-cancel]').count()) throw new Error(`${label}: duplicate must not cancel the source`);
   await page.locator('#fvModalBg #fvEditDate').fill('2026-09-22');
-  await page.locator('#fvModalBg #fvEditDesc').fill('Condomínio duplicado');
+  await page.locator('#fvModalBg #fvEditDesc').evaluate((field, value) => {
+    field.value = value;
+    field.dispatchEvent(new Event('input', { bubbles: true }));
+  }, 'Condomínio duplicado');
   await page.locator('#fvModalBg [data-fv-save]').click();
   await page.waitForFunction(() => window.__LTS_CANONICAL_FLOW_MUTATION_FIXTURE?.intent === 'duplicate');
   const duplicateMutation = await page.evaluate(() => window.__LTS_CANONICAL_FLOW_MUTATION_FIXTURE);
