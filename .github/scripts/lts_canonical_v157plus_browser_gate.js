@@ -88,7 +88,7 @@ function finalizeReceipt() {
   receipt.requirements = {
     architecture: { status: 'PASS', evidence: 'single canonical frontend; zero iframes' },
     dashboard: { status: 'PASS_AUTOMATED', evidence: 'approved hierarchy, four current-liquidity quadrants, layered fact/base/RSU/FGTS chart semantics, V151 first-negative versus management-point decision cue, documentary commitments and approved 1312x1199 desktop single-screen density' },
-    flow: { status: 'PASS_AUTOMATED', evidence: 'V150 interaction parity plus V157 liquidity layers: compact historical rows, expandable movements, explicit edit/postpone/duplicate/split actions, inline invoice and preserved scroll' },
+    flow: { status: 'PASS_AUTOMATED', evidence: 'V150 interaction parity plus V157 liquidity layers: compact historical rows, expandable movements, mobile progressive disclosure, open/closed invoice semantics, edit/postpone/duplicate/split/cancel lifecycle and preserved scroll' },
     expenses: { status: 'PASS_AUTOMATED', evidence: 'single-owner month/year history, nature x context, unassigned semantics and item drilldown' },
     cards: { status: 'PASS_AUTOMATED', evidence: 'current/next invoice and certified historical coverage' },
     wealth: { status: 'PASS_AUTOMATED', evidence: 'RSU, CIPÓ, Volvo and debt/asset separation' },
@@ -149,17 +149,21 @@ async function expandFlowDay(page, day) {
 async function assertFlowParity(page, label, mobile) {
   const status = await page.evaluate(() => window.__LTS_CANONICAL_FLOW_V157_STATUS);
   if (status?.contract !== 'v150-validated-flow-plus-v157-liquidity-v1'
-      || status?.build !== 'LTS v1.20'
+      || status?.build !== 'LTS v1.23'
       || status?.historical_opening_contract !== 'historical-opening-from-close-and-net-v1'
       || status?.historical_collapse_contract !== 'historical-closed-date-label-close-only-v1'
       || status?.action_contract !== 'projection-edit-postpone-duplicate-split-cancel-v1'
       || status?.today_marker_contract !== 'today-marker-without-row-band-v1'
       || status?.future_horizon_contract !== 'future-through-2029-plus-d30-v1'
+      || status?.daily_use_contract !== 'mobile-layer-disclosure-open-closed-invoice-actions-v1'
       || status?.edit_action !== true
       || status?.postpone_action !== true
       || status?.duplicate_action !== true
       || status?.split_action !== true
+      || status?.cancel_action !== true
       || status?.invoice_drilldown !== true
+      || status?.open_invoice_cycle !== true
+      || status?.mobile_liquidity_disclosure !== true
       || status?.semantic_labels !== true
       || status?.scroll_preservation !== true) {
     throw new Error(`${label}: Flow parity status ${JSON.stringify(status)}`);
@@ -170,6 +174,9 @@ async function assertFlowParity(page, label, mobile) {
   if (await page.locator('[data-preset]').count() !== 9) throw new Error(`${label}: period presets missing or duplicated`);
   if (await page.locator('[data-preset="today"]').count()) throw new Error(`${label}: duplicate Hoje preset returned`);
   if (!mobile && await page.locator('.fv-table th').count() !== 14) throw new Error(`${label}: consolidated Flow columns`);
+  if (await page.locator('.fv').getAttribute('data-daily-use-contract') !== 'mobile-layer-disclosure-open-closed-invoice-actions-v1') {
+    throw new Error(`${label}: daily-use Flow contract missing`);
+  }
 
   const flowText = (await page.locator('.fv').innerText()).toLowerCase();
   for (const forbidden of ['baseline funcional', 'fix86', 'legacy', 'lts v1.', 'canonical v', 'wip35']) {
@@ -183,6 +190,23 @@ async function assertFlowParity(page, label, mobile) {
   await waitFlowRange(page, '2026-09-07', '2026-09-11');
   if (await page.locator('.fv-table tbody .fv-row').count() !== 5) throw new Error(`${label}: Próximos 5 dias must show five days`);
   if (await page.locator('#fv-2026-09-07 .fv-today').count() !== 1) throw new Error(`${label}: discrete Hoje marker missing`);
+  if (mobile) {
+    const toggles = page.locator('.fv-layer-toggle');
+    if (await toggles.count() !== 5 || await page.locator('.fv-layers.open').count()) {
+      throw new Error(`${label}: mobile liquidity layers must start collapsed`);
+    }
+    const todayToggle = page.locator('#fv-2026-09-07 [data-layer-toggle="2026-09-07"]');
+    await todayToggle.click();
+    if (await todayToggle.getAttribute('aria-expanded') !== 'true'
+        || await page.locator('#fv-layers-2026-09-07.open > div').count() !== 9
+        || !(await page.locator('#fv-layers-2026-09-07').innerText()).includes('Posição econômica total')) {
+      throw new Error(`${label}: mobile liquidity disclosure failed`);
+    }
+    await todayToggle.click();
+    if (await todayToggle.getAttribute('aria-expanded') !== 'false' || await page.locator('.fv-layers.open').count()) {
+      throw new Error(`${label}: mobile liquidity disclosure did not collapse`);
+    }
+  }
   if (!mobile) {
     const todayBackgrounds = await page.locator('#fv-2026-09-07 > td').evaluateAll(cells => cells.map(cell => getComputedStyle(cell).backgroundColor));
     const rejectedHojeBand = todayBackgrounds.filter(color => color === 'rgb(255, 250, 240)' || color === 'rgba(255, 250, 240, 1)');
@@ -203,7 +227,8 @@ async function assertFlowParity(page, label, mobile) {
   await page.waitForSelector('[data-invoice-contract="inline-card-settlement-v150"]');
   let invoice = page.locator('[data-invoice-contract="inline-card-settlement-v150"]');
   let text = await invoice.innerText();
-  for (const required of ['Resumo da fatura', 'Fatura conciliada', 'Créditos', 'Caixa × detalhe', 'Acessar fatura completa']) {
+  if (await invoice.getAttribute('data-invoice-cycle') !== 'closed') throw new Error(`${label}: closed invoice state missing`);
+  for (const required of ['Resumo da fatura', 'Fatura fechada', 'Fatura conciliada', 'Créditos', 'Caixa × detalhe', 'Acessar fatura completa']) {
     if (!text.includes(required)) throw new Error(`${label}: inline invoice missing ${required}`);
   }
   await invoice.locator('[data-card-full]').click();
@@ -214,6 +239,20 @@ async function assertFlowParity(page, label, mobile) {
   await page.screenshot({ path: `canonical-flow-invoice-${label}.png`, fullPage: true });
   await invoice.locator('[data-card-summary]').click();
   await page.locator('[data-card-close]').click();
+
+  detail = await expandFlowDay(page, '2026-09-11');
+  await detail.locator('[data-card-detail]').click();
+  await page.waitForSelector('[data-invoice-cycle="open"]');
+  invoice = page.locator('[data-invoice-cycle="open"]');
+  text = await invoice.innerText();
+  for (const required of ['Fatura aberta', 'Valor atual no Fluxo', 'Após fechamento', 'só consolidam em Despesas após o fechamento']) {
+    if (!text.includes(required)) throw new Error(`${label}: open invoice semantics missing ${required}`);
+  }
+  if (await invoice.locator('.fv-purchase').count() || await invoice.locator('[data-card-full]').count()) {
+    throw new Error(`${label}: open invoice exposed unclosed purchase detail`);
+  }
+  await page.screenshot({ path: `canonical-flow-open-invoice-${label}.png`, fullPage: true });
+  await invoice.locator('[data-card-close]').click();
 
   detail = await expandFlowDay(page, '2026-09-10');
   text = await detail.innerText();
@@ -232,22 +271,65 @@ async function assertFlowParity(page, label, mobile) {
   if (JSON.stringify(quickActions) !== JSON.stringify(['Editar', 'Postergar', 'Duplicar', 'Dividir'])) {
     throw new Error(`${label}: projection quick actions ${JSON.stringify(quickActions)}`);
   }
-  await detail.locator('[data-event-action="postpone"]').click();
+  await detail.locator('[data-event-action="edit"]').click();
   await page.waitForSelector('#fvModalBg');
   const tabs = await page.locator('#fvModalBg [data-fv-mode]').allTextContents();
   if (JSON.stringify(tabs) !== JSON.stringify(['Editar', 'Postergar', 'Duplicar', 'Dividir / substituir'])) {
     throw new Error(`${label}: projection action tabs ${JSON.stringify(tabs)}`);
   }
+  const dialog = page.locator('#fvModalBg [role="dialog"]');
+  if (await dialog.getAttribute('aria-labelledby') !== 'fvModalTitle'
+      || await dialog.getAttribute('aria-describedby') !== 'fvModalDesc'
+      || await page.locator('#fvModalBg [data-fv-mode="edit"]').getAttribute('aria-selected') !== 'true') {
+    throw new Error(`${label}: accessible projection editor contract`);
+  }
+  await page.locator('#fvModalBg #fvEditAmount').fill('0');
+  await page.locator('#fvModalBg [data-fv-save]').click();
+  if (!(await page.locator('#fvEditorError').innerText()).includes('Preencha data') || await page.locator('#fvModalBg').count() !== 1) {
+    throw new Error(`${label}: inline editor validation missing`);
+  }
+  await page.locator('#fvModalBg #fvEditDate').fill('2026-09-17');
+  await page.locator('#fvModalBg #fvEditAmount').fill('13500');
+  await page.locator('#fvModalBg #fvEditDesc').fill('Condomínio ajustado');
+  await page.locator('#fvModalBg #fvEditAccount').selectOption({ label: 'Bradesco' });
+  await page.locator('#fvModalBg [data-fv-save]').click();
+  await page.waitForFunction(() => window.__LTS_CANONICAL_FLOW_MUTATION_FIXTURE?.intent === 'edit');
+  const editMutation = await page.evaluate(() => window.__LTS_CANONICAL_FLOW_MUTATION_FIXTURE);
+  if (editMutation.action !== 'edit' || editMutation.writer_called !== false
+      || editMutation.payload?.event_date !== '2026-09-17'
+      || editMutation.payload?.amount !== 13500
+      || editMutation.payload?.description !== 'Condomínio ajustado'
+      || editMutation.payload?.account !== 'Bradesco') {
+    throw new Error(`${label}: fixture edit boundary ${JSON.stringify(editMutation)}`);
+  }
+
+  await detail.locator('[data-event-action="postpone"]').click();
+  await page.waitForSelector('#fvModalBg [data-fv-mode="postpone"].active');
   if (!(await page.locator('#fvModalBg .fv-editor-hint').innerText()).includes('Somente a data prevista')) {
     throw new Error(`${label}: postpone-specific form missing`);
   }
   await page.locator('#fvModalBg #fvEditDate').fill('2026-09-16');
   await page.locator('#fvModalBg [data-fv-save]').click();
-  await page.waitForFunction(() => window.__LTS_CANONICAL_FLOW_MUTATION_FIXTURE?.action === 'edit');
+  await page.waitForFunction(() => window.__LTS_CANONICAL_FLOW_MUTATION_FIXTURE?.intent === 'postpone');
   const postponeMutation = await page.evaluate(() => window.__LTS_CANONICAL_FLOW_MUTATION_FIXTURE);
-  if (postponeMutation.writer_called !== false || postponeMutation.payload?.event_date !== '2026-09-16') {
+  if (postponeMutation.action !== 'edit' || postponeMutation.writer_called !== false || postponeMutation.payload?.event_date !== '2026-09-16') {
     throw new Error(`${label}: fixture postpone write boundary ${JSON.stringify(postponeMutation)}`);
   }
+
+  await detail.locator('[data-event-action="duplicate"]').click();
+  await page.waitForSelector('#fvModalBg [data-fv-mode="duplicate"].active');
+  if (await page.locator('#fvModalBg [data-fv-cancel]').count()) throw new Error(`${label}: duplicate must not cancel the source`);
+  await page.locator('#fvModalBg #fvEditDate').fill('2026-09-22');
+  await page.locator('#fvModalBg #fvEditDesc').fill('Condomínio duplicado');
+  await page.locator('#fvModalBg [data-fv-save]').click();
+  await page.waitForFunction(() => window.__LTS_CANONICAL_FLOW_MUTATION_FIXTURE?.intent === 'duplicate');
+  const duplicateMutation = await page.evaluate(() => window.__LTS_CANONICAL_FLOW_MUTATION_FIXTURE);
+  if (duplicateMutation.action !== 'duplicate' || duplicateMutation.writer_called !== false
+      || duplicateMutation.payload?.event_date !== '2026-09-22'
+      || duplicateMutation.payload?.description !== 'Condomínio duplicado') {
+    throw new Error(`${label}: fixture duplicate boundary ${JSON.stringify(duplicateMutation)}`);
+  }
+
   await detail.locator('[data-event-action="split"]').click();
   await page.waitForSelector('#fvModalBg [data-fv-mode="split"].active');
   if (await page.locator('#fvModalBg [data-fv-part]').count() !== 2) throw new Error(`${label}: split starts with two parts`);
@@ -268,10 +350,29 @@ async function assertFlowParity(page, label, mobile) {
   if (mutation.writer_called !== false || mutation.payload?.parts?.length !== 2) {
     throw new Error(`${label}: fixture split write boundary ${JSON.stringify(mutation)}`);
   }
+
+  await detail.locator('[data-event-action="edit"]').click();
+  await page.waitForSelector('#fvModalBg');
+  page.once('dialog', async confirmation => confirmation.accept());
+  await page.locator('#fvModalBg [data-fv-cancel]').click();
+  await page.waitForFunction(() => window.__LTS_CANONICAL_FLOW_MUTATION_FIXTURE?.intent === 'cancel');
+  const cancelMutation = await page.evaluate(() => window.__LTS_CANONICAL_FLOW_MUTATION_FIXTURE);
+  if (cancelMutation.action !== 'cancel' || cancelMutation.writer_called !== false) {
+    throw new Error(`${label}: fixture cancel boundary ${JSON.stringify(cancelMutation)}`);
+  }
+
+  const mutationIntents = await page.evaluate(() => (window.__LTS_CANONICAL_FLOW_MUTATION_FIXTURES || []).map(x => x.intent));
+  if (JSON.stringify(mutationIntents) !== JSON.stringify(['edit', 'postpone', 'duplicate', 'split', 'cancel'])) {
+    throw new Error(`${label}: complete append-only action lifecycle ${JSON.stringify(mutationIntents)}`);
+  }
+
   await detail.locator('[data-event-action="edit"]').click();
   await page.waitForSelector('#fvModalBg');
   await page.keyboard.press('Escape');
   await page.waitForSelector('#fvModalBg', { state: 'detached' });
+  if (await page.evaluate(() => document.activeElement?.getAttribute('data-event-action')) !== 'edit') {
+    throw new Error(`${label}: projection editor did not restore focus`);
+  }
 
   await page.locator('#fvFrom').fill('2026-01-01');
   await page.locator('#fvTo').fill('2026-01-01');
@@ -345,7 +446,7 @@ async function assertUpdatesContract(page, label) {
     throw new Error(`${label}: classification-first hierarchy ${JSON.stringify(hierarchy)}`);
   }
   const recovery = await page.evaluate(() => window.__LTS_CANONICAL_RECOVERY_STATUS);
-  if (recovery?.build !== 'LTS v1.22' || recovery?.updates_contract !== 4 || recovery?.document_review_contract !== 4 || recovery?.dashboard_density_contract !== 1 || recovery?.planning_decision_contract !== 1 || recovery?.dashboard_visual_contract !== 'executive-cockpit-readable-density-v1' || recovery?.product_language_contract !== 'user-facing-product-language-v1' || recovery?.ux_closure_contract !== 'safe-errors-accessible-controls-readable-mobile-v1') {
+  if (recovery?.build !== 'LTS v1.23' || recovery?.updates_contract !== 4 || recovery?.document_review_contract !== 4 || recovery?.dashboard_density_contract !== 1 || recovery?.planning_decision_contract !== 1 || recovery?.dashboard_visual_contract !== 'executive-cockpit-readable-density-v1' || recovery?.product_language_contract !== 'user-facing-product-language-v1' || recovery?.ux_closure_contract !== 'safe-errors-accessible-controls-readable-mobile-v1') {
     throw new Error(`${label}: v1.19 recovery contract ${JSON.stringify(recovery)}`);
   }
   const reportsTab = page.locator('[data-mg-pane="reports"]');

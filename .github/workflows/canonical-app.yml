@@ -55,7 +55,7 @@ jobs:
           assert 'setInterval(' not in s
           assert 'canonical-liquidity.js?v=' in s
           assert 'canonical-dashboard-fidelity.css?v=20260909-ux22' in s
-          assert 'canonical-liquidity.js?v=20260909-ux22' in s
+          assert 'canonical-liquidity.js?v=20260909-ux23' in s
           assert 'single-owner-history-nature-context-v1' in s
           assert 'Quanto você gasta — e para quem é cada gasto.' in s
           assert 'reference-layered-liquidity-commitments-v3' in s
@@ -66,9 +66,9 @@ jobs:
           assert 'product-commitments-plus-card-due' in s
           assert 'canonical-route-session-continuity-v1' in s
           assert 'data-dashboard-reload' in s
-          for module in ['canonical-liquidity-core.js?v=20260908-ux19','canonical-flow-v157.js?v=20260908-flow20','canonical-product-v157.js','canonical-presentation-v157.js','canonical-capabilities-v161.js?v=20260909-reports21','canonical-reviewed-input-v112.js?v=20260908-ux19']:
+          for module in ['canonical-liquidity-core.js?v=20260908-ux19','canonical-flow-v157.js?v=20260909-flow23','canonical-product-v157.js','canonical-presentation-v157.js','canonical-capabilities-v161.js?v=20260909-reports21','canonical-reviewed-input-v112.js?v=20260908-ux19']:
               assert module in l, module
-          for marker in ['LTS v1.22','UPDATES_CONTRACT','DOCUMENT_REVIEW_CONTRACT','DASHBOARD_DENSITY_CONTRACT','PLANNING_DECISION_CONTRACT','DASHBOARD_VISUAL_CONTRACT','executive-cockpit-readable-density-v1','user-facing-product-language-v1','safe-errors-accessible-controls-readable-mobile-v1','evidence-backed-executive-report-v1']:
+          for marker in ['LTS v1.23','UPDATES_CONTRACT','DOCUMENT_REVIEW_CONTRACT','DASHBOARD_DENSITY_CONTRACT','PLANNING_DECISION_CONTRACT','DASHBOARD_VISUAL_CONTRACT','executive-cockpit-readable-density-v1','user-facing-product-language-v1','safe-errors-accessible-controls-readable-mobile-v1','evidence-backed-executive-report-v1']:
               assert marker in l, marker
           assert 'canonical-flow-v150.js' not in l
           assert "const ROUTES=['Patrimônio','Cartões']" in p
@@ -94,7 +94,7 @@ jobs:
               'lts_browser_apply_liquidity_movement_v1'
           ]:
               assert rpc in c, rpc
-          for marker in ['lts_browser_flow_v8','lts_browser_card_settlement_detail_v2','LTS v1.20','v150-validated-flow-plus-v157-liquidity-v1','historical-opening-from-close-and-net-v1','historical-closed-date-label-close-only-v1','projection-edit-postpone-duplicate-split-cancel-v1','today-marker-without-row-band-v1','future-through-2029-plus-d30-v1','Histórico / período','Histórico / movimentos','Editar','Postergar','Duplicar','Dividir / substituir','inline-card-settlement-v150','RSUs futuras','Cash Awards futuros','lts_browser_flow_event_editor_v1','lts_browser_flow_mutate_v1']:
+          for marker in ['lts_browser_flow_v8','lts_browser_card_settlement_detail_v2','LTS v1.23','v150-validated-flow-plus-v157-liquidity-v1','historical-opening-from-close-and-net-v1','historical-closed-date-label-close-only-v1','projection-edit-postpone-duplicate-split-cancel-v1','today-marker-without-row-band-v1','future-through-2029-plus-d30-v1','mobile-layer-disclosure-open-closed-invoice-actions-v1','Histórico / período','Histórico / movimentos','Editar','Postergar','Duplicar','Dividir / substituir','Cancelar previsão','inline-card-settlement-v150','Fatura aberta','Fatura fechada','RSUs futuras','Cash Awards futuros','lts_browser_flow_event_editor_v1','lts_browser_flow_mutate_v1']:
               assert marker in f, marker
           for marker in ['Dinheiro em contas','Contas + curto prazo','RSUs vested','FGTS','Despesas (mês)','Evolução da Liquidez','Quanto você gastou — e como isso evoluiu.','Mês a mês','Ano a ano','Cobertura do histórico','Quanto você tem, quanto deve e quanto é seu.','Conferência de fatura, não análise de gasto.']:
               assert marker in p, marker
