@@ -1,11 +1,11 @@
 # LTS Wealth — Canonical Delivery Master Plan
 
-Last refreshed: 2026-09-09 00:15 BRT
-Active implementation branch: `canonical-v157plus-product-recovery` (canonical v1.22 product `181546c8b6d90756229fdf3ca083f0cf05dacc4a`; fixed-manifest exposure `3e3fa9a37b4393d405d0cbd4c5f5a3e30de6ce22`; all release branches aligned by normal no-force fast-forward)
+Last refreshed: 2026-09-09 19:45 BRT
+Active implementation branch: `canonical-v157plus-product-recovery` (canonical v1.23 product `7f6bac39ec0705e21a498b416762276ea3b8dbea`; fixed-manifest exposure `d804eb0b5e972d2e86f8abc57d375e4de3e82219`; all release branches aligned by normal no-force fast-forward)
 
 Purpose: this is the execution-order view of the LTS Wealth backlog. It does not replace documentary evidence or immutable checkpoints. `PROJECT_MASTER_BACKLOG.md` remains the complete persistent dependency list. This file makes the remaining work explicit so product delivery does not get lost behind release mechanics.
 
-Current milestone: canonical v1.22 preserves the full protected line, restores the V150/V151+ Flow interactions, rebuilds Reports as an evidence-backed executive surface and refines Dashboard readability without changing financial truth. Deterministic Chromium desktop/WebKit mobile gates and all release/Pages checks are green. Remaining P0 evidence requiring external control is the authenticated real lifecycle and physical-iPhone material homologation.
+Current milestone: canonical v1.23 preserves the full protected line and closes the daily-use Flow interaction package: compact mobile liquidity disclosure, truthful open/closed invoices and the complete append-only projection lifecycle. Deterministic Chromium desktop/WebKit mobile gates and all release/Pages checks are green. Remaining P0 evidence requiring external control is the authenticated real lifecycle and physical-iPhone material homologation.
 
 ## Definition of DONE for the app
 The LTS Wealth app is not considered delivered until all P0 items below are complete together in one canonical application:
@@ -71,7 +71,7 @@ The LTS Wealth app is not considered delivered until all P0 items below are comp
 - [x] No-horizontal-overflow and no-sustained-DOM-churn checks.
 - [x] Auth-truth / missing-data truth checks.
 - [x] One machine-readable `lts-canonical-definition-of-done-receipt-v1` maps the recovered requirements and separates automatic PASS from authenticated-real/physical-device claims.
-- [x] Fixed homologation manifest selects exact green canonical v1.22 product `181546c8…` through exposure `3e3fa9a3…`; public promotion remains separate and unauthorized.
+- [x] Fixed homologation manifest selects exact green canonical v1.23 product `7f6bac39…` through exposure `d804eb0b…`; public promotion remains separate and unauthorized.
 
 ### P0.6 Supabase security hardening
 - [x] Inventory the 13 `public` tables currently reported with RLS disabled.
@@ -240,7 +240,7 @@ Open Finance is still part of the product roadmap. It was not cancelled; work wa
 - [x] Preserve fixed homologation/public links.
 
 ## Execution order from now
-1. Preserve canonical v1.22 product `181546c8…` and exposure `3e3fa9a3…` as the current regression baseline, including every protected v1.19→v1.9 contract.
+1. Preserve canonical v1.23 product `7f6bac39…` and exposure `d804eb0b…` as the current regression baseline, including every protected v1.22→v1.9 contract.
 2. Execute real authenticated desktop and physical-iPhone lifecycles for Dashboard, Flow, search/CSV, classification, liquidity, documents and backup/restore; use them to close the corresponding receipt rows.
 3. Keep Bradesco/Cofrinho, card, RSU, CIPÓ and Volvo gaps open until documentary evidence exists; do not infer a closure.
 4. Keep the Supabase security baseline regression-protected and review leaked-password protection in a controlled Auth window.

@@ -2,10 +2,11 @@
 
 Purpose: evidence-backed sequence before asking the user to inspect a material candidate. Keep aligned with `PROJECT_MASTER_BACKLOG.md`, `LTS_WEALTH_CONTINUITY_HANDOFF.md` and immutable checkpoints.
 
-## Current canonical baseline — 09/09/2026 00:15 BRT
-- Fixed homologation selects **canonical v1.22 product recovery** through `canonical-app.html`, exact product `181546c8b6d90756229fdf3ca083f0cf05dacc4a`, exposure `3e3fa9a37b4393d405d0cbd4c5f5a3e30de6ce22`.
-- V1.20 Flow restores closed-history geometry and projected-event actions; V1.21 Reports adds `evidence-backed-executive-report-v1`; V1.22 Dashboard adds `executive-cockpit-readable-density-v1` without changing financial truth.
-- Recovery gate/smoke `34306308228` / `34306308235`, canonical gate/smoke `34306465733` / `34306465795`, main smoke/Pages `34306466418` / `34306465815`, post-exposure smokes `34306705547` / `34306706458` / `34306706548` and Pages `34306705941`: SUCCESS.
+## Current canonical baseline — 09/09/2026 19:45 BRT
+- Fixed homologation selects **canonical v1.23 daily-use Flow closure** through `canonical-app.html`, exact product `7f6bac39ec0705e21a498b416762276ea3b8dbea`, exposure `d804eb0b5e972d2e86f8abc57d375e4de3e82219`.
+- Contract `mobile-layer-disclosure-open-closed-invoice-actions-v1` completes mobile liquidity disclosure, open/closed invoice truth, the five-action projection lifecycle and accessible editor behavior while preserving V1.22→V1.9.
+- Recovery gate/smoke `34413082102` / `34413082087`, canonical gate/smoke `34413258158` / `34413258173`, main smoke/Pages `34413472119` / `34413471764`, post-exposure smokes `34413672709` / `34413684107` / `34413697593` and Pages `34413696615`: SUCCESS.
+- Live unsigned manifest resolves to `7f6bac39…`, `flow23` / `ux23` and remains `not_promoted`; public `index.html` is unchanged at protected blob `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
 - Next external gate is authenticated real lifecycle and physical-iPhone material homologation; neither is inferred from fixture/WebKit evidence.
 
 ## Prior canonical baseline — v1.19 retained as evidence

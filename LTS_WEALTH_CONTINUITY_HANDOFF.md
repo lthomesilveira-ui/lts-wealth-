@@ -1,6 +1,6 @@
 # LTS Wealth — Continuity Handoff
 
-Last materially refreshed: 2026-09-09 14:12 BRT (America/Sao_Paulo)
+Last materially refreshed: 2026-09-09 19:45 BRT (America/Sao_Paulo)
 
 This file exists so project continuity never depends on chat context. Always re-fetch `main`, active branch, `PROJECT_MASTER_BACKLOG.md`, `NEXT_HOMOLOGATION_GATE.md`, this file and the latest immutable checkpoint before every repository write.
 
@@ -24,14 +24,15 @@ This file exists so project continuity never depends on chat context. Always re-
 - Public fallback remains WIP35-v136; protected `index.html` blob remains `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
 - Public promotion remains unauthorized/not done.
 
-## Current exposed product — canonical v1.22 Product Recovery
-- Exact product `181546c8b6d90756229fdf3ca083f0cf05dacc4a`; fixed-manifest exposure `3e3fa9a37b4393d405d0cbd4c5f5a3e30de6ce22`; active recovery, `canonical-app-v1` and `main` are aligned by normal no-force fast-forward.
-- V1.20 restores the V150/V151+ Flow floor: compact closed-history geometry, left `Histórico` cue, opening/entries/exits/closing only after expansion, inline invoice detail and distinct Editar/Postergar/Duplicar/Dividir actions for eligible projections.
-- V1.21 rebuilds Relatórios as an evidence-backed executive surface; V1.22 refines Dashboard hierarchy and readability against the approved 1312×1199 reference without changing financial truth.
-- V1.22 preserves every V1.19→V1.9 product, safety and truth contract, including the 01/01 opening, rejected yellow-row removal, exact 31/12/2029 plus D+30 horizon and single canonical frontend.
-- Recovery gate/smoke `34306308228` / `34306308235`, canonical gate/smoke `34306465733` / `34306465795`, main smoke/Pages `34306466418` / `34306465815`, post-exposure active/canonical/main smokes `34306705547` / `34306706458` / `34306706548` and Pages `34306705941`: SUCCESS.
-- A fresh unsigned live check on 09/09/2026 resolved the fixed link to `canonical-app.html?homologacao=181546c8b6d90756229fdf3ca083f0cf05dacc4a`, loaded `?v=20260909-ux22`, rendered the truthful login and used zero iframes.
-- Latest immutable checkpoint: `backups/CANONICAL_APP_V122_PRODUCT_RECOVERY_CHECKPOINT_2026-09-09.md`.
+## Current exposed product — canonical v1.23 Daily-Use Flow Closure
+- Exact product `7f6bac39ec0705e21a498b416762276ea3b8dbea`; fixed-manifest exposure `d804eb0b5e972d2e86f8abc57d375e4de3e82219`; active recovery, `canonical-app-v1` and `main` are aligned by normal no-force fast-forward.
+- Contract `mobile-layer-disclosure-open-closed-invoice-actions-v1` keeps all 14 desktop columns and presents the nine future-liquidity layers behind an explicit per-day disclosure on mobile.
+- Open card invoices affect projected cash but do not expose or consolidate unclosed purchases; closed invoices preserve reconciled summary/category/full-purchase detail and the no-double-counting rule.
+- Projected events expose Editar, Postergar, Duplicar, Dividir/substituir and Cancelar previsão with inline validation, dialog semantics, Escape/focus restoration and append-only intent receipts. Historical facts remain read-only.
+- V1.23 preserves every V1.22→V1.9 product, safety and truth contract, including Reports, approved Dashboard density, 01/01 opening, exact 2029+D+30 horizon and the single canonical frontend.
+- Recovery gate/smoke `34413082102` / `34413082087`, canonical gate/smoke `34413258158` / `34413258173`, main smoke/Pages `34413472119` / `34413471764`, post-exposure smokes `34413672709` / `34413684107` / `34413697593` and Pages `34413696615`: SUCCESS.
+- Live unsigned manifest resolves to exact product `7f6bac39…`, loads `flow23` / `ux23` and remains `not_promoted`; public `index.html` is unchanged.
+- Latest immutable checkpoint: `backups/CANONICAL_APP_V123_DAILY_USE_FLOW_CLOSURE_CHECKPOINT_2026-09-09.md`.
 - Authenticated real mutation/readback/document/backup lifecycles, physical-iPhone E2E and public-root promotion remain open/not claimed.
 
 ## Protected predecessor — canonical v1.19 UX Closure

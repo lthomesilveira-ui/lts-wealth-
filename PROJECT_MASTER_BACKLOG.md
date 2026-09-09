@@ -4,6 +4,16 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 
 Canonical persistent project list. Never remove an open financial, documentary, classification, reconciliation or product dependency during compaction. Detailed immutable evidence remains in `backups/`, `HISTORICAL_RECOVERY_LOG.md`, `PLANNING_EXCEL_TO_CURRENT_AUDIT_2026-08-30.md`, `NEXT_HOMOLOGATION_GATE.md` and release checkpoints.
 
+## P0 — Daily-use Flow closure / canonical v1.23 — 09/09/2026
+- [x] Added mobile progressive disclosure for all nine future liquidity layers; each day starts compact and expands/collapses with an explicit accessible state.
+- [x] Separated open and closed card-invoice semantics. Open invoices affect projected cash without exposing or consolidating unclosed purchases; closed invoices retain reconciled composition and full detail.
+- [x] Completed the projected-event lifecycle: edit with inline validation, postpone, duplicate, split/substitute and explicit cancel, all preserving the append-only source history.
+- [x] Added modal dialog semantics, tab states, Escape close, focus restoration, mobile viewport bounds, sticky actions and active-filter centering.
+- [x] Permanent fixtures prove the exact intent order `edit → postpone → duplicate → split → cancel` with `writer_called:false`; no financial fact or backend contract changed.
+- [x] Exact product `7f6bac39ec0705e21a498b416762276ea3b8dbea`; exposure `d804eb0b5e972d2e86f8abc57d375e4de3e82219`; all release branches aligned without force.
+- [x] Recovery/canonical/main and post-exposure smokes, Chromium/WebKit gates and Pages are SUCCESS; live fixed manifest selects v1.23; immutable checkpoint `backups/CANONICAL_APP_V123_DAILY_USE_FLOW_CLOSURE_CHECKPOINT_2026-09-09.md`.
+- [ ] Authenticated real write/document/backup lifecycle and physical-iPhone evidence remain open/not claimed because they require the user's authenticated session/device.
+
 ## P0 — Product recovery / canonical v1.22 — 09/09/2026
 - [x] Restored V150/V151+ Flow history geometry and projected-event Edit/Postpone/Duplicate/Split actions under V1.20 without reopening certified historical facts.
 - [x] Rebuilt Reports from an export-only placeholder into the evidence-backed executive surface V1.21, with liquidity, projected cash, expenses, wealth/commitments, data quality and drill-downs.
