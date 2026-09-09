@@ -1,14 +1,14 @@
 {
   "schema": 1,
   "version": "canonical-v1",
-  "build": "CANONICAL v1.19 · Fechamento UX do produto",
+  "build": "CANONICAL v1.22 · Fluxo restaurado, Relatórios executivos e refinamento UX",
   "path": "canonical-app.html",
-  "candidate_head": "37781c3b11389789716781accca6c1fdabea461c",
+  "candidate_head": "181546c8b6d90756229fdf3ca083f0cf05dacc4a",
   "public_fallback": "index.html",
   "promotion_status": "not_promoted",
-  "candidate_sha": "37781c3b11389789716781accca6c1fdabea461c",
-  "exposed_from_main_sha": "37781c3b11389789716781accca6c1fdabea461c",
-  "exposure_mode": "canonical_single_frontend_v119_ux_closure_plus_v118_flow_history_horizon_plus_v117_user_facing_product_language_plus_v116_v151_first_negative_management_separation_plus_v115_approved_1312x1199_dashboard_density_plus_v114_document_interpretation_review_readonly_plus_v113_classification_first_guided_document_intake_plus_v112_reviewed_input_plus_v111_layered_liquidity_plus_v110_decision_truth_plus_v19_flow_parity",
-  "gate_status": "active-gate-34279813550-pass_active-candidate-smoke-34279813574-pass_canonical-gate-34281714299-pass_canonical-candidate-smoke-34281714284-pass_main-candidate-smoke-34281930573-pass_pages-34281929787-pass_safe-errors_accessible-controls_readable-mobile_single-hoje_action_authenticated-real-writes-not-claimed_physical-iphone-not-claimed",
-  "updated_at": "2026-09-08T21:44:20Z"
+  "candidate_sha": "181546c8b6d90756229fdf3ca083f0cf05dacc4a",
+  "exposed_from_main_sha": "181546c8b6d90756229fdf3ca083f0cf05dacc4a",
+  "exposure_mode": "canonical_single_frontend_v122_dashboard_readability_plus_v121_executive_reports_plus_v120_validated_flow_actions_plus_v119_ux_closure_plus_v118_flow_history_horizon_plus_v117_user_facing_product_language_plus_v116_v151_first_negative_management_separation_plus_v115_approved_1312x1199_dashboard_density_plus_v114_document_interpretation_review_readonly_plus_v113_classification_first_guided_document_intake_plus_v112_reviewed_input_plus_v111_layered_liquidity_plus_v110_decision_truth_plus_v19_flow_parity",
+  "gate_status": "active-gate-34306308228-pass_active-smoke-34306308235-pass_canonical-gate-34306465733-pass_canonical-smoke-34306465795-pass_main-smoke-34306466418-pass_pages-34306465815-pass_chromium-webkit_desktop-mobile_authenticated-real-writes-not-claimed_physical-iphone-not-claimed",
+  "updated_at": "2026-09-09T03:15:00Z"
 }
