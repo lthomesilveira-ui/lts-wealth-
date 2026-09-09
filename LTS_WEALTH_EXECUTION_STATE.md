@@ -12,11 +12,11 @@ Purpose: compact operational bootstrap so project execution never depends on a l
 7. Before a repository write, freshness-check `main`, active branch, this file, and the SHAs of `PROJECT_MASTER_BACKLOG.md`, `NEXT_HOMOLOGATION_GATE.md`, `LTS_WEALTH_CONTINUITY_HANDOFF.md`, `CANONICAL_DELIVERY_MASTER_PLAN.md` and latest immutable checkpoint. Use line-limited reads; fully re-read only a file whose SHA changed or whose relevant section is needed.
 8. After every material package, gate, integration or newly discovered blocker, update this file so a chat may be abandoned/restarted at any moment without reconstruction work.
 
-## Current execution state — 09/09/2026 00:15 BRT
+## Current execution state — 09/09/2026 14:12 BRT
 - Canonical v1.22 exact product is `181546c8b6d90756229fdf3ca083f0cf05dacc4a`; fixed-manifest exposure is `3e3fa9a37b4393d405d0cbd4c5f5a3e30de6ce22`. `main`, `canonical-app-v1` and `canonical-v157plus-product-recovery` are aligned by normal no-force fast-forward.
 - V1.20 restores the V150/V151+ Flow history/actions floor; V1.21 rebuilds Reports as `evidence-backed-executive-report-v1`; V1.22 adds `executive-cockpit-readable-density-v1` while preserving the approved liquidity-first five KPIs and V151 planning-date distinction.
 - Recovery gate/smoke `34306308228` / `34306308235`, canonical gate/smoke `34306465733` / `34306465795`, main smoke/Pages `34306466418` / `34306465815`, post-exposure active/canonical/main smokes `34306705547` / `34306706458` / `34306706548` and Pages `34306705941`: SUCCESS.
-- Fixed homologation selects v1.22 at `https://lthomesilveira-ui.github.io/lts-wealth-/homologacao.html`; deterministic evidence covers Chromium desktop 1312×1199 and WebKit mobile 390×844.
+- Fixed homologation selects v1.22 at `https://lthomesilveira-ui.github.io/lts-wealth-/homologacao.html`; deterministic evidence covers Chromium desktop 1312×1199 and WebKit mobile 390×844. A fresh unsigned live check resolved to exact product `181546c8…`, loaded the `20260909-ux22` assets, rendered the truthful login and used zero iframes.
 - Latest immutable evidence: `backups/CANONICAL_APP_V122_PRODUCT_RECOVERY_CHECKPOINT_2026-09-09.md`.
 - Authenticated real write/document/backup lifecycles and physical-iPhone E2E remain external evidence gates and are not claimed.
 - Public `index.html` remains protected at blob `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
@@ -139,7 +139,7 @@ Purpose: compact operational bootstrap so project execution never depends on a l
 - Historical v144–v160 workflows remain manually/branch runnable but no longer run automatically on `main`; their wrapper-specific failures are not canonical release gates.
 
 ## Current immediate execution sequence
-1. Treat canonical v1.19 product `37781c3b…` and exposure `59222846…` as the current protected baseline; do not regress safe errors/accessibility/mobile legibility, V1.18 history/horizon, product language, V151 first-negative/management distinction, 1312×1199 Dashboard density, V149 read-only review, classification-first/intake, reviewed input, layered liquidity, decision truth, V150 Flow or public `index.html`.
+1. Treat canonical v1.22 product `181546c8…` and exposure `3e3fa9a3…` as the current protected baseline; do not regress its Flow history/actions, Reports and Dashboard recovery or any safe-errors/accessibility/mobile, history/horizon, product-language, planning, document, classification, liquidity, V150/V151+ and public-`index.html` predecessor contract.
 2. Use `LTS_WEALTH_REQUIREMENTS_TRACEABILITY.md` as the durable map from briefing → implementation → validation → pending; append recovered facts rather than relying on chat memory.
 3. Keep closed the 01/01/2026, rejected 24/08 band and 31/12/2029+D30 engineering gaps; retain Bradesco/Cofrinho and other documentary gaps without inference.
 4. Execute Dashboard, Flow, search/CSV, classification, liquidity, documents and backup/restore lifecycles when an authenticated browser identity is available.
@@ -159,7 +159,7 @@ Purpose: compact operational bootstrap so project execution never depends on a l
 - Six real routes: Dashboard, Fluxo Diário, Despesas, Patrimônio, Cartões, Atualizações.
 - Financing, Planning, Revenues/Inputs, Recurrences, Commitments, Simulations, Reconciliation, Reports, Documents and Settings remain required capabilities even when grouped under the six primary routes; do not silently delete them.
 - Daily-use target is replacement of the Excel, with reliable past/today/90-day Flow and automatic release receipts; that target is not complete until the real authenticated gates are closed.
-- Flow: Consolidado/Itaú/Bradesco/C6, historical coverage where evidenced, operational balance + 14 consolidated liquidity layers, expandable movements, inline reconciled card detail, semantic labels, dedicated Hoje/five-day horizon, append-only edit/duplicate/split and internal transfers neutral in consolidated economics.
+- Flow: Consolidado/Itaú/Bradesco/C6, historical coverage where evidenced, operational balance + 14 consolidated liquidity layers, expandable movements, inline reconciled card detail, semantic labels, dedicated Hoje/five-day horizon, append-only edit/postpone/duplicate/split/cancel and internal transfers neutral in consolidated economics.
 - Original source files remain unchanged; no re-entry; historical/reconciliation difference tolerance remains R$0.00.
 - Daily balance chain, Realized versus Projected separation, Review for ambiguity, append-only ledger, idempotent ingestion and human approval remain binding domain rules.
 - No invented amount, merchant, classification, recurrence, competence, valuation, tax or documentary fact.

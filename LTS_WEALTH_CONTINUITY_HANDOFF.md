@@ -1,6 +1,6 @@
 # LTS Wealth — Continuity Handoff
 
-Last materially refreshed: 2026-09-08 18:50 BRT (America/Sao_Paulo)
+Last materially refreshed: 2026-09-09 14:12 BRT (America/Sao_Paulo)
 
 This file exists so project continuity never depends on chat context. Always re-fetch `main`, active branch, `PROJECT_MASTER_BACKLOG.md`, `NEXT_HOMOLOGATION_GATE.md`, this file and the latest immutable checkpoint before every repository write.
 
@@ -24,14 +24,20 @@ This file exists so project continuity never depends on chat context. Always re-
 - Public fallback remains WIP35-v136; protected `index.html` blob remains `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
 - Public promotion remains unauthorized/not done.
 
-## Current exposed product — canonical v1.19 UX Closure
-- Exact product `37781c3b11389789716781accca6c1fdabea461c`, tree `626437edfa47d12be4a061f3ff6c88e077ae2304`; fixed-manifest exposure `59222846a5c7e67c923790da9ad4088df9781fa4`, tree `5b34ab00cecf338c51eeb97f94d339a4bb025b03`; active recovery, `canonical-app-v1` and `main` are aligned by normal no-force fast-forward.
-- Contract `safe-errors-accessible-controls-readable-mobile-v1` closes the executable holistic UX pass: one `Hoje`, safe product errors plus bounded internal diagnostics, associated/live authentication feedback, explicit accessibility state, keyboard modal behavior, visible focus, reduced motion and readable mobile controls/copy.
-- V1.19 preserves every V1.18→V1.9 product and truth contract, including the recovered 01/01 opening, rejected yellow-row removal, 31/12/2029 plus D+30 horizon and rich V150/V151+ Flow floor.
-- Recovery/canonical gates `34279813550` / `34281714299`, candidate smokes `34279813574` / `34281714284`, pre-manifest main smoke/Pages `34281930573` / `34281929787`, post-exposure active/canonical/main smokes `34282394183` / `34282421576` / `34282451603` and Pages `34282450565`: SUCCESS.
-- Fixed homologation resolves to `canonical-app.html?homologacao=37781c3b11389789716781accca6c1fdabea461c`, loads `?v=20260908-ux19`, renders the truthful blank login with associated labels/live feedback and uses zero iframes.
-- Latest immutable checkpoint: `backups/CANONICAL_APP_V119_UX_CLOSURE_CHECKPOINT_2026-09-08.md`.
-- Authenticated real mutation/readback/document lifecycles, physical-iPhone E2E and public-root promotion remain open/not claimed.
+## Current exposed product — canonical v1.22 Product Recovery
+- Exact product `181546c8b6d90756229fdf3ca083f0cf05dacc4a`; fixed-manifest exposure `3e3fa9a37b4393d405d0cbd4c5f5a3e30de6ce22`; active recovery, `canonical-app-v1` and `main` are aligned by normal no-force fast-forward.
+- V1.20 restores the V150/V151+ Flow floor: compact closed-history geometry, left `Histórico` cue, opening/entries/exits/closing only after expansion, inline invoice detail and distinct Editar/Postergar/Duplicar/Dividir actions for eligible projections.
+- V1.21 rebuilds Relatórios as an evidence-backed executive surface; V1.22 refines Dashboard hierarchy and readability against the approved 1312×1199 reference without changing financial truth.
+- V1.22 preserves every V1.19→V1.9 product, safety and truth contract, including the 01/01 opening, rejected yellow-row removal, exact 31/12/2029 plus D+30 horizon and single canonical frontend.
+- Recovery gate/smoke `34306308228` / `34306308235`, canonical gate/smoke `34306465733` / `34306465795`, main smoke/Pages `34306466418` / `34306465815`, post-exposure active/canonical/main smokes `34306705547` / `34306706458` / `34306706548` and Pages `34306705941`: SUCCESS.
+- A fresh unsigned live check on 09/09/2026 resolved the fixed link to `canonical-app.html?homologacao=181546c8b6d90756229fdf3ca083f0cf05dacc4a`, loaded `?v=20260909-ux22`, rendered the truthful login and used zero iframes.
+- Latest immutable checkpoint: `backups/CANONICAL_APP_V122_PRODUCT_RECOVERY_CHECKPOINT_2026-09-09.md`.
+- Authenticated real mutation/readback/document/backup lifecycles, physical-iPhone E2E and public-root promotion remain open/not claimed.
+
+## Protected predecessor — canonical v1.19 UX Closure
+- Exact product `37781c3b11389789716781accca6c1fdabea461c`, tree `626437edfa47d12be4a061f3ff6c88e077ae2304`; fixed-manifest exposure `59222846a5c7e67c923790da9ad4088df9781fa4`, tree `5b34ab00cecf338c51eeb97f94d339a4bb025b03`.
+- Contract `safe-errors-accessible-controls-readable-mobile-v1` remains the protected UX/accessibility floor under v1.22.
+- Immutable checkpoint: `backups/CANONICAL_APP_V119_UX_CLOSURE_CHECKPOINT_2026-09-08.md`.
 
 ## Protected predecessor — canonical v1.18 Flow History + Horizon
 - Exact product `692535276fe7948c386349254151538c0c9eddf8`; fixed-manifest exposure `65cb675b613b70b7a26f97f86938a0b3ac72b584`.

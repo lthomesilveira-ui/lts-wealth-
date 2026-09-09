@@ -71,7 +71,7 @@ The LTS Wealth app is not considered delivered until all P0 items below are comp
 - [x] No-horizontal-overflow and no-sustained-DOM-churn checks.
 - [x] Auth-truth / missing-data truth checks.
 - [x] One machine-readable `lts-canonical-definition-of-done-receipt-v1` maps the recovered requirements and separates automatic PASS from authenticated-real/physical-device claims.
-- [x] Fixed homologation manifest selects exact green canonical v1.19 product `37781c3b…` through exposure `59222846…`; public promotion remains separate and unauthorized.
+- [x] Fixed homologation manifest selects exact green canonical v1.22 product `181546c8…` through exposure `3e3fa9a3…`; public promotion remains separate and unauthorized.
 
 ### P0.6 Supabase security hardening
 - [x] Inventory the 13 `public` tables currently reported with RLS disabled.
@@ -96,7 +96,7 @@ The LTS Wealth app is not considered delivered until all P0 items below are comp
 - [x] Facts > projections; scenarios never facts; stale anchors cannot reanchor.
 - [x] V150 parity restored on the canonical line: Hoje, complete next-five-day view, scroll preservation and semantic movement labels.
 - [x] Card-payment rows open reconciled invoice summary/full detail inline and do not duplicate underlying expenses.
-- [x] Projection actions expose append-only edit, duplicate, split/replace and cancel with 2–12 validated parts and visible sum.
+- [x] Projection actions expose append-only edit, postpone, duplicate, split/replace and cancel with 2–12 validated parts and visible sum.
 - [x] Bank↔liquidity-asset transfers have consolidated economic effect zero.
 - [x] Historical bank is never inferred without evidence.
 - [ ] Close real authenticated invoice and mutation readback plus physical-iPhone evidence.
@@ -240,7 +240,7 @@ Open Finance is still part of the product roadmap. It was not cancelled; work wa
 - [x] Preserve fixed homologation/public links.
 
 ## Execution order from now
-1. Preserve canonical v1.19 product `37781c3b…` and exposure `59222846…` as the current regression baseline.
+1. Preserve canonical v1.22 product `181546c8…` and exposure `3e3fa9a3…` as the current regression baseline, including every protected v1.19→v1.9 contract.
 2. Execute real authenticated desktop and physical-iPhone lifecycles for Dashboard, Flow, search/CSV, classification, liquidity, documents and backup/restore; use them to close the corresponding receipt rows.
 3. Keep Bradesco/Cofrinho, card, RSU, CIPÓ and Volvo gaps open until documentary evidence exists; do not infer a closure.
 4. Keep the Supabase security baseline regression-protected and review leaked-password protection in a controlled Auth window.
