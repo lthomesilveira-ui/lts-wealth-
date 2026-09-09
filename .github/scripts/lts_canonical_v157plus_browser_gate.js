@@ -178,7 +178,9 @@ async function assertFlowParity(page, label, mobile) {
     throw new Error(`${label}: daily-use Flow contract missing`);
   }
 
-  const flowText = (await page.locator('.fv').innerText()).toLowerCase();
+  // Mobile liquidity layers intentionally start collapsed; textContent keeps the
+  // semantic contract test independent from their visual disclosure state.
+  const flowText = (await page.locator('.fv').textContent()).toLowerCase();
   for (const forbidden of ['baseline funcional', 'fix86', 'legacy', 'lts v1.', 'canonical v', 'wip35']) {
     if (flowText.includes(forbidden)) throw new Error(`${label}: technical text leaked ${forbidden}`);
   }
@@ -370,6 +372,7 @@ async function assertFlowParity(page, label, mobile) {
   await page.waitForSelector('#fvModalBg');
   await page.keyboard.press('Escape');
   await page.waitForSelector('#fvModalBg', { state: 'detached' });
+  await page.waitForFunction(() => document.activeElement?.getAttribute('data-event-action') === 'edit');
   if (await page.evaluate(() => document.activeElement?.getAttribute('data-event-action')) !== 'edit') {
     throw new Error(`${label}: projection editor did not restore focus`);
   }
