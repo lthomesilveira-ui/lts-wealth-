@@ -47,19 +47,19 @@ jobs:
           assert '<iframe' not in app
           assert 'document.write' not in app
           assert 'canonical-product-v157.js' in loader
-          assert 'canonical-flow-v157.js' in loader
+          assert 'canonical-flow-v157.js?v=20260908-flow20' in loader
           assert 'canonical-presentation-v157.js' in loader
           assert 'canonical-capabilities-v161.js' in loader
           assert 'canonical-capabilities-v161.js?v=20260908-ux19' in loader
           assert 'canonical-reviewed-input-v112.js?v=20260908-ux19' in loader
           assert 'canonical-flow-v150.js' not in loader
-          for x in ['canonical-dashboard-fidelity.css?v=20260908-ux19','canonical-liquidity.js?v=20260908-ux19','single-owner-history-nature-context-v1','Quanto você gasta — e para quem é cada gasto.','reference-layered-liquidity-commitments-v3','approved-1312x1199-single-screen-v1','fact-before-asof-projection-after-asof-v1','current-base-scheduled-rsu-restricted-fgts-v1','layered-fact-projection-v2','product-commitments-plus-card-due','v151-first-negative-management-separation-v1','Primeiro caixa negativo','Ponto de gestão','canonical-route-session-continuity-v1','classification-first-guided-document-intake-v1','lts_browser_register_document_v2','v149-evidence-review-readonly-canonical-v1','lts_browser_document_review_queue_v1','updatesOtherActions','data-dashboard-reload','data-mg-shortcut','Receitas','Relatórios','Configurações']:
+          for x in ['canonical-dashboard-fidelity.css?v=20260908-ux19','canonical-liquidity.js?v=20260908-flow20','single-owner-history-nature-context-v1','Quanto você gasta — e para quem é cada gasto.','reference-layered-liquidity-commitments-v3','approved-1312x1199-single-screen-v1','fact-before-asof-projection-after-asof-v1','current-base-scheduled-rsu-restricted-fgts-v1','layered-fact-projection-v2','product-commitments-plus-card-due','v151-first-negative-management-separation-v1','Primeiro caixa negativo','Ponto de gestão','canonical-route-session-continuity-v1','classification-first-guided-document-intake-v1','lts_browser_register_document_v2','v149-evidence-review-readonly-canonical-v1','lts_browser_document_review_queue_v1','updatesOtherActions','data-dashboard-reload','data-mg-shortcut','Receitas','Relatórios','Configurações']:
               assert x in app, x
-          for x in ['LTS v1.19','canonical-liquidity-core.js?v=20260908-ux19','UPDATES_CONTRACT','DOCUMENT_REVIEW_CONTRACT','DASHBOARD_DENSITY_CONTRACT','PLANNING_DECISION_CONTRACT','user-facing-product-language-v1','safe-errors-accessible-controls-readable-mobile-v1']:
+          for x in ['LTS v1.20','canonical-liquidity-core.js?v=20260908-ux19','UPDATES_CONTRACT','DOCUMENT_REVIEW_CONTRACT','DASHBOARD_DENSITY_CONTRACT','PLANNING_DECISION_CONTRACT','user-facing-product-language-v1','safe-errors-accessible-controls-readable-mobile-v1']:
               assert x in loader, x
           for rpc in ['lts_browser_liquidity_movement_options_v1','lts_browser_preview_liquidity_movement_v1','lts_browser_apply_liquidity_movement_v1']:
               assert rpc in core, rpc
-          for x in ['lts_browser_flow_v8','lts_browser_card_settlement_detail_v2','LTS v1.19','v150-validated-flow-plus-v157-liquidity-v1','historical-opening-from-close-and-net-v1','today-marker-without-row-band-v1','future-through-2029-plus-d30-v1','Histórico / período','Movimentos do dia','Dividir / substituir','inline-card-settlement-v150','RSUs futuras','Cash Awards futuros','lts_browser_flow_event_editor_v1','lts_browser_flow_mutate_v1']:
+          for x in ['lts_browser_flow_v8','lts_browser_card_settlement_detail_v2','LTS v1.20','v150-validated-flow-plus-v157-liquidity-v1','historical-opening-from-close-and-net-v1','historical-closed-date-label-close-only-v1','projection-edit-postpone-duplicate-split-cancel-v1','today-marker-without-row-band-v1','future-through-2029-plus-d30-v1','Histórico / período','Histórico / movimentos','Editar','Postergar','Duplicar','Dividir / substituir','inline-card-settlement-v150','RSUs futuras','Cash Awards futuros','lts_browser_flow_event_editor_v1','lts_browser_flow_mutate_v1']:
               assert x in flow, x
           assert '.fv-table tr.today td{background:#fffaf0}' not in flow
           for x in ['1500','p_to + 30','all_src','requested-period-plus-30-days-v1','future Flow cache could not cover requested range']:

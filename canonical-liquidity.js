@@ -1,7 +1,7 @@
 (()=>{'use strict';
-const BUILD='LTS v1.19';
+const BUILD='LTS v1.20';
 const CORE_CONTRACT=['lts_browser_liquidity_movement_options_v1','lts_browser_preview_liquidity_movement_v1','lts_browser_apply_liquidity_movement_v1'];
-const FLOW_CONTRACT=['lts_browser_flow_v8','v150-validated-flow-plus-v157-liquidity-v1','Histórico / período','Movimentos do dia','Dividir / substituir','inline-card-settlement-v150','RSUs futuras','Cash Awards futuros'];
+const FLOW_CONTRACT=['lts_browser_flow_v8','v150-validated-flow-plus-v157-liquidity-v1','historical-closed-date-label-close-only-v1','projection-edit-postpone-duplicate-split-cancel-v1','Histórico / período','Histórico / movimentos','Editar','Postergar','Duplicar','Dividir / substituir','inline-card-settlement-v150','RSUs futuras','Cash Awards futuros'];
 const PRODUCT_CONTRACT=['Dinheiro em contas','Contas + curto prazo','RSUs vested','FGTS','Despesas (mês)','Quanto você gasta — e para quem é cada gasto.','Quanto você tem, quanto deve e quanto é seu.','Conferência de fatura, não análise de gasto.'];
 const CAPABILITY_CONTRACT=['Planejamento','Entradas & compromissos','Recorrências','Simulações','Conciliação','Relatórios','Backup & restauração','Configurações & integrações','Financiamentos','Documentos'];
 const REVIEWED_INPUT_CONTRACT=['Lançamento por texto','review-before-explicit-apply-v1','lts_browser_apply_reviewed_input_v1'];
@@ -19,7 +19,7 @@ function ensureModules(){
   if(modulesPromise)return modulesPromise;
   modulesPromise=Promise.all([
     load('canonical-product-v157.js?v=20260908-ux19','canonicalProductV157'),
-    load('canonical-flow-v157.js?v=20260908-ux19','canonicalFlowV157')
+    load('canonical-flow-v157.js?v=20260908-flow20','canonicalFlowV157')
   ]).then(()=>load('canonical-presentation-v157.js?v=20260908-ux19','canonicalPresentationV157')).then(()=>load('canonical-capabilities-v161.js?v=20260908-ux19','canonicalCapabilitiesV161')).then(()=>load('canonical-reviewed-input-v112.js?v=20260908-ux19','canonicalReviewedInputV112')).then(()=>{mark({flow_loaded:true,product_loaded:true,presentation_loaded:true,polish_loaded:true,capabilities_loaded:true,reviewed_input_loaded:true});return true}).catch(e=>{modulesPromise=null;mark({error:String(e?.message||e)});throw e});
   return modulesPromise;
 }
