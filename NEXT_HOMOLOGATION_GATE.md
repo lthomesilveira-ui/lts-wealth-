@@ -2,7 +2,13 @@
 
 Purpose: evidence-backed sequence before asking the user to inspect a material candidate. Keep aligned with `PROJECT_MASTER_BACKLOG.md`, `LTS_WEALTH_CONTINUITY_HANDOFF.md` and immutable checkpoints.
 
-## Current canonical baseline — 08/09/2026 18:50 BRT
+## Current canonical baseline — 09/09/2026 00:15 BRT
+- Fixed homologation selects **canonical v1.22 product recovery** through `canonical-app.html`, exact product `181546c8b6d90756229fdf3ca083f0cf05dacc4a`, exposure `3e3fa9a37b4393d405d0cbd4c5f5a3e30de6ce22`.
+- V1.20 Flow restores closed-history geometry and projected-event actions; V1.21 Reports adds `evidence-backed-executive-report-v1`; V1.22 Dashboard adds `executive-cockpit-readable-density-v1` without changing financial truth.
+- Recovery gate/smoke `34306308228` / `34306308235`, canonical gate/smoke `34306465733` / `34306465795`, main smoke/Pages `34306466418` / `34306465815`, post-exposure smokes `34306705547` / `34306706458` / `34306706548` and Pages `34306705941`: SUCCESS.
+- Next external gate is authenticated real lifecycle and physical-iPhone material homologation; neither is inferred from fixture/WebKit evidence.
+
+## Prior canonical baseline — v1.19 retained as evidence
 - Public fallback: WIP35-v136 in `index.html`, unchanged; protected blob remains `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
 - Fixed homologation: `https://lthomesilveira-ui.github.io/lts-wealth-/homologacao.html`.
 - Fixed homologation selects **canonical v1.19 UX closure** through `canonical-app.html`, exact product `37781c3b11389789716781accca6c1fdabea461c`, exposure `59222846a5c7e67c923790da9ad4088df9781fa4`; public `index.html` is unchanged.

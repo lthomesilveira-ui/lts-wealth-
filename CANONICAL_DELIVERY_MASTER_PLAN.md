@@ -1,11 +1,11 @@
 # LTS Wealth — Canonical Delivery Master Plan
 
-Last refreshed: 2026-09-08 18:50 BRT
-Active implementation branch: `canonical-v157plus-product-recovery` (canonical v1.19 product `37781c3b11389789716781accca6c1fdabea461c`; product tree `626437edfa47d12be4a061f3ff6c88e077ae2304`; fixed-manifest exposure `59222846a5c7e67c923790da9ad4088df9781fa4`; all release branches aligned by normal no-force fast-forward)
+Last refreshed: 2026-09-09 00:15 BRT
+Active implementation branch: `canonical-v157plus-product-recovery` (canonical v1.22 product `181546c8b6d90756229fdf3ca083f0cf05dacc4a`; fixed-manifest exposure `3e3fa9a37b4393d405d0cbd4c5f5a3e30de6ce22`; all release branches aligned by normal no-force fast-forward)
 
 Purpose: this is the execution-order view of the LTS Wealth backlog. It does not replace documentary evidence or immutable checkpoints. `PROJECT_MASTER_BACKLOG.md` remains the complete persistent dependency list. This file makes the remaining work explicit so product delivery does not get lost behind release mechanics.
 
-Current milestone: canonical v1.19 preserves the complete v1.18→v1.9 line and closes the executable holistic UX pass without changing financial truth. The approved 1312×1199 Dashboard, responsive 390×844 product, safe-error boundary, accessibility states, permanent Chromium/WebKit gates, all pre/post-exposure smokes and Pages are green; the fixed URL resolves to the exact v1.19 product. Only authenticated real lifecycles and physical-device evidence remain P0 execution gates.
+Current milestone: canonical v1.22 preserves the full protected line, restores the V150/V151+ Flow interactions, rebuilds Reports as an evidence-backed executive surface and refines Dashboard readability without changing financial truth. Deterministic Chromium desktop/WebKit mobile gates and all release/Pages checks are green. Remaining P0 evidence requiring external control is the authenticated real lifecycle and physical-iPhone material homologation.
 
 ## Definition of DONE for the app
 The LTS Wealth app is not considered delivered until all P0 items below are complete together in one canonical application:

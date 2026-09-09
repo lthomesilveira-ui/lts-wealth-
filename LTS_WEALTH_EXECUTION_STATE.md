@@ -12,7 +12,16 @@ Purpose: compact operational bootstrap so project execution never depends on a l
 7. Before a repository write, freshness-check `main`, active branch, this file, and the SHAs of `PROJECT_MASTER_BACKLOG.md`, `NEXT_HOMOLOGATION_GATE.md`, `LTS_WEALTH_CONTINUITY_HANDOFF.md`, `CANONICAL_DELIVERY_MASTER_PLAN.md` and latest immutable checkpoint. Use line-limited reads; fully re-read only a file whose SHA changed or whose relevant section is needed.
 8. After every material package, gate, integration or newly discovered blocker, update this file so a chat may be abandoned/restarted at any moment without reconstruction work.
 
-## Current execution state — 08/09/2026 18:50 BRT
+## Current execution state — 09/09/2026 00:15 BRT
+- Canonical v1.22 exact product is `181546c8b6d90756229fdf3ca083f0cf05dacc4a`; fixed-manifest exposure is `3e3fa9a37b4393d405d0cbd4c5f5a3e30de6ce22`. `main`, `canonical-app-v1` and `canonical-v157plus-product-recovery` are aligned by normal no-force fast-forward.
+- V1.20 restores the V150/V151+ Flow history/actions floor; V1.21 rebuilds Reports as `evidence-backed-executive-report-v1`; V1.22 adds `executive-cockpit-readable-density-v1` while preserving the approved liquidity-first five KPIs and V151 planning-date distinction.
+- Recovery gate/smoke `34306308228` / `34306308235`, canonical gate/smoke `34306465733` / `34306465795`, main smoke/Pages `34306466418` / `34306465815`, post-exposure active/canonical/main smokes `34306705547` / `34306706458` / `34306706548` and Pages `34306705941`: SUCCESS.
+- Fixed homologation selects v1.22 at `https://lthomesilveira-ui.github.io/lts-wealth-/homologacao.html`; deterministic evidence covers Chromium desktop 1312×1199 and WebKit mobile 390×844.
+- Latest immutable evidence: `backups/CANONICAL_APP_V122_PRODUCT_RECOVERY_CHECKPOINT_2026-09-09.md`.
+- Authenticated real write/document/backup lifecycles and physical-iPhone E2E remain external evidence gates and are not claimed.
+- Public `index.html` remains protected at blob `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
+
+## Prior canonical v1.19 state — retained as evidence
 - Repo: `lthomesilveira-ui/lts-wealth-`; active recovery branch remains `canonical-v157plus-product-recovery`.
 - Canonical v1.19 exact remote product is `37781c3b11389789716781accca6c1fdabea461c`, tree `626437edfa47d12be4a061f3ff6c88e077ae2304`; fixed-manifest exposure is `59222846a5c7e67c923790da9ad4088df9781fa4`, tree `5b34ab00cecf338c51eeb97f94d339a4bb025b03`. `main`, `canonical-app-v1` and the active branch share the exposure through normal no-force fast-forward.
 - V1.19 closes the executable holistic UX pass under contract `safe-errors-accessible-controls-readable-mobile-v1`: one `Hoje` action, safe user-facing errors with bounded internal diagnostics, associated login labels/live feedback, explicit current/pressed/expanded states, keyboard/Escape modal behavior, visible focus, reduced motion and readable 390 px controls/copy.

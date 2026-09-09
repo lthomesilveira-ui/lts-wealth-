@@ -4,6 +4,14 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 
 Canonical persistent project list. Never remove an open financial, documentary, classification, reconciliation or product dependency during compaction. Detailed immutable evidence remains in `backups/`, `HISTORICAL_RECOVERY_LOG.md`, `PLANNING_EXCEL_TO_CURRENT_AUDIT_2026-08-30.md`, `NEXT_HOMOLOGATION_GATE.md` and release checkpoints.
 
+## P0 — Product recovery / canonical v1.22 — 09/09/2026
+- [x] Restored V150/V151+ Flow history geometry and projected-event Edit/Postpone/Duplicate/Split actions under V1.20 without reopening certified historical facts.
+- [x] Rebuilt Reports from an export-only placeholder into the evidence-backed executive surface V1.21, with liquidity, projected cash, expenses, wealth/commitments, data quality and drill-downs.
+- [x] Refined Dashboard readability and executive hierarchy in V1.22 while preserving the approved liquidity-first five KPI order and the V151 first-negative/management-date distinction.
+- [x] Exact product `181546c8b6d90756229fdf3ca083f0cf05dacc4a`; exposure `3e3fa9a37b4393d405d0cbd4c5f5a3e30de6ce22`; all release branches aligned without force.
+- [x] Recovery/canonical/main and post-exposure smokes, Chromium/WebKit gates and Pages are SUCCESS; immutable checkpoint `backups/CANONICAL_APP_V122_PRODUCT_RECOVERY_CHECKPOINT_2026-09-09.md`.
+- [ ] Authenticated real write/document/backup lifecycle and physical-iPhone evidence remain open/not claimed because they require the user's authenticated session/device.
+
 ## P0 — Holistic UX closure / canonical v1.19 — 08/09/2026
 - [x] Audited Dashboard, Flow, Despesas, Patrimônio, Cartões and Atualizações against the official model, recovered Homologação/Execução ledger and protected V150/V151+ behavior floor.
 - [x] Removed the duplicated Flow `Hoje` preset while preserving the dedicated action, nine distinct presets, column order, expansion position and scroll behavior.
