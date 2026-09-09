@@ -55,7 +55,7 @@ jobs:
           assert 'setInterval(' not in s
           assert 'canonical-liquidity.js?v=' in s
           assert 'canonical-dashboard-fidelity.css?v=20260908-ux19' in s
-          assert 'canonical-liquidity.js?v=20260908-flow20' in s
+          assert 'canonical-liquidity.js?v=20260909-reports21' in s
           assert 'single-owner-history-nature-context-v1' in s
           assert 'Quanto você gasta — e para quem é cada gasto.' in s
           assert 'reference-layered-liquidity-commitments-v3' in s
@@ -66,9 +66,9 @@ jobs:
           assert 'product-commitments-plus-card-due' in s
           assert 'canonical-route-session-continuity-v1' in s
           assert 'data-dashboard-reload' in s
-          for module in ['canonical-liquidity-core.js?v=20260908-ux19','canonical-flow-v157.js?v=20260908-flow20','canonical-product-v157.js','canonical-presentation-v157.js','canonical-capabilities-v161.js?v=20260908-ux19','canonical-reviewed-input-v112.js?v=20260908-ux19']:
+          for module in ['canonical-liquidity-core.js?v=20260908-ux19','canonical-flow-v157.js?v=20260908-flow20','canonical-product-v157.js','canonical-presentation-v157.js','canonical-capabilities-v161.js?v=20260909-reports21','canonical-reviewed-input-v112.js?v=20260908-ux19']:
               assert module in l, module
-          for marker in ['LTS v1.20','UPDATES_CONTRACT','DOCUMENT_REVIEW_CONTRACT','DASHBOARD_DENSITY_CONTRACT','PLANNING_DECISION_CONTRACT','user-facing-product-language-v1','safe-errors-accessible-controls-readable-mobile-v1']:
+          for marker in ['LTS v1.21','UPDATES_CONTRACT','DOCUMENT_REVIEW_CONTRACT','DASHBOARD_DENSITY_CONTRACT','PLANNING_DECISION_CONTRACT','user-facing-product-language-v1','safe-errors-accessible-controls-readable-mobile-v1','evidence-backed-executive-report-v1']:
               assert marker in l, marker
           assert 'canonical-flow-v150.js' not in l
           assert "const ROUTES=['Patrimônio','Cartões']" in p
@@ -100,7 +100,7 @@ jobs:
               assert marker in p, marker
           for marker in ['presentation-polish-v2','safe-errors-accessible-controls-readable-mobile-v1','__LTS_V157_PRESENTATION_STATUS','__LTS_V157_POLISH_STATUS']:
               assert marker in v, marker
-          for marker in ['LTS v1.19','__LTS_CANONICAL_CAPABILITIES_STATUS','session-persisted-management-pane-v1','Planejamento','Entradas & compromissos','Recorrências','Simulações','Conciliação','Relatórios','Backup & restauração','Configurações & integrações','Financiamentos','Documentos']:
+          for marker in ['LTS v1.21','__LTS_CANONICAL_CAPABILITIES_STATUS','session-persisted-management-pane-v1','evidence-backed-executive-report-v1','Relatório executivo','Hoje e curto prazo','Caixa projetado · quando agir','Evolução das despesas','Qualidade, controle e rastreabilidade','Planejamento','Entradas & compromissos','Recorrências','Simulações','Conciliação','Relatórios','Backup & restauração','Configurações & integrações','Financiamentos','Documentos']:
               assert marker in g, marker
           for marker in ['LTS v1.19','review-before-explicit-apply-v1','Lançamento por texto','lts_browser_apply_reviewed_input_v1','Nada foi gravado.','requires_explicit_confirmation']:
               assert marker in i, marker

@@ -50,12 +50,12 @@ jobs:
           assert 'canonical-flow-v157.js?v=20260908-flow20' in loader
           assert 'canonical-presentation-v157.js' in loader
           assert 'canonical-capabilities-v161.js' in loader
-          assert 'canonical-capabilities-v161.js?v=20260908-ux19' in loader
+          assert 'canonical-capabilities-v161.js?v=20260909-reports21' in loader
           assert 'canonical-reviewed-input-v112.js?v=20260908-ux19' in loader
           assert 'canonical-flow-v150.js' not in loader
-          for x in ['canonical-dashboard-fidelity.css?v=20260908-ux19','canonical-liquidity.js?v=20260908-flow20','single-owner-history-nature-context-v1','Quanto você gasta — e para quem é cada gasto.','reference-layered-liquidity-commitments-v3','approved-1312x1199-single-screen-v1','fact-before-asof-projection-after-asof-v1','current-base-scheduled-rsu-restricted-fgts-v1','layered-fact-projection-v2','product-commitments-plus-card-due','v151-first-negative-management-separation-v1','Primeiro caixa negativo','Ponto de gestão','canonical-route-session-continuity-v1','classification-first-guided-document-intake-v1','lts_browser_register_document_v2','v149-evidence-review-readonly-canonical-v1','lts_browser_document_review_queue_v1','updatesOtherActions','data-dashboard-reload','data-mg-shortcut','Receitas','Relatórios','Configurações']:
+          for x in ['canonical-dashboard-fidelity.css?v=20260908-ux19','canonical-liquidity.js?v=20260909-reports21','single-owner-history-nature-context-v1','Quanto você gasta — e para quem é cada gasto.','reference-layered-liquidity-commitments-v3','approved-1312x1199-single-screen-v1','fact-before-asof-projection-after-asof-v1','current-base-scheduled-rsu-restricted-fgts-v1','layered-fact-projection-v2','product-commitments-plus-card-due','v151-first-negative-management-separation-v1','Primeiro caixa negativo','Ponto de gestão','canonical-route-session-continuity-v1','classification-first-guided-document-intake-v1','lts_browser_register_document_v2','v149-evidence-review-readonly-canonical-v1','lts_browser_document_review_queue_v1','updatesOtherActions','data-dashboard-reload','data-mg-shortcut','Receitas','Relatórios','Configurações']:
               assert x in app, x
-          for x in ['LTS v1.20','canonical-liquidity-core.js?v=20260908-ux19','UPDATES_CONTRACT','DOCUMENT_REVIEW_CONTRACT','DASHBOARD_DENSITY_CONTRACT','PLANNING_DECISION_CONTRACT','user-facing-product-language-v1','safe-errors-accessible-controls-readable-mobile-v1']:
+          for x in ['LTS v1.21','canonical-liquidity-core.js?v=20260908-ux19','UPDATES_CONTRACT','DOCUMENT_REVIEW_CONTRACT','DASHBOARD_DENSITY_CONTRACT','PLANNING_DECISION_CONTRACT','user-facing-product-language-v1','safe-errors-accessible-controls-readable-mobile-v1','evidence-backed-executive-report-v1']:
               assert x in loader, x
           for rpc in ['lts_browser_liquidity_movement_options_v1','lts_browser_preview_liquidity_movement_v1','lts_browser_apply_liquidity_movement_v1']:
               assert rpc in core, rpc
@@ -69,7 +69,7 @@ jobs:
           assert "const ROUTES=['Patrimônio','Cartões']" in product
           for x in ['presentation-polish-v2','safe-errors-accessible-controls-readable-mobile-v1','__LTS_V157_PRESENTATION_STATUS','__LTS_V157_POLISH_STATUS']:
               assert x in presentation, x
-          for x in ['LTS v1.19','__LTS_CANONICAL_CAPABILITIES_STATUS','session-persisted-management-pane-v1','data-mg-shortcut','Planejamento','Entradas & compromissos','Recorrências','Simulações','Conciliação','Relatórios','Backup & restauração','Configurações & integrações','Financiamentos','Documentos']:
+          for x in ['LTS v1.21','__LTS_CANONICAL_CAPABILITIES_STATUS','session-persisted-management-pane-v1','evidence-backed-executive-report-v1','Relatório executivo','Hoje e curto prazo','Caixa projetado · quando agir','Evolução das despesas','Qualidade, controle e rastreabilidade','data-mg-shortcut','Planejamento','Entradas & compromissos','Recorrências','Simulações','Conciliação','Relatórios','Backup & restauração','Configurações & integrações','Financiamentos','Documentos']:
               assert x in capabilities, x
           for x in ['LTS v1.19','review-before-explicit-apply-v1','Lançamento por texto','lts_browser_apply_reviewed_input_v1','Nada foi gravado.','requires_explicit_confirmation']:
               assert x in reviewed_input, x

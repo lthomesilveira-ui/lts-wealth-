@@ -345,9 +345,24 @@ async function assertUpdatesContract(page, label) {
     throw new Error(`${label}: classification-first hierarchy ${JSON.stringify(hierarchy)}`);
   }
   const recovery = await page.evaluate(() => window.__LTS_CANONICAL_RECOVERY_STATUS);
-  if (recovery?.build !== 'LTS v1.20' || recovery?.updates_contract !== 4 || recovery?.document_review_contract !== 4 || recovery?.dashboard_density_contract !== 1 || recovery?.planning_decision_contract !== 1 || recovery?.product_language_contract !== 'user-facing-product-language-v1' || recovery?.ux_closure_contract !== 'safe-errors-accessible-controls-readable-mobile-v1') {
+  if (recovery?.build !== 'LTS v1.21' || recovery?.updates_contract !== 4 || recovery?.document_review_contract !== 4 || recovery?.dashboard_density_contract !== 1 || recovery?.planning_decision_contract !== 1 || recovery?.product_language_contract !== 'user-facing-product-language-v1' || recovery?.ux_closure_contract !== 'safe-errors-accessible-controls-readable-mobile-v1') {
     throw new Error(`${label}: v1.19 recovery contract ${JSON.stringify(recovery)}`);
   }
+  const reportsTab = page.locator('[data-mg-pane="reports"]');
+  await reportsTab.click();
+  await page.waitForSelector('[data-report-contract="evidence-backed-executive-report-v1"]');
+  const reportsStatus = await page.evaluate(() => window.__LTS_CANONICAL_CAPABILITIES_STATUS);
+  if (reportsStatus?.build !== 'LTS v1.21'
+      || reportsStatus?.reports_contract !== 'evidence-backed-executive-report-v1'
+      || reportsStatus?.contracts?.reports_executive !== true) {
+    throw new Error(`${label}: executive reports status ${JSON.stringify(reportsStatus)}`);
+  }
+  const reportText = await page.locator('[data-report-contract="evidence-backed-executive-report-v1"]').innerText();
+  for (const required of ['Relatório executivo', 'Hoje e curto prazo', 'Caixa projetado', 'Evolução das despesas', 'Patrimônio e compromissos', 'Qualidade, controle e rastreabilidade']) {
+    if (!containsText(reportText, required)) throw new Error(`${label}: executive report section missing ${required}`);
+  }
+  if (await page.locator('.mg-report-bar').count() < 3) throw new Error(`${label}: expense history chart missing`);
+  if (await page.locator('.mg-report-link').count() !== 4) throw new Error(`${label}: report drill-down navigation incomplete`);
   const inputStatus = await page.evaluate(() => window.__LTS_CANONICAL_REVIEWED_INPUT_STATUS);
   if (inputStatus?.ready !== true
       || inputStatus?.contract !== 'review-before-explicit-apply-v1'
