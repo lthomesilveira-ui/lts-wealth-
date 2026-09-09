@@ -345,7 +345,7 @@ async function assertUpdatesContract(page, label) {
     throw new Error(`${label}: classification-first hierarchy ${JSON.stringify(hierarchy)}`);
   }
   const recovery = await page.evaluate(() => window.__LTS_CANONICAL_RECOVERY_STATUS);
-  if (recovery?.build !== 'LTS v1.21' || recovery?.updates_contract !== 4 || recovery?.document_review_contract !== 4 || recovery?.dashboard_density_contract !== 1 || recovery?.planning_decision_contract !== 1 || recovery?.product_language_contract !== 'user-facing-product-language-v1' || recovery?.ux_closure_contract !== 'safe-errors-accessible-controls-readable-mobile-v1') {
+  if (recovery?.build !== 'LTS v1.22' || recovery?.updates_contract !== 4 || recovery?.document_review_contract !== 4 || recovery?.dashboard_density_contract !== 1 || recovery?.planning_decision_contract !== 1 || recovery?.dashboard_visual_contract !== 'executive-cockpit-readable-density-v1' || recovery?.product_language_contract !== 'user-facing-product-language-v1' || recovery?.ux_closure_contract !== 'safe-errors-accessible-controls-readable-mobile-v1') {
     throw new Error(`${label}: v1.19 recovery contract ${JSON.stringify(recovery)}`);
   }
   const reportsTab = page.locator('[data-mg-pane="reports"]');
@@ -561,6 +561,8 @@ async function assertDashboardContract(page, label, mobile) {
       || status?.contract !== contract
       || status?.reference !== 'approved-1312x1199-liquidity-first'
       || status?.density_contract !== densityContract
+      || status?.decision_hierarchy_contract !== 'today-commitments-direction-v1'
+      || status?.visual_hierarchy_contract !== 'executive-cockpit-readable-density-v1'
       || status?.projection_contract !== 'fact-before-asof-projection-after-asof-v1'
       || status?.liquidity_layer_contract !== 'current-base-scheduled-rsu-restricted-fgts-v1'
       || status?.planning_decision_contract !== 'v151-first-negative-management-separation-v1'

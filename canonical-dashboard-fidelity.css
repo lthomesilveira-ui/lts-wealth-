@@ -353,3 +353,48 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
   html{scroll-behavior:auto!important}
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
 }
+
+/* Fidelity pass 9 — executive hierarchy and readable density. */
+#dashboard-view .card{box-shadow:0 5px 18px rgba(20,43,70,.055)}
+#dashboard-view .panel-title h2{color:#172c45;font-weight:850}
+#dashboard-view .action-link{font-weight:850}
+#dashboard-view .bank-row,#dashboard-view .rank-row,#dashboard-view .commit-row,#dashboard-view .update-row{transition:background-color .16s ease}
+#dashboard-view .kpi.primary:before,#dashboard-view .kpi.restricted:before{content:"";position:absolute;left:0;right:0;top:0;height:3px;border-radius:12px 12px 0 0;background:#2f7be5}
+#dashboard-view .kpi.restricted:before{background:#d39a2f}
+
+@media (min-width:821px){
+  #dashboard-view .page-title h1{font-size:32px;line-height:1.05}
+  #dashboard-view .page-title p{font-size:13.5px;color:#65758a}
+  #dashboard-view .panel-title h2{font-size:15.5px}
+  #dashboard-view .action-link{font-size:9.5px}
+  #dashboard-view .kpi label{font-size:11.5px}
+  #dashboard-view .kpi strong{font-size:26.5px}
+  #dashboard-view .kpi .meta{font-size:9px}
+  #dashboard-view .kpi-signal{font-size:8px}
+  #dashboard-view .kpi-evidence{font-size:6.7px;padding:3px 6px}
+  #dashboard-view .dist-row,#dashboard-view .dist-row b{font-size:9.7px}
+  #dashboard-view .bank-row{font-size:10px}
+  #dashboard-view .bank-row strong,#dashboard-view .bank-total{font-size:10px}
+  #dashboard-view .bank-row span{font-size:7.4px}
+  #dashboard-view .rank-row>div:nth-child(2) b,#dashboard-view .rank-row strong{font-size:10px}
+  #dashboard-view .rank-row>div:nth-child(2) span{font-size:8px}
+  #dashboard-view .commit-row strong,#dashboard-view .commit-row em{font-size:9.8px}
+  #dashboard-view .commit-row small{font-size:8px}
+  #dashboard-view .update-row b{font-size:9.8px}
+  #dashboard-view .update-row span{font-size:8px}
+  #dashboard-view .flow-col b{font-size:9.8px}
+  #dashboard-view .flow-col span{font-size:8px}
+}
+
+@media (max-width:820px){
+  #dashboard-view .page-title h1{font-size:26px}
+  #dashboard-view .page-title p{font-size:11.5px}
+  #dashboard-view .kpi label{font-size:10px}
+  #dashboard-view .kpi strong{font-size:18px}
+  #dashboard-view .kpi .meta{font-size:8px}
+  #dashboard-view .panel-title h2{font-size:14px}
+  #dashboard-view .action-link{font-size:9px}
+  #dashboard-view .dist-row,#dashboard-view .dist-row b,#dashboard-view .bank-row,#dashboard-view .bank-row strong,#dashboard-view .bank-total{font-size:9.5px}
+  #dashboard-view .rank-row b,#dashboard-view .rank-row strong,#dashboard-view .commit-row strong,#dashboard-view .commit-row em,#dashboard-view .update-row b{font-size:9.5px}
+  #dashboard-view .rank-row span,#dashboard-view .commit-row small,#dashboard-view .update-row span{font-size:8px}
+}

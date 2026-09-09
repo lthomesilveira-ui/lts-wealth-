@@ -54,8 +54,8 @@ jobs:
           assert 'MutationObserver' not in s
           assert 'setInterval(' not in s
           assert 'canonical-liquidity.js?v=' in s
-          assert 'canonical-dashboard-fidelity.css?v=20260908-ux19' in s
-          assert 'canonical-liquidity.js?v=20260909-reports21' in s
+          assert 'canonical-dashboard-fidelity.css?v=20260909-ux22' in s
+          assert 'canonical-liquidity.js?v=20260909-ux22' in s
           assert 'single-owner-history-nature-context-v1' in s
           assert 'Quanto você gasta — e para quem é cada gasto.' in s
           assert 'reference-layered-liquidity-commitments-v3' in s
@@ -68,7 +68,7 @@ jobs:
           assert 'data-dashboard-reload' in s
           for module in ['canonical-liquidity-core.js?v=20260908-ux19','canonical-flow-v157.js?v=20260908-flow20','canonical-product-v157.js','canonical-presentation-v157.js','canonical-capabilities-v161.js?v=20260909-reports21','canonical-reviewed-input-v112.js?v=20260908-ux19']:
               assert module in l, module
-          for marker in ['LTS v1.21','UPDATES_CONTRACT','DOCUMENT_REVIEW_CONTRACT','DASHBOARD_DENSITY_CONTRACT','PLANNING_DECISION_CONTRACT','user-facing-product-language-v1','safe-errors-accessible-controls-readable-mobile-v1','evidence-backed-executive-report-v1']:
+          for marker in ['LTS v1.22','UPDATES_CONTRACT','DOCUMENT_REVIEW_CONTRACT','DASHBOARD_DENSITY_CONTRACT','PLANNING_DECISION_CONTRACT','DASHBOARD_VISUAL_CONTRACT','executive-cockpit-readable-density-v1','user-facing-product-language-v1','safe-errors-accessible-controls-readable-mobile-v1','evidence-backed-executive-report-v1']:
               assert marker in l, marker
           assert 'canonical-flow-v150.js' not in l
           assert "const ROUTES=['Patrimônio','Cartões']" in p
