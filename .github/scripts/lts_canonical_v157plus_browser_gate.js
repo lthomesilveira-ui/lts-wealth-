@@ -199,10 +199,15 @@ async function assertFlowParity(page, label, mobile) {
     }
     const todayToggle = page.locator('#fv-2026-09-07 [data-layer-toggle="2026-09-07"]');
     await todayToggle.click();
-    if (await todayToggle.getAttribute('aria-expanded') !== 'true'
-        || await page.locator('#fv-layers-2026-09-07.open > div').count() !== 9
-        || !(await page.locator('#fv-layers-2026-09-07').innerText()).includes('Posição econômica total')) {
-      throw new Error(`${label}: mobile liquidity disclosure failed`);
+    const layerState = {
+      expanded: await todayToggle.getAttribute('aria-expanded'),
+      values: await page.locator('#fv-layers-2026-09-07.open > div').count(),
+      text: (await page.locator('#fv-layers-2026-09-07').textContent()).toLowerCase()
+    };
+    if (layerState.expanded !== 'true'
+        || layerState.values !== 9
+        || !layerState.text.includes('posição econômica total')) {
+      throw new Error(`${label}: mobile liquidity disclosure failed ${JSON.stringify(layerState)}`);
     }
     await todayToggle.click();
     if (await todayToggle.getAttribute('aria-expanded') !== 'false' || await page.locator('.fv-layers.open').count()) {
