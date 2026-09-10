@@ -13,7 +13,8 @@ Recuperar o Fluxo Diário validado sem sobrescrever o checkout com trabalho ante
 - Exposição V152: `598d53a441e54d0e416de03f4064e37814019a82`.
 - Primeiro shell V153 identificado na sequência histórica: `8527de91a87afab3459a4b82b57590b1bea4412d`.
 - Main auditada antes da recuperação: `5ba3dd9648214b65606f39fe02b0777b358299dc`.
-- A comparação entre a exposição V152 e a main acima mostrou zero diferenças em `index.html` e em todos os arquivos da cadeia V137–V152. A fonte histórica está preservada; o problema de produto veio da substituição posterior da superfície de homologação.
+- A comparação entre a exposição V152 e a main acima mostrou zero diferenças em `index.html` e em todos os arquivos da cadeia V137–V152. A fonte histórica está preservada.
+- O primeiro gate de recuperação (`34492222128`) comprovou que executar hoje a cadeia cumulativa V137–V152 congela antes da prontidão do Fluxo. A causa observável é a sobreposição de timers e observers permanentes nos wrappers; por isso eles permanecem como evidência, não como runtime da recuperação.
 - Blob protegido de `index.html`: `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
 
 ## Evidência do banco
@@ -25,7 +26,7 @@ Recuperar o Fluxo Diário validado sem sobrescrever o checkout com trabalho ante
 ## Pacote de recuperação
 
 - `wip35-v162-candidate.html`: entrada isolada da homologação do Fluxo.
-- `wip35-v162-flow-recovery.js`: ponte V152/V150 → V10, rota inicial do Fluxo e ocultação do Dashboard fora de escopo.
+- `wip35-v162-flow-recovery.js`: montagem direta e limitada do componente de Fluxo preservado em `index.html`, ponte V3/V4 → V10, rota inicial do Fluxo e ocultação do Dashboard fora de escopo.
 - `.github/scripts/lts_v162_flow_recovery_gate.js`: prova automatizada desktop/mobile da árvore, colunas, continuidade, faturas e vesting.
 - `LTS_WEALTH_PRODUCT_CONTRACT.md`: contrato permanente.
 - `LTS_WEALTH_DECISION_LEDGER.md`: decisões e rejeições sem depender do chat.
@@ -39,4 +40,4 @@ Recuperar o Fluxo Diário validado sem sobrescrever o checkout com trabalho ante
 
 ## Estado do gate
 
-`EM_EXECUÇÃO`. Atualizar este checkpoint com o resultado e a identidade exata da candidata antes da exposição.
+`EM_EXECUÇÃO`. A tentativa cumulativa falhou no run `34492222128`; a montagem direta `v150-flow-direct-current-read-v2` está no run `34493923776`. Atualizar este checkpoint com o resultado final e a identidade exata da candidata antes da exposição.

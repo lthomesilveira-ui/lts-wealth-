@@ -2,9 +2,10 @@
 
 Purpose: evidence-backed sequence before asking the user to inspect a material candidate. Keep aligned with `PROJECT_MASTER_BACKLOG.md`, `LTS_WEALTH_CONTINUITY_HANDOFF.md` and immutable checkpoints.
 
-## Current gate — V152/V150 Daily Flow recovery
+## Current gate — direct V150 Daily Flow recovery
 - Scope is exclusively the Daily Flow. Do not ask the user to review Dashboard, Despesas, Receitas or Cartões as complete modules in this gate.
-- Candidate: `wip35-v162-candidate.html`; source chain V152 → V151 → V150; current read bridge `lts_browser_flow_v10`; no writer/schema change.
+- Candidate: `wip35-v162-candidate.html`; direct source `index.html` with the preserved V150 Flow component; V152 remains comparison evidence; current read bridge `lts_browser_flow_v10`; no writer/schema change.
+- The historical wrapper chain is forbidden in this gate because run `34492222128` proved a pre-readiness freeze caused by accumulated permanent timers/observers.
 - Required automatic evidence before exposure: desktop 1440×900 and mobile 390×844; historical balance continuity; 11 validated columns; day tree; fact protection; projected edit/duplicate/delete; identical Visa Aeternum/C6 inline invoice model; no page overflow; no future RSU/Cash Award in current balance before the evidenced vesting date.
 - Fixed `homologacao.html` manifest may change only after the recovery gate is green. Public `index.html` remains unchanged and unpromoted.
 - Human homologation remains a separate final state. Automatic PASS must never be rewritten as user approval.

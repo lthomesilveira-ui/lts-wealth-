@@ -5,7 +5,7 @@ Active implementation branch: `recovery-v152-flow-20260910`. Canonical v1.24 is 
 
 Purpose: this is the execution-order view of the LTS Wealth backlog. It does not replace documentary evidence or immutable checkpoints. `PROJECT_MASTER_BACKLOG.md` remains the complete persistent dependency list. This file makes the remaining work explicit so product delivery does not get lost behind release mechanics.
 
-Current milestone: recover and homologate the Daily Flow first. The technical source is V152 and the visual/functional contract is V150. The recovery must preserve the 11-column cash ladder, history tree, classifications, projected-event actions and uniform Visa Aeternum/C6 invoice detail while reading the current V10 financial model and excluding future awards from current balance. Dashboard implementation is paused until a full proposal image receives explicit approval.
+Current milestone: recover and homologate the Daily Flow first. The runtime source is the preserved V150 Flow component inside unchanged `index.html`; V152 is comparison evidence. The recovery must preserve the 11-column cash ladder, history tree, classifications, projected-event actions and uniform Visa Aeternum/C6 invoice detail while reading the current V10 financial model and excluding future awards from current balance. Dashboard implementation is paused until a full proposal image receives explicit approval.
 
 ## Recovery override — execution order
 1. Complete deterministic desktop/mobile Flow gate.
@@ -14,7 +14,7 @@ Current milestone: recover and homologate the Daily Flow first. The technical so
 4. Produce one complete Dashboard image and obtain explicit approval.
 5. Implement the approved Dashboard, then continue Despesas, Receitas, Cartões and remaining modules in coherent packages.
 
-The wrapper/iframe prohibition below applies to the final canonical application. V162 is an explicitly bounded recovery/homologation bridge to restore the accepted Flow before later consolidation; it is not a declaration that the historical wrapper chain is the final architecture.
+V162 uses one isolated homologation frame around the unchanged protected source, but does not execute the historical release-wrapper chain. The gate forbids that chain after its accumulated timers/observers were proven to freeze. The final application still must be canonical and frame-free.
 
 ## Definition of DONE for the app
 The LTS Wealth app is not considered delivered until all P0 items below are complete together in one canonical application:

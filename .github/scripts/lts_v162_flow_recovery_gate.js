@@ -173,6 +173,7 @@ async function run(browser, viewport, label){
   await page.waitForFunction(()=>document.getElementById('gate')?.hidden===true,null,{timeout:25000});
   await frame.waitForFunction(()=>window.__LTS_V162_FLOW_RECOVERY_STATUS?.route==='Fluxo Diário'&&window.__LTS_V162_FLOW_RECOVERY_STATUS?.last_flow_ok===true,null,{timeout:25000});
   log(`${label}:flow-ready`);
+  await page.screenshot({path:`v162-flow-${label}.png`,fullPage:false});
 
   if(!chain.some(x=>x.includes('/index.html')))throw new Error(`${label} protected Flow source missing ${JSON.stringify(chain)}`);
   if(chain.some(x=>/wip35-v1(?:3[7-9]|4\d|5[0-2])-candidate\.html/.test(x)))throw new Error(`${label} historical wrapper leaked into clean recovery ${JSON.stringify(chain)}`);
@@ -196,9 +197,12 @@ async function run(browser, viewport, label){
   if(!has(vestText,'12.909,65')||!has(vestText,'30.909,65'))throw new Error(`${label} vesting date not reflected ${vestText}`);
 
   await historical.locator('[data-d="2026-09-09"]').click();
-  const historyDetails=frame.locator('.fx89-details').filter({hasText:'Pagamento confirmado'});
+  const historyDetails=frame.locator('#d-2026-09-09 + .fx89-details');
   await historyDetails.waitFor({state:'visible',timeout:5000});
-  if(!has(await historyDetails.innerText(),'Histórico / movimentos'))throw new Error(`${label} history tree did not open`);
+  const historyTreeText=await historyDetails.innerText();
+  for(const needle of ['Histórico / movimentos','Compromissos','Receita'])if(!has(historyTreeText,needle))throw new Error(`${label} history tree missing ${needle}`);
+  if(!has(await historyDetails.locator('.fx89-detail-entry').allInnerTexts(),'1.000,00'))throw new Error(`${label} historical entry left its column`);
+  if(!has(await historyDetails.locator('.fx89-detail-exit').allInnerTexts(),'2.000,00'))throw new Error(`${label} historical exit left its column`);
   if(await historyDetails.locator('.floweditbtn,.flowdeletebtn').count())throw new Error(`${label} realized historical fact exposed edit actions`);
   log(`${label}:history-tree-pass`);
 

@@ -15,10 +15,10 @@ Purpose: compact operational bootstrap so project execution never depends on a l
 ## Current recovery state — 10/09/2026
 - The user rejected canonical v1.24 as a product baseline. Its green automation is retained only as technical history and must not be represented as user approval.
 - Active isolated branch: `recovery-v152-flow-20260910`, created from the current remote `main` without touching the dirty prior checkout.
-- Current delivery scope is only the Daily Flow: preserved V152 wrapper chain, V150 visual/functional Flow contract, and current authenticated reader `lts_browser_flow_v10`.
-- Candidate under test: `wip35-v162-candidate.html`; contract `v152-visual-v150-flow-current-read-v1`. The rejected Dashboard is hidden in this Flow-only homologation.
+- Current delivery scope is only the Daily Flow: direct use of the preserved V150 Flow component in `index.html`, V152 as audited comparison evidence, and current authenticated reader `lts_browser_flow_v10`.
+- Candidate under test: `wip35-v162-candidate.html`; contract `v150-flow-direct-current-read-v2`. The rejected Dashboard is hidden in this Flow-only homologation.
 - V150 requirements now persisted in `PROJECT_START_HERE.md`, `LTS_WEALTH_PRODUCT_CONTRACT.md` and `LTS_WEALTH_DECISION_LEDGER.md`: 11-column cash ladder, continuous historical rows, daily tree, classification, projected-event actions, unified Visa Aeternum/C6 invoice detail, and future awards excluded until their evidenced vesting/liquidity date.
-- `index.html` and all source files in the historical V137–V152 chain remain byte-for-byte untouched. Writers and Supabase schema are unchanged.
+- `index.html` and all source files in the historical V137–V152 chain remain byte-for-byte untouched. The wrappers are no longer executed: run `34492222128` proved that their accumulated permanent timers/observers freeze before Flow readiness. Writers and Supabase schema are unchanged.
 - Static and deterministic desktop/mobile gates are being completed before the fixed homologation manifest is changed. Authenticated real-data and physical-iPhone evidence remain separate and are not claimed.
 - Latest recovery checkpoint: `backups/V152_FLOW_RECOVERY_AUDIT_2026-09-10.md`.
 

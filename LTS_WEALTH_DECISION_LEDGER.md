@@ -32,6 +32,15 @@ Status: **EM IMPLEMENTAÇÃO / AINDA NÃO HOMOLOGADA**
 - Não alterar writers financeiros nem classificar dados automaticamente.
 - Validar continuidade histórica, árvore, classificação, ações, faturas Visa/C6 e regra de vesting em desktop e mobile antes da exposição.
 
+## 10/09/2026 — retirada da cadeia cumulativa de wrappers
+
+Status: **DECISÃO TÉCNICA COMPROVADA PELO GATE**
+
+- A primeira candidata tentou reaproveitar integralmente a cadeia V152→V150 e congelou antes de o Fluxo ficar pronto no teste de navegador (`34492222128`).
+- A causa observável é a acumulação de `setInterval` e `MutationObserver` permanentes em diferentes wrappers históricos; manter essa execução repetiria o travamento relatado pelo usuário.
+- A recuperação passa a carregar diretamente `index.html`, onde o componente validado do Fluxo permanece preservado, e injeta apenas uma ponte limitada das leituras V3/V4 para V10.
+- Os arquivos históricos V150–V152 e o `index.html` continuam intactos. Dashboard, writers e schema permanecem fora desta mudança.
+
 ## Pendências de decisão/evidência
 
 - Os ajustes exatos de fatura posteriores à V152 que não estejam demonstrados por código, screenshot ou documento permanecem `ABERTO_EVIDÊNCIA`; não devem ser reconstruídos por memória presumida.

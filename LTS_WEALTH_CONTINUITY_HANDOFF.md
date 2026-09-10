@@ -19,7 +19,8 @@ This file exists so project continuity never depends on chat context. Always re-
 ## Current recovery — read before all prior release history
 - The user rejected canonical v1.24. It remains deployed at the old fixed target until the replacement gate is green, but it is not a valid product baseline or user-approved Dashboard.
 - Current branch: `recovery-v152-flow-20260910`. Current candidate: `wip35-v162-candidate.html`.
-- Current scope: recover the Daily Flow only, using the preserved V152 chain and the V150 visual/functional behavior with current `lts_browser_flow_v10` reads.
+- Current scope: recover the Daily Flow only, loading the preserved V150 Flow component directly from unchanged `index.html`, using V152 as comparison evidence and current `lts_browser_flow_v10` reads.
+- Do not restore the cumulative V137–V152 runtime chain: browser run `34492222128` proved it freezes due to stacked permanent timers/observers. Contract now is `v150-flow-direct-current-read-v2`.
 - Read `PROJECT_START_HERE.md`, `LTS_WEALTH_PRODUCT_CONTRACT.md` and `LTS_WEALTH_DECISION_LEDGER.md` before this long history.
 - Do not redesign Dashboard in this package. The next Dashboard requires a complete image and explicit approval before implementation.
 - Do not modify `index.html`, Supabase schema or financial writers for this recovery.
