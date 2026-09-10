@@ -19,7 +19,8 @@ Purpose: compact operational bootstrap so project execution never depends on a l
 - Candidate under test: `wip35-v162-candidate.html`; contract `v150-flow-direct-current-read-v2`. The rejected Dashboard is hidden in this Flow-only homologation.
 - V150 requirements now persisted in `PROJECT_START_HERE.md`, `LTS_WEALTH_PRODUCT_CONTRACT.md` and `LTS_WEALTH_DECISION_LEDGER.md`: 11-column cash ladder, continuous historical rows, daily tree, classification, projected-event actions, unified Visa Aeternum/C6 invoice detail, and future awards excluded until their evidenced vesting/liquidity date.
 - `index.html` and all source files in the historical V137–V152 chain remain byte-for-byte untouched. The wrappers are no longer executed: run `34492222128` proved that their accumulated permanent timers/observers freeze before Flow readiness. Writers and Supabase schema are unchanged.
-- Static and deterministic desktop/mobile gates are being completed before the fixed homologation manifest is changed. Authenticated real-data and physical-iPhone evidence remain separate and are not claimed.
+- Deterministic gate `34495044417` is green at 1440×900 and 390×844 for the 11-column ladder, history tree, classifications, projected actions, Visa/C6 invoice parity, vesting boundary and no page overflow. Artifact `10159437102`; exact tested remote commit `d15aedeef62891e1bb512e429e27827a17b2b769`.
+- Fixed homologation exposure is the next step. Authenticated real-data and physical-iPhone evidence remain separate and are not claimed.
 - Latest recovery checkpoint: `backups/V152_FLOW_RECOVERY_AUDIT_2026-09-10.md`.
 
 ## Rejected prior execution state — canonical v1.24 at 10/09/2026 01:00 BRT

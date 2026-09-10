@@ -379,7 +379,7 @@ Canonical persistent project list. Never remove an open financial, documentary, 
 
 ## 5. Fluxo Diário / FIX86
 - [x] Recovery audit proved the cumulative V137–V152 wrapper runtime freezes before Flow readiness; those files remain evidence only and are forbidden in the V162 runtime.
-- [~] Direct V162 recovery of the preserved V150 Flow component is under deterministic desktop/mobile gate with current V10 reads and no writer/schema change.
+- [x] Direct V162 recovery of the preserved V150 Flow component passed deterministic desktop/mobile gate `34495044417` with current V10 reads and no writer/schema change.
 - [x] Mandatory Consolidado, Itaú, Bradesco, C6; history from 2013 where supported.
 - [x] Canonical Fluxo owns account switching without nested wrappers.
 - [x] `Saldo anterior | Entradas | Saídas | Saldo final`; balances visually differentiated.

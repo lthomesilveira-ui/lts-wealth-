@@ -6,8 +6,9 @@ Purpose: evidence-backed sequence before asking the user to inspect a material c
 - Scope is exclusively the Daily Flow. Do not ask the user to review Dashboard, Despesas, Receitas or Cartões as complete modules in this gate.
 - Candidate: `wip35-v162-candidate.html`; direct source `index.html` with the preserved V150 Flow component; V152 remains comparison evidence; current read bridge `lts_browser_flow_v10`; no writer/schema change.
 - The historical wrapper chain is forbidden in this gate because run `34492222128` proved a pre-readiness freeze caused by accumulated permanent timers/observers.
+- Automatic gate status: **PASS** in run `34495044417`, exact candidate commit `d15aedeef62891e1bb512e429e27827a17b2b769`, artifact `10159437102` (`sha256:2ccc244d24fd7f3bd386a560e3334731267457ed9ec3fde1b981b9204ecd35f3`).
 - Required automatic evidence before exposure: desktop 1440×900 and mobile 390×844; historical balance continuity; 11 validated columns; day tree; fact protection; projected edit/duplicate/delete; identical Visa Aeternum/C6 inline invoice model; no page overflow; no future RSU/Cash Award in current balance before the evidenced vesting date.
-- Fixed `homologacao.html` manifest may change only after the recovery gate is green. Public `index.html` remains unchanged and unpromoted.
+- Fixed `homologacao.html` manifest may now change to this green candidate. Public `index.html` remains unchanged and unpromoted.
 - Human homologation remains a separate final state. Automatic PASS must never be rewritten as user approval.
 - Dashboard work is blocked until a complete proposed image is presented and explicitly approved.
 

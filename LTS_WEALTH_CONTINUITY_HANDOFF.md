@@ -25,6 +25,7 @@ This file exists so project continuity never depends on chat context. Always re-
 - Do not redesign Dashboard in this package. The next Dashboard requires a complete image and explicit approval before implementation.
 - Do not modify `index.html`, Supabase schema or financial writers for this recovery.
 - Gate and publication status are recorded in `backups/V152_FLOW_RECOVERY_AUDIT_2026-09-10.md`.
+- Deterministic recovery gate `34495044417` is green on exact remote candidate `d15aedeef62891e1bb512e429e27827a17b2b769`; artifact `10159437102`. Fixed homologation exposure is next; human/data-real/iPhone approval remains open.
 
 ## Fixed links / access
 - Public: `https://lthomesilveira-ui.github.io/lts-wealth-/`.

@@ -24,13 +24,14 @@ Status: **AUTORIZADA**
 
 ## 10/09/2026 — candidata do Fluxo
 
-Status: **EM IMPLEMENTAÇÃO / AINDA NÃO HOMOLOGADA**
+Status: **GATE AUTOMÁTICO APROVADO / HOMOLOGAÇÃO HUMANA PENDENTE**
 
 - Criar uma candidata separada que abre diretamente no Fluxo e oculta o Dashboard rejeitado durante esta etapa.
 - Manter intactos os arquivos históricos V150–V152 e o `index.html` público.
 - Adaptar apenas as leituras legadas `lts_browser_flow_v3`/`v4` para o leitor autenticado atual `lts_browser_flow_v10`.
 - Não alterar writers financeiros nem classificar dados automaticamente.
 - Validar continuidade histórica, árvore, classificação, ações, faturas Visa/C6 e regra de vesting em desktop e mobile antes da exposição.
+- O gate determinístico `34495044417` aprovou desktop 1440×900 e mobile 390×844; isso comprova o contrato da fixture, não os dados reais nem a aprovação humana.
 
 ## 10/09/2026 — retirada da cadeia cumulativa de wrappers
 

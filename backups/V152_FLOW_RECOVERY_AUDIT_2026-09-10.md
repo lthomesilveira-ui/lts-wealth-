@@ -40,4 +40,10 @@ Recuperar o Fluxo Diário validado sem sobrescrever o checkout com trabalho ante
 
 ## Estado do gate
 
-`EM_EXECUÇÃO`. A tentativa cumulativa falhou no run `34492222128`; a montagem direta `v150-flow-direct-current-read-v2` está no run `34493923776`. Atualizar este checkpoint com o resultado final e a identidade exata da candidata antes da exposição.
+`VERDE_AUTOMÁTICO / HOMOLOGAÇÃO HUMANA PENDENTE`.
+
+- A tentativa cumulativa falhou no run `34492222128`, confirmando o congelamento.
+- A montagem direta `v150-flow-direct-current-read-v2`, commit remoto `d15aedeef62891e1bb512e429e27827a17b2b769`, passou no run `34495044417` em desktop 1440×900 e mobile 390×844.
+- Artefato `10159437102`, digest `sha256:2ccc244d24fd7f3bd386a560e3334731267457ed9ec3fde1b981b9204ecd35f3`, contém recibo JSON e as duas capturas.
+- O runtime comprovado contém somente a candidata e `index.html`; nenhum wrapper V137–V152 foi carregado.
+- Manifesto fixo ainda não foi alterado neste checkpoint. Dados reais autenticados e iPhone físico permanecem pendentes e não são alegados.
