@@ -1,6 +1,6 @@
 # LTS Wealth — Continuity Handoff
 
-Last materially refreshed: 2026-09-09 19:45 BRT (America/Sao_Paulo)
+Last materially refreshed: 2026-09-10 01:00 BRT (America/Sao_Paulo)
 
 This file exists so project continuity never depends on chat context. Always re-fetch `main`, active branch, `PROJECT_MASTER_BACKLOG.md`, `NEXT_HOMOLOGATION_GATE.md`, this file and the latest immutable checkpoint before every repository write.
 
@@ -24,16 +24,21 @@ This file exists so project continuity never depends on chat context. Always re-
 - Public fallback remains WIP35-v136; protected `index.html` blob remains `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
 - Public promotion remains unauthorized/not done.
 
-## Current exposed product — canonical v1.23 Daily-Use Flow Closure
-- Exact product `7f6bac39ec0705e21a498b416762276ea3b8dbea`; fixed-manifest exposure `d804eb0b5e972d2e86f8abc57d375e4de3e82219`; active recovery, `canonical-app-v1` and `main` are aligned by normal no-force fast-forward.
-- Contract `mobile-layer-disclosure-open-closed-invoice-actions-v1` keeps all 14 desktop columns and presents the nine future-liquidity layers behind an explicit per-day disclosure on mobile.
-- Open card invoices affect projected cash but do not expose or consolidate unclosed purchases; closed invoices preserve reconciled summary/category/full-purchase detail and the no-double-counting rule.
-- Projected events expose Editar, Postergar, Duplicar, Dividir/substituir and Cancelar previsão with inline validation, dialog semantics, Escape/focus restoration and append-only intent receipts. Historical facts remain read-only.
-- V1.23 preserves every V1.22→V1.9 product, safety and truth contract, including Reports, approved Dashboard density, 01/01 opening, exact 2029+D+30 horizon and the single canonical frontend.
-- Recovery gate/smoke `34413082102` / `34413082087`, canonical gate/smoke `34413258158` / `34413258173`, main smoke/Pages `34413472119` / `34413471764`, post-exposure smokes `34413672709` / `34413684107` / `34413697593` and Pages `34413696615`: SUCCESS.
-- Live unsigned manifest resolves to exact product `7f6bac39…`, loads `flow23` / `ux23` and remains `not_promoted`; public `index.html` is unchanged.
-- Latest immutable checkpoint: `backups/CANONICAL_APP_V123_DAILY_USE_FLOW_CLOSURE_CHECKPOINT_2026-09-09.md`.
+## Current exposed product — canonical v1.24 Responsive Dashboard Readability
+- Exact product `39cb869f27f7a5eb7e5f6c57ed125f7b2d2aa4fc`, tree `69086fe6deb874af855843825da8ea738f6ee7ae`; fixed-manifest exposure `084a3521b0b42a2f15b8ec18348dc90f7bdc2d65`, tree `b4715f4c462f40c8f82601404cbabb4f6d41f31d`; active recovery, `canonical-app-v1` and `main` are aligned by normal no-force fast-forward before the documentation package.
+- Contract `executive-readable-breakpoints-v1` separates the approved compact 1312×1199 reference from readable 1366×900 notebook, 1024×900 intermediate and 390×844 mobile compositions.
+- Permanent checks now measure font floors, action targets, KPI/main/bottom track counts, panel/chart geometry, planning-callout position and no horizontal overflow. Full desktop/mobile routes, Flow V1.23 and future-JWT recovery remain in the same receipt.
+- Financial/product invariants were not changed: five liquidity-first KPIs, facts before projections, four distinct liquidity layers, restricted FGTS, financial commitments separated from tasks and V151 management date separated from first negative.
+- Product recovery gate/smoke `34434661341` / `34434661330`, canonical gate/smoke `34435078818` / `34435078779`, main smoke/Pages `34435242921` / `34435242177`, post-exposure smokes `34435460592` / `34435523608` / `34435568259` and Pages `34435567557`: SUCCESS.
+- Recovery artifact `10135754220` / `sha256:fde8eceb5d07106dac1ba84db09d4c30a27d856cff78fac1a8698850c9b7312e`; canonical artifact `10135897969` / `sha256:eab76d8c7dcab132be5d09ca7a5b3cae44dc8819f56f1f14733cf5156778d7b8`.
+- Live unsigned manifest resolves to exact product `39cb869f…`, loads `?v=20260910-dashboard24` and remains `not_promoted`; browser verification proved truthful signed-out login, zero iframe, zero fixture and no raw error. Public `index.html` is unchanged.
+- Latest immutable checkpoint: `backups/CANONICAL_APP_V124_RESPONSIVE_DASHBOARD_READABILITY_CHECKPOINT_2026-09-10.md`.
 - Authenticated real mutation/readback/document/backup lifecycles, physical-iPhone E2E and public-root promotion remain open/not claimed.
+
+## Protected predecessor — canonical v1.23 Daily-Use Flow Closure
+- Exact product `7f6bac39ec0705e21a498b416762276ea3b8dbea`; fixed-manifest exposure `d804eb0b5e972d2e86f8abc57d375e4de3e82219`.
+- Contract `mobile-layer-disclosure-open-closed-invoice-actions-v1` remains the protected Flow floor for all 14 desktop columns, nine mobile liquidity layers, open/closed invoice truth and the append-only edit/postpone/duplicate/split/cancel lifecycle.
+- Immutable checkpoint: `backups/CANONICAL_APP_V123_DAILY_USE_FLOW_CLOSURE_CHECKPOINT_2026-09-09.md`.
 
 ## Protected predecessor — canonical v1.19 UX Closure
 - Exact product `37781c3b11389789716781accca6c1fdabea461c`, tree `626437edfa47d12be4a061f3ff6c88e077ae2304`; fixed-manifest exposure `59222846a5c7e67c923790da9ad4088df9781fa4`, tree `5b34ab00cecf338c51eeb97f94d339a4bb025b03`.
@@ -297,7 +302,7 @@ This is deterministic fixture/unauthenticated evidence, not authenticated physic
 - v154 accepted visual direction; v155 false-zero/navigation correction; v156 liquidity-first but rejected real iPhone; v157 WebKit deterministic pass but real-device rejection; v158 truthful fallback/product regression; v159 presentation restored but KPI data unavailable on real iPhone; v160 material-data readiness/truthful fallback; canonical app supersedes all as primary architecture.
 
 ## Open backlog that must always remain visible
-- Preserve the V1.19 holistic UX closure and approved Dashboard structure; pixel-perfect identity is not claimed as an evidence fact.
+- Preserve the V1.24 four-profile readability contract, V1.23 daily-use Flow closure and every protected predecessor; literal pixel identity is not claimed as an evidence fact.
 - Close the unified receipt rows that require authenticated real-data/write lifecycles and physical-device evidence; do not reinterpret automatic PASS as final delivery.
 - Controlled Auth review/enablement of leaked-password protection; database RLS/SECURITY DEFINER hardening is closed and must remain regression-protected.
 - Authenticated physical-iPhone canonical financial/data E2E.
@@ -317,7 +322,7 @@ This is deterministic fixture/unauthenticated evidence, not authenticated physic
 - Preserve official-reference visual language, mobile/desktop usability, backup/restore and traceability.
 
 ## User action now
-The autonomous executable package is published. Closing the remaining P0 evidence now requires an authenticated session and a physical-iPhone walkthrough; public-root promotion still requires explicit authorization.
+No basic QA is delegated to the user. Closing the remaining P0 evidence requires an authenticated session and a physical-iPhone material walkthrough; public-root promotion remains separate and requires explicit authorization.
 
 ## Route/session continuity + unified receipt — 08/09/2026
 - Route and management-pane intent now survive refresh/session restoration/back-forward under explicit allowlists; the future-JWT safe reset returns to login without discarding the intended product route.

@@ -2,12 +2,19 @@
 
 Purpose: evidence-backed sequence before asking the user to inspect a material candidate. Keep aligned with `PROJECT_MASTER_BACKLOG.md`, `LTS_WEALTH_CONTINUITY_HANDOFF.md` and immutable checkpoints.
 
-## Current canonical baseline — 09/09/2026 19:45 BRT
-- Fixed homologation selects **canonical v1.23 daily-use Flow closure** through `canonical-app.html`, exact product `7f6bac39ec0705e21a498b416762276ea3b8dbea`, exposure `d804eb0b5e972d2e86f8abc57d375e4de3e82219`.
-- Contract `mobile-layer-disclosure-open-closed-invoice-actions-v1` completes mobile liquidity disclosure, open/closed invoice truth, the five-action projection lifecycle and accessible editor behavior while preserving V1.22→V1.9.
-- Recovery gate/smoke `34413082102` / `34413082087`, canonical gate/smoke `34413258158` / `34413258173`, main smoke/Pages `34413472119` / `34413471764`, post-exposure smokes `34413672709` / `34413684107` / `34413697593` and Pages `34413696615`: SUCCESS.
-- Live unsigned manifest resolves to `7f6bac39…`, `flow23` / `ux23` and remains `not_promoted`; public `index.html` is unchanged at protected blob `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
+## Current canonical baseline — 10/09/2026 01:00 BRT
+- Fixed homologation selects **canonical v1.24 responsive Dashboard readability** through `canonical-app.html`, exact product `39cb869f27f7a5eb7e5f6c57ed125f7b2d2aa4fc`, exposure `084a3521b0b42a2f15b8ec18348dc90f7bdc2d65`.
+- Contract `executive-readable-breakpoints-v1` protects four deliberate viewport profiles: reference 1312×1199, notebook 1366×900, intermediate 1024×900 and mobile 390×844. The reference stays compact; shorter/wider and intermediate canvases gain readable text and reorganized tracks; mobile keeps its single-column decision flow.
+- The gate measures computed font floors, action height, grid-track count, panel/chart geometry, responsive planning-callout position and zero horizontal overflow. It retains the full Chromium desktop/WebKit mobile functional suite, JWT recovery and every V1.23→V1.9 contract.
+- Product recovery gate/smoke `34434661341` / `34434661330`, canonical gate/smoke `34435078818` / `34435078779`, main smoke/Pages `34435242921` / `34435242177`, post-exposure smokes `34435460592` / `34435523608` / `34435568259` and Pages `34435567557`: SUCCESS.
+- Recovery artifact `10135754220` / `sha256:fde8eceb5d07106dac1ba84db09d4c30a27d856cff78fac1a8698850c9b7312e`; canonical artifact `10135897969` / `sha256:eab76d8c7dcab132be5d09ca7a5b3cae44dc8819f56f1f14733cf5156778d7b8`.
+- Live manifest resolves to product `39cb869f…`, assets `?v=20260910-dashboard24` and remains `not_promoted`; browser verification proved truthful signed-out login, zero iframe/fixture/raw error. Public `index.html` is unchanged at protected blob `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
 - Next external gate is authenticated real lifecycle and physical-iPhone material homologation; neither is inferred from fixture/WebKit evidence.
+
+## Protected predecessor — canonical v1.23 Daily-Use Flow Closure
+- Exact product `7f6bac39ec0705e21a498b416762276ea3b8dbea`; fixed-manifest exposure `d804eb0b5e972d2e86f8abc57d375e4de3e82219`.
+- Contract `mobile-layer-disclosure-open-closed-invoice-actions-v1` remains the protected Flow floor for mobile liquidity disclosure, open/closed invoice truth and the five-action append-only projection lifecycle.
+- Immutable checkpoint: `backups/CANONICAL_APP_V123_DAILY_USE_FLOW_CLOSURE_CHECKPOINT_2026-09-09.md`.
 
 ## Prior canonical baseline — v1.19 retained as evidence
 - Public fallback: WIP35-v136 in `index.html`, unchanged; protected blob remains `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
@@ -210,11 +217,12 @@ Purpose: evidence-backed sequence before asking the user to inspect a material c
 - Public `index.html` remains unchanged.
 
 ## Exact deterministic evidence
-Current V1.15 recovery gate `34256124696` and permanent canonical gate `34256598442`: **SUCCESS**. V1.14, V150/V151+ Flow parity, V157+ and every v1.13→v1.6 capability/receipt baseline remains preserved.
+Current V1.24 recovery gate `34434661341` and permanent canonical gate `34435078818`: **SUCCESS**. V1.23→V1.6, V150/V151+ Flow parity and every capability/receipt baseline remain preserved.
 
-Validated in Chromium desktop 1312×1199 and WebKit mobile 390×844:
+Validated in Chromium reference 1312×1199, Chromium notebook 1366×900, Chromium intermediate 1024×900 and WebKit mobile 390×844:
 - five KPI cards populated under controlled fixture;
 - full Dashboard fits the approved 1312×1199 desktop canvas without document or Dashboard-bottom overflow; mobile remains scrollable and unclipped;
+- notebook and intermediate profiles meet computed font/action floors, intentional track composition and chart/panel geometry without horizontal overflow;
 - all six physical routes and return to Dashboard;
 - Fluxo supports Consolidado/Itaú/Bradesco/C6, nine distinct period presets plus one dedicated `Hoje` action, 14 desktop columns, account switching and expandable movements without technical labels;
 - Despesas nature × context, drilldown and period selector;

@@ -12,12 +12,14 @@ Purpose: compact operational bootstrap so project execution never depends on a l
 7. Before a repository write, freshness-check `main`, active branch, this file, and the SHAs of `PROJECT_MASTER_BACKLOG.md`, `NEXT_HOMOLOGATION_GATE.md`, `LTS_WEALTH_CONTINUITY_HANDOFF.md`, `CANONICAL_DELIVERY_MASTER_PLAN.md` and latest immutable checkpoint. Use line-limited reads; fully re-read only a file whose SHA changed or whose relevant section is needed.
 8. After every material package, gate, integration or newly discovered blocker, update this file so a chat may be abandoned/restarted at any moment without reconstruction work.
 
-## Current execution state — 09/09/2026 19:45 BRT
-- Canonical v1.23 exact product is `7f6bac39ec0705e21a498b416762276ea3b8dbea`; fixed-manifest exposure is `d804eb0b5e972d2e86f8abc57d375e4de3e82219`. `main`, `canonical-app-v1` and `canonical-v157plus-product-recovery` are aligned by normal no-force fast-forward.
-- V1.23 closes the recovered daily-use Flow package under `mobile-layer-disclosure-open-closed-invoice-actions-v1`: nine mobile liquidity layers start collapsed, open/closed invoice cycles are explicit, and edit/postpone/duplicate/split/cancel are accessible and append-only. V1.22→V1.9 remain protected underneath.
-- Recovery gate/smoke `34413082102` / `34413082087`, canonical gate/smoke `34413258158` / `34413258173`, main smoke/Pages `34413472119` / `34413471764`, post-exposure active/canonical/main smokes `34413672709` / `34413684107` / `34413697593` and Pages `34413696615`: SUCCESS.
-- Fixed homologation selects v1.23 at `https://lthomesilveira-ui.github.io/lts-wealth-/homologacao.html`; live manifest resolves to exact product `7f6bac39…`, `flow23` / `ux23` assets and `not_promoted`. Deterministic browser evidence covers Chromium desktop 1312×1199 and WebKit mobile 390×844.
-- Latest immutable evidence: `backups/CANONICAL_APP_V123_DAILY_USE_FLOW_CLOSURE_CHECKPOINT_2026-09-09.md`.
+## Current execution state — 10/09/2026 01:00 BRT
+- Canonical v1.24 exact product is `39cb869f27f7a5eb7e5f6c57ed125f7b2d2aa4fc`, tree `69086fe6deb874af855843825da8ea738f6ee7ae`; fixed-manifest exposure is `084a3521b0b42a2f15b8ec18348dc90f7bdc2d65`, tree `b4715f4c462f40c8f82601404cbabb4f6d41f31d`. `main`, `canonical-app-v1` and `canonical-v157plus-product-recovery` are aligned by normal no-force fast-forward before this documentation package.
+- Contract `executive-readable-breakpoints-v1` preserves the approved compact 1312×1199 Dashboard while introducing intentional readable layouts for 1366×900 notebook, 1024×900 intermediate and 390×844 mobile. Font floors, track composition, action height, panel geometry and zero horizontal overflow are permanent regression checks.
+- The five approved KPIs, observed×projected separation, four liquidity layers, documentary/restricted FGTS, financial commitments versus operational tasks and V151 management-point versus first-negative distinction are unchanged. V1.23→V1.9 remain protected underneath.
+- Product recovery gate/smoke `34434661341` / `34434661330`, canonical gate/smoke `34435078818` / `34435078779`, main smoke/Pages `34435242921` / `34435242177`, post-exposure active/canonical/main smokes `34435460592` / `34435523608` / `34435568259` and Pages `34435567557`: SUCCESS.
+- Recovery artifact `10135754220`, digest `sha256:fde8eceb5d07106dac1ba84db09d4c30a27d856cff78fac1a8698850c9b7312e`; canonical artifact `10135897969`, digest `sha256:eab76d8c7dcab132be5d09ca7a5b3cae44dc8819f56f1f14733cf5156778d7b8`. Both contain the unified receipt and four Dashboard profiles.
+- Fixed homologation at `https://lthomesilveira-ui.github.io/lts-wealth-/homologacao.html` resolves to exact product `39cb869f…`, loads `?v=20260910-dashboard24`, renders truthful signed-out login and exposes zero iframe, fixture content or raw application error. Manifest remains `not_promoted`.
+- Latest immutable evidence: `backups/CANONICAL_APP_V124_RESPONSIVE_DASHBOARD_READABILITY_CHECKPOINT_2026-09-10.md`.
 - Authenticated real write/document/backup lifecycles and physical-iPhone E2E remain external evidence gates and are not claimed.
 - Public `index.html` remains protected at blob `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
 
@@ -139,7 +141,7 @@ Purpose: compact operational bootstrap so project execution never depends on a l
 - Historical v144–v160 workflows remain manually/branch runnable but no longer run automatically on `main`; their wrapper-specific failures are not canonical release gates.
 
 ## Current immediate execution sequence
-1. Treat canonical v1.23 product `7f6bac39…` and exposure `d804eb0b…` as the current protected baseline; do not regress its daily-use Flow closure or any V1.22→V1.9 Flow, Reports, Dashboard, safety, history/horizon, document, classification, liquidity, V150/V151+ and public-`index.html` predecessor contract.
+1. Treat canonical v1.24 product `39cb869f…` and exposure `084a3521…` as the current protected baseline; do not regress its four-profile Dashboard readability or any V1.23→V1.9 Flow, Reports, Dashboard, safety, history/horizon, document, classification, liquidity, V150/V151+ and public-`index.html` predecessor contract.
 2. Use `LTS_WEALTH_REQUIREMENTS_TRACEABILITY.md` as the durable map from briefing → implementation → validation → pending; append recovered facts rather than relying on chat memory.
 3. Keep closed the 01/01/2026, rejected 24/08 band and 31/12/2029+D30 engineering gaps; retain Bradesco/Cofrinho and other documentary gaps without inference.
 4. Execute Dashboard, Flow, search/CSV, classification, liquidity, documents and backup/restore lifecycles when an authenticated browser identity is available.

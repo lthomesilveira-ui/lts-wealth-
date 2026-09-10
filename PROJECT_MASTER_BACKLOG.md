@@ -4,6 +4,17 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 
 Canonical persistent project list. Never remove an open financial, documentary, classification, reconciliation or product dependency during compaction. Detailed immutable evidence remains in `backups/`, `HISTORICAL_RECOVERY_LOG.md`, `PLANNING_EXCEL_TO_CURRENT_AUDIT_2026-08-30.md`, `NEXT_HOMOLOGATION_GATE.md` and release checkpoints.
 
+## P0 — Responsive Dashboard readability / canonical v1.24 — 10/09/2026
+- [x] Measured the published v1.23 Dashboard instead of treating a passing screenshot as sufficient: wide short screens still exposed 6.5–11.5 px operational text because the 1312×1199 compact-density rules applied to every wide viewport.
+- [x] Added contract `executive-readable-breakpoints-v1` with four intentional profiles: approved 1312×1199 reference, 1366×900 notebook, 1024×900 intermediate and 390×844 mobile.
+- [x] Preserved the exact five-KPI liquidity-first order, observed×projected truth, four liquidity layers, documentary FGTS, commitment/task boundary and V151 management-point/first-negative separation.
+- [x] Added permanent computed-style floors, grid-track/geometry checks, minimum action heights and no-horizontal-overflow assertions; added dedicated notebook and intermediate Chromium suites while retaining the full desktop Chromium/mobile WebKit route and JWT-recovery suites.
+- [x] Corrected the only pre-integration regression found by the gate: mobile Planning measured 431 px against the protected 430 px ceiling; the final 2 px chart adjustment passed without hiding content.
+- [x] Exact product `39cb869f27f7a5eb7e5f6c57ed125f7b2d2aa4fc`; exposure `084a3521b0b42a2f15b8ec18348dc90f7bdc2d65`; all release branches aligned without force before the documentation package.
+- [x] Recovery/canonical/main and post-exposure gates, smokes and Pages are SUCCESS; artifacts `10135754220` / `10135897969`; fixed homologation selects v1.24 assets `20260910-dashboard24`.
+- [x] Immutable checkpoint `backups/CANONICAL_APP_V124_RESPONSIVE_DASHBOARD_READABILITY_CHECKPOINT_2026-09-10.md`.
+- [ ] Authenticated real write/document/backup lifecycle and physical-iPhone evidence remain open/not claimed because they require the user's authenticated session/device.
+
 ## P0 — Daily-use Flow closure / canonical v1.23 — 09/09/2026
 - [x] Added mobile progressive disclosure for all nine future liquidity layers; each day starts compact and expands/collapses with an explicit accessible state.
 - [x] Separated open and closed card-invoice semantics. Open invoices affect projected cash without exposing or consolidating unclosed purchases; closed invoices retain reconciled composition and full detail.
