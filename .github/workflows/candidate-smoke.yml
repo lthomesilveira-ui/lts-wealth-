@@ -65,6 +65,9 @@ jobs:
           if target == 'canonical-app.html':
               assert version == 'canonical-v1', (version, target)
               mode = 'canonical'
+          elif target == 'wip35-v162-candidate.html':
+              assert version == 'wip35-v162', (version, target)
+              mode = 'flow-recovery'
           else:
               assert re.fullmatch(r'wip35-v\d+-candidate\.html', target), target
               mode = 'legacy'
@@ -233,7 +236,7 @@ jobs:
           print('v152_flow_recovery_static=PASS')
           PY
       - name: Install headless browser
-        if: steps.candidate.outputs.mode == 'legacy' || github.ref_name == 'recovery-v152-flow-20260910'
+        if: steps.candidate.outputs.mode == 'legacy' || steps.candidate.outputs.mode == 'flow-recovery' || github.ref_name == 'recovery-v152-flow-20260910'
         run: |
           npm install --no-save playwright@1.55.0
           npx playwright install --with-deps chromium
