@@ -224,7 +224,7 @@ jobs:
           from pathlib import Path
           html=Path('wip35-v162-candidate.html').read_text(encoding='utf-8')
           js=Path('wip35-v162-flow-recovery.js').read_text(encoding='utf-8')
-          required_html=['index.html?v162-flow-recovery','wip35-v162-flow-recovery.js?v=20260910-flow-recovery-v2','Fluxo Diário · homologação']
+          required_html=['index.html?v162-flow-recovery','wip35-v162-flow-recovery.js?v=20260910-flow-recovery-v3','Fluxo Diário · homologação']
           required_js=['v150-flow-direct-current-read-v2','lts_browser_flow_v3','lts_browser_flow_v4','lts_browser_flow_v10','legacy_flow_reads_mapped:true','financial_writer_changed:false','dashboard_in_scope:false','permanent_polling:false','source_candidate:\'index.html\'']
           missing=[x for x in required_html if x not in html]+[x for x in required_js if x not in js]
           assert not missing, 'Flow recovery markers missing: '+repr(missing)
