@@ -182,7 +182,14 @@ async function run(browser, viewport, label){
   if(!requested.includes('lts_browser_flow_v10'))throw new Error(`${label} current flow reader was not requested`);
 
   const text=await frame.locator('body').innerText();
-  for(const needle of ['Fluxo Diário','Saldo anterior','Entradas','Saídas','Saldo final','D0/D1','Saldo c/ D0/D1','RSU vested','Saldo c/ RSU','FGTS','Saldo total'])if(!has(text,needle))throw new Error(`${label} missing ${needle}`);
+  if(!has(text,'Fluxo Diário'))throw new Error(`${label} missing Fluxo Diário`);
+  const columnLabels=['Saldo anterior','Entradas','Saídas','Saldo final','D0/D1','Saldo c/ D0/D1','RSU vested','Saldo c/ RSU','FGTS','Saldo total'];
+  if(label==='desktop'){
+    for(const needle of columnLabels)if(!has(text,needle))throw new Error(`${label} missing ${needle}`);
+  }else{
+    const mobileLabels=await frame.locator('#d-2026-09-09 .fx87-cell').evaluateAll(nodes=>nodes.map(node=>getComputedStyle(node,'::before').content.replace(/^['"]|['"]$/g,'')));
+    for(const needle of columnLabels)if(!mobileLabels.some(value=>has(value,needle)))throw new Error(`${label} missing ${needle}`);
+  }
   for(const forbidden of ['Cash Awards futuros','RSUs futuras','Posição econômica total'])if(has(text,forbidden))throw new Error(`${label} leaked non-cash future layer ${forbidden}`);
 
   const rows=frame.locator('.fx87-row:not(.fx87-head)');

@@ -149,7 +149,32 @@
     if(!frame.d.getElementById('v162-flow-scope-css')){
       const style=frame.d.createElement('style');
       style.id='v162-flow-scope-css';
-      style.textContent='.nav [data-v="Dashboard"]{display:none!important}.footer{display:none!important}';
+      style.textContent=`
+        .nav [data-v="Dashboard"]{display:none!important}
+        .footer{display:none!important}
+        @media(max-width:820px){
+          .fx87-row.fx87-cons .fx87-cell:nth-child(n+2){display:block!important;padding:8px 7px!important;text-align:right!important;min-height:49px}
+          .fx87-row.fx87-cons .fx87-cell:nth-child(n+2)::before{display:block;margin-bottom:4px;color:var(--mut);font-size:8px;font-weight:850;line-height:1.15;text-align:left;text-transform:uppercase;letter-spacing:.025em}
+          .fx87-row.fx87-cons .fx87-cell:nth-child(2)::before{content:'Saldo anterior'}
+          .fx87-row.fx87-cons .fx87-cell:nth-child(3)::before{content:'Entradas'}
+          .fx87-row.fx87-cons .fx87-cell:nth-child(4)::before{content:'Saídas'}
+          .fx87-row.fx87-cons .fx87-cell:nth-child(5)::before{content:'Saldo final'}
+          .fx87-row.fx87-cons .fx87-cell:nth-child(6)::before{content:'D0/D1'}
+          .fx87-row.fx87-cons .fx87-cell:nth-child(7)::before{content:'Saldo c/ D0/D1'}
+          .fx87-row.fx87-cons .fx87-cell:nth-child(8)::before{content:'RSU vested'}
+          .fx87-row.fx87-cons .fx87-cell:nth-child(9)::before{content:'Saldo c/ RSU'}
+          .fx87-row.fx87-cons .fx87-cell:nth-child(10)::before{content:'FGTS restrito'}
+          .fx87-row.fx87-cons .fx87-cell:nth-child(11)::before{content:'Saldo total'}
+          .fx87-row.fx87-cons .fx87-cell:nth-child(2),
+          .fx87-row.fx87-cons .fx87-cell:nth-child(5),
+          .fx87-row.fx87-cons .fx87-cell:nth-child(7),
+          .fx87-row.fx87-cons .fx87-cell:nth-child(9),
+          .fx87-row.fx87-cons .fx87-cell:nth-child(11){background:#f2f4f6!important;border-radius:8px}
+          .fx87-row.fx87-cons .fx87-cell:nth-child(6),
+          .fx87-row.fx87-cons .fx87-cell:nth-child(7){border-top:1px solid #e4e9ef}
+          .fx87-date{display:flex!important;min-height:0!important;text-align:left!important}
+        }
+      `;
       (frame.d.head||frame.d.documentElement).appendChild(style);
     }
     if(!installRuntime(frame))return false;
