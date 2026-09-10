@@ -47,3 +47,12 @@ Recuperar o Fluxo Diário validado sem sobrescrever o checkout com trabalho ante
 - Artefato `10159437102`, digest `sha256:2ccc244d24fd7f3bd386a560e3334731267457ed9ec3fde1b981b9204ecd35f3`, contém recibo JSON e as duas capturas.
 - O runtime comprovado contém somente a candidata e `index.html`; nenhum wrapper V137–V152 foi carregado.
 - Manifesto fixo ainda não foi alterado neste checkpoint. Dados reais autenticados e iPhone físico permanecem pendentes e não são alegados.
+
+## Exposição final da etapa
+
+- O primeiro commit de exposição revelou uma corrida rara do bootstrap no smoke da `main`; o run paralelo da recovery passou, mas a `main` foi tratada como falha e não como falso positivo.
+- A proteção foi adicionada sem alterar o componente financeiro: o runtime agora aguarda a existência do documento antes de injetar o estilo/script.
+- Produto exato após a proteção: `ce7e188ccef4040a7d4f391b00d1734d0c05ae4e`.
+- Smokes finais: `main` `34496317856` PASS; recovery `34496320377` PASS; Pages `34496316912` PASS.
+- Artefato final da `main`: `10159937702`, digest `sha256:8637b383cade6241fc0d8257ab191b0521654fea14f4aa9dc752550082eada3c`.
+- O manifesto fixo seleciona `wip35-v162-candidate.html`; promoção ao `index.html` público continua não autorizada e não realizada.

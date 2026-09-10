@@ -3,12 +3,12 @@
   "version": "wip35-v162",
   "build": "V162 · Recuperação direta do Fluxo Diário V150",
   "path": "wip35-v162-candidate.html",
-  "candidate_head": "d15aedeef62891e1bb512e429e27827a17b2b769",
+  "candidate_head": "ce7e188ccef4040a7d4f391b00d1734d0c05ae4e",
   "public_fallback": "index.html",
   "promotion_status": "not_promoted",
-  "candidate_sha": "d15aedeef62891e1bb512e429e27827a17b2b769",
-  "exposed_from_main_sha": "3cc90ea603f40b8ae10007d9e52953638719692a",
+  "candidate_sha": "ce7e188ccef4040a7d4f391b00d1734d0c05ae4e",
+  "exposed_from_main_sha": "ce7e188ccef4040a7d4f391b00d1734d0c05ae4e",
   "exposure_mode": "flow_only_direct_v150_component_current_v10_read_no_historical_wrapper_runtime_dashboard_out_of_scope",
-  "gate_status": "recovery-gate-34495044417-pass_main-smoke-34495675343-pass_main-pages-34495673922-pass_desktop-1440x900_mobile-390x844_fixture-only_authenticated-real-data-not-claimed_physical-iphone-not-claimed",
-  "updated_at": "2026-09-10T15:27:59Z"
+  "gate_status": "recovery-gate-34495044417-pass_main-smoke-34496317856-pass_recovery-smoke-34496320377-pass_main-pages-34496316912-pass_desktop-1440x900_mobile-390x844_fixture-only_authenticated-real-data-not-claimed_physical-iphone-not-claimed",
+  "updated_at": "2026-09-10T15:34:53Z"
 }

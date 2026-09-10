@@ -9,6 +9,7 @@ Purpose: evidence-backed sequence before asking the user to inspect a material c
 - Automatic gate status: **PASS** in run `34495044417`, exact candidate commit `d15aedeef62891e1bb512e429e27827a17b2b769`, artifact `10159437102` (`sha256:2ccc244d24fd7f3bd386a560e3334731267457ed9ec3fde1b981b9204ecd35f3`).
 - Required automatic evidence before exposure: desktop 1440×900 and mobile 390×844; historical balance continuity; 11 validated columns; day tree; fact protection; projected edit/duplicate/delete; identical Visa Aeternum/C6 inline invoice model; no page overflow; no future RSU/Cash Award in current balance before the evidenced vesting date.
 - Fixed `homologacao.html` manifest may now change to this green candidate. Public `index.html` remains unchanged and unpromoted.
+- Fixed homologation now selects hardened product `ce7e188ccef4040a7d4f391b00d1734d0c05ae4e`. Final `main` smoke `34496317856`, recovery smoke `34496320377` and Pages `34496316912` are PASS; signed-out live routing/login is verified.
 - Human homologation remains a separate final state. Automatic PASS must never be rewritten as user approval.
 - Dashboard work is blocked until a complete proposed image is presented and explicitly approved.
 

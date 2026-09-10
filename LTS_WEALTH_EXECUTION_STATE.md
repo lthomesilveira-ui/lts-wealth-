@@ -21,6 +21,8 @@ Purpose: compact operational bootstrap so project execution never depends on a l
 - `index.html` and all source files in the historical V137–V152 chain remain byte-for-byte untouched. The wrappers are no longer executed: run `34492222128` proved that their accumulated permanent timers/observers freeze before Flow readiness. Writers and Supabase schema are unchanged.
 - Deterministic gate `34495044417` is green at 1440×900 and 390×844 for the 11-column ladder, history tree, classifications, projected actions, Visa/C6 invoice parity, vesting boundary and no page overflow. Artifact `10159437102`; exact tested remote commit `d15aedeef62891e1bb512e429e27827a17b2b769`.
 - Fixed homologation exposure is the next step. Authenticated real-data and physical-iPhone evidence remain separate and are not claimed.
+- Fixed homologation now selects V162. Exact hardened product `ce7e188ccef4040a7d4f391b00d1734d0c05ae4e`; final `main` smoke `34496317856`, recovery smoke `34496320377` and Pages `34496316912` are green. Final main artifact `10159937702`.
+- Signed-out live verification reached the V162 candidate and showed the truthful login surface. Signed-in real data and physical-iPhone approval remain the user's homologation gate.
 - Latest recovery checkpoint: `backups/V152_FLOW_RECOVERY_AUDIT_2026-09-10.md`.
 
 ## Rejected prior execution state — canonical v1.24 at 10/09/2026 01:00 BRT

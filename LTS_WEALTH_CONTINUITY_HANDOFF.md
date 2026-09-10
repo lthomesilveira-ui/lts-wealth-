@@ -26,6 +26,7 @@ This file exists so project continuity never depends on chat context. Always re-
 - Do not modify `index.html`, Supabase schema or financial writers for this recovery.
 - Gate and publication status are recorded in `backups/V152_FLOW_RECOVERY_AUDIT_2026-09-10.md`.
 - Deterministic recovery gate `34495044417` is green on exact remote candidate `d15aedeef62891e1bb512e429e27827a17b2b769`; artifact `10159437102`. Fixed homologation exposure is next; human/data-real/iPhone approval remains open.
+- Fixed homologation now selects hardened V162 product `ce7e188ccef4040a7d4f391b00d1734d0c05ae4e`. `main` smoke `34496317856`, recovery smoke `34496320377` and Pages `34496316912` passed; final artifact `10159937702`. Signed-out live routing/login passed; human signed-in data/iPhone approval remains open.
 
 ## Fixed links / access
 - Public: `https://lthomesilveira-ui.github.io/lts-wealth-/`.
