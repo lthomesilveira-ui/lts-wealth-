@@ -4,7 +4,17 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 
 Canonical persistent project list. Never remove an open financial, documentary, classification, reconciliation or product dependency during compaction. Detailed immutable evidence remains in `backups/`, `HISTORICAL_RECOVERY_LOG.md`, `PLANNING_EXCEL_TO_CURRENT_AUDIT_2026-08-30.md`, `NEXT_HOMOLOGATION_GATE.md` and release checkpoints.
 
-## P0 — Responsive Dashboard readability / canonical v1.24 — 10/09/2026
+## P0 — Recover the user-validated Daily Flow — 10/09/2026
+- [x] Record canonical v1.24 as `REJEITADO_USUARIO`; retain its tests only as historical engineering evidence.
+- [x] Isolate recovery from a fresh remote `main` and preserve the dirty prior checkout without overwrite.
+- [x] Establish V152 as the technical source and V150 as the visual/functional Daily Flow contract.
+- [x] Persist the restart contract, decision ledger and product rules outside chat memory.
+- [x] Build an isolated Flow-only candidate that hides the rejected Dashboard and maps legacy V3/V4 reads to authenticated V10 without changing writers or schema.
+- [~] Prove desktop/mobile layout, historical continuity, daily tree, classifications, fact protection, projection actions, Visa Aeternum/C6 invoice parity and vesting boundaries.
+- [ ] Expose the fixed homologation link only after the gate is green; then request material Flow homologation.
+- [ ] After Flow approval, prepare a complete Dashboard image for explicit approval before writing Dashboard code.
+
+## Rejected history — Responsive Dashboard readability / canonical v1.24 — 10/09/2026
 - [x] Measured the published v1.23 Dashboard instead of treating a passing screenshot as sufficient: wide short screens still exposed 6.5–11.5 px operational text because the 1312×1199 compact-density rules applied to every wide viewport.
 - [x] Added contract `executive-readable-breakpoints-v1` with four intentional profiles: approved 1312×1199 reference, 1366×900 notebook, 1024×900 intermediate and 390×844 mobile.
 - [x] Preserved the exact five-KPI liquidity-first order, observed×projected truth, four liquidity layers, documentary FGTS, commitment/task boundary and V151 management-point/first-negative separation.

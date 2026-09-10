@@ -1,11 +1,13 @@
 name: LTS candidate smoke
 on:
   push:
-    branches: [main, canonical-app-v1, canonical-v157plus-product-recovery, v143-life-real-feedback]
+    branches: [main, canonical-app-v1, canonical-v157plus-product-recovery, v143-life-real-feedback, recovery-v152-flow-20260910]
     paths:
       - 'index.html'
       - 'homologacao.html'
       - 'homologacao-current.json'
+      - 'wip35-v162-candidate.html'
+      - 'wip35-v162-flow-recovery.js'
       - 'canonical-app.html'
       - 'canonical-dashboard-fidelity.css'
       - 'canonical-liquidity.js'
@@ -37,6 +39,7 @@ on:
       - '.github/scripts/lts_candidate_browser_smoke.js'
       - '.github/scripts/lts_v143_browser_smoke.js'
       - '.github/scripts/lts_button_contract_audit.js'
+      - '.github/scripts/lts_v162_flow_recovery_gate.js'
       - '.github/workflows/candidate-smoke.yml'
   workflow_dispatch:
 permissions:
@@ -208,8 +211,27 @@ jobs:
       - name: Audit inherited button wiring contracts
         if: steps.candidate.outputs.mode == 'legacy'
         run: node .github/scripts/lts_button_contract_audit.js
+      - name: Validate V152 Flow recovery contract
+        if: github.ref_name == 'recovery-v152-flow-20260910' || steps.candidate.outputs.target == 'wip35-v162-candidate.html'
+        run: |
+          node --check wip35-v162-flow-recovery.js
+          node --check .github/scripts/lts_v162_flow_recovery_gate.js
+          python - <<'PY'
+          from pathlib import Path
+          html=Path('wip35-v162-candidate.html').read_text(encoding='utf-8')
+          js=Path('wip35-v162-flow-recovery.js').read_text(encoding='utf-8')
+          required_html=['wip35-v152-candidate.html?v162-flow-recovery','wip35-v162-flow-recovery.js?v=20260910-flow-recovery','Fluxo Diário · homologação']
+          required_js=['v152-visual-v150-flow-current-read-v1','lts_browser_flow_v3','lts_browser_flow_v4','lts_browser_flow_v10','legacy_flow_reads_mapped:true','financial_writer_changed:false','dashboard_in_scope:false','permanent_polling:false']
+          missing=[x for x in required_html if x not in html]+[x for x in required_js if x not in js]
+          assert not missing, 'Flow recovery markers missing: '+repr(missing)
+          assert 'setInterval(' not in js and 'MutationObserver' not in js
+          assert 'lts_browser_flow_mutate_v1' not in js
+          assert 'wip35-v151-candidate.html?v152-parent' in Path('wip35-v152-candidate.html').read_text(encoding='utf-8')
+          assert 'wip35-v150-candidate.html?v151-parent' in Path('wip35-v151-candidate.html').read_text(encoding='utf-8')
+          print('v152_flow_recovery_static=PASS')
+          PY
       - name: Install headless browser
-        if: steps.candidate.outputs.mode == 'legacy'
+        if: steps.candidate.outputs.mode == 'legacy' || github.ref_name == 'recovery-v152-flow-20260910'
         run: |
           npm install --no-save playwright@1.55.0
           npx playwright install --with-deps chromium
@@ -230,6 +252,14 @@ jobs:
           sleep 1
           sed 's/8765/8766/g' .github/scripts/lts_v143_browser_smoke.js >/tmp/lts_v143_browser_smoke.js
           NODE_PATH="$PWD/node_modules" node /tmp/lts_v143_browser_smoke.js
+      - name: Run V152 Flow recovery browser gate
+        if: github.ref_name == 'recovery-v152-flow-20260910' || steps.candidate.outputs.target == 'wip35-v162-candidate.html'
+        run: |
+          python3 -m http.server 8778 >/tmp/lts-http-v162.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID || true' EXIT
+          sleep 1
+          node .github/scripts/lts_v162_flow_recovery_gate.js
       - name: Upload smoke evidence
         if: always() && steps.candidate.outputs.mode == 'legacy'
         uses: actions/upload-artifact@v4
@@ -240,4 +270,14 @@ jobs:
             candidate-browser-smoke-result.json
             v143-browser-smoke-result.json
             button-contract-audit-result.json
+          if-no-files-found: error
+      - name: Upload V152 Flow recovery evidence
+        if: always() && (github.ref_name == 'recovery-v152-flow-20260910' || steps.candidate.outputs.target == 'wip35-v162-candidate.html')
+        uses: actions/upload-artifact@v4
+        with:
+          name: wip35-v162-flow-recovery-gate
+          path: |
+            v162-flow-recovery-result.json
+            v162-flow-desktop.png
+            v162-flow-mobile.png
           if-no-files-found: error

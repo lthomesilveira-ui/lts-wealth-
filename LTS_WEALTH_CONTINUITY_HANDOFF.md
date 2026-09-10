@@ -1,6 +1,6 @@
 # LTS Wealth — Continuity Handoff
 
-Last materially refreshed: 2026-09-10 01:00 BRT (America/Sao_Paulo)
+Last materially refreshed: 2026-09-10 (Flow recovery)
 
 This file exists so project continuity never depends on chat context. Always re-fetch `main`, active branch, `PROJECT_MASTER_BACKLOG.md`, `NEXT_HOMOLOGATION_GATE.md`, this file and the latest immutable checkpoint before every repository write.
 
@@ -16,6 +16,15 @@ This file exists so project continuity never depends on chat context. Always re-
 - Never force branch divergence; use normal fast-forward/merge only after fresh compare.
 - Preserve historical evidence back to 2013 where supported.
 
+## Current recovery — read before all prior release history
+- The user rejected canonical v1.24. It remains deployed at the old fixed target until the replacement gate is green, but it is not a valid product baseline or user-approved Dashboard.
+- Current branch: `recovery-v152-flow-20260910`. Current candidate: `wip35-v162-candidate.html`.
+- Current scope: recover the Daily Flow only, using the preserved V152 chain and the V150 visual/functional behavior with current `lts_browser_flow_v10` reads.
+- Read `PROJECT_START_HERE.md`, `LTS_WEALTH_PRODUCT_CONTRACT.md` and `LTS_WEALTH_DECISION_LEDGER.md` before this long history.
+- Do not redesign Dashboard in this package. The next Dashboard requires a complete image and explicit approval before implementation.
+- Do not modify `index.html`, Supabase schema or financial writers for this recovery.
+- Gate and publication status are recorded in `backups/V152_FLOW_RECOVERY_AUDIT_2026-09-10.md`.
+
 ## Fixed links / access
 - Public: `https://lthomesilveira-ui.github.io/lts-wealth-/`.
 - Fixed homologation: `https://lthomesilveira-ui.github.io/lts-wealth-/homologacao.html`.
@@ -24,7 +33,7 @@ This file exists so project continuity never depends on chat context. Always re-
 - Public fallback remains WIP35-v136; protected `index.html` blob remains `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
 - Public promotion remains unauthorized/not done.
 
-## Current exposed product — canonical v1.24 Responsive Dashboard Readability
+## Rejected product still exposed until replacement passes — canonical v1.24
 - Exact product `39cb869f27f7a5eb7e5f6c57ed125f7b2d2aa4fc`, tree `69086fe6deb874af855843825da8ea738f6ee7ae`; fixed-manifest exposure `084a3521b0b42a2f15b8ec18348dc90f7bdc2d65`, tree `b4715f4c462f40c8f82601404cbabb4f6d41f31d`; active recovery, `canonical-app-v1` and `main` are aligned by normal no-force fast-forward before the documentation package.
 - Contract `executive-readable-breakpoints-v1` separates the approved compact 1312×1199 reference from readable 1366×900 notebook, 1024×900 intermediate and 390×844 mobile compositions.
 - Permanent checks now measure font floors, action targets, KPI/main/bottom track counts, panel/chart geometry, planning-callout position and no horizontal overflow. Full desktop/mobile routes, Flow V1.23 and future-JWT recovery remain in the same receipt.

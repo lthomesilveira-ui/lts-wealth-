@@ -2,7 +2,15 @@
 
 Purpose: evidence-backed sequence before asking the user to inspect a material candidate. Keep aligned with `PROJECT_MASTER_BACKLOG.md`, `LTS_WEALTH_CONTINUITY_HANDOFF.md` and immutable checkpoints.
 
-## Current canonical baseline — 10/09/2026 01:00 BRT
+## Current gate — V152/V150 Daily Flow recovery
+- Scope is exclusively the Daily Flow. Do not ask the user to review Dashboard, Despesas, Receitas or Cartões as complete modules in this gate.
+- Candidate: `wip35-v162-candidate.html`; source chain V152 → V151 → V150; current read bridge `lts_browser_flow_v10`; no writer/schema change.
+- Required automatic evidence before exposure: desktop 1440×900 and mobile 390×844; historical balance continuity; 11 validated columns; day tree; fact protection; projected edit/duplicate/delete; identical Visa Aeternum/C6 inline invoice model; no page overflow; no future RSU/Cash Award in current balance before the evidenced vesting date.
+- Fixed `homologacao.html` manifest may change only after the recovery gate is green. Public `index.html` remains unchanged and unpromoted.
+- Human homologation remains a separate final state. Automatic PASS must never be rewritten as user approval.
+- Dashboard work is blocked until a complete proposed image is presented and explicitly approved.
+
+## Rejected historical exposure — canonical v1.24 at 10/09/2026 01:00 BRT
 - Fixed homologation selects **canonical v1.24 responsive Dashboard readability** through `canonical-app.html`, exact product `39cb869f27f7a5eb7e5f6c57ed125f7b2d2aa4fc`, exposure `084a3521b0b42a2f15b8ec18348dc90f7bdc2d65`.
 - Contract `executive-readable-breakpoints-v1` protects four deliberate viewport profiles: reference 1312×1199, notebook 1366×900, intermediate 1024×900 and mobile 390×844. The reference stays compact; shorter/wider and intermediate canvases gain readable text and reorganized tracks; mobile keeps its single-column decision flow.
 - The gate measures computed font floors, action height, grid-track count, panel/chart geometry, responsive planning-callout position and zero horizontal overflow. It retains the full Chromium desktop/WebKit mobile functional suite, JWT recovery and every V1.23→V1.9 contract.

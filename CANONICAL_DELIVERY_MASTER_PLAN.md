@@ -1,11 +1,20 @@
 # LTS Wealth — Canonical Delivery Master Plan
 
-Last refreshed: 2026-09-10 01:00 BRT
-Active implementation branch: `canonical-v157plus-product-recovery` (canonical v1.24 product `39cb869f27f7a5eb7e5f6c57ed125f7b2d2aa4fc`; fixed-manifest exposure `084a3521b0b42a2f15b8ec18348dc90f7bdc2d65`; all release branches aligned by normal no-force fast-forward before the documentation package)
+Last refreshed: 2026-09-10 (Flow recovery)
+Active implementation branch: `recovery-v152-flow-20260910`. Canonical v1.24 is retained as rejected historical evidence, not as the current user-approved product baseline.
 
 Purpose: this is the execution-order view of the LTS Wealth backlog. It does not replace documentary evidence or immutable checkpoints. `PROJECT_MASTER_BACKLOG.md` remains the complete persistent dependency list. This file makes the remaining work explicit so product delivery does not get lost behind release mechanics.
 
-Current milestone: canonical v1.24 preserves the full protected line and closes the measurable Dashboard readability gap across the approved 1312×1199 reference, 1366×900 notebook, 1024×900 intermediate and 390×844 mobile. Deterministic Chromium/WebKit gates, four-profile screenshots and all release/Pages checks are green. Remaining P0 evidence requiring external control is the authenticated real lifecycle and physical-iPhone material homologation.
+Current milestone: recover and homologate the Daily Flow first. The technical source is V152 and the visual/functional contract is V150. The recovery must preserve the 11-column cash ladder, history tree, classifications, projected-event actions and uniform Visa Aeternum/C6 invoice detail while reading the current V10 financial model and excluding future awards from current balance. Dashboard implementation is paused until a full proposal image receives explicit approval.
+
+## Recovery override — execution order
+1. Complete deterministic desktop/mobile Flow gate.
+2. Expose only the recovered Flow candidate on the fixed homologation link; keep public `index.html` protected.
+3. Obtain human Flow approval and register discrepancies without rewriting financial facts.
+4. Produce one complete Dashboard image and obtain explicit approval.
+5. Implement the approved Dashboard, then continue Despesas, Receitas, Cartões and remaining modules in coherent packages.
+
+The wrapper/iframe prohibition below applies to the final canonical application. V162 is an explicitly bounded recovery/homologation bridge to restore the accepted Flow before later consolidation; it is not a declaration that the historical wrapper chain is the final architecture.
 
 ## Definition of DONE for the app
 The LTS Wealth app is not considered delivered until all P0 items below are complete together in one canonical application:

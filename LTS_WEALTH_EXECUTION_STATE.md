@@ -12,7 +12,17 @@ Purpose: compact operational bootstrap so project execution never depends on a l
 7. Before a repository write, freshness-check `main`, active branch, this file, and the SHAs of `PROJECT_MASTER_BACKLOG.md`, `NEXT_HOMOLOGATION_GATE.md`, `LTS_WEALTH_CONTINUITY_HANDOFF.md`, `CANONICAL_DELIVERY_MASTER_PLAN.md` and latest immutable checkpoint. Use line-limited reads; fully re-read only a file whose SHA changed or whose relevant section is needed.
 8. After every material package, gate, integration or newly discovered blocker, update this file so a chat may be abandoned/restarted at any moment without reconstruction work.
 
-## Current execution state — 10/09/2026 01:00 BRT
+## Current recovery state — 10/09/2026
+- The user rejected canonical v1.24 as a product baseline. Its green automation is retained only as technical history and must not be represented as user approval.
+- Active isolated branch: `recovery-v152-flow-20260910`, created from the current remote `main` without touching the dirty prior checkout.
+- Current delivery scope is only the Daily Flow: preserved V152 wrapper chain, V150 visual/functional Flow contract, and current authenticated reader `lts_browser_flow_v10`.
+- Candidate under test: `wip35-v162-candidate.html`; contract `v152-visual-v150-flow-current-read-v1`. The rejected Dashboard is hidden in this Flow-only homologation.
+- V150 requirements now persisted in `PROJECT_START_HERE.md`, `LTS_WEALTH_PRODUCT_CONTRACT.md` and `LTS_WEALTH_DECISION_LEDGER.md`: 11-column cash ladder, continuous historical rows, daily tree, classification, projected-event actions, unified Visa Aeternum/C6 invoice detail, and future awards excluded until their evidenced vesting/liquidity date.
+- `index.html` and all source files in the historical V137–V152 chain remain byte-for-byte untouched. Writers and Supabase schema are unchanged.
+- Static and deterministic desktop/mobile gates are being completed before the fixed homologation manifest is changed. Authenticated real-data and physical-iPhone evidence remain separate and are not claimed.
+- Latest recovery checkpoint: `backups/V152_FLOW_RECOVERY_AUDIT_2026-09-10.md`.
+
+## Rejected prior execution state — canonical v1.24 at 10/09/2026 01:00 BRT
 - Canonical v1.24 exact product is `39cb869f27f7a5eb7e5f6c57ed125f7b2d2aa4fc`, tree `69086fe6deb874af855843825da8ea738f6ee7ae`; fixed-manifest exposure is `084a3521b0b42a2f15b8ec18348dc90f7bdc2d65`, tree `b4715f4c462f40c8f82601404cbabb4f6d41f31d`. `main`, `canonical-app-v1` and `canonical-v157plus-product-recovery` are aligned by normal no-force fast-forward before this documentation package.
 - Contract `executive-readable-breakpoints-v1` preserves the approved compact 1312×1199 Dashboard while introducing intentional readable layouts for 1366×900 notebook, 1024×900 intermediate and 390×844 mobile. Font floors, track composition, action height, panel geometry and zero horizontal overflow are permanent regression checks.
 - The five approved KPIs, observed×projected separation, four liquidity layers, documentary/restricted FGTS, financial commitments versus operational tasks and V151 management-point versus first-negative distinction are unchanged. V1.23→V1.9 remain protected underneath.
