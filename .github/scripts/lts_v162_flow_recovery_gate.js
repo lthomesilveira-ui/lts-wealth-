@@ -128,7 +128,7 @@ async function deepestReady(page){
     const chain=all.map(x=>x.url());
     if(!frame){await page.waitForTimeout(100);continue}
     try{
-      const ready=await withTimeout(frame.evaluate(()=>!!window.S&&typeof window.render==='function'&&!!window.__LTS_V162_FLOW_RECOVERY_STATUS),1000,'deep frame readiness');
+      const ready=await withTimeout(frame.evaluate(()=>typeof window.__LTS_V162_ROUTE_FLOW==='function'&&window.__LTS_V162_FLOW_RECOVERY_STATUS?.installed===true),1000,'deep frame readiness');
       if(ready)return {frame,chain};
     }catch(e){}
     await page.waitForTimeout(100);
@@ -171,12 +171,13 @@ async function run(browser, viewport, label){
   const {frame,chain}=await deepestReady(page);
   log(`${label}:deep-frame-ready`,`${chain.length} frames`);
   await page.waitForFunction(()=>document.getElementById('gate')?.hidden===true,null,{timeout:25000});
-  await frame.waitForFunction(()=>window.V==='Fluxo Diário'&&window.__LTS_V162_FLOW_RECOVERY_STATUS?.last_flow_ok===true,null,{timeout:25000});
+  await frame.waitForFunction(()=>window.__LTS_V162_FLOW_RECOVERY_STATUS?.route==='Fluxo Diário'&&window.__LTS_V162_FLOW_RECOVERY_STATUS?.last_flow_ok===true,null,{timeout:25000});
   log(`${label}:flow-ready`);
 
-  if(!chain.some(x=>x.includes('wip35-v152-candidate.html'))||!chain.some(x=>x.includes('wip35-v150-candidate.html'))||!chain.some(x=>x.includes('/index.html')))throw new Error(`${label} invalid recovery chain ${JSON.stringify(chain)}`);
+  if(!chain.some(x=>x.includes('/index.html')))throw new Error(`${label} protected Flow source missing ${JSON.stringify(chain)}`);
+  if(chain.some(x=>/wip35-v1(?:3[7-9]|4\d|5[0-2])-candidate\.html/.test(x)))throw new Error(`${label} historical wrapper leaked into clean recovery ${JSON.stringify(chain)}`);
   const status=await frame.evaluate(()=>window.__LTS_V162_FLOW_RECOVERY_STATUS);
-  if(status.contract!=='v152-visual-v150-flow-current-read-v1'||status.data_rpc!=='lts_browser_flow_v10'||status.financial_writer_changed!==false||status.permanent_polling!==false)throw new Error(`${label} invalid bridge status ${JSON.stringify(status)}`);
+  if(status.contract!=='v150-flow-direct-current-read-v2'||status.data_rpc!=='lts_browser_flow_v10'||status.financial_writer_changed!==false||status.permanent_polling!==false)throw new Error(`${label} invalid bridge status ${JSON.stringify(status)}`);
   if(!requested.includes('lts_browser_flow_v10'))throw new Error(`${label} current flow reader was not requested`);
 
   const text=await frame.locator('body').innerText();
@@ -222,7 +223,7 @@ async function run(browser, viewport, label){
   const deepOverflow=await frame.evaluate(()=>[document.documentElement.scrollWidth,document.documentElement.clientWidth]);
   if(label==='mobile'){
     if(overflow.outer[0]>overflow.outer[1]+2||deepOverflow[0]>deepOverflow[1]+2)throw new Error(`mobile page overflow ${JSON.stringify({overflow,deepOverflow})}`);
-    const dashboardVisible=await page.frameLocator('#shell').locator('#v152MobileNav [data-dest="Dashboard"]').isVisible().catch(()=>false);
+    const dashboardVisible=await page.frameLocator('#shell').locator('.nav [data-v="Dashboard"]').isVisible().catch(()=>false);
     if(dashboardVisible)throw new Error('rejected Dashboard remained exposed in Flow-only mobile gate');
   }
 
