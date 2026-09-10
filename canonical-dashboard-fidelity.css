@@ -566,7 +566,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
   #dashboard-view .info-item{font-size:10.5px;line-height:1.45}
   #dashboard-view .plan-meta .pill{font-size:9.8px;line-height:1.35}
   #planning-panel .planning-chart-stage{display:flex;flex-direction:column}
-  #planning-panel .planning-chart-stage .chart{height:168px;order:0}
+  #planning-panel .planning-chart-stage .chart{height:166px;order:0}
   #planning-panel .planning-decision{position:static;order:-1;width:100%;margin-bottom:9px;padding:10px 11px}
   #planning-panel .planning-decision span,#planning-panel .planning-decision small{font-size:10px;line-height:1.35}
   #planning-panel .planning-decision b{font-size:14px;line-height:1.2}
