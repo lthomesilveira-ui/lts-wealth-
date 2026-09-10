@@ -255,7 +255,7 @@
 }
 
 /* Fidelity pass 7 — the approved 1312×1199 executive canvas fits without desktop scrolling. */
-@media (min-width:1181px){
+@media (min-width:1181px) and (min-height:1100px){
   #dashboard-view.view{padding-bottom:20px}
   #dashboard-view .grid-main .chart{height:180px}
   #dashboard-view .plan-panel .chart{height:162px}
@@ -397,4 +397,178 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
   #dashboard-view .dist-row,#dashboard-view .dist-row b,#dashboard-view .bank-row,#dashboard-view .bank-row strong,#dashboard-view .bank-total{font-size:9.5px}
   #dashboard-view .rank-row b,#dashboard-view .rank-row strong,#dashboard-view .commit-row strong,#dashboard-view .commit-row em,#dashboard-view .update-row b{font-size:9.5px}
   #dashboard-view .rank-row span,#dashboard-view .commit-row small,#dashboard-view .update-row span{font-size:8px}
+}
+
+/* Fidelity pass 10 — height-aware desktop, intermediate hierarchy and mobile readability. */
+@media (min-width:1181px) and (min-height:1100px){
+  #dashboard-view .kpi label{font-size:12px}
+  #dashboard-view .kpi .meta{font-size:9.5px}
+  #dashboard-view .kpi-signal{font-size:8.5px}
+  #dashboard-view .kpi-evidence{font-size:7.2px}
+  #dashboard-view .panel-title h2{font-size:15.8px}
+  #dashboard-view .panel-title small{font-size:9px}
+  #dashboard-view .action-link{font-size:10px}
+  #dashboard-view .dist-row,#dashboard-view .dist-row b{font-size:10px}
+  #dashboard-view .bank-row,#dashboard-view .bank-row strong,#dashboard-view .bank-total{font-size:10.3px}
+  #dashboard-view .bank-row span{font-size:8.2px}
+  #dashboard-view .rank-row>div:nth-child(2) b,#dashboard-view .rank-row strong{font-size:10.3px}
+  #dashboard-view .rank-row>div:nth-child(2) span{font-size:8.4px}
+  #dashboard-view .commit-row strong,#dashboard-view .commit-row em{font-size:10.2px}
+  #dashboard-view .commit-row small{font-size:8.4px}
+  #dashboard-view .update-row b{font-size:10.2px}
+  #dashboard-view .update-row span{font-size:8.4px}
+  #dashboard-view .flow-col b{font-size:10.2px}
+  #dashboard-view .flow-col span{font-size:8.4px}
+  #dashboard-view .liquidity-legend{font-size:8.2px}
+  #dashboard-view .liquidity-layer-values>span{font-size:7.8px}
+  #dashboard-view .liquidity-layer-values b{font-size:8.5px}
+  #dashboard-view .info-item{font-size:8.8px}
+  #planning-panel .planning-decision span,#planning-panel .planning-decision small{font-size:7.4px}
+}
+
+@media (min-width:1181px) and (max-height:1099px){
+  #dashboard-view.view{padding-bottom:34px}
+  #dashboard-view .kpi{height:145px;padding:17px 17px 36px}
+  #dashboard-view .kpi-foot{left:17px;right:17px;bottom:11px}
+  #dashboard-view .kpi label{font-size:12.5px}
+  #dashboard-view .kpi strong{font-size:27px}
+  #dashboard-view .kpi .meta{font-size:10.5px}
+  #dashboard-view .kpi-signal{font-size:10px}
+  #dashboard-view .kpi-evidence{font-size:8px;padding:4px 7px}
+  #dashboard-view .panel{padding:16px}
+  #dashboard-view .panel-title{margin-bottom:12px}
+  #dashboard-view .panel-title h2{font-size:16.5px}
+  #dashboard-view .panel-title small{font-size:10.5px}
+  #dashboard-view .action-link{min-height:32px;font-size:11px}
+  #dashboard-view .grid-main .chart{height:218px}
+  #dashboard-view .plan-panel .chart{height:205px}
+  #dashboard-view .liquidity-legend{flex-wrap:wrap;gap:9px;margin-top:8px;padding-top:7px;font-size:9.5px;white-space:normal}
+  #dashboard-view .liquidity-layer-values{gap:8px;margin-top:9px;padding-top:9px}
+  #dashboard-view .liquidity-layer-values>span{font-size:9.5px}
+  #dashboard-view .liquidity-layer-values b{font-size:10.5px}
+  #dashboard-view .axis-x{font-size:8.5px}
+  #dashboard-view .dist-row,#dashboard-view .dist-row b{font-size:11px}
+  #dashboard-view .bank-row,#dashboard-view .bank-row strong,#dashboard-view .bank-total{font-size:11.2px}
+  #dashboard-view .bank-row span{font-size:9.5px}
+  #dashboard-view .rank-row>div:nth-child(2) b,#dashboard-view .rank-row strong{font-size:11.2px}
+  #dashboard-view .rank-row>div:nth-child(2) span{font-size:9.5px}
+  #dashboard-view .commit-row strong,#dashboard-view .commit-row em{font-size:11px}
+  #dashboard-view .commit-row small{font-size:9.5px}
+  #dashboard-view .update-row b{font-size:11px}
+  #dashboard-view .update-row span{font-size:9.5px}
+  #dashboard-view .flow-col b{font-size:11px}
+  #dashboard-view .flow-col span{font-size:9.5px}
+  #dashboard-view .info-item{font-size:10.3px}
+  #planning-panel .planning-decision{width:min(210px,50%);padding:9px 10px}
+  #planning-panel .planning-decision span,#planning-panel .planning-decision small{font-size:9px}
+  #planning-panel .planning-decision b{font-size:14px}
+}
+
+@media (max-width:1180px) and (min-width:821px){
+  #dashboard-view.view{padding:18px 20px 36px}
+  #dashboard-view .page-head{min-height:88px}
+  #dashboard-view .asof b{font-size:11.5px}
+  #dashboard-view .asof small{font-size:9px}
+  #dashboard-view .dashboard-reload{min-width:58px;font-size:10.5px}
+  #dashboard-view .status-pill{font-size:10px}
+  #dashboard-view .kpis{grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin-bottom:14px}
+  #dashboard-view .kpi{height:146px;padding:17px 17px 37px}
+  #dashboard-view .kpi:nth-child(-n+3){grid-column:span 2}
+  #dashboard-view .kpi:nth-child(n+4){grid-column:span 3}
+  #dashboard-view .kpi-foot{left:17px;right:17px;bottom:11px}
+  #dashboard-view .kpi label{font-size:12.5px}
+  #dashboard-view .kpi strong{font-size:25px}
+  #dashboard-view .kpi .meta{font-size:10.5px}
+  #dashboard-view .kpi-signal{font-size:10px}
+  #dashboard-view .grid-main{grid-template-columns:1.25fr 1fr;gap:12px;margin-bottom:12px}
+  #dashboard-view .grid-main>.panel:first-child{grid-column:1/-1}
+  #dashboard-view .grid-main>.panel:last-child{grid-column:auto}
+  #dashboard-view .grid-three{grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+  #dashboard-view .grid-bottom{grid-template-columns:1fr 1fr;gap:12px}
+  #dashboard-view .grid-bottom>.plan-panel{grid-column:1/-1}
+  #dashboard-view .grid-bottom>.card:last-child{grid-column:auto}
+  #dashboard-view .panel{padding:17px;overflow:hidden}
+  #dashboard-view .grid-main>.panel,#dashboard-view .grid-three>.panel,#dashboard-view .grid-bottom>.panel{min-height:306px}
+  #dashboard-view .grid-main>.panel:first-child,#dashboard-view .plan-panel{min-height:344px}
+  #dashboard-view .panel-title{margin-bottom:12px}
+  #dashboard-view .panel-title h2{font-size:17px}
+  #dashboard-view .panel-title small{font-size:11px}
+  #dashboard-view .action-link{min-height:34px;font-size:11.5px}
+  #dashboard-view .grid-main .chart{height:226px}
+  #dashboard-view .plan-panel .chart{height:214px}
+  #dashboard-view .liquidity-legend{gap:10px;margin-top:8px;padding-top:7px;font-size:10.5px}
+  #dashboard-view .liquidity-layer-values{gap:9px;margin-top:9px;padding-top:9px}
+  #dashboard-view .liquidity-layer-values>span{font-size:10px}
+  #dashboard-view .liquidity-layer-values b{font-size:11px}
+  #dashboard-view .axis-x{font-size:8.8px}
+  #dashboard-view .dist-row,#dashboard-view .dist-row b{font-size:11.5px}
+  #dashboard-view .bank-row,#dashboard-view .bank-row strong,#dashboard-view .bank-total{font-size:11.5px}
+  #dashboard-view .bank-row span{font-size:10px}
+  #dashboard-view .rank-row>div:nth-child(2) b,#dashboard-view .rank-row strong{font-size:11.5px}
+  #dashboard-view .rank-row>div:nth-child(2) span{font-size:10px}
+  #dashboard-view .commit-row strong,#dashboard-view .commit-row em{font-size:11.5px}
+  #dashboard-view .commit-row small{font-size:10px}
+  #dashboard-view .update-row b{font-size:11.5px}
+  #dashboard-view .update-row span{font-size:10px}
+  #dashboard-view .flow-col b{font-size:11.5px}
+  #dashboard-view .flow-col span{font-size:10px}
+  #dashboard-view .info-item{font-size:10.5px}
+  #dashboard-view .plan-meta .pill{font-size:9.5px}
+  #planning-panel .planning-decision{width:min(224px,48%);padding:9px 11px}
+  #planning-panel .planning-decision span,#planning-panel .planning-decision small{font-size:9.5px}
+  #planning-panel .planning-decision b{font-size:14px}
+}
+
+@media (max-width:820px){
+  .mobile-head span{font-size:10px}
+  .mobile-nav button{font-size:9px!important}
+  .mobile-nav button svg{width:18px!important;height:18px!important}
+  #dashboard-view.view{padding:14px 12px 22px}
+  #dashboard-view .page-head{gap:11px;margin-bottom:12px}
+  #dashboard-view .page-title h1{font-size:27px}
+  #dashboard-view .page-title p{font-size:12.5px;line-height:1.45}
+  #dashboard-view .asof{height:44px;padding:8px 10px}
+  #dashboard-view .asof b{font-size:10.5px}
+  #dashboard-view .asof small{font-size:8.5px}
+  #dashboard-view .dashboard-reload{height:44px;min-width:58px;font-size:10.5px}
+  #dashboard-view .status-pill{height:44px;min-width:66px;font-size:10.5px}
+  #dashboard-view .kpis{gap:9px;margin-bottom:10px}
+  #dashboard-view .kpi{height:126px;padding:14px 14px 34px}
+  #dashboard-view .kpi:last-child{height:110px}
+  #dashboard-view .kpi label{font-size:12px;line-height:1.25}
+  #dashboard-view .kpi strong{font-size:clamp(18px,5.1vw,21px);margin-top:9px}
+  #dashboard-view .kpi .meta{font-size:10px;line-height:1.35}
+  #dashboard-view .kpi-foot{left:14px;right:14px;bottom:10px}
+  #dashboard-view .kpi-signal{font-size:10px}
+  #dashboard-view .panel{padding:15px}
+  #dashboard-view .panel-title{align-items:flex-start;gap:8px;margin-bottom:12px}
+  #dashboard-view .panel-title h2{font-size:16px;line-height:1.2}
+  #dashboard-view .panel-title small{font-size:10.5px;line-height:1.35;text-align:right}
+  #dashboard-view .action-link{min-height:36px;display:inline-flex;align-items:center;font-size:10.5px}
+  #dashboard-view .grid-main .chart{height:190px}
+  #dashboard-view .flow-bars{height:180px}
+  #dashboard-view .liquidity-legend{gap:8px;margin-top:9px;padding-top:8px;font-size:10px;line-height:1.35}
+  #dashboard-view .chart-key{gap:6px}
+  #dashboard-view .chart-key:before{width:14px}
+  #dashboard-view .axis-x{font-size:8px}
+  #dashboard-view .liquidity-layer-values{gap:9px 12px;margin-top:10px;padding-top:10px}
+  #dashboard-view .liquidity-layer-values>span{font-size:9.8px;line-height:1.25}
+  #dashboard-view .liquidity-layer-values b{font-size:10.8px}
+  #dashboard-view .dist-row,#dashboard-view .dist-row b{font-size:11.5px}
+  #dashboard-view .bank-row,#dashboard-view .bank-row strong,#dashboard-view .bank-total{font-size:11.5px}
+  #dashboard-view .bank-row span{font-size:10px}
+  #dashboard-view .bank-logo{width:30px;height:30px;font-size:9px}
+  #dashboard-view .rank-row,#dashboard-view .commit-row,#dashboard-view .update-row{min-height:54px}
+  #dashboard-view .rank-row b,#dashboard-view .rank-row strong,#dashboard-view .commit-row strong,#dashboard-view .commit-row em,#dashboard-view .update-row b{font-size:11.5px}
+  #dashboard-view .rank-row span,#dashboard-view .commit-row small,#dashboard-view .update-row span{font-size:10px;line-height:1.35}
+  #dashboard-view .flow-col b{font-size:11.5px}
+  #dashboard-view .flow-col span{font-size:10px}
+  #dashboard-view .info-item{font-size:10.5px;line-height:1.45}
+  #dashboard-view .plan-meta .pill{font-size:9.8px;line-height:1.35}
+  #planning-panel .planning-chart-stage{display:flex;flex-direction:column}
+  #planning-panel .planning-chart-stage .chart{height:168px;order:0}
+  #planning-panel .planning-decision{position:static;order:-1;width:100%;margin-bottom:9px;padding:10px 11px}
+  #planning-panel .planning-decision span,#planning-panel .planning-decision small{font-size:10px;line-height:1.35}
+  #planning-panel .planning-decision b{font-size:14px;line-height:1.2}
+  #dashboard-view .empty-state{font-size:11px;line-height:1.45}
 }

@@ -87,7 +87,7 @@ function finalizeReceipt() {
   receipt.claim_boundary.deterministic_fixture = 'PASS';
   receipt.requirements = {
     architecture: { status: 'PASS', evidence: 'single canonical frontend; zero iframes' },
-    dashboard: { status: 'PASS_AUTOMATED', evidence: 'approved hierarchy, four current-liquidity quadrants, layered fact/base/RSU/FGTS chart semantics, V151 first-negative versus management-point decision cue, documentary commitments and approved 1312x1199 desktop single-screen density' },
+    dashboard: { status: 'PASS_AUTOMATED', evidence: 'approved hierarchy, four current-liquidity quadrants, layered fact/base/RSU/FGTS chart semantics, V151 first-negative versus management-point decision cue, documentary commitments, approved 1312x1199 single-screen density and responsive readability profiles' },
     flow: { status: 'PASS_AUTOMATED', evidence: 'V150 interaction parity plus V157 liquidity layers: compact historical rows, expandable movements, mobile progressive disclosure, open/closed invoice semantics, edit/postpone/duplicate/split/cancel lifecycle and preserved scroll' },
     expenses: { status: 'PASS_AUTOMATED', evidence: 'single-owner month/year history, nature x context, unassigned semantics and item drilldown' },
     cards: { status: 'PASS_AUTOMATED', evidence: 'current/next invoice and certified historical coverage' },
@@ -103,7 +103,7 @@ function finalizeReceipt() {
     reports: { status: 'PASS_AUTOMATED', evidence: 'executive JSON and recurrence CSV controls' },
     backup_restore: { status: 'PASS_CONTROLS_ONLY', evidence: 'checksum/stage/preview/confirmation controls; real apply remains open' },
     route_session_continuity: { status: 'PASS_AUTOMATED', evidence: 'deep link, refresh, pane restore, back/forward and safe JWT reset' },
-    performance_ux: { status: 'PASS_AUTOMATED', evidence: 'bounded browser waits, no console/page errors, no horizontal overflow, no desktop dashboard vertical overflow at 1312x1199, safe user errors, accessible control states, visible focus and readable mobile controls' },
+    performance_ux: { status: 'PASS_AUTOMATED', evidence: 'bounded browser waits, no console/page errors, no horizontal overflow, no desktop dashboard vertical overflow at 1312x1199, readable 1366x900/1024x900 density, safe user errors, accessible control states, visible focus and readable mobile controls' },
     authenticated_real_data: { status: 'OPEN', evidence: 'not executed by fixture browser gate' },
     authenticated_write_lifecycles: { status: 'OPEN', evidence: 'financial writes remain disabled in fixture' },
     physical_iphone: { status: 'OPEN', evidence: 'not executed by CI WebKit' },
@@ -457,7 +457,7 @@ async function assertUpdatesContract(page, label) {
     throw new Error(`${label}: classification-first hierarchy ${JSON.stringify(hierarchy)}`);
   }
   const recovery = await page.evaluate(() => window.__LTS_CANONICAL_RECOVERY_STATUS);
-  if (recovery?.build !== 'LTS v1.23' || recovery?.updates_contract !== 4 || recovery?.document_review_contract !== 4 || recovery?.dashboard_density_contract !== 1 || recovery?.planning_decision_contract !== 1 || recovery?.dashboard_visual_contract !== 'executive-cockpit-readable-density-v1' || recovery?.product_language_contract !== 'user-facing-product-language-v1' || recovery?.ux_closure_contract !== 'safe-errors-accessible-controls-readable-mobile-v1') {
+  if (recovery?.build !== 'LTS v1.24' || recovery?.updates_contract !== 4 || recovery?.document_review_contract !== 4 || recovery?.dashboard_density_contract !== 1 || recovery?.planning_decision_contract !== 1 || recovery?.dashboard_visual_contract !== 'executive-cockpit-readable-density-v1' || recovery?.dashboard_responsive_contract !== 'executive-readable-breakpoints-v1' || recovery?.product_language_contract !== 'user-facing-product-language-v1' || recovery?.ux_closure_contract !== 'safe-errors-accessible-controls-readable-mobile-v1') {
     throw new Error(`${label}: v1.19 recovery contract ${JSON.stringify(recovery)}`);
   }
   const reportsTab = page.locator('[data-mg-pane="reports"]');
@@ -663,9 +663,130 @@ async function assertManagementContract(page, label) {
   await openManagementPane(page, 'overview');
 }
 
+async function assertDashboardReadability(page, label, profile) {
+  const metrics = await page.evaluate(() => {
+    const node = selector => document.querySelector(selector);
+    const font = selector => {
+      const element = node(selector);
+      return element ? Number.parseFloat(getComputedStyle(element).fontSize) : null;
+    };
+    const rect = selector => {
+      const element = node(selector);
+      if (!element) return null;
+      const box = element.getBoundingClientRect();
+      return { width: box.width, height: box.height, top: box.top, left: box.left };
+    };
+    const boxes = selector => [...document.querySelectorAll(selector)].map(element => {
+      const box = element.getBoundingClientRect();
+      return { width: box.width, height: box.height, top: box.top, left: box.left };
+    });
+    const gridTracks = selector => {
+      const element = node(selector);
+      return element ? getComputedStyle(element).gridTemplateColumns.split(' ').filter(Boolean).length : 0;
+    };
+    const actionHeights = boxes('#dashboard-view .action-link').map(box => box.height);
+    return {
+      contract: node('#dashboard-view')?.dataset.dashboardResponsiveContract,
+      statusContract: window.__LTS_CANONICAL_DASHBOARD_STATUS?.responsive_contract,
+      viewport: { width: window.innerWidth, height: window.innerHeight },
+      page: {
+        scrollWidth: document.documentElement.scrollWidth,
+        clientWidth: document.documentElement.clientWidth,
+        scrollHeight: document.documentElement.scrollHeight
+      },
+      tracks: {
+        kpis: gridTracks('#dashboard-view .kpis'),
+        main: gridTracks('#dashboard-view .grid-main'),
+        three: gridTracks('#dashboard-view .grid-three'),
+        bottom: gridTracks('#dashboard-view .grid-bottom')
+      },
+      boxes: {
+        kpis: boxes('#dashboard-view .kpi'),
+        main: rect('#dashboard-view .grid-main'),
+        liquidity: rect('#dashboard-view .grid-main > .panel:first-child'),
+        bottom: rect('#dashboard-view .grid-bottom'),
+        planning: rect('#planning-panel'),
+        chart: rect('#dashboard-view .grid-main .chart'),
+        planningChart: rect('#planning-panel .chart'),
+        actionMinHeight: actionHeights.length ? Math.min(...actionHeights) : 0
+      },
+      planningPosition: getComputedStyle(node('#planning-panel .planning-decision')).position,
+      fonts: {
+        kpiLabel: font('#dashboard-view .kpi label'),
+        kpiMeta: font('#dashboard-view .kpi .meta'),
+        kpiSignal: font('#dashboard-view .kpi-signal'),
+        panelTitle: font('#dashboard-view .panel-title h2'),
+        panelMeta: font('#dashboard-view .panel-title small'),
+        action: font('#dashboard-view .action-link'),
+        bank: font('#dashboard-view .bank-row'),
+        bankMeta: font('#dashboard-view .bank-row span'),
+        rank: font('#dashboard-view .rank-row b'),
+        rankMeta: font('#dashboard-view .rank-row span'),
+        commitment: font('#dashboard-view .commit-row strong'),
+        commitmentMeta: font('#dashboard-view .commit-row small'),
+        update: font('#dashboard-view .update-row b'),
+        updateMeta: font('#dashboard-view .update-row span'),
+        legend: font('#dashboard-view .liquidity-legend'),
+        layer: font('#dashboard-view .liquidity-layer-values > span'),
+        layerValue: font('#dashboard-view .liquidity-layer-values b'),
+        planningNote: font('#planning-panel .planning-decision small'),
+        mobileNav: font('.mobile-nav button')
+      }
+    };
+  });
+
+  if (metrics.contract !== 'executive-readable-breakpoints-v1' || metrics.statusContract !== metrics.contract) {
+    throw new Error(`${label}: responsive Dashboard contract ${JSON.stringify(metrics)}`);
+  }
+  if (metrics.page.scrollWidth > metrics.page.clientWidth + 1) {
+    throw new Error(`${label}: responsive Dashboard horizontal overflow ${JSON.stringify(metrics.page)}`);
+  }
+
+  const floors = {
+    reference: { kpiLabel: 12, kpiMeta: 9.5, kpiSignal: 8.5, panelTitle: 15.8, panelMeta: 9, action: 10, bank: 10.3, bankMeta: 8.2, rank: 10.3, rankMeta: 8.4, commitment: 10.2, commitmentMeta: 8.4, update: 10.2, updateMeta: 8.4, legend: 8.2, layer: 7.8, layerValue: 8.5, planningNote: 7.4 },
+    laptop: { kpiLabel: 12.5, kpiMeta: 10.5, kpiSignal: 10, panelTitle: 16.5, panelMeta: 10.5, action: 11, bank: 11.2, bankMeta: 9.5, rank: 11.2, rankMeta: 9.5, commitment: 11, commitmentMeta: 9.5, update: 11, updateMeta: 9.5, legend: 9.5, layer: 9.5, layerValue: 10.5, planningNote: 9 },
+    intermediate: { kpiLabel: 12.5, kpiMeta: 10.5, kpiSignal: 10, panelTitle: 17, panelMeta: 11, action: 11.5, bank: 11.5, bankMeta: 10, rank: 11.5, rankMeta: 10, commitment: 11.5, commitmentMeta: 10, update: 11.5, updateMeta: 10, legend: 10.5, layer: 10, layerValue: 11, planningNote: 9.5 },
+    mobile: { kpiLabel: 12, kpiMeta: 10, kpiSignal: 10, panelTitle: 16, panelMeta: 10.5, action: 10.5, bank: 11.5, bankMeta: 10, rank: 11.5, rankMeta: 10, commitment: 11.5, commitmentMeta: 10, update: 11.5, updateMeta: 10, legend: 10, layer: 9.8, layerValue: 10.8, planningNote: 10, mobileNav: 9 }
+  }[profile];
+  if (!floors) throw new Error(`${label}: unknown Dashboard readability profile ${profile}`);
+  for (const [key, floor] of Object.entries(floors)) {
+    const actual = metrics.fonts[key];
+    if (actual == null || actual + 0.05 < floor) {
+      throw new Error(`${label}: ${key} readability floor ${actual} < ${floor}; metrics=${JSON.stringify(metrics)}`);
+    }
+  }
+
+  if (metrics.boxes.kpis.length !== 5 || metrics.boxes.kpis.some(box => box.width <= 0 || box.height <= 0)) {
+    throw new Error(`${label}: responsive KPI geometry ${JSON.stringify(metrics.boxes.kpis)}`);
+  }
+  if (profile === 'reference') {
+    if (metrics.boxes.chart?.height > 185 || metrics.boxes.planningChart?.height > 168) {
+      throw new Error(`${label}: 1312x1199 compact chart profile ${JSON.stringify(metrics.boxes)}`);
+    }
+  } else if (profile === 'laptop') {
+    if (metrics.boxes.chart?.height < 210 || metrics.boxes.planningChart?.height < 198 || metrics.tracks.main !== 3) {
+      throw new Error(`${label}: height-aware laptop profile ${JSON.stringify(metrics)}`);
+    }
+  } else if (profile === 'intermediate') {
+    const minKpiWidth = Math.min(...metrics.boxes.kpis.map(box => box.width));
+    const liquidityRatio = metrics.boxes.liquidity.width / metrics.boxes.main.width;
+    const planningRatio = metrics.boxes.planning.width / metrics.boxes.bottom.width;
+    if (minKpiWidth < 195 || liquidityRatio < 0.98 || planningRatio < 0.98 || metrics.boxes.chart?.height < 220) {
+      throw new Error(`${label}: intermediate hierarchy profile ${JSON.stringify({ minKpiWidth, liquidityRatio, planningRatio, metrics })}`);
+    }
+  } else if (profile === 'mobile') {
+    const minKpiWidth = Math.min(...metrics.boxes.kpis.map(box => box.width));
+    if (minKpiWidth < 165 || metrics.planningPosition !== 'static' || metrics.boxes.actionMinHeight < 35.5 || metrics.boxes.planningChart?.height > 170) {
+      throw new Error(`${label}: mobile readable profile ${JSON.stringify({ minKpiWidth, metrics })}`);
+    }
+  }
+  return metrics;
+}
+
 async function assertDashboardContract(page, label, mobile) {
   const contract = await page.locator('#dashboard-view').getAttribute('data-dashboard-contract');
   const densityContract = await page.locator('#dashboard-view').getAttribute('data-dashboard-density-contract');
+  const responsiveContract = await page.locator('#dashboard-view').getAttribute('data-dashboard-responsive-contract');
   const status = await page.evaluate(() => window.__LTS_CANONICAL_DASHBOARD_STATUS);
   if (contract !== 'reference-layered-liquidity-commitments-v3'
       || densityContract !== 'approved-1312x1199-single-screen-v1'
@@ -673,6 +794,8 @@ async function assertDashboardContract(page, label, mobile) {
       || status?.contract !== contract
       || status?.reference !== 'approved-1312x1199-liquidity-first'
       || status?.density_contract !== densityContract
+      || responsiveContract !== 'executive-readable-breakpoints-v1'
+      || status?.responsive_contract !== responsiveContract
       || status?.decision_hierarchy_contract !== 'today-commitments-direction-v1'
       || status?.visual_hierarchy_contract !== 'executive-cockpit-readable-density-v1'
       || status?.projection_contract !== 'fact-before-asof-projection-after-asof-v1'
@@ -690,8 +813,10 @@ async function assertDashboardContract(page, label, mobile) {
       || status?.restricted_points !== 5
       || status?.commitment_rows !== 3
       || status?.update_rows !== 3) {
-    throw new Error(`${label}: Dashboard fidelity status ${JSON.stringify({ contract, densityContract, status })}`);
+    throw new Error(`${label}: Dashboard fidelity status ${JSON.stringify({ contract, densityContract, responsiveContract, status })}`);
   }
+
+  await assertDashboardReadability(page, label, mobile ? 'mobile' : 'reference');
 
   const charts = page.locator('#dashboard-view [data-liquidity-chart="layered-fact-projection-v2"]');
   if (await charts.count() !== 2) throw new Error(`${label}: layered liquidity charts missing`);
@@ -1086,6 +1211,42 @@ async function run(browserType, label, viewport) {
   }
 }
 
+async function runResponsiveDashboard(browserType, label, viewport, profile) {
+  const startedAt = Date.now();
+  const browser = await browserType.launch(launchOptions(browserType));
+  const page = await browser.newPage({ viewport });
+  const errors = [];
+  page.on('pageerror', error => errors.push(`pageerror:${String(error)}`));
+  page.on('console', message => {
+    if (message.type() === 'error') errors.push(`console:${message.text()}`);
+  });
+  try {
+    await page.goto(`${baseUrl}?fixture=1`, { waitUntil: 'networkidle' });
+    await page.waitForFunction(() => window.__LTS_CANONICAL_STATUS?.ready === true);
+    await page.waitForFunction(() => window.__LTS_CANONICAL_RECOVERY_STATUS?.product_loaded === true);
+    await waitProduct(page, 'Dashboard');
+    const metrics = await assertDashboardReadability(page, label, profile);
+    const labels = await page.locator('#dashboard-view .kpi label').allTextContents();
+    if (JSON.stringify(labels) !== JSON.stringify(['Dinheiro em contas', 'Contas + curto prazo', 'RSUs vested', 'FGTS', 'Despesas (mês)'])) {
+      throw new Error(`${label}: responsive KPI truth contract ${JSON.stringify(labels)}`);
+    }
+    if (errors.length) throw new Error(`${label}: browser errors ${errors.join(' | ')}`);
+    await page.screenshot({ path: `canonical-dashboard-${label}.png`, fullPage: true });
+    receipt.suites[label] = {
+      status: 'PASS',
+      engine: browserType.name(),
+      viewport,
+      profile,
+      duration_ms: Date.now() - startedAt,
+      metrics,
+      coverage: ['Dashboard responsive readability', 'liquidity-first hierarchy', 'no horizontal overflow']
+    };
+    saveReceipt();
+  } finally {
+    await browser.close();
+  }
+}
+
 async function runJwtClockRecovery(browserType) {
   const browser = await browserType.launch(launchOptions(browserType));
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
@@ -1141,6 +1302,8 @@ async function runJwtClockRecovery(browserType) {
   try {
     await sleep(700);
     await run(chromium, 'desktop', { width: 1312, height: 1199 });
+    await runResponsiveDashboard(chromium, 'laptop', { width: 1366, height: 900 }, 'laptop');
+    await runResponsiveDashboard(chromium, 'intermediate', { width: 1024, height: 900 }, 'intermediate');
     const mobileEngine = localChromiumOnly ? chromium : webkit;
     await run(mobileEngine, 'mobile', { width: 390, height: 844 });
     await runJwtClockRecovery(mobileEngine);
