@@ -47,6 +47,7 @@ permissions:
 jobs:
   candidate-smoke:
     runs-on: ubuntu-latest
+    timeout-minutes: 8
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -259,7 +260,7 @@ jobs:
           SERVER_PID=$!
           trap 'kill $SERVER_PID || true' EXIT
           sleep 1
-          node .github/scripts/lts_v162_flow_recovery_gate.js
+          timeout 240s node .github/scripts/lts_v162_flow_recovery_gate.js
       - name: Upload smoke evidence
         if: always() && steps.candidate.outputs.mode == 'legacy'
         uses: actions/upload-artifact@v4

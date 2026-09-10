@@ -5,6 +5,19 @@ const PORT = process.env.LTS_FLOW_RECOVERY_PORT || '8778';
 const BASE = `http://127.0.0.1:${PORT}`;
 const RESULT = 'v162-flow-recovery-result.json';
 const TODAY = '2026-09-10';
+const WATCHDOG_MS = 210000;
+
+function log(label, detail=''){
+  console.log(`[v162-gate] ${label}${detail ? ` · ${detail}` : ''}`);
+}
+
+function withTimeout(promise, ms, label){
+  let timer;
+  return Promise.race([
+    promise,
+    new Promise((_,reject)=>{timer=setTimeout(()=>reject(new Error(`${label} timed out after ${ms}ms`)),ms)})
+  ]).finally(()=>clearTimeout(timer));
+}
 
 function write(value){
   fs.writeFileSync(RESULT, JSON.stringify(value, null, 2));
@@ -109,29 +122,30 @@ function invoice(args){
 }
 
 async function deepestReady(page){
-  for(let attempt=0;attempt<100;attempt++){
-    let frame=page.mainFrame(),chain=[frame.url()];
-    for(let i=0;i<24;i++){
-      const children=frame.childFrames();
-      if(!children.length)break;
-      frame=children[0];
-      chain.push(frame.url());
-    }
+  for(let attempt=0;attempt<120;attempt++){
+    const all=page.frames();
+    const frame=all.find(x=>{try{return new URL(x.url()).pathname.endsWith('/index.html')}catch(e){return false}});
+    const chain=all.map(x=>x.url());
+    if(!frame){await page.waitForTimeout(100);continue}
     try{
-      if(await frame.evaluate(()=>!!window.S&&typeof window.render==='function'&&!!window.__LTS_V162_FLOW_RECOVERY_STATUS))return {frame,chain};
+      const ready=await withTimeout(frame.evaluate(()=>!!window.S&&typeof window.render==='function'&&!!window.__LTS_V162_FLOW_RECOVERY_STATUS),1000,'deep frame readiness');
+      if(ready)return {frame,chain};
     }catch(e){}
-    await page.waitForTimeout(200);
+    await page.waitForTimeout(100);
   }
   throw new Error('Fluxo recovery frame did not become ready');
 }
 
 async function run(browser, viewport, label){
+  log(`${label}:start`,`${viewport.width}x${viewport.height}`);
   const context=await browser.newContext({viewport});
   const requested=[];
   await context.addInitScript(session=>{
     localStorage.setItem('lts_supabase_session_v1',JSON.stringify(session));
   },{access_token:'fixture-token',refresh_token:'fixture-refresh',expires_at:4102444800,user:{id:'fixture-user'}});
   const page=await context.newPage();
+  page.setDefaultTimeout(10000);
+  page.setDefaultNavigationTimeout(20000);
   const pageErrors=[];
   page.on('pageerror',error=>pageErrors.push(String(error?.message||error)));
   await page.route('https://tadhkamnwtsbdozwkyut.supabase.co/**',async route=>{
@@ -152,10 +166,13 @@ async function run(browser, viewport, label){
     await route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(body)});
   });
 
-  await page.goto(`${BASE}/wip35-v162-candidate.html`,{waitUntil:'domcontentloaded',timeout:30000});
+  await page.goto(`${BASE}/wip35-v162-candidate.html`,{waitUntil:'domcontentloaded',timeout:20000});
+  log(`${label}:document-loaded`);
   const {frame,chain}=await deepestReady(page);
+  log(`${label}:deep-frame-ready`,`${chain.length} frames`);
   await page.waitForFunction(()=>document.getElementById('gate')?.hidden===true,null,{timeout:25000});
   await frame.waitForFunction(()=>window.V==='Fluxo Diário'&&window.__LTS_V162_FLOW_RECOVERY_STATUS?.last_flow_ok===true,null,{timeout:25000});
+  log(`${label}:flow-ready`);
 
   if(!chain.some(x=>x.includes('wip35-v152-candidate.html'))||!chain.some(x=>x.includes('wip35-v150-candidate.html'))||!chain.some(x=>x.includes('/index.html')))throw new Error(`${label} invalid recovery chain ${JSON.stringify(chain)}`);
   const status=await frame.evaluate(()=>window.__LTS_V162_FLOW_RECOVERY_STATUS);
@@ -182,6 +199,7 @@ async function run(browser, viewport, label){
   await historyDetails.waitFor({state:'visible',timeout:5000});
   if(!has(await historyDetails.innerText(),'Histórico / movimentos'))throw new Error(`${label} history tree did not open`);
   if(await historyDetails.locator('.floweditbtn,.flowdeletebtn').count())throw new Error(`${label} realized historical fact exposed edit actions`);
+  log(`${label}:history-tree-pass`);
 
   await todayRow.locator(`[data-d="${TODAY}"]`).click();
   const dayDetails=frame.locator('.fx89-details').filter({hasText:'Fatura C6 Carbon'});
@@ -198,6 +216,7 @@ async function run(browser, viewport, label){
     for(const needle of ['Resumo da fatura','Por categoria','Casa','A classificar','Revisar classificação','Acessar fatura completa'])if(!has(invoiceText,needle))throw new Error(`${label} ${cardName} invoice missing ${needle}`);
     await invoicePanel.locator('#closeCardDetail').click();
   }
+  log(`${label}:invoice-parity-pass`);
 
   const overflow=await page.evaluate(()=>({outer:[document.documentElement.scrollWidth,document.documentElement.clientWidth],candidate:(()=>{const d=document.getElementById('shell')?.contentDocument;return d?[d.documentElement.scrollWidth,d.documentElement.clientWidth]:null})()}));
   const deepOverflow=await frame.evaluate(()=>[document.documentElement.scrollWidth,document.documentElement.clientWidth]);
@@ -211,10 +230,17 @@ async function run(browser, viewport, label){
   await page.screenshot({path:screenshot,fullPage:false});
   if(pageErrors.length)throw new Error(`${label} page errors ${JSON.stringify(pageErrors)}`);
   await context.close();
+  log(`${label}:pass`);
   return {label,viewport,pass:true,chain,requested:[...new Set(requested)],bridge:{contract:status.contract,data_rpc:status.data_rpc,last_flow_ok:status.last_flow_ok},screenshot};
 }
 
 (async()=>{
+  const watchdog=setTimeout(()=>{
+    const out={pass:false,error:`V162 Flow recovery gate watchdog exceeded ${WATCHDOG_MS}ms`};
+    write(out);
+    console.error(out.error);
+    process.exit(124);
+  },WATCHDOG_MS);
   const browser=await chromium.launch({headless:true});
   try{
     const results=[];
@@ -229,6 +255,7 @@ async function run(browser, viewport, label){
     console.error(out.error);
     process.exitCode=1;
   }finally{
-    await browser.close();
+    clearTimeout(watchdog);
+    await withTimeout(browser.close(),10000,'browser close').catch(error=>console.error(String(error)));
   }
 })();
