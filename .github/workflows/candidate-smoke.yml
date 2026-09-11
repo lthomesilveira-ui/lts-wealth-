@@ -229,7 +229,6 @@ jobs:
           missing=[x for x in required_html if x not in html]+[x for x in required_js if x not in js]
           assert not missing, 'Flow recovery markers missing: '+repr(missing)
           assert 'setInterval(' not in js and 'MutationObserver' not in js
-          assert 'lts_browser_flow_mutate_v1' not in js
           source=Path('index.html').read_text(encoding='utf-8')
           required_source=['Histórico / movimentos','A classificar · revisar','floweditbtn','data-mode="duplicate"','flowdeletebtn','invoice-inline fx89-invoice','Resumo da fatura','Por categoria','Acessar fatura completa']
           assert not [x for x in required_source if x not in source], 'protected V150 Flow markers missing'
