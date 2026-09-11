@@ -7,6 +7,8 @@ on:
       - 'wip35-v162-flow-recovery.js'
       - '.github/scripts/lts_flow_default_window_gate.py'
       - '.github/workflows/flow-default-window.yml'
+      - '.github/workflows/candidate-smoke.yml'
+      - 'homologacao-current.json'
   workflow_dispatch:
 permissions:
   contents: read

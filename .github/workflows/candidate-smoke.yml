@@ -224,8 +224,8 @@ jobs:
           from pathlib import Path
           html=Path('wip35-v162-candidate.html').read_text(encoding='utf-8')
           js=Path('wip35-v162-flow-recovery.js').read_text(encoding='utf-8')
-          required_html=['index.html?v162-flow-recovery','wip35-v162-flow-recovery.js?v=20260911-flow-runtime-guard-v4','Fluxo Diário · homologação']
-          required_js=['v150-flow-direct-current-read-v3','lts_browser_flow_v3','lts_browser_flow_v4','lts_browser_flow_v11','lts_browser_flow_mutate_v2','legacy_flow_reads_mapped:true','financial_writer_changed:false','dashboard_in_scope:false','permanent_polling:false','source_candidate:\'index.html\'']
+          required_html=['index.html?v162-flow-recovery','wip35-v162-flow-recovery.js?v=20260911-default-window-v5','Fluxo Diário · homologação']
+          required_js=['v150-flow-direct-current-read-v3','lts_browser_flow_v3','lts_browser_flow_v4','lts_browser_flow_v11','lts_browser_flow_mutate_v2','legacy_flow_reads_mapped:true','financial_writer_changed:false','dashboard_in_scope:false','permanent_polling:false','source_candidate:\'index.html\'','previous-5-today-next-30-v1']
           missing=[x for x in required_html if x not in html]+[x for x in required_js if x not in js]
           assert not missing, 'Flow recovery markers missing: '+repr(missing)
           assert 'setInterval(' not in js and 'MutationObserver' not in js
