@@ -1,0 +1,35 @@
+name: Flow default window contract
+on:
+  push:
+    branches: [main, recovery-v152-flow-20260910]
+    paths:
+      - 'wip35-v162-candidate.html'
+      - 'wip35-v162-flow-recovery.js'
+      - '.github/scripts/lts_flow_default_window_gate.py'
+      - '.github/workflows/flow-default-window.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  default-window:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install browser test dependencies
+        run: |
+          python -m pip install playwright==1.57.0
+          python -m playwright install --with-deps chromium
+      - name: Test default, manual range, re-entry and calendar boundaries
+        run: python .github/scripts/lts_flow_default_window_gate.py
+      - name: Preserve window evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: flow-default-window-evidence
+          path: |
+            window-qa.json
+            window-*.png

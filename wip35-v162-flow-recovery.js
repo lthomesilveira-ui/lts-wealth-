@@ -73,6 +73,118 @@
     mappedRpc.__ltsV162FlowBridge=true;
     S.rpc=mappedRpc;
 
+    // One owned loader prevents an older response from replacing a newer period.
+    const DEFAULT_RANGE_CONTRACT='previous-5-today-next-30-v1';
+    const DEFAULT_RANGE_LABEL='5 anteriores + 30 próximos';
+    let flowRequestSequence=0;
+    let lastRenderedRoute=V;
+    status.default_range_contract=DEFAULT_RANGE_CONTRACT;
+    status.default_range_applied=false;
+
+    function defaultRange(){
+      const day=today();
+      const shift=offset=>{
+        const date=new Date(day+'T12:00:00Z');
+        date.setUTCDate(date.getUTCDate()+offset);
+        return date.toISOString().slice(0,10);
+      };
+      return {from:shift(-5),to:shift(30)};
+    }
+
+    function useDefaultState(){
+      const range=defaultRange();
+      FLOWPRESET=DEFAULT_RANGE_LABEL;
+      SHOWZERO=true;
+      FLOWFORCEZERO=false;
+      FLOWYEAR=Number(today().slice(0,4));
+      status.default_range_applied=true;
+      status.default_range=range;
+      return range;
+    }
+
+    loadFlowRange=async function(from,to){
+      if(!status.default_range_applied){
+        const range=useDefaultState();
+        from=range.from;to=range.to;
+      }
+      const valid=value=>/^\d{4}-\d{2}-\d{2}$/.test(String(value||''));
+      if(!valid(from)||!valid(to)||from>to)return;
+      const sequence=++flowRequestSequence;
+      FLOWLOADING=true;FLOWFROM=from;FLOWTO=to;
+      status.refresh_requested=true;
+      status.last_flow_done=false;status.last_flow_ok=false;
+      status.requested_range={from,to};
+      if(V==='Fluxo Diário')render();
+      try{
+        const {data,error}=await S.rpc('lts_browser_flow_v3',{p_from:from,p_to:to});
+        if(sequence!==flowRequestSequence)return;
+        if(error||!data?.flow)throw new Error(error?.message||'Resposta do Fluxo sem dados');
+        FLOWQ=data.flow;
+        status.last_flow_ok=true;status.last_flow_error=null;
+        status.loaded_range={from,to};
+      }catch(error){
+        if(sequence!==flowRequestSequence)return;
+        status.last_flow_ok=false;
+        status.last_flow_error=String(error?.message||error||'Falha de leitura');
+        FLOWQ={error:'Não foi possível carregar este período. Tente novamente.',historical:{days:[],events:[]},current_future:{days:[],events:[]}};
+      }finally{
+        if(sequence===flowRequestSequence){
+          FLOWLOADING=false;status.last_flow_done=true;
+          if(V==='Fluxo Diário')render();
+        }
+      }
+    };
+
+    function openDefaultRange(){
+      const range=useDefaultState();
+      return loadFlowRange(range.from,range.to);
+    }
+
+    function bindDefaultRange(){
+      if(V!=='Fluxo Diário')return;
+      const first=document.querySelector('[data-p]');
+      if(first&&!document.getElementById('flowDefaultRange')){
+        const button=document.createElement('button');
+        button.id='flowDefaultRange';button.type='button';button.className='chip';
+        button.textContent=DEFAULT_RANGE_LABEL;
+        button.title='Cinco dias anteriores, hoje e os próximos 30 dias';
+        first.parentNode.insertBefore(button,first);
+      }
+      const button=document.getElementById('flowDefaultRange');
+      if(button){
+        const range=defaultRange(),active=FLOWFROM===range.from&&FLOWTO===range.to;
+        button.classList.toggle('active',active);
+        button.setAttribute('aria-pressed',String(active));
+        button.onclick=openDefaultRange;
+      }
+      // Preserve one Hoje control; it restores the complete default window.
+      document.querySelectorAll('[data-p="Hoje"]').forEach(node=>node.remove());
+      const go=document.getElementById('goToday');
+      if(go)go.onclick=()=>openDefaultRange();
+    }
+
+    const preservedRender=render;
+    render=function(){
+      const entered=V==='Fluxo Diário'&&lastRenderedRoute!=='Fluxo Diário';
+      lastRenderedRoute=V;
+      preservedRender();
+      bindDefaultRange();
+      if(entered&&D&&status.default_range_applied){
+        queueMicrotask(()=>{if(V==='Fluxo Diário')openDefaultRange()});
+      }
+    };
+    const preservedRenderNav=renderNav;
+    renderNav=function(){
+      preservedRenderNav();
+      const button=document.querySelector('.nav [data-v="Fluxo Diário"]');
+      if(button)button.onclick=()=>{
+        V='Fluxo Diário';lastRenderedRoute=V;
+        renderNav();openDefaultRange();
+      };
+    };
+    renderNav();
+    bindDefaultRange();
+
     function applyScope(){
       document.querySelectorAll('.brand small').forEach(node=>{
         node.textContent='Recuperação do Fluxo Diário';
@@ -95,14 +207,10 @@
       }
       applyScope();
 
-      if(!status.refresh_requested){
-        status.refresh_requested=true;
-        const from=today();
-        const end=new Date(from+'T12:00:00Z');
-        end.setUTCDate(end.getUTCDate()+29);
-        const to=end.toISOString().slice(0,10);
-        status.requested_range={from,to};
-        Promise.resolve(loadFlowRange(from,to)).catch(error=>{
+      // An inherited read may already be running when the frame loads.
+      // Let it finish before the default read so it cannot overwrite the new window.
+      if(!status.refresh_requested&&!FLOWLOADING){
+        Promise.resolve(openDefaultRange()).catch(error=>{
           status.last_flow_done=true;
           status.last_flow_ok=false;
           status.last_flow_error=String(error?.message||error||'Falha de leitura');
@@ -195,7 +303,7 @@
       hideGate();
       return true;
     }
-    if(status?.last_flow_done){
+    if(status?.refresh_requested&&status?.last_flow_done){
       hideGate();
       return true;
     }
