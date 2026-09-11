@@ -1,8 +1,9 @@
 (function(){
   'use strict';
 
-  const CONTRACT='v150-flow-direct-current-read-v2';
-  const TARGET_RPC='lts_browser_flow_v10';
+  const CONTRACT='v150-flow-direct-current-read-v3';
+  const TARGET_RPC='lts_browser_flow_v11';
+  const TARGET_MUTATION_RPC='lts_browser_flow_mutate_v2';
   const SESSION_KEY='lts_supabase_session_v1';
   const outer=document.getElementById('shell');
   const gate=document.getElementById('gate');
@@ -11,8 +12,9 @@
   function recoveryRuntime(){
     'use strict';
 
-    const CONTRACT='v150-flow-direct-current-read-v2';
-    const TARGET_RPC='lts_browser_flow_v10';
+    const CONTRACT='v150-flow-direct-current-read-v3';
+    const TARGET_RPC='lts_browser_flow_v11';
+    const TARGET_MUTATION_RPC='lts_browser_flow_mutate_v2';
     const existing=window.__LTS_V162_FLOW_RECOVERY_STATUS;
     if(existing?.installed===true)return;
 
@@ -25,6 +27,7 @@
       data_rpc:TARGET_RPC,
       legacy_flow_reads_mapped:true,
       public_index_changed:false,
+      mutation_rpc:TARGET_MUTATION_RPC,
       financial_writer_changed:false,
       dashboard_in_scope:false,
       bounded_boot:true,
@@ -39,7 +42,11 @@
     const baseRpc=S.rpc.bind(S);
     async function mappedRpc(name,args){
       const requested=String(name||'');
-      const mapped=(requested==='lts_browser_flow_v3'||requested==='lts_browser_flow_v4')?TARGET_RPC:requested;
+      const mapped=(requested==='lts_browser_flow_v3'||requested==='lts_browser_flow_v4')
+        ? TARGET_RPC
+        : requested==='lts_browser_flow_mutate_v1'
+          ? TARGET_MUTATION_RPC
+          : requested;
       calls.push({requested,mapped,at:new Date().toISOString()});
       if(calls.length>40)calls.shift();
       try{

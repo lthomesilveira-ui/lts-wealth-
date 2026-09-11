@@ -12,18 +12,20 @@ Purpose: compact operational bootstrap so project execution never depends on a l
 7. Before a repository write, freshness-check `main`, active branch, this file, and the SHAs of `PROJECT_MASTER_BACKLOG.md`, `NEXT_HOMOLOGATION_GATE.md`, `LTS_WEALTH_CONTINUITY_HANDOFF.md`, `CANONICAL_DELIVERY_MASTER_PLAN.md` and latest immutable checkpoint. Use line-limited reads; fully re-read only a file whose SHA changed or whose relevant section is needed.
 8. After every material package, gate, integration or newly discovered blocker, update this file so a chat may be abandoned/restarted at any moment without reconstruction work.
 
-## Current recovery state — 10/09/2026
+## Current recovery state — 11/09/2026
 - The user rejected canonical v1.24 as a product baseline. Its green automation is retained only as technical history and must not be represented as user approval.
 - Active isolated branch: `recovery-v152-flow-20260910`, created from the current remote `main` without touching the dirty prior checkout.
-- Current delivery scope is only the Daily Flow: direct use of the preserved V150 Flow component in `index.html`, V152 as audited comparison evidence, and current authenticated reader `lts_browser_flow_v10`.
-- Candidate under test: `wip35-v162-candidate.html`; contract `v150-flow-direct-current-read-v2`. The rejected Dashboard is hidden in this Flow-only homologation.
+- Current delivery scope is only the Daily Flow: direct use of the preserved V150 Flow component in `index.html`, V152 as audited comparison evidence, and authenticated reader `lts_browser_flow_v11`.
+- Candidate under test: `wip35-v162-candidate.html`; contract `v150-flow-direct-current-read-v3`. The rejected Dashboard is hidden in this Flow-only homologation.
 - V150 requirements now persisted in `PROJECT_START_HERE.md`, `LTS_WEALTH_PRODUCT_CONTRACT.md` and `LTS_WEALTH_DECISION_LEDGER.md`: 11-column cash ladder, continuous historical rows, daily tree, classification, projected-event actions, unified Visa Aeternum/C6 invoice detail, and future awards excluded until their evidenced vesting/liquidity date.
-- `index.html` and all source files in the historical V137–V152 chain remain byte-for-byte untouched. The wrappers are no longer executed: run `34492222128` proved that their accumulated permanent timers/observers freeze before Flow readiness. Writers and Supabase schema are unchanged.
+- `index.html` and all source files in the historical V137–V152 chain remain byte-for-byte untouched. The wrappers are no longer executed: run `34492222128` proved that their accumulated permanent timers/observers freeze before Flow readiness.
 - Deterministic gate `34495044417` is green at 1440×900 and 390×844 for the 11-column ladder, history tree, classifications, projected actions, Visa/C6 invoice parity, vesting boundary and no page overflow. Artifact `10159437102`; exact tested remote commit `d15aedeef62891e1bb512e429e27827a17b2b769`.
 - Fixed homologation exposure is the next step. Authenticated real-data and physical-iPhone evidence remain separate and are not claimed.
 - Fixed homologation now selects V162. Exact hardened product `ce7e188ccef4040a7d4f391b00d1734d0c05ae4e`; final `main` smoke `34496317856`, recovery smoke `34496320377` and Pages `34496316912` are green. Final main artifact `10159937702`.
 - Signed-out live verification reached the V162 candidate and showed the truthful login surface. Signed-in real data and physical-iPhone approval remain the user's homologation gate.
-- Latest recovery checkpoint: `backups/V152_FLOW_RECOVERY_AUDIT_2026-09-10.md`.
+- The first real-data test on 11/09 exposed a P0 V10 timeout: daily cron left a V14 cache while V10 required V18, so the browser attempted a fixed 730-day rebuild under the authenticated eight-second limit. Migration `canonical_flow_v18_cache_runtime_guard_2026_09_11` adds V11, a bounded cold-cache refresh, mutation-V2 cache invalidation and daily V18 prewarming.
+- Direct authenticated evidence for 11/09–10/10: warm V11 approximately 20 ms; deliberately cold V11 approximately 2.9 s under an explicit eight-second timeout. Full 730-day V18 prewarm succeeded separately. Frontend publication and user re-test remain open.
+- Latest recovery checkpoint: `backups/V162_FLOW_REAL_DATA_TIMEOUT_RECOVERY_CHECKPOINT_2026-09-11.md`.
 
 ## Rejected prior execution state — canonical v1.24 at 10/09/2026 01:00 BRT
 - Canonical v1.24 exact product is `39cb869f27f7a5eb7e5f6c57ed125f7b2d2aa4fc`, tree `69086fe6deb874af855843825da8ea738f6ee7ae`; fixed-manifest exposure is `084a3521b0b42a2f15b8ec18348dc90f7bdc2d65`, tree `b4715f4c462f40c8f82601404cbabb4f6d41f31d`. `main`, `canonical-app-v1` and `canonical-v157plus-product-recovery` are aligned by normal no-force fast-forward before this documentation package.

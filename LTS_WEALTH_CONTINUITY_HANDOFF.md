@@ -1,6 +1,6 @@
 # LTS Wealth — Continuity Handoff
 
-Last materially refreshed: 2026-09-10 (Flow recovery)
+Last materially refreshed: 2026-09-11 (Flow real-data timeout recovery)
 
 This file exists so project continuity never depends on chat context. Always re-fetch `main`, active branch, `PROJECT_MASTER_BACKLOG.md`, `NEXT_HOMOLOGATION_GATE.md`, this file and the latest immutable checkpoint before every repository write.
 
@@ -19,14 +19,16 @@ This file exists so project continuity never depends on chat context. Always re-
 ## Current recovery — read before all prior release history
 - The user rejected canonical v1.24. It remains deployed at the old fixed target until the replacement gate is green, but it is not a valid product baseline or user-approved Dashboard.
 - Current branch: `recovery-v152-flow-20260910`. Current candidate: `wip35-v162-candidate.html`.
-- Current scope: recover the Daily Flow only, loading the preserved V150 Flow component directly from unchanged `index.html`, using V152 as comparison evidence and current `lts_browser_flow_v10` reads.
-- Do not restore the cumulative V137–V152 runtime chain: browser run `34492222128` proved it freezes due to stacked permanent timers/observers. Contract now is `v150-flow-direct-current-read-v2`.
+- Current scope: recover the Daily Flow only, loading the preserved V150 Flow component directly from unchanged `index.html`, using V152 as comparison evidence and current `lts_browser_flow_v11` reads.
+- Do not restore the cumulative V137–V152 runtime chain: browser run `34492222128` proved it freezes due to stacked permanent timers/observers. Contract now is `v150-flow-direct-current-read-v3`.
 - Read `PROJECT_START_HERE.md`, `LTS_WEALTH_PRODUCT_CONTRACT.md` and `LTS_WEALTH_DECISION_LEDGER.md` before this long history.
 - Do not redesign Dashboard in this package. The next Dashboard requires a complete image and explicit approval before implementation.
-- Do not modify `index.html`, Supabase schema or financial writers for this recovery.
+- Do not modify `index.html` or financial facts. The 11/09 timeout recovery is limited to cache/read orchestration plus guarded mutation-cache invalidation; append-only financial-write semantics remain unchanged.
 - Gate and publication status are recorded in `backups/V152_FLOW_RECOVERY_AUDIT_2026-09-10.md`.
 - Deterministic recovery gate `34495044417` is green on exact remote candidate `d15aedeef62891e1bb512e429e27827a17b2b769`; artifact `10159437102`. Fixed homologation exposure is next; human/data-real/iPhone approval remains open.
 - Fixed homologation now selects hardened V162 product `ce7e188ccef4040a7d4f391b00d1734d0c05ae4e`. `main` smoke `34496317856`, recovery smoke `34496320377` and Pages `34496316912` passed; final artifact `10159937702`. Signed-out live routing/login passed; human signed-in data/iPhone approval remains open.
+- First authenticated use on 11/09 failed with a statement timeout because cron prepared V14 while V10 required V18 and the browser cold path forced 730 days. Migration `canonical_flow_v18_cache_runtime_guard_2026_09_11` is applied; V11 cold path is bounded to requested period + D+30, daily cron prewarms V18, and mutation V2 invalidates both cache generations.
+- Direct authenticated 11/09–10/10 evidence: approximately 20 ms warm and 2.9 s deliberately cold under an eight-second timeout. Frontend publication and user re-test are not yet claimed complete. Latest checkpoint: `backups/V162_FLOW_REAL_DATA_TIMEOUT_RECOVERY_CHECKPOINT_2026-09-11.md`.
 
 ## Fixed links / access
 - Public: `https://lthomesilveira-ui.github.io/lts-wealth-/`.

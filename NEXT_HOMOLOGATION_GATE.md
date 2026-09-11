@@ -4,12 +4,15 @@ Purpose: evidence-backed sequence before asking the user to inspect a material c
 
 ## Current gate — direct V150 Daily Flow recovery
 - Scope is exclusively the Daily Flow. Do not ask the user to review Dashboard, Despesas, Receitas or Cartões as complete modules in this gate.
-- Candidate: `wip35-v162-candidate.html`; direct source `index.html` with the preserved V150 Flow component; V152 remains comparison evidence; current read bridge `lts_browser_flow_v10`; no writer/schema change.
+- Candidate: `wip35-v162-candidate.html`; direct source `index.html` with the preserved V150 Flow component; V152 remains comparison evidence; current read bridge `lts_browser_flow_v11`; preserved V150 mutation calls map to guarded `lts_browser_flow_mutate_v2` without changing append-only financial-write semantics.
 - The historical wrapper chain is forbidden in this gate because run `34492222128` proved a pre-readiness freeze caused by accumulated permanent timers/observers.
 - Automatic gate status: **PASS** in run `34495044417`, exact candidate commit `d15aedeef62891e1bb512e429e27827a17b2b769`, artifact `10159437102` (`sha256:2ccc244d24fd7f3bd386a560e3334731267457ed9ec3fde1b981b9204ecd35f3`).
 - Required automatic evidence before exposure: desktop 1440×900 and mobile 390×844; historical balance continuity; 11 validated columns; day tree; fact protection; projected edit/duplicate/delete; identical Visa Aeternum/C6 inline invoice model; no page overflow; no future RSU/Cash Award in current balance before the evidenced vesting date.
 - Fixed `homologacao.html` manifest may now change to this green candidate. Public `index.html` remains unchanged and unpromoted.
 - Fixed homologation now selects hardened product `ce7e188ccef4040a7d4f391b00d1734d0c05ae4e`. Final `main` smoke `34496317856`, recovery smoke `34496320377` and Pages `34496316912` are PASS; signed-out live routing/login is verified.
+- This exposure failed its first authenticated real-data load on 11/09 with `canceling statement due to statement timeout`; it is not approved. Root cause was V14 daily cache versus the V18 cache required by V10, followed by an unnecessary 730-day rebuild inside the browser request.
+- Migration `canonical_flow_v18_cache_runtime_guard_2026_09_11` is applied. Deliberate cold-cache V11 for 11/09–10/10 completed in approximately 2.9 s under an explicit eight-second limit; warm V11 completed in approximately 20 ms. Daily cron now prewarms V18 and mutation V2 invalidates the active cache.
+- Do not request a repeat user test until the V11 frontend bridge passes GitHub Actions and the published fixed link is verified.
 - Human homologation remains a separate final state. Automatic PASS must never be rewritten as user approval.
 - Dashboard work is blocked until a complete proposed image is presented and explicitly approved.
 

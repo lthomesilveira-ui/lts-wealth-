@@ -101,7 +101,7 @@ function flow(){
         {event_date:TODAY,account:'C6',description:'Fatura C6 Carbon final 8304',signed_amount:-400,category:'A classificar',source:'current_event',source_ref:'c6-1',confidence:'documented_expected'}
       ]
     },
-    version:'daily-flow-browser-v10-fixture'
+    version:'daily-flow-browser-v11-fixture'
   };
 }
 
@@ -157,10 +157,10 @@ async function run(browser, viewport, label){
     requested.push(name);
     let body={ok:true};
     if(name==='lts_browser_product_v1')body={ok:true,mvp:product()};
-    else if(name==='lts_browser_flow_v10')body={ok:true,flow:flow()};
+    else if(name==='lts_browser_flow_v11')body={ok:true,flow:flow()};
     else if(name==='lts_browser_card_settlement_detail_v2')body=invoice(args);
     else if(name==='lts_browser_flow_event_editor_v1')body={editable:true,event_date:TODAY,display_amount:400,amount:400,description:'Fatura C6 Carbon final 8304',account:'C6',source:'current_event',source_ref:'c6-1'};
-    else if(name==='lts_browser_flow_mutate_v1')body={ok:true};
+    else if(name==='lts_browser_flow_mutate_v2')body={ok:true};
     else if(name==='lts_browser_expense_context_nature_v1')body={summary:{},contexts:[],categories:[],unassigned_states:[]};
     else if(name==='lts_browser_transactions_v1')body={ok:true,total:0,rows:[]};
     await route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(body)});
@@ -178,8 +178,8 @@ async function run(browser, viewport, label){
   if(!chain.some(x=>x.includes('/index.html')))throw new Error(`${label} protected Flow source missing ${JSON.stringify(chain)}`);
   if(chain.some(x=>/wip35-v1(?:3[7-9]|4\d|5[0-2])-candidate\.html/.test(x)))throw new Error(`${label} historical wrapper leaked into clean recovery ${JSON.stringify(chain)}`);
   const status=await frame.evaluate(()=>window.__LTS_V162_FLOW_RECOVERY_STATUS);
-  if(status.contract!=='v150-flow-direct-current-read-v2'||status.data_rpc!=='lts_browser_flow_v10'||status.financial_writer_changed!==false||status.permanent_polling!==false)throw new Error(`${label} invalid bridge status ${JSON.stringify(status)}`);
-  if(!requested.includes('lts_browser_flow_v10'))throw new Error(`${label} current flow reader was not requested`);
+  if(status.contract!=='v150-flow-direct-current-read-v3'||status.data_rpc!=='lts_browser_flow_v11'||status.mutation_rpc!=='lts_browser_flow_mutate_v2'||status.financial_writer_changed!==false||status.permanent_polling!==false)throw new Error(`${label} invalid bridge status ${JSON.stringify(status)}`);
+  if(!requested.includes('lts_browser_flow_v11'))throw new Error(`${label} current flow reader was not requested`);
 
   const text=await frame.locator('body').innerText();
   if(!has(text,'Fluxo Diário'))throw new Error(`${label} missing Fluxo Diário`);

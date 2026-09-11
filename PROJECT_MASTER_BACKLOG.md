@@ -10,8 +10,10 @@ Canonical persistent project list. Never remove an open financial, documentary, 
 - [x] Establish V152 as the technical source and V150 as the visual/functional Daily Flow contract.
 - [x] Persist the restart contract, decision ledger and product rules outside chat memory.
 - [x] Build an isolated Flow-only candidate that hides the rejected Dashboard and maps legacy V3/V4 reads to authenticated V10 without changing writers or schema.
-- [~] Prove desktop/mobile layout, historical continuity, daily tree, classifications, fact protection, projection actions, Visa Aeternum/C6 invoice parity and vesting boundaries.
-- [ ] Expose the fixed homologation link only after the gate is green; then request material Flow homologation.
+- [x] Prove desktop/mobile fixture layout, historical continuity, daily tree, classifications, fact protection, projection actions, Visa Aeternum/C6 invoice parity and vesting boundaries.
+- [x] Record that the first authenticated real-data test failed on 11/09: V14 daily cache did not satisfy V10/V18 and triggered a timeout-prone 730-day browser rebuild.
+- [~] Publish the V11 runtime guard: requested-period cold refresh, daily V18 prewarm and mutation-V2 invalidation; repeat all automatic gates before asking for a new user test.
+- [ ] Obtain material authenticated Flow homologation after the corrected link is published; automatic fixture PASS is not user approval.
 - [ ] After Flow approval, prepare a complete Dashboard image for explicit approval before writing Dashboard code.
 
 ## Rejected history — Responsive Dashboard readability / canonical v1.24 — 10/09/2026
