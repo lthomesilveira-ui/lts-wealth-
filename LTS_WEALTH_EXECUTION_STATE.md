@@ -1,17 +1,18 @@
 # LTS Wealth — Execution State
 
-Last material update: 2026-09-11, default Flow window and open Itaú reconciliation review.
+Last material update: 2026-09-11, gated default Flow window and open Itaú reconciliation review.
 
 This compact file is the operational restart point. The full previous execution-state document is preserved unchanged at `backups/LTS_WEALTH_EXECUTION_STATE_BEFORE_USER_CONFIRMATIONS_2026-09-11.md`. No historical checkpoint or master-backlog dependency was deleted.
 
 ## Latest request and release boundary
 - The user reported that the Itaú balance does not match and requested five preceding days, today and thirty following days whenever opening Flow.
-- The candidate changes only the recovery frontend: default D-5 through D+30 inclusive, all 36 calendar days; reload, Flow navigation, default chip and Hoje restore this window. Manual periods and bank filters remain available. Public index.html is unchanged.
-- Backend mixed-range QA passed with five historical days and thirty-one current/future days under an eight-second limit and controlled authenticated database claims. This is not browser E2E.
-- Dedicated desktop/mobile/year-boundary browser workflow is added; CI and publication are still pending at this commit. Do not report delivery until checked.
+- Tested product `41587c9d21904354b5dec7cb936452ffaae55eae` changes only the recovery frontend: default D-5 through D+30 inclusive, all 36 calendar days; reload, Flow navigation, default chip and Hoje restore this window. Manual periods and bank filters remain available. Public index.html is unchanged.
+- Recovery browser smoke `34646535785` and dedicated window browser gate `34646535781` are SUCCESS. The latter covers desktop, mobile, year boundary, bank-filter preservation, manual ranges, navigation, reload and late boot callbacks. Local browser navigation was blocked by the runtime administrator; it is not claimed.
+- Backend mixed-range QA passed with five historical days and thirty-one current/future days under an eight-second limit and controlled authenticated database claims. This is not signed-in browser E2E.
+- The fixed manifest selects the tested product for the publication package. Check the latest main Pages and post-manifest browser runs before claiming deployment. Public-root promotion remains unauthorized.
 - Itaú reconciliation remains OPEN. Its current calculated balance uses an older documentary anchor less two legacy projections. A later uploaded account statement was recovered but was absent from the operational index; it still does not cover the current day. No balance adjustment, cancellation or bank fact was invented.
 - Private `source_documents` audit key `itau-current-balance-20260911` preserves the actual values, source reference, formula, before-image, date ambiguity and missing current statement. The current checking-account statement is required to finish the reconciliation; investment and card statements cannot replace it.
-- Latest checkpoint: `backups/V162_DEFAULT_WINDOW_ITAU_REVIEW_2026-09-11.md`. Its open balance issue supersedes any earlier implication that all current bank balances were reconciled.
+- Latest release receipt: `backups/V162_DEFAULT_WINDOW_GATE_RECEIPT_2026-09-11.md`. Detailed review: `backups/V162_DEFAULT_WINDOW_ITAU_REVIEW_2026-09-11.md`. The open balance issue supersedes any earlier implication that all current bank balances were reconciled.
 
 ## Restart protocol
 1. Read this file and `PROJECT_START_HERE.md`; use GitHub and the private database as operational truth, not chat recall.
@@ -50,4 +51,4 @@ This compact file is the operational restart point. The full previous execution-
 - Preserve all remaining dependencies in `PROJECT_MASTER_BACKLOG.md`, `NEXT_HOMOLOGATION_GATE.md`, `LTS_WEALTH_CONTINUITY_HANDOFF.md` and `CANONICAL_DELIVERY_MASTER_PLAN.md`.
 
 ## Next work
-Verify the window browser gates before publishing. Complete the Itaú reconciliation against a current checking-account statement without synthetic balancing entries. Continue practical Flow homologation, all-card Aeternum-model parity where actual detail exists and the small Bradesco card identity gap. Prove real classification persistence before inviting bulk work. Keep the accumulated classification backlog and every other historical/documentary gap. A future Dashboard requires a complete proposed image and explicit approval before implementation.
+Check publication receipt and obtain the current Itaú checking-account statement to reconcile without synthetic balancing entries. Continue practical Flow homologation, all-card Aeternum-model parity where actual detail exists and the small Bradesco card identity gap. Prove real classification persistence before inviting bulk work. Keep the accumulated classification backlog and every other historical/documentary gap. A future Dashboard requires a complete proposed image and explicit approval before implementation.
