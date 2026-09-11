@@ -1,14 +1,14 @@
 {
   "schema": 1,
   "version": "wip35-v162",
-  "build": "V162 · Recuperação direta do Fluxo Diário V150",
+  "build": "V162 · Recuperação direta do Fluxo Diário V150 · runtime V11",
   "path": "wip35-v162-candidate.html",
-  "candidate_head": "ce7e188ccef4040a7d4f391b00d1734d0c05ae4e",
+  "candidate_head": "da3d801d94b1bff5b2df4ec86af346fd41fd023e",
   "public_fallback": "index.html",
   "promotion_status": "not_promoted",
-  "candidate_sha": "ce7e188ccef4040a7d4f391b00d1734d0c05ae4e",
-  "exposed_from_main_sha": "ce7e188ccef4040a7d4f391b00d1734d0c05ae4e",
-  "exposure_mode": "flow_only_direct_v150_component_current_v10_read_no_historical_wrapper_runtime_dashboard_out_of_scope",
-  "gate_status": "recovery-gate-34495044417-pass_main-smoke-34496317856-pass_recovery-smoke-34496320377-pass_main-pages-34496316912-pass_desktop-1440x900_mobile-390x844_fixture-only_authenticated-real-data-not-claimed_physical-iphone-not-claimed",
-  "updated_at": "2026-09-10T15:34:53Z"
+  "candidate_sha": "da3d801d94b1bff5b2df4ec86af346fd41fd023e",
+  "exposed_from_main_sha": "e9df9e434b1839bc2b7da537cebd87e8f380bff3",
+  "exposure_mode": "flow_only_direct_v150_component_current_v11_read_mutation_v2_no_historical_wrapper_runtime_dashboard_out_of_scope",
+  "gate_status": "recovery-smoke-34612905541-pass_artifact-10268379886_main-smoke-34613113790-pass_main-pages-34613111683-pass_desktop-1440x900_mobile-390x844_v11-bridge-pass_authenticated-real-data-backend-performance-pass_user-signed-in-frontend-retest-pending_physical-iphone-pending",
+  "updated_at": "2026-09-11T14:58:00Z"
 }
