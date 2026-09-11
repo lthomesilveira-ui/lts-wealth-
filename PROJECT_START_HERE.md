@@ -1,57 +1,51 @@
 # LTS Wealth — Comece aqui
 
-Este é o ponto obrigatório de retomada do projeto. Um novo chat ou agente deve ler este arquivo antes de alterar produto, banco ou homologação.
+Este é o ponto obrigatório de retomada do projeto. Leia também `LTS_WEALTH_EXECUTION_STATE.md` antes de alterar produto, banco ou homologação.
 
-## Verdade atual — 11/09/2026
+## Verdade atual — 11/09/2026, após confirmações do usuário
 
-- A candidata canônica v1.24 foi **rejeitada pelo usuário**. Gates automáticos verdes não equivalem a homologação humana.
-- A recuperação está dividida em entregas sequenciais. A entrega atual continua exclusivamente o **Fluxo Diário**.
-- A V150/V151 permanece como contrato visual/funcional validado pelo usuário; a V152 é referência auditada. A perda material ocorreu na V153. A candidata V162 executa diretamente o componente de Fluxo preservado em `index.html`, sem restaurar a cadeia cumulativa V137–V152 que congelava.
-- O runtime de leitura vigente é `lts_browser_flow_v11`, contrato `v150-flow-direct-current-read-v3`; as mutações V150 preservadas são encaminhadas ao writer guardado `lts_browser_flow_mutate_v2`.
-- O gate V11 de desktop/mobile e o Pages estão verdes. A homologação humana autenticada do Fluxo permanece em andamento e nunca deve ser inferida de automação.
-- Em 11/09 foi aplicado um refresh de dados reais suportados por novas evidências: âncoras bancárias documentadas, faturas/pagamentos evidenciados, posição de brokerage e lançamentos futuros inequívocos. O detalhe fechado de cartão recebido foi conciliado a delta zero e usa a mesma camada semântica do modelo Visa Aeternum; descrições sem regra confirmada permanecem `A classificar`.
-- A data contratual de vencimento de fatura e a data documentada de efeito no caixa podem ser distintas; a camada de Fluxo preserva ambas e usa o efeito de caixa quando houver evidência separada.
-- A edição manual do usuário no financiamento de setembro foi preservada pela trilha append-only e deve continuar prevalecendo no Fluxo efetivo.
-- Existem pendências que exigem decisão/evidência humana e não podem ser inferidas: possíveis duplicidades de dois pagamentos para Larissa, identidade de um pequeno débito de cartão Bradesco, composição exata do total de investimentos Itaú, um boleto DDA Mercado Pago sem confirmação de obrigação e um CSV de cartão fornecido dentro de ZIP criptografado.
-- **Não orientar classificação em massa ainda.** Antes disso, provar uma classificação real autenticada com ciclo `salvar → atualizar → reler/self-heal` na superfície recuperada.
-- O Dashboard não pode ser redesenhado nesta etapa. Antes de qualquer implementação futura, deve existir uma imagem completa da proposta e aprovação explícita do usuário.
-- O `index.html` público continua protegido e a promoção pública permanece não autorizada.
+- A candidata canônica v1.24 foi rejeitada pelo usuário. Gates automáticos verdes não equivalem a homologação humana.
+- A entrega atual continua exclusivamente o Fluxo Diário. V150/V151 é o contrato visual/funcional validado; V152 é referência auditada; a perda material ocorreu na V153.
+- A V162 executa diretamente o componente de Fluxo preservado em `index.html`, sem a cadeia cumulativa V137–V152 que congelava.
+- Leitor vigente: `lts_browser_flow_v11`, contrato `v150-flow-direct-current-read-v3`; mutações V150 preservadas são encaminhadas a `lts_browser_flow_mutate_v2`.
+- A atualização anterior de dados reais permanece aplicada. Vencimento contratual da fatura e data documentada de efeito no caixa são preservados separadamente. A edição manual do financiamento de setembro permanece efetiva.
+- As confirmações posteriores resolveram os itens antes ambíguos: o pagamento revisado para Larissa é ajuste do mesmo compromisso de saúde; o Pix de outubro é o seguro Volvo existente; o total de investimentos Itaú é o Cofrinho; o boleto DDA Mercado Pago não é obrigação do usuário e permanece excluído.
+- O ZIP do C6 foi aberto com a senha fornecida. O CSV foi importado como detalhe da fatura já existente/paga, conciliado a diferença zero. Anuidade e estorno são linhas separadas com efeito líquido zero; o pagamento anterior do arquivo não virou consumo nem outro débito bancário.
+- Foi acrescentada uma posição datada do Cofrinho, preservando a anterior. O leitor de posição corrente foi corrigido para escolher somente o snapshot mais recente de cada ativo, sem duplicá-lo e sem fabricar rendimento ou entrada de caixa.
+- Regras exatas já existentes no projeto foram reaproveitadas nas classificações; categorias genéricas do emissor não substituem a taxonomia LTS.
+- As decisões, fontes decodificadas, checksums, antes/depois e verificações estão na camada privada e nos checkpoints de execução. A senha não foi gravada nesses documentos ou metadados.
+- Continua pendente a identidade documental do pequeno débito de cartão Bradesco. Não atribuir a um Visa específico por aproximação de data ou valor.
+- Não orientar classificação em massa ainda: primeiro provar uma classificação real no navegador com `salvar → atualizar → reler/self-heal`.
+- O Dashboard segue fora de escopo. Antes de implementação futura deve existir uma imagem completa da proposta e aprovação explícita.
+- `index.html` público continua protegido; promoção pública não autorizada.
 
-## Ordem obrigatória de leitura ao retomar
+## Ordem de leitura
 
-1. `PROJECT_START_HERE.md`
-2. `LTS_WEALTH_PRODUCT_CONTRACT.md`
-3. `LTS_WEALTH_DECISION_LEDGER.md`
-4. `LTS_WEALTH_EXECUTION_STATE.md`
-5. `NEXT_HOMOLOGATION_GATE.md`
-6. `PROJECT_MASTER_BACKLOG.md`
-7. `backups/V162_FLOW_REAL_DATA_REFRESH_CHECKPOINT_2026-09-11.md`
-8. checkpoint posterior em `backups/`, se existir
+1. `LTS_WEALTH_EXECUTION_STATE.md` e este arquivo.
+2. `LTS_WEALTH_PRODUCT_CONTRACT.md` e `LTS_WEALTH_DECISION_LEDGER.md`.
+3. `backups/V162_USER_CONFIRMATIONS_C6_IMPORT_CHECKPOINT_2026-09-11.md` e eventual checkpoint posterior.
+4. Se necessário para a tarefa: `NEXT_HOMOLOGATION_GATE.md`, `PROJECT_MASTER_BACKLOG.md`, `LTS_WEALTH_CONTINUITY_HANDOFF.md` e `CANONICAL_DELIVERY_MASTER_PLAN.md`.
 
-Os chats são fonte de contexto, mas não são a memória operacional do produto. A evidência privada recebida em 11/09 foi preservada fora do chat; o ponteiro de recuperação fica na camada privada de dados, não neste repositório público. Toda decisão recuperada deve estar no contrato, ledger ou checkpoint. Se uma instrução histórica não puder ser comprovada, registrar como pendência de evidência; não pedir que o usuário repita o projeto inteiro e não inventar a regra ausente.
+A decisão humana mais recente, registrada com evidência, prevalece sobre uma pendência antiga. Os chats não são a memória operacional. Não pedir ao usuário que repita o projeto inteiro e não inventar regra ausente. O documento de execução anterior foi arquivado integralmente em `backups/LTS_WEALTH_EXECUTION_STATE_BEFORE_USER_CONFIRMATIONS_2026-09-11.md`; os demais históricos e backlogs não foram apagados.
 
-## Sequência de entrega autorizada
+## Sequência autorizada
 
-1. Concluir a homologação humana do Fluxo Diário V150/V151 recuperado na V162 usando dados reais atualizados.
-2. Fechar os ajustes de faturas e garantir o mesmo conceito validado do Visa Aeternum para os demais cartões: resumo inline, categorias pelas regras confirmadas, ordenação útil e acesso ao detalhe completo, sem fabricar detalhe ausente.
-3. Provar um ciclo real de classificação e só então liberar a retomada da classificação acumulada pelo usuário.
-4. Produzir uma imagem completa do Dashboard proposto; aguardar aprovação.
-5. Somente então implementar o Dashboard aprovado.
-6. Evoluir Despesas, Receitas, Cartões e demais módulos em pacotes separados e verificáveis.
+1. Continuar a homologação prática do Fluxo V150/V151 recuperado na V162, com os dados confirmados.
+2. Garantir o conceito validado do Visa Aeternum nos demais cartões: resumo inline, categorias pelas regras confirmadas, ordenação decrescente por valor e acesso ao detalhe completo, sem fabricar detalhe ausente.
+3. Provar uma classificação real e só então liberar a classificação acumulada.
+4. Produzir a imagem completa do Dashboard proposto e aguardar aprovação.
+5. Implementar o Dashboard aprovado e evoluir os demais módulos em pacotes coerentes e verificáveis.
 
-## Linha de recuperação vigente
+## Linha vigente e evidência
 
-- Candidata: `wip35-v162-candidate.html`
-- Fonte executada: componente de Fluxo preservado em `index.html` (o arquivo público não é modificado)
-- Referência histórica auditada: V150/V151 como contrato; V152 como comparação
-- Contrato do Fluxo: `v150-flow-direct-current-read-v3`
-- Leitura do Fluxo: `lts_browser_flow_v11`
-- Mutação do Fluxo: chamadas V150 preservadas mapeadas para `lts_browser_flow_mutate_v2`
-- Runtime adicional aplicado em 11/09: `card_invoice_cash_effect_date_overlay_2026_09_11`
-- Checkpoint corrente: `backups/V162_FLOW_REAL_DATA_REFRESH_CHECKPOINT_2026-09-11.md`
-- Dashboard dentro desta candidata: fora de escopo e oculto da navegação de homologação
-- Promoção pública: não autorizada
+- Candidata: `wip35-v162-candidate.html`; link fixo: `homologacao.html`.
+- Fonte: componente de Fluxo preservado em `index.html`, sem alteração pública.
+- Leitura: `lts_browser_flow_v11`; mutação guardada: `lts_browser_flow_mutate_v2`.
+- Overlays aplicados em 11/09: `card_invoice_cash_effect_date_overlay_2026_09_11` e `evidence_current_asset_latest_snapshot_guard_2026_09_11`.
+- Checkpoint atual: `backups/V162_USER_CONFIRMATIONS_C6_IMPORT_CHECKPOINT_2026-09-11.md`.
+- Evidência privada: `source_documents`, tipos `user_confirmation` e `card_statement_csv`, referência 2026-09-11. Os ponteiros de Drive ficam nos metadados privados, não neste repositório público.
+- O pós-teste de dados e o RPC de detalhe C6 passaram; isso não significa E2E visual autenticado ou aprovação humana de todo o produto.
 
 ## Regra de encerramento
 
-Uma etapa só pode ser declarada concluída quando código, teste automático, limite da evidência real e resultado da homologação humana estiverem registrados separadamente. “Abriu”, “workflow verde”, “dados foram atualizados” e “usuário aprovou” são estados diferentes.
+Separar sempre código, publicação, teste automático, dados gravados, leitura pós-gravação e homologação humana. São estados diferentes. Manter todas as pendências históricas não resolvidas na lista-mestra.
