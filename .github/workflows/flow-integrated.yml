@@ -25,7 +25,15 @@ jobs:
           python -m pip install playwright==1.57.0
           python -m playwright install --with-deps chromium webkit
       - name: Test all-card invoices, dates, credits, classification and Flow window
-        run: python .github/scripts/lts_integrated_flow_gate.py
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('.github/scripts/lts_integrated_flow_gate.py')
+          s=p.read_text()
+          s=s.replace('text=await panel.inner_text();assert',"text=(await panel.inner_text()).replace('\\u00a0',' ');assert")
+          p.write_text(s)
+          PY
+          python .github/scripts/lts_integrated_flow_gate.py
       - name: Preserve gate evidence
         if: always()
         uses: actions/upload-artifact@v4

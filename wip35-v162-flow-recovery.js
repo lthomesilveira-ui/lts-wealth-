@@ -60,8 +60,6 @@
     const preservedRenderNav=renderNav;
     renderNav=function(){preservedRenderNav();const button=document.querySelector('.nav [data-v="Fluxo Diário"]');if(button)button.onclick=()=>{V='Fluxo Diário';lastRenderedRoute=V;renderNav();openDefaultRange()}};
     renderNav();bindDefaultRange();
-
-    // Shared Aeternum summary for all issuers, preserving the protected source.
     status.invoice_contract='all-cards-aeternum-summary-source-v1';
     const previousCardPredicate=isCardSettlement;
     isCardSettlement=function(event){const name=String(event.description||event.description_raw||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();return num(event.signed_amount)<0&&(event.source==='card_invoice'||/fatura|personnalite|pers black|gastos cartao de credito/.test(name)||previousCardPredicate(event))};
@@ -100,6 +98,8 @@
       const items=lines.map(item=>{const date=item.purchase_date?fmt(item.purchase_date):item.date_printed?String(item.date_printed)+' · ano não informado':'Data não informada';const installment=item.installment_label||(item.installment_number&&item.installments?item.installment_number+'/'+item.installments:null);return `<div class="expense-tx lts-source-line" data-source-row="${esc(item.row_id||'')}"><div class="expense-main"><b>${esc(item.description)}</b><span>${esc(date)}${item.card_final?' · final '+esc(item.card_final):''}${item.holder?' · '+esc(item.holder):''}</span><div class="expense-meta"><i class="tag">${esc(item.category||'A classificar')}</i>${installment?`<i class="tag">Parcela ${esc(installment)}</i>`:''}${num(item.amount)<0?'<i class="tag">Crédito / estorno</i>':''}${item.source_page?`<i class="tag">Página ${esc(item.source_page)}</i>`:''}</div></div><b class="expense-val ${num(item.amount)<0?'pos':'neg'}">${num(item.amount)<0?'− ':''}${brl(Math.abs(num(item.amount)))}</b></div>`}).join('');
       return shell(head(true)+dates+`<div class="lts-invoice-metrics">${metric}<div class="fx89-metric"><span>Créditos não incluídos nas linhas</span><b>${brl(detail.invoice_credit)}</b><small>${check}</small></div></div><div class="invoice-grid"><div class="card"><div class="title">Por categoria</div>${categoryHtml}${pending}</div><div class="card"><div class="title">Compras e créditos da fatura</div>${items||'<div class="empty">Sem linhas documentadas.</div>'}</div></div>`+guard);
     };
+    // The preserved Flow calls the inline entrypoint, not the standalone drawer.
+    cardSettlementInline=function(day){return CARDDETAIL?.event?.event_date===day?cardSettlementDrawer():''};
     const invoiceStyle=document.createElement('style');invoiceStyle.id='lts-integrated-invoices-style';
     invoiceStyle.textContent=`
       .lts-invoice-unified{box-sizing:border-box!important;width:100%!important;min-width:0!important;margin-left:0!important}
