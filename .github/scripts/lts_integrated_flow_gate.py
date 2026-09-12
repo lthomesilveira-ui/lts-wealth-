@@ -15,6 +15,9 @@ CARDS=[
 class Handler(SimpleHTTPRequestHandler):
  def log_message(self,*args): pass
 
+def contains(text,needle):
+ return needle.casefold() in text.replace('\u00a0',' ').casefold()
+
 def product(classified):
  return {'flow':{'days':[],'events':[]},'updates':{'items':[],'maintenance_checks':[],'freshness':{}},'semantic_review':{'pending_groups':0,'items':[]},'card_classification_review':{'pending_groups':0 if classified else 1,'pending_lines':0 if classified else 1,'pending_value':0 if classified else 100,'category_options':['Casa','Saúde'],'items':[] if classified else [{'description_key':'fixture pendente','example_description':'Fixture pendente','card_name':'Cartão de teste','due_date':'2026-09-14','total_value':100,'occurrences':1}]},'card_operating':{'open_cycles':[]},'card_history':{'units':[]},'wealth_executive':{'summary':{},'assets':{}},'expenses':{},'wealth':{},'planning':{},'duplicate_quality_gate':{}}
 
@@ -64,7 +67,7 @@ async def main():
    frame=next(f for f in page.frames if 'index.html?v162' in f.url)
    await frame.wait_for_function("!FLOWLOADING&&FLOWFROM==='2026-09-07'&&FLOWTO==='2026-10-12'",timeout=25000)
    assert await frame.locator('.fx87-row:not(.fx87-head)').count()==36
-   assert 'Saldos documentados' in await frame.locator('#ltsBankEvidence').inner_text()
+   assert contains(await frame.locator('#ltsBankEvidence').inner_text(),'Saldos documentados')
    assert '0,02' in await frame.locator('#ltsReconciliationWarning').inner_text()
    verified=[]
    for index,c in enumerate(CARDS):
@@ -75,22 +78,24 @@ async def main():
     panel=frame.locator('.lts-invoice-unified');await panel.wait_for(state='visible')
     await frame.wait_for_function('!CARDDETAILLOADING')
     assert await panel.get_attribute('data-invoice-contract')=='all-cards-aeternum-summary-source-v1'
-    text=await panel.inner_text();assert 'Resumo da fatura' in text
+    text=await panel.inner_text()
+    assert contains(text,'Resumo da fatura'),(label,c,text)
     if c.get('unknown'):
-     assert 'Sem fatura documental' in text and await panel.locator('#openCardFull').count()==0
+     assert contains(text,'Sem fatura documental') and await panel.locator('#openCardFull').count()==0
     else:
-     assert 'Por categoria' in text and 'Detalhe confere' in text
+     assert contains(text,'Por categoria') and contains(text,'Detalhe confere'),(label,c,text)
      values=await panel.locator('[data-category-total]').evaluate_all('(nodes)=>nodes.map(n=>Number(n.dataset.categoryTotal))')
      assert values==sorted(values,reverse=True)
      if 'Personnalite' in c['name']:assert '12/09/2026' in text and '14/09/2026' in text
      if c.get('credit'):
-      assert 'crédito(s)/estorno(s)' in text and 'R$ 10,00' in text and 'Não é uma nova despesa' in text
+      assert contains(text,'crédito(s)/estorno(s)') and contains(text,'R$ 10,00') and contains(text,'Não é uma nova despesa')
+     if index<3:await page.screenshot(path=f'integrated-{label}-summary{index}.png',full_page=False)
      await panel.locator('#openCardFull').click()
      assert await panel.locator('.lts-source-line').count()==3
      if c['open']:
-      assert 'ano não informado' in await panel.inner_text()
-      assert 'final 9222' in await panel.inner_text()
-     if c.get('credit'):assert 'Crédito / estorno' in await panel.inner_text()
+      assert contains(await panel.inner_text(),'ano não informado')
+      assert contains(await panel.inner_text(),'final 9222')
+     if c.get('credit'):assert contains(await panel.inner_text(),'Crédito / estorno')
      if index<3:await page.screenshot(path=f'integrated-{label}-card{index}.png',full_page=False)
      await panel.locator('#backCardSummary').click()
     await panel.locator('#closeCardDetail').click();assert await frame.locator('.lts-invoice-unified').count()==0
