@@ -224,6 +224,9 @@ async function run(browser, viewport, label){
     await event.locator('.carddetailbtn').click();
     const invoicePanel=frame.locator('.invoice-inline').filter({hasText:cardName});
     await invoicePanel.waitFor({state:'visible',timeout:5000});
+    // A visible loading shell is not a completed invoice. Preserve every content
+    // assertion, but wait for the matching asynchronous consumer response first.
+    await frame.waitForFunction(name=>!CARDDETAILLOADING&&CARDDETAIL?.matched===true&&CARDDETAIL.card_name===name,cardName,{timeout:5000});
     const invoiceText=await invoicePanel.innerText();
     for(const needle of ['Resumo da fatura','Por categoria','Casa','A classificar','Revisar classificação','Acessar fatura completa'])if(!has(invoiceText,needle))throw new Error(`${label} ${cardName} invoice missing ${needle}`);
     await invoicePanel.locator('#closeCardDetail').click();
