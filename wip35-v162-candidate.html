@@ -18,11 +18,34 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#f5f6f8;fon
 <div id="scope">Fluxo Diário · homologação</div>
 <iframe id="shell" title="LTS Wealth — Fluxo Diário" src="index.html?v162-flow-recovery"></iframe>
 <script>
-// The protected component calls toast after saving. Provide that missing UI
-// dependency in this isolated shell without changing its financial writer.
+// Scoped presentation only. The preserved public source and financial writer
+// are unchanged. The invoice renderer already sorts net totals descending.
 document.getElementById('shell').addEventListener('load',function(){
   const frame=this.contentWindow,doc=this.contentDocument;
-  if(!frame||!doc||typeof frame.toast==='function')return;
+  if(!frame||!doc)return;
+  if(!doc.getElementById('lts-invoice-linear-order')){
+    const style=doc.createElement('style');style.id='lts-invoice-linear-order';
+    style.dataset.contract='invoice-single-list-descending-v1';
+    style.textContent=`
+      .lts-invoice-unified .fx89-invoice-body .fx89-catgrid{
+        display:flex!important;flex-direction:column!important;gap:0!important;
+        grid-template-columns:none!important;columns:auto!important;min-width:0!important;
+      }
+      .lts-invoice-unified .fx89-invoice-body .fx89-catgrid>.fx89-cat{
+        display:flex!important;align-items:baseline!important;justify-content:space-between!important;
+        gap:14px!important;width:100%!important;min-width:0!important;
+        padding:9px 10px!important;border-bottom:1px solid var(--bd);border-radius:0!important;
+      }
+      .lts-invoice-unified .fx89-invoice-body .fx89-catgrid>.fx89-cat>span{
+        min-width:0;overflow-wrap:anywhere;flex:1;
+      }
+      .lts-invoice-unified .fx89-invoice-body .fx89-catgrid>.fx89-cat>b{
+        margin-left:auto;flex-shrink:0;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums;
+      }
+    `;
+    doc.head.appendChild(style);
+  }
+  if(typeof frame.toast==='function')return;
   let timeout;
   frame.toast=function(message){
     let notice=doc.getElementById('ltsUserToast');
@@ -37,6 +60,6 @@ document.getElementById('shell').addEventListener('load',function(){
   };
 });
 </script>
-<script src="wip35-v162-flow-recovery.js?v=20260911-default-window-v5&integrated=20260912-v3-bank-scope"></script>
+<script src="wip35-v162-flow-recovery.js?v=20260911-default-window-v5&integrated=20260912-v4-linear-categories"></script>
 </body>
 </html>

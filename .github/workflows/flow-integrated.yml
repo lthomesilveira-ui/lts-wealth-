@@ -8,6 +8,7 @@ on:
       - 'homologacao-current.json'
       - '.github/scripts/lts_integrated_flow_gate.py'
       - '.github/scripts/lts_flow_bank_scope_gate.py'
+      - '.github/scripts/lts_invoice_reading_order_gate.py'
       - '.github/workflows/flow-integrated.yml'
   workflow_dispatch:
 permissions:
@@ -29,6 +30,8 @@ jobs:
         run: python .github/scripts/lts_integrated_flow_gate.py
       - name: Test bank-switch disclosures and delayed invoice responses
         run: python .github/scripts/lts_flow_bank_scope_gate.py
+      - name: Test single-list category reading order in every card family
+        run: python .github/scripts/lts_invoice_reading_order_gate.py
       - name: Preserve gate evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -39,4 +42,6 @@ jobs:
             integrated-*.png
             bank-scope-result.json
             bank-scope-*.png
+            invoice-reading-order-result.json
+            invoice-order-*.png
           if-no-files-found: error
