@@ -1,15 +1,16 @@
 {
   "schema": 1,
   "version": "wip35-v162",
-  "build": "V162 · Fluxo Diário V150/V151 · janela 5 anteriores + 30 próximos",
+  "build": "V162 · Fluxo conciliado e modelo único de faturas · 12/09/2026",
   "path": "wip35-v162-candidate.html",
-  "candidate_head": "41587c9d21904354b5dec7cb936452ffaae55eae",
+  "candidate_head": "f202ec7f24f832952ba62b9d27ab9d179135280a",
+  "candidate_sha": "f202ec7f24f832952ba62b9d27ab9d179135280a",
   "public_fallback": "index.html",
   "promotion_status": "not_promoted",
-  "candidate_sha": "41587c9d21904354b5dec7cb936452ffaae55eae",
-  "exposed_from_main_sha": "cfa5ee36d74353050534fd892f02b124f630d09f",
-  "exposure_mode": "flow_only_direct_v150_component_current_v11_read_mutation_v2_default_d_minus_5_d_plus_30",
-  "gate_status": "recovery-smoke-34646535785-pass_default-window-34646535781-pass_desktop-mobile-year-boundary-pass_controlled-authenticated-database-window-pass_itau-current-balance-reconciliation-open_signed-in-browser-e2e-not-claimed",
+  "exposed_from_main_sha": "b6b6b64848a0f3432b83f4e609e7633058e63465",
+  "exposure_mode": "flow_only_v150_v151_v11_documentary_close_and_all_card_invoice_v3",
+  "gate_status": "recovery-34696883261-pass_window-34696883239-pass_integrated-34696883289-pass_chromium-desktop-mobile_webkit-mobile_source-db-qa-pass_user-session-human-gate-open",
+  "invoice_contract": "all-cards-aeternum-summary-source-v1",
   "default_window": {"past_days":5,"include_today":true,"future_days":30,"include_zero_movement_days":true},
-  "updated_at": "2026-09-11T20:54:00Z"
+  "updated_at": "2026-09-12T13:40:00Z"
 }
