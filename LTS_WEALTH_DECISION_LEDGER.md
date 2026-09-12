@@ -48,3 +48,13 @@ Status: **DECISÃO TÉCNICA COMPROVADA PELO GATE**
 - Homologação humana do Fluxo recuperado permanece aberta.
 - Proposta visual do Dashboard permanece aberta e bloqueia sua implementação.
 - Prova autenticada com dados reais e prova em iPhone físico permanecem distintas dos fixtures automáticos e não são alegadas como concluídas.
+
+## 12/09/2026 — rentabilidade da conta Bradesco
+
+Status: **CONFIRMADA PELO USUÁRIO / OCORRÊNCIA APLICADA E RELIDA**
+
+O resíduo positivo mostrado para a posição Bradesco de 11/09 é rentabilidade da conta, conforme a confirmação do usuário. A natureza já existia no histórico e na regra de RENTAB.INVEST FACILCRED*. Preservar a descrição da planilha Rentabilidade Conta Corrente Bradesco e a categoria canônica Rendimentos financeiros. O aviso de diferença sem explicação para essa ocorrência está SUPERADO.
+
+A aplicação reconhece o rendimento acumulado uma única vez na posição documentada, sem afirmar data de crédito bancário não fornecida e sem somar novamente ao saldo que já o inclui. Não transformar esta confirmação específica em tolerância geral ou classificação automática de qualquer diferença de centavos. Antes de perguntar novamente, consultar este registro e a evidência privada. Checkpoint: backups/V162_BRADESCO_YIELD_CONFIRMED_2026-09-12.md.
+
+A sequência permanece: fechar os problemas funcionais/UX do Fluxo, incluindo troca de bancos, e depois recuperar as classificações bancárias e de cartões pela planilha/histórico validados. Esta correção não libera classificação em massa nem representa homologação humana do conjunto.
