@@ -31,6 +31,7 @@ jobs:
           p=Path('.github/scripts/lts_integrated_flow_gate.py')
           s=p.read_text()
           s=s.replace('text=await panel.inner_text();assert',"text=(await panel.inner_text()).replace('\\u00a0',' ');assert")
+          s=s.replace("assert 'Por categoria' in text and 'Detalhe confere' in text", "assert 'Por categoria' in text and 'Detalhe confere' in text, (label,c,text,await frame.evaluate('CARDDETAIL'))")
           p.write_text(s)
           PY
           python .github/scripts/lts_integrated_flow_gate.py
