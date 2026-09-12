@@ -1,0 +1,37 @@
+name: Integrated Flow and invoices
+on:
+  push:
+    branches: [main, recovery-v152-flow-20260910]
+    paths:
+      - 'wip35-v162-flow-recovery.js'
+      - 'wip35-v162-candidate.html'
+      - 'homologacao-current.json'
+      - '.github/scripts/lts_integrated_flow_gate.py'
+      - '.github/workflows/flow-integrated.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  integrated-flow:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install isolated browser tests
+        run: |
+          python -m pip install playwright==1.57.0
+          python -m playwright install --with-deps chromium webkit
+      - name: Test all-card invoices, dates, credits, classification and Flow window
+        run: python .github/scripts/lts_integrated_flow_gate.py
+      - name: Preserve gate evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: integrated-flow-invoice-evidence
+          path: |
+            integrated-flow-result.json
+            integrated-*.png
+          if-no-files-found: error
