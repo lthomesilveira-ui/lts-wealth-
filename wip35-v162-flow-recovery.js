@@ -124,7 +124,41 @@
       const host=document.querySelector('.flowbar');if(!host)return;
       const notice=document.createElement('div');notice.id='ltsReconciliationWarning';notice.className='notice lts-reconciliation-warning';notice.setAttribute('role','status');notice.textContent='Conferência histórica pendente: '+gaps.map(g=>g.bank+' em '+fmt(g.date)+' · diferença de '+brl(Math.abs(g.value))).join('; ')+'. O saldo documental está preservado; não foi criado lançamento para encobrir a diferença.';host.insertAdjacentElement('afterend',notice);
     }
-    const renderWithInvoices=render;render=function(){renderWithInvoices();addReconciliationNotice()};
+    // Expanded days and invoice requests belong to the selected bank context.
+    // Keep the period; never carry an old bank's disclosure into the new bank.
+    status.bank_scope_contract='bank-switch-closes-days-and-invoices-v1';
+    let renderedBank=ACC,renderedRoute=V;
+    function clearInvoiceContext(){
+      invoiceSequence+=1; // Any earlier success/error/finally is now obsolete.
+      CARDDETAIL=null;CARDDETAILFULL=false;CARDDETAILLOADING=false;
+    }
+    function bindInvoiceContextControls(){
+      const close=document.getElementById('closeCardDetail');
+      if(close)close.onclick=()=>{clearInvoiceContext();render()};
+      document.querySelectorAll('[data-d]').forEach(button=>{
+        const toggle=button.onclick;
+        if(typeof toggle!=='function')return;
+        button.onclick=function(event){
+          if(EXP.has(button.dataset.d)&&CARDDETAIL?.event?.event_date===button.dataset.d){clearInvoiceContext()}
+          return toggle.call(this,event);
+        };
+      });
+    }
+    const renderWithInvoices=render;
+    render=function(){
+      const changedBank=ACC!==renderedBank;
+      const changedRoute=V!==renderedRoute;
+      if(changedBank){EXP.clear();clearInvoiceContext()}
+      else if(changedRoute){clearInvoiceContext()}
+      // Defensive boundary, also covers an incorrectly scoped retained detail.
+      if(V==='Fluxo Diário'&&CARDDETAIL&&ACC!=='Consolidado'&&CARDDETAIL.event?.account!==ACC){clearInvoiceContext()}
+      renderedBank=ACC;renderedRoute=V;
+      renderWithInvoices();addReconciliationNotice();bindInvoiceContextControls();
+      if(changedBank){
+        const scroller=document.querySelector('.fx87-scroll')||document.querySelector('.mscroll');
+        if(scroller)scroller.scrollTop=0;
+      }
+    };
     function applyScope(){document.querySelectorAll('.brand small').forEach(node=>{node.textContent='Recuperação do Fluxo Diário'});document.querySelectorAll('.footer').forEach(node=>{node.hidden=true})}
     window.__LTS_V162_ROUTE_FLOW=function(){
       if(!D){applyScope();return {state:document.querySelector('.login')?'login':'waiting',done:false,ok:false}}

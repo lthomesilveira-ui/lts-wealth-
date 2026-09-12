@@ -7,6 +7,7 @@ on:
       - 'wip35-v162-candidate.html'
       - 'homologacao-current.json'
       - '.github/scripts/lts_integrated_flow_gate.py'
+      - '.github/scripts/lts_flow_bank_scope_gate.py'
       - '.github/workflows/flow-integrated.yml'
   workflow_dispatch:
 permissions:
@@ -26,6 +27,8 @@ jobs:
           python -m playwright install --with-deps chromium webkit
       - name: Test all-card invoices, dates, credits, classification and Flow window
         run: python .github/scripts/lts_integrated_flow_gate.py
+      - name: Test bank-switch disclosures and delayed invoice responses
+        run: python .github/scripts/lts_flow_bank_scope_gate.py
       - name: Preserve gate evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -34,4 +37,6 @@ jobs:
           path: |
             integrated-flow-result.json
             integrated-*.png
+            bank-scope-result.json
+            bank-scope-*.png
           if-no-files-found: error
