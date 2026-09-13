@@ -70,3 +70,13 @@ A revisão de nomenclaturas fica para etapa posterior, separada da recuperação
 A autorização atual para recuperação/classificação apoiada em evidência substitui a restrição temporária de não classificar durante o isolamento do Fluxo em 10/09, apenas dentro do escopo confirmado. Não autoriza inventar finalidade ou sobrescrever decisões específicas anteriores.
 
 A aplicação desta rodada alcançou as quatro compras identificadas em três restaurantes na fatura atual, por registro de origem, sem regra global e sem alteração de valores. A fila e o detalhe foram conferidos depois da gravação. Checkpoint: backups/V162_RESTAURANTES_EXCEL_CONFIRMATION_2026-09-13.md. A recuperação completa dos dois meses e a liberação da classificação manual em massa continuam gates separados.
+
+## 13/09/2026 — mapa de equivalências aprovado como etapa futura
+
+Status: **CONCEITO APROVADO / REGISTRADO / CONTINUIDADE DA CLASSIFICAÇÃO AUTORIZADA**
+
+O usuário concordou com o mapa de equivalências entre categorias antigas e uma futura nomenclatura analítica, preservando a categoria original, e pediu que a decisão fosse registrada. O plano está em LTS_WEALTH_CATEGORY_EQUIVALENCE_PLAN.md. A aprovação é do conceito e da sequência, não de correspondências ainda não apresentadas ou de uma renomeação imediata do histórico.
+
+Prioridade atual: continuar classificando os dois meses pendentes, movimentos bancários e compras de cartões, com o padrão original do Excel/LTS. Não aguardar nova autorização para classificações apoiadas em evidência. Perguntar somente pelas ambiguidades restantes após recuperar o histórico. A revisão de nomes e a ativação do mapa ficam para depois; preservar originais, explicar impacto e validar as correspondências antes de usá-las na consolidação.
+
+Nesta continuação, três novas linhas de restaurante nos ciclos de agosto e setembro foram classificadas por origem com base em evidência já disponível e na categoria Restaurantes confirmada. Não foram criadas regras globais, fundidas categorias ou alterados valores. Evidência privada e leitura posterior estão registradas no checkpoint backups/V162_MAP_APPROVAL_CLASSIFICATION_CONTINUED_2026-09-13.md. A aprovação do mapa não equivale à conclusão dos dois meses nem à liberação irrestrita da interface manual.
