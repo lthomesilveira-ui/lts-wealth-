@@ -58,3 +58,15 @@ O resíduo positivo mostrado para a posição Bradesco de 11/09 é rentabilidade
 A aplicação reconhece o rendimento acumulado uma única vez na posição documentada, sem afirmar data de crédito bancário não fornecida e sem somar novamente ao saldo que já o inclui. Não transformar esta confirmação específica em tolerância geral ou classificação automática de qualquer diferença de centavos. Antes de perguntar novamente, consultar este registro e a evidência privada. Checkpoint: backups/V162_BRADESCO_YIELD_CONFIRMED_2026-09-12.md.
 
 A sequência permanece: fechar os problemas funcionais/UX do Fluxo, incluindo troca de bancos, e depois recuperar as classificações bancárias e de cartões pela planilha/histórico validados. Esta correção não libera classificação em massa nem representa homologação humana do conjunto.
+
+## 13/09/2026 — preservar a taxonomia do Excel e usar Restaurantes
+
+Status: **CONFIRMADA PELO USUÁRIO / COMPRAS IDENTIFICADAS APLICADAS E RELIDAS**
+
+O usuário confirmou que a classificação do histórico Excel desde 2013 era **Restaurantes**. Para consolidar os dois meses pendentes desde a migração, manter essa nomenclatura e as demais categorias históricas validadas. A escolha entre Restaurantes e Restaurantes e Lazer para as compras de restaurante discutidas está resolvida em favor de Restaurantes; não pedir a mesma decisão novamente.
+
+A revisão de nomenclaturas fica para etapa posterior, separada da recuperação pendente. Não renomear retrospectivamente todo o histórico, não criar categoria concorrente e não converter genericamente lazer, intermediadores, marketplaces ou Pix em Restaurantes. Eventual mapa de equivalências futuro deve preservar a classificação original e receber aprovação antes de alterar a leitura consolidada.
+
+A autorização atual para recuperação/classificação apoiada em evidência substitui a restrição temporária de não classificar durante o isolamento do Fluxo em 10/09, apenas dentro do escopo confirmado. Não autoriza inventar finalidade ou sobrescrever decisões específicas anteriores.
+
+A aplicação desta rodada alcançou as quatro compras identificadas em três restaurantes na fatura atual, por registro de origem, sem regra global e sem alteração de valores. A fila e o detalhe foram conferidos depois da gravação. Checkpoint: backups/V162_RESTAURANTES_EXCEL_CONFIRMATION_2026-09-13.md. A recuperação completa dos dois meses e a liberação da classificação manual em massa continuam gates separados.
