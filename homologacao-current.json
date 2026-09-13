@@ -1,16 +1,18 @@
 {
   "schema": 1,
   "version": "wip35-v162",
-  "build": "V162 · Fluxo conciliado e modelo único de faturas · 12/09/2026",
+  "build": "V162 · Faturas em lista única e troca de bancos · 12/09/2026",
   "path": "wip35-v162-candidate.html",
-  "candidate_head": "f202ec7f24f832952ba62b9d27ab9d179135280a",
-  "candidate_sha": "f202ec7f24f832952ba62b9d27ab9d179135280a",
+  "candidate_head": "d3300083bc1288cb0c5aff1772f98877ef17728e",
+  "candidate_sha": "d3300083bc1288cb0c5aff1772f98877ef17728e",
   "public_fallback": "index.html",
   "promotion_status": "not_promoted",
-  "exposed_from_main_sha": "b6b6b64848a0f3432b83f4e609e7633058e63465",
-  "exposure_mode": "flow_only_v150_v151_v11_documentary_close_and_all_card_invoice_v3",
-  "gate_status": "recovery-34696883261-pass_window-34696883239-pass_integrated-34696883289-pass_chromium-desktop-mobile_webkit-mobile_source-db-qa-pass_user-session-human-gate-open",
+  "exposed_from_main_sha": "c480823fd0d1259c88a5484cc05a89c932755936",
+  "exposure_mode": "flow_v150_v151_preserved_single_list_invoices_bank_scoped_disclosures",
+  "gate_status": "recovery-34726662187-pass_window-34726456351-pass_integrated-scope-order-34726456372-pass_classification-real-source-alignment-open",
   "invoice_contract": "all-cards-aeternum-summary-source-v1",
+  "invoice_reading_order": "invoice-single-list-descending-v1",
+  "bank_scope_contract": "bank-switch-closes-days-and-invoices-v1",
   "default_window": {"past_days":5,"include_today":true,"future_days":30,"include_zero_movement_days":true},
-  "updated_at": "2026-09-12T13:40:00Z"
+  "updated_at": "2026-09-12"
 }

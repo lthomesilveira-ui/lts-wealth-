@@ -1,24 +1,23 @@
 # LTS Wealth — Next Homologation Gate
 
-Updated 2026-09-12. Earlier gate history is preserved byte-for-byte at backups/NEXT_HOMOLOGATION_GATE_BEFORE_INTEGRATED_2026-09-12.md. Complete dependencies remain in the master backlog plus its current delta.
+12/09/2026. Previous complete gate preserved at backups/NEXT_HOMOLOGATION_GATE_BEFORE_LINEAR_CATEGORIES_2026-09-12.md. No unrelated dependency is removed.
 
-## Current material package
-Documentary Itaú reconciliation, current bank-position checks, exact invoice linkage, common open/closed invoice summary/detail and preserved D-5/D+30 Flow. Protected public root unchanged; no Dashboard.
+## Latest UI package
+V162 single descending category list across invoice families, combined with bank-change closure of daily expansions and invoice panels. Preserve selected dates, default D-5/D+30, source values and protected public index.html.
 
-## Completed before exposure
-- Applied the already-received checking statement with unique source facts and audited forecast replacements; verified readback and dated closes.
-- Verified the current Mastercard, Aeternum and C6 source sums, single cash obligations and explicit source dates/status.
-- Rejected wrong-bank/month and ambiguous/missing current invoice matches.
-- Shared category-descending inline/full UI and distinct pending credit behavior passed Chromium desktop/mobile and WebKit mobile fixtures.
-- Mechanical classification save -> product refresh -> reload passed stateful fixtures, with missing feedback dependency corrected and no late route reset.
-- Old recovery and default-window regression gates passed on exact product f202ec7f24f832952ba62b9d27ab9d179135280a.
+Pre-exposure evidence: recovery 34726662187, window 34726456351, integrated invoices/bank-context/category-geometry 34726456372, all SUCCESS. The initial legacy recovery test looked at the loading panel before its response; its wait was corrected while retaining every content assertion. Product code did not change to bypass a test.
 
-## Exposure checks
-The fixed manifest selects the tested product. Check the current main Pages deployment and all three post-manifest workflows before reporting it published. Record exact runs/commit in a publication receipt. No force updates or public-root promotion.
+The manifest selects d3300083bc1288cb0c5aff1772f98877ef17728e. Verify main Pages and post-manifest gates before reporting publication. Neither deterministic PASS nor publication implies user acceptance.
 
-## Not to overclaim
-- Real user-session/physical-iPhone E2E and human approval are separate, open gates.
-- Current position match does not erase the small historical Bradesco residual.
-- Missing current other-Visa evidence remains missing, not a fabricated zero/detail.
-- Bulk classification remains unreleased until the actual session lifecycle is confirmed.
-- Prior confirmations and all unrelated historical dependencies remain intact; do not request already received documents again.
+## Classification entry gate — still blocked for concrete reasons
+- [ ] Current open-invoice review queue and actual invoice detail must use the same source snapshot and reconcile pending counts/values.
+- [ ] Bank/Flow classification queue must include real pending bank movements; an empty queue while Flow shows pending labels is not ready.
+- [ ] Recover prior spreadsheet/LTS mappings before asking the user to reclassify accumulated rows.
+- [ ] Verify exact-description/per-event scope and preserve genuine contextual ambiguity.
+- [ ] Save must be followed by persisted-rule, refreshed-queue and actual invoice/Flow readback; deferred-refresh errors cannot be shown as unqualified full success.
+- [ ] Keep actual user-session save/reload proof distinct from the mechanical fixture path, then explicitly release user-dependent classification.
+
+The single-list layout is not the blocker for data entry. The concrete source/readback defects above are. Do not require Dashboard work, more Work credits, re-uploaded existing statements or a new chat to begin resolving them.
+
+## Financial / evidence boundaries
+The specific confirmed Bradesco yield residual is resolved and supersedes older unresolved references. Preserve all previous source dates, confirmed edits, current invoice balances and source originals. Current other-Visa documentary identities and earlier Bradesco opening investigation remain tracked; do not invent documents or erase unrelated gaps. Bulk classification and human final homologation remain separate open gates.
