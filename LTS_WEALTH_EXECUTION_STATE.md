@@ -1,43 +1,41 @@
 # LTS Wealth — Execution State
 
-Latest update: 13/09/2026. The user authorized continued classification and explicitly offered to clarify questions in this chat. Three further source-specific classifications were applied and an eight-topic clarification register was saved privately. Complete prior state remains unchanged at backups/LTS_WEALTH_EXECUTION_STATE_BEFORE_QUESTIONS_BATCH_2026-09-13.md. All unaffected requirements and pending work remain binding.
+Latest update: 13/09/2026. User answered the eight-question classification set. Fifteen source-specific classifications were applied and reread. Complete previous state is preserved byte-for-byte in backups/LTS_WEALTH_EXECUTION_STATE_BEFORE_Q1_Q8_ANSWERS_2026-09-13.md; all unaffected decisions and backlog remain binding.
 
-## Applied in this continuation
-Three previously pending source rows were classified: a recognized benefits-subscription descriptor with an existing LTS subscription precedent; an explicit valet descriptor using the imported parking category; and a confectionery/prepared-food entry whose stored category suggestion is supported by the now-confirmed Restaurantes nomenclature. Categories are Assinaturas, Estacionamento E Pedágio and Restaurantes. These are evidence-supported assistant classifications, not invented prior human confirmations for each row.
+## Latest applied package
+Six bank records and nine card-purchase lines were categorized from the user's answers. No source amount, date, bank-account record, invoice count/total, raw purchase field or unrelated category changed. Four requested category labels not previously in the catalog were registered using the existing authenticated category-creation function and verified in consumer options. No schema, frontend, manifest or global semantic-rule changes.
 
-Only the three closed-invoice source rows and their classification provenance were updated. No global rule, category equivalence, schema, permission, frontend or financial-value change was made. The future category map remains recorded and deferred.
+Exact private source audit: answers_q1_q8_classification_20260913_v1. It retains answers, original question IDs, before-source records, all six invoice snapshots, full before/after Flow, original bank records/catalog, fifteen changes and QA. The prior clarification audit classification_continuation_questions_20260913_v3 now references these answers and the new audit; do not treat all eight as unanswered.
 
-A guarded transaction preserved before-images, compared all six documented cycles, confirmed exactly three category changes and verified unchanged source amounts, descriptions, dates, instrument fields, invoice totals/row counts, bank account records and unrelated categories. Queue and invoice pending counts/values agree. A post-commit read under authenticated role confirmed the three categories and refreshed queue. This is database consumer verification, not physical-device/user-session browser E2E.
+Persistent decision supplement: LTS_WEALTH_USER_DECISIONS_Q1_Q8_2026-09-13.md, read with the original decision ledger. Latest checkpoint: backups/V162_Q1_Q8_ANSWERS_APPLIED_2026-09-13.md.
 
-Private source_documents audit_key classification_continuation_questions_20260913_v3 contains the old rules/evidence, source before-images, changes, after-invoices, QA receipt and clarification register. Latest checkpoint: backups/V162_CLASSIFICATION_QUESTIONS_BATCH_2026-09-13.md.
+## Resolved decisions, with scope
+Q1 vehicle category applied to three bank records; user identifies them as an advance/reimbursement group. Preserve that economic context. Exact card-purchase linkage and consumption reconciliation remain open: equal total and nearby date identify a candidate, not proof. Do not claim duplicates are financially resolved or silently suppress cash legs.
+Q2 the two specified employer credits are reimbursements, not salary. Use the requested reimbursement nomenclature without recoding older transactions.
+Q5 both identified payments are the dependent's swimming; use the explicitly proposed complementary-classes category and retain Natação as activity. Keep the two source payments distinct.
+Q6 two identified fuel-station charges use historical Combustível.
+Q7 four meal-delivery purchases use Ifood, not Restaurantes. Pharmacy/groceries/other platform purchases are outside this decision.
+Q8 laundry uses the explicitly approved new Lavanderia category; the identified supermarket purchase uses Mercado. No historical Vestuário rewrite or global grocery-category merge.
 
-## Current counts, with scope limits
-Current card pending lines fell from 61 to 58: August Aeternum 19, September Aeternum 30, September Itaú Mastercard 9. Bank review remains 14 groups. August Mastercard and both documented C6 cycles remain without pending categories. Other-Visa documentary gaps are separate and not claimed covered by these counts.
+## Further details requested — not yet proven
+Q3 remains purpose-unresolved. The supplied statements add printed dates and card identity, but no transaction time, itemized consumption or final merchant. Scoped Gmail searches found no Zig receipt. Drive metadata/fullText query found no relevant receipt. The provider's public documentation identifies it as a payment platform only; it does not identify these charges.
+Q4 remains unresolved. The source identifies the two dates, amounts and card final. A provider-platform email on a nearby date is stored privately as a possible clue, not an amount-specific payment receipt. Gmail/Drive/source searches found no downloadable financial receipt for these charges. No clinical-document links were opened and no diagnosis, treatment or service was inferred. Plugin lookup for the requested providers returned no matching integration. Do not claim direct authenticated access to the issuer/provider applications.
+Q1 follow-up: private candidate record contains an installment purchase whose computed total matches the advances, with compatible date. Leave it unclassified/unlinked until user confirms the specific transaction or equivalent documentary evidence is found. Pending-category counts do not express this separate linkage gate.
 
-The recorded recovery subtotal is now 36 newly classified or restored entries: first 16, then four user-confirmed restaurant lines, three map-approval continuation lines, ten services lines and three here. Do not call this completion of the entire two-month backlog or recalculate it as a universal historical coverage percentage.
+## Current verified counts
+Card-purchase pending lines: 49, down from 58. Bank pending groups: 8, down from 14. These are the current queue scope, not complete coverage of undocumented cards or proof that all remaining entries require user help. The running recorded recovery subtotal is 51 classified/restored entries, counting previous 36 plus these 15 once.
 
-## Clarification register — awaiting answers, NOT decisions
-The current user's offer is permission to ask, not an answer. Retrieve exact source amounts/dates and wording privately from metadata.clarifications in the audit above. IDs stay stable so short numbered replies remain actionable across chats.
-- Q1: Three similarly sized bank movements. Establish each purpose and whether they are actually linked; do not net or suppress by equal amount.
-- Q2: Two employer credits. The original reimbursement nomenclature exists, but the specific receipts need purpose confirmation; do not label salary or reimbursement automatically.
-- Q3: Three processor-only card charges. Need final establishment/purpose, not processor-based restaurant/leisure inference.
-- Q4: Two booking-platform charges. Need service nature, not diagnoses or clinical detail; no beneficiary assumption.
-- Q5: A card FIT descriptor and a bank FIT descriptor. Ask what each represents; similarity is not identity or duplication evidence.
-- Q6: Two fuel-station charges. Confirm fuel versus other purchases/services before choosing the historical category.
-- Q7: Four meal-delivery charges and the existing Ifood-versus-Restaurantes boundary. The Restaurantes decision remains settled; this distinct platform category must not be globally merged or applied to pharmacy/grocery purchases through the same platform.
-- Q8: Recover the original laundry label and the grocery Mercado/Supermercado choice for the identified source rows. No new category map is being activated.
+The guarded transaction asserted unchanged complete historical/current-future daily monetary payloads, unchanged bank-account records, exactly six classified bank consumer rows and nine newly classified card lines, unchanged source facts, unchanged unrelated categories and exact invoice/review parity. An initial local SQL assertion had an ambiguous variable reference and rolled back; the corrected transaction passed and committed. A separate post-commit read under authenticated role verified all fifteen categories and new catalog options. This is controlled database consumer QA, not actual physical-device/session E2E.
 
-These eight topics are a focused first clarification set, not the entire remaining queue. Personal Pix, marketplaces, mixed-purpose retailers and other unresolved entries still need evidence review. Do not ask to re-upload already received sources or redo prior restaurant/yield/insurance/Larissa confirmations.
+## Published frontend remains unchanged
+V162 product d3300083bc1288cb0c5aff1772f98877ef17728e; fixed homologacao.html -> wip35-v162-candidate.html. Same link reads the backend classifications after reload. Protected public index.html and promotion_status not_promoted remain intact. No new UI build required. Preserve single descending lists, bank-switch disclosure closure, chosen date ranges and D-5 through D+30.
 
-## Continue execution safely
-Apply remaining supported classifications while awaiting only genuinely necessary context. Use original Excel/LTS labels, keep Categoria/Grupo/Macrogrupo separate from cost centers, preserve raw descriptions and per-source scope, and do not turn unresolved merchant identity into guessed personal purpose. A source with a known category need not be sent back to the user simply because the manual interface is still under review.
+## Continue safely
+Keep applying supported classifications to bank and card sources, with original Excel/LTS categories plus explicit new categories authorized by the user. Retain raw labels and source-specific decisions. The future category-equivalence plan remains approved in concept and deferred; this package does not activate it.
 
-Full recovery, transaction-scoped manual reclassification UI, actual-session save-refresh-reopen and unrestricted bulk manual release remain open. Current-source queue parity, bank-pending inclusion and atomic save/refresh guards remain applied. The user's answers must be recorded with exact targets and before/after checks; do not create broad rules from a transaction-specific reply.
+Other personal-Pix purposes, marketplace/mixed-shop purchases and undocumented Visa identities remain open. Complete historical coverage, transaction-specific manual UI, actual-session save-refresh-reopen, unrestricted bulk release and human whole-product approval remain separate gates. Manual gates do not block safe evidence-supported assistant work. Do not ask again for received bank/card PDFs or settled restaurant, fuel, grocery, swimming or laundry choices.
 
-## Published version and other retained boundaries
-Frontend stays the already-published V162 product d3300083bc1288cb0c5aff1772f98877ef17728e, fixed homologacao.html -> wip35-v162-candidate.html. The same link reads the backend changes after reload; no new UI build or link was required. Public index.html remains protected and promotion_status not_promoted. Preserve single descending category lists, bank-switch disclosure closure, manual date choices and D-5 through D+30.
+Preserve reconciled Itaú cash, resolved Bradesco yield, dated separate Cofrinho, vested-only current awards, exact due/cash dates, C6 prior-payment exclusion, financing edits, Larissa adjustment, single insurance obligation and rejected DDA. Keep the earlier uncaptured Bradesco opening report and every unrelated master-backlog item. Dashboard and public-root promotion remain out of scope.
 
-Preserve reconciled Itaú cash, resolved Bradesco yield, separate dated Cofrinho, vested-only awards, exact invoice due/cash dates, C6 prior-payment exclusion, financing edits, Larissa adjustment, single insurance obligation and rejected unrelated DDA. Other-Visa source identity gaps, the uncaptured Bradesco opening report, human whole-product approval and every unrelated backlog dependency remain tracked. Dashboard and public-root promotion are not authorized by this classification continuation.
-
-## Restart / write protocol
-Before repository writes, refresh main and recovery-v152-flow-20260910 plus this state, latest checkpoint, NEXT_HOMOLOGATION_GATE.md, complete master backlog/delta, decision ledger, equivalence plan, LTS_WEALTH_CONTINUITY_HANDOFF.md and CANONICAL_DELIVERY_MASTER_PLAN.md. Never force branches or overwrite parallel work. Updates use Concluído / Em execução / Próximos passos. Distinguish applied data, verified consumer read, test environment, frontend publication and human approval.
+## Restart / writes
+Before repository writes refresh main and recovery-v152-flow-20260910, this state, latest checkpoint, NEXT_HOMOLOGATION_GATE.md, master backlog/delta, decision ledger/supplement, equivalence plan, LTS_WEALTH_CONTINUITY_HANDOFF.md and CANONICAL_DELIVERY_MASTER_PLAN.md. Never force or overwrite parallel work. Updates use Concluído / Em execução / Próximos passos. Distinguish category assignment, economic linkage, source facts, database test, browser/session test, publication and user approval.
