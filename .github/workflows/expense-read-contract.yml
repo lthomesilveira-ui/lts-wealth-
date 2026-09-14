@@ -1,0 +1,47 @@
+name: Despesas read contracts
+on:
+  push:
+    branches: [main, recovery-v152-flow-20260910]
+    paths:
+      - 'lts-expense-read-model.js'
+      - '.github/scripts/lts_expense_*.cjs'
+      - '.github/scripts/lts_expense_*.py'
+      - '.github/workflows/expense-read-contract.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  offline-contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Existing checker and actual-reader contract adapters
+        run: |
+          node --check lts-expense-read-model.js
+          node --check .github/scripts/lts_expense_reader_adapter.cjs
+          node .github/scripts/lts_expense_integrity.cjs --self-test > expense-integrity-unit.json
+          node .github/scripts/lts_expense_read_model.test.cjs > expense-month-contract.json
+          node .github/scripts/lts_expense_dual.test.cjs > expense-dual-contract.json
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install test-only browser dependencies
+        run: |
+          python -m pip install playwright==1.57.0
+          python -m playwright install --with-deps chromium
+      - name: Browser lifecycle fixture with all network requests denied
+        run: python .github/scripts/lts_expense_read_model.browser.py > expense-browser-fixture.json
+      - name: Preserve synthetic test evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: expense-read-contract-evidence
+          path: |
+            expense-integrity-unit.json
+            expense-month-contract.json
+            expense-dual-contract.json
+            expense-browser-fixture.json
