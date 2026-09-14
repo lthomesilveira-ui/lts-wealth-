@@ -217,11 +217,51 @@
     });
     const allCashRows=sum(buckets.map(b=>b.rows));
     if(recent.length>allCashRows || recent.length>120)add('recent_cash_count_mismatch');
+    const bucketByName=new Map(buckets.map(b=>[b.name,b]));
+    for(const row of recent){
+      const bucket=bucketByName.get(row.bucket);
+      if(!bucket)add('recent_cash_bucket_unknown');
+      else if(row.excluded!==bucket.excluded)add('recent_cash_treatment_mismatch');
+    }
+    // Only a complete, uniquely identified list can explain the whole cash
+    // summary. A capped/partial recent list must never be forced to its total.
+    const completeRecent=recent.length===allCashRows && seen.size===recent.length;
+    if(completeRecent){
+      if(sum(recent.map(r=>r.amountCents))!==gross)add('recent_cash_total_mismatch');
+      for(const bucket of buckets){
+        const rows=recent.filter(r=>r.bucket===bucket.name);
+        if(rows.length!==bucket.rows || sum(rows.map(r=>r.amountCents))!==bucket.totalCents)add('recent_cash_bucket_mismatch');
+      }
+      const recentByMonth=new Map();
+      for(const row of recent){
+        const month=row.date.slice(0,7)+'-01';
+        if(!recentByMonth.has(month))recentByMonth.set(month,0);
+        if(!row.excluded)recentByMonth.set(month,sum([recentByMonth.get(month),row.amountCents]));
+      }
+      for(const month of new Set([...cashMonth.keys(),...recentByMonth.keys()])){
+        // Missing explicit zero-month metadata is not invented. Only differing
+        // observed sums are a monetary conflict; absence remains null below.
+        if((cashMonth.get(month) ?? 0)!==(recentByMonth.get(month) ?? 0))add('recent_cash_monthly_mismatch');
+      }
+      const observedPending=sum(recent.filter(r=>r.evidenceStatus.startsWith('operacional')).map(r=>r.amountCents));
+      if(observedPending!==pendingCash)add('recent_pending_cash_mismatch');
+    }
+    // Include silent months within the requested interval as missing, not as
+    // zero spend or silently removed timeline points. No source dates change.
+    const calendarMonths=[];
+    let cursor=scope.from.slice(0,7)+'-01';
+    const lastMonth=scope.to.slice(0,7)+'-01';
+    while(cursor<=lastMonth){
+      calendarMonths.push(cursor);
+      if(cursor===lastMonth)break;
+      const d=new Date(cursor+'T12:00:00Z');d.setUTCMonth(d.getUTCMonth()+1,1);
+      cursor=d.toISOString().slice(0,10);
+    }
     return freeze({version:'expense-dual-read-model-v1',scope,issues,internallyConsistent:issues.length===0,
       grossOutflowsCents:gross,ownTransfersCents:transfers,spendOutflowsCents:spend,consumptionCents:consumed,
       pendingCashCents:pendingCash,missingCategoryRows:sum(categories.filter(c=>PENDING.has(c.name.trim().toLocaleLowerCase('pt-BR'))).map(c=>c.rows)),
-      buckets,categories,recentCash:recent,recentCashIsComplete:recent.length===allCashRows,
-      monthly:Array.from(new Set([...cashMonth.keys(),...consMonth.keys()])).sort().map(month=>({month,
+      buckets,categories,recentCash:recent,recentCashIsComplete:completeRecent,
+      monthly:calendarMonths.map(month=>({month,
         cashCents:cashMonth.has(month)?cashMonth.get(month):null,consumptionCents:consMonth.has(month)?consMonth.get(month):null})),
       partialCalendarRange:scope.from.slice(8)!=='01'||scope.to!==monthEnd(scope.to.slice(0,7)+'-01'),
       sourceParityVerified:false,definitiveReportReady:false});
@@ -232,16 +272,29 @@
     let generation = 0, destroyed = false, active = null;
     let state = freeze({phase: 'idle', request: null, model: null, message: null});
     function emit(next) {
-      state = freeze(next);
-      // A view subscriber must not turn a successful read into a financial error.
-      for (const fn of listeners) { try { fn(state); } catch (_) { /* isolate view callbacks */ } }
+      const snapshot = state = freeze(next);
+      // Deliver a stable listener snapshot. A callback can cancel/dispose or
+      // request another period synchronously; never re-emit obsolete state.
+      for (const fn of [...listeners]) {
+        if (state !== snapshot) break;
+        if (!listeners.has(fn)) continue;
+        try { fn(snapshot); } catch (_) { /* isolate view callbacks */ }
+      }
     }
     async function select(request) {
       if (destroyed) throw new Error('Session disposed.');
-      const wanted = selectScope(request), seq = ++generation;
-      if (active) active.abort();
-      active = new AbortController(); const signal = active.signal;
+      let wanted;
+      try { wanted = selectScope(request); }
+      catch (error) { clear(); throw error; }
+      const seq = ++generation, previous = active;
+      const controller = new AbortController(); active = controller;
+      const signal = controller.signal;
+      // Publish ownership before aborting: abort listeners can request a newer
+      // period. A superseded call must not invoke its loader even once.
+      if (previous) previous.abort();
+      if (destroyed || seq !== generation) return state;
       emit({phase: 'loading', request: wanted, model: null, message: 'Carregando despesas do período selecionado…'});
+      if (destroyed || seq !== generation || signal.aborted) return state;
       try {
         const answer = await options.load(copy(wanted), {signal});
         if (destroyed || seq !== generation) return state;
@@ -250,9 +303,12 @@
           if (answer.error) throw answer.error; payload = answer.data;
         }
         const model = adapt(payload, wanted);
+        if (destroyed || seq !== generation) return state;
+        if (active === controller) active = null;
         emit({phase: 'ready', request: wanted, model, message: null});
       } catch (error) {
         if (destroyed || seq !== generation) return state;
+        if (active === controller) active = null;
         const auth = error && (error.status === 401 || error.status === 403 || error.code === '42501');
         emit({phase: auth ? 'authentication_required' : 'error', request: wanted, model: null,
           message: auth ? 'Sua sessão precisa ser renovada para consultar as despesas.' : 'Não foi possível carregar este período. Nenhum valor foi substituído por zero.'});
@@ -260,13 +316,22 @@
       return state;
     }
     function clear() {
-      ++generation; if (active) active.abort(); active = null;
-      emit({phase: 'idle', request: null, model: null, message: null});
+      if (destroyed) return;
+      const seq = ++generation, previous = active; active = null;
+      if (previous) previous.abort();
+      if (!destroyed && seq === generation) emit({phase: 'idle', request: null, model: null, message: null});
     }
     return Object.freeze({select, getState: () => state,
       subscribe(fn) { if (destroyed || typeof fn !== 'function') throw new TypeError('Invalid subscriber.'); listeners.add(fn); return () => listeners.delete(fn); },
       invalidate: clear,
-      dispose() { if (destroyed) return; clear(); destroyed = true; listeners.clear(); }});
+      dispose() {
+        if (destroyed) return;
+        destroyed = true; ++generation;
+        const previous = active; active = null;
+        if (previous) previous.abort();
+        emit({phase: 'idle', request: null, model: null, message: null});
+        listeners.clear();
+      }});
   }
   function presentation(model) {
     if (!model || model.version !== 'expense-month-read-model-v1') throw new TypeError('Expected normalized month.');

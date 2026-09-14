@@ -26,6 +26,7 @@ jobs:
           node .github/scripts/lts_expense_integrity.cjs --self-test > expense-integrity-unit.json
           node .github/scripts/lts_expense_read_model.test.cjs > expense-month-contract.json
           node .github/scripts/lts_expense_dual.test.cjs > expense-dual-contract.json
+          node .github/scripts/lts_expense_hardening.test.cjs > expense-hardening-contract.json
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -44,4 +45,5 @@ jobs:
             expense-integrity-unit.json
             expense-month-contract.json
             expense-dual-contract.json
+            expense-hardening-contract.json
             expense-browser-fixture.json
