@@ -1,0 +1,34 @@
+# LTS Wealth — Execution State
+
+Latest verified update: 14/09/2026. H12c and H13a user answers applied and reread. Complete prior state is preserved byte-for-byte at backups/LTS_WEALTH_EXECUTION_STATE_BEFORE_HOUSE_CAR_ANSWERS_2026-09-14.md. All unaffected requirements, prior decisions, evidence references and unfinished dependencies remain binding. RETOMAR_LTS_WEALTH.md remains the permanent restart entrypoint.
+
+## Newly resolved and actually applied
+H12c: the user approved Casa - Utensílios e equipamentos. This new label was registered through the existing category function and applied only to the identified electrical-protection purchase. The prior toy assumption remains rejected and preserved in the audit; this item is no longer a provisional child gift or an open classification question.
+
+H13a: the user confirmed the identified multipurpose bin is for the car and authorized an appropriate vehicle category. A fresh history query found the original Carro rubric; it was selected instead of introducing another label or misclassifying an accessory as maintenance. The source note says Lixeira para carro. No particular vehicle model, driver, beneficiary or asset was inferred. The bank/card statement description is unchanged.
+
+Private source_documents audit_key h12c_house_h13a_car_bin_confirmed_20260914_v1 contains exact user answers, the two source targets, original invoice/detail/review/account/catalog/product snapshots, source changes, post-state and QA PASS. The H01–H13 registry now marks H12c and H13a answered, applied and verified. Do not ask these two purposes or categories again. Latest checkpoint: backups/V162_H12C_H13A_HOUSE_CAR_CLASSIFIED_2026-09-14.md.
+
+## Verification / delivery boundary
+A guarded transaction verified exactly two newly classified source lines and unchanged invoice totals/counts/raw description/date/amount/instrument fields, unrelated categories and bank-account records. Direct invoice and card-review pending counts fell by two and the pending value by the exact two source amounts. The new category was added using the existing mechanism, with the stored product payload compared unchanged except category_options. No full cached-summary refresh, source insertion, new cash movement, global merchant rule, schema, frontend or permission change occurred.
+
+A separate post-commit call through authenticated browser-consumer signatures returned the two correct classifications and unchanged invoice total. This is controlled consumer-data readback, not an actual signed-in phone/browser test. The stored Updates summary is still stale and a page reload is not asserted to refresh it.
+
+Direct card pending is now twelve: seven earlier answered-but-unapplied H06/H08 sources plus five still needing context or stronger evidence (H09b, H10a, H10b/c and H13b). H13a no longer belongs in that question set. The two old bank reimbursements are answered but unapplied, not questions. Stored product summary remains forty card entries and eleven bank groups. These are different source/summary scopes, not twelve new unanswered purchases or full-period completion.
+
+## Preserve prior H12 evidence and blocked naming scope
+H12a remains classified as Benjamin - Estrutura e manutenção for the identified baby-changing equipment. H12b/d are verified toys with the currently stored Benjamin - Brinquedos e presentes label. The requested shorter Benjamin - Presentes label remains recorded but unapplied; a future allowed rename must cover only seven H11 sources plus H12b/d, not the now-confirmed household electrical item or the baby-changing equipment. Do not reintroduce H12c into an old ten-source rename plan.
+
+The seven earlier H06/H08 answers and their source targets remain in private Drive record 1V0jeNYASEUEkERRFuqrA0E-lzfor6Laj and backups/V162_SCREENSHOT_DECISIONS_AND_BLOCKED_APPLICATION_2026-09-14.md. The two old health-plan-reimbursement answers likewise remain final. None of these previously denied operations was retried or bypassed by this separate new two-item approval.
+
+## Remaining evidence and technical work
+H09b still lacks a safe original-order/installment-purpose link. H10a has a strong perfume date/amount candidate, not a proven payment-instrument/purpose match. H10b/c and H13b still lack sufficient item detail. Preserve H identifiers and all prior source dates, unknown purchase years and installment uncertainty; do not merge by close amounts or seller names. Prior shopping archives and the subscription observation screen remain private evidence. The subscription screenshot is not a payment receipt, a complete billing-frequency schedule or permission to insert future cash; its plan multiplier is not installment count.
+
+The known initiated/posting-date historical duplicates, vehicle-advance consumption bug, two invoice-payment/control markers, historical bank attribution, beneficiary-column propagation, cached-summary synchronization and actual-session manual save/refresh/reopen remain OPEN. This category package did not correct them. Preserve real cash and do not net or suppress source movements to fix report presentation. Full review is inclusive from 07/07/2026, including relevant older-purchase installments; source freshness, other-Visa documentary gaps and unrestricted bulk/manual or whole-product approval remain separate.
+
+## Retained product contracts and continuation
+Frontend remains published V162 with unchanged manifest and protected public index.html. Preserve descending single-list invoice categories, bank-switch disclosure closure with selected dates retained, manual ranges, D-5/today/D+30 and the V150/V151 functional reference without restoring the cumulative wrapper chain. No new homologation release is claimed. Dashboard requires explicit approval of a full proposed visual; public-root promotion remains unauthorized.
+
+Preserve the original spreadsheet taxonomy plus explicit new user labels, the deferred equivalence-map plan, current Itaú anchor, resolved Bradesco yield, separate dated Cofrinho, vested-only availability, due/cash-date distinction, C6 prior-payment exclusion and all financing/insurance/family/vehicle/DDA decisions. All unrelated master-backlog items remain open until independently verified. Earlier snapshots are not a reason to re-ask newer confirmed decisions.
+
+Before repository writes re-fetch main and recovery-v152-flow-20260910, current state, latest checkpoint, complete master backlog/delta, full-period coverage, next gate, decision supplements, handoff and canonical plan. Never force branches or overwrite parallel work. The previous complete state and checkpoints are immutable. Updates use Concluído / Em execução / Próximos passos. Distinguish a received answer, applied source, consumer readback, cached summary, actual browser test and human approval. No unattended work was scheduled or claimed.
