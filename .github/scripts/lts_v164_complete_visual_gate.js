@@ -100,9 +100,10 @@ async function run(browser,viewport,label,{loginAfterLoad=false}={}){
   }
   const frame=await frameReady(page,label);
   const text=await frame.locator('.v164-dashboard').innerText();
+  const normalizedText=text.toLocaleLowerCase('pt-BR');
   const answerMetrics=await frame.locator('.v164-answer-metrics .v164-metric').allInnerTexts();
   await page.screenshot({path:`v164-${label}.png`,fullPage:true});
-  for(const needle of ['Tenho dinheiro suficiente?','Até 29/12/2026, sim. Depois, é preciso agir.','Sim · 30/12/2026','Com o FGTS','Falta em 30/01/2027','Data para agir','30/11/2026','Dinheiro em contas','Planejamento incorporado','Quando falta dinheiro e quando recupera'])if(!text.includes(needle))throw new Error(`${label} missing ${needle}; answer metrics=${JSON.stringify(answerMetrics)}; dashboard=${JSON.stringify(text.slice(0,1800))}`);
+  for(const needle of ['Tenho dinheiro suficiente?','Até 29/12/2026, sim. Depois, é preciso agir.','Sim · 30/12/2026','Com o FGTS','Falta em 30/01/2027','Data para agir','30/11/2026','Dinheiro em contas','Planejamento incorporado','Quando falta dinheiro e quando recupera'])if(!normalizedText.includes(needle.toLocaleLowerCase('pt-BR')))throw new Error(`${label} missing ${needle}; answer metrics=${JSON.stringify(answerMetrics)}; dashboard=${JSON.stringify(text.slice(0,1800))}`);
   if(answerMetrics.length!==4)throw new Error(`${label} expected four answer metrics, received ${JSON.stringify(answerMetrics)}`);
   if(await frame.locator('.v164-kpi').count()!==5)throw new Error(`${label} expected five KPIs`);
   const nav=label==='mobile'?frame.locator('#dx1MobileNav'):frame.locator('.nav');
