@@ -1,0 +1,147 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1320" height="960" viewBox="0 0 1320 960" role="img" aria-labelledby="title desc">
+  <title id="title">Proposta visual do Dashboard LTS Wealth para celular</title>
+  <desc id="desc">Três quadros de uma mesma tela móvel em rolagem vertical: resumo, análises e decisões, com navegação primária persistente e sem rolagem horizontal.</desc>
+  <defs>
+    <filter id="phoneShadow" x="-20%" y="-10%" width="140%" height="130%"><feGaussianBlur in="SourceAlpha" stdDeviation="16" result="pb"/><feOffset in="pb" dx="0" dy="12" result="po"/><feFlood flood-color="#0d2238" flood-opacity=".18" result="pc"/><feComposite in="pc" in2="po" operator="in" result="ps"/><feMerge><feMergeNode in="ps"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="cardShadow" x="-20%" y="-20%" width="140%" height="150%"><feGaussianBlur in="SourceAlpha" stdDeviation="6" result="cb"/><feOffset in="cb" dx="0" dy="3" result="co"/><feFlood flood-color="#17324d" flood-opacity=".07" result="cc"/><feComposite in="cc" in2="co" operator="in" result="cs"/><feMerge><feMergeNode in="cs"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <style>
+      .ui { font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      .frame-label { fill:#51677e; font-size:12px; font-weight:760; letter-spacing:.4px; }
+      .h1 { fill:#142941; font-size:25px; font-weight:780; letter-spacing:-.6px; }
+      .sub { fill:#758497; font-size:10px; font-weight:520; }
+      .label { fill:#6e7d90; font-size:9px; font-weight:720; }
+      .value { fill:#18304b; font-size:17px; font-weight:770; }
+      .note { fill:#8995a4; font-size:8px; font-weight:540; }
+      .title { fill:#203850; font-size:13px; font-weight:760; }
+      .meta { fill:#7f8d9c; font-size:8px; font-weight:560; }
+      .row { fill:#2a4159; font-size:9px; font-weight:700; }
+      .nav { fill:#748398; font-size:7px; font-weight:700; }
+      .nav-active { fill:#337bea; font-size:7px; font-weight:780; }
+    </style>
+  </defs>
+  <g class="ui">
+    <rect width="1320" height="960" fill="#e9eef4"/>
+    <text x="40" y="31" class="frame-label">CELULAR · 390 × 844 · UMA ÚNICA TELA EM ROLAGEM VERTICAL</text>
+    <rect x="1018" y="13" width="262" height="26" rx="13" fill="#dff3eb"/><circle cx="1035" cy="26" r="4" fill="#29a678"/><text x="1047" y="30" fill="#26775b" font-size="9" font-weight="760">SEM OVERFLOW HORIZONTAL</text>
+
+    <!-- Molduras -->
+    <g filter="url(#phoneShadow)">
+      <rect x="30" y="52" width="390" height="844" rx="30" fill="#0d1d31"/>
+      <rect x="465" y="52" width="390" height="844" rx="30" fill="#0d1d31"/>
+      <rect x="900" y="52" width="390" height="844" rx="30" fill="#0d1d31"/>
+    </g>
+    <rect x="38" y="60" width="374" height="828" rx="23" fill="#f4f7fa"/>
+    <rect x="473" y="60" width="374" height="828" rx="23" fill="#f4f7fa"/>
+    <rect x="908" y="60" width="374" height="828" rx="23" fill="#f4f7fa"/>
+
+    <!-- Quadro 1: resumo -->
+    <rect x="38" y="60" width="374" height="61" rx="23" fill="#10243d"/>
+    <rect x="38" y="97" width="374" height="24" fill="#10243d"/>
+    <circle cx="62" cy="91" r="13" fill="#347cea"/><path d="M56 91h12M62 85v12" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+    <text x="83" y="88" fill="#fff" font-size="13" font-weight="760">LTS Wealth</text><text x="83" y="104" fill="#8ea3ba" font-size="8">Resumo executivo</text>
+    <circle cx="383" cy="91" r="12" fill="#1b3858"/><circle cx="383" cy="88" r="3" fill="#adc0d4"/><path d="M377 98c1-5 11-5 12 0" fill="none" stroke="#adc0d4" stroke-width="1.4"/>
+    <text x="56" y="158" class="h1">Dashboard</text><text x="56" y="177" class="sub">Sua vida financeira, em uma tela.</text>
+    <rect x="56" y="192" width="153" height="31" rx="9" fill="#fff" stroke="#dce4eb"/><text x="68" y="211" class="row">Mês atual  ▾</text>
+    <rect x="217" y="192" width="177" height="31" rx="9" fill="#fff" stroke="#dce4eb"/><text x="228" y="211" class="row">Base DD/MM/AAAA</text>
+    <g filter="url(#cardShadow)">
+      <rect x="56" y="239" width="165" height="82" rx="13" fill="#fafdff" stroke="#aacbed"/>
+      <rect x="229" y="239" width="165" height="82" rx="13" fill="#fff" stroke="#e0e7ed"/>
+      <rect x="56" y="329" width="165" height="82" rx="13" fill="#fff" stroke="#e0e7ed"/>
+      <rect x="229" y="329" width="165" height="82" rx="13" fill="#fff" stroke="#e0e7ed"/>
+      <rect x="56" y="419" width="338" height="78" rx="13" fill="#fff" stroke="#e0e7ed"/>
+    </g>
+    <text x="69" y="260" class="label">DINHEIRO EM CONTAS</text><text x="69" y="286" class="value">R$ •••••</text><text x="69" y="306" class="note">saldo evidenciado</text>
+    <text x="242" y="260" class="label">CONTAS + CURTO PRAZO</text><text x="242" y="286" class="value">R$ •••••</text><text x="242" y="306" class="note">recursos elegíveis</text>
+    <text x="69" y="350" class="label">RSUs VESTED</text><text x="69" y="376" class="value">R$ •••••</text><text x="69" y="396" class="note">adquiridas · D+3</text>
+    <text x="242" y="350" class="label">FGTS</text><text x="242" y="376" class="value">R$ •••••</text><text x="242" y="396" class="note">restrito · D+30</text>
+    <circle cx="77" cy="458" r="12" fill="#feecee"/><path d="M72 454v8M80 454v8M69 458h14" stroke="#d85f6c" stroke-width="1.4"/>
+    <text x="98" y="449" class="label">DESPESAS (MÊS)</text><text x="98" y="474" class="value">R$ •••••</text><rect x="303" y="441" width="75" height="22" rx="11" fill="#fff2dd"/><text x="315" y="456" fill="#936d29" font-size="8" font-weight="740">MÊS PARCIAL</text>
+    <g filter="url(#cardShadow)"><rect x="56" y="513" width="338" height="249" rx="15" fill="#fff" stroke="#e0e7ed"/></g>
+    <text x="73" y="540" class="title">Evolução da liquidez</text><text x="73" y="557" class="meta">observado e projeções separados</text>
+    <rect x="302" y="528" width="76" height="23" rx="11" fill="#f2f6fa"/><text x="317" y="543" class="row">90 dias ▾</text>
+    <line x1="77" y1="605" x2="373" y2="605" stroke="#edf1f5"/><line x1="77" y1="654" x2="373" y2="654" stroke="#edf1f5"/><line x1="77" y1="703" x2="373" y2="703" stroke="#dfe6ed"/>
+    <path d="M82 673L130 659L177 667L224 642" fill="none" stroke="#337bea" stroke-width="3"/><circle cx="224" cy="642" r="4" fill="#fff" stroke="#337bea" stroke-width="2.5"/>
+    <path d="M224 642C273 653 316 627 369 639" fill="none" stroke="#337bea" stroke-width="2.6" stroke-dasharray="6 5"/>
+    <path d="M224 642C274 620 320 609 369 582" fill="none" stroke="#2aac7a" stroke-width="2.4" stroke-dasharray="5 5"/>
+    <path d="M315 609C337 578 353 567 369 552" fill="none" stroke="#d69b2d" stroke-width="2.4" stroke-dasharray="3 5"/>
+    <circle cx="78" cy="733" r="4" fill="#337bea"/><text x="88" y="736" class="meta">base</text><circle cx="137" cy="733" r="4" fill="#2aac7a"/><text x="147" y="736" class="meta">RSU cond.</text><circle cx="220" cy="733" r="4" fill="#d69b2d"/><text x="230" y="736" class="meta">FGTS restrito</text>
+    <rect x="38" y="814" width="374" height="74" fill="#fff"/><line x1="38" y1="814" x2="412" y2="814" stroke="#dce4eb"/>
+    <g class="nav-active"><circle cx="69" cy="838" r="10" fill="#e8f1ff"/><path d="M64 841l4-5 3 3 4-6" fill="none" stroke="#337bea" stroke-width="1.4"/><text x="69" y="862" text-anchor="middle">Início</text></g>
+    <g class="nav"><circle cx="127" cy="838" r="9" fill="#f1f4f7"/><text x="127" y="841" text-anchor="middle">F</text><text x="127" y="862" text-anchor="middle">Fluxo</text></g>
+    <g class="nav"><circle cx="185" cy="838" r="9" fill="#f1f4f7"/><text x="185" y="841" text-anchor="middle">D</text><text x="185" y="862" text-anchor="middle">Gastos</text></g>
+    <g class="nav"><circle cx="243" cy="838" r="9" fill="#f1f4f7"/><text x="243" y="841" text-anchor="middle">C</text><text x="243" y="862" text-anchor="middle">Cartões</text></g>
+    <g class="nav"><circle cx="301" cy="838" r="9" fill="#f1f4f7"/><text x="301" y="841" text-anchor="middle">P</text><text x="301" y="862" text-anchor="middle">Bens</text></g>
+    <g class="nav"><circle cx="359" cy="838" r="9" fill="#f1f4f7"/><text x="359" y="841" text-anchor="middle">A</text><text x="359" y="862" text-anchor="middle">Ações</text></g>
+
+    <!-- Quadro 2: análises -->
+    <rect x="473" y="60" width="374" height="61" rx="23" fill="#10243d"/><rect x="473" y="97" width="374" height="24" fill="#10243d"/>
+    <text x="491" y="89" fill="#8ea3ba" font-size="9" font-weight="700">DASHBOARD</text><text x="491" y="106" fill="#fff" font-size="14" font-weight="760">Análises</text>
+    <rect x="742" y="78" width="87" height="27" rx="13" fill="#1b3858"/><text x="757" y="95" fill="#c7d5e4" font-size="8" font-weight="730">Topo ↑</text>
+    <g filter="url(#cardShadow)"><rect x="491" y="139" width="338" height="229" rx="15" fill="#fff" stroke="#e0e7ed"/></g>
+    <text x="508" y="166" class="title">Liquidez por horizonte</text><text x="508" y="183" class="meta">âncora atual e cenários explícitos</text>
+    <text x="508" y="216" class="row">Hoje · observado</text><rect x="508" y="227" width="290" height="11" rx="6" fill="#edf2f6"/><rect x="508" y="227" width="164" height="11" rx="6" fill="#337bea"/>
+    <text x="508" y="265" class="row">Base operacional</text><rect x="508" y="276" width="290" height="11" rx="6" fill="#edf2f6"/><rect x="508" y="276" width="203" height="11" rx="6" fill="#6798d8"/>
+    <text x="508" y="314" class="row">Com RSU condicional</text><rect x="508" y="325" width="290" height="11" rx="6" fill="#edf2f6"/><rect x="508" y="325" width="251" height="11" rx="6" fill="#2aac7a"/>
+    <text x="803" y="216" text-anchor="end" class="note">R$ •••</text><text x="803" y="265" text-anchor="end" class="note">R$ •••</text><text x="803" y="314" text-anchor="end" class="note">R$ •••</text>
+
+    <g filter="url(#cardShadow)"><rect x="491" y="383" width="338" height="174" rx="15" fill="#fff" stroke="#e0e7ed"/></g>
+    <text x="508" y="410" class="title">Distribuição patrimonial</text><rect x="716" y="395" width="96" height="22" rx="11" fill="#fff3db"/><text x="730" y="410" fill="#926b24" font-size="8" font-weight="750">EM VALIDAÇÃO</text>
+    <circle cx="553" cy="482" r="38" fill="none" stroke="#e4eaf0" stroke-width="12" stroke-dasharray="7 5"/><text x="553" y="479" text-anchor="middle" fill="#596c80" font-size="8" font-weight="740">COBERTURA</text><text x="553" y="492" text-anchor="middle" fill="#8b97a5" font-size="7">PARCIAL</text>
+    <rect x="613" y="447" width="9" height="9" rx="3" fill="#337bea"/><text x="630" y="455" class="row">Ativos documentados</text>
+    <rect x="613" y="475" width="9" height="9" rx="3" fill="#2aac7a"/><text x="630" y="483" class="row">RSUs vested</text>
+    <rect x="613" y="503" width="9" height="9" rx="3" fill="#e9b142"/><text x="630" y="511" class="row">FGTS restrito</text>
+    <text x="508" y="540" class="meta">Sem valor total enquanto ativos/passivos não forem certificados.</text>
+
+    <g filter="url(#cardShadow)"><rect x="491" y="572" width="338" height="221" rx="15" fill="#fff" stroke="#e0e7ed"/></g>
+    <text x="508" y="599" class="title">Posição por banco</text><text x="508" y="616" class="meta">fonte e data em cada conta</text>
+    <circle cx="524" cy="651" r="13" fill="#edf3f8"/><text x="524" y="654" text-anchor="middle" fill="#586f87" font-size="7" font-weight="800">ITA</text><text x="548" y="648" class="row">Itaú</text><text x="548" y="663" class="meta">posição DD/MM</text><text x="808" y="654" text-anchor="end" class="row">R$ •••</text><line x1="508" y1="677" x2="812" y2="677" stroke="#edf1f4"/>
+    <circle cx="524" cy="705" r="13" fill="#edf3f8"/><text x="524" y="708" text-anchor="middle" fill="#586f87" font-size="7" font-weight="800">BRA</text><text x="548" y="702" class="row">Bradesco</text><text x="548" y="717" class="meta">posição DD/MM</text><text x="808" y="708" text-anchor="end" class="row">R$ •••</text><line x1="508" y1="731" x2="812" y2="731" stroke="#edf1f4"/>
+    <circle cx="524" cy="759" r="13" fill="#edf3f8"/><text x="524" y="762" text-anchor="middle" fill="#586f87" font-size="7" font-weight="800">C6</text><text x="548" y="756" class="row">C6</text><text x="548" y="771" class="meta">posição DD/MM</text><text x="808" y="762" text-anchor="end" class="row">R$ •••</text>
+    <rect x="473" y="814" width="374" height="74" fill="#fff"/><line x1="473" y1="814" x2="847" y2="814" stroke="#dce4eb"/>
+    <g class="nav-active"><circle cx="504" cy="838" r="10" fill="#e8f1ff"/><text x="504" y="841" text-anchor="middle">D</text><text x="504" y="862" text-anchor="middle">Início</text></g>
+    <g class="nav"><circle cx="562" cy="838" r="9" fill="#f1f4f7"/><text x="562" y="841" text-anchor="middle">F</text><text x="562" y="862" text-anchor="middle">Fluxo</text></g>
+    <g class="nav"><circle cx="620" cy="838" r="9" fill="#f1f4f7"/><text x="620" y="841" text-anchor="middle">D</text><text x="620" y="862" text-anchor="middle">Gastos</text></g>
+    <g class="nav"><circle cx="678" cy="838" r="9" fill="#f1f4f7"/><text x="678" y="841" text-anchor="middle">C</text><text x="678" y="862" text-anchor="middle">Cartões</text></g>
+    <g class="nav"><circle cx="736" cy="838" r="9" fill="#f1f4f7"/><text x="736" y="841" text-anchor="middle">P</text><text x="736" y="862" text-anchor="middle">Bens</text></g>
+    <g class="nav"><circle cx="794" cy="838" r="9" fill="#f1f4f7"/><text x="794" y="841" text-anchor="middle">A</text><text x="794" y="862" text-anchor="middle">Ações</text></g>
+
+    <!-- Quadro 3: decisões -->
+    <rect x="908" y="60" width="374" height="61" rx="23" fill="#10243d"/><rect x="908" y="97" width="374" height="24" fill="#10243d"/>
+    <text x="926" y="89" fill="#8ea3ba" font-size="9" font-weight="700">DASHBOARD</text><text x="926" y="106" fill="#fff" font-size="14" font-weight="760">Decisões</text>
+    <rect x="1177" y="78" width="87" height="27" rx="13" fill="#1b3858"/><text x="1192" y="95" fill="#c7d5e4" font-size="8" font-weight="730">Topo ↑</text>
+    <g filter="url(#cardShadow)"><rect x="926" y="139" width="338" height="137" rx="15" fill="#fff" stroke="#e0e7ed"/></g>
+    <text x="943" y="166" class="title">Fluxo de caixa</text><rect x="1167" y="151" width="80" height="23" rx="11" fill="#eef5ff"/><text x="1180" y="166" fill="#376da9" font-size="8" font-weight="750">ABRIR FLUXO</text>
+    <line x1="947" y1="244" x2="1242" y2="244" stroke="#dfe6ed"/>
+    <g fill="#76c4a5"><rect x="968" y="204" width="12" height="40" rx="3"/><rect x="1010" y="183" width="12" height="61" rx="3"/><rect x="1052" y="212" width="12" height="32" rx="3"/><rect x="1094" y="177" width="12" height="67" rx="3"/><rect x="1136" y="195" width="12" height="49" rx="3"/><rect x="1178" y="186" width="12" height="58" rx="3"/></g>
+    <g fill="#eb8490"><rect x="982" y="222" width="12" height="22" rx="3"/><rect x="1024" y="207" width="12" height="37" rx="3"/><rect x="1066" y="225" width="12" height="19" rx="3"/><rect x="1108" y="201" width="12" height="43" rx="3"/><rect x="1150" y="217" width="12" height="27" rx="3"/><rect x="1192" y="209" width="12" height="35" rx="3"/></g>
+
+    <g filter="url(#cardShadow)"><rect x="926" y="291" width="338" height="153" rx="15" fill="#fff" stroke="#e0e7ed"/></g>
+    <text x="943" y="318" class="title">Principais despesas</text><text x="1245" y="318" text-anchor="end" fill="#337bea" font-size="8" font-weight="760">DETALHAR →</text>
+    <text x="943" y="351" class="row">Categoria 01</text><rect x="1020" y="343" width="180" height="9" rx="5" fill="#edf2f6"/><rect x="1020" y="343" width="166" height="9" rx="5" fill="#427fd4"/><text x="1245" y="351" text-anchor="end" class="row">R$ •••</text>
+    <text x="943" y="386" class="row">Categoria 02</text><rect x="1020" y="378" width="180" height="9" rx="5" fill="#edf2f6"/><rect x="1020" y="378" width="125" height="9" rx="5" fill="#72a0db"/><text x="1245" y="386" text-anchor="end" class="row">R$ •••</text>
+    <text x="943" y="421" class="row">Categoria 03</text><rect x="1020" y="413" width="180" height="9" rx="5" fill="#edf2f6"/><rect x="1020" y="413" width="88" height="9" rx="5" fill="#a1bfe3"/><text x="1245" y="421" text-anchor="end" class="row">R$ •••</text>
+
+    <g filter="url(#cardShadow)"><rect x="926" y="459" width="338" height="133" rx="15" fill="#fff" stroke="#e0e7ed"/></g>
+    <text x="943" y="486" class="title">Próximos compromissos</text><text x="943" y="503" class="meta">datas documentadas, sem tarefas presumidas</text>
+    <rect x="943" y="519" width="304" height="27" rx="8" fill="#f7f9fb"/><text x="954" y="536" class="row">DD/MM · Próxima fatura</text><text x="1237" y="536" text-anchor="end" class="row">R$ •••</text>
+    <rect x="943" y="552" width="304" height="27" rx="8" fill="#f7f9fb"/><text x="954" y="569" class="row">DD/MM · Parcela contratual</text><text x="1237" y="569" text-anchor="end" class="row">R$ •••</text>
+
+    <g filter="url(#cardShadow)"><rect x="926" y="607" width="338" height="126" rx="15" fill="#fff" stroke="#e0e7ed"/></g>
+    <text x="943" y="634" class="title">Planejamento · visão de caixa</text>
+    <rect x="943" y="651" width="144" height="57" rx="10" fill="#f2f6fb"/><text x="954" y="670" class="label">DATA DE GESTÃO</text><text x="954" y="693" fill="#24425f" font-size="14" font-weight="760">DD/MM/AAAA</text>
+    <rect x="1095" y="651" width="152" height="57" rx="10" fill="#fff3ee"/><text x="1106" y="670" class="label">1º CAIXA NEGATIVO</text><text x="1106" y="693" fill="#a65057" font-size="14" font-weight="760">DD/MM/AAAA</text>
+
+    <g filter="url(#cardShadow)"><rect x="926" y="748" width="338" height="52" rx="13" fill="#fff7e6" stroke="#f2dfb3"/></g>
+    <text x="943" y="770" fill="#806027" font-size="10" font-weight="750">FGTS · contingência restrita</text><text x="943" y="787" fill="#987b49" font-size="8">D+30 · sem projeção de aportes</text><text x="1246" y="778" text-anchor="end" fill="#806027" font-size="11" font-weight="760">R$ •••</text>
+    <rect x="908" y="814" width="374" height="74" fill="#fff"/><line x1="908" y1="814" x2="1282" y2="814" stroke="#dce4eb"/>
+    <g class="nav-active"><circle cx="939" cy="838" r="10" fill="#e8f1ff"/><text x="939" y="841" text-anchor="middle">D</text><text x="939" y="862" text-anchor="middle">Início</text></g>
+    <g class="nav"><circle cx="997" cy="838" r="9" fill="#f1f4f7"/><text x="997" y="841" text-anchor="middle">F</text><text x="997" y="862" text-anchor="middle">Fluxo</text></g>
+    <g class="nav"><circle cx="1055" cy="838" r="9" fill="#f1f4f7"/><text x="1055" y="841" text-anchor="middle">D</text><text x="1055" y="862" text-anchor="middle">Gastos</text></g>
+    <g class="nav"><circle cx="1113" cy="838" r="9" fill="#f1f4f7"/><text x="1113" y="841" text-anchor="middle">C</text><text x="1113" y="862" text-anchor="middle">Cartões</text></g>
+    <g class="nav"><circle cx="1171" cy="838" r="9" fill="#f1f4f7"/><text x="1171" y="841" text-anchor="middle">P</text><text x="1171" y="862" text-anchor="middle">Bens</text></g>
+    <g class="nav"><circle cx="1229" cy="838" r="9" fill="#f1f4f7"/><text x="1229" y="841" text-anchor="middle">A</text><text x="1229" y="862" text-anchor="middle">Ações</text></g>
+
+    <text x="40" y="930" fill="#6e7f91" font-size="9" font-weight="650">1 · RESUMO E CINCO KPIs</text><text x="475" y="930" fill="#6e7f91" font-size="9" font-weight="650">2 · ANÁLISES E COBERTURA</text><text x="910" y="930" fill="#6e7f91" font-size="9" font-weight="650">3 · DECISÕES E DRILL-DOWN</text>
+    <text x="1280" y="949" text-anchor="end" fill="#8290a0" font-size="8" font-weight="650">PROPOSTA VISUAL · VALORES OCULTOS · NÃO IMPLEMENTADA</text>
+  </g>
+</svg>

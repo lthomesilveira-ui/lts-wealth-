@@ -4,6 +4,18 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 
 Canonical persistent project list. Never remove an open financial, documentary, classification, reconciliation or product dependency during compaction. Detailed immutable evidence remains in `backups/`, `HISTORICAL_RECOVERY_LOG.md`, `PLANNING_EXCEL_TO_CURRENT_AUDIT_2026-08-30.md`, `NEXT_HOMOLOGATION_GATE.md` and release checkpoints.
 
+## P0 — Dashboard visual proposal / Work continuity — 15/09/2026
+- [x] Recovered the original official 1312×1199 visual source and verified its exact contracted SHA-256; the public 180×164 proxy remains auxiliary only.
+- [x] Rechecked `main`, `recovery-v152-flow-20260910`, V162 manifest, exact product build, successful Pages run, fixed homologation redirect and protected-root status before writing.
+- [x] Audited effective route ownership: current navigation omits Dashboard; historical Dashboard code remains rejected/non-canonical; effective Despesas is ex135 plus the reconciled screen alignment.
+- [x] Produced complete notebook and 390 px mobile visuals, a block-to-reader data contract and the extension language for Despesas, Cartões and Patrimônio without private values.
+- [x] Recorded the proposal, source provenance, limitations, decisions and pending gates in `LTS_WEALTH_DASHBOARD_VISUAL_PROPOSAL_2026-09-15.md` and its immutable package checkpoint.
+- [ ] Obtain explicit user approval or requested visual corrections. Creating or rendering the proposal is not approval.
+- [ ] After approval, implement a new Dashboard layer in the same branch lineage; do not re-enable the Dashboard rejected on 10/09/2026.
+- [ ] Run integrated desktop/mobile route, reader, financial-invariant and visual side-by-side gates; fixture/geometry PASS is not real-data acceptance.
+- [ ] Verify the exact candidate SHA and Pages artifact after publication to homologation; keep public-root promotion behind a separate explicit decision.
+- [ ] Complete authenticated real-session material review and physical-device navigation evidence; no such evidence is claimed by the proposal package.
+
 ## P0 — Recover the user-validated Daily Flow — 10/09/2026
 - [x] Record canonical v1.24 as `REJEITADO_USUARIO`; retain its tests only as historical engineering evidence.
 - [x] Isolate recovery from a fresh remote `main` and preserve the dirty prior checkout without overwrite.
