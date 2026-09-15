@@ -32,7 +32,7 @@ jobs:
         run: |
           npm install --no-save playwright@1.55.0
           npx playwright install --with-deps chromium
-      - name: Run desktop and mobile gate
+      - name: Run desktop, mobile and post-login gate
         run: |
           python3 -m http.server 8779 >/tmp/lts-http-v163.log 2>&1 &
           SERVER_PID=$!
@@ -47,5 +47,7 @@ jobs:
             v163-dashboard-executive-result.json
             v163-dashboard-desktop.png
             v163-dashboard-mobile.png
+            v163-dashboard-post-login.png
             v163-dashboard-desktop-failure.png
             v163-dashboard-mobile-failure.png
+            v163-dashboard-post-login-failure.png
