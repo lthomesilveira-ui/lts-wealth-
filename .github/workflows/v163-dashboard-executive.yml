@@ -46,3 +46,5 @@ jobs:
             v163-dashboard-executive-result.json
             v163-dashboard-desktop.png
             v163-dashboard-mobile.png
+            v163-dashboard-desktop-failure.png
+            v163-dashboard-mobile-failure.png

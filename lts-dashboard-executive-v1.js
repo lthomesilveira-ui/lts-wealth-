@@ -74,6 +74,7 @@
     function bind(){
       document.querySelectorAll('[data-go]').forEach(button=>button.onclick=()=>go(button.dataset.go));
       const refresh=document.getElementById('dx1Refresh');if(refresh)refresh.onclick=()=>loadDashboard(true);
+      const badge=window.parent.document.getElementById('scope');if(badge)badge.textContent=V==='Dashboard'?'Resumo executivo · homologação':V==='Despesas'?'Despesas · homologação':'Fluxo Diário · homologação';
       bindMobileNav();
     }
     function bindMobileNav(){
