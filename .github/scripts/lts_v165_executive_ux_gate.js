@@ -109,6 +109,7 @@ async function run(browser,viewport,label,{loginAfterLoad=false}={}){
   if(await frame.locator('.v165-kpis>.v165-kpi').count()!==5)throw Error(`${label}: dashboard KPI count`);
   if(await frame.locator('.v165-grid.dashboard-main>.v165-card').count()!==3)throw Error(`${label}: reference main row missing`);
   if(await frame.locator('.v165-grid.dashboard-lower>.v165-card').count()!==3)throw Error(`${label}: reference lower row missing`);
+  if(label==='desktop'){const rail=await frame.locator('.hdr').evaluate(element=>element.getBoundingClientRect().width),dashboardHeight=await frame.locator('.v165-dashboard').evaluate(element=>element.getBoundingClientRect().height);if(rail<215||rail>225)throw Error(`desktop: rail ${rail}`);if(dashboardHeight>1160)throw Error(`desktop: dashboard too verbose ${dashboardHeight}`)}
   const nav=label==='mobile'?frame.locator('#dx1MobileNav'):frame.locator('.nav');if(await nav.locator('button').count()!==5)throw Error(`${label}: expected five navigation routes`);
   if(await nav.getByText('Cartões',{exact:true}).count()||await nav.getByText('Planejamento',{exact:true}).count())throw Error(`${label}: duplicate top-level route`);
   if(!(await frame.locator('.brand small').innerText()).includes('V165'))throw Error(`${label}: visible V165 missing`);
@@ -126,7 +127,6 @@ async function run(browser,viewport,label,{loginAfterLoad=false}={}){
   if(await frame.locator('.v165-search input[type="date"]').count())throw Error(`${label}: search incorrectly requires date`);
   if(label!=='post-login')await page.screenshot({path:`v165-${label}-updates.png`,fullPage:true});
   const dims=await frame.locator('html').evaluate(element=>({scroll:element.scrollWidth,client:element.clientWidth}));if(dims.scroll>dims.client+3)throw Error(`${label}: horizontal overflow ${JSON.stringify(dims)}`);
-  if(label==='desktop'){const rail=await frame.locator('.hdr').evaluate(element=>element.getBoundingClientRect().width),dashboardHeight=await frame.locator('.v165-dashboard').evaluate(element=>element.getBoundingClientRect().height);if(rail<215||rail>225)throw Error(`desktop: rail ${rail}`);if(dashboardHeight>1160)throw Error(`desktop: dashboard too verbose ${dashboardHeight}`)}
   await page.reload({waitUntil:'domcontentloaded'});const reloaded=await frameReady(page,label+'-reload');if(!await reloaded.locator('.v165-dashboard').isVisible())throw Error(`${label}: reload did not return Dashboard`);
   if(errors.length)throw Error(`${label}: page errors ${JSON.stringify(errors)}`);
   await context.close();return {label,pass:true,viewport,routes:5,reference_structure:true,flow_preserved:true,search_without_date:true,rsu_rules:true,reload:true,login_transition:loginAfterLoad?'signed-out-to-dashboard-without-reload':'preauthenticated',requested:[...new Set(requested)]};
