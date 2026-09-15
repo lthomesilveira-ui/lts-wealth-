@@ -1,18 +1,21 @@
 {
   "schema": 1,
   "version": "wip35-v162",
-  "build": "V162 · Faturas em lista única e troca de bancos · 12/09/2026",
+  "build": "V162 · Despesas e classificações conciliadas · 14/09/2026",
   "path": "wip35-v162-candidate.html",
-  "candidate_head": "d3300083bc1288cb0c5aff1772f98877ef17728e",
-  "candidate_sha": "d3300083bc1288cb0c5aff1772f98877ef17728e",
+  "candidate_head": "398ef6918bbb6164543107f2ca87d314e42c9f2f",
+  "candidate_sha": "398ef6918bbb6164543107f2ca87d314e42c9f2f",
   "public_fallback": "index.html",
   "promotion_status": "not_promoted",
-  "exposed_from_main_sha": "c480823fd0d1259c88a5484cc05a89c932755936",
-  "exposure_mode": "flow_v150_v151_preserved_single_list_invoices_bank_scoped_disclosures",
-  "gate_status": "recovery-34726662187-pass_window-34726456351-pass_integrated-scope-order-34726456372-pass_classification-real-source-alignment-open",
+  "exposure_mode": "current_expense_sources_executive_screen_preserved_flow",
+  "gate_status": "expense-screen-34912267323-pass_read-contracts-34912267328-pass_flow-window-34912837547-pass_integrated-flow-34912837504-pass_native-source-alignment-pass",
+  "expense_screen_contract": "current-executive-screen-v2",
+  "expense_backend_contract": "current-documentary-expense-sources-v1",
+  "classification_scope": "reviewed_available_sources_zero_pending",
   "invoice_contract": "all-cards-aeternum-summary-source-v1",
   "invoice_reading_order": "invoice-single-list-descending-v1",
   "bank_scope_contract": "bank-switch-closes-days-and-invoices-v1",
   "default_window": {"past_days":5,"include_today":true,"future_days":30,"include_zero_movement_days":true},
-  "updated_at": "2026-09-12"
+  "updated_at": "2026-09-14",
+  "actual_user_session_homologation": "pending"
 }
