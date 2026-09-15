@@ -44,6 +44,8 @@ The fixed V163 candidate loaded the new runtime URL and, after secure authentica
 
 No credential was exposed to the executor or recorded. Exact private financial values are intentionally omitted from this public receipt. The browser verification proves the delivered read/presentation path at that time; it does not certify every source document, physical iPhone rendering, public-root promotion or whole-product acceptance.
 
+The first post-fix browser pass also exposed a metadata-only inconsistency: `homologacao-current.json` still encoded the pre-fix `6cc1e616` candidate hash even though Pages served the corrected runtime. The manifest was therefore updated to `f4e2ce4cfc77b8bc3e1812f642f40fda5e36f43c` before final handoff; this did not change application behavior or financial data.
+
 ## Remaining gates
 
 - human review of the Dashboard presentation and numbers on notebook and phone;
