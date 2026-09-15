@@ -1,0 +1,41 @@
+name: Despesas current screen integration
+on:
+  push:
+    branches: [main, recovery-v152-flow-20260910]
+    paths:
+      - 'lts-expense-screen-alignment.js'
+      - 'lts-expense-read-model.js'
+      - 'wip35-v162-candidate.html'
+      - '.github/scripts/lts_expense_screen.browser.py'
+      - '.github/workflows/expense-screen-integration.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  existing-screen:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check source syntax
+        run: node --check lts-expense-screen-alignment.js
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Test-only browser dependencies
+        run: |
+          python -m pip install playwright==1.57.0
+          python -m playwright install --with-deps chromium
+      - name: Real V162 source with synthetic intercepted reads
+        run: python .github/scripts/lts_expense_screen.browser.py
+      - name: Preserve evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: expense-screen-evidence
+          path: |
+            expense-screen-qa.json
+            expense-screen-*.png

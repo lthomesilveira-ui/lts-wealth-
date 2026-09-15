@@ -1,22 +1,27 @@
 # LTS Wealth — Next Homologation Gate
 
-Business date 12/09/2026. Previous complete gate preserved at backups/NEXT_HOMOLOGATION_GATE_BEFORE_CLASSIFICATION_RECOVERY_2026-09-12.md.
+14/09/2026. Previous gate preserved byte-for-byte at backups/NEXT_HOMOLOGATION_GATE_BEFORE_EXPENSE_ALIGNMENT_2026-09-14.md. Read with the complete backlog and latest state; unrelated requirements remain.
 
-## Published UX retained
-V162 single descending category list, bank-switch closure, manual range preservation and default D-5 through D+30 remain published. No frontend or financial-value changes in the classification batch. The same link reads the corrected backend.
+## Closed on real sources
+- [x] Apply the seven answered card classifications, two outgoing health reimbursements and nine approved shorter child labels.
+- [x] Synchronize direct and stored card/bank classification queues: zero pending in the reviewed available-source set.
+- [x] Preserve source cash, invoice amounts/dates/counts and account values; retain full private before-images.
+- [x] Count the three documentary initiated/posted duplicates once in the historical reader; check nineteen statement closing balances and browser Flow readback.
+- [x] Remove the confirmed card-linked advance from additional expense consumption without changing cash.
+- [x] Use the current open-invoice source, preserve unknown purchase dates and reconcile all eight checked cycles to original totals.
+- [x] Preserve original historical enrichment and pre-July data; include current open coverage explicitly.
+- [x] Refresh derived expense cache and stored expense views/detail; verify complete source-cache equality, category/month parity and three executive/monthly comparisons.
 
-## Classification progress
-- [x] Apply the first evidence-supported batch instead of asking the user to do known classifications.
-- [x] Recover specific source categories ignored by the Flow reader; preserve existing non-pending effective decisions.
-- [x] Align the current open-invoice review slice with actual current invoice details, while retaining historical snapshots.
-- [x] Include pending current bank sources in the bank review queue; preserve signed per-source evidence.
-- [x] Refresh both review scopes on semantic save; fail atomically when refresh fails instead of reporting completed success.
-- [x] Verify current invoice pending-count/value parity, unchanged money/rows/raw fields and cache readback.
-- [x] Exercise the real semantic writer under authenticated role in an isolated rolled-back transaction with a historically known category, followed by invoice/queue readback.
-- [ ] Complete all recoverable historical mappings beyond the first batch; maintain user decisions and exact per-event versus global scope.
-- [ ] Resolve genuine remaining taxonomy/context ambiguity with focused user decisions, not generic merchant guesses.
-- [ ] Validate full manual transaction-scoped UI, actual-session save-refresh-reopen and review presentation before declaring unrestricted bulk user classification ready.
+## Current screen integration / publication
+- [~] Integrate tested lifecycle and source-consistent filters into existing Despesas, without changing the protected index or adding frames/polling.
+- [ ] New real-V162-source browser tests (mocked financial RPCs), plus retained Flow/CI gates, pass on the exact candidate commit. Consult actual run evidence.
+- [ ] Publish the passed candidate to main/Pages and update the fixed manifest; confirm deployment.
+- [ ] Material user review of Despesas on the actual signed-in device. Do not label synthetic browser tests as that review.
 
-Manual UX/session gates do not prevent safe assistant-applied classifications supported by existing evidence. Do not ask for already-received statements or require another chat/Work credits.
+## Scope not certified by zero pending categories
+- [ ] Transaction-scoped manual classification of a genuinely new entry, save/refresh/reopen in the actual session, and unrestricted bulk manual release.
+- [ ] Other current Visa source/identity gaps, old payment/control/account-attribution markers and data after the latest supplied statements.
+- [ ] Patrimônio holdings, debts, availability and valuation/date-base validation.
+- [ ] All unrelated master-backlog requirements; new Dashboard still needs explicit visual approval and public-root promotion remains unauthorized.
 
-All source/financial and other-module dependencies remain in the unchanged master backlog plus delta, interpreted with the latest execution-state/checkpoint overrides. Bradesco yield is resolved; other current Visa documentary identities and human whole-product approval remain open.
+The H question set is answered and now applied. Do not request the same decisions or statements again. Open invoices are provisional; source freshness and missing documentary detail remain visible limitations, not fabricated zeros.

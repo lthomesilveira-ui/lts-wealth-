@@ -1,0 +1,19 @@
+# V162 — Real classification closeout and current expense-source alignment
+
+Date: 14/09/2026. User requested maximum continued implementation. This is materially different from the earlier offline-only stages: source classifications, reader corrections and expense-cache synchronization actually committed through the native authorized Supabase connector.
+
+## Verified application
+Private audit answered_classifications_native_closeout_20260914_v1 contains seven new card classifications, two outgoing bank reimbursement classifications and nine approved child-label changes. Direct and cached classification queues now return zero. It preserves exact before/after source records and validates unchanged financial facts. The current user's past confirmations were used as authority, not inferred again. A separate authenticated consumer read confirmed source categories, counts and unchanged outgoing cash.
+
+Private audit expense_current_sources_alignment_20260914_v1 records two applied reader/coverage migrations, all old definitions and original source hashes, full source before/after data, nineteen independently documented bank closing balances, eight invoice checks and expense-cache comparisons. Derived historical reads eliminate only uniquely matched duplicate evidence representations; original evidence and real posted cash remain. Confirmed bidirectional vehicle advance/card linkage prevents an extra purchase in expense reports without netting cash.
+
+The report now reads the authoritative current open invoice rather than its explicitly superseded snapshot, while preserving credits, source identity, month competence and unknown original dates. Current-open coverage is explicitly provisional. Original center/supplier enrichment and pre-July history were regression-checked. Checks caught two initial implementation assumptions and rolled those attempts back; corrected versions passed before application. The new internal helper has no direct anon/authenticated execution grant.
+
+The effective expense cache equals the current source projection row-for-row in both directions. Stored consumption views/categories/detail use one universe. July, August and partial September executive totals equal their corresponding monthly totals; consumption and all-expense layers intentionally remain distinct. Classification counts remain zero. No protected raw financial table was modified by the reader changes, and no user-facing financial total is published in this repository.
+
+## Screen package and honest gate status
+A scoped V162 integration now connects the existing read model to the existing expense screen, leaving index.html and the Flow runtime untouched. The same single frame is reused. It preserves filters, open-cycle warnings, original-date uncertainty, exact category/detail parity, missing-data gaps and late-response isolation. It contains no financial writer, new polling or persistent storage. The new test uses the actual V162 source with synthetic intercepted financial RPCs on desktop/mobile; its result must be obtained from GitHub, not assumed at commit creation. Local JavaScript/Python syntax checks passed.
+
+This checkpoint does not claim the candidate is deployed or that the real user's phone has been tested. A subsequent release receipt must cite exact CI and Pages outcomes. No new classification questions are required. Other documentary card gaps, old payment/account controls, actual-session manual-entry lifecycle, source freshness, independent wealth validation, Dashboard approval and full-product approval remain open.
+
+Full earlier execution state and next-gate documents were preserved immutably before these updates. Restart remains RETOMAR_LTS_WEALTH.md -> current execution state -> this checkpoint and the latest release receipt. The deferred nomenclature map, original financial rules, bank anchors, assets/liabilities boundaries and every unrelated master-backlog item remain binding.
