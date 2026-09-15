@@ -16,16 +16,17 @@ Business date 14/09/2026. Final Despesas product 39e47fc60c40fa8f3796fab4f73f05d
 - [x] Deploy final candidate in GitHub Pages run 34914204383 and update fixed-manifest product metadata. Public index promotion remains unauthorized.
 
 ## The next user gate
-- [ ] Material review of Despesas on the user's actual signed-in device: August and September, month open/close and category drill-down, source-date/open-invoice clarity. This is the requested action now. No classification question remains for the completed H set.
+- [ ] Material review of the complete V164 homologation on the user's actual signed-in notebook and phone, only after automated gates, Pages publication and authenticated browser verification succeed. Review Dashboard, Flow, Despesas, Cartões and Patrimônio as one delivery; no classification question remains for the completed H set.
 - [x] V163 signed-out → login → Dashboard transition fixed and verified in the authenticated real browser after the user reported the published link still showing the prior interface. Dashboard → Fluxo → Dashboard also passed; automatic fixture and real-browser presentation evidence remain distinct.
 - [x] V163 authenticated full reload fixed and verified after a second route race was reproduced. The automated gate includes a deliberately slow Flow read; the published real session reload opens Dashboard directly and retains Dashboard → Fluxo → Dashboard navigation.
-- [ ] Human visual/financial acceptance of the newly visible Dashboard on the user's notebook and phone; the user may request iterative layout/information refinements without reopening the fixed activation defect.
+- [ ] Human visual/financial acceptance of the V164 Dashboard and aligned reports on the user's notebook and phone; the user may request iterative refinements without reopening already fixed readers or route defects.
 
 ## Separate open work
 - [ ] Transaction-scoped manual classification of a genuinely new entry, save/refresh/reopen in the actual session, unrestricted manual release.
 - [ ] Other current Visa evidence/identity gaps, older payment/account-attribution controls, source updates after the latest statements and document navigation where absent.
-- [ ] Independent Patrimônio asset/debt/availability/valuation/date-base verification.
-- [x] Approved complete Dashboard visual proposal implemented in the V163 homologation candidate; no public-root promotion or whole-product acceptance assumed.
+- [ ] Independent Patrimônio asset/debt/availability/valuation/date-base verification remains separate from visual alignment.
+- [ ] V164 visual package: Dashboard unique with Planning incorporated; Despesas, Cartões and Patrimônio aligned; false post-extract Itaú warning suppressed; automated and authenticated publication evidence pending.
+- [x] The V163 claim of complete visual implementation is superseded. V163 solved authenticated activation/reload but was not accepted as faithful implementation of the approved layout.
 - [ ] Every unaffected dependency in the full master backlog/deltas remains until individually evidenced closed.
 
 Zero category-pending does not certify all historical/future sources or turn open invoices into closed bills. Preserve original categories, cash-versus-competence, documentary depth and all previous user decisions. The fixed link is ready for Despesas review, not re-entry of the old answers.

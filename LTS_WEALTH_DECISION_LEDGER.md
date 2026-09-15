@@ -2,6 +2,18 @@
 
 Registro cumulativo de decisões humanas e mudanças de direção. Não apagar entradas antigas; uma decisão posterior deve marcar explicitamente a anterior como substituída ou rejeitada.
 
+## 16/09/2026 — Dashboard único e pacote visual completo
+
+Status: **AUTORIZADO PELO USUÁRIO / IMPLEMENTAÇÃO V164 EM ANDAMENTO**
+
+- O layout de cockpit aprovado continua sendo a referência; V163 não foi aceito como execução fiel desse layout.
+- `Planejamento` deixa de ser uma aba separada. Escada de liquidez, janelas negativas, recuperações e contingência passam a integrar o Dashboard único.
+- A primeira tela deve responder diretamente: há dinheiro suficiente, existe saldo negativo, quando ele começa e qual é a pior falta.
+- A leitura deve diferenciar o primeiro gap com vestings programados (30/12/2026) do primeiro gap ainda descoberto se o FGTS estiver disponível (30/01/2027), sem chamar isso de “cenário-base operacional”.
+- Despesas, Cartões e Patrimônio devem usar a mesma linguagem visual do Dashboard, preservando leitores reconciliados, drill-downs e regras financeiras.
+- A faixa de “diferença Itaú” não pode tratar um dia projetado posterior ao último extrato como divergência bancária. Aviso de conciliação só aparece diante de diferença na própria data de fechamento documental.
+- O usuário autorizou implementação, testes e publicação em homologação e pediu um único link já conferido; fixture automática não substitui a validação dos dados reais.
+
 ## 10/09/2026 — rejeição da canônica v1.24
 
 Status: **REJEITADA PELO USUÁRIO**

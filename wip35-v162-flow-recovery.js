@@ -114,9 +114,17 @@
       .lts-reconciliation-warning{margin:12px 0;font-size:12px}
       @media(max-width:820px){.lts-invoice-unified .invoice-grid,.lts-invoice-metrics{grid-template-columns:1fr!important}.lts-invoice-unified .invoice-head{flex-wrap:wrap}.lts-invoice-unified .fx89-invoice-body{display:grid;grid-template-columns:1fr}.lts-invoice-unified button{min-height:36px}.lts-invoice-unified .expense-tx{display:flex;gap:10px}.lts-invoice-unified .expense-main{flex:1}.lts-invoice-unified{padding:12px!important}}
     `;document.head.appendChild(invoiceStyle);
+    function reconciliationNoticeEligible(day,bank,value){
+      const account=day?.[bank]||{};
+      return Math.abs(num(value))>.005&&
+        (ACC==='Consolidado'||ACC===bank)&&
+        String(account.documentary_anchor_date||'')===String(day?.date||'')&&
+        String(account.balance_basis||'')==='documentary_close';
+    }
+    window.__LTS_RECONCILIATION_NOTICE_ELIGIBLE=reconciliationNoticeEligible;
     function addReconciliationNotice(){
       if(V!=='Fluxo Diário'||!FLOWQ)return;
-      const gaps=(FLOWQ.historical?.days||[]).flatMap(day=>Object.entries(day.reconciliation_gaps||{}).filter(([bank,value])=>Math.abs(num(value))>.005&&(ACC==='Consolidado'||ACC===bank)).map(([bank,value])=>({bank,value,date:day.date})));
+      const gaps=(FLOWQ.historical?.days||[]).flatMap(day=>Object.entries(day.reconciliation_gaps||{}).filter(([bank,value])=>reconciliationNoticeEligible(day,bank,value)).map(([bank,value])=>({bank,value,date:day.date})));
       const priorEvidence=document.getElementById('ltsBankEvidence');if(priorEvidence)priorEvidence.remove();
       const banks=(FLOWQ.bank_evidence_as_of||[]).filter(bank=>ACC==='Consolidado'||ACC===bank.bank),rangeHost=document.querySelector('.flowbar');
       if(banks.length&&rangeHost){const evidence=document.createElement('div');evidence.id='ltsBankEvidence';evidence.className='mut';evidence.textContent='Saldos documentados: '+banks.map(bank=>bank.bank+' em '+fmt(bank.date)).join(' · ')+'. Os dias seguintes são projeção, não consulta ao banco.';rangeHost.insertAdjacentElement('afterend',evidence)}

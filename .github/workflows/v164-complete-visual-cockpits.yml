@@ -1,0 +1,92 @@
+name: V164 complete visual cockpits
+
+on:
+  push:
+    branches: [work/v164-complete-visual-cockpits-20260916, main]
+    paths:
+      - 'wip35-v164-candidate.html'
+      - 'lts-executive-visual-system-v1.js'
+      - 'wip35-v162-flow-recovery.js'
+      - 'homologacao-current.json'
+      - '.github/scripts/lts_v164_complete_visual_gate.js'
+      - '.github/workflows/v164-complete-visual-cockpits.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  complete-cockpits:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate architecture, language and safety boundaries
+        run: |
+          node --check lts-dashboard-read-model.js
+          node --check lts-dashboard-executive-v1.js
+          node --check lts-executive-visual-system-v1.js
+          node --check wip35-v162-flow-recovery.js
+          node --check .github/scripts/lts_v164_complete_visual_gate.js
+          python3 - <<'PY'
+          from pathlib import Path
+          candidate=Path('wip35-v164-candidate.html').read_text(encoding='utf-8')
+          runtime=Path('lts-executive-visual-system-v1.js').read_text(encoding='utf-8')
+          flow=Path('wip35-v162-flow-recovery.js').read_text(encoding='utf-8')
+          for token in ['index.html?v164-complete-visual-cockpits','wip35-v162-flow-recovery.js','lts-expense-screen-alignment.js','lts-dashboard-executive-v1.js','lts-executive-visual-system-v1.js']:
+              assert token in candidate, token
+          for token in ['Tenho dinheiro suficiente?','Fico negativo?','Planejamento incorporado','planning_route_visible:false','planning_tab_removed:true','Despesas','Cartões','Patrimônio','financial_writers_changed:false','public_index_changed:false']:
+              assert token in runtime, token
+          assert 'Cenário-base operacional' not in runtime
+          assert "planning.remove()" in runtime
+          for forbidden in ['setInterval(','MutationObserver(','insert into','delete from','update public.','.upsert(']:
+              assert forbidden.lower() not in runtime.lower(), forbidden
+          assert 'reconciliationNoticeEligible' in flow
+          assert "documentary_anchor_date||''" in flow
+          assert "balance_basis||'')==='documentary_close'" in flow
+          import hashlib
+          assert hashlib.sha256(Path('index.html').read_bytes()).hexdigest()=='cca36731258680cc15a73fbad61c90ddf803358b741fd3ef58fefe5419eb688b'
+          print('v164_static_contract=PASS')
+          PY
+      - name: Install browser dependencies
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+          python -m pip install playwright==1.57.0
+          python -m playwright install --with-deps chromium
+      - name: Test Dashboard, reports, navigation and responsive layouts
+        run: |
+          python3 -m http.server 8780 >/tmp/lts-v164-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID || true' EXIT
+          sleep 1
+          timeout 300s node .github/scripts/lts_v164_complete_visual_gate.js
+      - name: Re-run preserved Flow and invoice contracts
+        run: |
+          python .github/scripts/lts_integrated_flow_gate.py
+          python .github/scripts/lts_flow_bank_scope_gate.py
+          python .github/scripts/lts_invoice_reading_order_gate.py
+      - name: Upload visual and functional evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v164-complete-visual-cockpits
+          path: |
+            v164-complete-visual-result.json
+            v164-desktop.png
+            v164-mobile.png
+            v164-post-login.png
+            v164-*-failure.png
+            integrated-flow-result.json
+            integrated-*.png
+            bank-scope-result.json
+            bank-scope-*.png
+            invoice-reading-order-result.json
+            invoice-order-*.png
+          if-no-files-found: warn
