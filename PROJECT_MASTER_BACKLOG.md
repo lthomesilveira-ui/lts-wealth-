@@ -13,7 +13,7 @@ Canonical persistent project list. Never remove an open financial, documentary, 
 - [x] Obtained explicit user approval on 15/09/2026 to proceed with the notebook/mobile direction and adjust after practical review; added the binding direct cash-sufficiency/negative-date/worst-balance answer.
 - [x] Implemented the new read-only V163 Dashboard layer and integrated it into `main` at `6cc1e61630f31694172b6a2a1e0075161cb8bbd5`; the rejected Dashboard from 10/09/2026 was not re-enabled.
 - [x] Integrated desktop/mobile decision, reader, no-overflow and Dashboard → Flow → Dashboard gate passed in run `34920486665`; controlled fixture/geometry PASS is explicitly not real-data acceptance.
-- [~] V163 manifest exposure prepared with exact candidate SHA; Pages run and published artifact verification remain pending. Public-root promotion stays behind a separate explicit decision.
+- [x] V163 manifest exposure deployed from `main` in GitHub Pages run `34921104617`; the fixed homologation redirect was browser-verified on the exact V163 candidate. Public-root promotion remains behind a separate explicit decision.
 - [ ] Complete authenticated real-session material review and physical-device navigation evidence; no such evidence is claimed by the proposal package.
 
 ## P0 — Recover the user-validated Daily Flow — 10/09/2026
