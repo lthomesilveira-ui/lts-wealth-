@@ -41,7 +41,7 @@ async function run(browser,viewport,label){
   const text=await frame.locator('.dx1').innerText();
   for(const needle of ['Tenho dinheiro suficiente?','Atenção: o caixa fica negativo','Primeiro saldo negativo','01/12/2026','Caixa coberto até','30/11/2026','Pior saldo projetado','-R$ 12.500,00','Dinheiro em contas','Contas + curto prazo','RSUs vested','FGTS','Despesas (mês)','Total consolidado ainda não certificado'])if(!text.includes(needle))throw new Error(`${label} missing ${needle}`);
   const status=await frame.locator('body').evaluate(()=>window.__LTS_DASHBOARD_EXECUTIVE_STATUS);
-  if(!status||status.reader!=='lts_browser_dashboard_cockpit_v1'||status.read_only!==true||status.financial_writer_changed!==false||status.permanent_polling!==false)throw new Error(`${label} invalid status ${JSON.stringify(status)}`);
+  if(!status||status.reader!=='lts_browser_dashboard_cockpit_v1'||status.read_only!==true||status.financial_writer_changed!==false||status.permanent_polling!==false||status.flow_ready_before_initial!==true)throw new Error(`${label} invalid status ${JSON.stringify(status)}`);
   if(!requested.includes('lts_browser_dashboard_cockpit_v1'))throw new Error(`${label} dashboard reader not requested`);
   if(await frame.locator('.dx1-kpi').count()!==5)throw new Error(`${label} expected five KPIs`);
   const dims=await frame.locator('html').evaluate(node=>({scroll:node.scrollWidth,client:node.clientWidth}));

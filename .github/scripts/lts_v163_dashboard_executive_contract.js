@@ -36,7 +36,7 @@ const candidate=fs.readFileSync(path.join(root,'wip35-v163-candidate.html'),'utf
 const runtime=fs.readFileSync(path.join(root,'lts-dashboard-executive-v1.js'),'utf8');
 const readModel=fs.readFileSync(path.join(root,'lts-dashboard-read-model.js'),'utf8');
 for(const token of ['index.html?v163-dashboard-executive','wip35-v162-flow-recovery.js','lts-expense-screen-alignment.js','lts-dashboard-executive-v1.js'])assert.ok(candidate.includes(token),`candidate missing ${token}`);
-for(const token of ['Tenho dinheiro suficiente?','Primeiro saldo negativo','Caixa coberto até','Pior saldo projetado','Dinheiro em contas','Contas + curto prazo','RSUs vested','FGTS','Despesas (mês)','lts_browser_dashboard_cockpit_v1','mobile_nav_six_fixed:true','financial_writer_changed:false'])assert.ok(runtime.includes(token),`runtime missing ${token}`);
+for(const token of ['Tenho dinheiro suficiente?','Primeiro saldo negativo','Caixa coberto até','Pior saldo projetado','Dinheiro em contas','Contas + curto prazo','RSUs vested','FGTS','Despesas (mês)','lts_browser_dashboard_cockpit_v1','mobile_nav_six_fixed:true','financial_writer_changed:false','flow_ready_before_initial=true'])assert.ok(runtime.includes(token),`runtime missing ${token}`);
 for(const forbidden of ['setInterval(','MutationObserver(','lts_browser_flow_mutate_v2','lts_browser_semantic_feedback_v1'])assert.equal(runtime.includes(forbidden),false,`runtime contains forbidden ${forbidden}`);
 assert.ok(readModel.includes('bank_cash_plus_d0'));
 assert.ok(readModel.includes('through_d3_minus_vested'));
