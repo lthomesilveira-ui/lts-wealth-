@@ -17,6 +17,7 @@
     const txt=value=>esc(value==null?'':value);
     const signed=value=>value===null||value===undefined?'':value<0?'neg':'pos';
     function go(route){
+      if(route==='Dashboard'){V='Dashboard';renderNav();render();return}
       const top=document.querySelector('.nav [data-v="'+CSS.escape(route)+'"]');
       if(top&&typeof top.onclick==='function'){top.click();return}
       V=route;renderNav();render();
