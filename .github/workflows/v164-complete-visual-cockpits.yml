@@ -43,7 +43,7 @@ jobs:
           flow=Path('wip35-v162-flow-recovery.js').read_text(encoding='utf-8')
           for token in ['index.html?v164-complete-visual-cockpits','wip35-v162-flow-recovery.js','lts-expense-screen-alignment.js','lts-dashboard-executive-v1.js','lts-executive-visual-system-v1.js']:
               assert token in candidate, token
-          for token in ['Tenho dinheiro suficiente?','Fico negativo?','Planejamento incorporado','planning_route_visible:false','planning_tab_removed:true','Despesas','Cartões','Patrimônio','financial_writers_changed:false','public_index_changed:false']:
+          for token in ['Tenho dinheiro suficiente?','Fico negativo?','Planejamento incorporado','planning_route_visible:false','planning_tab_removed:true','planning_entrypoints_redirected:true','Abrir Dashboard','v164PlanningRedirect','Despesas','Cartões','Patrimônio','financial_writers_changed:false','public_index_changed:false']:
               assert token in runtime, token
           assert 'Cenário-base operacional' not in runtime
           assert "planning.remove()" in runtime

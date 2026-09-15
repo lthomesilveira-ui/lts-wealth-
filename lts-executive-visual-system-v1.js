@@ -18,6 +18,7 @@
       planning_consolidated_into_dashboard:true,
       planning_route_visible:false,
       planning_tab_removed:true,
+      planning_entrypoints_redirected:true,
       reports_aligned:['Despesas','Cartões','Patrimônio'],
       flow_renderer_preserved:true,
       expense_reader_preserved:true,
@@ -180,12 +181,22 @@
       nav.querySelectorAll('[data-mobile-route]').forEach(button=>button.onclick=()=>go(button.dataset.mobileRoute));
     }
 
+    function redirectPlanningEntrypoints(){
+      document.querySelectorAll('button').forEach(button=>{
+        if(button.textContent.trim()!=='Abrir Planejamento')return;
+        button.textContent='Abrir Dashboard';
+        button.dataset.v164PlanningRedirect='Dashboard';
+        button.onclick=()=>go('Dashboard');
+      });
+    }
+
     function bind(){
       const authenticated=Boolean(D)&&!N.classList.contains('hidden');
       document.body.classList.toggle('v164-authenticated',authenticated);
       document.body.classList.add('v164-ready');
       decorateMobile();
       document.querySelectorAll('[data-v164-go]').forEach(button=>button.onclick=()=>go(button.dataset.v164Go));
+      redirectPlanningEntrypoints();
       const refresh=document.getElementById('v164Refresh');if(refresh)refresh.onclick=refreshDashboard;
       document.querySelectorAll('.brand small').forEach(node=>{node.textContent=V==='Dashboard'?'Visão financeira executiva':V==='Fluxo Diário'?'Caixa e disponibilidade':V==='Despesas'?'Consumo reconciliado':V==='Cartões'?'Faturas e compromissos':V==='Patrimônio'?'Ativos, dívidas e liquidez':'Pendências e documentos'});
       const badge=window.parent.document.getElementById('scope');if(badge)badge.textContent=(V==='Dashboard'?'Dashboard':V)+' · homologação V164';

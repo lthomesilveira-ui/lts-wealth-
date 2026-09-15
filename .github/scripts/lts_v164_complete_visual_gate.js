@@ -127,6 +127,12 @@ async function run(browser,viewport,label,{loginAfterLoad=false}={}){
   if(label!=='post-login')await page.screenshot({path:`v164-${label}-cards.png`,fullPage:true});
   await routeButton('Patrimônio').click();await frame.locator('.v164-wealth .v136').waitFor({state:'visible'});if(!(await frame.locator('.v164-wealth').innerText()).includes('Quanto você tem, quanto deve e quanto sobra.'))throw new Error(`${label} wealth cockpit missing`);
   if(label!=='post-login')await page.screenshot({path:`v164-${label}-wealth.png`,fullPage:true});
+  await routeButton('Atualizações').click();await frame.waitForFunction(()=>V==='Atualizações');
+  await frame.evaluate(()=>{const button=document.createElement('button');button.id='fixtureLegacyPlanningEntry';button.type='button';button.textContent='Abrir Planejamento';document.body.appendChild(button);render()});
+  const legacyPlanningEntry=frame.locator('#fixtureLegacyPlanningEntry');
+  if(await legacyPlanningEntry.innerText()!=='Abrir Dashboard')throw new Error(`${label} legacy Planning entrypoint was not relabelled`);
+  if(await legacyPlanningEntry.getAttribute('data-v164-planning-redirect')!=='Dashboard')throw new Error(`${label} legacy Planning entrypoint was not redirected`);
+  await legacyPlanningEntry.click();await frame.locator('.v164-answer').waitFor({state:'visible'});await legacyPlanningEntry.evaluate(button=>button.remove());
   await routeButton('Dashboard').click();await frame.locator('.v164-answer').waitFor({state:'visible'});
   const dims=await frame.locator('html').evaluate(el=>({scroll:el.scrollWidth,client:el.clientWidth}));if(dims.scroll>dims.client+3)throw new Error(`${label} horizontal overflow ${JSON.stringify(dims)}`);
   if(label==='desktop'){const rail=await frame.locator('.hdr').evaluate(el=>el.getBoundingClientRect().width);if(rail<220)throw new Error(`desktop rail too small ${rail}`)}
