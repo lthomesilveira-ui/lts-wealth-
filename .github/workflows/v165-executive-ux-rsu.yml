@@ -1,0 +1,148 @@
+name: V165 executive UX and RSU controls
+
+on:
+  push:
+    branches: [work/v165-executive-ux-rsu-20260916, main]
+    paths:
+      - 'wip35-v165-candidate.html'
+      - 'lts-executive-visual-system-v2.js'
+      - 'lts-executive-visual-system-v2.css'
+      - 'supabase/canonical_v165_private_awards_and_search_2026_09_16.sql'
+      - 'wip35-v162-flow-recovery.js'
+      - 'homologacao-current.json'
+      - '.github/scripts/lts_v165_executive_ux_gate.js'
+      - '.github/scripts/lts_integrated_flow_gate.py'
+      - '.github/scripts/lts_flow_bank_scope_gate.py'
+      - '.github/scripts/lts_invoice_reading_order_gate.py'
+      - '.github/workflows/v165-executive-ux-rsu.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  executive-ux-rsu:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate architecture, product contract and protected core
+        run: |
+          node --check lts-dashboard-read-model.js
+          node --check lts-dashboard-executive-v1.js
+          node --check lts-executive-visual-system-v2.js
+          node --check wip35-v162-flow-recovery.js
+          node --check .github/scripts/lts_v165_executive_ux_gate.js
+          python3 -m py_compile \
+            .github/scripts/lts_integrated_flow_gate.py \
+            .github/scripts/lts_flow_bank_scope_gate.py \
+            .github/scripts/lts_invoice_reading_order_gate.py
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib
+
+          candidate = Path('wip35-v165-candidate.html').read_text(encoding='utf-8')
+          runtime = Path('lts-executive-visual-system-v2.js').read_text(encoding='utf-8')
+          css = Path('lts-executive-visual-system-v2.css').read_text(encoding='utf-8')
+          sql = Path('supabase/canonical_v165_private_awards_and_search_2026_09_16.sql').read_text(encoding='utf-8')
+
+          for token in [
+              'index.html?v165-executive-ux-rsu',
+              'wip35-v162-flow-recovery.js',
+              'lts-expense-screen-alignment.js',
+              'lts-dashboard-executive-v1.js',
+              'lts-executive-visual-system-v2.js',
+          ]:
+              assert token in candidate, token
+
+          for token in [
+              "navigation_routes:['Dashboard','Fluxo Diário','Despesas','Patrimônio','Atualizações']",
+              'Coberto até ',
+              'Ação recomendada',
+              'nova falta em ',
+              'Classificação revisada',
+              'cobertura documental',
+              'private_awards_only:true',
+              'award_ids',
+              "type==='Cash RSU'",
+              '100% bruto; sem corte automático',
+              'Retention Award',
+              'Antecipação é cenário.',
+              'lts_browser_wealth_detail_v2',
+              'lts_browser_save_vesting_anticipation_v1',
+              'lts_browser_transactions_v2',
+              'V165',
+              'financial_writers_changed:false',
+              'public_index_changed:false',
+          ]:
+              assert token in runtime, token
+
+          for forbidden in [
+              'Cenário-base operacional',
+              'Tenho dinheiro suficiente?',
+              'Planejamento incorporado',
+              'setInterval(',
+              'MutationObserver(',
+              'insert into',
+              'delete from',
+              'update public.',
+              '.upsert(',
+              'awardBlueprints',
+              'lts_v165_rsu_scenarios_v1',
+          ]:
+              assert forbidden.lower() not in runtime.lower(), forbidden
+
+          for token in [
+              'lts_browser_wealth_detail_v2',
+              'lts_browser_save_vesting_anticipation_v1',
+              'lts_browser_transactions_v2',
+              'revoke all on function',
+              'grant execute on function',
+              'public.lts_browser_assert_user_v1()',
+          ]:
+              assert token in sql, token
+
+          assert 'body.v165-authenticated .hdr{position:fixed;left:0;top:0;bottom:0;width:220px' in css
+          assert '@media(max-width:900px)' in css.replace(' ', '')
+          assert hashlib.sha256(Path('index.html').read_bytes()).hexdigest() == 'cca36731258680cc15a73fbad61c90ddf803358b741fd3ef58fefe5419eb688b'
+          print('v165_static_contract=PASS')
+          PY
+      - name: Install browser dependencies
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+          python -m pip install playwright==1.57.0
+          python -m playwright install --with-deps chromium webkit
+      - name: Test Dashboard, unified Expenses, RSUs, search and responsive layouts
+        run: |
+          python3 -m http.server 8781 >/tmp/lts-v165-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID || true' EXIT
+          sleep 1
+          timeout 360s node .github/scripts/lts_v165_executive_ux_gate.js
+      - name: Re-run preserved Flow and invoice contracts
+        run: |
+          python .github/scripts/lts_integrated_flow_gate.py
+          python .github/scripts/lts_flow_bank_scope_gate.py
+          python .github/scripts/lts_invoice_reading_order_gate.py
+      - name: Upload visual and functional evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v165-executive-ux-rsu
+          path: |
+            v165-executive-ux-result.json
+            v165-*.png
+            integrated-flow-result.json
+            integrated-*.png
+            bank-scope-result.json
+            bank-scope-*.png
+            invoice-reading-order-result.json
+            invoice-order-*.png
+          if-no-files-found: warn
