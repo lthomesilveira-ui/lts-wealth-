@@ -96,7 +96,7 @@ async function run(browser,viewport,label,{loginAfterLoad=false}={}){
     await route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(body)});
   });
   await page.goto(`${BASE}/wip35-v165-candidate.html`,{waitUntil:'domcontentloaded',timeout:20000});
-  if(loginAfterLoad){const loginFrame=page.frames().find(frame=>{try{return new URL(frame.url()).pathname.endsWith('/index.html')}catch{return false}});if(!loginFrame)throw Error(`${label}: login frame missing`);await loginFrame.locator('.login').waitFor({state:'visible'});await loginFrame.locator('#email').fill('fixture@example.test');await loginFrame.locator('#password').fill('fixture-password');await loginFrame.locator('#signin').click()}
+  if(loginAfterLoad){const loginFrame=page.frames().find(frame=>{try{return new URL(frame.url()).pathname.endsWith('/index.html')}catch{return false}});if(!loginFrame)throw Error(`${label}: login frame missing`);await loginFrame.locator('.login').waitFor({state:'visible'});await loginFrame.waitForFunction(()=>document.querySelector('.brand small')?.textContent.includes('V165'));const signedOutBrand=await loginFrame.locator('.brand small').innerText();if(signedOutBrand.includes('Recuperação do Fluxo Diário'))throw Error(`${label}: legacy signed-out brand visible`);await loginFrame.locator('#email').fill('fixture@example.test');await loginFrame.locator('#password').fill('fixture-password');await loginFrame.locator('#signin').click()}
   const frame=await frameReady(page,label);
   const dashboardText=await frame.locator('.v165-dashboard').innerText();
   const dashboardKpis=await frame.locator('.v165-dashboard .v165-kpi').allInnerTexts();

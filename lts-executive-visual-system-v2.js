@@ -357,7 +357,12 @@
     const current=frame();if(!current)return false;
     if(!current.w.__LTS_V162_FLOW_RECOVERY_STATUS?.installed||!current.w.__LTS_EXPENSE_SCREEN_ALIGNMENT?.installed||!current.w.__LTS_DASHBOARD_EXECUTIVE_STATUS?.installed)return false;
     if(!current.w.__LTS_EXECUTIVE_VISUAL_SYSTEM_V2?.installed&&!current.d.getElementById('lts-executive-visual-system-v2-runtime')){const script=current.d.createElement('script');script.id='lts-executive-visual-system-v2-runtime';script.textContent='('+visualRuntime.toString()+')();';(current.d.head||current.d.documentElement).appendChild(script)}
-    const ready=current.w.__LTS_EXECUTIVE_VISUAL_SYSTEM_V2?.installed===true;if(ready&&gate)gate.hidden=true;return ready;
+    const ready=current.w.__LTS_EXECUTIVE_VISUAL_SYSTEM_V2?.installed===true;
+    if(ready){
+      current.d.querySelectorAll('.brand small').forEach(node=>{if(node.textContent.trim()!=='V165 · Homologação')node.innerHTML='<b>V165</b> · Homologação'});
+      if(gate)gate.hidden=true;
+    }
+    return ready;
   }
 
   function burst(){const current=++generation;let attempt=0;function step(){if(current!==generation)return;const ready=install();attempt+=1;if(!ready&&attempt<240)setTimeout(step,100)}step();[300,700,1400,2800,5200,9000,15000,22000].forEach(delay=>setTimeout(()=>{if(current===generation)install()},delay))}
