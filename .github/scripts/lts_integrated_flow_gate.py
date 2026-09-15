@@ -26,6 +26,9 @@ def flow(args):
  for i in range((last-first).days+1):
   day=first+dt.timedelta(days=i);date=day.isoformat()
   item={'date':date,'historical':day<TODAY,'Itaú':{'balance':6000,'net':0},'Bradesco':{'balance':5000,'net':0},'C6':{'balance':1000,'net':0},'Consolidado':{'bank_balance':12000,'net':0,'economic_net':0},'fix86_columns':{'saldo_anterior':12000,'entradas':0,'saidas':0,'saldo_final':12000,'liq_d0_1_recurso':500,'saldo_apos_d0_1':12500,'rsus_vested':0,'saldo_apos_rsu':12500,'fgts':0,'saldo_apos_fgts':12500},'reconciliation_gaps':{'Bradesco':0.02} if date=='2026-09-11' else {}}
+  for bank in ('Itaú','Bradesco','C6'):
+   item[bank]['documentary_anchor_date']='2026-09-11'
+   item[bank]['balance_basis']='documentary_close' if date=='2026-09-11' else 'documentary_close_plus_effective_movements'
   (hist if day<TODAY else future).append(item)
  events=[{'event_date':c['date'],'original_date':c['due'] or c['date'],'account':c['account'],'description':c['name'],'signed_amount':-1000,'category':'Cartão de Crédito','source':'current_event' if c.get('unknown') else 'card_invoice','source_ref':'fixture-'+str(i),'confidence':'documented_expected'} for i,c in enumerate(CARDS) if first.isoformat()<=c['date']<=last.isoformat()]
  return {'from':first.isoformat(),'to':last.isoformat(),'historical':{'days':hist,'events':[e for e in events if e['event_date']<TODAY.isoformat()]},'current_future':{'days':future,'events':[e for e in events if e['event_date']>=TODAY.isoformat()]},'bank_evidence_as_of':[{'bank':b,'date':'2026-09-11','documentary_balance':v} for b,v in [('Itaú',6000),('Bradesco',5000),('C6',1000)]]}
