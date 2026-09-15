@@ -50,8 +50,15 @@ async function run(browser,viewport,label){
     const nav=frame.locator('#dx1MobileNav');if(!await nav.isVisible())throw new Error('mobile navigation hidden');if(await nav.locator('button').count()!==6)throw new Error('mobile navigation must have six routes');
     const routes=await nav.locator('button').allTextContents();for(const route of ['Resumo','Fluxo','Despesas','Cartões','Patrimônio','Atualizar'])if(!routes.some(value=>value.includes(route)))throw new Error(`mobile missing ${route}`);
   }
+  const flowButton=label==='mobile'?frame.locator('#dx1MobileNav [data-mobile-route="Fluxo Diário"]'):frame.locator('.nav [data-v="Fluxo Diário"]');
+  await flowButton.click();
+  await frame.waitForFunction(()=>V==='Fluxo Diário'&&window.__LTS_V162_FLOW_RECOVERY_STATUS?.last_flow_ok===true,null,{timeout:10000});
+  const flowText=await frame.locator('body').innerText();if(!flowText.includes('Caixa e disponibilidade'))throw new Error(`${label} Flow route did not render`);
+  const dashboardButton=label==='mobile'?frame.locator('#dx1MobileNav [data-mobile-route="Dashboard"]'):frame.locator('.nav [data-v="Dashboard"]');
+  await dashboardButton.click();
+  await frame.waitForFunction(()=>V==='Dashboard'&&Boolean(document.querySelector('.dx1-decision')),null,{timeout:10000});
   await page.screenshot({path:`v163-dashboard-${label}.png`,fullPage:true});
   if(errors.length)throw new Error(`${label} page errors ${JSON.stringify(errors)}`);
-  await context.close();return {label,viewport,pass:true,requested:[...new Set(requested)],dims};
+  await context.close();return {label,viewport,pass:true,requested:[...new Set(requested)],dims,route_regression:'dashboard-flow-dashboard-pass'};
 }
 (async()=>{const browser=await chromium.launch({headless:true});try{const results=[await run(browser,{width:1440,height:1000},'desktop'),await run(browser,{width:390,height:844},'mobile')];const out={pass:true,version:'v163-dashboard-executive',data:'controlled-fixture-not-user-validation',results};fs.writeFileSync(resultFile,JSON.stringify(out,null,2));console.log(JSON.stringify(out,null,2))}catch(error){const out={pass:false,error:String(error.stack||error),data:'controlled-fixture-not-user-validation'};fs.writeFileSync(resultFile,JSON.stringify(out,null,2));console.error(out.error);process.exitCode=1}finally{await browser.close()}})();
