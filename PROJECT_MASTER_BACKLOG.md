@@ -4,6 +4,15 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 
 Canonical persistent project list. Never remove an open financial, documentary, classification, reconciliation or product dependency during compaction. Detailed immutable evidence remains in `backups/`, `HISTORICAL_RECOVERY_LOG.md`, `PLANNING_EXCEL_TO_CURRENT_AUDIT_2026-08-30.md`, `NEXT_HOMOLOGATION_GATE.md` and release checkpoints.
 
+## P0 — V164 complete visual cockpits — 16/09/2026
+- [x] Replace the rejected V163 presentation with the approved dark-rail/light-canvas direction on notebook and 390 px mobile.
+- [x] Keep exactly six visible routes and consolidate all liquidity ladder, negative windows, recovery dates and FGTS timing into the single Dashboard; redirect residual Planning entrypoints to Dashboard.
+- [x] Answer cash sufficiency directly with the distinct audited thresholds 30/12/2026 before FGTS and 30/01/2027 still uncovered with FGTS, including worst gaps and action date.
+- [x] Align Despesas, Cartões and Patrimônio while preserving the reconciled readers, Flow behavior, invoice drill-downs, financial writers and protected public root.
+- [x] Restrict the Itaú reconciliation banner to a non-zero gap on the bank's documentary-close date; later projection rows cannot produce a false historical warning.
+- [x] Pass final main gates and Pages on release `31fecc10`; verify all six routes, reload and legacy redirects in the authenticated published browser. See `backups/V164_COMPLETE_VISUAL_COCKPITS_PUBLISHED_2026-09-16.md`.
+- [ ] Obtain human visual/financial acceptance on the user's notebook and phone. Automated fixtures and the authenticated technical read path do not replace this decision.
+
 ## P0 — Dashboard visual proposal / Work continuity — 15/09/2026
 - [x] Recovered the original official 1312×1199 visual source and verified its exact contracted SHA-256; the public 180×164 proxy remains auxiliary only.
 - [x] Rechecked `main`, `recovery-v152-flow-20260910`, V162 manifest, exact product build, successful Pages run, fixed homologation redirect and protected-root status before writing.

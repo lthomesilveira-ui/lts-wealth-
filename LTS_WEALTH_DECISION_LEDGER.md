@@ -4,7 +4,7 @@ Registro cumulativo de decisões humanas e mudanças de direção. Não apagar e
 
 ## 16/09/2026 — Dashboard único e pacote visual completo
 
-Status: **AUTORIZADO PELO USUÁRIO / IMPLEMENTAÇÃO V164 EM ANDAMENTO**
+Status: **AUTORIZADO PELO USUÁRIO / V164 IMPLEMENTADA E PUBLICADA / ACEITE HUMANO PENDENTE**
 
 - O layout de cockpit aprovado continua sendo a referência; V163 não foi aceito como execução fiel desse layout.
 - `Planejamento` deixa de ser uma aba separada. Escada de liquidez, janelas negativas, recuperações e contingência passam a integrar o Dashboard único.
@@ -13,6 +13,8 @@ Status: **AUTORIZADO PELO USUÁRIO / IMPLEMENTAÇÃO V164 EM ANDAMENTO**
 - Despesas, Cartões e Patrimônio devem usar a mesma linguagem visual do Dashboard, preservando leitores reconciliados, drill-downs e regras financeiras.
 - A faixa de “diferença Itaú” não pode tratar um dia projetado posterior ao último extrato como divergência bancária. Aviso de conciliação só aparece diante de diferença na própria data de fechamento documental.
 - O usuário autorizou implementação, testes e publicação em homologação e pediu um único link já conferido; fixture automática não substitui a validação dos dados reais.
+- A V164 publicada mantém somente seis rotas visíveis. Atalhos residuais de Atualizações que diziam `Abrir Planejamento` foram convertidos em `Abrir Dashboard` e testados no navegador autenticado.
+- O aceite técnico de CI, Pages e leitura autenticada não deve ser registrado como aceite financeiro/visual humano; essa decisão permanece com o usuário após abrir o link.
 
 ## 10/09/2026 — rejeição da canônica v1.24
 
