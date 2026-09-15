@@ -14,7 +14,8 @@ Canonical persistent project list. Never remove an open financial, documentary, 
 - [x] Implemented the new read-only V163 Dashboard layer and integrated it into `main` at `6cc1e61630f31694172b6a2a1e0075161cb8bbd5`; the rejected Dashboard from 10/09/2026 was not re-enabled.
 - [x] Integrated desktop/mobile decision, reader, no-overflow and Dashboard → Flow → Dashboard gate passed in run `34920486665`; controlled fixture/geometry PASS is explicitly not real-data acceptance.
 - [x] V163 manifest exposure deployed from `main` in GitHub Pages run `34921104617`; the fixed homologation redirect was browser-verified on the exact V163 candidate. Public-root promotion remains behind a separate explicit decision.
-- [ ] Complete authenticated real-session material review and physical-device navigation evidence; no such evidence is claimed by the proposal package.
+- [x] Corrected the missing signed-out → login → Dashboard activation after the user's real-link report; added a no-reload post-login gate, published main `f4e2ce4`, passed V163/Pages runs `34982625911` / `34982624816`, and verified the executive decision plus Dashboard → Fluxo → Dashboard in the authenticated real browser session.
+- [ ] Complete physical-device visual/navigation review and human acceptance of the Dashboard's real financial presentation; authenticated browser verification is evidence, not blanket approval.
 
 ## P0 — Recover the user-validated Daily Flow — 10/09/2026
 - [x] Record canonical v1.24 as `REJEITADO_USUARIO`; retain its tests only as historical engineering evidence.
