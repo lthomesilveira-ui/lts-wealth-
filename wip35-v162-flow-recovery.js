@@ -212,7 +212,7 @@
     if(status?.refresh_requested&&status?.last_flow_done){hideGate();return true}
     if(result?.state==='flow')showGate('Atualizando o Fluxo Diário…');return result?.state==='flow';
   }
-  function burst(){const generation=++bootGeneration;let attempt=0;function step(){if(generation!==bootGeneration)return;install();attempt+=1;if(attempt<160&&gate&&!gate.hidden)setTimeout(step,100)}step();[250,600,1200,2400,4800,8000,12000,18000].forEach(delay=>{setTimeout(()=>{if(generation===bootGeneration)install()},delay)})}
+  function burst(){const generation=++bootGeneration;let attempt=0;function step(){if(generation!==bootGeneration)return;install();attempt+=1;if(attempt<360&&gate&&!gate.hidden)setTimeout(step,100)}step();[250,600,1200,2400,4800,8000,12000,18000,24000,30000,36000].forEach(delay=>{setTimeout(()=>{if(generation===bootGeneration)install()},delay)})}
   outer?.addEventListener('load',()=>{showGate('Preparando o Fluxo Diário…');burst()});
   window.addEventListener('storage',event=>{if(event.key===SESSION_KEY){showGate('Atualizando o Fluxo Diário…');burst()}});
   document.readyState==='loading'?document.addEventListener('DOMContentLoaded',burst,{once:true}):burst();

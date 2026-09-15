@@ -66,7 +66,7 @@ async def main():
    await context.route('https://tadhkamnwtsbdozwkyut.supabase.co/**',rpc)
    page=await context.new_page();page.on('pageerror',lambda e:errors.append(str(e)))
    await page.goto('http://127.0.0.1:8779/wip35-v162-candidate.html',wait_until='domcontentloaded')
-   await page.wait_for_function("document.getElementById('gate')?.hidden===true",timeout=25000)
+   await page.wait_for_function("document.getElementById('gate')?.hidden===true",timeout=45000)
    frame=next(f for f in page.frames if 'index.html?v162' in f.url)
    await frame.wait_for_function("!FLOWLOADING&&FLOWFROM==='2026-09-07'&&FLOWTO==='2026-10-12'",timeout=25000)
    assert await frame.locator('.fx87-row:not(.fx87-head)').count()==36
@@ -108,7 +108,7 @@ async def main():
    await frame.locator('.cardclass-save').click()
    await frame.wait_for_function("D.card_classification_review.pending_groups===0")
    assert state['semantic_calls']==1
-   await page.reload();await page.wait_for_function("document.getElementById('gate')?.hidden===true",timeout=25000)
+   await page.reload();await page.wait_for_function("document.getElementById('gate')?.hidden===true",timeout=45000)
    frame=next(f for f in page.frames if 'index.html?v162' in f.url)
    await frame.wait_for_function("!FLOWLOADING&&FLOWFROM==='2026-09-07'&&FLOWTO==='2026-10-12'")
    await frame.locator('.nav [data-v="Atualizações"]').click()
