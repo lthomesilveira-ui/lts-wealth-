@@ -100,7 +100,10 @@ async function run(browser,viewport,label,{loginAfterLoad=false}={}){
   }
   const frame=await frameReady(page,label);
   const text=await frame.locator('.v164-dashboard').innerText();
-  for(const needle of ['Tenho dinheiro suficiente?','Até 29/12/2026, sim. Depois, é preciso agir.','Sim · 30/12/2026','Com o FGTS','Falta em 30/01/2027','Data para agir','30/11/2026','Dinheiro em contas','Planejamento incorporado','Quando falta dinheiro e quando recupera'])if(!text.includes(needle))throw new Error(`${label} missing ${needle}`);
+  const answerMetrics=await frame.locator('.v164-answer-metrics .v164-metric').allInnerTexts();
+  await page.screenshot({path:`v164-${label}.png`,fullPage:true});
+  for(const needle of ['Tenho dinheiro suficiente?','Até 29/12/2026, sim. Depois, é preciso agir.','Sim · 30/12/2026','Com o FGTS','Falta em 30/01/2027','Data para agir','30/11/2026','Dinheiro em contas','Planejamento incorporado','Quando falta dinheiro e quando recupera'])if(!text.includes(needle))throw new Error(`${label} missing ${needle}; answer metrics=${JSON.stringify(answerMetrics)}; dashboard=${JSON.stringify(text.slice(0,1800))}`);
+  if(answerMetrics.length!==4)throw new Error(`${label} expected four answer metrics, received ${JSON.stringify(answerMetrics)}`);
   if(await frame.locator('.v164-kpi').count()!==5)throw new Error(`${label} expected five KPIs`);
   const nav=label==='mobile'?frame.locator('#dx1MobileNav'):frame.locator('.nav');
   if(await nav.locator('button').count()!==6)throw new Error(`${label} navigation must have six routes`);
@@ -115,7 +118,6 @@ async function run(browser,viewport,label,{loginAfterLoad=false}={}){
   await routeButton('Dashboard').click();await frame.locator('.v164-answer').waitFor({state:'visible'});
   const dims=await frame.locator('html').evaluate(el=>({scroll:el.scrollWidth,client:el.clientWidth}));if(dims.scroll>dims.client+3)throw new Error(`${label} horizontal overflow ${JSON.stringify(dims)}`);
   if(label==='desktop'){const rail=await frame.locator('.hdr').evaluate(el=>el.getBoundingClientRect().width);if(rail<220)throw new Error(`desktop rail too small ${rail}`)}
-  await page.screenshot({path:`v164-${label}.png`,fullPage:true});
   await page.reload({waitUntil:'domcontentloaded'});const reloaded=await frameReady(page,label+'-reload');if(!await reloaded.locator('.v164-answer').isVisible())throw new Error(`${label} reload did not return to Dashboard`);
   if(errors.length)throw new Error(`${label} page errors ${JSON.stringify(errors)}`);
   await context.close();return {label,pass:true,viewport,dims,routes:6,dashboard_flow_reports_dashboard:true,reload:true,reconciliation_projection_warning:false,login_transition:loginAfterLoad?'signed-out-to-dashboard-without-reload':'preauthenticated'};
