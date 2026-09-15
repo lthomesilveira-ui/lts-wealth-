@@ -1,0 +1,28 @@
+name: Flow documentary roll-forward
+
+on:
+  push:
+    branches:
+      - main
+      - 'work/**'
+    paths:
+      - 'supabase/canonical_flow_documentary_close_rollforward_2026_09_15.sql'
+      - '.github/scripts/lts_flow_documentary_rollforward_gate.py'
+      - '.github/workflows/flow-documentary-rollforward.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  rollforward-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify documentary anchor roll-forward
+        run: python .github/scripts/lts_flow_documentary_rollforward_gate.py
+
