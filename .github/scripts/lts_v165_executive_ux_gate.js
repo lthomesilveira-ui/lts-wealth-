@@ -78,6 +78,7 @@ async function frameReady(page,label){
 async function run(browser,viewport,label,{loginAfterLoad=false}={}){
   const context=await browser.newContext({viewport});
   const session={access_token:'fixture-token',refresh_token:'fixture-refresh',expires_at:4102444800,user:{id:'fixture-user'}};
+  await context.addInitScript(fixed=>{const NativeDate=Date,fixedMs=NativeDate.parse(fixed);class FixedDate extends NativeDate{constructor(...args){super(...(args.length?args:[fixedMs]))}static now(){return fixedMs}}window.Date=FixedDate},'2030-06-15T12:00:00Z');
   if(!loginAfterLoad)await context.addInitScript(value=>localStorage.setItem('lts_supabase_session_v1',JSON.stringify(value)),session);
   const page=await context.newPage();page.setDefaultTimeout(18000);const errors=[],requested=[];page.on('pageerror',error=>errors.push(String(error.message||error)));
   await page.route('https://tadhkamnwtsbdozwkyut.supabase.co/**',async route=>{
