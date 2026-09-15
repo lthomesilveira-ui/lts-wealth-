@@ -17,6 +17,8 @@ Business date 14/09/2026. Final Despesas product 39e47fc60c40fa8f3796fab4f73f05d
 
 ## The next user gate
 - [ ] Material review of Despesas on the user's actual signed-in device: August and September, month open/close and category drill-down, source-date/open-invoice clarity. This is the requested action now. No classification question remains for the completed H set.
+- [x] V163 signed-out → login → Dashboard transition fixed and verified in the authenticated real browser after the user reported the published link still showing the prior interface. Dashboard → Fluxo → Dashboard also passed; automatic fixture and real-browser presentation evidence remain distinct.
+- [ ] Human visual/financial acceptance of the newly visible Dashboard on the user's notebook and phone; the user may request iterative layout/information refinements without reopening the fixed activation defect.
 
 ## Separate open work
 - [ ] Transaction-scoped manual classification of a genuinely new entry, save/refresh/reopen in the actual session, unrestricted manual release.
