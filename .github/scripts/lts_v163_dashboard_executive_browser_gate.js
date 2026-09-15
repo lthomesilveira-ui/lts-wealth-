@@ -30,12 +30,19 @@ async function dashboardFrame(page,label){
   await page.screenshot({path:`v163-dashboard-${label}-failure.png`,fullPage:true});
   throw new Error(`${label} dashboard frame not ready ${JSON.stringify(diagnostic)}`);
 }
-async function run(browser,viewport,label){
+async function run(browser,viewport,label,{loginAfterLoad=false}={}){
   const context=await browser.newContext({viewport});
-  await context.addInitScript(session=>localStorage.setItem('lts_supabase_session_v1',JSON.stringify(session)),{access_token:'fixture-token',refresh_token:'fixture-refresh',expires_at:4102444800,user:{id:'fixture-user'}});
+  const session={access_token:'fixture-token',refresh_token:'fixture-refresh',expires_at:4102444800,user:{id:'fixture-user'}};
+  if(!loginAfterLoad)await context.addInitScript(value=>localStorage.setItem('lts_supabase_session_v1',JSON.stringify(value)),session);
   const page=await context.newPage();page.setDefaultTimeout(15000);const errors=[];const requested=[];page.on('pageerror',error=>errors.push(String(error.message||error)));
-  await page.route('https://tadhkamnwtsbdozwkyut.supabase.co/**',async route=>{const name=new URL(route.request().url()).pathname.split('/').pop();requested.push(name);let body={ok:true};if(name==='lts_browser_product_v1')body={ok:true,mvp:product()};else if(name==='lts_browser_dashboard_cockpit_v1')body=cockpit;else if(name==='lts_browser_flow_v11')body={ok:true,flow:flow()};else if(name==='lts_browser_expense_context_nature_v1')body={summary:{},contexts:[],categories:[],unassigned_states:[]};await route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(body)})});
+  await page.route('https://tadhkamnwtsbdozwkyut.supabase.co/**',async route=>{const name=new URL(route.request().url()).pathname.split('/').pop();requested.push(name);let body={ok:true};if(name==='token')body=session;else if(name==='lts_browser_product_v1')body={ok:true,mvp:product()};else if(name==='lts_browser_dashboard_cockpit_v1')body=cockpit;else if(name==='lts_browser_flow_v11')body={ok:true,flow:flow()};else if(name==='lts_browser_expense_context_nature_v1')body={summary:{},contexts:[],categories:[],unassigned_states:[]};await route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(body)})});
   await page.goto(`${BASE}/wip35-v163-candidate.html`,{waitUntil:'domcontentloaded',timeout:20000});
+  if(loginAfterLoad){
+    const loginFrame=page.frames().find(frame=>{try{return new URL(frame.url()).pathname.endsWith('/index.html')}catch(_){return false}});if(!loginFrame)throw new Error(`${label} login frame missing`);
+    await loginFrame.locator('.login').waitFor({state:'visible',timeout:10000});
+    if(await loginFrame.locator('.dx1-decision').count())throw new Error(`${label} dashboard visible before login`);
+    await loginFrame.locator('#email').fill('fixture@example.test');await loginFrame.locator('#password').fill('fixture-password');await loginFrame.locator('#signin').click();
+  }
   const frame=await dashboardFrame(page,label);
   await frame.locator('.dx1-decision').waitFor({state:'visible',timeout:5000});
   const text=await frame.locator('.dx1').innerText();
@@ -59,6 +66,8 @@ async function run(browser,viewport,label){
   await frame.waitForFunction(()=>V==='Dashboard'&&Boolean(document.querySelector('.dx1-decision')),null,{timeout:10000});
   await page.screenshot({path:`v163-dashboard-${label}.png`,fullPage:true});
   if(errors.length)throw new Error(`${label} page errors ${JSON.stringify(errors)}`);
-  await context.close();return {label,viewport,pass:true,requested:[...new Set(requested)],dims,route_regression:'dashboard-flow-dashboard-pass'};
+  const topStatus=await page.evaluate(()=>window.__LTS_V163_STATUS);
+  if(!topStatus?.post_login_session_rearm)throw new Error(`${label} post-login rearm status missing`);
+  await context.close();return {label,viewport,pass:true,requested:[...new Set(requested)],dims,login_transition:loginAfterLoad?'signed-out-to-dashboard-without-reload':'preauthenticated',route_regression:'dashboard-flow-dashboard-pass'};
 }
-(async()=>{const browser=await chromium.launch({headless:true});try{const results=[await run(browser,{width:1440,height:1000},'desktop'),await run(browser,{width:390,height:844},'mobile')];const out={pass:true,version:'v163-dashboard-executive',data:'controlled-fixture-not-user-validation',results};fs.writeFileSync(resultFile,JSON.stringify(out,null,2));console.log(JSON.stringify(out,null,2))}catch(error){const out={pass:false,error:String(error.stack||error),data:'controlled-fixture-not-user-validation'};fs.writeFileSync(resultFile,JSON.stringify(out,null,2));console.error(out.error);process.exitCode=1}finally{await browser.close()}})();
+(async()=>{const executablePath=process.env.LTS_CHROMIUM_EXECUTABLE||undefined;const browser=await chromium.launch({headless:true,...(executablePath?{executablePath}:{})});try{const results=[await run(browser,{width:1440,height:1000},'desktop'),await run(browser,{width:390,height:844},'mobile'),await run(browser,{width:1440,height:1000},'post-login',{loginAfterLoad:true})];const out={pass:true,version:'v163-dashboard-executive',data:'controlled-fixture-not-user-validation',results};fs.writeFileSync(resultFile,JSON.stringify(out,null,2));console.log(JSON.stringify(out,null,2))}catch(error){const out={pass:false,error:String(error.stack||error),data:'controlled-fixture-not-user-validation'};fs.writeFileSync(resultFile,JSON.stringify(out,null,2));console.error(out.error);process.exitCode=1}finally{await browser.close()}})();
