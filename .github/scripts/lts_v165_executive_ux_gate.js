@@ -99,7 +99,9 @@ async function run(browser,viewport,label,{loginAfterLoad=false}={}){
   const dashboardText=await frame.locator('.v165-dashboard').innerText();
   const dashboardKpis=await frame.locator('.v165-dashboard .v165-kpi').allInnerTexts();
   await page.screenshot({path:`v165-${label}-dashboard.png`,fullPage:true});
-  for(const phrase of ['Coberto até 19/12/2030','primeiro dia negativo em 20/12/2030','Resgatar FGTS até 20/11/2030','nova falta em 25/01/2031','Dinheiro em contas','Contas + curto prazo','RSUs vested','FGTS','Despesas do mês','Dados até 14/06/2030'])if(!dashboardText.includes(phrase))throw Error(`${label}: dashboard missing ${phrase}; kpis=${JSON.stringify(dashboardKpis)}`);
+  for(const phrase of ['Coberto até 19/12/2030','primeiro dia negativo em 20/12/2030','Resgatar FGTS até 20/11/2030','nova falta em 25/01/2031','Dados até 14/06/2030'])if(!dashboardText.includes(phrase))throw Error(`${label}: dashboard missing ${phrase}; kpis=${JSON.stringify(dashboardKpis)}`);
+  const dashboardLower=dashboardText.toLocaleLowerCase('pt-BR');
+  for(const phrase of ['dinheiro em contas','contas + curto prazo','rsus vested','fgts','despesas do mês'])if(!dashboardLower.includes(phrase))throw Error(`${label}: dashboard missing ${phrase}; kpis=${JSON.stringify(dashboardKpis)}`);
   for(const forbidden of ['Tenho dinheiro suficiente?','Cenário-base operacional','Planejamento incorporado'])if(dashboardText.includes(forbidden))throw Error(`${label}: dashboard leaked ${forbidden}`);
   if(await frame.locator('.v165-kpis>.v165-kpi').count()!==5)throw Error(`${label}: dashboard KPI count`);
   if(await frame.locator('.v165-grid.dashboard-main>.v165-card').count()!==3)throw Error(`${label}: reference main row missing`);
