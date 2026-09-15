@@ -18,13 +18,14 @@ Business date 14/09/2026. Final Despesas product 39e47fc60c40fa8f3796fab4f73f05d
 ## The next user gate
 - [ ] Material review of Despesas on the user's actual signed-in device: August and September, month open/close and category drill-down, source-date/open-invoice clarity. This is the requested action now. No classification question remains for the completed H set.
 - [x] V163 signed-out → login → Dashboard transition fixed and verified in the authenticated real browser after the user reported the published link still showing the prior interface. Dashboard → Fluxo → Dashboard also passed; automatic fixture and real-browser presentation evidence remain distinct.
+- [x] V163 authenticated full reload fixed and verified after a second route race was reproduced. The automated gate includes a deliberately slow Flow read; the published real session reload opens Dashboard directly and retains Dashboard → Fluxo → Dashboard navigation.
 - [ ] Human visual/financial acceptance of the newly visible Dashboard on the user's notebook and phone; the user may request iterative layout/information refinements without reopening the fixed activation defect.
 
 ## Separate open work
 - [ ] Transaction-scoped manual classification of a genuinely new entry, save/refresh/reopen in the actual session, unrestricted manual release.
 - [ ] Other current Visa evidence/identity gaps, older payment/account-attribution controls, source updates after the latest statements and document navigation where absent.
 - [ ] Independent Patrimônio asset/debt/availability/valuation/date-base verification.
-- [ ] Approved complete new Dashboard visual proposal before its implementation; no public-root promotion or whole-product acceptance assumed.
+- [x] Approved complete Dashboard visual proposal implemented in the V163 homologation candidate; no public-root promotion or whole-product acceptance assumed.
 - [ ] Every unaffected dependency in the full master backlog/deltas remains until individually evidenced closed.
 
 Zero category-pending does not certify all historical/future sources or turn open invoices into closed bills. Preserve original categories, cash-versus-competence, documentary depth and all previous user decisions. The fixed link is ready for Despesas review, not re-entry of the old answers.
