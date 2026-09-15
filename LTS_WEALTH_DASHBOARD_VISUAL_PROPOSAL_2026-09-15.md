@@ -1,10 +1,14 @@
 # LTS Wealth — Proposta visual do Dashboard e dos reports
 
-Status: **PROPOSTA — AGUARDA APROVAÇÃO EXPLÍCITA**
+Status: **APROVADA PELO USUÁRIO — IMPLEMENTAÇÃO V163 EM ANDAMENTO**
 
 Data: 15/09/2026
 
-Branch de trabalho: `work/dashboard-visual-proposal-20260915`
+Branch da proposta: `work/dashboard-visual-proposal-20260915`
+
+Branch de implementação: `work/dashboard-executive-implementation-20260915`
+
+Decisão registrada em 15/09/2026: o usuário aprovou seguir com os modelos apresentados e ajustar após vê-los na prática. A aprovação veio com um reforço vinculante: a tela inicial deve responder diretamente **“Tenho dinheiro suficiente?”** e **“Fico negativo em algum momento?”**, mostrando quando ocorre e qual é o pior saldo projetado quando a evidência existir. A ausência de evidência não autoriza resposta positiva.
 
 Esta proposta continua o LTS Wealth existente. Ela não reativa o Dashboard rejeitado em 10/09/2026, não cria outro produto, não altera o Fluxo V150/V151, não muda leitores, cálculos, classificações, banco, caches ou publicação. Os valores das imagens estão ocultos de propósito: o repositório é público e os números da referência visual não são fonte financeira.
 
@@ -31,12 +35,14 @@ Esta proposta continua o LTS Wealth existente. Ela não reativa o Dashboard reje
 
 O Dashboard responde, nesta ordem:
 
-1. **Quanto está disponível agora?**
-2. **O que muda no curto prazo e nos horizontes futuros?**
-3. **De onde vem a posição e qual é a data da fonte?**
-4. **Quais saídas e compromissos exigem atenção?**
-5. **Quando agir?**
-6. **O que ainda não pode ser afirmado?**
+1. **Tenho dinheiro suficiente no horizonte analisado?**
+2. **Fico negativo; se sim, quando e em qual pior saldo?**
+3. **Quanto está disponível agora?**
+4. **O que muda no curto prazo e nos horizontes futuros?**
+5. **De onde vem a posição e qual é a data da fonte?**
+6. **Quais saídas e compromissos exigem atenção?**
+7. **Quando agir?**
+8. **O que ainda não pode ser afirmado?**
 
 Liquidez, consumo e patrimônio permanecem conceitos diferentes. Uma projeção não vira saldo presente; RSU futura não vira vested; FGTS não entra em D+3; fatura paga não duplica compras; compromisso sem data explícita não é inventado; ausência de evidência não vira zero.
 

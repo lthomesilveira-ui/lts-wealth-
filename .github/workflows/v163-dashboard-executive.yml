@@ -1,0 +1,48 @@
+name: V163 dashboard executivo
+on:
+  push:
+    paths:
+      - 'wip35-v163-candidate.html'
+      - 'lts-dashboard-executive-v1.js'
+      - 'lts-dashboard-read-model.js'
+      - '.github/scripts/lts_v163_dashboard_executive_contract.js'
+      - '.github/scripts/lts_v163_dashboard_executive_browser_gate.js'
+      - '.github/workflows/v163-dashboard-executive.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  dashboard-executive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate read model and static contracts
+        run: |
+          node --check lts-dashboard-read-model.js
+          node --check lts-dashboard-executive-v1.js
+          node --check .github/scripts/lts_v163_dashboard_executive_contract.js
+          node --check .github/scripts/lts_v163_dashboard_executive_browser_gate.js
+          node .github/scripts/lts_v163_dashboard_executive_contract.js
+      - name: Install browser
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Run desktop and mobile gate
+        run: |
+          python3 -m http.server 8779 >/tmp/lts-http-v163.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID || true' EXIT
+          timeout 240s node .github/scripts/lts_v163_dashboard_executive_browser_gate.js
+      - name: Upload visual evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v163-dashboard-executive-gate
+          path: |
+            v163-dashboard-executive-result.json
+            v163-dashboard-desktop.png
+            v163-dashboard-mobile.png
