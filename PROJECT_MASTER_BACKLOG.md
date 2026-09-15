@@ -11,9 +11,9 @@ Canonical persistent project list. Never remove an open financial, documentary, 
 - [x] Produced complete notebook and 390 px mobile visuals, a block-to-reader data contract and the extension language for Despesas, Cartões and Patrimônio without private values.
 - [x] Recorded the proposal, source provenance, limitations, decisions and pending gates in `LTS_WEALTH_DASHBOARD_VISUAL_PROPOSAL_2026-09-15.md` and its immutable package checkpoint.
 - [x] Obtained explicit user approval on 15/09/2026 to proceed with the notebook/mobile direction and adjust after practical review; added the binding direct cash-sufficiency/negative-date/worst-balance answer.
-- [~] Implement a new read-only V163 Dashboard layer in the same branch lineage; initial reader, runtime, candidate and deterministic three-state contract are complete locally. Do not re-enable the Dashboard rejected on 10/09/2026.
+- [x] Implemented the new read-only V163 Dashboard layer and integrated it into `main` at `6cc1e61630f31694172b6a2a1e0075161cb8bbd5`; the rejected Dashboard from 10/09/2026 was not re-enabled.
 - [x] Integrated desktop/mobile decision, reader, no-overflow and Dashboard → Flow → Dashboard gate passed in run `34920486665`; controlled fixture/geometry PASS is explicitly not real-data acceptance.
-- [ ] Verify the exact candidate SHA and Pages artifact after publication to homologation; keep public-root promotion behind a separate explicit decision.
+- [~] V163 manifest exposure prepared with exact candidate SHA; Pages run and published artifact verification remain pending. Public-root promotion stays behind a separate explicit decision.
 - [ ] Complete authenticated real-session material review and physical-device navigation evidence; no such evidence is claimed by the proposal package.
 
 ## P0 — Recover the user-validated Daily Flow — 10/09/2026
