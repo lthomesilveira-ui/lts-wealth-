@@ -77,9 +77,9 @@ async function run(browser,viewport,label,{loginAfterLoad=false}={}){
   if(!loginAfterLoad)await context.addInitScript(value=>localStorage.setItem('lts_supabase_session_v1',JSON.stringify(value)),session);
   const page=await context.newPage();
   page.setDefaultTimeout(15000);
-  const errors=[];page.on('pageerror',e=>errors.push(String(e.message||e)));
+  const errors=[],requested=[];page.on('pageerror',e=>errors.push(String(e.message||e)));
   await page.route('https://tadhkamnwtsbdozwkyut.supabase.co/**',async route=>{
-    const request=route.request(),name=new URL(request.url()).pathname.split('/').pop();let body={ok:true};
+    const request=route.request(),name=new URL(request.url()).pathname.split('/').pop();requested.push(name);let body={ok:true};
     if(name==='token')body=session;
     else if(name==='lts_browser_product_v1')body={ok:true,mvp:product()};
     else if(name==='lts_browser_dashboard_cockpit_v1')body=cockpit;
@@ -113,7 +113,13 @@ async function run(browser,viewport,label,{loginAfterLoad=false}={}){
   if(helper.projected!==false||helper.sameDay!==true)throw new Error(`${label} reconciliation notice gate ${JSON.stringify(helper)}`);
   const routeButton=route=>(label==='mobile'?frame.locator(`#dx1MobileNav [data-mobile-route="${route}"]`):frame.locator(`.nav [data-v="${route}"]`));
   await routeButton('Fluxo Diário').click();await frame.waitForFunction(()=>V==='Fluxo Diário');if(await frame.locator('#ltsReconciliationWarning').count())throw new Error(`${label} projected Itaú gap shown as documentary warning`);
-  await routeButton('Despesas').click();await frame.locator('.v164-expenses .ex135-page').waitFor({state:'visible'});await frame.locator('.ex135-main').waitFor({state:'visible'});
+  await routeButton('Despesas').click();
+  try{await frame.locator('.v164-expenses .ex135-page').waitFor({state:'visible'});await frame.locator('.ex135-main').waitFor({state:'visible'})}
+  catch(error){
+    await page.screenshot({path:`v164-${label}-expenses-failure.png`,fullPage:true});
+    const diagnostic=await frame.evaluate(()=>({route:typeof V==='undefined'?null:V,expenseStatus:window.__LTS_EXPENSE_SCREEN_ALIGNMENT||null,expenseState:window.EX135||null,main:document.getElementById('main')?.innerText?.slice(0,2200)||''}));
+    throw new Error(`${label} Despesas did not load; requested=${JSON.stringify(requested)}; diagnostic=${JSON.stringify(diagnostic)}; cause=${String(error)}`);
+  }
   await routeButton('Cartões').click();await frame.locator('.v164-cards .c111-head').waitFor({state:'visible'});if(!(await frame.locator('.v164-cards').innerText()).includes('Cada cartão em um lugar.'))throw new Error(`${label} rich Cards cockpit missing`);
   await routeButton('Patrimônio').click();await frame.locator('.v164-wealth .v136').waitFor({state:'visible'});if(!(await frame.locator('.v164-wealth').innerText()).includes('Quanto você tem, quanto deve e quanto sobra.'))throw new Error(`${label} wealth cockpit missing`);
   await routeButton('Dashboard').click();await frame.locator('.v164-answer').waitFor({state:'visible'});
@@ -121,7 +127,7 @@ async function run(browser,viewport,label,{loginAfterLoad=false}={}){
   if(label==='desktop'){const rail=await frame.locator('.hdr').evaluate(el=>el.getBoundingClientRect().width);if(rail<220)throw new Error(`desktop rail too small ${rail}`)}
   await page.reload({waitUntil:'domcontentloaded'});const reloaded=await frameReady(page,label+'-reload');if(!await reloaded.locator('.v164-answer').isVisible())throw new Error(`${label} reload did not return to Dashboard`);
   if(errors.length)throw new Error(`${label} page errors ${JSON.stringify(errors)}`);
-  await context.close();return {label,pass:true,viewport,dims,routes:6,dashboard_flow_reports_dashboard:true,reload:true,reconciliation_projection_warning:false,login_transition:loginAfterLoad?'signed-out-to-dashboard-without-reload':'preauthenticated'};
+  await context.close();return {label,pass:true,viewport,dims,routes:6,dashboard_flow_reports_dashboard:true,reload:true,reconciliation_projection_warning:false,login_transition:loginAfterLoad?'signed-out-to-dashboard-without-reload':'preauthenticated',requested:[...new Set(requested)]};
 }
 
 (async()=>{
