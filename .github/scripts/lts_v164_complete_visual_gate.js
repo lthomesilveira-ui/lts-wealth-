@@ -122,8 +122,11 @@ async function run(browser,viewport,label,{loginAfterLoad=false}={}){
     const diagnostic=await frame.evaluate(()=>({route:typeof V==='undefined'?null:V,expenseStatus:window.__LTS_EXPENSE_SCREEN_ALIGNMENT||null,expenseState:window.EX135||null,main:document.getElementById('main')?.innerText?.slice(0,2200)||''}));
     throw new Error(`${label} Despesas did not load; requested=${JSON.stringify(requested)}; diagnostic=${JSON.stringify(diagnostic)}; cause=${String(error)}`);
   }
+  if(label!=='post-login')await page.screenshot({path:`v164-${label}-expenses.png`,fullPage:true});
   await routeButton('Cartões').click();await frame.locator('.v164-cards .c111-head').waitFor({state:'visible'});if(!(await frame.locator('.v164-cards').innerText()).includes('Cada cartão em um lugar.'))throw new Error(`${label} rich Cards cockpit missing`);
+  if(label!=='post-login')await page.screenshot({path:`v164-${label}-cards.png`,fullPage:true});
   await routeButton('Patrimônio').click();await frame.locator('.v164-wealth .v136').waitFor({state:'visible'});if(!(await frame.locator('.v164-wealth').innerText()).includes('Quanto você tem, quanto deve e quanto sobra.'))throw new Error(`${label} wealth cockpit missing`);
+  if(label!=='post-login')await page.screenshot({path:`v164-${label}-wealth.png`,fullPage:true});
   await routeButton('Dashboard').click();await frame.locator('.v164-answer').waitFor({state:'visible'});
   const dims=await frame.locator('html').evaluate(el=>({scroll:el.scrollWidth,client:el.clientWidth}));if(dims.scroll>dims.client+3)throw new Error(`${label} horizontal overflow ${JSON.stringify(dims)}`);
   if(label==='desktop'){const rail=await frame.locator('.hdr').evaluate(el=>el.getBoundingClientRect().width);if(rail<220)throw new Error(`desktop rail too small ${rail}`)}

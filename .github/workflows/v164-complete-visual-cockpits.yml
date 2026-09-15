@@ -9,6 +9,7 @@ on:
       - 'wip35-v162-flow-recovery.js'
       - 'homologacao-current.json'
       - '.github/scripts/lts_v164_complete_visual_gate.js'
+      - '.github/scripts/lts_integrated_flow_gate.py'
       - '.github/workflows/v164-complete-visual-cockpits.yml'
   workflow_dispatch:
 
@@ -34,6 +35,7 @@ jobs:
           node --check lts-executive-visual-system-v1.js
           node --check wip35-v162-flow-recovery.js
           node --check .github/scripts/lts_v164_complete_visual_gate.js
+          python3 -m py_compile .github/scripts/lts_integrated_flow_gate.py
           python3 - <<'PY'
           from pathlib import Path
           candidate=Path('wip35-v164-candidate.html').read_text(encoding='utf-8')
@@ -59,7 +61,7 @@ jobs:
           npm install --no-save playwright@1.55.0
           npx playwright install --with-deps chromium
           python -m pip install playwright==1.57.0
-          python -m playwright install --with-deps chromium
+          python -m playwright install --with-deps chromium webkit
       - name: Test Dashboard, reports, navigation and responsive layouts
         run: |
           python3 -m http.server 8780 >/tmp/lts-v164-http.log 2>&1 &
@@ -79,10 +81,7 @@ jobs:
           name: v164-complete-visual-cockpits
           path: |
             v164-complete-visual-result.json
-            v164-desktop.png
-            v164-mobile.png
-            v164-post-login.png
-            v164-*-failure.png
+            v164-*.png
             integrated-flow-result.json
             integrated-*.png
             bank-scope-result.json
