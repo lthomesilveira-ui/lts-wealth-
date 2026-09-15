@@ -19,9 +19,9 @@ const cockpit={
 };
 function product(){return {dashboard_cockpit:cockpit,updates:{items:[],maintenance_checks:[],freshness:{position_as_of:'2026-09-15'}},semantic_review:{pending_groups:0,items:[]},card_classification_review:{pending_groups:0,pending_lines:0,pending_value:0,category_options:[],items:[]},card_operating:{open_cycles_total:14000,open_cycles:[],next_due:cockpit.cards.next_due},card_history:{units:[]},wealth_executive:{summary:{},assets:{}},duplicate_quality_gate:{},flow:{days:[],events:[]},expenses:{},wealth:{},planning:{}}}
 function flow(){return {from:'2026-09-10',to:'2026-10-15',available_year_from:2013,available_year_to:2041,historical:{days:[],events:[]},current_future:{days:[],events:[]},bank_evidence_as_of:[],version:'v163-fixture'}}
-async function dashboardFrame(page,label){
+async function dashboardFrame(page,label,timeoutMs=30000){
   let inner=null;
-  for(let attempt=0;attempt<240;attempt++){
+  for(let attempt=0;attempt<Math.ceil(timeoutMs/125);attempt++){
     inner=page.frames().find(frame=>{try{return new URL(frame.url()).pathname.endsWith('/index.html')}catch(_){return false}})||null;
     if(inner){const ready=await inner.evaluate(()=>Boolean(document.querySelector('.dx1-decision')&&window.__LTS_DASHBOARD_EXECUTIVE_STATUS?.installed)).catch(()=>false);if(ready)return inner}
     await page.waitForTimeout(125);
@@ -30,12 +30,12 @@ async function dashboardFrame(page,label){
   await page.screenshot({path:`v163-dashboard-${label}-failure.png`,fullPage:true});
   throw new Error(`${label} dashboard frame not ready ${JSON.stringify(diagnostic)}`);
 }
-async function run(browser,viewport,label,{loginAfterLoad=false}={}){
+async function run(browser,viewport,label,{loginAfterLoad=false,slowFlow=false}={}){
   const context=await browser.newContext({viewport});
   const session={access_token:'fixture-token',refresh_token:'fixture-refresh',expires_at:4102444800,user:{id:'fixture-user'}};
   if(!loginAfterLoad)await context.addInitScript(value=>localStorage.setItem('lts_supabase_session_v1',JSON.stringify(value)),session);
   const page=await context.newPage();page.setDefaultTimeout(15000);const errors=[];const requested=[];page.on('pageerror',error=>errors.push(String(error.message||error)));
-  await page.route('https://tadhkamnwtsbdozwkyut.supabase.co/**',async route=>{const name=new URL(route.request().url()).pathname.split('/').pop();requested.push(name);let body={ok:true};if(name==='token')body=session;else if(name==='lts_browser_product_v1')body={ok:true,mvp:product()};else if(name==='lts_browser_dashboard_cockpit_v1')body=cockpit;else if(name==='lts_browser_flow_v11')body={ok:true,flow:flow()};else if(name==='lts_browser_expense_context_nature_v1')body={summary:{},contexts:[],categories:[],unassigned_states:[]};await route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(body)})});
+  await page.route('https://tadhkamnwtsbdozwkyut.supabase.co/**',async route=>{const name=new URL(route.request().url()).pathname.split('/').pop();requested.push(name);let body={ok:true};if(name==='token')body=session;else if(name==='lts_browser_product_v1')body={ok:true,mvp:product()};else if(name==='lts_browser_dashboard_cockpit_v1')body=cockpit;else if(name==='lts_browser_flow_v11'){if(slowFlow)await new Promise(resolve=>setTimeout(resolve,4000));body={ok:true,flow:flow()}}else if(name==='lts_browser_expense_context_nature_v1')body={summary:{},contexts:[],categories:[],unassigned_states:[]};await route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(body)})});
   await page.goto(`${BASE}/wip35-v163-candidate.html`,{waitUntil:'domcontentloaded',timeout:20000});
   if(loginAfterLoad){
     const loginFrame=page.frames().find(frame=>{try{return new URL(frame.url()).pathname.endsWith('/index.html')}catch(_){return false}});if(!loginFrame)throw new Error(`${label} login frame missing`);
@@ -43,12 +43,12 @@ async function run(browser,viewport,label,{loginAfterLoad=false}={}){
     if(await loginFrame.locator('.dx1-decision').count())throw new Error(`${label} dashboard visible before login`);
     await loginFrame.locator('#email').fill('fixture@example.test');await loginFrame.locator('#password').fill('fixture-password');await loginFrame.locator('#signin').click();
   }
-  const frame=await dashboardFrame(page,label);
+  const frame=await dashboardFrame(page,label,slowFlow?2000:30000);
   await frame.locator('.dx1-decision').waitFor({state:'visible',timeout:5000});
   const text=await frame.locator('.dx1').innerText();
   for(const needle of ['Tenho dinheiro suficiente?','Atenção: o caixa fica negativo','Primeiro saldo negativo','01/12/2026','Caixa coberto até','30/11/2026','Pior saldo projetado','-R$ 12.500,00','Dinheiro em contas','Contas + curto prazo','RSUs vested','FGTS','Despesas (mês)','Total consolidado ainda não certificado'])if(!text.includes(needle))throw new Error(`${label} missing ${needle}`);
   const status=await frame.locator('body').evaluate(()=>window.__LTS_DASHBOARD_EXECUTIVE_STATUS);
-  if(!status||status.reader!=='lts_browser_dashboard_cockpit_v1'||status.read_only!==true||status.financial_writer_changed!==false||status.permanent_polling!==false||status.flow_ready_before_initial!==true)throw new Error(`${label} invalid status ${JSON.stringify(status)}`);
+  if(!status||status.reader!=='lts_browser_dashboard_cockpit_v1'||status.read_only!==true||status.financial_writer_changed!==false||status.permanent_polling!==false||status.flow_ready_before_initial!==true||status.flow_runtime_ready_before_initial!==true||status.flow_read_completion_not_required!==true)throw new Error(`${label} invalid status ${JSON.stringify(status)}`);
   if(!requested.includes('lts_browser_dashboard_cockpit_v1'))throw new Error(`${label} dashboard reader not requested`);
   if(await frame.locator('.dx1-kpi').count()!==5)throw new Error(`${label} expected five KPIs`);
   const dims=await frame.locator('html').evaluate(node=>({scroll:node.scrollWidth,client:node.clientWidth}));
@@ -68,6 +68,6 @@ async function run(browser,viewport,label,{loginAfterLoad=false}={}){
   if(errors.length)throw new Error(`${label} page errors ${JSON.stringify(errors)}`);
   const topStatus=await page.evaluate(()=>window.__LTS_V163_STATUS);
   if(!topStatus?.post_login_session_rearm)throw new Error(`${label} post-login rearm status missing`);
-  await context.close();return {label,viewport,pass:true,requested:[...new Set(requested)],dims,login_transition:loginAfterLoad?'signed-out-to-dashboard-without-reload':'preauthenticated',route_regression:'dashboard-flow-dashboard-pass'};
+  await context.close();return {label,viewport,pass:true,requested:[...new Set(requested)],dims,login_transition:loginAfterLoad?'signed-out-to-dashboard-without-reload':'preauthenticated',flow_readiness:slowFlow?'dashboard-before-slow-flow-read-completes':'normal',route_regression:'dashboard-flow-dashboard-pass'};
 }
-(async()=>{const executablePath=process.env.LTS_CHROMIUM_EXECUTABLE||undefined;const browser=await chromium.launch({headless:true,...(executablePath?{executablePath}:{})});try{const results=[await run(browser,{width:1440,height:1000},'desktop'),await run(browser,{width:390,height:844},'mobile'),await run(browser,{width:1440,height:1000},'post-login',{loginAfterLoad:true})];const out={pass:true,version:'v163-dashboard-executive',data:'controlled-fixture-not-user-validation',results};fs.writeFileSync(resultFile,JSON.stringify(out,null,2));console.log(JSON.stringify(out,null,2))}catch(error){const out={pass:false,error:String(error.stack||error),data:'controlled-fixture-not-user-validation'};fs.writeFileSync(resultFile,JSON.stringify(out,null,2));console.error(out.error);process.exitCode=1}finally{await browser.close()}})();
+(async()=>{const executablePath=process.env.LTS_CHROMIUM_EXECUTABLE||undefined;const browser=await chromium.launch({headless:true,...(executablePath?{executablePath}:{})});try{const results=[await run(browser,{width:1440,height:1000},'desktop'),await run(browser,{width:390,height:844},'mobile'),await run(browser,{width:1440,height:1000},'post-login',{loginAfterLoad:true}),await run(browser,{width:1440,height:1000},'slow-flow-load',{slowFlow:true})];const out={pass:true,version:'v163-dashboard-executive',data:'controlled-fixture-not-user-validation',results};fs.writeFileSync(resultFile,JSON.stringify(out,null,2));console.log(JSON.stringify(out,null,2))}catch(error){const out={pass:false,error:String(error.stack||error),data:'controlled-fixture-not-user-validation'};fs.writeFileSync(resultFile,JSON.stringify(out,null,2));console.error(out.error);process.exitCode=1}finally{await browser.close()}})();
