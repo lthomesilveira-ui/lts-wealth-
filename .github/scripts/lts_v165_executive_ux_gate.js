@@ -97,7 +97,9 @@ async function run(browser,viewport,label,{loginAfterLoad=false}={}){
   if(loginAfterLoad){const loginFrame=page.frames().find(frame=>{try{return new URL(frame.url()).pathname.endsWith('/index.html')}catch{return false}});if(!loginFrame)throw Error(`${label}: login frame missing`);await loginFrame.locator('.login').waitFor({state:'visible'});await loginFrame.locator('#email').fill('fixture@example.test');await loginFrame.locator('#password').fill('fixture-password');await loginFrame.locator('#signin').click()}
   const frame=await frameReady(page,label);
   const dashboardText=await frame.locator('.v165-dashboard').innerText();
-  for(const phrase of ['Coberto até 19/12/2030','primeiro dia negativo em 20/12/2030','Resgatar FGTS até 20/11/2030','nova falta em 25/01/2031','Dinheiro em contas','Contas + curto prazo','RSUs vested','FGTS','Despesas do mês','Dados até 14/06/2030'])if(!dashboardText.includes(phrase))throw Error(`${label}: dashboard missing ${phrase}`);
+  const dashboardKpis=await frame.locator('.v165-dashboard .v165-kpi').allInnerTexts();
+  await page.screenshot({path:`v165-${label}-dashboard.png`,fullPage:true});
+  for(const phrase of ['Coberto até 19/12/2030','primeiro dia negativo em 20/12/2030','Resgatar FGTS até 20/11/2030','nova falta em 25/01/2031','Dinheiro em contas','Contas + curto prazo','RSUs vested','FGTS','Despesas do mês','Dados até 14/06/2030'])if(!dashboardText.includes(phrase))throw Error(`${label}: dashboard missing ${phrase}; kpis=${JSON.stringify(dashboardKpis)}`);
   for(const forbidden of ['Tenho dinheiro suficiente?','Cenário-base operacional','Planejamento incorporado'])if(dashboardText.includes(forbidden))throw Error(`${label}: dashboard leaked ${forbidden}`);
   if(await frame.locator('.v165-kpis>.v165-kpi').count()!==5)throw Error(`${label}: dashboard KPI count`);
   if(await frame.locator('.v165-grid.dashboard-main>.v165-card').count()!==3)throw Error(`${label}: reference main row missing`);
@@ -105,7 +107,6 @@ async function run(browser,viewport,label,{loginAfterLoad=false}={}){
   const nav=label==='mobile'?frame.locator('#dx1MobileNav'):frame.locator('.nav');if(await nav.locator('button').count()!==5)throw Error(`${label}: expected five navigation routes`);
   if(await nav.getByText('Cartões',{exact:true}).count()||await nav.getByText('Planejamento',{exact:true}).count())throw Error(`${label}: duplicate top-level route`);
   if(!(await frame.locator('.brand small').innerText()).includes('V165'))throw Error(`${label}: visible V165 missing`);
-  await page.screenshot({path:`v165-${label}-dashboard.png`,fullPage:true});
   const route=routeName=>label==='mobile'?frame.locator(`#dx1MobileNav [data-mobile-route="${routeName}"]`):frame.locator(`.nav [data-v="${routeName}"]`);
   await route('Fluxo Diário').click();await frame.waitForFunction(()=>V==='Fluxo Diário');if(await frame.locator('#ltsReconciliationWarning').count())throw Error(`${label}: projected Itaú warning visible`);
   await route('Despesas').click();await frame.locator('.v165-expenses').waitFor({state:'visible'});await frame.locator('.v165-expenses .v165-kpi').first().waitFor({state:'visible'});let text=await frame.locator('.v165-expenses').innerText();for(const phrase of ['Visão geral','Categorias','Cartões','Lançamentos','Classificação revisada','100%','cobertura documental'])if(!text.includes(phrase))throw Error(`${label}: expenses missing ${phrase}`);
