@@ -2,6 +2,7 @@
   'use strict';
   const CONTRACT='dashboard-executive-cash-answer-v1';
   const MODEL_SRC='lts-dashboard-read-model.js?v=20260915-cash-answer-v1';
+  const SESSION_KEY='lts_supabase_session_v1';
   const outer=document.getElementById('shell');
   const gate=document.getElementById('gate');
   let generation=0;
@@ -118,10 +119,12 @@
       if(!f.d.getElementById('lts-dashboard-read-model')){const script=f.d.createElement('script');script.id='lts-dashboard-read-model';script.src=MODEL_SRC;script.onload=burst;(f.d.head||f.d.documentElement).appendChild(script)}return false;
     }
     if(!f.w.__LTS_DASHBOARD_EXECUTIVE_STATUS?.installed&&!f.d.getElementById('lts-dashboard-executive-runtime')){const script=f.d.createElement('script');script.id='lts-dashboard-executive-runtime';script.textContent='('+dashboardRuntime.toString()+')();';(f.d.head||f.d.documentElement).appendChild(script)}
-    const result=f.w.__LTS_V163_ROUTE_DASHBOARD?.();if(result?.state==='dashboard'&&gate)gate.hidden=true;return result?.state==='dashboard'||result?.state==='login';
+    const result=f.w.__LTS_V163_ROUTE_DASHBOARD?.();if((result?.state==='dashboard'||result?.state==='login')&&gate)gate.hidden=true;return result?.state==='dashboard';
   }
   function burst(){const current=++generation;let attempt=0;function step(){if(current!==generation)return;const done=install();attempt+=1;if(!done&&attempt<180)setTimeout(step,100)}step();[250,600,1200,2400,4800,8000,12000,18000].forEach(delay=>setTimeout(()=>{if(current===generation)install()},delay))}
+  function sessionChanged(event){if(event.storageArea===localStorage&&event.key===SESSION_KEY&&event.newValue)burst()}
+  window.addEventListener('storage',sessionChanged);
   outer?.addEventListener('load',burst);document.readyState==='loading'?document.addEventListener('DOMContentLoaded',burst,{once:true}):burst();
   window.__LTS_TOP_CANDIDATE_VERSION='v163-dashboard-executive';
-  window.__LTS_V163_STATUS={contract:CONTRACT,source_candidate:'index.html',flow_baseline:'wip35-v162-flow-recovery',expense_baseline:'ex135-reconciled',dashboard_reader:'lts_browser_dashboard_cockpit_v1',read_only:true,financial_writer_changed:false,public_index_changed:false,bounded_boot:true,permanent_polling:false};
+  window.__LTS_V163_STATUS={contract:CONTRACT,source_candidate:'index.html',flow_baseline:'wip35-v162-flow-recovery',expense_baseline:'ex135-reconciled',dashboard_reader:'lts_browser_dashboard_cockpit_v1',read_only:true,financial_writer_changed:false,public_index_changed:false,bounded_boot:true,post_login_session_rearm:true,permanent_polling:false};
 })();
