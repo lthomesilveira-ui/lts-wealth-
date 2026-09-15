@@ -287,8 +287,12 @@
       @media(max-width:620px){.v164-pagehead{flex-direction:column;gap:12px}.v164-pageactions{width:100%;justify-content:space-between}.v164-answer-metrics{grid-template-columns:1fr}.v164-metric{border-left:0;border-bottom:1px solid #ebeff3!important}.v164-metric:last-child{border-bottom:0!important}.v164-kpis{grid-template-columns:1fr}.v164-kpi:first-child{grid-column:auto}.v164-horizons{grid-template-columns:1fr}.v164-chart svg{height:auto}.v164-rank{grid-template-columns:minmax(110px,1fr) auto}.v164-rank>i{display:none}.v164-layer{grid-template-columns:30px 1fr}.v164-layer>strong{grid-column:2;text-align:left}.v164-card{padding:15px}.v164-report .ex135-panel,.v164-report .v136-panel,.v164-report .c111-panel{padding:14px}}
     `;
     document.head.appendChild(style);
-    renderNav();
-    render();
+    if(D&&!N.classList.contains('hidden')){
+      renderNav();
+      render();
+    }else{
+      bind();
+    }
   }
 
   function frame(){
