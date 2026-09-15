@@ -318,6 +318,16 @@
       const nav=document.getElementById('dx1MobileNav');if(!nav)return;const routes=[['Dashboard','Início'],['Fluxo Diário','Fluxo'],['Despesas','Despesas'],['Patrimônio','Bens'],['Atualizações','Ações']];nav.innerHTML=routes.map(([route,label])=>'<button type="button" data-mobile-route="'+route+'" class="'+(V===route?'active':'')+'">'+icon(route)+'<span>'+label+'</span></button>').join('');nav.querySelectorAll('[data-mobile-route]').forEach(button=>button.onclick=()=>go(button.dataset.mobileRoute));
     }
 
+    function stampBrand(){
+      document.querySelectorAll('.brand small').forEach(node=>{if(node.textContent.trim()!=='V165 · Homologação')node.innerHTML='<b>V165</b> · Homologação'});
+    }
+
+    function preserveBrand(){
+      stampBrand();
+      if(window.__LTS_V165_FLOW_ROUTE_WRAPPED||typeof window.__LTS_V162_ROUTE_FLOW!=='function')return;
+      const routeFlow=window.__LTS_V162_ROUTE_FLOW;window.__LTS_V162_ROUTE_FLOW=function(){const result=routeFlow.apply(this,arguments);stampBrand();return result};window.__LTS_V165_FLOW_ROUTE_WRAPPED=true;
+    }
+
     function bind(){
       const authenticated=Boolean(D)&&!N.classList.contains('hidden');document.body.classList.toggle('v165-authenticated',authenticated);document.body.classList.add('v165-ready');decorateMobile();
       document.querySelectorAll('[data-v165-go]').forEach(button=>button.onclick=()=>go(button.dataset.v165Go,button.dataset.v165Tab));
@@ -328,7 +338,7 @@
       document.querySelectorAll('[data-v165-award-save]').forEach(button=>button.onclick=()=>saveAnticipation(button.dataset.v165AwardSave));
       const input=document.getElementById('v165SearchInput');if(input)input.oninput=event=>scheduleSearch(event.target.value);
       const refresh=document.getElementById('v165Refresh');if(refresh)refresh.onclick=refreshDashboard;
-      document.querySelectorAll('.brand small').forEach(node=>node.innerHTML='<b>V165</b> · Homologação');
+      preserveBrand();
       const badge=window.parent.document.getElementById('scope');if(badge)badge.textContent=VERSION+' · '+(V==='Fluxo Diário'?'Fluxo de caixa':V)+' · Homologação';
     }
 
