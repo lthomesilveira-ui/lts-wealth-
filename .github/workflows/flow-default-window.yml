@@ -5,6 +5,8 @@ on:
     paths:
       - 'wip35-v162-candidate.html'
       - 'wip35-v162-flow-recovery.js'
+      - 'lts-expense-screen-alignment.js'
+      - 'lts-expense-read-model.js'
       - '.github/scripts/lts_flow_default_window_gate.py'
       - '.github/workflows/flow-default-window.yml'
       - '.github/workflows/candidate-smoke.yml'

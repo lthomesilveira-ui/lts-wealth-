@@ -1,0 +1,11 @@
+# V162 — Correct executive screen passes desktop/mobile integration gate
+
+Business date 14/09/2026. Candidate source a92dc0f97ba341ac4d031ac700e993d81462646e. The final active ex135 executive/monthly route was recovered from the complete protected index; earlier dual-only integration was rejected by its first test before main exposure. The route correction is documented in the preceding immutable receipt.
+
+Run 34912267323, job 104202153781: SUCCESS. Artifact 10374439743, sha256:148a1ce36e3cbdd6e4730752330f8af9b4e921048e6318ae5ce40702466c1c05, contains real-page synthetic QA and desktop/mobile screenshots, downloaded and inspected. Eleven checks per viewport passed, twenty-two total, including actual category-button clicks, exact displayed month/category totals, stale response rejection, source/open-invoice notice, unknown original-date presentation, safe failure state, responsive width and preserved Flow re-entry. No page errors, real user financial reads or writes. These fixtures do not substitute for real backend checks or actual user-device homologation.
+
+Run 34912267328 separately passed the read-model contract suite on the same source commit. Existing Flow default-window run 34911377141 passed on the prior candidate; the unchanged retained Flow and invoice tests are retriggered through expanded workflow path coverage in this checkpoint. Do not mark their new runs complete without receipts.
+
+All real source classifications and derived financial/cache corrections described in V162_CLASSIFICATION_CLOSED_EXPENSE_SOURCES_ALIGNED_2026-09-14.md remain applied and independently verified under the native authenticated database consumer. Direct/cached pending categories are zero in the reviewed available-source set. Nineteen bank closing balances and eight invoice totals reconcile; original money/evidence and pre-July history are preserved. Current open invoices and historical aggregate-only detail retain explicit limitations.
+
+No active index or Flow runtime bytes changed. This metadata/test-trigger checkpoint does not itself assert main/Pages deployment. Final manifest exposure, deployment success and user guidance belong in the subsequent release receipt. Keep all unrelated source, wealth, manual-session, Dashboard and whole-product gates open.
