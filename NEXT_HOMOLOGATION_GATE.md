@@ -1,27 +1,28 @@
 # LTS Wealth — Next Homologation Gate
 
-14/09/2026. Previous gate preserved byte-for-byte at backups/NEXT_HOMOLOGATION_GATE_BEFORE_EXPENSE_ALIGNMENT_2026-09-14.md. Read with the complete backlog and latest state; unrelated requirements remain.
+Business date 14/09/2026. Final Despesas product 39e47fc60c40fa8f3796fab4f73f05dee5a89419 has been deployed. Previous complete gate is preserved at backups/NEXT_HOMOLOGATION_GATE_BEFORE_DESPESAS_PUBLICATION_2026-09-14.md. All unrelated backlog requirements remain.
 
-## Closed on real sources
-- [x] Apply the seven answered card classifications, two outgoing health reimbursements and nine approved shorter child labels.
-- [x] Synchronize direct and stored card/bank classification queues: zero pending in the reviewed available-source set.
-- [x] Preserve source cash, invoice amounts/dates/counts and account values; retain full private before-images.
-- [x] Count the three documentary initiated/posted duplicates once in the historical reader; check nineteen statement closing balances and browser Flow readback.
-- [x] Remove the confirmed card-linked advance from additional expense consumption without changing cash.
-- [x] Use the current open-invoice source, preserve unknown purchase dates and reconcile all eight checked cycles to original totals.
-- [x] Preserve original historical enrichment and pre-July data; include current open coverage explicitly.
-- [x] Refresh derived expense cache and stored expense views/detail; verify complete source-cache equality, category/month parity and three executive/monthly comparisons.
+## Completed and verified
+- [x] Apply all seven previously answered card and two bank categories, plus the nine scoped Benjamin - Presentes labels.
+- [x] Synchronize current direct/stored classification queues: zero pending in the reviewed available-source set.
+- [x] Preserve original source cash, amounts, dates, installments, counts, account values and private audit before-images.
+- [x] Count three unique documentary initiated/posted duplicates once in derived cash; match nineteen source closing balances and browser Flow readings.
+- [x] Exclude the bidirectionally confirmed vehicle advance from additional consumption without deleting/netting actual cash.
+- [x] Reconcile all eight documented invoice cycles to the current detail source; preserve credits, unknown dates and open-cycle provisional status.
+- [x] Refresh expense caches and stored views/detail; verify complete source-cache parity, month/category totals and executive/monthly readings.
+- [x] Integrate the actual final ex135 executive/monthly screen and tested lifecycle, retaining protected index and Flow runtime.
+- [x] Pass screen, smoke, Flow window and integrated Flow/invoice/bank-scope/reading-order tests on the final product; see release receipt for runs.
+- [x] Handle preserved historical fractional-cent allocations at display only, retaining original values and explicit notice; pass all real-source display identities.
+- [x] Deploy final candidate in GitHub Pages run 34914204383 and update fixed-manifest product metadata. Public index promotion remains unauthorized.
 
-## Current screen integration / publication
-- [~] Integrate tested lifecycle and source-consistent filters into existing Despesas, without changing the protected index or adding frames/polling.
-- [ ] New real-V162-source browser tests (mocked financial RPCs), plus retained Flow/CI gates, pass on the exact candidate commit. Consult actual run evidence.
-- [ ] Publish the passed candidate to main/Pages and update the fixed manifest; confirm deployment.
-- [ ] Material user review of Despesas on the actual signed-in device. Do not label synthetic browser tests as that review.
+## The next user gate
+- [ ] Material review of Despesas on the user's actual signed-in device: August and September, month open/close and category drill-down, source-date/open-invoice clarity. This is the requested action now. No classification question remains for the completed H set.
 
-## Scope not certified by zero pending categories
-- [ ] Transaction-scoped manual classification of a genuinely new entry, save/refresh/reopen in the actual session, and unrestricted bulk manual release.
-- [ ] Other current Visa source/identity gaps, old payment/control/account-attribution markers and data after the latest supplied statements.
-- [ ] Patrimônio holdings, debts, availability and valuation/date-base validation.
-- [ ] All unrelated master-backlog requirements; new Dashboard still needs explicit visual approval and public-root promotion remains unauthorized.
+## Separate open work
+- [ ] Transaction-scoped manual classification of a genuinely new entry, save/refresh/reopen in the actual session, unrestricted manual release.
+- [ ] Other current Visa evidence/identity gaps, older payment/account-attribution controls, source updates after the latest statements and document navigation where absent.
+- [ ] Independent Patrimônio asset/debt/availability/valuation/date-base verification.
+- [ ] Approved complete new Dashboard visual proposal before its implementation; no public-root promotion or whole-product acceptance assumed.
+- [ ] Every unaffected dependency in the full master backlog/deltas remains until individually evidenced closed.
 
-The H question set is answered and now applied. Do not request the same decisions or statements again. Open invoices are provisional; source freshness and missing documentary detail remain visible limitations, not fabricated zeros.
+Zero category-pending does not certify all historical/future sources or turn open invoices into closed bills. Preserve original categories, cash-versus-competence, documentary depth and all previous user decisions. The fixed link is ready for Despesas review, not re-entry of the old answers.
