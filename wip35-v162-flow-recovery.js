@@ -179,7 +179,8 @@
   function currentFrame(){try{const w=outer?.contentWindow,d=outer?.contentDocument;if(!w||!d||!d.documentElement)return null;const path=w.location?.pathname||'';if(!path.endsWith('/index.html'))return null;return {w,d}}catch(error){return null}}
   function showGate(message){if(!gate)return;gate.textContent=message||'Preparando o Fluxo Diário…';gate.hidden=false}
   function hideGate(){if(gate)gate.hidden=true}
-  function installRuntime(frame){if(frame.w.__LTS_V162_FLOW_RECOVERY_STATUS?.installed===true)return true;if(frame.d.getElementById('lts-v162-flow-runtime'))return false;const host=frame.d.head||frame.d.documentElement;if(!host)return false;const script=frame.d.createElement('script');script.id='lts-v162-flow-runtime';script.textContent=`(${recoveryRuntime.toString()})();`;host.appendChild(script);return frame.w.__LTS_V162_FLOW_RECOVERY_STATUS?.installed===true}
+  function runtimePrerequisitesReady(frame){return ['render','renderNav','loadFlowRange','isCardSettlement'].every(name=>typeof frame.w[name]==='function')}
+  function installRuntime(frame){if(frame.w.__LTS_V162_FLOW_RECOVERY_STATUS?.installed===true)return true;if(!runtimePrerequisitesReady(frame))return false;if(frame.d.getElementById('lts-v162-flow-runtime'))return false;const host=frame.d.head||frame.d.documentElement;if(!host)return false;const script=frame.d.createElement('script');script.id='lts-v162-flow-runtime';script.textContent=`(${recoveryRuntime.toString()})();`;host.appendChild(script);return frame.w.__LTS_V162_FLOW_RECOVERY_STATUS?.installed===true}
   function install(){
     const frame=currentFrame();if(!frame)return false;
     if(!frame.d.getElementById('v162-flow-scope-css')){

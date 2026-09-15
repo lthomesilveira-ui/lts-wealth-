@@ -50,6 +50,7 @@ jobs:
           for forbidden in ['setInterval(','MutationObserver(','insert into','delete from','update public.','.upsert(']:
               assert forbidden.lower() not in runtime.lower(), forbidden
           assert 'reconciliationNoticeEligible' in flow
+          assert 'runtimePrerequisitesReady' in flow
           assert "documentary_anchor_date||''" in flow
           assert "balance_basis||'')==='documentary_close'" in flow
           import hashlib
