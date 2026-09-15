@@ -12,7 +12,7 @@ Canonical persistent project list. Never remove an open financial, documentary, 
 - [x] Recorded the proposal, source provenance, limitations, decisions and pending gates in `LTS_WEALTH_DASHBOARD_VISUAL_PROPOSAL_2026-09-15.md` and its immutable package checkpoint.
 - [x] Obtained explicit user approval on 15/09/2026 to proceed with the notebook/mobile direction and adjust after practical review; added the binding direct cash-sufficiency/negative-date/worst-balance answer.
 - [~] Implement a new read-only V163 Dashboard layer in the same branch lineage; initial reader, runtime, candidate and deterministic three-state contract are complete locally. Do not re-enable the Dashboard rejected on 10/09/2026.
-- [~] Run integrated desktop/mobile route, reader, financial-invariant and visual side-by-side gates; dedicated CI workflow is prepared, but its fixture/geometry PASS will not be real-data acceptance.
+- [x] Integrated desktop/mobile decision, reader, no-overflow and Dashboard → Flow → Dashboard gate passed in run `34920486665`; controlled fixture/geometry PASS is explicitly not real-data acceptance.
 - [ ] Verify the exact candidate SHA and Pages artifact after publication to homologation; keep public-root promotion behind a separate explicit decision.
 - [ ] Complete authenticated real-session material review and physical-device navigation evidence; no such evidence is claimed by the proposal package.
 

@@ -3,6 +3,7 @@ on:
   push:
     paths:
       - 'wip35-v163-candidate.html'
+      - 'homologacao-current.json'
       - 'lts-dashboard-executive-v1.js'
       - 'lts-dashboard-read-model.js'
       - '.github/scripts/lts_v163_dashboard_executive_contract.js'

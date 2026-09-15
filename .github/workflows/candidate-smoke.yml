@@ -68,6 +68,9 @@ jobs:
           elif target == 'wip35-v162-candidate.html':
               assert version == 'wip35-v162', (version, target)
               mode = 'flow-recovery'
+          elif target == 'wip35-v163-candidate.html':
+              assert version == 'wip35-v163', (version, target)
+              mode = 'dashboard-executive'
           else:
               assert re.fullmatch(r'wip35-v\d+-candidate\.html', target), target
               mode = 'legacy'
