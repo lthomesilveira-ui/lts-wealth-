@@ -4,6 +4,18 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 
 Canonical persistent project list. Never remove an open financial, documentary, classification, reconciliation or product dependency during compaction. Detailed immutable evidence remains in `backups/`, `HISTORICAL_RECOVERY_LOG.md`, `PLANNING_EXCEL_TO_CURRENT_AUDIT_2026-08-30.md`, `NEXT_HOMOLOGATION_GATE.md` and release checkpoints.
 
+## P0 — V165 executive UX, unified expenses and private awards — 16/09/2026
+- [x] Rebuild the approved dark-rail/light-canvas product with exactly five top-level routes and no separate Planejamento or Cartões route.
+- [x] Make Dashboard answer cash sufficiency at a glance with compact KPIs, liquidity curve, banks, expense groups, commitments, updates and a direct action timeline.
+- [x] Consolidate Despesas with internal Visão geral, Categorias, Cartões and Lançamentos views; retain Benjamin as the group and Educação as detail.
+- [x] Separate 100% reviewed classification completion from documentary coverage and show the source date compactly.
+- [x] Add authenticated private RSU/Cash RSU/Retention readers, regular RSU at 100%, Cash RSU at 70%, original vesting date plus optional user-scoped anticipated date and audited scenario persistence.
+- [x] Restore incremental full-history transaction search without requiring a date; a text match returns all corresponding rows.
+- [x] Preserve the reconciled Flow, invoice order, bank scope, financial writers and protected `index.html`; projection after documentary close cannot create a false Itaú warning.
+- [x] Pass branch/main V165 gates `35028990197` / `35029387758`, artifact `10420263597` with digest `sha256:eea9d394458f2bff8831e4dd7008aa3ba8aadc8f2cf5053ed500d07e3ea854ea`, and product Pages `35029387014`.
+- [x] Verify the public candidate title, login and V165 brand after Pages; the legacy signed-out recovery subtitle is no longer shown.
+- [ ] Obtain the user's material notebook/phone visual and financial acceptance. Automated fixtures, secure backend checks and signed-out live verification do not replace it.
+
 ## P0 — V164 complete visual cockpits — 16/09/2026
 - [x] Replace the rejected V163 presentation with the approved dark-rail/light-canvas direction on notebook and 390 px mobile.
 - [x] Keep exactly six visible routes and consolidate all liquidity ladder, negative windows, recovery dates and FGTS timing into the single Dashboard; redirect residual Planning entrypoints to Dashboard.
@@ -11,7 +23,7 @@ Canonical persistent project list. Never remove an open financial, documentary, 
 - [x] Align Despesas, Cartões and Patrimônio while preserving the reconciled readers, Flow behavior, invoice drill-downs, financial writers and protected public root.
 - [x] Restrict the Itaú reconciliation banner to a non-zero gap on the bank's documentary-close date; later projection rows cannot produce a false historical warning.
 - [x] Pass final main gates and Pages on release `31fecc10`; verify all six routes, reload and legacy redirects in the authenticated published browser. See `backups/V164_COMPLETE_VISUAL_COCKPITS_PUBLISHED_2026-09-16.md`.
-- [ ] Obtain human visual/financial acceptance on the user's notebook and phone. Automated fixtures and the authenticated technical read path do not replace this decision.
+- [x] Superseded by the V165 material acceptance gate above; V164 remains historical evidence.
 
 ## P0 — Dashboard visual proposal / Work continuity — 15/09/2026
 - [x] Recovered the original official 1312×1199 visual source and verified its exact contracted SHA-256; the public 180×164 proxy remains auxiliary only.

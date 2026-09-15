@@ -1,6 +1,6 @@
 # LTS Wealth — Next Homologation Gate
 
-Business date 16/09/2026. V164 product `8ef79a4cedb40690fb155961c2ed2bb65316d0c8` is exposed by `main` release `31fecc10b4282f28ae7e219821c2abaff05181f6`. All unrelated backlog requirements remain.
+Business date 16/09/2026. V165 product `6bcdfb1f78baf944e6f215da045b75ef3244d4de` is the candidate selected by this release package. All unrelated backlog requirements remain.
 
 ## Completed and verified
 - [x] Apply all seven previously answered card and two bank categories, plus the nine scoped Benjamin - Presentes labels.
@@ -17,19 +17,25 @@ Business date 16/09/2026. V164 product `8ef79a4cedb40690fb155961c2ed2bb65316d0c8
 - [x] Publish the V164 single Dashboard and aligned Despesas, Cartões and Patrimônio cockpits; preserve the reconciled Flow and expense readers and suppress only the false post-documentary Itaú projection warning.
 - [x] Pass final main V164, integrated Flow/invoices, Flow-window, candidate-smoke, V163-compatibility and Pages runs: `34998781983`, `34998781943`, `34998781992`, `34998782111`, `34998781982`, `34998780824`.
 - [x] Verify the published product in the authenticated browser: six routes, Dashboard answer/reload, 36-row Flow without the false warning, reconciled Despesas completion, three-card cockpit, Patrimônio report and Atualizações redirects to Dashboard.
+- [x] Replace the rejected V164 presentation with the approved dark-rail/light-canvas V165 hierarchy and exactly five top-level routes: Dashboard, Fluxo de caixa, Despesas, Patrimônio and Atualizações.
+- [x] Unify Cartões inside Despesas with Visão geral, Categorias, Cartões and Lançamentos; preserve the reconciled expense, invoice and Flow contracts.
+- [x] Add protected RSU/Cash RSU/Retention reads, 100%/70% presentation, original and optional anticipated vesting dates, user-scoped audited anticipation persistence and no public private-award constants.
+- [x] Add incremental full-history transaction search without a required date, preserve the Benjamin/Educação hierarchy and separate 100% reviewed classification completion from documentary coverage.
+- [x] Pass V165 branch/main gates `35028990197` / `35029387758`, artifact `10420263597`, and product Pages `35029387014`; verify the live signed-out V165 title, login and product brand.
 
 ## The next user gate
-- [ ] Material review of the complete V164 homologation on the user's actual signed-in notebook and phone, only after automated gates, Pages publication and authenticated browser verification succeed. Review Dashboard, Flow, Despesas, Cartões and Patrimônio as one delivery; no classification question remains for the completed H set.
+- [ ] Material review of the complete V165 homologation on the user's actual signed-in notebook and phone. Review Dashboard, Fluxo, Despesas, Patrimônio/RSUs and Atualizações as one delivery; no classification question remains for the completed reviewed-source set.
 - [x] V163 signed-out → login → Dashboard transition fixed and verified in the authenticated real browser after the user reported the published link still showing the prior interface. Dashboard → Fluxo → Dashboard also passed; automatic fixture and real-browser presentation evidence remain distinct.
 - [x] V163 authenticated full reload fixed and verified after a second route race was reproduced. The automated gate includes a deliberately slow Flow read; the published real session reload opens Dashboard directly and retains Dashboard → Fluxo → Dashboard navigation.
-- [ ] Human visual/financial acceptance of the V164 Dashboard and aligned reports on the user's notebook and phone; the user may request iterative refinements without reopening already fixed readers or route defects.
+- [ ] Human visual/financial acceptance of the V165 Dashboard and aligned reports on the user's notebook and phone; the user may request refinements without reopening already fixed readers or route defects.
 
 ## Separate open work
 - [ ] Transaction-scoped manual classification of a genuinely new entry, save/refresh/reopen in the actual session, unrestricted manual release.
 - [ ] Other current Visa evidence/identity gaps, older payment/account-attribution controls, source updates after the latest statements and document navigation where absent.
 - [ ] Independent Patrimônio asset/debt/availability/valuation/date-base verification remains separate from visual alignment.
 - [x] V164 technical publication package: Dashboard unique with Planning incorporated; Despesas, Cartões and Patrimônio aligned; false post-extract Itaú warning suppressed; automated and authenticated-browser evidence complete.
+- [x] V165 supersedes V164 for the current visual/product acceptance gate; V164 remains historical engineering evidence only.
 - [x] The V163 claim of complete visual implementation is superseded. V163 solved authenticated activation/reload but was not accepted as faithful implementation of the approved layout.
 - [ ] Every unaffected dependency in the full master backlog/deltas remains until individually evidenced closed.
 
-Zero category-pending does not certify all historical/future sources or turn open invoices into closed bills. Preserve original categories, cash-versus-competence, documentary depth and all previous user decisions. The fixed link is ready for the user's whole-product visual and financial review, not re-entry of old answers.
+Zero category-pending does not certify all historical/future sources or turn open invoices into closed bills. Preserve original categories, cash-versus-competence, documentary depth and all previous user decisions. The fixed link is ready for the user's whole-product V165 visual and financial review, not re-entry of old answers.

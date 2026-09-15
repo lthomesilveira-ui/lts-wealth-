@@ -1,6 +1,6 @@
 # LTS Wealth — Continuity Handoff
 
-Last materially refreshed: 2026-09-11 (Flow real-data timeout recovery)
+Last materially refreshed: 2026-09-16 (V165 executive UX and private awards publication)
 
 This file exists so project continuity never depends on chat context. Always re-fetch `main`, active branch, `PROJECT_MASTER_BACKLOG.md`, `NEXT_HOMOLOGATION_GATE.md`, this file and the latest immutable checkpoint before every repository write.
 
@@ -16,7 +16,19 @@ This file exists so project continuity never depends on chat context. Always re-
 - Never force branch divergence; use normal fast-forward/merge only after fresh compare.
 - Preserve historical evidence back to 2013 where supported.
 
-## Current recovery — read before all prior release history
+## Current product — V165 executive UX and private awards
+- Current product branch and `main` code head: `6bcdfb1f78baf944e6f215da045b75ef3244d4de`. Candidate: `wip35-v165-candidate.html`.
+- Fixed homologation selects V165 through `homologacao-current.json`; the public root remains protected and is not promoted.
+- Exactly five top-level routes are visible: Dashboard, Fluxo de caixa, Despesas, Patrimônio and Atualizações. Planejamento is incorporated into Dashboard and Cartões is an internal Despesas view.
+- Dashboard follows the approved dark-rail/light-canvas reference and prioritizes direct cash answer, action and supporting visual evidence over conversational text.
+- Patrimônio reads private grouped RSU/Cash RSU and Retention data only through authenticated functions. Regular RSU is presented at 100%; Cash RSU at 70%; original dates remain immutable and optional anticipation is a user-scoped audited scenario.
+- Atualizações provides incremental full-history text search without a required date. Despesas preserves Benjamin/Educação and separates reviewed classification completion from documentary coverage.
+- Flow, invoice reading order, bank scope, financial writers and protected `index.html` are unchanged. The false Itaú projection warning remains suppressed only outside the documentary anchor.
+- V165 branch/main gates `35028990197` / `35029387758`, artifact `10420263597` (`sha256:eea9d394458f2bff8831e4dd7008aa3ba8aadc8f2cf5053ed500d07e3ea854ea`) and product Pages `35029387014`: SUCCESS.
+- The public candidate title, signed-out login and V165 product brand were directly verified after Pages. A real user-authenticated notebook/phone material acceptance is still pending and must not be inferred from fixture tests.
+- Latest immutable checkpoint: `backups/V165_EXECUTIVE_UX_RSU_PUBLISHED_2026-09-16.md`.
+
+## Historical V162 recovery baseline — retain for prior release history
 - The user rejected canonical v1.24. It remains deployed at the old fixed target until the replacement gate is green, but it is not a valid product baseline or user-approved Dashboard.
 - Current branch: `recovery-v152-flow-20260910`. Current candidate: `wip35-v162-candidate.html`.
 - Current scope: recover the Daily Flow only, loading the preserved V150 Flow component directly from unchanged `index.html`, using V152 as comparison evidence and current `lts_browser_flow_v11` reads.
@@ -35,7 +47,7 @@ This file exists so project continuity never depends on chat context. Always re-
 - Fixed homologation: `https://lthomesilveira-ui.github.io/lts-wealth-/homologacao.html`.
 - Repo: `lthomesilveira-ui/lts-wealth-`.
 - Supabase project: `tadhkamnwtsbdozwkyut`.
-- Public fallback remains WIP35-v136; protected `index.html` blob remains `a130eafe5f7ee5b7f60a95b5ff988669d0c401d9`.
+- Public fallback remains protected; `index.html` SHA-256 remains `cca36731258680cc15a73fbad61c90ddf803358b741fd3ef58fefe5419eb688b`.
 - Public promotion remains unauthorized/not done.
 
 ## Rejected product still exposed until replacement passes — canonical v1.24
