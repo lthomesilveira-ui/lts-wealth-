@@ -256,7 +256,11 @@ async function run(browser,viewport,label){
     await frame.waitForFunction(()=>!document.querySelector('.v169-transfer-editor'));
     if(!mutations.some(x=>x.p_action==='edit'&&x.p_source_ref===transferRef&&x.p_payload?.amount===21000))throw new Error('desktop: paired transfer edit RPC was not called correctly');
     const dayAgain=frame.locator('#fv-2030-06-15,#d-2030-06-15').first();
-    const expandAgain=dayAgain.locator('[data-expand],.exp[data-d]').first();if(await expandAgain.count())await expandAgain.click();
+    const expandAgain=dayAgain.locator('[data-expand],.exp[data-d]').first();
+    if(await expandAgain.count()){
+      const alreadyOpen=(await expandAgain.getAttribute('aria-expanded'))==='true'||(await expandAgain.innerText()).includes('−');
+      if(!alreadyOpen)await expandAgain.click();
+    }
     await frame.getByText('Excluir transferência',{exact:true}).first().click();
     await frame.waitForTimeout(200);
     if(!mutations.some(x=>x.p_action==='cancel'&&x.p_source_ref===transferRef))throw new Error('desktop: paired transfer cancel RPC was not called correctly');
