@@ -4,6 +4,16 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 
 Canonical persistent project list. Never remove an open financial, documentary, classification, reconciliation or product dependency during compaction. Detailed immutable evidence remains in `backups/`, `HISTORICAL_RECOVERY_LOG.md`, `PLANNING_EXCEL_TO_CURRENT_AUDIT_2026-08-30.md`, `NEXT_HOMOLOGATION_GATE.md` and release checkpoints.
 
+## P0 — V167 full user-review package — 16/09/2026
+- [~] Execute the complete 16-item contract in `backups/V167_USER_REVIEW_SCOPE_2026-09-16.md` without changing or losing the V165/V166 baseline.
+- [ ] Fix statement upload actions and exact search → Flow day/event navigation.
+- [ ] Extend the evidence-led planning audit through 2030 and restore reviewed natural-language financial input.
+- [ ] Rebuild Despesas reliability and audit daily Flow history from 10/10/2013.
+- [ ] Rebuild financing detail, payoff comparison, CIPÓ schedule and user-facing commitment naming.
+- [ ] Complete Dashboard chart/current-cash/assets and Patrimônio/RSU totals/as-of dates.
+- [ ] Add Novartis/Organon pensions only after the user supplies current balances and evidence.
+- [ ] Keep Open Finance visible as an unconnected integration dependency until a provider is selected and authorized.
+
 ## P0 — V166 user-feedback closure on preserved V165 — 16/09/2026
 - [x] Preserve the accepted V165 product and exact public-root hash in an immutable baseline before additive work.
 - [x] Make Atualizações counts truthful, remove already-settled September invoice tasks, add historical recurrence proposals and make priority buttons actionable.
