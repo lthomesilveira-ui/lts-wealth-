@@ -147,9 +147,9 @@ async function run(browser,viewport,label){
     await frame.waitForFunction(()=>window.__LTS_V168_STATE?.expense?.key==='all'&&window.__LTS_V168_STATE?.expense?.loading===false);
     text=await frame.locator('.v168-expenses').innerText();lower=semantic(text);
     for(const phrase of ['desde 2013','média mensal por ano','2013','2030'])if(!lower.includes(phrase))throw new Error(`desktop: full expense history missing ${phrase}`);
-    await frame.locator('[data-v168-exp-tab="categories"]').click();text=await frame.locator('.v168-expenses').innerText();lower=semantic(text);for(const phrase of ['benjamin · educação','benjamin · saúde','casa · obra e reforma'])if(!lower.includes(phrase))throw new Error(`desktop: hierarchy missing ${phrase}`);
+    await frame.locator('button[role="tab"][data-v168-exp-tab="categories"]').click();text=await frame.locator('.v168-expenses').innerText();lower=semantic(text);for(const phrase of ['benjamin · educação','benjamin · saúde','casa · obra e reforma'])if(!lower.includes(phrase))throw new Error(`desktop: hierarchy missing ${phrase}`);
     await frame.locator('[data-v168-exp-drill]').first().click();await frame.locator('.v168-modal .v168-table').waitFor({state:'visible'});if(!semantic(await frame.locator('.v168-modal').innerText()).includes('escola'))throw new Error('desktop: generic drilldown did not open');await frame.locator('[data-v168-close]').click();
-    await frame.locator('[data-v168-exp-tab="cards"]').click();text=await frame.locator('.v168-expenses').innerText();lower=semantic(text);for(const phrase of ['bradesco','itaú','c6','compromissos já contratados'])if(!lower.includes(phrase))throw new Error(`desktop: cards missing ${phrase}`);
+    await frame.locator('button[role="tab"][data-v168-exp-tab="cards"]').click();text=await frame.locator('.v168-expenses').innerText();lower=semantic(text);for(const phrase of ['bradesco','itaú','c6','compromissos já contratados'])if(!lower.includes(phrase))throw new Error(`desktop: cards missing ${phrase}`);
     await page.screenshot({path:'v168-desktop-expenses.png',fullPage:true});
 
     await route('Patrimônio').click();await frame.locator('.v168-wealth').waitFor({state:'visible'});await frame.waitForFunction(()=>window.__LTS_V168_STATE?.wealth?.loading===false);
