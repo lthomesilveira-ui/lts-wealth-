@@ -39,7 +39,7 @@ jobs:
         run: |
           npm install --no-save playwright@1.55.0
           python -m pip install playwright==1.55.0
-          npx playwright install --with-deps chromium
+          python -m playwright install --with-deps chromium webkit
       - name: Validate V169 in desktop and mobile viewports
         run: |
           python3 -m http.server 8781 >/tmp/lts-v169-http.log 2>&1 &
