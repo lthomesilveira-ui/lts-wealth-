@@ -1,6 +1,6 @@
 (function(){
   'use strict';
-  const outer=document.getElementById('shell'),gate=document.getElementById('gate');let generation=0;
+  const outer=document.getElementById('shell'),gate=document.getElementById('gate'),scope=document.getElementById('scope');let generation=0;
   function runtime(){
     'use strict';
     if(window.__LTS_V166_FEEDBACK?.installed||!window.__LTS_EXECUTIVE_VISUAL_SYSTEM_V2?.installed)return;
