@@ -10,6 +10,7 @@ const css=read('lts-v167-complete-review.css');
 const coreSql=read('supabase/canonical_v167_complete_review_2026_09_16.sql');
 const auditSql=read('supabase/canonical_v167_long_horizon_audit_2026_09_16.sql');
 const securitySql=read('supabase/canonical_v167_security_revoke_internal_reader_2026_09_16.sql');
+const paymentSql=read('supabase/canonical_v167_card_payment_date_reconciliation_2026_09_16.sql');
 const scope=read('backups/V167_USER_REVIEW_SCOPE_2026-09-16.md');
 const indexHash=crypto.createHash('sha256').update(fs.readFileSync('index.html')).digest('hex');
 
@@ -23,7 +24,8 @@ for(const token of [
   "document.getElementById('flowFrom')","document.getElementById('flowTo')","document.getElementById('flowApply')",
   'floweditbtn','Previdências','Cartões e faturas','Enviar extrato bancário','Lançar em texto',
   'effectiveRows','invoice-display','Ver composição','lts_browser_card_settlement_detail_v2',
-  "filter(x=>x.source!=='evento_usuario')","y.source='legacy_fix86'"
+  "filter(x=>x.source!=='evento_usuario')","y.source='legacy_fix86'",'kpiText(\'Ações abertas\'',
+  'Patrimônio líquido em','loadFlowRange(day,day)','humanText(x.detail'
 ])assert(js.includes(token),'runtime missing '+token);
 for(const token of ['.v167{','.v167-kpis','.v167-chart svg','.v167-wealthcards','.v167-pensions','.v167-updategrid','.v167-invoices','.v167-modal-bg','@media(max-width:900px)','@media(max-width:520px)'])assert(css.includes(token),'style missing '+token);
 for(const token of [
@@ -39,6 +41,10 @@ for(const token of [
 for(const token of [
   'lts_corrected_cashflow_fix86_v5','revoke all','public,anon,authenticated'
 ])assert(securitySql.toLowerCase().includes(token.toLowerCase()),'security migration missing '+token);
+for(const token of [
+  'lts_browser_confirm_card_payment_v1','ci.due_date-7','greatest(current_date,ci.due_date+7)',
+  "'payment_date',v_payment_date",'lts_refresh_product_read_cache_confirmation_v1'
+])assert(paymentSql.includes(token),'payment reconciliation migration missing '+token);
 for(const token of ['Organon Multiprev','Novartis Previ Plano D','Deferred user review'])assert(scope.includes(token),'scope checkpoint missing '+token);
 
 console.log(JSON.stringify({
@@ -49,6 +55,7 @@ console.log(JSON.stringify({
   historical_balance_truth:true,
   long_horizon_audit_2030:true,
   exact_flow_navigation:true,
+  card_payment_actual_date_reconciliation:true,
   guided_upload:true,
   reviewed_natural_language_entry:true
 },null,2));
