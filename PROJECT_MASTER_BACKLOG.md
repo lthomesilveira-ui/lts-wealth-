@@ -4,6 +4,17 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 
 Canonical persistent project list. Never remove an open financial, documentary, classification, reconciliation or product dependency during compaction. Detailed immutable evidence remains in `backups/`, `HISTORICAL_RECOVERY_LOG.md`, `PLANNING_EXCEL_TO_CURRENT_AUDIT_2026-08-30.md`, `NEXT_HOMOLOGATION_GATE.md` and release checkpoints.
 
+## P0 — V166 user-feedback closure on preserved V165 — 16/09/2026
+- [x] Preserve the accepted V165 product and exact public-root hash in an immutable baseline before additive work.
+- [x] Make Atualizações counts truthful, remove already-settled September invoice tasks, add historical recurrence proposals and make priority buttons actionable.
+- [x] Add asynchronous search edit/open controls; route protected future sources into the exact Flow year instead of dead-ending.
+- [x] Make Despesas periods change the whole report, keep Cartões inside Despesas and list the reconciled invoices.
+- [x] Consolidate duplicate CIPÓ presentation, restore Empréstimo pai e mãe and expose the available CIPÓ purchase/works detail.
+- [x] Separate vested shares from brokerage cash; expose editable RSU price/FX and preserve the original/anticipated-date contract.
+- [x] Add Cash RSU at 70% to projected liquidity on its documented D+3 availability date without changing historical facts.
+- [x] Verify the authenticated publication and the exact 14/09 Flow arithmetic without writing test data.
+- [ ] Continue the user's material review as additive V166 feedback; do not reopen or lose this checkpoint.
+
 ## P0 — V165 executive UX, unified expenses and private awards — 16/09/2026
 - [x] Rebuild the approved dark-rail/light-canvas product with exactly five top-level routes and no separate Planejamento or Cartões route.
 - [x] Make Dashboard answer cash sufficiency at a glance with compact KPIs, liquidity curve, banks, expense groups, commitments, updates and a direct action timeline.

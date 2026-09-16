@@ -1,6 +1,6 @@
 # LTS Wealth — Next Homologation Gate
 
-Business date 16/09/2026. V165 product `6bcdfb1f78baf944e6f215da045b75ef3244d4de` is the candidate selected by this release package. All unrelated backlog requirements remain.
+Business date 16/09/2026. V166 product `117c467a02641c1b7e167493fda6f916e7927e14` is the candidate selected by this release package. V165 product `6bcdfb1f78baf944e6f215da045b75ef3244d4de` remains the preserved accepted baseline. All unrelated backlog requirements remain.
 
 ## Completed and verified
 - [x] Apply all seven previously answered card and two bank categories, plus the nine scoped Benjamin - Presentes labels.
@@ -22,9 +22,11 @@ Business date 16/09/2026. V165 product `6bcdfb1f78baf944e6f215da045b75ef3244d4de
 - [x] Add protected RSU/Cash RSU/Retention reads, 100%/70% presentation, original and optional anticipated vesting dates, user-scoped audited anticipation persistence and no public private-award constants.
 - [x] Add incremental full-history transaction search without a required date, preserve the Benjamin/Educação hierarchy and separate 100% reviewed classification completion from documentary coverage.
 - [x] Pass V165 branch/main gates `35028990197` / `35029387758`, artifact `10420263597`, and product Pages `35029387014`; verify the live signed-out V165 title, login and product brand.
+- [x] Publish V166 as an additive closure over V165: actionable Atualizações, editable/search-to-Flow results, working Despesas periods, invoice list, CIPÓ detail, family loan, RSU price/FX controls and Cash RSU D+3 projection.
+- [x] Verify the real authenticated V166 routes and exact 14/09 Flow arithmetic; no test mutation was saved.
 
 ## The next user gate
-- [ ] Material review of the complete V165 homologation on the user's actual signed-in notebook and phone. Review Dashboard, Fluxo, Despesas, Patrimônio/RSUs and Atualizações as one delivery; no classification question remains for the completed reviewed-source set.
+- [ ] Continue material review of the complete V166 homologation on the user's actual signed-in notebook and phone. Review Dashboard, Fluxo, Despesas, Patrimônio/RSUs and Atualizações as one delivery; no classification question remains for the completed reviewed-source set.
 - [x] V163 signed-out → login → Dashboard transition fixed and verified in the authenticated real browser after the user reported the published link still showing the prior interface. Dashboard → Fluxo → Dashboard also passed; automatic fixture and real-browser presentation evidence remain distinct.
 - [x] V163 authenticated full reload fixed and verified after a second route race was reproduced. The automated gate includes a deliberately slow Flow read; the published real session reload opens Dashboard directly and retains Dashboard → Fluxo → Dashboard navigation.
 - [ ] Human visual/financial acceptance of the V165 Dashboard and aligned reports on the user's notebook and phone; the user may request refinements without reopening already fixed readers or route defects.
@@ -38,4 +40,4 @@ Business date 16/09/2026. V165 product `6bcdfb1f78baf944e6f215da045b75ef3244d4de
 - [x] The V163 claim of complete visual implementation is superseded. V163 solved authenticated activation/reload but was not accepted as faithful implementation of the approved layout.
 - [ ] Every unaffected dependency in the full master backlog/deltas remains until individually evidenced closed.
 
-Zero category-pending does not certify all historical/future sources or turn open invoices into closed bills. Preserve original categories, cash-versus-competence, documentary depth and all previous user decisions. The fixed link is ready for the user's whole-product V165 visual and financial review, not re-entry of old answers.
+Zero category-pending does not certify all historical/future sources or turn open invoices into closed bills. Preserve original categories, cash-versus-competence, documentary depth and all previous user decisions. The V166 link is ready for continued visual and financial review, not re-entry of old answers.

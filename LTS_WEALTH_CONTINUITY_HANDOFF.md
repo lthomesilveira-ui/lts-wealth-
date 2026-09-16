@@ -1,6 +1,6 @@
 # LTS Wealth — Continuity Handoff
 
-Last materially refreshed: 2026-09-16 (V165 executive UX and private awards publication)
+Last materially refreshed: 2026-09-16 (V166 feedback closure on preserved V165)
 
 This file exists so project continuity never depends on chat context. Always re-fetch `main`, active branch, `PROJECT_MASTER_BACKLOG.md`, `NEXT_HOMOLOGATION_GATE.md`, this file and the latest immutable checkpoint before every repository write.
 
@@ -16,8 +16,9 @@ This file exists so project continuity never depends on chat context. Always re-
 - Never force branch divergence; use normal fast-forward/merge only after fresh compare.
 - Preserve historical evidence back to 2013 where supported.
 
-## Current product — V165 executive UX and private awards
-- Current product branch and `main` code head: `6bcdfb1f78baf944e6f215da045b75ef3244d4de`. Candidate: `wip35-v165-candidate.html`.
+## Current product — V166 feedback closure on preserved V165
+- Current product branch and `main` code head: `117c467a02641c1b7e167493fda6f916e7927e14`. Candidate: `wip35-v166-candidate.html`.
+- V165 product `6bcdfb1f78baf944e6f215da045b75ef3244d4de` and `wip35-v165-candidate.html` remain the immutable accepted base; see `backups/V165_USER_ACCEPTED_BASELINE_2026-09-16.md`.
 - Fixed homologation selects V165 through `homologacao-current.json`; the public root remains protected and is not promoted.
 - Exactly five top-level routes are visible: Dashboard, Fluxo de caixa, Despesas, Patrimônio and Atualizações. Planejamento is incorporated into Dashboard and Cartões is an internal Despesas view.
 - Dashboard follows the approved dark-rail/light-canvas reference and prioritizes direct cash answer, action and supporting visual evidence over conversational text.
@@ -26,7 +27,9 @@ This file exists so project continuity never depends on chat context. Always re-
 - Flow, invoice reading order, bank scope, financial writers and protected `index.html` are unchanged. The false Itaú projection warning remains suppressed only outside the documentary anchor.
 - V165 branch/main gates `35028990197` / `35029387758`, artifact `10420263597` (`sha256:eea9d394458f2bff8831e4dd7008aa3ba8aadc8f2cf5053ed500d07e3ea854ea`) and product Pages `35029387014`: SUCCESS.
 - The public candidate title, signed-out login and V165 product brand were directly verified after Pages. A real user-authenticated notebook/phone material acceptance is still pending and must not be inferred from fixture tests.
-- Latest immutable checkpoint: `backups/V165_EXECUTIVE_UX_RSU_PUBLISHED_2026-09-16.md`.
+- V166 adds actionable updates/search, working expense periods, invoice history, CIPÓ/family-loan detail, editable RSU price/FX and Cash RSU D+3 projected liquidity without modifying the protected public root.
+- Real authenticated browser evidence covers all five routes and exact 14/09 Flow arithmetic; no validation mutation was saved.
+- Latest immutable checkpoint: `backups/V166_FEEDBACK_CLOSURE_PUBLISHED_2026-09-16.md`.
 
 ## Historical V162 recovery baseline — retain for prior release history
 - The user rejected canonical v1.24. It remains deployed at the old fixed target until the replacement gate is green, but it is not a valid product baseline or user-approved Dashboard.
