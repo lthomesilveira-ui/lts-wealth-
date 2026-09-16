@@ -10,9 +10,9 @@ const {chromium}=require('playwright');
   await page.goto('http://127.0.0.1:8781/wip35-v166-candidate.html',{waitUntil:'domcontentloaded'});
   await page.waitForTimeout(2500);
   const version=await page.evaluate(()=>window.__LTS_TOP_CANDIDATE_VERSION||null);
-  const brand=await page.frameLocator('#shell').locator('.brand small').innerText();
+  const brand=await page.locator('#scope').innerText();
   if(version!=='v166-feedback-closure'||!brand.includes('V166')){
-    throw new Error(`V166 shell inactive: version=${version}; brand=${brand}; errors=${JSON.stringify(errors)}`);
+    throw new Error(`V166 shell inactive: version=${version}; visible_version=${brand}; errors=${JSON.stringify(errors)}`);
   }
   console.log(JSON.stringify({pass:true,version,brand,errors},null,2));
   await browser.close();
