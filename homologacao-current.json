@@ -9,8 +9,10 @@
   "promotion_status": "not_promoted",
   "exposure_mode": "v168_feedback_closure_monthly_balance_future_cards_paired_transfer_crud",
   "gate_status": "v169-branch-35152832476-pass_main-35153170553-pass_v168-compat-35153170516-pass",
-  "pages_deployment_run": 35153169310,
-  "pages_deployment_status": "success_pre_manifest_exposure",
+  "pages_deployment_run": 35153622917,
+  "pages_deployment_status": "success_manifest_exposure",
+  "manifest_exposure_commit": "677e8a3fa4ccd52b6808962753cd191319c803d9",
+  "post_manifest_gate_status": "v169-35153624108-pass_flow-invoices-35153624205-pass_flow-window-35153624105-pass_candidate-smoke-35153624208-pass",
   "dashboard_contract": "v169-total-emphasis-aligned-navigation-explicit-coverage-v1",
   "dashboard_reader": "lts_browser_dashboard_cockpit_v1",
   "dashboard_post_login_contract": "signed-out-to-dashboard-without-reload-v2",
@@ -34,6 +36,6 @@
   "reconciliation_notice_contract": "documentary-anchor-only-never-projection-v1",
   "default_window": {"past_days":5,"include_today":true,"future_days":30,"include_zero_movement_days":true},
   "updated_at": "2026-09-16",
-  "live_signed_out_verification": "pending-post-manifest-exposure",
+  "live_signed_out_verification": "fixed-redirect-v169-title-and-brand-verified_existing-browser-session-was-authenticated_data-load-not-claimed",
   "actual_user_session_homologation": "automated-authenticated-runtime-and-secure-read-path-verified_human-notebook-phone-acceptance-pending"
 }

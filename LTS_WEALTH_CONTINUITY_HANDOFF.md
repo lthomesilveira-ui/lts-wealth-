@@ -1,6 +1,6 @@
 # LTS Wealth — Continuity Handoff
 
-Last materially refreshed: 2026-09-16 (V167 blank-Dashboard incident and complete user register)
+Last materially refreshed: 2026-09-16 (V169 V168-feedback closure published)
 
 This file exists so project continuity never depends on chat context. Always re-fetch `main`, active branch, `PROJECT_MASTER_BACKLOG.md`, `NEXT_HOMOLOGATION_GATE.md`, this file and the latest immutable checkpoint before every repository write.
 
@@ -15,6 +15,15 @@ This file exists so project continuity never depends on chat context. Always re-
 - Public `index.html` remains protected; no promotion without explicit user approval.
 - Never force branch divergence; use normal fast-forward/merge only after fresh compare.
 - Preserve historical evidence back to 2013 where supported.
+
+## Current product — V169 published in fixed homologation
+- Product head: `6c32ee78b19e1252e5615c8bc267e11f9e84ba5f`; manifest exposure: `677e8a3fa4ccd52b6808962753cd191319c803d9`; branch: `work/v169-v168-feedback-20260916`; candidate: `wip35-v169-candidate.html`.
+- The binding user scope is `backups/V169_V168_USER_FEEDBACK_REGISTER_2026-09-16.md`; the immutable publication receipt is `backups/V169_V168_FEEDBACK_PUBLISHED_2026-09-16.md`.
+- Fixed homologation selects V169. The public `index.html` remains unchanged with SHA-256 `cca36731258680cc15a73fbad61c90ddf803358b741fd3ef58fefe5419eb688b`; `promotion_status` remains `not_promoted`.
+- V169 adds the Despesas monthly balance, future cards by bank/month, explicit passives, Dashboard emphasis/clarity/alignment and two-leg atomic transfer edit/cancel. Preserve all V168 capabilities and the V150/V151 Flow floor.
+- Supabase migrations `canonical_v169_v168_feedback_2026_09_16` and `canonical_v169_flow_audit_contract_fix_2026_09_16` are applied. The 2013–2026 civil-day audit is green with zero gaps, duplicates, net mismatches, relative-balance mismatches or unsupported leaks.
+- Post-manifest V169, integrated Flow/invoices, Flow window, candidate smoke, V163/V164/V165 compatibility and Pages runs are all SUCCESS; exact IDs are in the publication receipt.
+- Live browser verification proves the fixed redirect, candidate title and V169 brand. It does not substitute for the user's human notebook/phone review or certify every private financial input.
 
 ## Current incident and binding V167 scope
 - The user opened authenticated V167 and saw the rail/header/version but a completely blank Dashboard body.
