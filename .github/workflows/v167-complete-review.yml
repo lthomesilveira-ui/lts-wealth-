@@ -39,6 +39,8 @@ jobs:
         run: |
           npm install --no-save playwright@1.55.0
           npx playwright install --with-deps chromium
+          python -m pip install playwright==1.57.0
+          python -m playwright install --with-deps chromium webkit
       - name: Prove V167 shell and preserved V165 product baseline
         run: |
           python3 -m http.server 8781 >/tmp/lts-v167-http.log 2>&1 &
