@@ -4,6 +4,8 @@ Business date: 16/09/2026.
 
 This scope is additive to the immutable V165/V166 checkpoints. V166 product head `117c467a02641c1b7e167493fda6f916e7927e14` and documentation head `9ec85db491c85c364c2ace135c09d1eea211990e` remain preserved.
 
+The original 16 headings below are a compact grouping only. The binding, non-compacted register is `backups/V167_COMPLETE_USER_REVIEW_REGISTER_2026-09-16.md`, with 82 individually preserved requirements. No future summary may replace that register.
+
 ## User-reported corrections and new requirements
 1. Atualizações statement actions must open the guided upload for the named bank instead of populating transaction search.
 2. Recurrence/planning audit must cover future years through 2030 and explicitly detect missing salary, card, tax and recurring-expense projections using historical evidence; no inferred item may write before confirmation.

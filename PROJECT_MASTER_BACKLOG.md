@@ -5,7 +5,9 @@ Status legend: [x] concluded, [~] in progress, [ ] open.
 Canonical persistent project list. Never remove an open financial, documentary, classification, reconciliation or product dependency during compaction. Detailed immutable evidence remains in `backups/`, `HISTORICAL_RECOVERY_LOG.md`, `PLANNING_EXCEL_TO_CURRENT_AUDIT_2026-08-30.md`, `NEXT_HOMOLOGATION_GATE.md` and release checkpoints.
 
 ## P0 — V167 full user-review package — 16/09/2026
-- [~] Execute the complete 16-item contract in `backups/V167_USER_REVIEW_SCOPE_2026-09-16.md` without changing or losing the V165/V166 baseline.
+- [~] Execute the complete 82-item acceptance register in `backups/V167_COMPLETE_USER_REVIEW_REGISTER_2026-09-16.md`; the prior 16 headings are only a compact grouping and may not replace the full register.
+- [~] Correct the user-reported blank authenticated V167 Dashboard: render the cockpit immediately and complete slow Flow/Despesas/Patrimônio/audit readers progressively.
+- [ ] Keep a permanent slow-reader browser gate so the shell/header can never pass while the Dashboard body remains blank.
 - [ ] Fix statement upload actions and exact search → Flow day/event navigation.
 - [ ] Extend the evidence-led planning audit through 2030 and restore reviewed natural-language financial input.
 - [ ] Rebuild Despesas reliability and audit daily Flow history from 10/10/2013.

@@ -1,6 +1,6 @@
 # LTS Wealth — Continuity Handoff
 
-Last materially refreshed: 2026-09-16 (V166 feedback closure on preserved V165)
+Last materially refreshed: 2026-09-16 (V167 blank-Dashboard incident and complete user register)
 
 This file exists so project continuity never depends on chat context. Always re-fetch `main`, active branch, `PROJECT_MASTER_BACKLOG.md`, `NEXT_HOMOLOGATION_GATE.md`, this file and the latest immutable checkpoint before every repository write.
 
@@ -15,6 +15,13 @@ This file exists so project continuity never depends on chat context. Always re-
 - Public `index.html` remains protected; no promotion without explicit user approval.
 - Never force branch divergence; use normal fast-forward/merge only after fresh compare.
 - Preserve historical evidence back to 2013 where supported.
+
+## Current incident and binding V167 scope
+- The user opened authenticated V167 and saw the rail/header/version but a completely blank Dashboard body.
+- Root cause measured against the real private readers: V167 used one `Promise.all`; `lts_browser_flow_v11` for today through the following year took about 22.5 seconds and returned about 690 KB, so all useful content was withheld despite the cockpit being available in about 2.6 seconds.
+- Required fix is progressive Dashboard rendering plus a slow-reader browser regression gate. Never call this incident closed based only on the outer shell gate.
+- Binding scope is `backups/V167_COMPLETE_USER_REVIEW_REGISTER_2026-09-16.md` with 82 granular requirements. The older 16-point checkpoint is only a grouping summary.
+- The register explicitly retains the daily historical Flow audit from 10/10/2013, including the reported impossible 2021–2023 balances.
 
 ## Current product — V166 feedback closure on preserved V165
 - Current product branch and `main` code head: `117c467a02641c1b7e167493fda6f916e7927e14`. Candidate: `wip35-v166-candidate.html`.

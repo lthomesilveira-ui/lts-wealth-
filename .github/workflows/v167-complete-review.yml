@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - work/v167-user-review-20260916
+      - work/v167-dashboard-progressive-20260916
       - main
     paths:
       - 'wip35-v167-candidate.html'
@@ -14,8 +15,14 @@ on:
       - 'supabase/canonical_v167_long_horizon_audit_2026_09_16.sql'
       - 'supabase/canonical_v167_security_revoke_internal_reader_2026_09_16.sql'
       - 'backups/V167_USER_REVIEW_SCOPE_2026-09-16.md'
+      - 'backups/V167_COMPLETE_USER_REVIEW_REGISTER_2026-09-16.md'
+      - 'PROJECT_MASTER_BACKLOG.md'
+      - 'NEXT_HOMOLOGATION_GATE.md'
+      - 'LTS_WEALTH_CONTINUITY_HANDOFF.md'
       - '.github/scripts/lts_v167_complete_review_contract.js'
       - '.github/scripts/lts_v167_shell_gate.js'
+      - '.github/scripts/lts_v167_progressive_dashboard_gate.js'
+      - '.github/scripts/lts_v165_executive_ux_gate.js'
       - '.github/workflows/v167-complete-review.yml'
 
 permissions:
@@ -48,6 +55,7 @@ jobs:
           trap 'kill $SERVER_PID || true' EXIT
           sleep 1
           timeout 90s node .github/scripts/lts_v167_shell_gate.js
+          timeout 90s node .github/scripts/lts_v167_progressive_dashboard_gate.js
           timeout 360s node .github/scripts/lts_v165_executive_ux_gate.js
       - name: Re-run protected Flow and invoice contracts
         run: |
@@ -63,6 +71,8 @@ jobs:
           path: |
             v165-executive-ux-result.json
             v165-*.png
+            v167-progressive-dashboard-result.json
+            v167-progressive-dashboard.png
             integrated-flow-result.json
             integrated-*.png
             bank-scope-result.json

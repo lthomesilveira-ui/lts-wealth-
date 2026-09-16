@@ -132,9 +132,12 @@ async function run(browser,viewport,label,{loginAfterLoad=false}={}){
   await context.close();return {label,pass:true,viewport,routes:5,reference_structure:true,flow_preserved:true,search_without_date:true,rsu_rules:true,reload:true,login_transition:loginAfterLoad?'signed-out-to-dashboard-without-reload':'preauthenticated',requested:[...new Set(requested)]};
 }
 
-(async()=>{
+async function main(){
   const executablePath=process.env.LTS_CHROMIUM_EXECUTABLE||undefined,browser=await chromium.launch({headless:true,...(executablePath?{executablePath}:{})});
   try{const results=[await run(browser,{width:1440,height:1000},'desktop'),await run(browser,{width:390,height:844},'mobile'),await run(browser,{width:1440,height:1000},'post-login',{loginAfterLoad:true})],output={pass:true,version:'v165-executive-ux-rsu',data:'controlled-fixture-not-user-data-validation',results};fs.writeFileSync('v165-executive-ux-result.json',JSON.stringify(output,null,2));console.log(JSON.stringify(output,null,2))}
   catch(error){const output={pass:false,error:String(error.stack||error),data:'controlled-fixture-not-user-data-validation'};fs.writeFileSync('v165-executive-ux-result.json',JSON.stringify(output,null,2));console.error(output.error);process.exitCode=1}
   finally{await browser.close()}
-})();
+}
+
+module.exports={BASE,cockpit,planning,wealth,product,expensePayload,flow,semantic};
+if(require.main===module)main();

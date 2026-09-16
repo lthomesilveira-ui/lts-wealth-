@@ -12,6 +12,7 @@ const auditSql=read('supabase/canonical_v167_long_horizon_audit_2026_09_16.sql')
 const securitySql=read('supabase/canonical_v167_security_revoke_internal_reader_2026_09_16.sql');
 const paymentSql=read('supabase/canonical_v167_card_payment_date_reconciliation_2026_09_16.sql');
 const scope=read('backups/V167_USER_REVIEW_SCOPE_2026-09-16.md');
+const fullRegister=read('backups/V167_COMPLETE_USER_REVIEW_REGISTER_2026-09-16.md');
 const indexHash=crypto.createHash('sha256').update(fs.readFileSync('index.html')).digest('hex');
 
 assert(indexHash==='cca36731258680cc15a73fbad61c90ddf803358b741fd3ef58fefe5419eb688b','protected index.html changed');
@@ -25,7 +26,9 @@ for(const token of [
   'floweditbtn','Previdências','Cartões e faturas','Enviar extrato bancário','Lançar em texto',
   'effectiveRows','invoice-display','Ver composição','lts_browser_card_settlement_detail_v2',
   "filter(x=>x.source!=='evento_usuario')","y.source='legacy_fix86'",'kpiText(\'Ações abertas\'',
-  'Patrimônio líquido em','loadFlowRange(day,day)','humanText(x.detail'
+  'Patrimônio líquido em','loadFlowRange(day,day)','humanText(x.detail',
+  'lts_browser_dashboard_cockpit_v1','function cockpitPoints','v167-loadstatus','data-v167-dashboard-refresh',
+  "['cockpit','lts_browser_dashboard_cockpit_v1'","['flow','lts_browser_flow_v11'"
 ])assert(js.includes(token),'runtime missing '+token);
 for(const token of ['.v167{','.v167-kpis','.v167-chart svg','.v167-wealthcards','.v167-pensions','.v167-updategrid','.v167-invoices','.v167-modal-bg','@media(max-width:900px)','@media(max-width:520px)'])assert(css.includes(token),'style missing '+token);
 for(const token of [
@@ -46,6 +49,8 @@ for(const token of [
   "'payment_date',v_payment_date",'lts_refresh_product_read_cache_confirmation_v1'
 ])assert(paymentSql.includes(token),'payment reconciliation migration missing '+token);
 for(const token of ['Organon Multiprev','Novartis Previ Plano D','Deferred user review'])assert(scope.includes(token),'scope checkpoint missing '+token);
+for(const token of ['82 individually preserved requirements','10/10/2013','2021, 2022 and 2023','18/02/2027','Open Finance remains a visible backlog'])assert(fullRegister.includes(token),'complete register missing '+token);
+assert((fullRegister.match(/^\d+\. /gm)||[]).length===82,'complete user register must retain all 82 numbered requirements');
 
 console.log(JSON.stringify({
   pass:true,
@@ -58,4 +63,6 @@ console.log(JSON.stringify({
   card_payment_actual_date_reconciliation:true,
   guided_upload:true,
   reviewed_natural_language_entry:true
+  ,progressive_dashboard:true
+  ,complete_user_requirements:82
 },null,2));
