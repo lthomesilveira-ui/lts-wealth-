@@ -136,7 +136,7 @@ async function run(browser,viewport,label){
   for(const phrase of ['recursos de hoje','posições futuras','recursos restritos e consumo','contas correntes hoje','com fgts, sem ruptura até 31/12/2031'])if(!lower.includes(phrase))throw new Error(`${label}: Dashboard missing ${phrase}`);
   if(lower.includes('25/01/2031'))throw new Error(`${label}: stale cockpit FGTS date leaked`);
   if((calls.lts_browser_flow_v11||0)<2)throw new Error(`${label}: read retry did not run`);
-  const sourceLabels=await frame.locator('.v168-chart .axis-label').allInnerTexts();if(!sourceLabels.some(x=>x.includes('R$')))throw new Error(`${label}: chart axis is not formatted as money`);
+  const sourceLabels=await frame.locator('.v168-chart .axis-label').allTextContents();if(!sourceLabels.some(x=>String(x||'').includes('R$')))throw new Error(`${label}: chart axis is not formatted as money`);
   if(label==='desktop')await page.screenshot({path:'v168-desktop-dashboard.png',fullPage:true});
 
   const route=name=>viewport.width<=520?frame.locator(`#dx1MobileNav [data-mobile-route="${name}"]`):frame.locator(`.nav [data-v="${name}"]`);
