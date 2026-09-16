@@ -1,0 +1,71 @@
+name: V168 feedback package
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - work/v168-product-20260916
+      - main
+    paths:
+      - 'wip35-v168-candidate.html'
+      - 'lts-v168-feedback-package.js'
+      - 'lts-v168-feedback-package.css'
+      - '.github/scripts/lts_v168_feedback_package_contract.js'
+      - '.github/scripts/lts_v168_feedback_package_gate.js'
+      - '.github/workflows/v168-feedback-package.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  contract-and-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate V168 static contracts
+        run: |
+          node --check lts-v168-feedback-package.js
+          node --check .github/scripts/lts_v168_feedback_package_gate.js
+          node .github/scripts/lts_v168_feedback_package_contract.js
+      - name: Install isolated browser dependency
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+          python -m pip install playwright==1.57.0
+          python -m playwright install --with-deps chromium
+      - name: Validate V168 in notebook and mobile viewports
+        run: |
+          python3 -m http.server 8781 >/tmp/lts-v168-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID || true' EXIT
+          sleep 1
+          timeout 180s node .github/scripts/lts_v168_feedback_package_gate.js
+      - name: Re-run protected Flow and invoice contracts
+        run: |
+          python .github/scripts/lts_integrated_flow_gate.py
+          python .github/scripts/lts_flow_bank_scope_gate.py
+          python .github/scripts/lts_invoice_reading_order_gate.py
+          python .github/scripts/lts_flow_documentary_rollforward_gate.py
+      - name: Upload evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v168-feedback-package
+          path: |
+            v168-feedback-package-result.json
+            v168-*.png
+            integrated-flow-result.json
+            integrated-*.png
+            bank-scope-result.json
+            bank-scope-*.png
+            invoice-reading-order-result.json
+            invoice-order-*.png
+            flow-documentary-rollforward-result.json
+          if-no-files-found: warn
