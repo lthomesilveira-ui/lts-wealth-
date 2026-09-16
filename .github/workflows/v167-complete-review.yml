@@ -1,0 +1,71 @@
+name: V167 complete review
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - work/v167-user-review-20260916
+      - main
+    paths:
+      - 'wip35-v167-candidate.html'
+      - 'lts-v167-complete-review.js'
+      - 'lts-v167-complete-review.css'
+      - 'supabase/canonical_v167_complete_review_2026_09_16.sql'
+      - 'supabase/canonical_v167_long_horizon_audit_2026_09_16.sql'
+      - 'supabase/canonical_v167_security_revoke_internal_reader_2026_09_16.sql'
+      - 'backups/V167_USER_REVIEW_SCOPE_2026-09-16.md'
+      - '.github/scripts/lts_v167_complete_review_contract.js'
+      - '.github/scripts/lts_v167_shell_gate.js'
+      - '.github/workflows/v167-complete-review.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: node --check lts-v167-complete-review.js
+      - run: node .github/scripts/lts_v167_complete_review_contract.js
+      - name: Install isolated browser dependency
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Prove V167 shell and preserved V165 product baseline
+        run: |
+          python3 -m http.server 8781 >/tmp/lts-v167-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID || true' EXIT
+          sleep 1
+          timeout 90s node .github/scripts/lts_v167_shell_gate.js
+          timeout 360s node .github/scripts/lts_v165_executive_ux_gate.js
+      - name: Re-run protected Flow and invoice contracts
+        run: |
+          python .github/scripts/lts_integrated_flow_gate.py
+          python .github/scripts/lts_flow_bank_scope_gate.py
+          python .github/scripts/lts_invoice_reading_order_gate.py
+          python .github/scripts/lts_flow_documentary_rollforward_gate.py
+      - name: Upload evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v167-complete-review
+          path: |
+            v165-executive-ux-result.json
+            v165-*.png
+            integrated-flow-result.json
+            integrated-*.png
+            bank-scope-result.json
+            bank-scope-*.png
+            invoice-reading-order-result.json
+            invoice-order-*.png
+            flow-documentary-rollforward-result.json
+          if-no-files-found: warn

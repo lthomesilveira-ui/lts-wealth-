@@ -27,9 +27,13 @@ This scope is additive to the immutable V165/V166 checkpoints. V166 product head
 - RSU action price and USD/BRL assumption are editable.
 - 14/09/2026 Flow arithmetic was confirmed by the user.
 
-## Inputs still required
-- Current balance screenshots and as-of dates for Novartis and Organon pensions.
-- Completion of the user's truncated sentence beginning with `O que vem pela frente...`.
+## Inputs received after scope capture
+- Organon Multiprev position dated 04/09/2026: gross balance and participant/sponsor composition applied to the private authenticated data layer. Exact values are intentionally not duplicated in this repository.
+- Novartis Previ Plano D position dated 01/08/2026: gross balance applied to the private authenticated data layer; the screenshot does not expose a complete participant balance, so that field remains blank. Exact values are intentionally not duplicated in this repository.
+- Both positions are regressive-tax retirement assets and remain restricted/gross; no net redemption value is inferred.
+
+## Deferred user review
+- The user's voice note ended mid-sentence after `O que vem pela frente...`; V167 implements the evidenced current commitments and leaves room for the next review instead of inventing the missing request.
 
 ## Safety and truth boundaries
 - Never invent an installment, historic balance, category, valuation, tax outcome or Open Finance connection.
