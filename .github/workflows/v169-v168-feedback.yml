@@ -8,6 +8,7 @@ on:
       - main
     paths:
       - 'wip35-v169-candidate.html'
+      - 'homologacao-current.json'
       - 'lts-v168-feedback-package.js'
       - 'lts-v169-v168-feedback-closure.js'
       - 'lts-v169-v168-feedback-closure.css'
