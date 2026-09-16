@@ -127,11 +127,12 @@
       const apply=document.getElementById('v168ExpenseApply');if(apply){const old=apply.onclick;apply.onclick=e=>{state.monthly.data=null;state.monthly.key='';state.monthly.error=null;return old?.call(apply,e)}}
       decorateTransferActions();
     }
-    function stamp(){document.querySelectorAll('.brand small').forEach(n=>n.innerHTML='<b>V169</b> · Homologação');document.querySelectorAll('.v168-release').forEach(n=>n.textContent='V169 · Homologação');const badge=window.parent.document.getElementById('scope');if(badge)badge.textContent='V169 · '+(V==='Fluxo Diário'?'Fluxo de caixa':V)+' · Homologação'}
+    function stamp(){document.querySelectorAll('.brand small').forEach(n=>{if(n.textContent.trim()!=='V169 · Homologação')n.innerHTML='<b>V169</b> · Homologação'});document.querySelectorAll('.v168-release').forEach(n=>{if(n.textContent.trim()!=='V169 · Homologação')n.textContent='V169 · Homologação'});const badge=window.parent.document.getElementById('scope'),label='V169 · '+(V==='Fluxo Diário'?'Fluxo de caixa':V)+' · Homologação';if(badge&&badge.textContent!==label)badge.textContent=label}
     function after(){stamp();bind169()}
     dashboard=dashboardV169;despesas=expensesV169;patrimonio=wealthV169;
     render=function(){const out=baseRender();after();return out};
     renderNav=function(){const out=baseNav();stamp();return out};
+    const versionObserver=new MutationObserver(stamp);versionObserver.observe(document.body,{childList:true,subtree:true,characterData:true});
     if(D&&!N.classList.contains('hidden'))render();
   }
 
