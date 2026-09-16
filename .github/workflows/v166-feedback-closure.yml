@@ -1,0 +1,69 @@
+name: V166 feedback closure
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - work/v166-v165-feedback-20260916
+      - main
+    paths:
+      - 'wip35-v166-candidate.html'
+      - 'lts-v166-feedback-closure.js'
+      - 'lts-v166-feedback-closure.css'
+      - 'supabase/canonical_v166_feedback_closure_2026_09_16.sql'
+      - 'backups/V165_USER_ACCEPTED_BASELINE_2026-09-16.md'
+      - '.github/scripts/lts_v166_feedback_closure_gate.js'
+      - '.github/workflows/v166-feedback-closure.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: node --check lts-v166-feedback-closure.js
+      - run: node .github/scripts/lts_v166_feedback_closure_gate.js
+      - name: Install isolated browser dependencies
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+          python -m pip install playwright==1.57.0
+          python -m playwright install --with-deps chromium webkit
+      - name: Prove the preserved V165 baseline still works
+        run: |
+          python3 -m http.server 8781 >/tmp/lts-v166-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID || true' EXIT
+          sleep 1
+          timeout 360s node .github/scripts/lts_v165_executive_ux_gate.js
+      - name: Re-run protected Flow and invoice contracts
+        run: |
+          python .github/scripts/lts_integrated_flow_gate.py
+          python .github/scripts/lts_flow_bank_scope_gate.py
+          python .github/scripts/lts_invoice_reading_order_gate.py
+          python .github/scripts/lts_flow_documentary_rollforward_gate.py
+      - name: Upload non-regression evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v166-feedback-closure
+          path: |
+            v165-executive-ux-result.json
+            v165-*.png
+            integrated-flow-result.json
+            integrated-*.png
+            bank-scope-result.json
+            bank-scope-*.png
+            invoice-reading-order-result.json
+            invoice-order-*.png
+            flow-documentary-rollforward-result.json
+          if-no-files-found: warn
