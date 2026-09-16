@@ -13,6 +13,7 @@ on:
       - 'supabase/canonical_v166_feedback_closure_2026_09_16.sql'
       - 'backups/V165_USER_ACCEPTED_BASELINE_2026-09-16.md'
       - '.github/scripts/lts_v166_feedback_closure_gate.js'
+      - '.github/scripts/lts_v166_shell_gate.js'
       - '.github/workflows/v166-feedback-closure.yml'
 
 permissions:
@@ -45,6 +46,7 @@ jobs:
           trap 'kill $SERVER_PID || true' EXIT
           sleep 1
           timeout 360s node .github/scripts/lts_v165_executive_ux_gate.js
+          timeout 90s node .github/scripts/lts_v166_shell_gate.js
       - name: Re-run protected Flow and invoice contracts
         run: |
           python .github/scripts/lts_integrated_flow_gate.py
