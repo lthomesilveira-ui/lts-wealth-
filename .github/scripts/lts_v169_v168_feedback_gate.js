@@ -240,11 +240,13 @@ async function run(browser,viewport,label){
   await day.waitFor({state:'visible'});
   const expand=day.locator('[data-expand],.exp[data-d]').first();
   if(await expand.count())await expand.click();
-  await frame.getByText('Editar transferência',{exact:true}).first().waitFor({state:'visible'});
+  const transferEdit=frame.getByText('Editar transferência',{exact:true}).first();
+  await transferEdit.waitFor({state:'visible'});
   if(await frame.getByText('Excluir transferência',{exact:true}).count()<1)throw new Error(`${label}: transfer delete action missing`);
   if(await frame.getByText('Duplicar',{exact:true}).count())throw new Error(`${label}: transfer duplicate action should not exist`);
-  const flowText=await day.innerText();if(!flowText.includes('R$ 20.665,00')&&!flowText.includes('R$ 20.665,00'))throw new Error(`${label}: transfer amount is not formatted as BRL: ${flowText}`);
-  await frame.getByText('Editar transferência',{exact:true}).first().click();
+  const transferRow=transferEdit.locator('xpath=ancestor::div[contains(@class,"fx89-detail-row")]').first(),flowText=await transferRow.innerText();
+  if(!flowText.includes('R$ 20.665,00')&&!flowText.includes('R$ 20.665,00'))throw new Error(`${label}: transfer amount is not formatted as BRL: ${flowText}`);
+  await transferEdit.click();
   await frame.locator('.v169-transfer-editor').waitFor({state:'visible'});
   text=await frame.locator('.v169-transfer-editor').innerText();lower=semantic(text);
   for(const phrase of ['duas pernas vinculadas','efeito consolidado r$ 0,00','operação atômica','salvar transferência','excluir transferência'])if(!lower.includes(phrase))throw new Error(`${label}: transfer editor missing ${phrase}`);
