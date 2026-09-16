@@ -6,8 +6,8 @@ Canonical persistent project list. Never remove an open financial, documentary, 
 
 ## P0 — V167 full user-review package — 16/09/2026
 - [~] Execute the complete 82-item acceptance register in `backups/V167_COMPLETE_USER_REVIEW_REGISTER_2026-09-16.md`; the prior 16 headings are only a compact grouping and may not replace the full register.
-- [~] Correct the user-reported blank authenticated V167 Dashboard: render the cockpit immediately and complete slow Flow/Despesas/Patrimônio/audit readers progressively.
-- [ ] Keep a permanent slow-reader browser gate so the shell/header can never pass while the Dashboard body remains blank.
+- [x] Correct the user-reported blank authenticated V167 Dashboard: render the cockpit immediately and complete slow Flow/Despesas/Patrimônio/audit readers progressively.
+- [x] Keep a permanent slow-reader browser gate so the shell/header can never pass while the Dashboard body remains blank; see `backups/V167_DASHBOARD_PROGRESSIVE_LOADING_PUBLISHED_2026-09-16.md`.
 - [ ] Fix statement upload actions and exact search → Flow day/event navigation.
 - [ ] Extend the evidence-led planning audit through 2030 and restore reviewed natural-language financial input.
 - [ ] Rebuild Despesas reliability and audit daily Flow history from 10/10/2013.

@@ -1,11 +1,11 @@
 # LTS Wealth — Next Homologation Gate
 
 ## V167 blank-Dashboard incident gate — 16/09/2026
-- [~] Reproduce the authenticated shell-with-blank-body failure reported by the user.
+- [x] Reproduce the authenticated shell-with-blank-body failure reported by the user.
 - [x] Identify the cause: initial V167 paint waited for four detailed readers as one all-or-nothing group; the real Flow reader alone took about 22.5 seconds and returned about 690 KB.
-- [~] Publish progressive rendering: the executive cockpit must paint first; Flow, Despesas, Patrimônio and recurrence audit then enrich the same screen independently.
-- [~] Pass a browser gate with deliberately slow detailed readers while five KPIs, chart and decision/report cards remain visible.
-- [ ] Reopen the published authenticated link and verify the Dashboard body, refresh and navigation before asking for user retest.
+- [x] Publish progressive rendering: the executive cockpit paints first; Flow, Despesas, Patrimônio and recurrence audit then enrich the same screen independently.
+- [x] Pass a browser gate with deliberately slow detailed readers while five KPIs, chart and decision/report cards remain visible.
+- [x] Reopen the published authenticated link and verify the Dashboard body and authenticated refresh; the body rendered after refresh in about 1.2 seconds.
 - [ ] Continue every item in `backups/V167_COMPLETE_USER_REVIEW_REGISTER_2026-09-16.md`, including the daily historical Flow audit from 10/10/2013.
 
 Business date 16/09/2026. V166 product `117c467a02641c1b7e167493fda6f916e7927e14` is the candidate selected by this release package. V165 product `6bcdfb1f78baf944e6f215da045b75ef3244d4de` remains the preserved accepted baseline. All unrelated backlog requirements remain.

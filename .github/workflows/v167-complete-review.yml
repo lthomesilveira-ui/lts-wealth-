@@ -16,6 +16,7 @@ on:
       - 'supabase/canonical_v167_security_revoke_internal_reader_2026_09_16.sql'
       - 'backups/V167_USER_REVIEW_SCOPE_2026-09-16.md'
       - 'backups/V167_COMPLETE_USER_REVIEW_REGISTER_2026-09-16.md'
+      - 'backups/V167_DASHBOARD_PROGRESSIVE_LOADING_PUBLISHED_2026-09-16.md'
       - 'PROJECT_MASTER_BACKLOG.md'
       - 'NEXT_HOMOLOGATION_GATE.md'
       - 'LTS_WEALTH_CONTINUITY_HANDOFF.md'
