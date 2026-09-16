@@ -1,8 +1,8 @@
 /* V169 — closure of the complete V168 user review. */
 @media (min-width:901px){
-  body.v165-authenticated .nav button{justify-content:flex-start!important;gap:13px!important;padding:11px 14px!important}
-  body.v165-authenticated .nav button svg{width:19px!important;height:19px!important;flex:0 0 19px!important;margin:0!important}
-  body.v165-authenticated .nav button span{display:block;line-height:19px}
+  body.v165-authenticated .nav button{display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:flex-start!important;gap:13px!important;min-height:42px!important;padding:11px 14px!important}
+  body.v165-authenticated .nav button svg{display:block!important;width:19px!important;height:19px!important;min-width:19px!important;flex:0 0 19px!important;align-self:center!important;margin:0!important}
+  body.v165-authenticated .nav button span{display:block!important;align-self:center!important;margin:0!important;padding:0!important;line-height:19px!important}
 }
 .v169-coverage{display:grid;gap:4px;margin-top:12px;border:1px solid #d9e4ef;border-radius:12px;padding:11px 12px;background:#f7fafd;color:#536a80;font-size:12px}.v169-coverage b{color:#274661}.v169-coverage span{display:block}.v169-coverage strong{color:#173d68}
 .v169-bank-filter{display:flex;gap:7px;align-items:center;overflow:auto;padding-bottom:2px}.v169-cards,.v169-monthly{display:grid;gap:14px}.v169-card-months{display:grid;gap:9px}.v169-card-month{display:grid;grid-template-columns:minmax(220px,1fr) minmax(310px,.8fr);gap:16px;align-items:center;border:1px solid #e1e8ef;border-radius:13px;padding:12px}.v169-card-month span,.v169-card-month b,.v169-card-month small{display:block}.v169-card-month span{font-weight:900;color:#244e7a}.v169-card-month small{margin-top:3px;color:#718297;font-size:11px}.v169-card-month dl{display:grid;grid-template-columns:1fr auto;gap:4px 12px;margin:0}.v169-card-month dt{font-size:11px;color:#718297}.v169-card-month dd{margin:0;text-align:right;font-size:12px;font-weight:800}
