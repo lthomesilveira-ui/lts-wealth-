@@ -1,8 +1,17 @@
 # LTS Wealth — Execution State
 
-Published V171 V170-review closure, business date 17/09/2026. Tested branch head `f3bf16abc2cf917c5e7a80deb55bd5366fd515b5` passed run `35264916304` and was squash-merged to `main` as `b4cf631d7caaca7f34ebc2fef177402e1bad0261`. The fixed homologation redirects to `wip35-v171-candidate.html`; the protected public root remains unauthorized and byte-for-byte unchanged.
+Published V172 V171-review closure, business date 17/09/2026. Tested branch head `5789fe38fe101d175c72ffe727e5bbd4bb647058` passed run `35273688049` and was squash-merged to `main` as `1af047cbac2919c2a51f1b850afdf982153d78d8`. Manifest exposure is `5a8cbfb27d3a806880cd309f7c8f70fc022681dd`. The fixed homologation redirects to `wip35-v172-candidate.html`; the protected public root remains unauthorized and byte-for-byte unchanged.
 
-Latest immutable release receipt: `backups/V171_V170_REVIEW_PUBLISHED_2026-09-17.md`. Earlier scope registers, release receipts and private evidence remain binding. `RETOMAR_LTS_WEALTH.md` remains the restart entrypoint.
+Latest immutable release receipt: `backups/V172_V171_REVIEW_PUBLISHED_2026-09-17.md`. Earlier scope registers, release receipts and private evidence remain binding. `RETOMAR_LTS_WEALTH.md` remains the restart entrypoint.
+
+## V172 V171-review closure PUBLISHED — 17/09/2026
+V172 fixes the V171 blank Flow without changing the validated table structure. The visible range now opens from five prior days through current-year end. Bounded V11 history and V12 future are independent; V12 historical data upgrades asynchronously and can no longer erase already-rendered rows if it times out. The gate deliberately fails that upgrade and still requires populated rows, exact opening/closing arithmetic, `RSU vested` and `Saldo c/ RSU`.
+
+Dashboard and Despesas remove redundant subtype captions and use `Empréstimos`. Categories contain evidenced financial groups only; work/reform, financing and recurring property costs remain separate. Card and current-account totals are combined without double counting. The R$ 270.849,19 historical-card remainder is now stated truthfully as 24 aggregate-only invoice cycles already present in totals but lacking purchase rows, not as an invented category. Long monthly-balance ranges load in annual chunks; extraordinary income explicitly includes share and RSU sales.
+
+Patrimônio is grouped into current net worth, current assets, known debt, pensions and future compensation. Morgan prioritizes statement gross, available now, future projected net and total projected net; tax reserve is secondary. No database migration or financial write was introduced.
+
+Branch V172 `35273688049`, V171 regression `35273688138`, main V172 `35274059546`, post-manifest V172 `35274767490`, V171/V170/V169, integrated Flow/invoices, Flow window, candidate smoke, V163/V164/V165 and Pages `35274766884` are SUCCESS. Live HTTP verified the V172 manifest, candidate title/runtime and unchanged protected-root SHA-256 `cca36731258680cc15a73fbad61c90ddf803358b741fd3ef58fefe5419eb688b`. Human authenticated notebook/phone acceptance remains pending.
 
 ## V171 V170-review closure PUBLISHED — 17/09/2026
 V171 applies the user's professional classification decisions without inference: investments in property/works are separate from recurring expenses; financing is separate by type; only explicitly identified Benjamin education is shown as `Benjamin — Educação`, while all other education is `Educação`. The expense reader and monthly balance cover the complete selected history, transactions load with the supported cash direction, future cards are organized by bank, named card and month, and the Dashboard gives expenses a distinct semantic color.

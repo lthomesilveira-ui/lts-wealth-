@@ -1,6 +1,6 @@
 # LTS Wealth — Continuity Handoff
 
-Last materially refreshed: 2026-09-17 (V171 V170-review closure published)
+Last materially refreshed: 2026-09-17 (V172 V171-review closure published)
 
 This file exists so project continuity never depends on chat context. Always re-fetch `main`, active branch, `PROJECT_MASTER_BACKLOG.md`, `NEXT_HOMOLOGATION_GATE.md`, this file and the latest immutable checkpoint before every repository write.
 
@@ -16,7 +16,19 @@ This file exists so project continuity never depends on chat context. Always re-
 - Never force branch divergence; use normal fast-forward/merge only after fresh compare.
 - Preserve historical evidence back to 2013 where supported.
 
-## Current product — V171 published in fixed homologation
+## Current product — V172 published in fixed homologation
+- Product merge: `1af047cbac2919c2a51f1b850afdf982153d78d8`; tested branch head: `5789fe38fe101d175c72ffe727e5bbd4bb647058`; manifest exposure: `5a8cbfb27d3a806880cd309f7c8f70fc022681dd`; candidate: `wip35-v172-candidate.html`.
+- Immutable publication receipt: `backups/V172_V171_REVIEW_PUBLISHED_2026-09-17.md`.
+- V172 is homologation-only. The protected public `index.html` remains unchanged with SHA-256 `cca36731258680cc15a73fbad61c90ddf803358b741fd3ef58fefe5419eb688b`; public promotion remains unauthorized.
+- Flow defaults to five prior days through current-year end. Bounded V11 history and V12 future load independently; a slow/failing V12 historical upgrade cannot blank already-rendered rows. Preserve the validated `RSU vested` and `Saldo c/ RSU` columns.
+- The V171 blank-Flow root cause was an all-or-nothing pair of calls after both legs were remapped to the heavier V12 reader. Do not reintroduce that remap or a single rejecting `Promise.all` for the visible range.
+- Dashboard/Despesas rankings have no redundant subtype captions. Use `Empréstimos`; keep work/reform, financing and recurring property expenses separate. Only evidenced groups are categories.
+- Expense totals include every supported card and current account without double counting. The R$ 270.849,19 across 24 historical invoice cycles is already in card totals but has no purchase-level source rows; it is a documentary-coverage note, never a category and never grounds for invented classifications.
+- Monthly balance splits long selections into annual reads and merges the complete supported history. Extraordinary income explicitly includes share/RSU sales.
+- Patrimônio is grouped into current net worth, current assets, known debt, pensions and future compensation. Morgan prioritizes statement gross, available now, future projected net and total projected net; the projected reserve is secondary.
+- No V172 database migration or financial write was introduced. Branch V172 `35273688049`, V171 regression `35273688138`, post-manifest V172 `35274767490`, every protected compatibility gate and Pages `35274766884` are SUCCESS. Human authenticated notebook/phone acceptance remains pending.
+
+## Protected predecessor — V171 published in fixed homologation
 - Product merge: `b4cf631d7caaca7f34ebc2fef177402e1bad0261`; tested branch head: `f3bf16abc2cf917c5e7a80deb55bd5366fd515b5`; branch: `work/v171-v170-user-review-20260917`; candidate: `wip35-v171-candidate.html`.
 - Immutable publication receipt: `backups/V171_V170_REVIEW_PUBLISHED_2026-09-17.md`.
 - V171 is homologation-only. The protected public `index.html` remains unchanged with SHA-256 `cca36731258680cc15a73fbad61c90ddf803358b741fd3ef58fefe5419eb688b`; public promotion remains unauthorized.
