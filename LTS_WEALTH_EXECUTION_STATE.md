@@ -1,8 +1,15 @@
 # LTS Wealth — Execution State
 
-Published V170 V169-review closure, business date 17/09/2026. Tested product `139ac69564820cd54439d202a875b244839b2602` is exposed from `main` and branch `work/v170-v169-user-review-20260917` through manifest commit `0b49a8a999dfd51c30fbb4b80aefed5bf71f4192`. GitHub Pages run `35223163491` completed build and deployment successfully. The fixed homologation redirects to `wip35-v170-candidate.html`; the protected public root remains unauthorized and byte-for-byte unchanged.
+Published V171 V170-review closure, business date 17/09/2026. Tested branch head `f3bf16abc2cf917c5e7a80deb55bd5366fd515b5` passed run `35264916304` and was squash-merged to `main` as `b4cf631d7caaca7f34ebc2fef177402e1bad0261`. The fixed homologation redirects to `wip35-v171-candidate.html`; the protected public root remains unauthorized and byte-for-byte unchanged.
 
-Latest immutable release receipt: `backups/V170_V169_REVIEW_PUBLISHED_2026-09-17.md`. Earlier scope registers, release receipts and private evidence remain binding. `RETOMAR_LTS_WEALTH.md` remains the restart entrypoint.
+Latest immutable release receipt: `backups/V171_V170_REVIEW_PUBLISHED_2026-09-17.md`. Earlier scope registers, release receipts and private evidence remain binding. `RETOMAR_LTS_WEALTH.md` remains the restart entrypoint.
+
+## V171 V170-review closure PUBLISHED — 17/09/2026
+V171 applies the user's professional classification decisions without inference: investments in property/works are separate from recurring expenses; financing is separate by type; only explicitly identified Benjamin education is shown as `Benjamin — Educação`, while all other education is `Educação`. The expense reader and monthly balance cover the complete selected history, transactions load with the supported cash direction, future cards are organized by bank, named card and month, and the Dashboard gives expenses a distinct semantic color.
+
+The Flow preserves the already-approved `RSU vested` and `Saldo c/ RSU` structure, removes internal audit wording, opens from five prior days through the end of the following year and cannot be reset by the legacy 30-day bootstrap. Historical opening/closing balances and protected transfer arithmetic remain regression-tested. Patrimônio keeps Morgan statement gross/available/after-reserve values separate and retains both the global price/FX action and individual vesting controls.
+
+Supabase migrations `20260917175647_v171_professional_expense_taxonomy_monthly_balance.sql` and `20260917180229_v171_expense_coverage_aggregation_fix.sql` are applied. The final branch gate `35264916304` is SUCCESS in desktop and 390 px mobile and reruns all protected Flow/invoice/bank contracts. Product merge is `b4cf631d7caaca7f34ebc2fef177402e1bad0261`. Public promotion was not performed; authenticated human acceptance remains pending.
 
 ## V170 V169-review closure PUBLISHED — 17/09/2026
 V170 closes the user's review of V169 as one coherent package: pension-total ordering and Top 15 expense groups on Dashboard; education split by person; grouped and traceable financing, loans and O Parque/CIPÓ 396 expenses; clearer wealth/passive layers; exact Morgan statement gross, available and unavailable totals separated from the after-reserve planning total; full Morgan available cash in Flow; one confirmed action to update every active vesting price/FX while retaining individual edits; and Flow opening/closing balances from 2013 through 2026.
