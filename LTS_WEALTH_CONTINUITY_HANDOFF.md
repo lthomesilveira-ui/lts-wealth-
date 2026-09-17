@@ -1,6 +1,6 @@
 # LTS Wealth — Continuity Handoff
 
-Last materially refreshed: 2026-09-17 (V170 V169-review closure published)
+Last materially refreshed: 2026-09-17 (V171 V170-review closure published)
 
 This file exists so project continuity never depends on chat context. Always re-fetch `main`, active branch, `PROJECT_MASTER_BACKLOG.md`, `NEXT_HOMOLOGATION_GATE.md`, this file and the latest immutable checkpoint before every repository write.
 
@@ -16,7 +16,18 @@ This file exists so project continuity never depends on chat context. Always re-
 - Never force branch divergence; use normal fast-forward/merge only after fresh compare.
 - Preserve historical evidence back to 2013 where supported.
 
-## Current product — V170 published in fixed homologation
+## Current product — V171 published in fixed homologation
+- Product merge: `b4cf631d7caaca7f34ebc2fef177402e1bad0261`; tested branch head: `f3bf16abc2cf917c5e7a80deb55bd5366fd515b5`; branch: `work/v171-v170-user-review-20260917`; candidate: `wip35-v171-candidate.html`.
+- Immutable publication receipt: `backups/V171_V170_REVIEW_PUBLISHED_2026-09-17.md`.
+- V171 is homologation-only. The protected public `index.html` remains unchanged with SHA-256 `cca36731258680cc15a73fbad61c90ddf803358b741fd3ef58fefe5419eb688b`; public promotion remains unauthorized.
+- Expense taxonomy is professional and explicit: property investment/works, recurring expenses and every financing are separate. Only explicit Benjamin education is `Benjamin — Educação`; remaining education is `Educação`. The audited reader returns works/reform R$ 1.517.643,79, financing R$ 1.700.952,62, loans/consignado R$ 651.990,34, Benjamin education R$ 56.267,53, Education R$ 86.647,00 and Rafiki R$ 29.769,84.
+- Monthly balance supports the complete selected period from 2013; cards are Bank → named card → month; expense transactions use the supported `saida` direction; Dashboard expense totals use a distinct expense color.
+- Flow retains the validated `RSU vested` and `Saldo c/ RSU` columns, removes the non-product historical-audit banner, loads progressively and opens from five prior days through 31 December of the following year. Legacy V162/V170 boot callbacks can no longer reduce that horizon.
+- Morgan retains statement gross/available/net-after-reserve separation and global/individual price controls. Route readers for Despesas and Patrimônio now start deterministically after layered runtime navigation.
+- Supabase migrations `20260917175647_v171_professional_expense_taxonomy_monthly_balance.sql` and `20260917180229_v171_expense_coverage_aggregation_fix.sql` are applied. Authenticated browser readers are `lts_browser_expense_executive_v6` and `lts_browser_monthly_balance_v2`.
+- V171 branch run `35264916304` passed desktop, 390 px mobile and all protected Flow/bank/invoice regressions. Human authenticated notebook/phone acceptance remains pending.
+
+## Protected predecessor — V170 published in fixed homologation
 - Product head: `139ac69564820cd54439d202a875b244839b2602`; manifest exposure: `0b49a8a999dfd51c30fbb4b80aefed5bf71f4192`; branch: `work/v170-v169-user-review-20260917`; candidate: `wip35-v170-candidate.html`.
 - Immutable publication receipt: `backups/V170_V169_REVIEW_PUBLISHED_2026-09-17.md`.
 - Fixed homologation selects V170. The public `index.html` remains unchanged with SHA-256 `cca36731258680cc15a73fbad61c90ddf803358b741fd3ef58fefe5419eb688b`; `promotion_status` remains `not_promoted`.
