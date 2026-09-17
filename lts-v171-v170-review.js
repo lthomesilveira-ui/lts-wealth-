@@ -47,7 +47,7 @@
     function after(){document.querySelectorAll('.v168-history-note').forEach(x=>x.setAttribute('aria-hidden','true'));document.querySelectorAll('[data-v171-card-bank]').forEach(b=>b.onclick=()=>{state.cardBank=b.dataset.v171CardBank;render()});if(scope)scope.dataset.v171Route=V==='Fluxo Diário'?'Fluxo de caixa':V}
     dashboard=dashboardV171;despesas=expensesV171;
     render=function(){const out=baseRender();after();return out};renderNav=function(){const out=baseNav();after();return out};
-    if(v168){v168.dashboard.data=null;v168.dashboard.started=false;v168.dashboard.loading=false;v168.expense.data=null;v168.expense.loading=false;v168.transactions.rows=null;v168.transactions.error=null}if(v169){v169.monthly.data=null;v169.monthly.key='';v169.monthly.error=null}
+    if(v168){v168.dashboard.data=null;v168.dashboard.started=false;v168.dashboard.loading=false;v168.transactions.rows=null;v168.transactions.error=null}if(v169){v169.monthly.data=null;v169.monthly.key='';v169.monthly.error=null}
     if(D&&!N.classList.contains('hidden'))render();
   }
 
