@@ -2,6 +2,9 @@ name: V171 V170 user-review closure
 
 on:
   workflow_dispatch:
+  pull_request:
+    branches:
+      - main
   push:
     branches:
       - work/v171-v170-user-review-20260917
