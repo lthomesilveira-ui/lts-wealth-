@@ -40,6 +40,14 @@ Authenticated browser readers are `lts_browser_expense_executive_v6` and `lts_br
 ## Automated evidence
 
 - Final V171 gate: `35264916304` — SUCCESS.
+- Post-manifest V171: `35265491147` — SUCCESS.
+- V170 compatibility: `35265491184` — SUCCESS.
+- V169 compatibility: `35265491165` — SUCCESS.
+- Integrated Flow and invoices: `35265491209` — SUCCESS.
+- Flow default window: `35265491146` — SUCCESS.
+- Candidate smoke: `35265491153` — SUCCESS.
+- V163/V164/V165 compatibility: `35265491189` / `35265491169` / `35265491292` — SUCCESS.
+- GitHub Pages manifest deployment: `35265490224` — SUCCESS.
 - Tested branch head: `f3bf16abc2cf917c5e7a80deb55bd5366fd515b5`.
 - Desktop: 1440 × 1000 — PASS.
 - Mobile: 390 × 844 — PASS.
@@ -47,6 +55,8 @@ Authenticated browser readers are `lts_browser_expense_executive_v6` and `lts_br
 - Static contract confirms protected public index unchanged — PASS.
 
 The gate covers route loading, expense groups/subgroups, full-period monthly balance, cards, expense transactions, Morgan gross/net/available presentation, bulk vesting mutation parameters under controlled fixture, next-year Flow opening, historical opening/closing balances, internal-transfer arithmetic and responsive overflow. Controlled fixtures are not the user's private values.
+
+Live verification fetched the fixed manifest, V171 candidate and V171 runtime after Pages. The candidate title is `LTS Wealth · Homologação V171`, is `noindex,nofollow`, and loads the V171 review layer. A fresh download of the public `index.html` retained SHA-256 `cca36731258680cc15a73fbad61c90ddf803358b741fd3ef58fefe5419eb688b`.
 
 ## Remaining gate
 
