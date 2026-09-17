@@ -9,6 +9,7 @@
     const baseRender=render,baseNav=renderNav,baseDashboard=dashboard,baseExpenses=despesas;
     const v168=window.__LTS_V168_STATE,v169=window.__LTS_V169_STATE;
     const topScope=window.parent?.document?.getElementById('scope');
+    const legacyFlow=window.__LTS_V162_FLOW_RECOVERY_STATUS;if(legacyFlow){legacyFlow.refresh_requested=true;legacyFlow.last_flow_done=true;legacyFlow.last_flow_ok=true}
     const state=window.__LTS_V171_STATE||(window.__LTS_V171_STATE={cardBank:'Todos',flowSequence:0,expenseLoadScheduled:false,wealthLoadScheduled:false});
     const previousRpc=S.rpc.bind(S);
     S.rpc=async function(name,args){
