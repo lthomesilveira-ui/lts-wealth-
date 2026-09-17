@@ -1,0 +1,71 @@
+name: V171 V170 user-review closure
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - work/v171-v170-user-review-20260917
+      - main
+    paths:
+      - 'wip35-v171-candidate.html'
+      - 'homologacao-current.json'
+      - 'lts-v171-v170-review.js'
+      - 'lts-v171-v170-review.css'
+      - 'supabase/migrations/20260917*_v171_*.sql'
+      - '.github/scripts/lts_v171_v170_review_contract.js'
+      - '.github/scripts/lts_v171_v170_review_gate.js'
+      - '.github/workflows/v171-v170-review.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  contract-and-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Validate V171 static contracts
+        run: |
+          node --check lts-v171-v170-review.js
+          node --check .github/scripts/lts_v171_v170_review_contract.js
+          node --check .github/scripts/lts_v171_v170_review_gate.js
+          node .github/scripts/lts_v171_v170_review_contract.js
+      - name: Install isolated browser dependency
+        run: |
+          npm install --no-save playwright@1.55.0
+          python -m pip install playwright==1.55.0
+          python -m playwright install --with-deps chromium webkit
+      - name: Validate V171 in desktop and mobile viewports
+        run: |
+          python3 -m http.server 8781 >/tmp/lts-v171-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID || true' EXIT
+          sleep 1
+          timeout 180s node .github/scripts/lts_v171_v170_review_gate.js
+      - name: Re-run V170 and protected Flow contracts
+        run: |
+          node .github/scripts/lts_v170_v169_review_contract.js
+          python .github/scripts/lts_integrated_flow_gate.py
+          python .github/scripts/lts_flow_bank_scope_gate.py
+          python .github/scripts/lts_invoice_reading_order_gate.py
+          python .github/scripts/lts_flow_documentary_rollforward_gate.py
+      - name: Upload evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v171-v170-user-review
+          path: |
+            v171-v170-review-result.json
+            v171-*.png
+            integrated-flow-result.json
+            integrated-*.png
+            bank-scope-result.json
+            bank-scope-*.png
+            invoice-reading-order-result.json
+            invoice-order-*.png
+            flow-documentary-rollforward-result.json
+          if-no-files-found: warn
