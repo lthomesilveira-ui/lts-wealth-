@@ -9,10 +9,10 @@
   "promotion_status": "not_promoted",
   "exposure_mode": "v171_review_flow_resilience_expense_coverage_and_wealth_clarity",
   "gate_status": "v172-branch-35273688049-pass_v171-35273688138-pass",
-  "pages_deployment_run": 35274059060,
-  "pages_deployment_status": "success_product_pre_manifest",
-  "manifest_exposure_commit": "pending_release_merge",
-  "post_manifest_gate_status": "pending_manifest_exposure",
+  "pages_deployment_run": 35274766884,
+  "pages_deployment_status": "success_manifest_exposure",
+  "manifest_exposure_commit": "5a8cbfb27d3a806880cd309f7c8f70fc022681dd",
+  "post_manifest_gate_status": "v172-35274767490-pass_v171-35274767603-pass_v170-35274768120-pass_v169-35274767547-pass_flow-invoices-35274767653-pass_flow-window-35274767686-pass_candidate-smoke-35274767723-pass_v163-35274767549-pass_v164-35274767697-pass_v165-35274767646-pass",
   "dashboard_contract": "v172-top12-clean-professional-expense-groups-v2",
   "dashboard_reader": "lts_browser_dashboard_cockpit_v1",
   "dashboard_post_login_contract": "signed-out-to-dashboard-without-reload-v2",
@@ -36,6 +36,6 @@
   "reconciliation_notice_contract": "documentary-anchor-only-never-projection-v1",
   "default_window": {"past_days":5,"include_today":true,"future_through":"current_year_end","include_zero_movement_days":true},
   "updated_at": "2026-09-17",
-  "live_signed_out_verification": "pending_v172_manifest_exposure",
+  "live_signed_out_verification": "fixed-manifest-v172-candidate-title-assets-and-protected-root-hash-verified-live-http",
   "actual_user_session_homologation": "automated-controlled-runtime-verified_human-authenticated-notebook-phone-acceptance-pending"
 }
