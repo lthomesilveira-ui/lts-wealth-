@@ -1,6 +1,6 @@
 # LTS Wealth — Continuity Handoff
 
-Last materially refreshed: 2026-09-16 (V169 V168-feedback closure published)
+Last materially refreshed: 2026-09-17 (V170 V169-review closure published)
 
 This file exists so project continuity never depends on chat context. Always re-fetch `main`, active branch, `PROJECT_MASTER_BACKLOG.md`, `NEXT_HOMOLOGATION_GATE.md`, this file and the latest immutable checkpoint before every repository write.
 
@@ -16,7 +16,18 @@ This file exists so project continuity never depends on chat context. Always re-
 - Never force branch divergence; use normal fast-forward/merge only after fresh compare.
 - Preserve historical evidence back to 2013 where supported.
 
-## Current product — V169 published in fixed homologation
+## Current product — V170 published in fixed homologation
+- Product head: `139ac69564820cd54439d202a875b244839b2602`; manifest exposure: `0b49a8a999dfd51c30fbb4b80aefed5bf71f4192`; branch: `work/v170-v169-user-review-20260917`; candidate: `wip35-v170-candidate.html`.
+- Immutable publication receipt: `backups/V170_V169_REVIEW_PUBLISHED_2026-09-17.md`.
+- Fixed homologation selects V170. The public `index.html` remains unchanged with SHA-256 `cca36731258680cc15a73fbad61c90ddf803358b741fd3ef58fefe5419eb688b`; `promotion_status` remains `not_promoted`.
+- V170 delivers Dashboard Top 15 with education by person and corrected pension-total order; auditable 2013–2026 opening/closing cash balances; the default Flow window from five prior days through the end of the following year; full Morgan available cash in Flow; consolidated, traceable expense groups; clearer wealth/passive reading; exact Morgan gross/available/unavailable statement figures; and one confirmed action to update price/FX across all active vestings while keeping individual controls.
+- Historical tracked-bank arithmetic covers 4,726 civil days from 09/10/2013 through 16/09/2026 with zero mismatches and maximum gap R$ 0.00. Paired transfers net to zero; a transfer between tracked cash and an untracked pocket is shown as internal net movement, never revenue or expense.
+- The V169 two-leg edit/cancel lifecycle for user-created transfers remains protected and passed compatibility gates. No validation mutation was retained; the global award writer was exercised inside an explicit rollback.
+- Supabase V170 migrations through `v170_cash_arithmetic_audit_summary` are applied. New internal readers remain unavailable to anon/authenticated roles; only the existing user-asserting browser RPC surface is executable by authenticated users.
+- Branch V170 `35222746676`, main V170 `35223164124`, V169 compatibility `35223164154`, all protected compatibility workflows and Pages `35223163491` are SUCCESS. The exact IDs are in the publication receipt.
+- Live HTTP verification proved the fixed manifest, V170 candidate title/assets and unchanged protected public root. Human notebook/phone review remains the next acceptance gate.
+
+## Protected predecessor — V169 published in fixed homologation
 - Product head: `6c32ee78b19e1252e5615c8bc267e11f9e84ba5f`; manifest exposure: `677e8a3fa4ccd52b6808962753cd191319c803d9`; branch: `work/v169-v168-feedback-20260916`; candidate: `wip35-v169-candidate.html`.
 - The binding user scope is `backups/V169_V168_USER_FEEDBACK_REGISTER_2026-09-16.md`; the immutable publication receipt is `backups/V169_V168_FEEDBACK_PUBLISHED_2026-09-16.md`.
 - Fixed homologation selects V169. The public `index.html` remains unchanged with SHA-256 `cca36731258680cc15a73fbad61c90ddf803358b741fd3ef58fefe5419eb688b`; `promotion_status` remains `not_promoted`.
