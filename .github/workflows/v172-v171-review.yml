@@ -1,0 +1,74 @@
+name: V172 V171 user-review closure
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - work/v172-v171-user-review-20260917
+      - main
+    paths:
+      - 'wip35-v172-candidate.html'
+      - 'homologacao-current.json'
+      - 'lts-v172-v171-review.js'
+      - 'lts-v172-v171-review.css'
+      - '.github/scripts/lts_v172_v171_review_contract.js'
+      - '.github/scripts/lts_v172_v171_review_gate.js'
+      - '.github/workflows/v172-v171-review.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  contract-and-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Validate V172 static contracts
+        run: |
+          node --check lts-v172-v171-review.js
+          node --check .github/scripts/lts_v172_v171_review_contract.js
+          node --check .github/scripts/lts_v172_v171_review_gate.js
+          node .github/scripts/lts_v172_v171_review_contract.js
+      - name: Install isolated browser dependency
+        run: |
+          npm install --no-save playwright@1.55.0
+          python -m pip install playwright==1.55.0
+          python -m playwright install --with-deps chromium webkit
+      - name: Validate V172 in desktop and mobile viewports
+        run: |
+          python3 -m http.server 8782 >/tmp/lts-v172-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID || true' EXIT
+          sleep 1
+          timeout 180s node .github/scripts/lts_v172_v171_review_gate.js
+      - name: Re-run prior and protected Flow contracts
+        run: |
+          node .github/scripts/lts_v171_v170_review_contract.js
+          node .github/scripts/lts_v170_v169_review_contract.js
+          python .github/scripts/lts_integrated_flow_gate.py
+          python .github/scripts/lts_flow_bank_scope_gate.py
+          python .github/scripts/lts_invoice_reading_order_gate.py
+          python .github/scripts/lts_flow_documentary_rollforward_gate.py
+      - name: Upload evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v172-v171-user-review
+          path: |
+            v172-v171-review-result.json
+            v172-*.png
+            integrated-flow-result.json
+            integrated-*.png
+            bank-scope-result.json
+            bank-scope-*.png
+            invoice-reading-order-result.json
+            invoice-order-*.png
+            flow-documentary-rollforward-result.json
+          if-no-files-found: warn
