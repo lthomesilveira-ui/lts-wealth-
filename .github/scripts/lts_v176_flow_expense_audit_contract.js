@@ -6,7 +6,7 @@ const indexHash=crypto.createHash('sha256').update(fs.readFileSync('index.html')
 assert(indexHash==='cca36731258680cc15a73fbad61c90ddf803358b741fd3ef58fefe5419eb688b','protected index changed');
 for(const t of ['V176','lts-v175-expense-financial-audit.js','lts-v176-flow-expense-audit.js','noindex,nofollow'])assert(candidate.includes(t),'candidate missing '+t);
 assert(candidate.indexOf('lts-v176-flow-expense-audit.js')>candidate.indexOf('lts-v175-expense-financial-audit.js'),'V176 load order');
-for(const t of ["version:'v176'","base_version:'v175'",'future_rsu_available','future_award_vesting_marker','flowDayMaterial=function','c.entradas','c.saidas','FLOWFORCEZERO=false','lts_browser_expense_executive_v9','lts_browser_monthly_balance_v6','health_6m_corrected_brl:56307.56','loans_6m_audited_brl:38691.93'])assert(js.includes(t),'runtime missing '+t);
+for(const t of ["version:'v176'","base_version:'v175'",'future_(rsu|cash_rsu)_available','future_award_vesting_marker','flowDayMaterial=function','c.entradas','c.saidas','FLOWFORCEZERO=false','lts_browser_expense_executive_v9','lts_browser_monthly_balance_v6','health_6m_corrected_brl:56307.56','loans_6m_audited_brl:38691.93'])assert(js.includes(t),'runtime missing '+t);
 for(const t of ['V176 · Homologação','.v176-rsu-delta','.v176-rsu-active'])assert(css.includes(t),'css missing '+t);
 for(const t of ['R$ 56.307,56','R$ 105.050,49','R$ 38.691,93','R$ 109.227,39','future_rsu_available'])assert(audit.includes(t),'audit missing '+t);
 console.log(JSON.stringify({pass:true,version:'v176',public_index_unchanged:true,rsu_cash_separated:true,expense_windows_fixed:true},null,2));
