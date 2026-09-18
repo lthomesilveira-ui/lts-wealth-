@@ -1,0 +1,12 @@
+'use strict';
+const fs=require('node:fs'),crypto=require('node:crypto');
+const read=f=>fs.readFileSync(f,'utf8'),assert=(x,m)=>{if(!x)throw Error(m)};
+const candidate=read('wip35-v174-candidate.html'),js=read('lts-v174-v173-review.js'),css=read('lts-v174-v173-review.css'),sql=read('supabase/migrations/20260918152137_v174_expense_deep_audit_readers.sql');
+const indexHash=crypto.createHash('sha256').update(fs.readFileSync('index.html')).digest('hex');
+assert(indexHash==='cca36731258680cc15a73fbad61c90ddf803358b741fd3ef58fefe5419eb688b','protected index changed');
+for(const t of ['V174','lts-v173-v172-feedback.js','lts-v174-v173-review.js','noindex,nofollow'])assert(candidate.includes(t),'candidate missing '+t);
+assert(candidate.indexOf('lts-v174-v173-review.js')>candidate.indexOf('lts-v173-v172-feedback.js'),'V174 overlay order');
+for(const t of ["version:'v174'","base_version:'v173'",'monthly-balance-v4-v174-resilient-chunked','mapLimitSettled','lts_browser_monthly_balance_v3','lts_browser_expense_executive_v7','lts_browser_card_flow_schedule_v1','Família — saídas','Histórico pago · Itaú','Venda de ações recuperada no período','—* não significa despesa zero','reconciled_unique_brl'])assert(js.includes(t),'runtime missing '+t);
+for(const t of ['lts_expense_management_group_v2','lts_browser_cipo_improvement_reconciliation_v1','lts_browser_card_flow_schedule_v1','lts_browser_expense_executive_v7','lts_browser_monthly_balance_v3','Venda de bens e ativos','Família — saídas'])assert(sql.includes(t),'migration missing '+t);
+for(const t of ['V174 · Homologação','.v174-property-note','.v174-unknown','.v174-cards'])assert(css.includes(t),'css missing '+t);
+console.log(JSON.stringify({pass:true,version:'v174-v173-review',public_index_unchanged:true,deep_expense_audit:true,monthly_resilient:true,card_flow_precedence:true},null,2));
