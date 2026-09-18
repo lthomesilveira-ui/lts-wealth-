@@ -9,7 +9,7 @@
     const baseRender=render,baseNav=renderNav,baseDashboard=dashboard,baseExpenses=despesas;
     const v168=window.__LTS_V168_STATE,v169=window.__LTS_V169_STATE,v171=window.__LTS_V171_STATE||{};
     const state=window.__LTS_V174_STATE||(window.__LTS_V174_STATE={
-      monthlyWarning:'',monthlyChunkCalls:0,cardFlow:null,cardFlowLoading:false,cardFlowError:'',cardFlowSeq:0
+      monthlyWarning:'',monthlyChunkCalls:0,monthlyOwnLoading:false,monthlyOwnSeq:0,cardFlow:null,cardFlowLoading:false,cardFlowError:'',cardFlowSeq:0
     });
     const previousRpc=S.rpc.bind(S);
 
@@ -148,20 +148,20 @@
       return{from:year+'-01-01',to:t};
     }
     async function ensureMonthlyV174(force=false){
-      const s=v169?.monthly;if(!s||s.loading)return;
+      const s=v169?.monthly;if(!s||state.monthlyOwnLoading)return;
       const r=expenseRange174(),key=r.from+'|'+r.to;
       if(!force&&s.data&&s.key===key)return;
-      const token=(s.token||0)+1;s.token=token;s.key=key;s.loading=true;s.error=null;
-      if(V==='Despesas'&&v168?.expense?.tab==='monthly')render();
+      state.monthlyOwnLoading=true;const ownSeq=++state.monthlyOwnSeq;
+      s.token=(s.token||0)+1;s.key=key;s.loading=true;s.error=null;if(force||!s.data||s.key!==key)s.data=null;
       try{
-        const result=await S.rpc('lts_browser_monthly_balance_v3',{p_from:r.from,p_to:r.to});
-        if(s.token!==token)return;
+        const result=await monthlyV174Rpc({p_from:r.from,p_to:r.to});
+        if(ownSeq!==state.monthlyOwnSeq)return;
         if(result?.error||!result?.data)throw Error(result?.error?.message||'Balanço mensal indisponível');
         s.data=result.data;
       }catch(error){
-        if(s.token===token){s.error=String(error?.message||error);s.data=null}
+        if(ownSeq===state.monthlyOwnSeq){s.error=String(error?.message||error);s.data=null}
       }finally{
-        if(s.token===token){s.loading=false;if(V==='Despesas'&&v168?.expense?.tab==='monthly')render()}
+        if(ownSeq===state.monthlyOwnSeq){s.loading=false;state.monthlyOwnLoading=false;if(V==='Despesas'&&v168?.expense?.tab==='monthly')render()}
       }
     }
 
@@ -263,7 +263,7 @@
       document.querySelectorAll('[data-v174-card-bank]').forEach(b=>b.onclick=()=>{v171.cardBank=b.dataset.v174CardBank;render()});
       if(V==='Despesas'&&v168?.expense?.tab==='monthly'){
         const r=expenseRange174(),key=r.from+'|'+r.to,s=v169?.monthly;
-        if(s&&!s.loading&&(!s.data||s.key!==key))queueMicrotask(()=>ensureMonthlyV174(false));
+        if(s&&!state.monthlyOwnLoading&&(!s.data||s.key!==key))queueMicrotask(()=>ensureMonthlyV174(false));
       }
       if(V==='Despesas'&&v168?.expense?.tab==='cards'&&!state.cardFlow&&!state.cardFlowLoading)queueMicrotask(()=>ensureCardFlow(false));
     }
