@@ -135,7 +135,7 @@ async function run(browser,viewport,label){
   for(const phrase of [semantic('Família — saídas'),semantic(brl(263909.54)),'13/08/2026','larissa','itaú'])
     if(!text.includes(phrase))throw Error(label+': family drawer missing '+phrase);
   if(!calls.some(x=>x.name==='lts_browser_expense_group_detail_v1'&&x.args.p_group==='Família — saídas'))throw Error(label+': family detail RPC missing');
-  await drawer.locator('[data-v177-close]').click();
+  await drawer.locator('header button[data-v177-close]').click();
 
   const apartmentRow=frame.locator('.v175-rankrow').filter({hasText:'Apartamento · CIPÓ 396'}).first();
   await apartmentRow.locator(':scope > strong').click();
@@ -144,7 +144,7 @@ async function run(browser,viewport,label){
   text=semantic(await frame.locator('#v177ExpenseDrawer .v177-drawer').innerText());
   for(const phrase of [semantic(brl(4529057.60)),semantic('Aquisição do imóvel'),semantic('Financiamento imobiliário'),semantic('Obra e reforma'),semantic('Custos recorrentes de moradia')])
     if(!text.includes(phrase))throw Error(label+': apartment drawer missing '+phrase);
-  await frame.locator('#v177ExpenseDrawer [data-v177-close]').first().click();
+  await frame.locator('#v177ExpenseDrawer .v177-drawer header button[data-v177-close]').click();
 
   const subgroup=apartmentRow.locator('details em').filter({hasText:'Custos recorrentes de moradia'}).first();
   await subgroup.click();
@@ -153,7 +153,7 @@ async function run(browser,viewport,label){
   text=semantic(await frame.locator('#v177ExpenseDrawer .v177-drawer').innerText());
   for(const phrase of [semantic(brl(364579.90)),'condomínio','energia elétrica','seguro residencial'])
     if(!text.includes(semantic(phrase)))throw Error(label+': recurring-housing detail missing '+phrase);
-  await frame.locator('#v177ExpenseDrawer [data-v177-close]').first().click();
+  await frame.locator('#v177ExpenseDrawer .v177-drawer header button[data-v177-close]').click();
 
   await nav('Dashboard').click();await page.waitForTimeout(900);
   text=semantic(await frame.locator('.v168-dashboard').innerText());
