@@ -124,6 +124,7 @@ async function run(browser,viewport,label){
   await route('Despesas').click();await frame.waitForFunction(()=>window.__LTS_V168_STATE?.expense?.data?.version==='expense-executive-v16-v174-audited');
   await frame.locator('[data-v168-exp-range="all"]').click();await frame.waitForFunction(()=>window.__LTS_V168_STATE?.expense?.key==='all'&&window.__LTS_V168_STATE?.expense?.data?.property_improvement_reconciliation?.reconciled_unique_brl===2174777.52);
   await frame.locator('.v168-tabs [data-v168-exp-tab="categories"]').click();await frame.locator('.v174-categories').waitFor();
+  await frame.locator('.v174-categories details').evaluateAll(nodes=>nodes.forEach(node=>node.open=true));
   let text=semantic(await frame.locator('.v174-categories').innerText());
   for(const phrase of ['reformas e melhorias · reconciliado',semantic(brl(2174777.52)),'duplicidade confirmada na fonte','família — saídas','histórico pago · itaú','empréstimo consignado · coopharma','investimento no imóvel — aquisição e histórico'])if(!text.includes(phrase))throw Error(label+': categories missing '+phrase);
   if(text.includes('financiamento imobiliário — casa'))throw Error(label+': duplicate mortgage composition returned');
