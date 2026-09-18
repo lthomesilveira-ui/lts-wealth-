@@ -9,7 +9,7 @@
     const baseRender=render,baseNav=renderNav,baseDashboard=dashboard,baseExpenses=despesas;
     const v168=window.__LTS_V168_STATE,v169=window.__LTS_V169_STATE,v171=window.__LTS_V171_STATE||{};
     const state=window.__LTS_V174_STATE||(window.__LTS_V174_STATE={
-      monthlyWarning:'',monthlyChunkCalls:0,monthlyOwnLoading:false,monthlyOwnSeq:0,monthlyLastError:'',monthlyFailedKey:'',cardFlow:null,cardFlowLoading:false,cardFlowError:'',cardFlowSeq:0
+      monthlyWarning:'',monthlyChunkCalls:0,cardFlow:null,cardFlowLoading:false,cardFlowError:'',cardFlowSeq:0
     });
     const previousRpc=S.rpc.bind(S);
 
@@ -147,28 +147,12 @@
       if(key==='custom'&&/^\\d{4}-\\d{2}-\\d{2}$/.test(s.customFrom||'')&&/^\\d{4}-\\d{2}-\\d{2}$/.test(s.customTo||''))return{from:s.customFrom,to:s.customTo};
       return{from:year+'-01-01',to:t};
     }
-    async function ensureMonthlyV174(force=false){
-      const s=v169?.monthly;if(!s||state.monthlyOwnLoading)return;
-      const r=expenseRange174(),key=r.from+'|'+r.to;
-      if(!force&&s.data&&s.key===key)return;
-      state.monthlyOwnLoading=true;state.monthlyLastError='';state.monthlyFailedKey='';const ownSeq=++state.monthlyOwnSeq;
-      s.token=(s.token||0)+1;s.key=key;s.loading=true;s.error=null;if(force||!s.data||s.key!==key)s.data=null;
-      try{
-        const result=await monthlyV174Rpc({p_from:r.from,p_to:r.to});
-        if(ownSeq!==state.monthlyOwnSeq)return;
-        if(result?.error||!result?.data)throw Error(result?.error?.message||'Balanço mensal indisponível');
-        s.data=result.data;
-      }catch(error){
-        if(ownSeq===state.monthlyOwnSeq){s.error=String(error?.message||error);s.data=null;state.monthlyLastError=s.error;state.monthlyFailedKey=key}
-      }finally{
-        if(ownSeq===state.monthlyOwnSeq){s.loading=false;state.monthlyOwnLoading=false;if(V==='Despesas'&&v168?.expense?.tab==='monthly')render()}
-      }
-    }
-
     async function monthlyV174Rpc(args){
-      const from=args?.p_from,to=args?.p_to;state.monthlyWarning='';
+      const from=args?.p_from,to=args?.p_to;state.monthlyWarning='';state.monthlyChunkCalls=1;
       if(!/^\d{4}-\d{2}-\d{2}$/.test(from||'')||!/^\d{4}-\d{2}-\d{2}$/.test(to||''))return directRpc('lts_browser_monthly_balance_v3',args||{});
-      if(monthSpan(from,to)<=18)return directRpc('lts_browser_monthly_balance_v3',{p_from:from,p_to:to});
+      const direct=await directRpc('lts_browser_monthly_balance_v3',{p_from:from,p_to:to});
+      if(!direct?.error&&direct?.data)return{data:{...direct.data,version:'monthly-balance-v4-v174-direct'},error:null};
+      if(monthSpan(from,to)<=18)return direct;
       const chunks=yearChunks(from,to);state.monthlyChunkCalls=chunks.length;
       const settled=await mapLimitSettled(chunks,3,async chunk=>{
         const r=await directRpc('lts_browser_monthly_balance_v3',{p_from:chunk.from,p_to:chunk.to});
@@ -176,7 +160,7 @@
         return{chunk,data:r.data};
       });
       const good=settled.filter(x=>x.status==='fulfilled').map(x=>x.value.data),failed=settled.map((x,i)=>x.status==='rejected'?chunks[i]:null).filter(Boolean);
-      if(!good.length)return{data:null,error:{message:'Balanço mensal indisponível para o período selecionado.'}};
+      if(!good.length)return{data:null,error:{message:direct?.error?.message||'Balanço mensal indisponível para o período selecionado.'}};
       if(failed.length)state.monthlyWarning='Alguns anos não responderam. O LTS manteve os anos carregados e não apagou o relatório: '+failed.map(x=>x.from.slice(0,4)).join(', ')+'.';
       return{data:mergeMonthly(good,from,to,failed),error:null};
     }
@@ -261,10 +245,6 @@
     function after(){
       const badge=window.parent?.document?.getElementById('scope');if(badge)badge.dataset.v174Route=V==='Fluxo Diário'?'Fluxo de caixa':V;
       document.querySelectorAll('[data-v174-card-bank]').forEach(b=>b.onclick=()=>{v171.cardBank=b.dataset.v174CardBank;render()});
-      if(V==='Despesas'&&v168?.expense?.tab==='monthly'){
-        const r=expenseRange174(),key=r.from+'|'+r.to,s=v169?.monthly;
-        if(s&&!state.monthlyOwnLoading&&state.monthlyFailedKey!==key&&(!s.data||s.key!==key))queueMicrotask(()=>ensureMonthlyV174(false));
-      }
       if(V==='Despesas'&&v168?.expense?.tab==='cards'&&!state.cardFlow&&!state.cardFlowLoading)queueMicrotask(()=>ensureCardFlow(false));
     }
 
