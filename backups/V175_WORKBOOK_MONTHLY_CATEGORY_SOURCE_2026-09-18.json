@@ -1,0 +1,2460 @@
+{
+  "schema": 1,
+  "generated_at": "2026-09-18",
+  "source_file": "Controle_Financeiro_v16.xlsm",
+  "source_file_id": "file_000000007b20720ea920e6bbdc7147ac",
+  "source_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e",
+  "reconciliation_rule": "Use only a month whose category sum equals the workbook card total and whose workbook card total equals the current LTS card total.",
+  "rows": [
+    {
+      "amount": 1322.4,
+      "card_total": 44670.99,
+      "source_row": 7,
+      "category_raw": "Rafiki",
+      "parent_group": "Rafiki",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-11-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 50,
+      "card_total": 44670.99,
+      "source_row": 10,
+      "category_raw": "Google",
+      "parent_group": "Assinaturas",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-11-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 474.3,
+      "card_total": 44670.99,
+      "source_row": 11,
+      "category_raw": "Apple",
+      "parent_group": "Assinaturas",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-11-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 19.9,
+      "card_total": 44670.99,
+      "source_row": 12,
+      "category_raw": "Amazon",
+      "parent_group": "Assinaturas",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-11-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 23.9,
+      "card_total": 44670.99,
+      "source_row": 13,
+      "category_raw": "Spotify",
+      "parent_group": "Assinaturas",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-11-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 80,
+      "card_total": 44670.99,
+      "source_row": 14,
+      "category_raw": "Sócio Rei",
+      "parent_group": "Assinaturas",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-11-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 220.75,
+      "card_total": 44670.99,
+      "source_row": 18,
+      "category_raw": "Bebidas",
+      "parent_group": "Alimentação",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-11-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 3627.53,
+      "card_total": 44670.99,
+      "source_row": 19,
+      "category_raw": "Restaurantes",
+      "parent_group": "Restaurantes",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-11-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 330.25,
+      "card_total": 44670.99,
+      "source_row": 20,
+      "category_raw": "Farmácia",
+      "parent_group": "Saúde",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-11-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 8817.42,
+      "card_total": 44670.99,
+      "source_row": 21,
+      "category_raw": "Vestuário",
+      "parent_group": "Vestuário",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-11-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 81.93,
+      "card_total": 44670.99,
+      "source_row": 22,
+      "category_raw": "Mercado",
+      "parent_group": "Mercado",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-11-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 5103.49,
+      "card_total": 44670.99,
+      "source_row": 25,
+      "category_raw": "Saúde",
+      "parent_group": "Saúde",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-11-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 80.9,
+      "card_total": 44670.99,
+      "source_row": 28,
+      "category_raw": "Larissa",
+      "parent_group": "Larissa",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-11-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 246.02,
+      "card_total": 44670.99,
+      "source_row": 31,
+      "category_raw": "Assinatura",
+      "parent_group": "Assinaturas",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-11-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 1366.15,
+      "card_total": 44670.99,
+      "source_row": 33,
+      "category_raw": "Presentes",
+      "parent_group": "Presentes",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-11-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 39.9,
+      "card_total": 44670.99,
+      "source_row": 34,
+      "category_raw": "Rappi",
+      "parent_group": "Mercado",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-11-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 37.8,
+      "card_total": 44670.99,
+      "source_row": 35,
+      "category_raw": "Passagem Aérea",
+      "parent_group": "Viagem",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-11-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 6992.85,
+      "card_total": 44670.99,
+      "source_row": 37,
+      "category_raw": "Benjamin",
+      "parent_group": "Benjamin - Outros",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-11-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 1491.32,
+      "card_total": 44670.99,
+      "source_row": 38,
+      "category_raw": "Benjamin - Saúde",
+      "parent_group": "Benjamin - Saúde",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-11-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 579.34,
+      "card_total": 44670.99,
+      "source_row": 39,
+      "category_raw": "Benjamin - Vestuário",
+      "parent_group": "Benjamin - Vestuário",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-11-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 124.79,
+      "card_total": 44670.99,
+      "source_row": 42,
+      "category_raw": "Seguro de Vida",
+      "parent_group": "Seguros",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-11-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 169.8,
+      "card_total": 44670.99,
+      "source_row": 43,
+      "category_raw": "Seguro Residencial",
+      "parent_group": "Seguros",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-11-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 96.76,
+      "card_total": 44670.99,
+      "source_row": 50,
+      "category_raw": "Louças e Metais - O Parque",
+      "parent_group": "Cipó 396",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-11-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 2033.48,
+      "card_total": 44670.99,
+      "source_row": 51,
+      "category_raw": "Eletrodomésticos - O Parque",
+      "parent_group": "Cipó 396",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-11-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 5833.37,
+      "card_total": 44670.99,
+      "source_row": 53,
+      "category_raw": "Cortinas e Persianas - O Parque",
+      "parent_group": "Cipó 396",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-11-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 2549.55,
+      "card_total": 44670.99,
+      "source_row": 54,
+      "category_raw": "Móveis - O Parque",
+      "parent_group": "Cipó 396",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-11-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 152.1,
+      "card_total": 44670.99,
+      "source_row": 55,
+      "category_raw": "Camas e estofados - O Parque",
+      "parent_group": "Cipó 396",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-11-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 136.8,
+      "card_total": 44670.99,
+      "source_row": 61,
+      "category_raw": "Material Obra - O Parque",
+      "parent_group": "Cipó 396",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-11-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 2154.55,
+      "card_total": 44670.99,
+      "source_row": 70,
+      "category_raw": "Ifood",
+      "parent_group": "Ifood",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-11-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": -0.06,
+      "card_total": 44670.99,
+      "source_row": 72,
+      "category_raw": "Crédito",
+      "parent_group": "Crédito",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-11-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 160,
+      "card_total": 44670.99,
+      "source_row": 78,
+      "category_raw": "Anuidade",
+      "parent_group": "Tarifas",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-11-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 273.7,
+      "card_total": 44670.99,
+      "source_row": 81,
+      "category_raw": "Seguro Jeep Compass",
+      "parent_group": "Carro",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-11-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 1862.4,
+      "card_total": 49137.85,
+      "source_row": 7,
+      "category_raw": "Rafiki",
+      "parent_group": "Rafiki",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-12-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 49.99,
+      "card_total": 49137.85,
+      "source_row": 10,
+      "category_raw": "Google",
+      "parent_group": "Assinaturas",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-12-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 394.5,
+      "card_total": 49137.85,
+      "source_row": 11,
+      "category_raw": "Apple",
+      "parent_group": "Assinaturas",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-12-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 63.4,
+      "card_total": 49137.85,
+      "source_row": 12,
+      "category_raw": "Amazon",
+      "parent_group": "Assinaturas",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-12-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 23.9,
+      "card_total": 49137.85,
+      "source_row": 13,
+      "category_raw": "Spotify",
+      "parent_group": "Assinaturas",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-12-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 80,
+      "card_total": 49137.85,
+      "source_row": 14,
+      "category_raw": "Sócio Rei",
+      "parent_group": "Assinaturas",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-12-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 680,
+      "card_total": 49137.85,
+      "source_row": 15,
+      "category_raw": "Cabelereiro",
+      "parent_group": "Cabelereiro",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-12-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 350,
+      "card_total": 49137.85,
+      "source_row": 16,
+      "category_raw": "passeios",
+      "parent_group": "Lazer",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-12-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 344.73,
+      "card_total": 49137.85,
+      "source_row": 18,
+      "category_raw": "Bebidas",
+      "parent_group": "Alimentação",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-12-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 8696,
+      "card_total": 49137.85,
+      "source_row": 19,
+      "category_raw": "Restaurantes",
+      "parent_group": "Restaurantes",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-12-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 492.2,
+      "card_total": 49137.85,
+      "source_row": 20,
+      "category_raw": "Farmácia",
+      "parent_group": "Saúde",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-12-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 9125.66,
+      "card_total": 49137.85,
+      "source_row": 21,
+      "category_raw": "Vestuário",
+      "parent_group": "Vestuário",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-12-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 42.96,
+      "card_total": 49137.85,
+      "source_row": 22,
+      "category_raw": "Mercado",
+      "parent_group": "Mercado",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-12-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 5980.94,
+      "card_total": 49137.85,
+      "source_row": 25,
+      "category_raw": "Saúde",
+      "parent_group": "Saúde",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-12-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 180.46,
+      "card_total": 49137.85,
+      "source_row": 27,
+      "category_raw": "Mala",
+      "parent_group": "Viagem",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-12-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 634.12,
+      "card_total": 49137.85,
+      "source_row": 28,
+      "category_raw": "Larissa",
+      "parent_group": "Larissa",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-12-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 1750,
+      "card_total": 49137.85,
+      "source_row": 29,
+      "category_raw": "Larissa - Saúde",
+      "parent_group": "Larissa",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-12-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 2538,
+      "card_total": 49137.85,
+      "source_row": 30,
+      "category_raw": "Hotel",
+      "parent_group": "Viagem",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-12-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 154.72,
+      "card_total": 49137.85,
+      "source_row": 31,
+      "category_raw": "Assinatura",
+      "parent_group": "Assinaturas",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-12-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 1895.42,
+      "card_total": 49137.85,
+      "source_row": 33,
+      "category_raw": "Presentes",
+      "parent_group": "Presentes",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-12-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 39.9,
+      "card_total": 49137.85,
+      "source_row": 34,
+      "category_raw": "Rappi",
+      "parent_group": "Mercado",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-12-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 37.8,
+      "card_total": 49137.85,
+      "source_row": 35,
+      "category_raw": "Passagem Aérea",
+      "parent_group": "Viagem",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-12-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 6992.85,
+      "card_total": 49137.85,
+      "source_row": 37,
+      "category_raw": "Benjamin",
+      "parent_group": "Benjamin - Outros",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-12-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 1754.34,
+      "card_total": 49137.85,
+      "source_row": 38,
+      "category_raw": "Benjamin - Saúde",
+      "parent_group": "Benjamin - Saúde",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-12-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 1078.46,
+      "card_total": 49137.85,
+      "source_row": 39,
+      "category_raw": "Benjamin - Vestuário",
+      "parent_group": "Benjamin - Vestuário",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-12-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 124.79,
+      "card_total": 49137.85,
+      "source_row": 42,
+      "category_raw": "Seguro de Vida",
+      "parent_group": "Seguros",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-12-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 169.8,
+      "card_total": 49137.85,
+      "source_row": 43,
+      "category_raw": "Seguro Residencial",
+      "parent_group": "Seguros",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-12-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 69.73,
+      "card_total": 49137.85,
+      "source_row": 54,
+      "category_raw": "Móveis - O Parque",
+      "parent_group": "Cipó 396",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-12-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 136.8,
+      "card_total": 49137.85,
+      "source_row": 61,
+      "category_raw": "Material Obra - O Parque",
+      "parent_group": "Cipó 396",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-12-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 98.98,
+      "card_total": 49137.85,
+      "source_row": 67,
+      "category_raw": "Outros",
+      "parent_group": "Outros",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-12-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 2791.62,
+      "card_total": 49137.85,
+      "source_row": 70,
+      "category_raw": "Ifood",
+      "parent_group": "Ifood",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-12-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 70,
+      "card_total": 49137.85,
+      "source_row": 71,
+      "category_raw": "Estacionamento e Pedágio",
+      "parent_group": "Carro",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-12-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": -0.32,
+      "card_total": 49137.85,
+      "source_row": 72,
+      "category_raw": "Crédito",
+      "parent_group": "Crédito",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-12-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 160,
+      "card_total": 49137.85,
+      "source_row": 78,
+      "category_raw": "Anuidade",
+      "parent_group": "Tarifas",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-12-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 273.7,
+      "card_total": 49137.85,
+      "source_row": 81,
+      "category_raw": "Seguro Jeep Compass",
+      "parent_group": "Carro",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2025-12-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 1706.17,
+      "card_total": 26164.68,
+      "source_row": 7,
+      "category_raw": "Rafiki",
+      "parent_group": "Rafiki",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-01-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 49.99,
+      "card_total": 26164.68,
+      "source_row": 10,
+      "category_raw": "Google",
+      "parent_group": "Assinaturas",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-01-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 281.6,
+      "card_total": 26164.68,
+      "source_row": 11,
+      "category_raw": "Apple",
+      "parent_group": "Assinaturas",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-01-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 39.8,
+      "card_total": 26164.68,
+      "source_row": 12,
+      "category_raw": "Amazon",
+      "parent_group": "Assinaturas",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-01-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 23.9,
+      "card_total": 26164.68,
+      "source_row": 13,
+      "category_raw": "Spotify",
+      "parent_group": "Assinaturas",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-01-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 80,
+      "card_total": 26164.68,
+      "source_row": 14,
+      "category_raw": "Sócio Rei",
+      "parent_group": "Assinaturas",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-01-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 740,
+      "card_total": 26164.68,
+      "source_row": 15,
+      "category_raw": "Cabelereiro",
+      "parent_group": "Cabelereiro",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-01-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 246,
+      "card_total": 26164.68,
+      "source_row": 16,
+      "category_raw": "passeios",
+      "parent_group": "Lazer",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-01-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 2257.55,
+      "card_total": 26164.68,
+      "source_row": 18,
+      "category_raw": "Bebidas",
+      "parent_group": "Alimentação",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-01-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 2274.69,
+      "card_total": 26164.68,
+      "source_row": 19,
+      "category_raw": "Restaurantes",
+      "parent_group": "Restaurantes",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-01-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 1330.41,
+      "card_total": 26164.68,
+      "source_row": 20,
+      "category_raw": "Farmácia",
+      "parent_group": "Saúde",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-01-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 4924.2,
+      "card_total": 26164.68,
+      "source_row": 21,
+      "category_raw": "Vestuário",
+      "parent_group": "Vestuário",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-01-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 265.4,
+      "card_total": 26164.68,
+      "source_row": 22,
+      "category_raw": "Mercado",
+      "parent_group": "Mercado",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-01-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 4224.15,
+      "card_total": 26164.68,
+      "source_row": 25,
+      "category_raw": "Saúde",
+      "parent_group": "Saúde",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-01-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 180.46,
+      "card_total": 26164.68,
+      "source_row": 27,
+      "category_raw": "Mala",
+      "parent_group": "Viagem",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-01-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 61,
+      "card_total": 26164.68,
+      "source_row": 28,
+      "category_raw": "Larissa",
+      "parent_group": "Larissa",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-01-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 1750,
+      "card_total": 26164.68,
+      "source_row": 29,
+      "category_raw": "Larissa - Saúde",
+      "parent_group": "Larissa",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-01-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 59.8,
+      "card_total": 26164.68,
+      "source_row": 31,
+      "category_raw": "Assinatura",
+      "parent_group": "Assinaturas",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-01-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 1824.77,
+      "card_total": 26164.68,
+      "source_row": 33,
+      "category_raw": "Presentes",
+      "parent_group": "Presentes",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-01-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 39.9,
+      "card_total": 26164.68,
+      "source_row": 34,
+      "category_raw": "Rappi",
+      "parent_group": "Mercado",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-01-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 37.8,
+      "card_total": 26164.68,
+      "source_row": 35,
+      "category_raw": "Passagem Aérea",
+      "parent_group": "Viagem",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-01-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 431.77,
+      "card_total": 26164.68,
+      "source_row": 37,
+      "category_raw": "Benjamin",
+      "parent_group": "Benjamin - Outros",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-01-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 745.66,
+      "card_total": 26164.68,
+      "source_row": 38,
+      "category_raw": "Benjamin - Saúde",
+      "parent_group": "Benjamin - Saúde",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-01-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 838.43,
+      "card_total": 26164.68,
+      "source_row": 39,
+      "category_raw": "Benjamin - Vestuário",
+      "parent_group": "Benjamin - Vestuário",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-01-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 124.79,
+      "card_total": 26164.68,
+      "source_row": 42,
+      "category_raw": "Seguro de Vida",
+      "parent_group": "Seguros",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-01-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 169.8,
+      "card_total": 26164.68,
+      "source_row": 43,
+      "category_raw": "Seguro Residencial",
+      "parent_group": "Seguros",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-01-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 295.42,
+      "card_total": 26164.68,
+      "source_row": 47,
+      "category_raw": "Combustível",
+      "parent_group": "Carro",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-01-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 132.92,
+      "card_total": 26164.68,
+      "source_row": 67,
+      "category_raw": "Outros",
+      "parent_group": "Outros",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-01-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 515.6,
+      "card_total": 26164.68,
+      "source_row": 70,
+      "category_raw": "Ifood",
+      "parent_group": "Ifood",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-01-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 79,
+      "card_total": 26164.68,
+      "source_row": 71,
+      "category_raw": "Estacionamento e Pedágio",
+      "parent_group": "Carro",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-01-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 160,
+      "card_total": 26164.68,
+      "source_row": 78,
+      "category_raw": "Anuidade",
+      "parent_group": "Tarifas",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-01-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 273.7,
+      "card_total": 26164.68,
+      "source_row": 81,
+      "category_raw": "Seguro Jeep Compass",
+      "parent_group": "Carro",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-01-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 1651.89,
+      "card_total": 24448.52,
+      "source_row": 7,
+      "category_raw": "Rafiki",
+      "parent_group": "Rafiki",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-02-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 49.99,
+      "card_total": 24448.52,
+      "source_row": 10,
+      "category_raw": "Google",
+      "parent_group": "Assinaturas",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-02-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 647.3,
+      "card_total": 24448.52,
+      "source_row": 11,
+      "category_raw": "Apple",
+      "parent_group": "Assinaturas",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-02-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 392.21,
+      "card_total": 24448.52,
+      "source_row": 12,
+      "category_raw": "Amazon",
+      "parent_group": "Assinaturas",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-02-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 23.9,
+      "card_total": 24448.52,
+      "source_row": 13,
+      "category_raw": "Spotify",
+      "parent_group": "Assinaturas",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-02-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 80,
+      "card_total": 24448.52,
+      "source_row": 14,
+      "category_raw": "Sócio Rei",
+      "parent_group": "Assinaturas",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-02-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 680,
+      "card_total": 24448.52,
+      "source_row": 15,
+      "category_raw": "Cabelereiro",
+      "parent_group": "Cabelereiro",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-02-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 777.39,
+      "card_total": 24448.52,
+      "source_row": 18,
+      "category_raw": "Bebidas",
+      "parent_group": "Alimentação",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-02-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 708.7,
+      "card_total": 24448.52,
+      "source_row": 19,
+      "category_raw": "Restaurantes",
+      "parent_group": "Restaurantes",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-02-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 1324.96,
+      "card_total": 24448.52,
+      "source_row": 20,
+      "category_raw": "Farmácia",
+      "parent_group": "Saúde",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-02-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 5144.71,
+      "card_total": 24448.52,
+      "source_row": 21,
+      "category_raw": "Vestuário",
+      "parent_group": "Vestuário",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-02-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 2110.84,
+      "card_total": 24448.52,
+      "source_row": 22,
+      "category_raw": "Mercado",
+      "parent_group": "Mercado",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-02-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 4671.12,
+      "card_total": 24448.52,
+      "source_row": 25,
+      "category_raw": "Saúde",
+      "parent_group": "Saúde",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-02-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 1750,
+      "card_total": 24448.52,
+      "source_row": 29,
+      "category_raw": "Larissa - Saúde",
+      "parent_group": "Larissa",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-02-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": -1004.2,
+      "card_total": 24448.52,
+      "source_row": 31,
+      "category_raw": "Assinatura",
+      "parent_group": "Assinaturas",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-02-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 1084.77,
+      "card_total": 24448.52,
+      "source_row": 33,
+      "category_raw": "Presentes",
+      "parent_group": "Presentes",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-02-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 39.9,
+      "card_total": 24448.52,
+      "source_row": 34,
+      "category_raw": "Rappi",
+      "parent_group": "Mercado",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-02-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 287.8,
+      "card_total": 24448.52,
+      "source_row": 35,
+      "category_raw": "Passagem Aérea",
+      "parent_group": "Viagem",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-02-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 292.92,
+      "card_total": 24448.52,
+      "source_row": 37,
+      "category_raw": "Benjamin",
+      "parent_group": "Benjamin - Outros",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-02-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 838.31,
+      "card_total": 24448.52,
+      "source_row": 39,
+      "category_raw": "Benjamin - Vestuário",
+      "parent_group": "Benjamin - Vestuário",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-02-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 124.79,
+      "card_total": 24448.52,
+      "source_row": 42,
+      "category_raw": "Seguro de Vida",
+      "parent_group": "Seguros",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-02-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 169.8,
+      "card_total": 24448.52,
+      "source_row": 43,
+      "category_raw": "Seguro Residencial",
+      "parent_group": "Seguros",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-02-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 258.96,
+      "card_total": 24448.52,
+      "source_row": 67,
+      "category_raw": "Outros",
+      "parent_group": "Outros",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-02-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 1848.76,
+      "card_total": 24448.52,
+      "source_row": 70,
+      "category_raw": "Ifood",
+      "parent_group": "Ifood",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-02-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 60,
+      "card_total": 24448.52,
+      "source_row": 71,
+      "category_raw": "Estacionamento e Pedágio",
+      "parent_group": "Carro",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-02-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 160,
+      "card_total": 24448.52,
+      "source_row": 78,
+      "category_raw": "Anuidade",
+      "parent_group": "Tarifas",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-02-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 273.7,
+      "card_total": 24448.52,
+      "source_row": 81,
+      "category_raw": "Seguro Jeep Compass",
+      "parent_group": "Carro",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-02-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 3302.19,
+      "card_total": 35623.38,
+      "source_row": 7,
+      "category_raw": "Rafiki",
+      "parent_group": "Rafiki",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-03-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 49.99,
+      "card_total": 35623.38,
+      "source_row": 10,
+      "category_raw": "Google",
+      "parent_group": "Assinaturas",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-03-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 431.5,
+      "card_total": 35623.38,
+      "source_row": 11,
+      "category_raw": "Apple",
+      "parent_group": "Assinaturas",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-03-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 124.76,
+      "card_total": 35623.38,
+      "source_row": 12,
+      "category_raw": "Amazon",
+      "parent_group": "Assinaturas",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-03-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 23.9,
+      "card_total": 35623.38,
+      "source_row": 13,
+      "category_raw": "Spotify",
+      "parent_group": "Assinaturas",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-03-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 80,
+      "card_total": 35623.38,
+      "source_row": 14,
+      "category_raw": "Sócio Rei",
+      "parent_group": "Assinaturas",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-03-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 777.39,
+      "card_total": 35623.38,
+      "source_row": 18,
+      "category_raw": "Bebidas",
+      "parent_group": "Alimentação",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-03-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 1284.7,
+      "card_total": 35623.38,
+      "source_row": 19,
+      "category_raw": "Restaurantes",
+      "parent_group": "Restaurantes",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-03-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 1738.98,
+      "card_total": 35623.38,
+      "source_row": 20,
+      "category_raw": "Farmácia",
+      "parent_group": "Saúde",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-03-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 14662.29,
+      "card_total": 35623.38,
+      "source_row": 21,
+      "category_raw": "Vestuário",
+      "parent_group": "Vestuário",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-03-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 489.9,
+      "card_total": 35623.38,
+      "source_row": 22,
+      "category_raw": "Mercado",
+      "parent_group": "Mercado",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-03-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 4433.85,
+      "card_total": 35623.38,
+      "source_row": 25,
+      "category_raw": "Saúde",
+      "parent_group": "Saúde",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-03-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 1750,
+      "card_total": 35623.38,
+      "source_row": 29,
+      "category_raw": "Larissa - Saúde",
+      "parent_group": "Larissa",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-03-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 164.7,
+      "card_total": 35623.38,
+      "source_row": 31,
+      "category_raw": "Assinatura",
+      "parent_group": "Assinaturas",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-03-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 1291.57,
+      "card_total": 35623.38,
+      "source_row": 33,
+      "category_raw": "Presentes",
+      "parent_group": "Presentes",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-03-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 39.9,
+      "card_total": 35623.38,
+      "source_row": 34,
+      "category_raw": "Rappi",
+      "parent_group": "Mercado",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-03-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 37.8,
+      "card_total": 35623.38,
+      "source_row": 35,
+      "category_raw": "Passagem Aérea",
+      "parent_group": "Viagem",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-03-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 292.92,
+      "card_total": 35623.38,
+      "source_row": 37,
+      "category_raw": "Benjamin",
+      "parent_group": "Benjamin - Outros",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-03-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 647.55,
+      "card_total": 35623.38,
+      "source_row": 38,
+      "category_raw": "Benjamin - Saúde",
+      "parent_group": "Benjamin - Saúde",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-03-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 955.65,
+      "card_total": 35623.38,
+      "source_row": 39,
+      "category_raw": "Benjamin - Vestuário",
+      "parent_group": "Benjamin - Vestuário",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-03-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 169.8,
+      "card_total": 35623.38,
+      "source_row": 43,
+      "category_raw": "Seguro Residencial",
+      "parent_group": "Seguros",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-03-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 98.96,
+      "card_total": 35623.38,
+      "source_row": 67,
+      "category_raw": "Outros",
+      "parent_group": "Outros",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-03-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 2263.38,
+      "card_total": 35623.38,
+      "source_row": 70,
+      "category_raw": "Ifood",
+      "parent_group": "Ifood",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-03-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 78,
+      "card_total": 35623.38,
+      "source_row": 71,
+      "category_raw": "Estacionamento e Pedágio",
+      "parent_group": "Carro",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-03-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 160,
+      "card_total": 35623.38,
+      "source_row": 78,
+      "category_raw": "Anuidade",
+      "parent_group": "Tarifas",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-03-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 273.7,
+      "card_total": 35623.38,
+      "source_row": 81,
+      "category_raw": "Seguro Jeep Compass",
+      "parent_group": "Carro",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-03-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 2606.36,
+      "card_total": 31888.09,
+      "source_row": 7,
+      "category_raw": "Rafiki",
+      "parent_group": "Rafiki",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-04-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 49.99,
+      "card_total": 31888.09,
+      "source_row": 10,
+      "category_raw": "Google",
+      "parent_group": "Assinaturas",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-04-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 547.9,
+      "card_total": 31888.09,
+      "source_row": 11,
+      "category_raw": "Apple",
+      "parent_group": "Assinaturas",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-04-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 53.86,
+      "card_total": 31888.09,
+      "source_row": 12,
+      "category_raw": "Amazon",
+      "parent_group": "Assinaturas",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-04-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 23.9,
+      "card_total": 31888.09,
+      "source_row": 13,
+      "category_raw": "Spotify",
+      "parent_group": "Assinaturas",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-04-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 80,
+      "card_total": 31888.09,
+      "source_row": 14,
+      "category_raw": "Sócio Rei",
+      "parent_group": "Assinaturas",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-04-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 740,
+      "card_total": 31888.09,
+      "source_row": 15,
+      "category_raw": "Cabelereiro",
+      "parent_group": "Cabelereiro",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-04-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 777.39,
+      "card_total": 31888.09,
+      "source_row": 18,
+      "category_raw": "Bebidas",
+      "parent_group": "Alimentação",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-04-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 2751.09,
+      "card_total": 31888.09,
+      "source_row": 19,
+      "category_raw": "Restaurantes",
+      "parent_group": "Restaurantes",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-04-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 1739.33,
+      "card_total": 31888.09,
+      "source_row": 20,
+      "category_raw": "Farmácia",
+      "parent_group": "Saúde",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-04-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 3556.77,
+      "card_total": 31888.09,
+      "source_row": 21,
+      "category_raw": "Vestuário",
+      "parent_group": "Vestuário",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-04-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 1681.55,
+      "card_total": 31888.09,
+      "source_row": 22,
+      "category_raw": "Mercado",
+      "parent_group": "Mercado",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-04-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 5091.22,
+      "card_total": 31888.09,
+      "source_row": 25,
+      "category_raw": "Saúde",
+      "parent_group": "Saúde",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-04-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 245,
+      "card_total": 31888.09,
+      "source_row": 28,
+      "category_raw": "Larissa",
+      "parent_group": "Larissa",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-04-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 1750,
+      "card_total": 31888.09,
+      "source_row": 29,
+      "category_raw": "Larissa - Saúde",
+      "parent_group": "Larissa",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-04-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 70,
+      "card_total": 31888.09,
+      "source_row": 30,
+      "category_raw": "Hotel",
+      "parent_group": "Viagem",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-04-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 164.7,
+      "card_total": 31888.09,
+      "source_row": 31,
+      "category_raw": "Assinatura",
+      "parent_group": "Assinaturas",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-04-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 1110.81,
+      "card_total": 31888.09,
+      "source_row": 33,
+      "category_raw": "Presentes",
+      "parent_group": "Presentes",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-04-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 39.9,
+      "card_total": 31888.09,
+      "source_row": 34,
+      "category_raw": "Rappi",
+      "parent_group": "Mercado",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-04-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 360.66,
+      "card_total": 31888.09,
+      "source_row": 35,
+      "category_raw": "Passagem Aérea",
+      "parent_group": "Viagem",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-04-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 618.4,
+      "card_total": 31888.09,
+      "source_row": 37,
+      "category_raw": "Benjamin",
+      "parent_group": "Benjamin - Outros",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-04-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 1745.98,
+      "card_total": 31888.09,
+      "source_row": 38,
+      "category_raw": "Benjamin - Saúde",
+      "parent_group": "Benjamin - Saúde",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-04-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 1092.92,
+      "card_total": 31888.09,
+      "source_row": 39,
+      "category_raw": "Benjamin - Vestuário",
+      "parent_group": "Benjamin - Vestuário",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-04-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 1016.37,
+      "card_total": 31888.09,
+      "source_row": 40,
+      "category_raw": "Benjamin - Educação",
+      "parent_group": "Benjamin - Educação",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-04-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 169.8,
+      "card_total": 31888.09,
+      "source_row": 43,
+      "category_raw": "Seguro Residencial",
+      "parent_group": "Seguros",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-04-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 257.5,
+      "card_total": 31888.09,
+      "source_row": 47,
+      "category_raw": "Combustível",
+      "parent_group": "Carro",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-04-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 98.96,
+      "card_total": 31888.09,
+      "source_row": 67,
+      "category_raw": "Outros",
+      "parent_group": "Outros",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-04-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 2943.13,
+      "card_total": 31888.09,
+      "source_row": 70,
+      "category_raw": "Ifood",
+      "parent_group": "Ifood",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-04-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 70.9,
+      "card_total": 31888.09,
+      "source_row": 71,
+      "category_raw": "Estacionamento e Pedágio",
+      "parent_group": "Carro",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-04-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 160,
+      "card_total": 31888.09,
+      "source_row": 78,
+      "category_raw": "Anuidade",
+      "parent_group": "Tarifas",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-04-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 273.7,
+      "card_total": 31888.09,
+      "source_row": 81,
+      "category_raw": "Seguro Jeep Compass",
+      "parent_group": "Carro",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-04-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 7554.86,
+      "card_total": 35072.44,
+      "source_row": 7,
+      "category_raw": "Rafiki",
+      "parent_group": "Rafiki",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-05-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 49.99,
+      "card_total": 35072.44,
+      "source_row": 10,
+      "category_raw": "Google",
+      "parent_group": "Assinaturas",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-05-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 721.4,
+      "card_total": 35072.44,
+      "source_row": 11,
+      "category_raw": "Apple",
+      "parent_group": "Assinaturas",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-05-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 1069.21,
+      "card_total": 35072.44,
+      "source_row": 12,
+      "category_raw": "Amazon",
+      "parent_group": "Assinaturas",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-05-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 23.9,
+      "card_total": 35072.44,
+      "source_row": 13,
+      "category_raw": "Spotify",
+      "parent_group": "Assinaturas",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-05-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 80,
+      "card_total": 35072.44,
+      "source_row": 14,
+      "category_raw": "Sócio Rei",
+      "parent_group": "Assinaturas",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-05-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 490,
+      "card_total": 35072.44,
+      "source_row": 15,
+      "category_raw": "Cabelereiro",
+      "parent_group": "Cabelereiro",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-05-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 691.89,
+      "card_total": 35072.44,
+      "source_row": 18,
+      "category_raw": "Bebidas",
+      "parent_group": "Alimentação",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-05-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 4269.15,
+      "card_total": 35072.44,
+      "source_row": 19,
+      "category_raw": "Restaurantes",
+      "parent_group": "Restaurantes",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-05-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 2118.5,
+      "card_total": 35072.44,
+      "source_row": 20,
+      "category_raw": "Farmácia",
+      "parent_group": "Saúde",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-05-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 3668.64,
+      "card_total": 35072.44,
+      "source_row": 21,
+      "category_raw": "Vestuário",
+      "parent_group": "Vestuário",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-05-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 541.18,
+      "card_total": 35072.44,
+      "source_row": 22,
+      "category_raw": "Mercado",
+      "parent_group": "Mercado",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-05-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": -408.31,
+      "card_total": 35072.44,
+      "source_row": 24,
+      "category_raw": "Aluguel Carro",
+      "parent_group": "Viagem",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-05-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 5155.35,
+      "card_total": 35072.44,
+      "source_row": 25,
+      "category_raw": "Saúde",
+      "parent_group": "Saúde",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-05-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 1750,
+      "card_total": 35072.44,
+      "source_row": 29,
+      "category_raw": "Larissa - Saúde",
+      "parent_group": "Larissa",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-05-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 164.7,
+      "card_total": 35072.44,
+      "source_row": 31,
+      "category_raw": "Assinatura",
+      "parent_group": "Assinaturas",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-05-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 858.26,
+      "card_total": 35072.44,
+      "source_row": 33,
+      "category_raw": "Presentes",
+      "parent_group": "Presentes",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-05-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 39.9,
+      "card_total": 35072.44,
+      "source_row": 34,
+      "category_raw": "Rappi",
+      "parent_group": "Mercado",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-05-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 37.8,
+      "card_total": 35072.44,
+      "source_row": 35,
+      "category_raw": "Passagem Aérea",
+      "parent_group": "Viagem",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-05-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 292.92,
+      "card_total": 35072.44,
+      "source_row": 37,
+      "category_raw": "Benjamin",
+      "parent_group": "Benjamin - Outros",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-05-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 638.38,
+      "card_total": 35072.44,
+      "source_row": 38,
+      "category_raw": "Benjamin - Saúde",
+      "parent_group": "Benjamin - Saúde",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-05-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 830.75,
+      "card_total": 35072.44,
+      "source_row": 39,
+      "category_raw": "Benjamin - Vestuário",
+      "parent_group": "Benjamin - Vestuário",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-05-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 1427.16,
+      "card_total": 35072.44,
+      "source_row": 41,
+      "category_raw": "Benjamin - Batizado",
+      "parent_group": "Benjamin - Lazer",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-05-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 127.18,
+      "card_total": 35072.44,
+      "source_row": 42,
+      "category_raw": "Seguro de Vida",
+      "parent_group": "Seguros",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-05-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 169.8,
+      "card_total": 35072.44,
+      "source_row": 43,
+      "category_raw": "Seguro Residencial",
+      "parent_group": "Seguros",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-05-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 2130.92,
+      "card_total": 35072.44,
+      "source_row": 70,
+      "category_raw": "Ifood",
+      "parent_group": "Ifood",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-05-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 146,
+      "card_total": 35072.44,
+      "source_row": 71,
+      "category_raw": "Estacionamento e Pedágio",
+      "parent_group": "Carro",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-05-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": -0.79,
+      "card_total": 35072.44,
+      "source_row": 72,
+      "category_raw": "Crédito",
+      "parent_group": "Crédito",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-05-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 160,
+      "card_total": 35072.44,
+      "source_row": 78,
+      "category_raw": "Anuidade",
+      "parent_group": "Tarifas",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-05-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 273.7,
+      "card_total": 35072.44,
+      "source_row": 81,
+      "category_raw": "Seguro Jeep Compass",
+      "parent_group": "Carro",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-05-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 5312.54,
+      "card_total": 34503.59,
+      "source_row": 7,
+      "category_raw": "Rafiki",
+      "parent_group": "Rafiki",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-06-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 49.99,
+      "card_total": 34503.59,
+      "source_row": 10,
+      "category_raw": "Google",
+      "parent_group": "Assinaturas",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-06-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 391.5,
+      "card_total": 34503.59,
+      "source_row": 11,
+      "category_raw": "Apple",
+      "parent_group": "Assinaturas",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-06-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 19.9,
+      "card_total": 34503.59,
+      "source_row": 12,
+      "category_raw": "Amazon",
+      "parent_group": "Assinaturas",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-06-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 23.9,
+      "card_total": 34503.59,
+      "source_row": 13,
+      "category_raw": "Spotify",
+      "parent_group": "Assinaturas",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-06-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 80,
+      "card_total": 34503.59,
+      "source_row": 14,
+      "category_raw": "Sócio Rei",
+      "parent_group": "Assinaturas",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-06-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 740,
+      "card_total": 34503.59,
+      "source_row": 15,
+      "category_raw": "Cabelereiro",
+      "parent_group": "Cabelereiro",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-06-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 50,
+      "card_total": 34503.59,
+      "source_row": 16,
+      "category_raw": "passeios",
+      "parent_group": "Lazer",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-06-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 374.98,
+      "card_total": 34503.59,
+      "source_row": 18,
+      "category_raw": "Bebidas",
+      "parent_group": "Alimentação",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-06-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 4051.72,
+      "card_total": 34503.59,
+      "source_row": 19,
+      "category_raw": "Restaurantes",
+      "parent_group": "Restaurantes",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-06-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 2485.15,
+      "card_total": 34503.59,
+      "source_row": 20,
+      "category_raw": "Farmácia",
+      "parent_group": "Saúde",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-06-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 4656.69,
+      "card_total": 34503.59,
+      "source_row": 21,
+      "category_raw": "Vestuário",
+      "parent_group": "Vestuário",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-06-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 901.39,
+      "card_total": 34503.59,
+      "source_row": 22,
+      "category_raw": "Mercado",
+      "parent_group": "Mercado",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-06-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 72.6,
+      "card_total": 34503.59,
+      "source_row": 24,
+      "category_raw": "Aluguel Carro",
+      "parent_group": "Viagem",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-06-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 4461.44,
+      "card_total": 34503.59,
+      "source_row": 25,
+      "category_raw": "Saúde",
+      "parent_group": "Saúde",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-06-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 1750,
+      "card_total": 34503.59,
+      "source_row": 29,
+      "category_raw": "Larissa - Saúde",
+      "parent_group": "Larissa",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-06-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 295.93,
+      "card_total": 34503.59,
+      "source_row": 31,
+      "category_raw": "Assinatura",
+      "parent_group": "Assinaturas",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-06-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 2105.1,
+      "card_total": 34503.59,
+      "source_row": 33,
+      "category_raw": "Presentes",
+      "parent_group": "Presentes",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-06-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 39.9,
+      "card_total": 34503.59,
+      "source_row": 34,
+      "category_raw": "Rappi",
+      "parent_group": "Mercado",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-06-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 37.8,
+      "card_total": 34503.59,
+      "source_row": 35,
+      "category_raw": "Passagem Aérea",
+      "parent_group": "Viagem",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-06-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 360.32,
+      "card_total": 34503.59,
+      "source_row": 37,
+      "category_raw": "Benjamin",
+      "parent_group": "Benjamin - Outros",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-06-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 318.9,
+      "card_total": 34503.59,
+      "source_row": 38,
+      "category_raw": "Benjamin - Saúde",
+      "parent_group": "Benjamin - Saúde",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-06-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 808.89,
+      "card_total": 34503.59,
+      "source_row": 39,
+      "category_raw": "Benjamin - Vestuário",
+      "parent_group": "Benjamin - Vestuário",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-06-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 1427.1,
+      "card_total": 34503.59,
+      "source_row": 41,
+      "category_raw": "Benjamin - Batizado",
+      "parent_group": "Benjamin - Lazer",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-06-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 169.8,
+      "card_total": 34503.59,
+      "source_row": 43,
+      "category_raw": "Seguro Residencial",
+      "parent_group": "Seguros",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-06-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 289.7,
+      "card_total": 34503.59,
+      "source_row": 47,
+      "category_raw": "Combustível",
+      "parent_group": "Carro",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-06-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 0.24,
+      "card_total": 34503.59,
+      "source_row": 67,
+      "category_raw": "Outros",
+      "parent_group": "Outros",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-06-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 2665.96,
+      "card_total": 34503.59,
+      "source_row": 70,
+      "category_raw": "Ifood",
+      "parent_group": "Ifood",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-06-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 130,
+      "card_total": 34503.59,
+      "source_row": 71,
+      "category_raw": "Estacionamento e Pedágio",
+      "parent_group": "Carro",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-06-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": -1.55,
+      "card_total": 34503.59,
+      "source_row": 72,
+      "category_raw": "Crédito",
+      "parent_group": "Crédito",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-06-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 160,
+      "card_total": 34503.59,
+      "source_row": 78,
+      "category_raw": "Anuidade",
+      "parent_group": "Tarifas",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-06-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    },
+    {
+      "amount": 273.7,
+      "card_total": 34503.59,
+      "source_row": 81,
+      "category_raw": "Seguro Jeep Compass",
+      "parent_group": "Carro",
+      "source_label": "Controle_Financeiro_v16.xlsm · Consolidado Cartão de Crédito",
+      "competence_month": "2026-06-01",
+      "source_workbook_sha256": "57a7efb384f410d02f698de1bcefc6190112edcf68a41cb2f79b49fc8a102c1e"
+    }
+  ]
+}
