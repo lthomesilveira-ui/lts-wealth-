@@ -173,7 +173,7 @@ async function run(browser,viewport,label){
   await frame.locator('.v168-tabs [data-v168-exp-tab="categories"]').click();await frame.locator('.v175-categories').waitFor();
   await frame.locator('.v175-categories details').evaluateAll(nodes=>nodes.forEach(n=>n.open=true));
   let text=semantic(await frame.locator('.v175-categories').innerText());
-  for(const phrase of [semantic(brl(2174777.52)),semantic(brl(267441.25)),'historico pago · coopermsd','emprestimo consignado · coopharma','familia — saidas'])
+  for(const phrase of [semantic(brl(2174777.52)),semantic(brl(267441.25)),semantic('Histórico pago · CooperMSD'),semantic('Empréstimo consignado · Coopharma'),semantic('Família — saídas')])
     if(!text.includes(phrase))throw Error(label+': category audit missing '+phrase);
   if(text.includes(semantic(brl(567420.96))))throw Error(label+': old false Itaú total is still displayed as subgroup');
   if(label==='desktop')await page.screenshot({path:'v175-desktop-categories.png',fullPage:true});
@@ -186,7 +186,7 @@ async function run(browser,viewport,label){
   if(monthlyCalls.length>5)throw Error(label+': monthly reader made too many calls '+monthlyCalls.length);
   if(calls.some(x=>/^lts_browser_monthly_balance_v[123]$/.test(x.name)))throw Error(label+': legacy monthly RPC escaped V175 mapping');
   text=semantic(await frame.locator('.v175-monthly').innerText());
-  for(const phrase of ['venda de acoes, rsus e outros ativos','venda de acoes de abril/2026 sem fonte localizada',semantic(brl(18808.69)),semantic(brl(2274.69)),semantic(brl(708.7)),semantic(brl(1284.7))])
+  for(const phrase of [semantic('Venda de ações, RSUs e outros ativos'),semantic('Venda de ações de abril/2026 sem fonte localizada'),semantic(brl(18808.69)),semantic(brl(2274.69)),semantic(brl(708.7)),semantic(brl(1284.7))])
     if(!text.includes(phrase))throw Error(label+': monthly audit missing '+phrase);
   const cellCount=await frame.locator('.v175-monthly th,.v175-monthly td').count();
   if(cellCount>3500)throw Error(label+': full-history DOM is unbounded '+cellCount);
@@ -198,7 +198,7 @@ async function run(browser,viewport,label){
   await frame.locator('.v168-tabs [data-v168-exp-tab="cards"]').click();
   await frame.waitForFunction(()=>window.__LTS_V175_STATE?.cards?.data?.version==='card-flow-schedule-v2-v175'&&!window.__LTS_V175_STATE?.cards?.loading);
   text=semantic(await frame.locator('.v175-cards').innerText());
-  for(const phrase of ['visa · final 3980','mastercard black itau','visa itau','c6 historico · final 6610','c6 carbon · final 7873','c6 carbon · final 8304',semantic(brl(5318.86)),semantic(brl(11202.03))])
+  for(const phrase of [semantic('Visa · final 3980'),semantic('Mastercard Black Itaú'),semantic('Visa Itaú'),semantic('C6 histórico · final 6610'),semantic('C6 Carbon · final 7873'),semantic('C6 Carbon · final 8304'),semantic(brl(5318.86)),semantic(brl(11202.03))])
     if(!text.includes(phrase))throw Error(label+': cards audit missing '+phrase);
   if(label==='desktop')await page.screenshot({path:'v175-desktop-cards.png',fullPage:true});
 
