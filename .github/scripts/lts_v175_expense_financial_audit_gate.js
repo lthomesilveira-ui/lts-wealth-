@@ -90,7 +90,7 @@ function monthlyFixture(from,to){
   });
   const totals=monthlyTotals.reduce((o,x)=>{for(const k of ['revenue','expenses','operating_balance','extraordinary','cash_after_extraordinary'])o[k]+=x[k];return o},{revenue:0,expenses:0,operating_balance:0,extraordinary:0,cash_after_extraordinary:0});
   return{
-    version:'monthly-balance-v5-v175-financial-audit',from,to,months,monthly_totals,totals,
+    version:'monthly-balance-v5-v175-financial-audit',from,to,months,monthly_totals:monthlyTotals,totals,
     revenue_groups:[{label:'Salário',source_rows:months.length,total:100000*months.length,monthly:months.map(m=>({month:m,amount:100000}))}],
     extraordinary_groups:saleTotal?[{label:'Venda de ações, RSUs e outros ativos',total:saleTotal,source_rows:14,monthly:saleMonthly}]:[],
     expense_groups:[
