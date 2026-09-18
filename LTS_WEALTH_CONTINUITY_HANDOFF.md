@@ -1,6 +1,6 @@
 # LTS Wealth — Continuity Handoff
 
-Last materially refreshed: 2026-09-17 (V172 V171-review closure published)
+Last materially refreshed: 2026-09-18 (V175 financial expense audit published)
 
 This file exists so project continuity never depends on chat context. Always re-fetch `main`, active branch, `PROJECT_MASTER_BACKLOG.md`, `NEXT_HOMOLOGATION_GATE.md`, this file and the latest immutable checkpoint before every repository write.
 
@@ -16,7 +16,19 @@ This file exists so project continuity never depends on chat context. Always re-
 - Never force branch divergence; use normal fast-forward/merge only after fresh compare.
 - Preserve historical evidence back to 2013 where supported.
 
-## Current product — V172 published in fixed homologation
+## Current product — V175 published in fixed homologation
+- Product merge: `f198c0e4e00540d3e4d2e2649b7003b7618008b1`; manifest exposure: `9b55e58e2d8bd0feb0b1cbcad020a0094116b2b3`; candidate: `wip35-v175-candidate.html`.
+- Branch gate `35386909885` and Supabase `lts_v175_financial_audit_qa_v1` are PASS; Pages deployment `35389818312` is SUCCESS.
+- V175 is homologation-only. Protected public `index.html` remains not promoted.
+- Expense source audit now combines supported current accounts and cards once, with exact workbook monthly-category reconciliation only when source sum, source card total and current LTS card total agree.
+- User-reported Restaurant/iFood/Rafiki gaps for Dec/2025–Mar/2026 are source-recovered. Full-history monthly balance returns 156 months but renders annual summary plus one selected year, avoiding the V174 authenticated-browser hang.
+- Historical loan display no longer collapses all `Empréstimos` paid from Itaú into one false Itaú lender. Paid history is split by counterparty: Itaú R$ 267.441,25; CooperMSD R$ 224.164,59; Coopharma R$ 84.569,38; CGI/CEF/Funcef separate. Historical paid is not current debt stock.
+- Historical card inventory preserves inactive instruments: Itaú Mastercard lineage, Visa Itaú, Visa Infinite Itaú; Bradesco Aeternum and Visa/Infinite Prime; C6 historical 6610 and Carbon 7873/8304.
+- Sep/2026 share-sale context is restored at R$ 18.808,69 from confirmed C6 Global evidence; downstream interbank transfers remain neutral.
+- One explicit open issue remains: `stock_sale_2026_04_missing_source`. User confirms Apr/2026 sale but no source amount was found, so no value is fabricated.
+- Immutable receipt: `backups/V175_FINANCIAL_EXPENSE_AUDIT_PUBLISHED_2026-09-18.md`.
+
+## Protected predecessor — V172 published in fixed homologation
 - Product merge: `1af047cbac2919c2a51f1b850afdf982153d78d8`; tested branch head: `5789fe38fe101d175c72ffe727e5bbd4bb647058`; manifest exposure: `5a8cbfb27d3a806880cd309f7c8f70fc022681dd`; candidate: `wip35-v172-candidate.html`.
 - Immutable publication receipt: `backups/V172_V171_REVIEW_PUBLISHED_2026-09-17.md`.
 - V172 is homologation-only. The protected public `index.html` remains unchanged with SHA-256 `cca36731258680cc15a73fbad61c90ddf803358b741fd3ef58fefe5419eb688b`; public promotion remains unauthorized.
