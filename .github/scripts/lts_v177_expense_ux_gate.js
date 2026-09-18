@@ -128,8 +128,7 @@ async function run(browser,viewport,label){
 
   const familyRow=frame.locator('.v175-rankrow').filter({hasText:'Família — saídas'}).first();
   await familyRow.locator(':scope > strong').click();
-  await page.waitForTimeout(100);
-  await frame.evaluate(()=>Boolean(window.__LTS_V177_STATE?.detail?.open));
+  await frame.waitForFunction(()=>window.__LTS_V177_STATE?.detail?.data?.total===263909.54);
   const drawer=frame.locator('#v177ExpenseDrawer .v177-drawer');
   await drawer.waitFor();
   text=semantic(await drawer.innerText());
@@ -139,14 +138,18 @@ async function run(browser,viewport,label){
   await drawer.locator('[data-v177-close]').click();
 
   const apartmentRow=frame.locator('.v175-rankrow').filter({hasText:'Apartamento · CIPÓ 396'}).first();
-  await apartmentRow.locator(':scope > strong').click();await frame.locator('#v177ExpenseDrawer .v177-drawer').waitFor();
+  await apartmentRow.locator(':scope > strong').click();
+  await frame.waitForFunction(()=>window.__LTS_V177_STATE?.detail?.data?.total===4529057.60);
+  await frame.locator('#v177ExpenseDrawer .v177-drawer').waitFor();
   text=semantic(await frame.locator('#v177ExpenseDrawer .v177-drawer').innerText());
   for(const phrase of [semantic(brl(4529057.60)),semantic('Aquisição do imóvel'),semantic('Financiamento imobiliário'),semantic('Obra e reforma'),semantic('Custos recorrentes de moradia')])
     if(!text.includes(phrase))throw Error(label+': apartment drawer missing '+phrase);
   await frame.locator('#v177ExpenseDrawer [data-v177-close]').first().click();
 
   const subgroup=apartmentRow.locator('details em').filter({hasText:'Custos recorrentes de moradia'}).first();
-  await subgroup.click();await frame.locator('#v177ExpenseDrawer .v177-drawer').waitFor();
+  await subgroup.click();
+  await frame.waitForFunction(()=>window.__LTS_V177_STATE?.detail?.data?.total===364579.90);
+  await frame.locator('#v177ExpenseDrawer .v177-drawer').waitFor();
   text=semantic(await frame.locator('#v177ExpenseDrawer .v177-drawer').innerText());
   for(const phrase of [semantic(brl(364579.90)),'condomínio','energia elétrica','seguro residencial'])
     if(!text.includes(semantic(phrase)))throw Error(label+': recurring-housing detail missing '+phrase);
