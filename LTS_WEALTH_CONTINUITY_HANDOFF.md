@@ -1,6 +1,6 @@
 # LTS Wealth — Continuity Handoff
 
-Last materially refreshed: 2026-09-18 (V176 Flow/expense audit published)
+Last materially refreshed: 2026-09-18 (V177 expense audit / apartment roll-up / drill-down published)
 
 This file exists so project continuity never depends on chat context. Always re-fetch `main`, active branch, `PROJECT_MASTER_BACKLOG.md`, `NEXT_HOMOLOGATION_GATE.md`, this file and the latest immutable checkpoint before every repository write.
 
@@ -16,7 +16,20 @@ This file exists so project continuity never depends on chat context. Always re-
 - Never force branch divergence; use normal fast-forward/merge only after fresh compare.
 - Preserve historical evidence back to 2013 where supported.
 
-## Current product — V176 published in fixed homologation
+## Current product — V177 published in fixed homologation
+- Product merge: `49b8a0742b80409e728abff81f2fb67fcf0d5cc3`; manifest exposure: `d0c73d8a0e5589a74a2c3e1ad24b796e2a4ff00b`; candidate: `wip35-v177-candidate.html`.
+- Branch gate `35396351907` and Supabase `lts_v177_product_qa_v1` are PASS; Pages deployment `35396641223` is SUCCESS.
+- V177 is homologation-only. Protected public `index.html` remains not promoted.
+- 2020 expense audit: 2019 R$ 646.933,25 included R$ 344.846,71 of Casamento. Normalized 2019 excluding Casamento is R$ 302.086,54 (R$ 25.173,88/month), versus 2020 R$ 281.377,71 (R$ 23.448,14/month), a normalized difference of -6,86%. 2020 has card evidence in all 12 months; preserved source contains Mastercard Itaú only and no Visa settlement.
+- Property management roll-up is now `Apartamento · CIPÓ 396`: Aquisição do imóvel R$ 288.747,56; Financiamento imobiliário R$ 1.700.952,62; Obra e reforma R$ 2.174.777,52; Custos recorrentes de moradia R$ 364.579,90; total cash directed R$ 4.529.057,60.
+- Recurring housing costs retain a further professional split: Condomínio R$ 236.934,10; IPTU/impostos do imóvel R$ 69.235,37; Energia elétrica R$ 57.052,03; Seguro residencial R$ 1.358,40.
+- Normal expense UI no longer exposes `fonte reconciliada`, original-workbook/duplicate reconciliation strip or source/programming contract wording.
+- Management group amounts and subgroup lines are clickable. Drawer detail shows date/period, description, account/card, reference and value. Família — saídas reconciles exactly to R$ 263.909,54 / 202 rows; Apartamento to R$ 4.529.057,60 / 726 rows/components.
+- Immutable receipt: `backups/V177_EXPENSE_UX_PUBLISHED_2026-09-18.md`.
+- Existing explicit open issue remains: `stock_sale_2026_04_missing_source`.
+
+## Protected predecessor — V176 published in fixed homologation
+
 - Product merge: `5cd67fef7ee4080ba7d38dda0219ac646240fcf5`; manifest exposure: `3fea384ce5b989a0fa9596697e1967617081873a`; candidate: `wip35-v176-candidate.html`.
 - Branch gate `35392138400` and Supabase `lts_v176_expense_window_qa_v1` are PASS; Pages deployment `35392557385` is SUCCESS.
 - V176 is homologation-only. Protected public `index.html` remains not promoted.
