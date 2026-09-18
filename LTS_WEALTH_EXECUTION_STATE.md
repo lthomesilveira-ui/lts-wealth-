@@ -1,8 +1,21 @@
 # LTS Wealth — Execution State
 
-Published V172 V171-review closure, business date 17/09/2026. Tested branch head `5789fe38fe101d175c72ffe727e5bbd4bb647058` passed run `35273688049` and was squash-merged to `main` as `1af047cbac2919c2a51f1b850afdf982153d78d8`. Manifest exposure is `5a8cbfb27d3a806880cd309f7c8f70fc022681dd`. The fixed homologation redirects to `wip35-v172-candidate.html`; the protected public root remains unauthorized and byte-for-byte unchanged.
+Published V175 financial-expense audit, business date 18/09/2026. Product head `f198c0e4e00540d3e4d2e2649b7003b7618008b1`; manifest exposure `9b55e58e2d8bd0feb0b1cbcad020a0094116b2b3`; Pages deployment `35389818312` SUCCESS. Fixed homologation now points to `wip35-v175-candidate.html`; protected public root remains unauthorized and unchanged.
 
-Latest immutable release receipt: `backups/V172_V171_REVIEW_PUBLISHED_2026-09-17.md`. Earlier scope registers, release receipts and private evidence remain binding. `RETOMAR_LTS_WEALTH.md` remains the restart entrypoint.
+Latest immutable release receipt: `backups/V175_FINANCIAL_EXPENSE_AUDIT_PUBLISHED_2026-09-18.md`. Source scope, audit findings, recovered workbook monthly category evidence and canonical Supabase reader snapshot are all persisted outside chat.
+
+## V175 financial-expense audit PUBLISHED — 18/09/2026
+V175 closes the deep Despesas audit without inventing financial facts. It recovered the historical workbook's monthly card-category matrix and only applies a month when the category sum equals the workbook card total and that total equals the current LTS card total. This restores the user's blank Restaurant/iFood/Rafiki months from Dec/2025 through Mar/2026 while preserving the economic card total exactly.
+
+The false ~R$ 567k Itaú loan presentation was traced to a grouping bug: the UI grouped every `Empréstimos` row by the cash account `Itau` rather than the actual counterparty. V175 separates historical paid values by lender/counterparty: Itaú R$ 267.441,25, CooperMSD R$ 224.164,59, Coopharma R$ 84.569,38, plus CGI/CEF/Funcef. Historical paid values are explicitly not current debt stock.
+
+The full monthly backend returns 156 months from Oct/2013 through Sep/2026. The client no longer attempts to render the full 156×~90-group matrix at once; it renders an annual summary and one selected year's monthly detail, with direct full-range read plus bounded annual fallback. The V175 browser gate passed desktop and 390px mobile and verified bounded DOM size.
+
+Historical cards are now an explicit inventory including inactive instruments: Itaú Mastercard/Personnalite lineage, Visa Itaú, Visa Infinite Itaú; Bradesco Aeternum and Visa/Infinite Prime; C6 historical 6610 and Carbon 7873/8304. Future card screen keeps observed invoice, contracted installment floor, Flow value and considered value separate.
+
+Sep/2026 share-sale context is restored as extraordinary income at R$ 18.808,69 from source metadata explicitly confirmed as C6 Global sale context; downstream transfers remain neutral. Apr/2026 remains an open source gap (`stock_sale_2026_04_missing_source`) because no source amount was found; no amount is fabricated.
+
+Property works remain reconciled at R$ 2.174.777,52 versus workbook R$ 2.177.714,78, with the confirmed R$ 2.937,26 source duplicate preserved as evidence. Supabase QA `lts_v175_financial_audit_qa_v1` passed all V175 source checks. Branch gate `35386909885` is SUCCESS and reran protected V174/V173/V172/Flow/bank/invoice regressions.
 
 ## V172 V171-review closure PUBLISHED — 17/09/2026
 V172 fixes the V171 blank Flow without changing the validated table structure. The visible range now opens from five prior days through current-year end. Bounded V11 history and V12 future are independent; V12 historical data upgrades asynchronously and can no longer erase already-rendered rows if it times out. The gate deliberately fails that upgrade and still requires populated rows, exact opening/closing arithmetic, `RSU vested` and `Saldo c/ RSU`.
