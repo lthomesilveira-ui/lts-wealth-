@@ -151,7 +151,7 @@ async function run(browser,viewport,label){
   await frame.waitForFunction(()=>window.__LTS_V177_STATE?.detail?.data?.total===364579.90);
   await frame.locator('#v177ExpenseDrawer .v177-drawer').waitFor();
   text=semantic(await frame.locator('#v177ExpenseDrawer .v177-drawer').innerText());
-  for(const phrase of [semantic(brl(364579.90)),'condomínio','energia elétrica','seguro residencial'])
+  for(const phrase of [semantic(brl(364579.90)),'condomínio','enel','seguro residencial'])
     if(!text.includes(semantic(phrase)))throw Error(label+': recurring-housing detail missing '+phrase);
   await frame.locator('#v177ExpenseDrawer .v177-drawer header button[data-v177-close]').click();
 
