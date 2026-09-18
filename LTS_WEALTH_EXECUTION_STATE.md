@@ -1,8 +1,17 @@
 # LTS Wealth — Execution State
 
-Published V176 Flow/expense audit, business date 18/09/2026. Product head `5cd67fef7ee4080ba7d38dda0219ac646240fcf5`; manifest exposure `3fea384ce5b989a0fa9596697e1967617081873a`; Pages deployment `35392557385` SUCCESS. Fixed homologation points to `wip35-v176-candidate.html`; protected public root remains unauthorized and unchanged.
+Published V177 expense audit / apartment roll-up / transaction drill-down, business date 18/09/2026. Product head `49b8a0742b80409e728abff81f2fb67fcf0d5cc3`; manifest exposure `d0c73d8a0e5589a74a2c3e1ad24b796e2a4ff00b`; Pages deployment `35396641223` SUCCESS. Fixed homologation points to `wip35-v177-candidate.html`; protected public root remains unauthorized and unchanged.
 
-Latest immutable receipt: `backups/V176_FLOW_EXPENSE_AUDIT_PUBLISHED_2026-09-18.md`. User feedback, source audit findings and canonical Supabase reader snapshot are persisted outside chat.
+Latest immutable receipt: `backups/V177_EXPENSE_UX_PUBLISHED_2026-09-18.md`. V177 feedback decisions, 2020 audit findings and canonical Supabase reader snapshot are persisted outside chat.
+
+## V177 expense audit / apartment UX PUBLISHED — 18/09/2026
+The suspicious 2020 expense level was audited against effective account/card evidence. 2019 total R$ 646.933,25 was dominated by R$ 344.846,71 of wedding spend. Removing that one-off gives normalized 2019 R$ 302.086,54 (R$ 25.173,88/month), versus 2020 R$ 281.377,71 (R$ 23.448,14/month), only -6,86%. 2020 contains card evidence in all 12 months, R$ 99.107,08 total, with Mastercard Itaú in the preserved source and no Visa settlement.
+
+Property management is consolidated into one professional roll-up `Apartamento · CIPÓ 396`, with acquisition, financing, works and recurring housing costs kept economically distinct. Full-history cash directed totals R$ 4.529.057,60. The regular UI no longer exposes reconciliation/programming language; audit evidence stays in backend/checkpoints.
+
+Category/group values are clickable. The V177 drill-down reader reconciles the user-facing group total to underlying economic rows/components. Família — saídas = R$ 263.909,54 across 202 rows; Apartamento = R$ 4.529.057,60 across 726 rows/components. Source-only historical work rows display `Histórico` instead of fabricated transaction dates.
+
+Branch gate `35396351907` passed desktop, 390px mobile and protected V176/V175/V174/V173/V172/Flow/bank/invoice/documentary regressions. Supabase QA `lts_v177_product_qa_v1` passed the 2020 audit, apartment roll-up and group-detail parity checks.
 
 ## V176 Flow/expense audit PUBLISHED — 18/09/2026
 V176 closes the user's RSU/Flow and 6m/12m audit feedback. The bank-cash backend was already arithmetically correct, but the browser mixed Corretora RSU availability events into the positive event sum used for `Entradas`. V176 excludes future RSU/Cash-RSU availability and vesting-marker events from cash Entradas/Saídas and cash detail. RSU remains in the dedicated `RSU vested` liquidity layer, with green incremental disclosure on days the available/vested position increases.
