@@ -273,7 +273,7 @@
     renderNav=function(){const out=baseNav();after();return out};
 
     if(v168){v168.dashboard.data=null;v168.dashboard.started=false;v168.dashboard.loading=false;v168.expense.data=null;v168.expense.loading=false}
-    if(v169){v169.monthly.data=null;v169.monthly.key='';v169.monthly.error=null}
+    if(v169){v169.monthly.token=(v169.monthly.token||0)+1;v169.monthly.data=null;v169.monthly.key='';v169.monthly.error=null;v169.monthly.loading=false}
     window.__LTS_V174_V173_REVIEW={
       installed:true,version:'v174',base_version:'v173',public_index_changed:false,
       deep_expense_audit:true,stock_sales_extraordinary_fixed:true,monthly_resilient_full_history:true,
