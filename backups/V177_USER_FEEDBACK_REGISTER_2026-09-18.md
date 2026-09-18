@@ -1,6 +1,6 @@
 # V177 — Expense audit, drill-down and property UX feedback — 18/09/2026
 
-Status: USER FEEDBACK REGISTERED / ONE PROPERTY-ROLLUP DECISION PENDING
+Status: USER FEEDBACK REGISTERED / PROPERTY-ROLLUP DECISION CONFIRMED / IMPLEMENTATION AUTHORIZED
 Baseline: V176 fixed homologation
 Public root: protected; no production promotion authorized
 
@@ -68,3 +68,28 @@ A professional drawer/inline detail is preferred over exposing technical source 
 
 ## F05 — Front-end principle
 The product surface must answer management questions, not explain internal reconciliation mechanics. Reconciliation evidence is essential but belongs outside the normal front-end unless the user explicitly opens an audit/debug surface.
+
+## F06 — Property roll-up decision CONFIRMED by user
+User decision:
+- include recurring housing costs inside the apartment / housing roll-up;
+- use a professional label that makes clear these are costs to live in / occupy the property, not acquisition or investment;
+- examples that belong in this recurring layer: condominium, electricity/energy and equivalent housing-use costs; if rent existed in another housing context, it would conceptually belong to this living-cost layer.
+
+Approved management hierarchy:
+- `Apartamento · CIPÓ 396`
+  1. `Aquisição do imóvel`
+  2. `Financiamento imobiliário`
+  3. `Obra e reforma`
+  4. `Custos para morar` (working product label; may use an equivalent concise professional wording such as `Custos recorrentes de moradia` if clearer in the UI)
+
+Binding semantic rules:
+- acquisition, financing, works/reform and recurring occupancy costs stay economically distinct;
+- condominium, energy/electricity and property-use recurring costs roll up under the apartment while remaining identifiable in drill-down;
+- do not call financing `Aquisição`;
+- do not mix recurring housing-use costs into capital invested in acquisition/reform when computing investment subtotals;
+- allow the apartment roll-up to answer both:
+  - total cash directed to the property; and
+  - split between capital/investment-like uses and ongoing cost-to-live uses.
+
+User has authorized proceeding with this structure. No further property-rollup clarification is required before implementation.
+
