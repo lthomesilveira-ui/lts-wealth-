@@ -1,8 +1,19 @@
 # LTS Wealth — Execution State
 
-Published V175 financial-expense audit, business date 18/09/2026. Product head `f198c0e4e00540d3e4d2e2649b7003b7618008b1`; manifest exposure `9b55e58e2d8bd0feb0b1cbcad020a0094116b2b3`; Pages deployment `35389818312` SUCCESS. Fixed homologation now points to `wip35-v175-candidate.html`; protected public root remains unauthorized and unchanged.
+Published V176 Flow/expense audit, business date 18/09/2026. Product head `5cd67fef7ee4080ba7d38dda0219ac646240fcf5`; manifest exposure `3fea384ce5b989a0fa9596697e1967617081873a`; Pages deployment `35392557385` SUCCESS. Fixed homologation points to `wip35-v176-candidate.html`; protected public root remains unauthorized and unchanged.
 
-Latest immutable release receipt: `backups/V175_FINANCIAL_EXPENSE_AUDIT_PUBLISHED_2026-09-18.md`. Source scope, audit findings, recovered workbook monthly category evidence and canonical Supabase reader snapshot are all persisted outside chat.
+Latest immutable receipt: `backups/V176_FLOW_EXPENSE_AUDIT_PUBLISHED_2026-09-18.md`. User feedback, source audit findings and canonical Supabase reader snapshot are persisted outside chat.
+
+## V176 Flow/expense audit PUBLISHED — 18/09/2026
+V176 closes the user's RSU/Flow and 6m/12m audit feedback. The bank-cash backend was already arithmetically correct, but the browser mixed Corretora RSU availability events into the positive event sum used for `Entradas`. V176 excludes future RSU/Cash-RSU availability and vesting-marker events from cash Entradas/Saídas and cash detail. RSU remains in the dedicated `RSU vested` liquidity layer, with green incremental disclosure on days the available/vested position increases.
+
+The `Ocultar dias sem movimento` contract is now cash-only: a day remains visible only when actual cash Entradas or Saídas are non-zero for the selected bank scope. Carried negative balance, D0/D1, RSU, FGTS and other resource-layer changes alone are not movement. Explicit hide-zero also disables preset force-show behavior.
+
+The V175 expense reader had a real range bug: when a selected range started on the first day of a month, all earlier reconciled workbook category months could be included. That inflated 6m Saúde from R$ 92.359,98 to an incorrect value. V176 bounds workbook replacement to the selected date range. Correct 6m Saúde (01/04–18/09/2026) is R$ 56.307,56: Saúde geral/não atribuído R$ 36.146,23, Larissa R$ 10.515,00, Benjamin R$ 9.646,33. 12m Saúde remains source-backed at R$ 105.050,49.
+
+Empréstimos were re-audited and were not inflated by this bug: 6m R$ 38.691,93 = Itaú historical paid R$ 20.887,85 + Coopharma R$ 17.804,08; 12m R$ 109.227,39 = Itaú R$ 64.717,19 + Coopharma R$ 44.510,20. These remain historical cash payments, not current debt stock.
+
+Supabase QA `lts_v176_expense_window_qa_v1` passed all exact totals and confirmed zero pre-April workbook rows in the 6m reader. Branch gate `35392138400` passed desktop, 390px mobile and protected V175/V174/V173/V172/Flow/bank/invoice/documentary regressions.
 
 ## V175 financial-expense audit PUBLISHED — 18/09/2026
 V175 closes the deep Despesas audit without inventing financial facts. It recovered the historical workbook's monthly card-category matrix and only applies a month when the category sum equals the workbook card total and that total equals the current LTS card total. This restores the user's blank Restaurant/iFood/Rafiki months from Dec/2025 through Mar/2026 while preserving the economic card total exactly.
