@@ -54,6 +54,7 @@
       if(g==='Empréstimos'&&n.includes('itau'))return'Histórico pago · Itaú';
       if(g==='Empréstimos'&&n.includes('coopharma'))return'Empréstimo consignado · Coopharma';
       if(g==='Empréstimos'&&n.includes('pai'))return'Empréstimo familiar · Pai e Mãe';
+      if(g==='Financiamento de veículo'&&(n==='nao identificado'||n==='veiculo nao atribuido'))return'Volvo XC40';
       return professionalName(x);
     }
     function usefulSubgroups(group,rows){
@@ -64,7 +65,12 @@
         const cur=seen.get(key)||{name,total:0,rows:0};
         cur.total+=(num(row.total)||0);cur.rows+=(num(row.rows)||0);seen.set(key,cur);
       }
-      return [...seen.values()].sort((a,b)=>b.total-a.total);
+      const values=[...seen.values()].sort((a,b)=>b.total-a.total);
+      if(professionalName(group)==='Financiamento imobiliário'){
+        const allowed=new Set(['casa','cipo 396','financiamento imobiliario — casa','financiamento imobiliario - casa','financiamento imobiliario — cipo 396','financiamento imobiliario - cipo 396']);
+        if(values.length&&values.every(x=>allowed.has(norm(x.name))))return[];
+      }
+      return values;
     }
 
     function propertyReconciliation(data){return data?.property_improvement_reconciliation||{}}
