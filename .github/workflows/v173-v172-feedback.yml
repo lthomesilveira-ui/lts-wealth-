@@ -1,0 +1,72 @@
+name: V173 V172 feedback closure
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - work/v173-v172-feedback-20260918
+    paths:
+      - 'wip35-v173-candidate.html'
+      - 'lts-v173-v172-feedback.js'
+      - 'lts-v173-v172-feedback.css'
+      - 'backups/V173_V172_USER_FEEDBACK_REGISTER_2026-09-18.md'
+      - '.github/scripts/lts_v173_v172_feedback_contract.js'
+      - '.github/scripts/lts_v173_v172_feedback_gate.js'
+      - '.github/workflows/v173-v172-feedback.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  contract-and-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Validate V173 static contracts
+        run: |
+          node --check lts-v173-v172-feedback.js
+          node --check .github/scripts/lts_v173_v172_feedback_contract.js
+          node --check .github/scripts/lts_v173_v172_feedback_gate.js
+          node .github/scripts/lts_v173_v172_feedback_contract.js
+      - name: Install isolated browser dependency
+        run: |
+          npm install --no-save playwright@1.55.0
+          python -m pip install playwright==1.55.0
+          python -m playwright install --with-deps chromium
+      - name: Validate V173 category and composition feedback
+        run: |
+          python3 -m http.server 8783 >/tmp/lts-v173-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID || true' EXIT
+          sleep 1
+          timeout 180s node .github/scripts/lts_v173_v172_feedback_gate.js
+      - name: Re-run V172 and protected contracts
+        run: |
+          node .github/scripts/lts_v172_v171_review_contract.js
+          node .github/scripts/lts_v171_v170_review_contract.js
+          node .github/scripts/lts_v170_v169_review_contract.js
+          python .github/scripts/lts_integrated_flow_gate.py
+          python .github/scripts/lts_flow_bank_scope_gate.py
+          python .github/scripts/lts_invoice_reading_order_gate.py
+      - name: Upload evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v173-v172-feedback
+          path: |
+            v173-v172-feedback-result.json
+            v173-*.png
+            integrated-flow-result.json
+            integrated-*.png
+            bank-scope-result.json
+            bank-scope-*.png
+            invoice-reading-order-result.json
+            invoice-order-*.png
+          if-no-files-found: warn
