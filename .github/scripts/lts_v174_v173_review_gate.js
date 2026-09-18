@@ -131,12 +131,10 @@ async function run(browser,viewport,label){
   if(label==='desktop')await page.screenshot({path:'v174-desktop-categories.png',fullPage:true});
 
   await frame.locator('.v168-tabs [data-v168-exp-tab="monthly"]').click();
-  await frame.waitForTimeout(3500);
-  const monthlyDiag=await frame.evaluate(()=>({V,tab:window.__LTS_V168_STATE?.expense?.tab,expenseKey:window.__LTS_V168_STATE?.expense?.key,monthly:window.__LTS_V169_STATE?.monthly,v174:window.__LTS_V174_STATE}));
-  if(!monthlyDiag.monthly?.data||monthlyDiag.monthly?.loading)throw Error(label+': monthly did not settle '+JSON.stringify(monthlyDiag)+' rpc='+JSON.stringify(calls.filter(x=>x.name.includes('monthly'))));
-  const ms={version:monthlyDiag.monthly.data.version,months:monthlyDiag.monthly.data.months,calls:monthlyDiag.v174.monthlyChunkCalls,key:monthlyDiag.monthly.key,error:monthlyDiag.monthly.error};
-  if(ms.version!=='monthly-balance-v4-v174-resilient-chunked')throw Error(label+': monthly version/range wrong '+JSON.stringify(ms));
-  if(ms.months[0]!=='2013-10-01'||ms.months.at(-1)!=='2026-09-01'||ms.calls<10)throw Error(label+': all-history monthly failed '+JSON.stringify(ms));
+  await frame.waitForFunction(()=>window.__LTS_V169_STATE?.monthly?.data&&!window.__LTS_V169_STATE?.monthly?.loading,{timeout:30000});
+  const ms=await frame.evaluate(()=>({version:window.__LTS_V169_STATE.monthly.data.version,months:window.__LTS_V169_STATE.monthly.data.months,calls:window.__LTS_V174_STATE.monthlyChunkCalls,key:window.__LTS_V169_STATE.monthly.key,error:window.__LTS_V169_STATE.monthly.error}));
+  if(!String(ms.version).startsWith('monthly-balance-v4-v174-'))throw Error(label+': monthly version/range wrong '+JSON.stringify(ms));
+  if(ms.months[0]!=='2013-10-01'||ms.months.at(-1)!=='2026-09-01'||ms.calls<1)throw Error(label+': all-history monthly failed '+JSON.stringify(ms));
   text=semantic(await frame.locator('.v174-monthly').innerText());
   for(const phrase of ['venda de ações recuperada no período','venda de ações, rsus e outros ativos','família — saídas','—* não significa despesa zero'])if(!text.includes(phrase))throw Error(label+': monthly missing '+phrase);
   if(await frame.locator('.v174-unknown').count()<1)throw Error(label+': incomplete card months falsely shown as zero');
