@@ -138,6 +138,33 @@
         partial_year_failures:failed||[]
       };
     }
+    const addMonths=(iso,delta)=>{const d=new Date(iso+'T12:00:00Z'),day=d.getUTCDate();d.setUTCDate(1);d.setUTCMonth(d.getUTCMonth()+delta);const last=new Date(Date.UTC(d.getUTCFullYear(),d.getUTCMonth()+1,0)).getUTCDate();d.setUTCDate(Math.min(day,last));return d.toISOString().slice(0,10)};
+    function expenseRange174(){
+      const s=v168?.expense||{},t=today(),year=t.slice(0,4),key=s.key;
+      if(key==='6m')return{from:addMonths(t,-5).slice(0,8)+'01',to:t};
+      if(key==='12m')return{from:addMonths(t,-11).slice(0,8)+'01',to:t};
+      if(key==='all')return{from:'2013-10-10',to:t};
+      if(key==='custom'&&/^\\d{4}-\\d{2}-\\d{2}$/.test(s.customFrom||'')&&/^\\d{4}-\\d{2}-\\d{2}$/.test(s.customTo||''))return{from:s.customFrom,to:s.customTo};
+      return{from:year+'-01-01',to:t};
+    }
+    async function ensureMonthlyV174(force=false){
+      const s=v169?.monthly;if(!s||s.loading)return;
+      const r=expenseRange174(),key=r.from+'|'+r.to;
+      if(!force&&s.data&&s.key===key)return;
+      const token=(s.token||0)+1;s.token=token;s.key=key;s.loading=true;s.error=null;
+      if(V==='Despesas'&&v168?.expense?.tab==='monthly')render();
+      try{
+        const result=await S.rpc('lts_browser_monthly_balance_v3',{p_from:r.from,p_to:r.to});
+        if(s.token!==token)return;
+        if(result?.error||!result?.data)throw Error(result?.error?.message||'Balanço mensal indisponível');
+        s.data=result.data;
+      }catch(error){
+        if(s.token===token){s.error=String(error?.message||error);s.data=null}
+      }finally{
+        if(s.token===token){s.loading=false;if(V==='Despesas'&&v168?.expense?.tab==='monthly')render()}
+      }
+    }
+
     async function monthlyV174Rpc(args){
       const from=args?.p_from,to=args?.p_to;state.monthlyWarning='';
       if(!/^\d{4}-\d{2}-\d{2}$/.test(from||'')||!/^\d{4}-\d{2}-\d{2}$/.test(to||''))return directRpc('lts_browser_monthly_balance_v3',args||{});
@@ -234,6 +261,10 @@
     function after(){
       const badge=window.parent?.document?.getElementById('scope');if(badge)badge.dataset.v174Route=V==='Fluxo Diário'?'Fluxo de caixa':V;
       document.querySelectorAll('[data-v174-card-bank]').forEach(b=>b.onclick=()=>{v171.cardBank=b.dataset.v174CardBank;render()});
+      if(V==='Despesas'&&v168?.expense?.tab==='monthly'){
+        const r=expenseRange174(),key=r.from+'|'+r.to,s=v169?.monthly;
+        if(s&&!s.loading&&(!s.data||s.key!==key))queueMicrotask(()=>ensureMonthlyV174(false));
+      }
       if(V==='Despesas'&&v168?.expense?.tab==='cards'&&!state.cardFlow&&!state.cardFlowLoading)queueMicrotask(()=>ensureCardFlow(false));
     }
 
