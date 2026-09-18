@@ -15,7 +15,7 @@ for(const token of [
   "version:'v175'","base_version:'v174'",'lts_browser_expense_executive_v8','lts_browser_monthly_balance_v5',
   'lts_browser_card_flow_schedule_v2','full_history_monthly_bounded_render:true','historical_card_inventory:true',
   'april_stock_sale_open_source_issue:true','shellForHeavyTab','annualTable','Escolha o ano','Venda de ações, RSUs e outros ativos',
-  'Todos os cartões documentados','Mastercard Black Itaú','Visa · final ','—* não significa zero'
+  'Todos os cartões documentados','Mastercard Black Itaú','Visa Infinite Prime','—* não significa zero'
 ])assert(js.includes(token),'runtime missing '+token);
 for(const forbidden of ['lts_browser_apply_reviewed_input_v1','insert into','update public.','delete from'])assert(!js.toLowerCase().includes(forbidden.toLowerCase()),'V175 UI must remain read-only: '+forbidden);
 for(const token of ['V175 · Homologação','.v175-rank','.v175-yearbar','.v175-inventory-grid','.v175-tablewrap'])assert(css.includes(token),'css missing '+token);
