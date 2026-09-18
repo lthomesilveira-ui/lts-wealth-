@@ -1,0 +1,43 @@
+/* V177 — professional expense roll-up + transaction drill-down */
+.brand small::before,.v168-release::before{content:'V177 · Homologação'!important}
+.v177-amount-link,.v177-title-link{cursor:pointer}
+.v177-amount-link{text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px;text-decoration-color:#8da7ba}
+.v177-title-link:hover,.v177-amount-link:hover{color:#1f5f8d!important}
+.v177-subgroup-link{cursor:pointer;border-radius:6px}
+.v177-subgroup-link:hover{background:#f4f8fb}
+#v177ExpenseDrawer{position:fixed;inset:0;z-index:2147483000;pointer-events:none}
+.v177-drawer-backdrop{position:absolute;inset:0;background:rgba(18,35,52,.26);pointer-events:auto}
+.v177-drawer{position:absolute;top:0;right:0;width:min(760px,92vw);height:100%;background:#fff;box-shadow:-12px 0 40px rgba(28,50,70,.18);display:flex;flex-direction:column;pointer-events:auto}
+.v177-drawer>header{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;padding:18px 20px;border-bottom:1px solid #e5ebf0}
+.v177-drawer>header span{display:block;color:#2f6c98;font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:.06em}
+.v177-drawer>header h2{margin:3px 0 2px;color:#263f56;font-size:20px;line-height:1.2}
+.v177-drawer>header small{color:#7d8f9f;font-size:9px}
+.v177-drawer>header button{border:0;background:#edf3f7;color:#4f6679;width:30px;height:30px;border-radius:9px;font-size:20px;cursor:pointer}
+.v177-drawer-loading{padding:24px;color:#60758a;font-size:11px}
+.v177-drawer-kpis{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:12px 20px 0}
+.v177-drawer-kpis>div{border:1px solid #e3eaf0;border-radius:10px;padding:9px 11px;background:#fbfcfd}
+.v177-drawer-kpis span{display:block;color:#7d8d9b;font-size:8px;font-weight:800;text-transform:uppercase}
+.v177-drawer-kpis b{display:block;margin-top:3px;color:#294d6d;font-size:13px}
+.v177-component-strip{display:flex;gap:7px;flex-wrap:wrap;padding:10px 20px 0}
+.v177-component-strip span{display:inline-flex;gap:7px;align-items:center;border:1px solid #dbe5ed;border-radius:999px;padding:5px 8px;color:#60758a;font-size:8px;background:#f8fafc}
+.v177-component-strip b{color:#355b79}
+.v177-search{padding:12px 20px}
+.v177-search input{width:100%;border:1px solid #ced9e2;border-radius:9px;padding:9px 11px;color:#314d65;background:#fff;font-size:10px;outline:none}
+.v177-search input:focus{border-color:#8fb3d0;box-shadow:0 0 0 3px rgba(75,126,167,.08)}
+.v177-detail-table-wrap{overflow:auto;flex:1;padding:0 20px 20px}
+.v177-detail-table{width:100%;border-collapse:collapse;font-size:9px}
+.v177-detail-table th,.v177-detail-table td{padding:8px 7px;border-bottom:1px solid #edf1f4;text-align:left;vertical-align:top}
+.v177-detail-table th{position:sticky;top:0;background:#fff;z-index:1;color:#6f8192;font-size:8px;font-weight:900;text-transform:uppercase}
+.v177-detail-table td:last-child,.v177-detail-table th:last-child{text-align:right;white-space:nowrap}
+.v177-detail-table td:nth-child(1){white-space:nowrap;color:#657a8c}
+.v177-detail-table td:nth-child(2) b{display:block;color:#314f69;font-size:9px}
+.v177-detail-table td:nth-child(2) small{display:block;margin-top:2px;color:#8a9aa7;font-size:8px}
+.v177-detail-table td:nth-child(3),.v177-detail-table td:nth-child(4){color:#617486}
+.v177-empty{text-align:center!important;color:#8b9ba8!important;padding:18px!important}
+@media(max-width:640px){
+  .v177-drawer{width:100vw}
+  .v177-drawer-kpis{grid-template-columns:1fr 1fr;padding-left:12px;padding-right:12px}
+  .v177-search,.v177-detail-table-wrap{padding-left:12px;padding-right:12px}
+  .v177-component-strip{padding-left:12px;padding-right:12px}
+  .v177-detail-table{min-width:690px}
+}
