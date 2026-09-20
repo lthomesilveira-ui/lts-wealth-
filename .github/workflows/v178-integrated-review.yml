@@ -11,35 +11,59 @@ concurrency:
 jobs:
   review:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Protected baseline
+      - name: Protected baseline and parser
         run: |
           echo 'cca36731258680cc15a73fbad61c90ddf803358b741fd3ef58fefe5419eb688b  index.html' | sha256sum --check
+          node --check lts-v178-integrated-review.js
+          node --check lts-v178-review-actions.js
+          node --check .github/scripts/lts_v178_review_gate.js
+          node --check .github/scripts/lts_v178_actions_gate.js
           tar --exclude=.git --exclude=node_modules -czf /tmp/v178-source.tar.gz .
       - uses: actions/upload-artifact@v4
         with:
           name: v178-source
           path: /tmp/v178-source.tar.gz
-      - name: Validate package
-        if: ${{ hashFiles('.github/scripts/lts_v178_review_gate.js') != '' }}
+      - name: Browser dependencies
         run: |
-          node --check lts-v178-integrated-review.js
           npm install --no-save playwright@1.55.0
+          python -m pip install playwright==1.55.0
           npx playwright install --with-deps chromium webkit
+      - name: Integrated desktop and mobile review
+        run: |
           python3 -m http.server 8788 >/tmp/v178-http.log 2>&1 &
           SERVER_PID=$!
           trap 'kill $SERVER_PID || true' EXIT
+          sleep 1
           timeout 300s node .github/scripts/lts_v178_review_gate.js
+          timeout 240s node .github/scripts/lts_v178_actions_gate.js
+      - name: Protected baseline regressions
+        run: |
+          node .github/scripts/lts_v176_flow_expense_audit_contract.js
+          node .github/scripts/lts_v175_expense_financial_audit_contract.js
+          node .github/scripts/lts_v174_v173_review_contract.js
+          node .github/scripts/lts_v173_v172_feedback_contract.js
+          node .github/scripts/lts_v172_v171_review_contract.js
+          python .github/scripts/lts_integrated_flow_gate.py
+          python .github/scripts/lts_flow_bank_scope_gate.py
+          python .github/scripts/lts_invoice_reading_order_gate.py
+          python .github/scripts/lts_flow_documentary_rollforward_gate.py
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: v178-review-evidence
           path: |
             v178-result.json
+            v178-actions-result.json
             v178-*.png
-          if-no-files-found: ignore
+            v178-*-fixture.csv
+            integrated-flow-result.json
+            bank-scope-result.json
+            invoice-reading-order-result.json
+            flow-documentary-rollforward-result.json
+          if-no-files-found: warn
