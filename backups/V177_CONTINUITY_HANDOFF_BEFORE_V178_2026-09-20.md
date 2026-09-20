@@ -1,0 +1,476 @@
+# LTS Wealth — Continuity Handoff
+
+Last materially refreshed: 2026-09-18 (V177 expense audit / apartment roll-up / drill-down published)
+
+This file exists so project continuity never depends on chat context. Always re-fetch `main`, active branch, `PROJECT_MASTER_BACKLOG.md`, `NEXT_HOMOLOGATION_GATE.md`, this file and the latest immutable checkpoint before every repository write.
+
+## Conduct
+- Preserve every open financial, documentary, classification, reconciliation and product dependency; never compact it away.
+- Project updates use exactly `Concluído / Em execução / Próximos passos`.
+- No microbuilds; package coherent changes.
+- Never invent financial amounts, classifications, merchants, competence, recurrence, reconciliation, valuation, tax or economic-effect rules.
+- Ask the user only when a real financial/classification/documentary/provider/consent decision is required; otherwise advance autonomously.
+- Test before user homologation; do not delegate basic QA.
+- Never claim authenticated visual/data E2E unless actually executed.
+- Public `index.html` remains protected; no promotion without explicit user approval.
+- Never force branch divergence; use normal fast-forward/merge only after fresh compare.
+- Preserve historical evidence back to 2013 where supported.
+
+## Current product — V177 published in fixed homologation
+- Product merge: `49b8a0742b80409e728abff81f2fb67fcf0d5cc3`; manifest exposure: `d0c73d8a0e5589a74a2c3e1ad24b796e2a4ff00b`; candidate: `wip35-v177-candidate.html`.
+- Branch gate `35396351907` and Supabase `lts_v177_product_qa_v1` are PASS; Pages deployment `35396641223` is SUCCESS.
+- V177 is homologation-only. Protected public `index.html` remains not promoted.
+- 2020 expense audit: 2019 R$ 646.933,25 included R$ 344.846,71 of Casamento. Normalized 2019 excluding Casamento is R$ 302.086,54 (R$ 25.173,88/month), versus 2020 R$ 281.377,71 (R$ 23.448,14/month), a normalized difference of -6,86%. 2020 has card evidence in all 12 months; preserved source contains Mastercard Itaú only and no Visa settlement.
+- Property management roll-up is now `Apartamento · CIPÓ 396`: Aquisição do imóvel R$ 288.747,56; Financiamento imobiliário R$ 1.700.952,62; Obra e reforma R$ 2.174.777,52; Custos recorrentes de moradia R$ 364.579,90; total cash directed R$ 4.529.057,60.
+- Recurring housing costs retain a further professional split: Condomínio R$ 236.934,10; IPTU/impostos do imóvel R$ 69.235,37; Energia elétrica R$ 57.052,03; Seguro residencial R$ 1.358,40.
+- Normal expense UI no longer exposes `fonte reconciliada`, original-workbook/duplicate reconciliation strip or source/programming contract wording.
+- Management group amounts and subgroup lines are clickable. Drawer detail shows date/period, description, account/card, reference and value. Família — saídas reconciles exactly to R$ 263.909,54 / 202 rows; Apartamento to R$ 4.529.057,60 / 726 rows/components.
+- Immutable receipt: `backups/V177_EXPENSE_UX_PUBLISHED_2026-09-18.md`.
+- Existing explicit open issue remains: `stock_sale_2026_04_missing_source`.
+
+## Protected predecessor — V176 published in fixed homologation
+
+- Product merge: `5cd67fef7ee4080ba7d38dda0219ac646240fcf5`; manifest exposure: `3fea384ce5b989a0fa9596697e1967617081873a`; candidate: `wip35-v176-candidate.html`.
+- Branch gate `35392138400` and Supabase `lts_v176_expense_window_qa_v1` are PASS; Pages deployment `35392557385` is SUCCESS.
+- V176 is homologation-only. Protected public `index.html` remains not promoted.
+- Flow cash semantics: RSU/award availability events from Corretora are excluded from current-account Entradas/Saídas and cash detail. RSU increases remain in the dedicated `RSU vested` resource column, with a green delta. Bank cash arithmetic is unchanged.
+- `Ocultar dias sem movimento` now uses only actual cash Entradas/Saídas for the selected bank scope. Carried balance, D0/D1, RSU, FGTS and other liquidity-layer changes alone do not keep a day visible.
+- V175's 6m Saúde result was overstated by a source-window bug. V176 fixes the monthly-workbook replacement boundary: 6m Saúde is R$ 56.307,56, not R$ 92.359,98. 12m Saúde remains source-backed at R$ 105.050,49.
+- Empréstimos were double-checked and are not inflated by the window bug: 6m R$ 38.691,93; 12m R$ 109.227,39. These are historical paid cash outflows (Itaú + Coopharma), never current debt stock.
+- Saúde composition is explicit: 6m = Saúde geral/não atribuído R$ 36.146,23 + Larissa R$ 10.515,00 + Benjamin R$ 9.646,33. 12m = R$ 63.800,29 + R$ 17.515,00 + R$ 23.735,20 respectively.
+- Immutable receipt: `backups/V176_FLOW_EXPENSE_AUDIT_PUBLISHED_2026-09-18.md`.
+- Open V175 issue remains unchanged: `stock_sale_2026_04_missing_source`.
+
+## Protected predecessor — V175 published in fixed homologation
+
+- Product merge: `f198c0e4e00540d3e4d2e2649b7003b7618008b1`; manifest exposure: `9b55e58e2d8bd0feb0b1cbcad020a0094116b2b3`; candidate: `wip35-v175-candidate.html`.
+- Branch gate `35386909885` and Supabase `lts_v175_financial_audit_qa_v1` are PASS; Pages deployment `35389818312` is SUCCESS.
+- V175 is homologation-only. Protected public `index.html` remains not promoted.
+- Expense source audit now combines supported current accounts and cards once, with exact workbook monthly-category reconciliation only when source sum, source card total and current LTS card total agree.
+- User-reported Restaurant/iFood/Rafiki gaps for Dec/2025–Mar/2026 are source-recovered. Full-history monthly balance returns 156 months but renders annual summary plus one selected year, avoiding the V174 authenticated-browser hang.
+- Historical loan display no longer collapses all `Empréstimos` paid from Itaú into one false Itaú lender. Paid history is split by counterparty: Itaú R$ 267.441,25; CooperMSD R$ 224.164,59; Coopharma R$ 84.569,38; CGI/CEF/Funcef separate. Historical paid is not current debt stock.
+- Historical card inventory preserves inactive instruments: Itaú Mastercard lineage, Visa Itaú, Visa Infinite Itaú; Bradesco Aeternum and Visa/Infinite Prime; C6 historical 6610 and Carbon 7873/8304.
+- Sep/2026 share-sale context is restored at R$ 18.808,69 from confirmed C6 Global evidence; downstream interbank transfers remain neutral.
+- One explicit open issue remains: `stock_sale_2026_04_missing_source`. User confirms Apr/2026 sale but no source amount was found, so no value is fabricated.
+- Immutable receipt: `backups/V175_FINANCIAL_EXPENSE_AUDIT_PUBLISHED_2026-09-18.md`.
+
+## Protected predecessor — V172 published in fixed homologation
+- Product merge: `1af047cbac2919c2a51f1b850afdf982153d78d8`; tested branch head: `5789fe38fe101d175c72ffe727e5bbd4bb647058`; manifest exposure: `5a8cbfb27d3a806880cd309f7c8f70fc022681dd`; candidate: `wip35-v172-candidate.html`.
+- Immutable publication receipt: `backups/V172_V171_REVIEW_PUBLISHED_2026-09-17.md`.
+- V172 is homologation-only. The protected public `index.html` remains unchanged with SHA-256 `cca36731258680cc15a73fbad61c90ddf803358b741fd3ef58fefe5419eb688b`; public promotion remains unauthorized.
+- Flow defaults to five prior days through current-year end. Bounded V11 history and V12 future load independently; a slow/failing V12 historical upgrade cannot blank already-rendered rows. Preserve the validated `RSU vested` and `Saldo c/ RSU` columns.
+- The V171 blank-Flow root cause was an all-or-nothing pair of calls after both legs were remapped to the heavier V12 reader. Do not reintroduce that remap or a single rejecting `Promise.all` for the visible range.
+- Dashboard/Despesas rankings have no redundant subtype captions. Use `Empréstimos`; keep work/reform, financing and recurring property expenses separate. Only evidenced groups are categories.
+- Expense totals include every supported card and current account without double counting. The R$ 270.849,19 across 24 historical invoice cycles is already in card totals but has no purchase-level source rows; it is a documentary-coverage note, never a category and never grounds for invented classifications.
+- Monthly balance splits long selections into annual reads and merges the complete supported history. Extraordinary income explicitly includes share/RSU sales.
+- Patrimônio is grouped into current net worth, current assets, known debt, pensions and future compensation. Morgan prioritizes statement gross, available now, future projected net and total projected net; the projected reserve is secondary.
+- No V172 database migration or financial write was introduced. Branch V172 `35273688049`, V171 regression `35273688138`, post-manifest V172 `35274767490`, every protected compatibility gate and Pages `35274766884` are SUCCESS. Human authenticated notebook/phone acceptance remains pending.
+
+## Protected predecessor — V171 published in fixed homologation
+- Product merge: `b4cf631d7caaca7f34ebc2fef177402e1bad0261`; tested branch head: `f3bf16abc2cf917c5e7a80deb55bd5366fd515b5`; branch: `work/v171-v170-user-review-20260917`; candidate: `wip35-v171-candidate.html`.
+- Immutable publication receipt: `backups/V171_V170_REVIEW_PUBLISHED_2026-09-17.md`.
+- V171 is homologation-only. The protected public `index.html` remains unchanged with SHA-256 `cca36731258680cc15a73fbad61c90ddf803358b741fd3ef58fefe5419eb688b`; public promotion remains unauthorized.
+- Expense taxonomy is professional and explicit: property investment/works, recurring expenses and every financing are separate. Only explicit Benjamin education is `Benjamin — Educação`; remaining education is `Educação`. The audited reader returns works/reform R$ 1.517.643,79, financing R$ 1.700.952,62, loans/consignado R$ 651.990,34, Benjamin education R$ 56.267,53, Education R$ 86.647,00 and Rafiki R$ 29.769,84.
+- Monthly balance supports the complete selected period from 2013; cards are Bank → named card → month; expense transactions use the supported `saida` direction; Dashboard expense totals use a distinct expense color.
+- Flow retains the validated `RSU vested` and `Saldo c/ RSU` columns, removes the non-product historical-audit banner, loads progressively and opens from five prior days through 31 December of the following year. Legacy V162/V170 boot callbacks can no longer reduce that horizon.
+- Morgan retains statement gross/available/net-after-reserve separation and global/individual price controls. Route readers for Despesas and Patrimônio now start deterministically after layered runtime navigation.
+- Supabase migrations `20260917175647_v171_professional_expense_taxonomy_monthly_balance.sql` and `20260917180229_v171_expense_coverage_aggregation_fix.sql` are applied. Authenticated browser readers are `lts_browser_expense_executive_v6` and `lts_browser_monthly_balance_v2`.
+- V171 branch run `35264916304` passed desktop, 390 px mobile and all protected Flow/bank/invoice regressions. Human authenticated notebook/phone acceptance remains pending.
+
+## Protected predecessor — V170 published in fixed homologation
+- Product head: `139ac69564820cd54439d202a875b244839b2602`; manifest exposure: `0b49a8a999dfd51c30fbb4b80aefed5bf71f4192`; branch: `work/v170-v169-user-review-20260917`; candidate: `wip35-v170-candidate.html`.
+- Immutable publication receipt: `backups/V170_V169_REVIEW_PUBLISHED_2026-09-17.md`.
+- Fixed homologation selects V170. The public `index.html` remains unchanged with SHA-256 `cca36731258680cc15a73fbad61c90ddf803358b741fd3ef58fefe5419eb688b`; `promotion_status` remains `not_promoted`.
+- V170 delivers Dashboard Top 15 with education by person and corrected pension-total order; auditable 2013–2026 opening/closing cash balances; the default Flow window from five prior days through the end of the following year; full Morgan available cash in Flow; consolidated, traceable expense groups; clearer wealth/passive reading; exact Morgan gross/available/unavailable statement figures; and one confirmed action to update price/FX across all active vestings while keeping individual controls.
+- Historical tracked-bank arithmetic covers 4,726 civil days from 09/10/2013 through 16/09/2026 with zero mismatches and maximum gap R$ 0.00. Paired transfers net to zero; a transfer between tracked cash and an untracked pocket is shown as internal net movement, never revenue or expense.
+- The V169 two-leg edit/cancel lifecycle for user-created transfers remains protected and passed compatibility gates. No validation mutation was retained; the global award writer was exercised inside an explicit rollback.
+- Supabase V170 migrations through `v170_cash_arithmetic_audit_summary` are applied. New internal readers remain unavailable to anon/authenticated roles; only the existing user-asserting browser RPC surface is executable by authenticated users.
+- Branch V170 `35222746676`, main V170 `35223164124`, V169 compatibility `35223164154`, all protected compatibility workflows and Pages `35223163491` are SUCCESS. The exact IDs are in the publication receipt.
+- Live HTTP verification proved the fixed manifest, V170 candidate title/assets and unchanged protected public root. Human notebook/phone review remains the next acceptance gate.
+
+## Protected predecessor — V169 published in fixed homologation
+- Product head: `6c32ee78b19e1252e5615c8bc267e11f9e84ba5f`; manifest exposure: `677e8a3fa4ccd52b6808962753cd191319c803d9`; branch: `work/v169-v168-feedback-20260916`; candidate: `wip35-v169-candidate.html`.
+- The binding user scope is `backups/V169_V168_USER_FEEDBACK_REGISTER_2026-09-16.md`; the immutable publication receipt is `backups/V169_V168_FEEDBACK_PUBLISHED_2026-09-16.md`.
+- Fixed homologation selects V169. The public `index.html` remains unchanged with SHA-256 `cca36731258680cc15a73fbad61c90ddf803358b741fd3ef58fefe5419eb688b`; `promotion_status` remains `not_promoted`.
+- V169 adds the Despesas monthly balance, future cards by bank/month, explicit passives, Dashboard emphasis/clarity/alignment and two-leg atomic transfer edit/cancel. Preserve all V168 capabilities and the V150/V151 Flow floor.
+- Supabase migrations `canonical_v169_v168_feedback_2026_09_16` and `canonical_v169_flow_audit_contract_fix_2026_09_16` are applied. The 2013–2026 civil-day audit is green with zero gaps, duplicates, net mismatches, relative-balance mismatches or unsupported leaks.
+- Post-manifest V169, integrated Flow/invoices, Flow window, candidate smoke, V163/V164/V165 compatibility and Pages runs are all SUCCESS; exact IDs are in the publication receipt.
+- Live browser verification proves the fixed redirect, candidate title and V169 brand. It does not substitute for the user's human notebook/phone review or certify every private financial input.
+
+## Current incident and binding V167 scope
+- The user opened authenticated V167 and saw the rail/header/version but a completely blank Dashboard body.
+- Root cause measured against the real private readers: V167 used one `Promise.all`; `lts_browser_flow_v11` for today through the following year took about 22.5 seconds and returned about 690 KB, so all useful content was withheld despite the cockpit being available in about 2.6 seconds.
+- Required fix is progressive Dashboard rendering plus a slow-reader browser regression gate. Never call this incident closed based only on the outer shell gate.
+- Binding scope is `backups/V167_COMPLETE_USER_REVIEW_REGISTER_2026-09-16.md` with 82 granular requirements. The older 16-point checkpoint is only a grouping summary.
+- The register explicitly retains the daily historical Flow audit from 10/10/2013, including the reported impossible 2021–2023 balances.
+- Progressive-loading product commit `5ac4883fac5d23d1c3bf5dab58013e5d4a7251f3` passed branch V167 `35114582176`, main V167 `35115073727`, V165 regression `35115073637` and Pages `35115072130`.
+- Authenticated published reload rendered the real Dashboard body in about 1.2 seconds. Exact receipt: `backups/V167_DASHBOARD_PROGRESSIVE_LOADING_PUBLISHED_2026-09-16.md`.
+
+## Current product — V166 feedback closure on preserved V165
+- Current product branch and `main` code head: `117c467a02641c1b7e167493fda6f916e7927e14`. Candidate: `wip35-v166-candidate.html`.
+- V165 product `6bcdfb1f78baf944e6f215da045b75ef3244d4de` and `wip35-v165-candidate.html` remain the immutable accepted base; see `backups/V165_USER_ACCEPTED_BASELINE_2026-09-16.md`.
+- Fixed homologation selects V165 through `homologacao-current.json`; the public root remains protected and is not promoted.
+- Exactly five top-level routes are visible: Dashboard, Fluxo de caixa, Despesas, Patrimônio and Atualizações. Planejamento is incorporated into Dashboard and Cartões is an internal Despesas view.
+- Dashboard follows the approved dark-rail/light-canvas reference and prioritizes direct cash answer, action and supporting visual evidence over conversational text.
+- Patrimônio reads private grouped RSU/Cash RSU and Retention data only through authenticated functions. Regular RSU is presented at 100%; Cash RSU at 70%; original dates remain immutable and optional anticipation is a user-scoped audited scenario.
+- Atualizações provides incremental full-history text search without a required date. Despesas preserves Benjamin/Educação and separates reviewed classification completion from documentary coverage.
+- Flow, invoice reading order, bank scope, financial writers and protected `index.html` are unchanged. The false Itaú projection warning remains suppressed only outside the documentary anchor.
+- V165 branch/main gates `35028990197` / `35029387758`, artifact `10420263597` (`sha256:eea9d394458f2bff8831e4dd7008aa3ba8aadc8f2cf5053ed500d07e3ea854ea`) and product Pages `35029387014`: SUCCESS.
+- The public candidate title, signed-out login and V165 product brand were directly verified after Pages. A real user-authenticated notebook/phone material acceptance is still pending and must not be inferred from fixture tests.
+- V166 adds actionable updates/search, working expense periods, invoice history, CIPÓ/family-loan detail, editable RSU price/FX and Cash RSU D+3 projected liquidity without modifying the protected public root.
+- Real authenticated browser evidence covers all five routes and exact 14/09 Flow arithmetic; no validation mutation was saved.
+- Latest immutable checkpoint: `backups/V166_FEEDBACK_CLOSURE_PUBLISHED_2026-09-16.md`.
+
+## Historical V162 recovery baseline — retain for prior release history
+- The user rejected canonical v1.24. It remains deployed at the old fixed target until the replacement gate is green, but it is not a valid product baseline or user-approved Dashboard.
+- Current branch: `recovery-v152-flow-20260910`. Current candidate: `wip35-v162-candidate.html`.
+- Current scope: recover the Daily Flow only, loading the preserved V150 Flow component directly from unchanged `index.html`, using V152 as comparison evidence and current `lts_browser_flow_v11` reads.
+- Do not restore the cumulative V137–V152 runtime chain: browser run `34492222128` proved it freezes due to stacked permanent timers/observers. Contract now is `v150-flow-direct-current-read-v3`.
+- Read `PROJECT_START_HERE.md`, `LTS_WEALTH_PRODUCT_CONTRACT.md` and `LTS_WEALTH_DECISION_LEDGER.md` before this long history.
+- Do not redesign Dashboard in this package. The next Dashboard requires a complete image and explicit approval before implementation.
+- Do not modify `index.html` or financial facts. The 11/09 timeout recovery is limited to cache/read orchestration plus guarded mutation-cache invalidation; append-only financial-write semantics remain unchanged.
+- Gate and publication status are recorded in `backups/V152_FLOW_RECOVERY_AUDIT_2026-09-10.md`.
+- Deterministic recovery gate `34495044417` is green on exact remote candidate `d15aedeef62891e1bb512e429e27827a17b2b769`; artifact `10159437102`. Fixed homologation exposure is next; human/data-real/iPhone approval remains open.
+- Fixed homologation now selects hardened V162 product `ce7e188ccef4040a7d4f391b00d1734d0c05ae4e`. `main` smoke `34496317856`, recovery smoke `34496320377` and Pages `34496316912` passed; final artifact `10159937702`. Signed-out live routing/login passed; human signed-in data/iPhone approval remains open.
+- First authenticated use on 11/09 failed with a statement timeout because cron prepared V14 while V10 required V18 and the browser cold path forced 730 days. Migration `canonical_flow_v18_cache_runtime_guard_2026_09_11` is applied; V11 cold path is bounded to requested period + D+30, daily cron prewarms V18, and mutation V2 invalidates both cache generations.
+- Direct authenticated 11/09–10/10 evidence: approximately 20 ms warm and 2.9 s deliberately cold under an eight-second timeout. Frontend publication and user re-test are not yet claimed complete. Latest checkpoint: `backups/V162_FLOW_REAL_DATA_TIMEOUT_RECOVERY_CHECKPOINT_2026-09-11.md`.
+
+## Fixed links / access
+- Public: `https://lthomesilveira-ui.github.io/lts-wealth-/`.
+- Fixed homologation: `https://lthomesilveira-ui.github.io/lts-wealth-/homologacao.html`.
+- Repo: `lthomesilveira-ui/lts-wealth-`.
+- Supabase project: `tadhkamnwtsbdozwkyut`.
+- Public fallback remains protected; `index.html` SHA-256 remains `cca36731258680cc15a73fbad61c90ddf803358b741fd3ef58fefe5419eb688b`.
+- Public promotion remains unauthorized/not done.
+
+## Rejected product still exposed until replacement passes — canonical v1.24
+- Exact product `39cb869f27f7a5eb7e5f6c57ed125f7b2d2aa4fc`, tree `69086fe6deb874af855843825da8ea738f6ee7ae`; fixed-manifest exposure `084a3521b0b42a2f15b8ec18348dc90f7bdc2d65`, tree `b4715f4c462f40c8f82601404cbabb4f6d41f31d`; active recovery, `canonical-app-v1` and `main` are aligned by normal no-force fast-forward before the documentation package.
+- Contract `executive-readable-breakpoints-v1` separates the approved compact 1312×1199 reference from readable 1366×900 notebook, 1024×900 intermediate and 390×844 mobile compositions.
+- Permanent checks now measure font floors, action targets, KPI/main/bottom track counts, panel/chart geometry, planning-callout position and no horizontal overflow. Full desktop/mobile routes, Flow V1.23 and future-JWT recovery remain in the same receipt.
+- Financial/product invariants were not changed: five liquidity-first KPIs, facts before projections, four distinct liquidity layers, restricted FGTS, financial commitments separated from tasks and V151 management date separated from first negative.
+- Product recovery gate/smoke `34434661341` / `34434661330`, canonical gate/smoke `34435078818` / `34435078779`, main smoke/Pages `34435242921` / `34435242177`, post-exposure smokes `34435460592` / `34435523608` / `34435568259` and Pages `34435567557`: SUCCESS.
+- Recovery artifact `10135754220` / `sha256:fde8eceb5d07106dac1ba84db09d4c30a27d856cff78fac1a8698850c9b7312e`; canonical artifact `10135897969` / `sha256:eab76d8c7dcab132be5d09ca7a5b3cae44dc8819f56f1f14733cf5156778d7b8`.
+- Live unsigned manifest resolves to exact product `39cb869f…`, loads `?v=20260910-dashboard24` and remains `not_promoted`; browser verification proved truthful signed-out login, zero iframe, zero fixture and no raw error. Public `index.html` is unchanged.
+- Latest immutable checkpoint: `backups/CANONICAL_APP_V124_RESPONSIVE_DASHBOARD_READABILITY_CHECKPOINT_2026-09-10.md`.
+- Authenticated real mutation/readback/document/backup lifecycles, physical-iPhone E2E and public-root promotion remain open/not claimed.
+
+## Protected predecessor — canonical v1.23 Daily-Use Flow Closure
+- Exact product `7f6bac39ec0705e21a498b416762276ea3b8dbea`; fixed-manifest exposure `d804eb0b5e972d2e86f8abc57d375e4de3e82219`.
+- Contract `mobile-layer-disclosure-open-closed-invoice-actions-v1` remains the protected Flow floor for all 14 desktop columns, nine mobile liquidity layers, open/closed invoice truth and the append-only edit/postpone/duplicate/split/cancel lifecycle.
+- Immutable checkpoint: `backups/CANONICAL_APP_V123_DAILY_USE_FLOW_CLOSURE_CHECKPOINT_2026-09-09.md`.
+
+## Protected predecessor — canonical v1.19 UX Closure
+- Exact product `37781c3b11389789716781accca6c1fdabea461c`, tree `626437edfa47d12be4a061f3ff6c88e077ae2304`; fixed-manifest exposure `59222846a5c7e67c923790da9ad4088df9781fa4`, tree `5b34ab00cecf338c51eeb97f94d339a4bb025b03`.
+- Contract `safe-errors-accessible-controls-readable-mobile-v1` remains the protected UX/accessibility floor under v1.22.
+- Immutable checkpoint: `backups/CANONICAL_APP_V119_UX_CLOSURE_CHECKPOINT_2026-09-08.md`.
+
+## Protected predecessor — canonical v1.18 Flow History + Horizon
+- Exact product `692535276fe7948c386349254151538c0c9eddf8`; fixed-manifest exposure `65cb675b613b70b7a26f97f86938a0b3ac72b584`.
+- Contracts `historical-opening-from-close-and-net-v1`, `today-marker-without-row-band-v1` and `future-through-2029-plus-d30-v1` close the recovered 01/01 opening, yellow-row and 2029/D+30 gaps while preserving the rich V150/V151+ Flow floor.
+- Supabase migration `canonical_flow_horizon_and_slice_guard_2026_09_08` is applied; exact requested coverage fails loudly instead of selecting a loose cache. No financial fact was changed.
+- Immutable checkpoint: `backups/CANONICAL_APP_V118_FLOW_HISTORY_HORIZON_CHECKPOINT_2026-09-08.md`.
+
+## Protected predecessor — canonical v1.17 Product Language
+- Exact remote product `e4cea67563ac379d5bf47d02d20846699194a002`, product tree `9037c73840167b1cfe1d36e2b8cc2b6f90d101f7`; fixed-manifest exposure `06fdcbba8f1cbcae6af2ebf153a2291915195f96`, exposure tree `4d3a917076380bfc81d8a0a74842d97eb1fe38f9`; all three release branches share the exposure through normal no-force fast-forward.
+- Contract `user-facing-product-language-v1` removes internal build/release labels from every normal product route while keeping internal diagnostics available to the gates.
+- Fluxo no longer shows a fixed build badge; Patrimônio/Cartões headers show data recency rather than module releases; Central de Gestão shows data-loading state rather than a build identifier.
+- The permanent gate fails if any canonical route exposes an `LTS`, `CANONICAL` or `WIP35` release label/build badge. No financial values or semantics changed.
+- V1.17 preserves v1.16 planning separation, v1.15 density, v1.14 V149 review, v1.13 hierarchy/intake, v1.12 reviewed input, v1.11 liquidity layers, v1.10 decision truth, v1.9 V150/V151+ Flow parity and every canonical route/session/security baseline.
+- Recovery/canonical gates `34267339089` / `34267537086`, candidate smokes `34267339099` / `34267537120`, main smoke/Pages `34267717067` / `34267715832`, post-exposure smokes `34267927974` / `34267929858` / `34267932211` and Pages `34267929912`: SUCCESS.
+- Artifacts: recovery `10072405055` / `sha256:200786a5aee8034f91f7b625234a10900cb7e444ca754c1a5f4354177e0537a4`; canonical `10072479667` / `sha256:b135f99fbc2b64a029d5c462865d8e4461f93667bc0fdf1b73e0ca29c6dff4a7`; product/exposure Pages `10072497570` / `10072584498`.
+- Fixed homologation resolves to `canonical-app.html?homologacao=e4cea675…#Dashboard`, loads `?v=20260908-ux17`, renders a truthful blank signed-out login and exposes zero iframe, fixture badge, technical release badge, raw JWT or application error.
+- Latest immutable checkpoints: `backups/CANONICAL_APP_V117_PRODUCT_LANGUAGE_CHECKPOINT_2026-09-08.md` and `backups/TWO_MONTH_FEEDBACK_RECOVERY_CHECKPOINT_2026-09-08.md`.
+- Authenticated real lifecycles, physical-iPhone E2E and public-root promotion remain explicitly open/not claimed. No approved standalone Reports visual was recovered; do not invent one.
+
+## Protected predecessor — canonical v1.16 V151 Planning Decision Recovery
+- Exact remote product `4028321fed599496d29798e3e2d1c47c48bc54d1`, product tree `0776d7e4de0f63eae13ad92f01fc47acc799e148`; fixed-manifest exposure `d9a63c96e2674f7bf8d615e29643598bd8146537`, exposure tree `0c2dc3c7c38051f8c11008f35651aebf405149f3`; all three release branches share the exposure through normal no-force fast-forward.
+- Contract `v151-first-negative-management-separation-v1` restores the V151 distinction between the first projected negative date and the earlier management-action date as an explicit planning decision signal.
+- A red chart point/guide is rendered only when the exact first-negative horizon row exists and its evidenced `base` is below zero. Otherwise the product presents the date without fabricating/interpolating a value.
+- The approved Dashboard remains exactly 1312×1199 on desktop; both four-layer legends remain readable. Mobile 390×844 remains intentionally scrollable without horizontal clipping.
+- V1.16 preserves v1.15 density, v1.14 V149 read-only review, v1.13 classification-first guided intake, v1.12 reviewed input, v1.11 liquidity layers, v1.10 decision truth, v1.9 V150/V151+ Flow parity and every canonical route/session/security baseline.
+- Product recovery gate/smoke `34262013499` / `34262013502`, canonical gate/smoke `34262279303` / `34262278639`, main smoke/Pages `34262576921` / `34262575286`: SUCCESS. Post-exposure active/canonical/main smokes `34262885534` / `34262887519` / `34262889285` and Pages `34262887576`: SUCCESS.
+- Recovery artifact `10070303869` / `sha256:4dc750647554451639e78d7bc4af15de8690b81fdf28f48b4e7908088632140b`; canonical artifact `10070422301` / `sha256:5ac0f9b13f98820ab7ed87c79debdc8643703d0d82df9fbfa6e01689106492da`; exposure Pages `10070593792` / `sha256:6c3e77988732f9852214e6c7eabb1f934973ad8e60616eb6d04c85faa625bbbc`.
+- Fixed homologation resolves to `canonical-app.html?homologacao=4028321…#Dashboard`, loads `?v=20260908-planning16`, renders truthful signed-out login with blank fields and exposes no iframe, fixture badge, raw JWT or application error.
+- Latest immutable checkpoint: `backups/CANONICAL_APP_V116_PLANNING_DECISION_CHECKPOINT_2026-09-08.md`.
+- Authenticated real lifecycles, physical-iPhone E2E and public-root promotion remain explicitly open/not claimed. No approved standalone Reports visual was recovered; do not invent one.
+
+## Protected predecessor — canonical v1.15 Dashboard Density
+- Exact remote product `a0a2675e6a9c9b3ffe4d9b0bc1fab222a48bc347`; fixed-manifest exposure `b1998a9178ef3a8eec90dd47aa21e31dad8c868a`.
+- Contract `approved-1312x1199-single-screen-v1` closed the measured desktop overflow while preserving the four liquidity layers and mobile composition.
+- Immutable checkpoint: `backups/CANONICAL_APP_V115_DASHBOARD_DENSITY_CHECKPOINT_2026-09-08.md`.
+
+## Protected predecessor — canonical v1.14 Document Interpretation Review
+- Exact remote product `0d50699af5aa5b950ff889a1fc6becfee209ce06`, product tree `f086c6878f4737a10c6865768241e9d2c4adc326`; fixed-manifest exposure `ac5d4674920615c6c5e5947d4ab721f538679a0c`, exposure tree `e4d9796e6646a2265ca62c5de4b7058ac6b487cb`; all three release branches share the exposure through normal no-force fast-forward.
+- V149 is the recovered source for a read-only association-versus-extracted-evidence review that had disappeared from the canonical surface. V1.14 restores it under `v149-evidence-review-readonly-canonical-v1` without restoring a historical wrapper.
+- Each review card separates `Vínculo informado por você` from `Leitura extraída do arquivo`, bounds/escapes extracted rows, warns when the link is missing and exposes no input/button.
+- `Somente leitura` is a hard product boundary: the review cannot approve, reconcile, classify, overwrite association or call a financial writer. Fixture proof requires `write_allowed:false` and `financial_writer_called:false`.
+- Browser RPC `lts_browser_document_review_queue_v1` is guarded by `lts_browser_assert_user_v1`; internal `lts_document_review_queue_v1` is an owner-scoped, bounded service-role-only reader. Migration `canonical_document_review_read_model_2026_09_08` is applied.
+- V1.14 preserves v1.13 guided intake and priority hierarchy, v1.12 reviewed input, v1.11 liquidity layers, v1.10 decision truth, v1.9 V150/V151+ Flow parity and every canonical route/session/security baseline.
+- Product recovery gate/smoke `34250450654` / `34250450670`, canonical gate/smoke `34250649137` / `34250649010`, main smoke/Pages `34250977997` / `34250976391`: SUCCESS. Post-exposure active/canonical/main smokes `34251224292` / `34251281745` / `34251333462` and Pages `34251332488`: SUCCESS.
+- Recovery artifact `10065805910` / `sha256:50a3687a1ff0d86dc74c0c8a7d2be6066b0b47a5634f1f392692237de30322c7`; canonical artifact `10065921441` / `sha256:7a292b5f5ce280ebac2f57ae53520d45bf37fcaa2d145a6351100e0f2f2a4a18`; exposure Pages `10066100348` / `sha256:8d3f15e7be00a045f48066859f833bf2b79df7a23eac652742090056ae6fb36e`.
+- Fixed homologation resolves to `canonical-app.html?homologacao=0d50699…#Dashboard`, loads `?v=20260908-doc-review14`, renders truthful signed-out login and exposes no iframe, fixture badge, raw JWT or application error.
+- Latest immutable checkpoint: `backups/CANONICAL_APP_V114_DOCUMENT_INTERPRETATION_REVIEW_CHECKPOINT_2026-09-08.md`.
+- A real authenticated document upload/register/interpretation/review readback, authenticated writes/search, physical-iPhone E2E and public-root promotion remain explicitly open/not claimed. No approved standalone Reports visual was recovered; do not invent one.
+
+## Protected predecessor — canonical v1.13 Classification-first Updates + Guided Document Intake
+- Exact remote product `6d2b546b5e32d9ac09013cbd682e261e3f41ccac`, product tree `ae4710f80a7ed60c6e0b00c801b9814143edc84a`; fixed-manifest exposure `6a25aa99ab9548ef001870d9303d65700a0da8ec`, exposure tree `ebc49406160e31f2d988825392fe642fb35e85df`; all three release branches share the exposure through normal no-force fast-forward.
+- V147 is the recovered product source for the `Atualizações` hierarchy: classification is foreground; `Outras ações que precisam de você` is collapsed and contains documents/secondary management work. A documents-first layout was rejected.
+- Contract `classification-first-guided-document-intake-v1` requires explicit type and association before upload. Bank statement requires institution/account+competence; card statement requires card+competence; financing requires commitment+exact as-of; other document accepts an optional note and remains manual review.
+- Filename never determines a financial fact and upload never posts one. Real confirmed uploads target private bucket `lts-documents`, register through `lts_browser_register_document_v2`, and attempt object cleanup if registration fails.
+- A same-route anchor/remount defect found by the permanent gate was fixed: Documentos now opens its enclosing collapsed section and scrolls without replacing the route DOM or erasing the reviewed-input/liquidity/management modules.
+- V1.13 preserves v1.12 reviewed input, v1.11 liquidity layers, v1.10 decision truth, v1.9 V150/V151+ Flow parity and every canonical route/session/security baseline.
+- Product recovery gate/smoke `34242926042` / `34242925889`, canonical gate/smoke `34243185722` / `34243185837`, main smoke/Pages `34243383377` / `34243381614`: SUCCESS. Post-exposure active/canonical/main smokes `34243737853` / `34243795334` / `34244113857` and Pages `34244111908`: SUCCESS.
+- Recovery artifact `10062796446` / `sha256:bb51419f7772a7504b4556bb89d017b8297165d3f01d92f0cb8ff26bd92d1667`; canonical artifact `10062906709` / `sha256:3f19198c6ab8256323cdc7b9b56b19401cd39e0c823322d5c1e5bf5524f99480`.
+- Fixed homologation resolves to `canonical-app.html?homologacao=6d2b546…#Dashboard`, loads `?v=20260908-updates13`, renders truthful signed-out login, and exposes no iframe, fixture KPI or application error.
+- Latest immutable checkpoint: `backups/CANONICAL_APP_V113_CLASSIFICATION_FIRST_DOCUMENT_INTAKE_CHECKPOINT_2026-09-08.md`.
+- Real authenticated upload/register/readback/interpretation, authenticated writes/search, physical-iPhone E2E and public-root promotion remain explicitly open/not claimed. No final approved standalone Reports visual was recovered; do not invent one.
+
+## Protected predecessor — canonical v1.12 Reviewed Text Input
+- Exact product `70c49b1b50b7faca09b71889e14d33183a7f9092`; fixed-manifest exposure `adac528dbde6d0dcd6268a52c780d3abf43dc9a9`; all three release branches share both through normal fast-forward.
+- Historical audit found that V150 exposed `Lançamento por texto`, while the v1.11 canonical `Atualizações` route omitted it despite documentation saying it was implemented. V1.12 restores the missing product surface without restoring wrappers.
+- Contract `review-before-explicit-apply-v1`: phrase interpretation only proposes values; date, value, nature, account/card, category, context, counterparty and description are editable; required evidence is shown before approval.
+- The authenticated writer remains `lts_browser_apply_reviewed_input_v1` with an idempotency key and product/cockpit readback. Preview never writes; fixture mode has no confirmation action and the permanent gate requires `writer_called:false` / `write_accepted:false`.
+- Bank↔liquidity and RSU operations remain in the separate equal-and-opposite Aplicar/Resgatar flow and cannot be converted into revenue/expense by text input.
+- Local Chromium and recovery/canonical CI Chromium+WebKit are PASS in desktop 1312×1199 and mobile 390×844, including every protected v1.11/v1.10/v1.9 regression.
+- Pre-exposure recovery gate/smoke `34235638676` / `34235638646`, canonical gate/smoke `34235911409` / `34235911280`, main smoke/Pages `34236205811` / `34236204118`: SUCCESS. Post-exposure active/canonical/main smokes `34236480960` / `34236541857` / `34236635343` and Pages `34236635451`: SUCCESS.
+- Fixed homologation resolves to `canonical-app.html?homologacao=70c49b1…#Dashboard`, loads `input12`, renders truthful signed-out login and exposes no iframe or fixture financial content.
+- Latest immutable checkpoint: `backups/CANONICAL_APP_V112_REVIEWED_TEXT_INPUT_CHECKPOINT_2026-09-08.md`.
+- Authenticated real save/readback and physical-iPhone evidence remain explicitly open/not claimed. No user action is required for the release sequence.
+
+## Protected predecessor — canonical v1.11 Layered Liquidity
+- Exact product `8a9c675ed3940da19a10c04e56249a315576045a`; fixed-manifest exposure `04c051f19167e913079bb8e75b692f5fe430892c`; all three release branches share the product, exposure and documentation/checkpoint closure through normal fast-forward.
+- Dashboard contract `reference-layered-liquidity-commitments-v3` preserves the observed/projected truth boundary and adds liquidity-layer contract `current-base-scheduled-rsu-restricted-fgts-v1`.
+- Cockpit `through_d3` is the evidenced current anchor. `current_liquidity_balance` is the future base; `conditional_rsu_balance` is the scheduled-vesting scenario; `restricted_total_balance` is the FGTS-inclusive contingency. Conditional/restricted paths never become the current position.
+- `Próximos Compromissos` no longer reads `cockpit.work.top_actions`. Its only sources are card `next_due` and `product.commitments.commitments` rows with explicit `next_due`; missing next dates are omitted rather than inferred from historical start dates.
+- Operational review tasks remain in `Atualizações`. Commitment actions route to `Fluxo Diário`, where the v1.9 V150/V151+ interaction contract remains unchanged.
+- Local Chromium and recovery/canonical CI Chromium+WebKit are PASS in desktop 1312×1199 and mobile 390×844 after full six-route, Flow, Dashboard, Central de Gestão and auth-truth regression.
+- Pre-exposure recovery gate/smoke `34229899061` / `34229899074`, canonical gate/smoke `34230146792` / `34230146827`, main smoke/Pages `34230384306` / `34230382218`: SUCCESS. Post-exposure active/canonical/main smokes `34230610235` / `34230659383` / `34230705729` and Pages `34230705397`: SUCCESS.
+- Fixed homologation browser verification resolved to `canonical-app.html?homologacao=8a9c675…#Dashboard`, loaded `dashboard-layers11`, rendered the truthful signed-out login and exposed no iframe or fixture financial content.
+- Latest immutable checkpoint: `backups/CANONICAL_APP_V111_LAYERED_LIQUIDITY_CHECKPOINT_2026-09-08.md`.
+- This predecessor remains immutable evidence; continue autonomously unless a real financial/provider/consent decision becomes necessary.
+
+## Recovered explicit user feedback — preserve across chats
+- V147: classification is the primary `Atualizações` action; documents and other secondary work belong under the collapsed `Outras ações que precisam de você`. Document association must be explicit and type-specific before interpretation; upload alone does not launch a financial fact.
+- 24/08: Flow `+` at left; validated columns retained; open Itaú invoice enters the total and transaction detail consolidates only after closure.
+- 04–05/09: visually plausible releases with broken buttons/data on iPhone were rejected; automatic/visual proof cannot be relabelled as real-device validation.
+- 05/09: V155 visual direction was liked, but Dashboard hierarchy must prioritize bank cash, accounts + short-term, vested RSUs and FGTS; net worth follows; expenses combine consolidated reading and detail; actions stay discreet/clickable; cash evolution separates account, short-term, RSU and FGTS layers.
+- 07/09: V150 is the functional floor and V151–V153+ improvements must accumulate; missing RSUs/future RSUs and an incorrect negative previous balance are regressions; Flow keeps history/classification and user-facing language.
+- Implementation status is tracked in `LTS_WEALTH_REQUIREMENTS_TRACEABILITY.md`; explicit feedback is not silently marked user-validated merely because CI is green.
+
+## Protected prior baseline — canonical v1.9 Flow parity
+The primary product line is the single canonical frontend `canonical-app.html`. The v154→v160 wrapper lineage is historical evidence only and must not be reintroduced as the product architecture.
+
+Current facts:
+- single frontend; no release iframe/wrapper chain;
+- direct Supabase authentication/RPC integration;
+- same app owns Dashboard, Fluxo Diário, Despesas, Patrimônio, Cartões and Atualizações;
+- V157+ modular baseline, v1.8 unified expenses, v1.7 route/session receipt, v1.6 capability recovery, Dashboard Fidelity Pass 6, iPhone future-JWT recovery and the bounded Supabase security baseline remain preserved; the historical v1.9 product package was `6aba220653a9053cf304ab11bf931db38ccc1b75`, with fixed-manifest exposure `90aad3a754e69708fcc9e03a5bb32835281e2925`;
+- Despesas is owned only by `canonical-app`: month/year history, nature × context, evidence-led insights, explicit `Não atribuído` semantics and item/month drilldown are one responsive surface; product module ownership is Patrimônio/Cartões only;
+- current changed blobs: `canonical-app.html` `92507f55f4de291c17e49a5b430bedcb33018506`, `canonical-liquidity.js` `8a8caba73c0f6a08710328c19e38bec6c6aab7e9`, `canonical-capabilities-v161.js` `da479e1c5215b593b7bb43d2df5d64dc939e19e2`, permanent gate `f48fc1520f1e50d7071f21be6648a2293fc21e6f`, recovery workflow `9a558c4574eb6439b1eeca0f34400fec2012cdd5`;
+- modular recovery gate `34170935882` and permanent canonical gate `34171231918`: SUCCESS in Chromium desktop 1312×1199 and WebKit mobile 390×844;
+- all active/canonical/main candidate smokes and both pre/post-manifest Pages deployments are green; exact run inventory is in the immutable checkpoint;
+- Pass 6 recovery/candidate `34185954453` / `34185954506`, canonical gate/candidate `34186087590` / `34186087628`, main candidate/Pages `34186301851` / `34186300869`: SUCCESS;
+- post-exposure active/canonical/main smokes `34186663110` / `34186664337` / `34186664887` and Pages `34186664347`: SUCCESS;
+- route/receipt recovery/candidate `34190659782` / `34190659780`, canonical gate/candidate `34191017877` / `34191017858`, main candidate/Pages `34191216218` / `34191215874`: SUCCESS;
+- post-v1.7-exposure active/canonical/main smokes `34191461669` / `34191462282` / `34191463017` and Pages `34191462402`: SUCCESS;
+- historical v1.9 fixed-exposure evidence used `canonical-app.html` / `promotion_status:not_promoted`; the current fixed exposure is v1.12 and public `index.html` remains protected;
+- unified-expenses gates are green: active `34199824400`, canonical `34200253901`, main candidate/Pages `34200706521` / `34200704967`;
+- canonical v1.9 recovery/candidate `34219446266` / `34219446256`, canonical gate/candidate `34219669569` / `34219669492`, main candidate/Pages `34219911180` / `34219909612`: SUCCESS;
+- post-exposure active/canonical/main smokes `34220841617` / `34220895671` / `34220950755` and Pages `34220949477`: SUCCESS;
+- live fixed-URL verification resolved to product `6aba220…`, loaded `canonical-liquidity.js?v=20260908-flow-parity9`, used no iframe and rendered truthful login with no unauthenticated fixture values;
+- latest immutable checkpoint: `backups/CANONICAL_APP_V19_V150_FLOW_PARITY_CHECKPOINT_2026-09-08.md`;
+- authenticated physical-iPhone financial/data E2E remains pending/not claimed.
+
+## Canonical v1.9 Flow interaction recovery — green and selected for fixed homologation
+- Git-history audit recovered the exact V150–V160 lineage: V150–V152 kept inline invoice detail, rich semantic movements, projection split and interaction continuity; V153 simplified the visible Flow; V154–V160 focused on visual/data/session recovery without fully restoring those behaviors.
+- `canonical-flow-v157.js` now carries contract `v150-validated-flow-plus-v157-liquidity-v1`, preserving `lts_browser_flow_v8`, four account views, ten periods and 14 consolidated liquidity/economic layers.
+- Restored canonical interactions: dedicated Hoje, five complete future days, expansion scroll preservation, inline reconciled invoice summary/full detail, semantic transfer/net-salary labels and append-only edit/duplicate/split/cancel with live split sum.
+- Permanent gate covers these interactions and Flow-specific mobile overflow. Local Chromium desktop/mobile and CI Chromium/WebKit are PASS; fixed-manifest exposure is in this release package. Authenticated real mutations/invoices and physical iPhone remain explicitly open/not claimed.
+
+## Canonical v1.7 — route/session continuity and one readiness receipt
+- `canonical-route-session-continuity-v1` resolves the intended route before the first RPC/render and stores only allowlisted navigation state in `sessionStorage`.
+- Refresh, signed-out login, future-JWT reset, direct deep links, browser back/forward and bfcache preserve or safely canonicalize route intent; invalid routes fall back to Dashboard.
+- Central de Gestão restores one of eight allowlisted panes after refresh/back without changing the six-route mobile contract.
+- The permanent browser gate emits `lts-canonical-definition-of-done-receipt-v1`; artifact `10042106418`, digest `sha256:69ef7f8af36374e9c91ae5074690d13525676d8fe8ee326024c40e381e36ed47`.
+- Receipt semantics are binding: `gate_status: PASS` means the deterministic suites passed; `delivery_status: AUTOMATED_GATE_PASS_REAL_E2E_OPEN` means authenticated real-data/write lifecycles, physical iPhone and public-root promotion are still not claimed.
+
+## Canonical v1.6 — recovered briefing capabilities
+- Central de Gestão is grouped inside `Atualizações`; desktop receives secondary intent links while mobile keeps exactly six primary destinations.
+- Visible inventory: Planejamento, Entradas & compromissos, Recorrências, Simulações, Conciliação, Relatórios, Backup & restauração, Configurações & integrações, Financiamentos and Documentos.
+- Real authenticated readers: `lts_browser_planning_executive_v1`, `lts_browser_recurring_future_gap_audit_v4`, `lts_browser_vesting_scenario_v1`, `lts_browser_backup_status_v1`, `lts_browser_backup_export_v1`, `lts_browser_restore_stage_v1`, `lts_browser_restore_apply_v1`, `lts_browser_open_finance_status_v1`, `lts_browser_wealth_detail_v1`, `lts_browser_document_lifecycle_v1`.
+- All ten functions deny `anon` EXECUTE and allow `authenticated` EXECUTE. This is intentional browser-RPC reachability, not proof that every historical SECURITY DEFINER function is safe.
+- Recurrence and scenario paths are read-only; planning never projects new FGTS accrual; reconciliation keeps difference R$0; fixture blocks backup/restore writes.
+- Real restore is non-destructive/staged: local checksum verification, backend preview, exact phrase, second browser confirmation and apply. Real authenticated backup/restore remains pending/unclaimed.
+- Reports expose executive JSON and recurrence CSV; the full financial backup remains separate and explicitly private.
+
+## Durable briefing and validation map
+- `LTS_WEALTH_REQUIREMENTS_TRACEABILITY.md` is the canonical crosswalk for original briefing, Dashboard model lineage, V150/V151 decisions, implementation, automatic proof, user/real-life proof and exact gaps.
+- The app-level target remains daily use without Excel, reliable past/today/90-day Flow, integrated cards/recurrences/commitments/transfers/simulations/reconciliation and zero financial divergence.
+- The six primary routes may group secondary capabilities, but Financing, Planning, Revenues/Inputs, Recurrences, Commitments, Simulations, Reconciliation, Reports, Documents and Settings must not silently disappear.
+- Historical indexed conversation recovery is partial; absence from search never authorizes removing a requirement.
+
+## iPhone future-JWT recovery
+- A real iPhone showed raw fatal `JWT issued at future`.
+- The shared canonical RPC/session layer now performs bounded clock-skew retry, one coalesced refresh and safe cached-session reset.
+- WebKit explicitly gates a persisted future token and the safe return to login without raw JWT exposure.
+- Physical authenticated post-fix/data E2E is still pending and remains honestly unclaimed.
+
+## Deterministic canonical evidence
+Current gate preserves the prior six-route regression coverage and additionally proves the deterministic Aplicar/Resgatar preview:
+- explicit application/redemption control;
+- explicit account and documented cash-investment asset;
+- positive amount parser including `5 mil`;
+- equal-and-opposite bank/asset preview;
+- economic effect `R$ 0,00`;
+- fixture writer disabled so no financial fact is posted;
+- desktop Chromium and mobile WebKit have no horizontal overflow/page error;
+- unauthenticated no-fixture state exposes the real login.
+
+This is deterministic fixture/unauthenticated evidence, not authenticated physical-device E2E.
+
+## Official visual / Dashboard target
+- Authoritative reference: original 1312×1199 approved image, SHA-256 `0e5293a98bf3fce30b27ba508afdb2f17d82700a6134372938eaff38da73c06b`.
+- Target remains dark desktop rail, light dense executive canvas, compact spacing and intentional mobile layout.
+- Liquidity-first hierarchy remains evidence-led.
+- Pass 6 closes the major structural differences in navigation breadth, month/as-of controls, top KPI evidence, bank position and working decision drill-downs.
+- Pixel-perfect parity, richer evidence-backed historical chart detail and authenticated real-data presentation remain open; the approved image defines presentation/hierarchy, never financial values.
+
+## Current financial/product invariants
+### Dashboard / Planning / FGTS
+- Bank cash R$15.794,43; D0 R$42.929,50; current vested D+3 R$12.909,65; liquidity through D+3 R$71.633,58.
+- `Contas + curto prazo` remains evidence-only arithmetic.
+- FGTS exact documentary balance R$22.432,31 at 21/08/2026; restricted / approximately D+30; never D+3.
+- No future FGTS deposit/accrual projection.
+- Current audited planning: request FGTS by 30/11/2026; management/action point 30/12/2026; first uncovered gap 30/01/2027; worst before FGTS -R$25.782,39; worst after current documentary FGTS -R$3.350,08.
+- Historical R$3.700/month FGTS accrual and dependent R$32.309,05 outputs are historical only.
+- Future RSUs remain excluded until vest/settlement.
+
+### Natural liquidity input
+- Backend browser contract: options → preview → explicit approval/apply → atomic refresh/readback.
+- Application and redemption use equal-and-opposite bank↔cash-investment legs and economic effect exactly R$0; they do not become income/expense.
+- Browser path supports today/future movements only.
+- Idempotency prevents a repeated confirmation from double-applying a movement.
+- Canonical Atualizações now exposes this path with explicit account, asset, value and date; no account/asset is guessed.
+- Deterministic UI is gated, but real authenticated liquidity save→refresh→visible remains pending because no real financial movement was posted during testing.
+
+### RSU / Organon
+- Current documentary position 03/09/2026: 184,483 shares / R$12.909,65 / D+3.
+- Previous 18/08/2026 snapshot: 459,483 shares / R$32.772,30; historical only.
+- Current metadata records a 275-share reduction after the prior snapshot and a user-confirmed sale, but exact trade settlement date/price/proceeds remain pending documentary reconciliation.
+- Brokerage cash R$2.862,67 is separately `available_unclassified` and excluded from D0/D3 until transfer latency is evidenced.
+- Do not invent quantity/gross/fees/FX for historical proceeds where evidence is incomplete.
+
+### Despesas
+- Economic invariant R$8.623.752,53; analytical cache 3.860/3.860 exact.
+- Nature and context/person/cost center distinct.
+- Canonical route consumes `lts_browser_expense_context_lens_v1` and keeps read-only drilldowns/historical periods.
+- Classification hierarchy: explicit user rule → exact/consistent LTS history → public merchant research → manual review.
+- Marketplace/intermediary alone never proves purchase purpose.
+- Continue decision-useful density/ranking and evidence-only reduction of `A classificar`.
+
+### Atualizações / search / documents / classification
+- Classification-first prioritized action center; no large blank whitespace or buried primary action. `Outras ações que precisam de você` is collapsed by default and contains documents/secondary management work.
+- `Lançamento por texto` remains preview/review first; no automatic posting.
+- Server-side incremental search uses `lts_browser_transactions_v1`, includes total and Excel-compatible CSV; deterministic UI gate passed.
+- Mastercard backend evidence: 239 rows spanning 01/11/2013–12/04/2028.
+- Classification writer `lts_browser_semantic_feedback_v1`; canonical lifecycle wiring performs save → product refresh/read verification.
+- Guided intake enforces bank/account+competence, card+competence, financing commitment+as-of or other/manual linkage before private upload; filename is never evidence and no auto-post path exists.
+- Document register writer `lts_browser_register_document_v2` and lifecycle reader `lts_browser_document_lifecycle_v1` are surfaced in canonical Atualizações; registration failure attempts Storage cleanup.
+- Real authenticated classification, transaction-search and PDF/image upload→register→interpret→review E2E remain pending/unclaimed.
+
+### Fluxo Diário / mutation semantics
+- Mandatory Consolidado, Itaú, Bradesco, C6.
+- Facts > projections; scenarios never facts; stale anchors cannot reanchor; cards do not feed their own forecast.
+- Bank↔liquidity-asset transfer consolidated economic effect zero.
+- Append-only edit/cancel/split semantics proven: current-event overlays append to `lts_flow_event_operation`; legacy overrides append to `projecao_op`; mutations append to `lts_flow_mutation_audit`; source facts are not destructively rewritten.
+- `lts_fix86_legacy_guardrails_qa_v4` passes 10/10 including `flow_mutations_append_only_operational`.
+- Separate user-facing undo/reversal is not claimed/enabled without an explicit append-only reversal contract.
+
+### Cartões
+- Certified allocation 38 cycles / 650 rows / R$885.855,19.
+- Aggregate fallback 314 rows / R$2.650.846,36 remains aggregate-only.
+- C6 Aug/2024 explicit R$66,70 gap remains.
+- Mastercard/Visa incomplete historical months remain documentary recovery only; never pattern-fill purchases.
+
+### CIPÓ 396
+- Distinct consortium entries R$6.654,50 on 12/05/2023 and R$151,80 on 15/05/2023; never present as same-date arithmetic.
+- R$303,60 consortium delta unresolved; Visa Infinite R$303,60 rows are not consortium evidence.
+- Condominium source/formula/cutoff absent.
+- Raw gap R$1.780.358; dedup gap R$1.312.268; duplicate excess R$3.531,70 unresolved.
+- Never fabricate post-2029 TR; market-minus-cost is not automatically taxable/net gain.
+
+### Volvo
+- Bradesco financing 60 × R$2.886,43, first 08/09/2026, last 08/08/2031, exactly once economically.
+- Exact trim/version and km remain required before valuation refinement.
+
+### Open Finance
+- Provider-neutral architecture QA 14/14.
+- `lts_browser_open_finance_status_v1` exposes architecture/connections/sync health; provider records are staged/reconciled before canonical financial effect; no bank credentials/provider secrets are stored in LTS tables under the current contract.
+- No provider selected/activated by project decision; no consent/token/commercial commitment claimed.
+- Need written pricing/support/SLA, exact product×bank coverage for Itaú/Bradesco/C6, scope, history depth, refresh/webhooks, consent renewal, errors and sandbox quality.
+- Provider/spend/consent remains a future user decision.
+
+### Supabase security hardening
+- Migration `20260908045049 canonical_security_rls_and_flow_helper_acl_2026_09_08` is applied. The 13 audited tables now have RLS and no direct `PUBLIC`/`anon`/`authenticated` DML grants.
+- The audit found 12 internal SECURITY DEFINER Flow/cache helpers that accepted explicit arbitrary `user_id` and inherited client EXECUTE through postgres defaults. They are now internal-only. Browser Flow wrappers v7-v10 remain authenticated-only and derive the user through `lts_browser_assert_user_v1`.
+- Postflight returned 13/13 RLS, 12/12 helpers closed, 4/4 wrappers authenticated-only, zero anonymous SECURITY DEFINER execution and zero authenticated SECURITY DEFINER functions without a direct allowlist/JWT/user guard. Default client grants are zero; `service_role` remains preserved.
+- Authenticated transactional regression passed for Flow v8, Dashboard cockpit and product contract, then rolled back. Advisor no longer reports RLS-disabled or anonymous SECURITY DEFINER findings. No-policy INFO notices on the 13 internal tables are intentional deny-by-default behavior.
+- Leaked-password protection remains disabled and must be handled as a separate controlled Auth-setting change.
+
+## Historical release lineage retained, not current
+- v154 accepted visual direction; v155 false-zero/navigation correction; v156 liquidity-first but rejected real iPhone; v157 WebKit deterministic pass but real-device rejection; v158 truthful fallback/product regression; v159 presentation restored but KPI data unavailable on real iPhone; v160 material-data readiness/truthful fallback; canonical app supersedes all as primary architecture.
+
+## Open backlog that must always remain visible
+- Preserve the V1.24 four-profile readability contract, V1.23 daily-use Flow closure and every protected predecessor; literal pixel identity is not claimed as an evidence fact.
+- Close the unified receipt rows that require authenticated real-data/write lifecycles and physical-device evidence; do not reinterpret automatic PASS as final delivery.
+- Controlled Auth review/enablement of leaked-password protection; database RLS/SECURITY DEFINER hardening is closed and must remain regression-protected.
+- Authenticated physical-iPhone canonical financial/data E2E.
+- Real authenticated liquidity save→refresh→visible.
+- Real authenticated classification lifecycle.
+- Real authenticated PDF/image interpretation→review.
+- Real authenticated server-side search/CSV E2E.
+- User-facing undo/reversal only after explicit append-only reversal contract; cancel/edit/split already proven append-only.
+- Expense density/insight refinement and evidence-only reduction of `A classificar`.
+- Mastercard/Visa documentary recovery.
+- Current/historical RSU sale documentary detail where not evidenced.
+- CIPÓ R$303,60 delta, condominium source, raw/dedup gaps, duplicate excess.
+- Volvo exact trim/km.
+- Open Finance pricing/SLA/product×bank comparison; no provider/consent/spend without explicit authorization.
+- Audit all dependencies/improvements back to 07/07/2026.
+- Public promotion only after explicit user approval.
+- Preserve official-reference visual language, mobile/desktop usability, backup/restore and traceability.
+
+## User action now
+No basic QA is delegated to the user. Closing the remaining P0 evidence requires an authenticated session and a physical-iPhone material walkthrough; public-root promotion remains separate and requires explicit authorization.
+
+## Route/session continuity + unified receipt — 08/09/2026
+- Route and management-pane intent now survive refresh/session restoration/back-forward under explicit allowlists; the future-JWT safe reset returns to login without discarding the intended product route.
+- The permanent recovery/canonical gates cover Chromium desktop 1312×1199 and WebKit mobile 390×844, including direct links, invalid-route fallback, bfcache/back-forward, selected management pane and route preservation through JWT recovery.
+- Product target `e618ef48e22872ce718c7932872e2316e5660f67`; exposure `33da29ab0818c9dd59dca45f68d3680ed153f6af`; all pre/post-exposure smokes and Pages are green.
+- The generated receipt is the single automatic evidence index, not a claim of authenticated physical-device completion. Public `index.html` remains unchanged.
+
+## Dashboard Fidelity Pass 6 — 08/09/2026
+- Approved-reference desktop intent order, month/as-of controls, working `Hoje` reload, five evidence labels, bank rows and real route drill-downs are implemented without changing the liquidity-first financial contract.
+- Mobile preserves exactly six primary destinations and exposes the period controls without clipping; Central de Gestão keeps all ten recovered briefing capabilities.
+- The canonical gate found and blocked a mobile scenario race caused by redundant delayed remounts; the product now preserves form state and both browser gates are green after the fix.
+- Product target `9ae0ee37ab3332415523eeee287cdbf75102e1c4`; homologation exposure `4d3c7bc912a672ae7353c7028d8b05d047961dd5`; all pre/post-exposure smokes and Pages are green.
+- Active artifact `10040515495`, digest `sha256:e8b4403df49125b5251f751378e4e84f7c9704abac55c40d8324e05a895009a2`; canonical artifact `10040555899`, digest `sha256:e3d4685de0887ce0711f42fd16adcbecd33ef0311466749383b4d0c45bca7883`.
+- Browser verification of the fixed URL showed Pass 6 assets, clean login, no unauthenticated financial KPI and no iframe. Authenticated physical-iPhone financial/data E2E and pixel-perfect parity remain unclaimed.
+
+
+## Latest product-recovery exposure — 07/09/2026
+- Split V157+ module architecture is now covered by both the recovery and permanent canonical gates.
+- Product/gate source `76f888dc0e668fb0e768c8cc825f56778f043f50`; homologation target `c44d401497e14d842d433a302006ff5648b956a9`; manifest exposure `3b3048fa4660868e161582fcd8704438a13e300c`.
+- Recovery `34170935882`, permanent canonical `34171231918`, all active/canonical/main candidate smokes and Pages deployments: SUCCESS.
+- Historical v144–v160 workflows retain branch/manual execution but no longer auto-trigger on `main`.
+- Fixed homologation was directly verified; Dashboard parity remains P0 and pixel-perfect parity is not claimed.
+- Real authenticated liquidity save→refresh→visible and authenticated physical-iPhone E2E remain pending/unclaimed.
+- `index.html` remains protected/not promoted.
+
+## Dashboard Fidelity Pass 5 — 07/09/2026
+- At Pass 5, `canonical-product-v157.js` stopped replacing Dashboard. Canonical v1.8 supersedes its Despesas ownership too; the module now remains responsible only for Patrimônio and Cartões enrichment.
+- Canonical Dashboard now keeps the five liquidity-first KPI contract inside the denser approved-reference hierarchy.
+- Product source `6eca5c3785cd5dca69a2aa8f610312eefbb2a669`; exact gated target `eff928cb88e01ba3c5c88b8a8a8c4e8fa5d89f5d`; exposure `a808d855aa6687a893a51598db8f5fad4faf1cbb`.
+- Recovery gate `34173223977`, permanent canonical gate `34173482173`, final active/canonical/main smokes and Pages: SUCCESS; all post-exposure smokes and Pages are also green.
+- Fixed homologation was directly verified at the exact target with Pass 5 asset and truthful unauthenticated login.
+- Dashboard pixel-perfect parity and authenticated physical-iPhone financial/data E2E remain explicitly unclaimed.
