@@ -43,12 +43,14 @@ async function run(browser,viewport,label){
   await f.locator('.v178-pending-open').first().click();await f.waitForSelector('.v178-export-pending:not([disabled])');
   assert.equal(await f.locator('#v178Drawer tbody tr').count(),3);assert.equal(await f.locator('.v178-question').count(),3);
   await f.locator('.v178-filter input').fill('Último');assert.equal(await f.locator('#v178Drawer tbody tr').count(),1);assert.equal(await f.locator('.v178-question').count(),1);
+  await f.evaluate(()=>{render();render();});
+  assert.equal(await f.locator('.v178-filter input').inputValue(),'Último','background rendering preserves review search');
   const wait=page.waitForEvent('download');await f.locator('.v178-export-pending').click();const download=await wait;const path='v178-'+label+'-pending-fixture.csv';await download.saveAs(path);const csv=fs.readFileSync(path,'utf8');assert.equal(csv.trim().split(/\r?\n/).length,4,'export includes complete list, not filtered subset');assert(csv.includes("'  =1+1"),'CSV text cannot execute a formula');assert(csv.includes('"-1,00"'),'credits preserve signed amounts');
   await f.locator('.v178-close').click();await f.locator('.v178-coverage-open').first().click();await f.waitForFunction(()=>window.__LTS_V178_STATE.detail?.count===1&&!window.__LTS_V178_STATE.detail.loading);assert.equal(await f.evaluate(()=>window.__LTS_V178_STATE.detail.total),100);await f.locator('.v178-close').click();
   const nav=viewport.width<=520?f.locator('#dx1MobileNav [data-mobile-route="Despesas"]'):f.locator('.nav [data-v="Despesas"]');await nav.click();await f.locator('[data-v168-exp-range="6m"]').click();await f.locator('.v168-tabs [data-v168-exp-tab="categories"]').click();await f.waitForFunction(()=>window.__LTS_V175_STATE.expense.data?.period?.from==='2026-04-01');
   assert.equal(await f.locator('.v168-expenses .v178-rankrow').count(),122,'all categories remain accessible beyond first 99');
   await f.locator('.v168-expenses .v178-open.amount[data-group="Grupo sintético 121"]').click();await f.waitForFunction(()=>window.__LTS_V178_STATE.detail?.count===1&&!window.__LTS_V178_STATE.detail.loading);assert.equal(await f.evaluate(()=>window.__LTS_V178_STATE.detail.range.from),'2026-04-01');await f.locator('.v178-close').click();
-  assert.deepEqual(errors,[]);return{label,pass:true,exported_rows:3,visible_categories:122};
+  assert.deepEqual(errors,[]);return{label,pass:true,exported_rows:3,visible_categories:122,export_after_background_render:true};
  }finally{await context.close()}
 }
 (async()=>{const browser=await chromium.launch({headless:true});try{const results=[await run(browser,{width:1440,height:1000},'desktop-actions'),await run(browser,{width:390,height:844},'mobile-actions')];fs.writeFileSync('v178-actions-result.json',JSON.stringify({pass:true,results},null,2));console.log(JSON.stringify(results))}catch(e){fs.writeFileSync('v178-actions-result.json',JSON.stringify({pass:false,error:String(e.stack||e)},null,2));console.error(e);process.exitCode=1}finally{await browser.close()}})();
