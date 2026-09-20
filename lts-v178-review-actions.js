@@ -20,7 +20,8 @@
    const d=state.detail,host=document.getElementById('v178Drawer');if(!d||d.group!==pending||!host)return;
    const byKey=new Map(d.rows.map(r=>[String(r.key),r]));
    host.querySelectorAll('tr[data-row-key]').forEach(tr=>{const r=byKey.get(tr.dataset.rowKey);if(!r||tr.querySelector('.v178-question'))return;const small=document.createElement('small');small.className='v178-question';small.textContent=r.review_question||'Pessoa ou classificação a confirmar';tr.children[1]?.appendChild(small)});
-   let button=host.querySelector('.v178-export-pending');if(!button){button=document.createElement('button');button.className='v178-refresh v178-export-pending';button.textContent='Exportar lista';button.title='Exportar todos os itens do período';button.onclick=exportPending;host.querySelector('footer')?.appendChild(button)}
+   let button=host.querySelector('.v178-export-pending');if(!button){button=document.createElement('button');button.className='v178-refresh v178-export-pending';button.textContent='Exportar lista';button.title='Exportar todos os itens do período';host.querySelector('footer')?.appendChild(button)}
+   button.onclick=exportPending;
    button.disabled=Boolean(d.loading||d.error||d.rows.length!==d.count);
    const input=host.querySelector('input');if(input&&!input.dataset.reviewQuestions){input.dataset.reviewQuestions='1';input.addEventListener('input',detailQuestions)}
    const retry=host.querySelector('.v178-retry');if(retry&&!retry.dataset.reviewQuestions){retry.dataset.reviewQuestions='1';const old=retry.onclick;retry.onclick=e=>Promise.resolve(old?.call(retry,e)).finally(detailQuestions)}
