@@ -10,7 +10,7 @@
   const pending='Identificações pendentes';
   function exportPending(){
    const d=state.detail;if(!d||d.group!==pending||d.loading||d.error||d.rows.length!==d.count)return;
-   const text=x=>{let s=String(x??'');if(/^[=+@-]/.test(s))s="'"+s;return '"'+s.replace(/"/g,'""')+'"'};
+   const text=x=>{let s=String(x??'');if(/^[\u0000-\u0020]*[=+@-]/.test(s))s="'"+s;return '"'+s.replace(/"/g,'""')+'"'};
    const rows=[['Data','Competência','Histórico','Conta ou cartão','Pessoa','Categoria','Valor (R$)','Confirmar'].map(text).join(';')];
    for(const r of d.rows)rows.push([text(r.date_kind==='day'?r.date:''),text(String(r.period||'').slice(0,7)),text(r.description),text(r.account_source),text(r.beneficiary),text(r.category),'"'+Number(r.amount).toFixed(2).replace('.',',')+'"',text(r.review_question||'Pessoa ou classificação a confirmar')].join(';'));
    const url=URL.createObjectURL(new Blob(['\ufeff'+rows.join('\r\n')],{type:'text/csv;charset=utf-8'}));
@@ -26,7 +26,17 @@
    const retry=host.querySelector('.v178-retry');if(retry&&!retry.dataset.reviewQuestions){retry.dataset.reviewQuestions='1';const old=retry.onclick;retry.onclick=e=>Promise.resolve(old?.call(retry,e)).finally(detailQuestions)}
   }
   async function open(group,range,expected){await api.openDetail(group,null,range,expected);detailQuestions()}
+  function guardSecondaryTotals(){
+   if(V!=='Dashboard')return;
+   const cards=[...document.querySelectorAll('.v168-dashboard .v168-kpi')];
+   const find=label=>cards.find(c=>c.querySelector('span')?.textContent.trim()===label);
+   const available=label=>{const text=find(label)?.querySelector('strong')?.textContent.trim();return Boolean(text&&!/^[—–-]$/.test(text))};
+   for(const [label,parts] of [['Total de posições futuras',['RSUs futuras','Cash RSUs futuras']],['Total em previdências',['Organon','Novartis']]]){
+    if(parts.every(available))continue;const card=find(label);if(!card)continue;card.querySelector('strong').textContent='—';if(card.querySelector('small'))card.querySelector('small').textContent='Aguardando todas as posições';
+   }
+  }
   function decorate(){
+   guardSecondaryTotals();
    document.querySelectorAll('[data-v178-scope]').forEach(parent=>{
     if(parent.querySelector('.v178-review-actions'))return;
     const dashboard=parent.dataset.v178Scope==='dashboard';
@@ -41,7 +51,8 @@
     if(!dashboard&&window.__LTS_V168_STATE?.expense?.tab==='categories'){
      const existing=new Set([...parent.querySelectorAll('.v178-open.title')].map(b=>b.dataset.group));
      const extra=(data.management_groups||[]).filter(g=>!existing.has(g.name)&&g.name!=='Faturas conciliadas pelo total');
-     for(const g of extra){const row=document.createElement('div');row.className='v178-rankrow';row.innerHTML='<span>'+(existing.size+1)+'</span><div><button class="v178-open title">'+escape(g.name)+'</button></div><button class="v178-open amount">'+money(g.total)+'</button>';row.querySelectorAll('button').forEach(b=>{b.dataset.group=g.name;b.onclick=()=>open(g.name,range,g.total)});parent.querySelector('.v178-rank')?.appendChild(row);existing.add(g.name)}
+     const max=Math.max(1,...(data.management_groups||[]).map(g=>Math.abs(Number(g.total)||0)));
+     for(const g of extra){const row=document.createElement('div');row.className='v178-rankrow';row.innerHTML='<span>'+(existing.size+1)+'</span><div><button class="v178-open title">'+escape(g.name)+'</button><i><u style="width:'+Math.max(1,Math.abs(Number(g.total)||0)/max*100)+'%"></u></i></div><button class="v178-open amount">'+money(g.total)+'</button>';row.querySelectorAll('button').forEach(b=>{b.dataset.group=g.name;b.onclick=()=>open(g.name,range,g.total)});parent.querySelector('.v178-rank')?.appendChild(row);existing.add(g.name)}
     }
    });
    detailQuestions();
