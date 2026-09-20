@@ -1,0 +1,45 @@
+name: V178 integrated review
+on:
+  workflow_dispatch:
+  push:
+    branches: [work/v178-integrated-review-20260920]
+permissions:
+  contents: read
+concurrency:
+  group: v178-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Protected baseline
+        run: |
+          echo 'cca36731258680cc15a73fbad61c90ddf803358b741fd3ef58fefe5419eb688b  index.html' | sha256sum --check
+          tar --exclude=.git --exclude=node_modules -czf /tmp/v178-source.tar.gz .
+      - uses: actions/upload-artifact@v4
+        with:
+          name: v178-source
+          path: /tmp/v178-source.tar.gz
+      - name: Validate package
+        if: ${{ hashFiles('.github/scripts/lts_v178_review_gate.js') != '' }}
+        run: |
+          node --check lts-v178-integrated-review.js
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium webkit
+          python3 -m http.server 8788 >/tmp/v178-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID || true' EXIT
+          timeout 300s node .github/scripts/lts_v178_review_gate.js
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v178-review-evidence
+          path: |
+            v178-result.json
+            v178-*.png
+          if-no-files-found: ignore
