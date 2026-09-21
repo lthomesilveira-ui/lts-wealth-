@@ -32,7 +32,7 @@ jobs:
         run: |
           npm install --no-save playwright@1.55.0
           python -m pip install playwright==1.55.0
-          npx playwright install --with-deps chromium
+          npx playwright install --with-deps chromium webkit
       - name: Integrated desktop and mobile review
         run: |
           python3 -m http.server 8788 >/tmp/v179-http.log 2>&1 &
