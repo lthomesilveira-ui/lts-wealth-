@@ -2,9 +2,10 @@ name: V179 published homologation verification
 on:
   workflow_dispatch:
   push:
-    branches: [main]
+    branches: [main, work/v179-live-verification-fix-20260921]
     paths:
       - 'homologacao-current.json'
+      - '.github/workflows/v179-live-homologation.yml'
 permissions:
   contents: read
 concurrency:
@@ -49,7 +50,7 @@ jobs:
               await page.goto(base+'homologacao.html?verify='+Date.now(),{waitUntil:'domcontentloaded'});
               let frame;
               for(let i=0;i<200;i++){
-                frame=page.frames().find(candidate=>new URL(candidate.url()).pathname.endsWith('/index.html'));
+                frame=page.frames().find(candidate=>{try{return new URL(candidate.url()).pathname.endsWith('/index.html')}catch{return false}});
                 if(frame&&await frame.evaluate(()=>window.__LTS_V178_REVIEW?.version==='v179-cash-recovery'&&!!window.__LTS_V178_REVIEW_ACTIONS?.installed).catch(()=>false))break;
                 await page.waitForTimeout(200);
               }
