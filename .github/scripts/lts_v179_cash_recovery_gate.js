@@ -42,13 +42,13 @@ const semantic=value=>String(value||'').replace(/\s+/g,' ').trim();
   assert(frame,'V179 frame available');
   await frame.waitForFunction(()=>window.__LTS_V178_STATE.cash.status==='ready'&&window.__LTS_V178_STATE.forecast.status==='ready'&&window.__LTS_V178_STATE.dashboardReport.status==='ready');
   const ordered=calls.filter(name=>readers.has(name));
-  assert.deepEqual(ordered.slice(0,2),['lts_browser_cash_today_v178','lts_browser_cash_today_v178'],'cash and its bounded retry finish before heavy readers');
   assert.equal(cashCalls,2,'one automatic retry recovers the first transient cash failure');
   const value=label=>frame.locator('.v168-dashboard .v168-kpi').filter({has:frame.locator('span').filter({hasText:new RegExp('^'+label+'$')})}).locator('strong');
   assert.match(semantic(await value('Total disponível hoje').innerText()),/1\.200,00/,'complete recovered cash is rendered');
   const diagnostic=await frame.locator('html').getAttribute('data-lts-v179-cash-diagnostic');
   assert(diagnostic&&!diagnostic.includes(session.access_token)&&!diagnostic.includes(session.refresh_token)&&!diagnostic.includes('Authorization'),'diagnostic is redacted');
   const parsed=JSON.parse(diagnostic);assert.deepEqual(parsed.history.slice(0,2).map(item=>item.outcome),['http_error','success']);
+  assert.deepEqual(parsed.concurrent.slice(0,2).map(item=>item.name),['lts_browser_cash_today_v178','lts_browser_cash_today_v178'],'the V179 layer finishes cash and its bounded retry before heavy readers');
   assert(await frame.evaluate(()=>window.__LTS_V178_REVIEW.retryableCashFailure({status:'error',outcome:'client_timeout'})),'authenticated client timeout is retryable');
 
   mode='incomplete';let before=cashCalls;await frame.evaluate(()=>window.__LTS_V178_REVIEW.refresh());
