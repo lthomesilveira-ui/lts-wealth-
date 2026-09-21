@@ -2,7 +2,7 @@ name: V179 cash recovery
 on:
   workflow_dispatch:
   push:
-    branches: [work/v179-cash-recovery-20260921]
+    branches: [work/v179-cash-recovery-20260921, work/v179-homologation-20260921]
 permissions:
   contents: read
 concurrency:

@@ -1,0 +1,71 @@
+name: V179 published homologation verification
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'homologacao-current.json'
+permissions:
+  contents: read
+concurrency:
+  group: v179-published-verification
+  cancel-in-progress: true
+jobs:
+  signed-out-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Verify served bytes and login gate
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+          node <<'JS'
+          const fs=require('node:fs'),crypto=require('node:crypto'),assert=require('node:assert/strict');
+          const {chromium}=require('playwright');
+          const expected=JSON.parse(fs.readFileSync('homologacao-current.json','utf8'));
+          const base='https://lthomesilveira-ui.github.io/lts-wealth-/';
+          const hash=body=>crypto.createHash('sha256').update(body).digest('hex');
+          (async()=>{
+            if(expected.version!=='wip35-v179'){console.log('V179 not selected; no verification claimed.');return;}
+            const names=['homologacao-current.json','wip35-v179-candidate.html','lts-v179-cash-recovery.js','lts-v178-review-actions.js','index.html'];
+            let verified=false,lastError='';
+            for(let attempt=0;attempt<30;attempt++){
+              try{
+                for(const name of names){
+                  const response=await fetch(base+name+'?verify='+Date.now(),{signal:AbortSignal.timeout(15000),cache:'no-store'});assert(response.ok,name+' HTTP '+response.status);
+                  const body=Buffer.from(await response.arrayBuffer());assert.equal(hash(body),hash(fs.readFileSync(name)),name+' served hash');
+                }
+                verified=true;break;
+              }catch(error){lastError=error.message;await new Promise(resolve=>setTimeout(resolve,10000));}
+            }
+            assert(verified,'Publication bytes mismatch: '+lastError);
+            const browser=await chromium.launch({headless:true});
+            const page=await browser.newPage({viewport:{width:1440,height:1000}}),errors=[];page.on('pageerror',error=>errors.push(error.message));
+            try{
+              await page.goto(base+'homologacao.html?verify='+Date.now(),{waitUntil:'domcontentloaded'});
+              let frame;
+              for(let i=0;i<200;i++){
+                frame=page.frames().find(candidate=>new URL(candidate.url()).pathname.endsWith('/index.html'));
+                if(frame&&await frame.evaluate(()=>window.__LTS_V178_REVIEW?.version==='v179-cash-recovery'&&!!window.__LTS_V178_REVIEW_ACTIONS?.installed).catch(()=>false))break;
+                await page.waitForTimeout(200);
+              }
+              assert(frame&&await frame.evaluate(()=>window.__LTS_V178_REVIEW?.version==='v179-cash-recovery'&&!!window.__LTS_V178_REVIEW_ACTIONS?.installed),'V179 runtime installed from published assets');
+              const text=await frame.locator('body').innerText();assert(/Entrar|Acessar|Login|e-mail|email/i.test(text),'Signed-out authentication surface visible');
+              assert.equal(await frame.locator('#v178Drawer').count(),0,'No private detail while signed out');assert.deepEqual(errors,[]);
+              await page.screenshot({path:'v179-published-signed-out.png',fullPage:true});
+              fs.writeFileSync('v179-published-verification.json',JSON.stringify({pass:true,manifest:expected.version,candidate:expected.path,served_assets_match:true,protected_index_sha256:hash(fs.readFileSync('index.html')),signed_out_runtime:true,authenticated_user_session_tested:false},null,2));
+            }finally{await browser.close()}
+          })().catch(error=>{console.error(error);fs.writeFileSync('v179-published-verification.json',JSON.stringify({pass:false,error:error.message,authenticated_user_session_tested:false},null,2));process.exitCode=1});
+          JS
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v179-published-verification
+          path: |
+            v179-published-verification.json
+            v179-published-signed-out.png
+          if-no-files-found: warn
