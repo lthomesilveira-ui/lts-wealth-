@@ -1,0 +1,28 @@
+name: V183 card period candidate
+on:
+  pull_request:
+    paths:
+      - 'wip35-v183-candidate.html'
+      - 'lts-v183-card-period-candidate.js'
+      - '.github/workflows/v183-card-period.yml'
+permissions:
+  contents: read
+jobs:
+  candidate-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check period reader and isolation
+        run: |
+          node <<'JS'
+          const fs=require('node:fs'),assert=require('node:assert/strict'),crypto=require('node:crypto');
+          const js=fs.readFileSync('lts-v183-card-period-candidate.js','utf8');
+          const html=fs.readFileSync('wip35-v183-candidate.html','utf8');
+          assert.doesNotThrow(()=>new Function(js));
+          assert.match(html,/lts-v183-card-period-candidate\.js/);
+          assert.match(js,/lts_browser_invoice_flow_reconciliation_v181/);
+          assert.match(js,/Nenhum resultado parcial é exibido/);
+          assert.match(js,/data-v181-flow-date/);
+          assert.equal(JSON.parse(fs.readFileSync('homologacao-current.json','utf8')).version,'wip35-v181');
+          assert.equal(crypto.createHash('sha256').update(fs.readFileSync('index.html')).digest('hex'),'cca36731258680cc15a73fbad61c90ddf803358b741fd3ef58fefe5419eb688b');
+          JS
