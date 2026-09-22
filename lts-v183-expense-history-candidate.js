@@ -90,7 +90,11 @@
         const s=part?.stock_sale_supplement||{};stockTotal+=(num(s.total)||0);
         for(const m of arr(s.monthly)){const k=String(m.month).slice(0,10),cur=stockMap.get(k)||{amount:0,source_rows:0};cur.amount+=(num(m.amount)||0);cur.source_rows+=(num(m.source_rows)||0);stockMap.set(k,cur)}
       }
-      const sourceCoverage={};\n      for(const part of parts)for(const [key,value] of Object.entries(part?.coverage||{}))if(typeof value==='number')sourceCoverage[key]=(sourceCoverage[key]||0)+value;\n      const recurring=parts.map(x=>x?.recurring_gap_audit).filter(Boolean);\n      const recurringItems=recurring.flatMap(x=>arr(x.items));\n      const issues=new Map();
+      const sourceCoverage={};
+      for(const part of parts)for(const [key,value] of Object.entries(part?.coverage||{}))if(typeof value==='number')sourceCoverage[key]=(sourceCoverage[key]||0)+value;
+      const recurring=parts.map(x=>x?.recurring_gap_audit).filter(Boolean);
+      const recurringItems=recurring.flatMap(x=>arr(x.items));
+      const issues=new Map();
       for(const part of parts)for(const issue of arr(part?.open_audit_issues)){if(issue?.issue_id)issues.set(issue.issue_id,issue)}
       return{
         ...parts[0],version:'monthly-balance-v5-v183-complete-chunks',from,to,months,monthly_totals,totals,
@@ -99,7 +103,9 @@
         expense_groups:mergeGroups(parts,'expense_groups',months),
         expense_unclassified_card_coverage:{label:'Faturas conciliadas pelo total',total:coverageTotal,source_rows:coverageRows,monthly:months.map(k=>({month:k,amount:coverageMap.get(k)||0}))},
         stock_sale_supplement:{total:stockTotal,monthly:months.map(k=>({month:k,amount:stockMap.get(k)?.amount||0,source_rows:stockMap.get(k)?.source_rows||0}))},
-        coverage:{...parts[0]?.coverage,...sourceCoverage},\n        recurring_gap_audit:recurring.length?{...recurring.at(-1),from:recurring[0].from,to:recurring.at(-1).to,items:recurringItems,open_zero_count:sum(recurring.map(x=>x.open_zero_count))}:parts[0]?.recurring_gap_audit,\n        open_audit_issues:[...issues.values()],
+        coverage:{...parts[0]?.coverage,...sourceCoverage},
+        recurring_gap_audit:recurring.length?{...recurring.at(-1),from:recurring[0].from,to:recurring.at(-1).to,items:recurringItems,open_zero_count:sum(recurring.map(x=>x.open_zero_count))}:parts[0]?.recurring_gap_audit,
+        open_audit_issues:[...issues.values()],
         partial_year_failures:failed
       };
     }
