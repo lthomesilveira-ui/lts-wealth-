@@ -11,8 +11,9 @@
   "protected_index_sha256": "cca36731258680cc15a73fbad61c90ddf803358b741fd3ef58fefe5419eb688b",
   "promotion_status": "not_promoted",
   "exposure_mode": "v180_documentary_refresh_with_v179_authenticated_cash_recovery",
-  "gate_status": "v180-35746263140-success; v171-v177-pr-matrix-success; authenticated-readers-pass; fixed-entry-authenticated-pending",
+  "gate_status": "v180-35746263140-success; exposure-35747307190-success; published-35747837646-success; pages-35747832616-success; v171-v177-pr-matrix-success; fixed-entry-authenticated-reload-flow-return-pass",
   "prepublication_validation": "backups/V180_PREPUBLICATION_VALIDATION_2026-09-22.md",
+  "publication_receipt": "backups/V180_HOMOLOGATION_PUBLICATION_2026-09-22.md",
   "publication_verification_workflow": ".github/workflows/v180-homologation.yml",
   "dashboard_contract": "v180-current-day-documentary-position-plus-v179-cash-first-one-transient-retry-no-partial-or-stale-total",
   "dashboard_reader": "lts_browser_cash_today_v178",
@@ -48,5 +49,5 @@
     "include_zero_movement_days": true
   },
   "updated_at": "2026-09-22",
-  "actual_user_session_homologation": "authenticated-backend-and-direct-v179-pass; fixed-entry-v180-login-reload-flow-return-pending"
+  "actual_user_session_homologation": "authenticated-fixed-entry-v180-pass; full-reload-pass; dashboard-flow-dashboard-pass; user-acceptance-pending"
 }
