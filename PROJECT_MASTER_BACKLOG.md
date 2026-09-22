@@ -1,5 +1,22 @@
 # LTS Wealth — Master Backlog
 
+## P0 — V183 correction round: frozen V182 user QA and complete financial trace — 22/09/2026
+
+The user explicitly will not test the current link/build. Keep the fixed V181 homologation and public root intact; do not send a V182 test link. These items are additive to V182-F01–F12 and the earlier registers. A new candidate becomes testable only after authenticated published checks (login, full reload, Dashboard → Flow → Dashboard), complete source-to-Flow reconciliation and scoped notebook/mobile navigation. Public status contains no private transaction detail.
+
+- [ ] V183-F01: freeze the current user-QA link; publish and identify a *successor* only after all critical gates, recording code version, date, evidence and remaining dependencies for each item.
+- [ ] V183-F02: present every documented historical card family in Cartões/Faturas, including Bradesco Visa, Bradesco Visa Aeternum, Itaú Mastercard Black, Itaú Visa and C6, with correct bank/name, selected period and traceable coverage. “Visa Aeternum” is the exact canonical spelling.
+- [ ] V183-F03: every card invoice in Daily Flow uses the approved Visa Aeternum pattern: one cash obligation per eligible cycle, expandable to source purchases and installments; preserve aggregate-only limitations honestly. Reconcile invoice document, card view and cash Flow without counting purchase and settlement twice.
+- [ ] V183-F04: audit Daily Flow back to 10/10/2013 against original bank/card and historical import evidence; verify each day, source key, sign, date, invoice-cycle uniqueness, continuity, balances and exclusions. Do not treat a sample as full-history certification.
+- [ ] V183-F05: correct vested RSU valuation as of documented vesting without inventing a bank receipt; distinguish vesting date, settlement/availability and tax/net layers; compare source quantities/value against Morgan Stanley, not by forcing a target amount.
+- [ ] V183-F06: expose the action price and USD/BRL assumption with an as-of timestamp and clear manual/market provenance, and ensure valuation refresh is reproducible; no unlabeled stale price or guessed live quote.
+- [ ] V183-F07: show traceable Retention Award composition separately from regular and Cash RSUs, with source dates, quantity/price/FX assumptions and appropriate comparison layer.
+- [ ] V183-F08: Patrimônio must show assets, debts and net equity distinctly; value of a property and outstanding mortgage are different layers, while paid housing expenses are not a liability. Reconcile components before declaring a net amount.
+- [ ] V183-F09: make “Desde 2013” monthly expenses reliable and fast under authenticated published use. An unavailable year fails closed, never contributes a partial total; diagnose measured query/HTTP timeout and verify full period, refresh, and source invalidation.
+- [ ] V183-F10: reconcile all prior V176–V182 feedback and pending documentary gaps; make original Excel purchase detail searchable before asking for missing card invoices, and retain the April 2026 share-sale source dependency.
+
+Status legend remains [x] concluded, [~] in progress, [ ] open. Private figures and names remain in the private feedback register, not this public file.
+
 ## P0 — V181 homologation feedback, new user lot — 22/09/2026
 
 The user finished a three-message review and authorized consolidated implementation. Private examples and amounts are in the corresponding Library record. All IDs below remain open until specific implementation and authenticated published validation are recorded. Prior V181 checks do not close later user observations.
