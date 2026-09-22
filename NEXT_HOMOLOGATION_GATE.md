@@ -82,3 +82,8 @@ Zero category-pending does not certify all historical/future sources or turn ope
 - [x] Dashboard after login and after a full reload displayed complete daily cash; Flow on 22/09 displayed the same components and total, and the return to Dashboard retained them. This gate is candidate-specific, not user acceptance.
 - [ ] Reconcile all 156 rows and group totals to source, detect duplicates and stale/incorrect as-of labels; a Despesas header briefly showed 21/09 while the report period and Flow used 22/09. Correct stacked internal version labels V178/V181/V182 under the V183 candidate.
 - [ ] Finish historical card/invoice cycle and purchase coverage, Flow daily audit from 2013, source classification, RSU/award valuations and Patrimônio asset/liability/net equity. Test notebook/mobile and full reload. Fixed homologation stays V181; do not request user QA or promote root yet.
+
+## V183 historical Flow protection — still a gate
+
+- [~] SQL inspection identified a relative movement accumulation before complete documented openings. Candidate guard hides consolidated balances and dependent totals for marked relative dates while preserving day movements. The first published `v183a` masked the example historical date; subsequent `v183c` initially failed to mark that row. Latest `v183d` restores use of the SQL marker and awaits published authentication/reload tests.
+- [ ] Establish source-backed historical opening and balance for each bank and explicit treatment of negative C6 in combined liquidity; reconcile invoice payment events across due/payment dates. This remains a P0 financial gate, not solved by masking.
