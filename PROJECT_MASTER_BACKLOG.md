@@ -14,6 +14,7 @@ The user explicitly will not test the current link/build. Keep the fixed V181 ho
 - [ ] V183-F08: Patrimônio must show assets, debts and net equity distinctly; value of a property and outstanding mortgage are different layers, while paid housing expenses are not a liability. Reconcile components before declaring a net amount.
 - [ ] V183-F09: make “Desde 2013” monthly expenses reliable and fast under authenticated published use. An unavailable year fails closed, never contributes a partial total; diagnose measured query/HTTP timeout and verify full period, refresh, and source invalidation.
 - [ ] V183-F10: reconcile all prior V176–V182 feedback and pending documentary gaps; make original Excel purchase detail searchable before asking for missing card invoices, and retain the April 2026 share-sale source dependency.
+Card period candidate PR #45 now reads only documented invoice cycles within the selected interval. Authenticated 12-month and Since 2013 reads exposed historical cycles that the earlier future-only panel hid. The reconciliation RPC found no matching projected invoice event for some past cycles, which does not establish absent historical bank payment. These rows are labelled pending, with no fabricated zero cash; an exact-day Flow navigation candidate awaits published verification. Full card-family/source purchase coverage and cash reconciliation remain open. 
 
 Status legend remains [x] concluded, [~] in progress, [ ] open. Private figures and names remain in the private feedback register, not this public file.
 
