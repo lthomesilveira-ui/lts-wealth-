@@ -17,7 +17,9 @@
           let masked=0;
           for(const row of rows){
             const cells=row.children;
-            if(cells.length<11||!relative.has(row.id.slice(2)))continue;
+            if(cells.length<11)continue;
+            const missingBankBasis=cells[1].textContent.trim()==='—'||cells[4].textContent.trim()==='—';
+            if(!relative.has(row.id.slice(2))&&!missingBankBasis)continue;
             for(const index of [1,4,6,8,10]){
               const cell=cells[index];
               if(cell.textContent.trim()==='—')continue;
