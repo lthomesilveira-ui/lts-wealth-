@@ -3,6 +3,7 @@ on:
   pull_request:
     paths:
       - 'wip35-v180-candidate.html'
+      - 'lts-v180-documentary-refresh.js'
       - 'homologacao-current.json'
       - '.github/workflows/v180-homologation.yml'
       - 'backups/V180_PREPUBLICATION_VALIDATION_2026-09-22.md'
@@ -34,6 +35,7 @@ jobs:
           assert.match(candidate,/V180 · Homologação/);
           assert.match(candidate,/index\.html\?v180-documentary-refresh/);
           assert.match(candidate,/lts-v179-cash-recovery\.js\?v=20260922-v180-data-refresh/);
+          assert.match(candidate,/lts-v180-documentary-refresh\.js\?v=20260922-v180a/);
           assert.match(candidate,/lts-v178-review-actions\.js/);
           assert.equal(hash('index.html'),'cca36731258680cc15a73fbad61c90ddf803358b741fd3ef58fefe5419eb688b');
           const manifest=JSON.parse(fs.readFileSync('homologacao-current.json','utf8'));
@@ -65,7 +67,7 @@ jobs:
           const hash=body=>crypto.createHash('sha256').update(body).digest('hex');
           (async()=>{
             if(expected.version!=='wip35-v180'){console.log('V180 not selected; no publication claim.');return;}
-            const names=['homologacao-current.json','wip35-v180-candidate.html','lts-v179-cash-recovery.js','lts-v178-review-actions.js','index.html'];
+            const names=['homologacao-current.json','wip35-v180-candidate.html','lts-v179-cash-recovery.js','lts-v180-documentary-refresh.js','lts-v178-review-actions.js','index.html'];
             let verified=false,lastError='';
             for(let attempt=0;attempt<30;attempt++){
               try{
@@ -87,10 +89,10 @@ jobs:
               let frame;
               for(let i=0;i<200;i++){
                 frame=page.frames().find(candidate=>{try{return new URL(candidate.url()).pathname.endsWith('/index.html')}catch{return false}});
-                if(frame&&await frame.evaluate(()=>window.__LTS_V178_REVIEW?.version==='v179-cash-recovery'&&!!window.__LTS_V178_REVIEW_ACTIONS?.installed).catch(()=>false))break;
+                if(frame&&await frame.evaluate(()=>window.__LTS_V178_REVIEW?.version==='v179-cash-recovery'&&window.__LTS_V180_DOCUMENTARY_REFRESH?.version==='v180-documentary-refresh'&&!!window.__LTS_V178_REVIEW_ACTIONS?.installed).catch(()=>false))break;
                 await page.waitForTimeout(200);
               }
-              assert(frame&&await frame.evaluate(()=>window.__LTS_V178_REVIEW?.version==='v179-cash-recovery'&&!!window.__LTS_V178_REVIEW_ACTIONS?.installed),'cash-recovery runtime installed from V180 candidate');
+              assert(frame&&await frame.evaluate(()=>window.__LTS_V178_REVIEW?.version==='v179-cash-recovery'&&window.__LTS_V180_DOCUMENTARY_REFRESH?.version==='v180-documentary-refresh'&&!!window.__LTS_V178_REVIEW_ACTIONS?.installed),'V180 runtime installed from published candidate');
               const text=await frame.locator('body').innerText();
               assert(/Entrar|Acessar|Login|e-mail|email/i.test(text),'Signed-out authentication surface visible');
               assert.equal(await frame.locator('#v178Drawer').count(),0,'No private detail while signed out');
