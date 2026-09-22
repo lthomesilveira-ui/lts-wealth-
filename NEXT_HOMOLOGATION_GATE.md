@@ -74,3 +74,11 @@ Business date 16/09/2026. V166 product `117c467a02641c1b7e167493fda6f916e7927e14
 - [ ] Every unaffected dependency in the full master backlog/deltas remains until individually evidenced closed.
 
 Zero category-pending does not certify all historical/future sources or turn open invoices into closed bills. Preserve original categories, cash-versus-competence, documentary depth and all previous user decisions. The V166 link is ready for continued visual and financial review, not re-entry of old answers.
+
+
+## V183 read-only checkpoint — 22/09/2026
+
+- [x] Isolated V183 candidate passed its syntax/root/manifest gate and displayed all 156 monthly rows from October 2013 through September 2026 in an authenticated browser, using 27 bounded semester reads. The 12-month view displayed 12 rows and the previously checked V182 card totals. This proves response coverage and client assembly, not independent financial correctness.
+- [x] Dashboard after login and after a full reload displayed complete daily cash; Flow on 22/09 displayed the same components and total, and the return to Dashboard retained them. This gate is candidate-specific, not user acceptance.
+- [ ] Reconcile all 156 rows and group totals to source, detect duplicates and stale/incorrect as-of labels; a Despesas header briefly showed 21/09 while the report period and Flow used 22/09. Correct stacked internal version labels V178/V181/V182 under the V183 candidate.
+- [ ] Finish historical card/invoice cycle and purchase coverage, Flow daily audit from 2013, source classification, RSU/award valuations and Patrimônio asset/liability/net equity. Test notebook/mobile and full reload. Fixed homologation stays V181; do not request user QA or promote root yet.
