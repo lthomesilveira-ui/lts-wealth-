@@ -1,5 +1,9 @@
 # LTS Wealth — Execution State
 
+## Current state — V181 homologation (22/09/2026)
+
+V181 is selected at the fixed entry after PR #37 exposure merge `7a885d5a35204cc40e6661aa19369e89b3a65b01`. The authorized browser verified the published Dashboard after login/session entry and full reload, the current-day Flow equality, exactly one documentary movement on the reported due date, and Dashboard → Flow → Dashboard return. Nine exposure PR gates passed. This is agent-run QA, not user acceptance. The V180 record below remains a historical checkpoint. Continue the V181 register and publication receipt. Keep 137 unresolved identity reviews, aggregate-only invoice composition, April 2026 share-sale source, physical-phone QA and all prior open dependencies. Do not infer a successful post-merge signed-out smoke workflow or promote the protected root.
+
 Business date 22/09/2026. V180 is published only in homologation. Implementation, database refresh, automated gates, served-byte verification and authenticated browser QA are complete; user acceptance remains pending.
 
 ## Current release
