@@ -87,3 +87,8 @@ Zero category-pending does not certify all historical/future sources or turn ope
 
 - [~] SQL inspection identified a relative movement accumulation before complete documented openings. Candidate guard hides consolidated balances and dependent totals for marked relative dates while preserving day movements. The first published `v183a` masked the example historical date; subsequent `v183c` initially failed to mark that row. Latest `v183d` restores use of the SQL marker and awaits published authentication/reload tests.
 - [ ] Establish source-backed historical opening and balance for each bank and explicit treatment of negative C6 in combined liquidity; reconcile invoice payment events across due/payment dates. This remains a P0 financial gate, not solved by masking.
+
+### V183e candidate evidence and remaining block
+
+- [x] Published authenticated browser after full reload: consolidated historical windows on 04–05/08 suppress uncertified balances and derived totals; entries/exits stay visible, Itaú tab retains its balance. Return to current-day Flow and Dashboard retains complete cash. Gate for display guard passed; historical bank balances remain unproven.
+- [ ] Correct invoice reconciliation identity: the historical C6 cashflow on 05/08 appears in Flow and the invoice drawer detail sums to the documented invoice, yet the reconciliation RPC reports no `card_invoice` event and the drawer says payment unconfirmed. Check source keys before any status change; transfer between own accounts is not the payment itself.
