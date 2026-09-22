@@ -1,55 +1,59 @@
 # LTS Wealth — Continuity Handoff
 
-Last materially refreshed: 2026-09-20 — V178 published and served assets verified.
+Last materially refreshed: 2026-09-22 — V180 published in homologation and validated in the authorized authenticated browser session.
 
 ## Mandatory continuity sources — do not skip
-This index adds V178; it does not replace or close earlier requirements. The complete prior handoff and execution state have been preserved byte-for-byte in this same commit:
+
+This index advances the active homologation to V180; it does not replace or close earlier requirements. The complete pre-V178 handoff and execution state remain preserved byte-for-byte:
+
 - `backups/V177_CONTINUITY_HANDOFF_BEFORE_V178_2026-09-20.md` — original blob `a813bea2d533f09fd920197bef5c9318d9ffc704`.
 - `backups/V177_EXECUTION_STATE_BEFORE_V178_2026-09-20.md` — original blob `b89104e9898c2ec04c65c4253daae371d4c9017d`.
 
-Before any continuation or write, re-fetch main, the active branch, this file, `LTS_WEALTH_EXECUTION_STATE.md`, the manifest, `PROJECT_MASTER_BACKLOG.md`, `NEXT_HOMOLOGATION_GATE.md`, both complete archives above, latest immutable receipt, and open issues. All unclosed financial, documentary, classification, planning, provider and product dependencies in those sources remain binding. Do not use a historical PASS claim to dismiss a later user-reported defect.
+Before any continuation or write, re-fetch main, the active branch, this file, `LTS_WEALTH_EXECUTION_STATE.md`, the manifest, `PROJECT_MASTER_BACKLOG.md`, `NEXT_HOMOLOGATION_GATE.md`, both complete archives above, the latest immutable receipt, and open issues. Read the private V177, V178 and V180 continuity records from the user's Library. All unclosed financial, documentary, classification, planning, provider and product dependencies in those sources remain binding. A historical PASS never dismisses a later user-reported defect.
 
 ## Conduct
+
 - Do not restart architecture or ask the user to repeat confirmed decisions. Preserve historical sources and previous candidates.
 - Never invent amounts, beneficiaries, dates, recurrence, classification, tax, identity or cash effects.
 - Preserve sources and amounts; use reversible derived readers and explicit user decisions for presentation changes.
-- Test before delivery; distinguish synthetic browser tests, real SQL reader validation, published signed-out smoke, and actual user acceptance.
-- Do not claim testing the user's authenticated browser session unless actually done.
-- No partial sum presented as complete. Missing, zero, negative and stale are different states.
-- No public-root promotion without explicit authorization; normal PR/fast-forward only, never force branch divergence.
-- This repository is PUBLIC. Keep new real transactions, private amounts, provider/person associations, screenshots, auth material and private rule payloads out of public source/issues. Store private evidence in Supabase and the user's Library.
+- Test before delivery; distinguish automated gates, real authenticated readers, published signed-out smoke, authenticated browser QA and user acceptance.
+- No partial sum may appear as complete. Missing, zero, negative and stale are different states.
+- No public-root promotion without explicit authorization; use normal PR/merge flow and never force branch divergence.
+- This repository is PUBLIC. Keep real transactions, private amounts, provider/person associations, screenshots, auth material and private rule payloads out of public source and issues. Store private evidence in Supabase and the user's Library.
 
-## Current homologation — V178
-- Candidate: `wip35-v178-candidate.html`; fixed entry: `homologacao.html`.
-- Branch: `work/v178-integrated-review-20260920`.
-- Tested head: `ab8d04750ab85b91d82341eff3d2a549a53a80de`.
-- PR #25 merge: `a63f897edc8c755ac9398697142671c1ed0ef1a8`.
-- Manifest exposure: `b6d0fb43ef04b59b9836ef9ae6c6c420c45e0459`.
-- Final integrated gate `35540287825`: SUCCESS.
-- Pages deployment `35540583485`: SUCCESS.
-- Published bytes and signed-out runtime verification `35540584185`: SUCCESS; artifact `10614153955`.
-- Protected index SHA-256 remains `cca36731258680cc15a73fbad61c90ddf803358b741fd3ef58fefe5419eb688b`.
-- V177 and predecessors remain available as fallback. No production promotion; no raw financial source-row rewrite.
-- Immutable release receipt: `backups/V178_HOMOLOGATION_PUBLICATION_2026-09-20.md`.
+## Current homologation — V180
 
-## Implemented integrated review
-Current-day cash is read separately from the long projection. Incomplete/currently failed sources cannot appear as complete liquidity, pension or future-position totals. The application distinguishes zero, negative, missing and stale values and supports recovery in place.
+- Candidate: `wip35-v180-candidate.html`; fixed entry: `homologacao.html`.
+- Product branch: `work/v180-documentary-refresh-20260922`; tested head `9d1c926dca02b70b69a7add6a7afc0dfec5c6671`.
+- PR #30 product merge: `810935171f77215e172c7617753695cce967a2c8`.
+- PR #31 fixed-entry exposure merge: `319789d06956c00171864dbe3e61bb60d961908f`.
+- Candidate gate `35746263140`: SUCCESS.
+- Exposure gate `35747307190`: SUCCESS; protected V171–V177 regression matrix: SUCCESS.
+- Pages deployment `35747832616`: SUCCESS.
+- Published V180 bytes and signed-out runtime `35747837646`: SUCCESS.
+- The fixed published entry was opened in the authorized authenticated browser session, fully reloaded, traversed Dashboard → Fluxo → Dashboard and returned to a complete, date-aligned, arithmetically consistent Dashboard. The cash RPC and every concurrent reader returned HTTP 200; the reported cash failure did not recur.
+- Automated notebook/mobile gates passed. Physical-phone validation was not performed in this run and must not be claimed.
+- Protected index SHA-256 remains `cca36731258680cc15a73fbad61c90ddf803358b741fd3ef58fefe5419eb688b`. V177, V178 and V179 remain available as fallbacks. No production/root promotion occurred.
+- Publication receipt: `backups/V180_HOMOLOGATION_PUBLICATION_2026-09-22.md`.
 
-Expense detail reads all pages with revision/count/key/sum checks, scrolls to the final row on desktop and mobile, preserves scroll/search across background renders and discards stale responses when changing groups. Partial-page failure remains explicit and retriable. Dashboard YTD detail is independent from Despesas period selection.
+## V179/V180 contracts now active
 
-Beneficiary/category groups follow source evidence and confirmed review decisions, across categories rather than only the examples. Unknown beneficiaries are not assigned to the account holder by default. General personal outflows do not duplicate person-specific health/education/clothing. Accepted loan behavior is preserved.
+V179 keeps the current-day cash read ahead of long projections, allows one bounded recovery for a transient failure and never substitutes zero, stale values or partial components for a complete total.
 
-Apartment detail starts with acquisition, works/reform, occupancy costs and taxes. Financing and purchase components stay distinguishable. Do not attribute all historic Casa/Moradia to one property. Source-only undated property components remain a separate historical view, not another addition to dated consumption.
+V180 applies the final documentary refresh through append-only source evidence and reconciled read models. The product refresh now invalidates and prewarms the same future-flow cache read by the browser before rebuilding dependent modules. Current invoice cycles preserve prior-balance semantics and do not double count a closed cycle inside the next open cycle.
 
-RSU column changes on vesting; settlement availability stays separate. Noncash award events are described only inside the expanded day, not bank inflows or extra row-height increments. Hide-zero is based on actual cash entries/exits, including genuine offsetting entry/exit on one day.
+Expense presentation omits the account-holder prefix. A person is shown only where the evidence supports that person; unidentified ownership remains pending internally instead of being converted into a guessed beneficiary or a visible technical suffix. Economic totals and historical coverage remain unchanged.
 
-Unresolved identity and invoice-composition records have private list/detail/export access. Category views do not silently stop at item 99. Technical reconciliation explanations are not the normal product UI.
+Brokerage totals expose explicit unallocated residual components instead of silently forcing category reconciliation. RSU vesting and later availability remain distinct; no noncash award creates a bank inflow. Cash-only hide-zero, complete expense pagination, apartment component separation, source-backed classification and all prior interaction contracts remain binding.
 
 ## Private truth and open issues
-Fetch these user Library documents with Files before changing private classifications:
-- `/LTS Wealth/Feedbacks/LTS_WEALTH_V177_REVISAO_USUARIO_2026-09-20.md` — complete confirmed feedback, seven screenshots referenced, final RSU authorization.
-- `/LTS Wealth/Feedbacks/LTS_WEALTH_V178_VALIDACAO_E_PENDENCIAS_2026-09-20.md` — private source checks, exact remaining ambiguities and validation.
 
-Private server implementation and decisions are persisted in Supabase migration history and review tables. Do not copy them to public SQL files. `backups/V178_PREPUBLICATION_VALIDATION_2026-09-20.md` records the nonprivate tests.
+Read these Library records before changing private data or classification:
 
-Issues #23 and #24 remain open for real-user acceptance and residual source questions. The April 2026 share-sale source gap is still open. Historical invoice detail and beneficiary/property identity gaps remain explicit, retained in totals and reviewable. Earlier backlog items not specifically validated by this release remain open. Do not describe the entire product as 100% classified or fully homologated.
+- `/LTS Wealth/Feedbacks/LTS_WEALTH_V177_REVISAO_USUARIO_2026-09-20.md`
+- `/LTS Wealth/Feedbacks/LTS_WEALTH_V178_VALIDACAO_E_PENDENCIAS_2026-09-20.md`
+- `/LTS Wealth/Feedbacks/LTS_WEALTH_V180_ATUALIZACAO_DOCUMENTAL_2026-09-22.md`
+
+Supabase migration history and private review tables remain authoritative for financial data and decisions. Do not copy their private payloads into public SQL, commits or issues.
+
+Issues #23 and #24 remain open for user acceptance and residual source questions. The April 2026 share-sale source gap remains open. Historical invoice composition and unsupported beneficiary/property identities remain explicit and reviewable. Every earlier backlog item not specifically closed by its own evidence remains open. Do not describe the whole product as fully classified, fully homologated or production-ready.
