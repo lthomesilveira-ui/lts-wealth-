@@ -114,7 +114,20 @@
         const args={p_from:chunk.from,p_to:chunk.to};
         let r=await directRpc('lts_browser_monthly_balance_v5',args,15000);
         if((r.error||!r.data)&&![401,403].includes(r.error?.status))r=await directRpc('lts_browser_monthly_balance_v5',args,15000);
-        if(r.error||!r.data)throw Error(r.error?.message||'Ano indisponível');
+        if(r.error||!r.data){
+          if([401,403].includes(r.error?.status))throw Error(r.error?.message||'Acesso negado');
+          const year=Number(chunk.from.slice(0,4)),pieces=[];
+          for(let month=1;month<=12;month+=3){
+            const start=year+'-'+String(month).padStart(2,'0')+'-01';
+            const end=new Date(Date.UTC(year,month+2,0)).toISOString().slice(0,10);
+            const from=start<chunk.from?chunk.from:start,to=end>chunk.to?chunk.to:end;
+            if(from>to)continue;
+            const part=await directRpc('lts_browser_monthly_balance_v5',{p_from:from,p_to:to},15000);
+            if(part.error||!part.data)throw Error('Trimestre '+from+' a '+to+': '+(part.error?.message||'indisponível'));
+            pieces.push(part.data);
+          }
+          r={data:mergeMonthly(pieces,chunk.from,chunk.to,[]),error:null};
+        }
         return{chunk,data:r.data};
       });
       const good=settled.filter(x=>x.ok).map(x=>x.value.data),failed=settled.map((x,i)=>x.ok?null:chunks[i]).filter(Boolean);
