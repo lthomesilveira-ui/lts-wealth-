@@ -77,7 +77,7 @@
   }
   function updates181(){
    const t=template(previousUpdates()),root=t.content.querySelector('.v168-updates');if(!root)return t.innerHTML;
-   const head=root.querySelector('.v168-head'),kpis=root.querySelector('.v168-kpis');(kpis||head)?.insertAdjacentHTML('afterend',reviewPanel());
+   const head=root.querySelector('.v168-head'),kpis=root.querySelector('.v168-kpis');(head||kpis)?.insertAdjacentHTML('afterend',reviewPanel());
    return t.innerHTML;
   }
   function reconciliationPanel(){
