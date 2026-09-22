@@ -1,5 +1,9 @@
 # LTS Wealth — Continuity Handoff
 
+## Current homologation — V181 (22/09/2026)
+
+The active fixed entry is V181. Product merge `9cce166287f2d6213c1ee48547df3f1db642145e`; exposure merge `7a885d5a35204cc40e6661aa19369e89b3a65b01`. Nine PR exposure gates passed. The served manifest selected V181; the authorized browser passed login/session entry, full Dashboard reload, current-day cash equality with Flow, the reported single-invoice due date, and Flow → Dashboard return. See `backups/V181_HOMOLOGATION_PUBLICATION_2026-09-22.md` and `backups/V181_USER_FEEDBACK_REGISTER_2026-09-22.md`. User acceptance, physical-phone validation, ambiguous identifications, aggregate-only invoice composition, April 2026 share-sale source and all other open backlog items remain open. The following V180 section is historical. No root production promotion occurred.
+
 Last materially refreshed: 2026-09-22 — V180 published in homologation and validated in the authorized authenticated browser session.
 
 ## Mandatory continuity sources — do not skip

@@ -35,3 +35,24 @@ The successor must not be exposed from the fixed homologation entry until all do
 - Every earlier backlog item that lacks its own closure evidence.
 
 Production/root promotion remains unauthorized.
+
+## Post-publication checkpoint — 22/09/2026
+
+V181 is now selected at the fixed homologation entry. The nine exposure PR gates passed; the authorized browser passed complete current-day Dashboard after full reload and Dashboard → Flow → Dashboard, with one documentary invoice on the reported due date. This is agent QA, not user acceptance. The prepublication statuses above are historical.
+
+| ID | Current status | Evidence / remaining dependency |
+|---|---|---|
+| V181-01 | Implemented, continuing | This register, state, backlog, gate and immutable receipt persist the decisions. Update as new evidence arrives. |
+| V181-02 | Implemented; acceptance open | Fixed entry serves V181; previous candidates preserved. |
+| V181-03 | Workflow published; 137 decisions open | No option preset and no actual classification saved in QA; user or documentary evidence is needed for each ambiguous identity. |
+| V181-04 | Audited in scoped period | Source-key audit, alternative partitions and coverage reconciliation passed; historical source gaps stay open. |
+| V181-05 | Published; physical-device acceptance open | Apartment period/archive distinctions and 17-of-17 reachable row checked in authenticated candidate. |
+| V181-06 | Published | Inventory-first block absent from the authenticated card operating view. |
+| V181-07 | Financial regression corrected | Seven eligible documentary cycles reconcile; the reported date shows one cash obligation in the fixed published Flow. |
+| V181-08 | Published; acceptance open | Monthly inputs, expenses and result with existing KPIs checked in authenticated candidate. |
+| V181-09 | Published; acceptance open | Person/context and nature are alternative views of the same total; no additivity implied. |
+| V181-10 | Partial, source dependency open | RSU vesting and cash remain distinct; original April 2026 share-sale evidence remains missing. |
+| V181-11 | Published; physical-device check open | Actual scrolling to final apartment row passed in notebook browser; responsive gates passed. |
+| V181-12 | Partial, source dependency open | Aggregate-only rows visibly ask for source statement; individual purchases cannot be invented. |
+
+No item is marked user accepted. The private Library record holds source-level evidence without placing personal financial rows in this public repository.
