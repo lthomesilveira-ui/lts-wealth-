@@ -58,10 +58,11 @@
           else if(state.status==='error')body='<p role="alert">'+esc(state.error)+' Nenhum resultado parcial é exibido.</p><button class="v168-btn" data-v183-card-retry>Tentar novamente</button>';
           else if(state.status==='ready'){
             const good=rows.filter(x=>x.reconciliation_status==='reconciled'&&Math.abs(Number(x.difference)||0)<=0.02).length;
-            body='<p><b>'+rows.length+' fatura(s) documentada(s) neste recorte; '+good+' conciliada(s) com o Fluxo.</b> A conferência não certifica cartões ou ciclos ainda sem fatura individual cadastrada.</p>'+
+            body='<p><b>'+rows.length+' fatura(s) documentada(s) neste recorte; '+good+' conciliada(s) por esta consulta.</b> Para vencimentos anteriores a hoje, ausência de evento nesta consulta não comprova ausência de pagamento no caixa histórico. Cartões ou ciclos sem fatura individual permanecem sem conferência.</p>'+
               (rows.length?'<div class="v181-tablewrap"><table class="v181-table"><thead><tr><th>Cartão</th><th>Vencimento</th><th>Documento</th><th>Fluxo</th><th>Diferença</th><th>Situação</th><th>Origem</th></tr></thead><tbody>'+rows.map(row=>{
                 const ok=row.reconciliation_status==='reconciled'&&Math.abs(Number(row.difference)||0)<=0.02;
-                return'<tr><td>'+esc(row.card_name||'Cartão não identificado')+'</td><td>'+esc(date(row.due_date))+'</td><td>'+money(row.documented_amount)+'</td><td>'+money(row.flow_amount)+'</td><td>'+money(row.difference)+'</td><td>'+(ok?'Conciliada':esc(row.reconciliation_status||'Revisar'))+'</td><td><button class="v168-btn" data-v181-flow-date="'+esc(row.due_date||'')+'">Abrir no Fluxo</button></td></tr>';
+                const historical=String(row.due_date||'')<today()&&row.reconciliation_status==='invoice_event_count_mismatch'&&Number(row.flow_amount)===0;
+                return'<tr><td>'+esc(row.card_name||'Cartão não identificado')+'</td><td>'+esc(date(row.due_date))+'</td><td>'+money(row.documented_amount)+'</td><td>'+(historical?'—':money(row.flow_amount))+'</td><td>'+(historical?'—':money(row.difference))+'</td><td>'+(ok?'Conciliada':historical?'Conferência histórica pendente':esc(row.reconciliation_status||'Revisar'))+'</td><td><button class="v168-btn" data-v181-flow-date="'+esc(row.due_date||'')+'">Abrir no Fluxo</button></td></tr>';
               }).join('')+'</tbody></table></div>':'<p>Não há fatura individual cadastrada neste recorte. Os agregados históricos ainda precisam de composição e conferência por cartão.</p>');
           }
           const inventory=Array.isArray(v175?.cards?.data?.inventory?.cards)?v175.cards.data.inventory.cards:[];
