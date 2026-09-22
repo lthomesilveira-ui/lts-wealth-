@@ -587,3 +587,9 @@ Canonical persistent project list. Never remove an open financial, documentary, 
 - [ ] Public-root promotion remains a user decision; Supabase policy hardening itself is engineering work and must proceed autonomously after contract-level design/tests.
 
 No other engineering task should wait for the user.
+
+## V183 Flow historical balance safeguard — 22/09/2026
+
+- [~] Isolated candidate script `lts-v183-historical-balance-guard.js` masks consolidated bank opening/closing and dependent liquidity totals on dates marked by the SQL relative-balance overlay before a complete documented bank opening. Entries, exits, and separately sourced components remain visible. This is a display safety measure, not a source reconciliation.
+- [ ] Published authenticated verification of latest `v183d` revision, reload, bank switching and return to current-day Dashboard/Flow; prior revisions exposed inconsistent historical numbers during the iteration. Do not promote or request user QA until checked.
+- [ ] P0: reconcile each historical bank balance and liquidity inclusion policy, card invoice coverage and actual payment dates, including the C6 liability. A zero-based accumulation since 2013 cannot be labeled as absolute bank cash.
