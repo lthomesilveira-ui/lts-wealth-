@@ -30,9 +30,11 @@
             if(controls&&!note){note=document.createElement('p');note.className='v183-balance-basis-note';note.setAttribute('role','status');note.style.cssText='margin:8px 12px;padding:9px 12px;border-radius:9px;background:#fff5df;color:#60451e;font-size:12px;line-height:1.45';controls.appendChild(note)}
             if(note&&note.textContent!==explanation)note.textContent=explanation;
             const old=document.querySelector('.v168-history-note');
-            if(old&&old.textContent!==explanation)old.textContent=explanation;
+            if(old&&!old.hidden)old.hidden=true;
           }else{
             document.querySelector('.v183-balance-basis-note')?.remove();
+            const old=document.querySelector('.v168-history-note');
+            if(old&&old.hidden)old.hidden=false;
           }
         }
         const observer=new MutationObserver(()=>{if(!pending){pending=true;requestAnimationFrame(guard)}});
