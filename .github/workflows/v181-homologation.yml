@@ -39,7 +39,7 @@ jobs:
           assert.match(candidate,/index\.html\?v181-regression-closure/);
           assert.match(candidate,/lts-v179-cash-recovery\.js\?v=20260922-v180-data-refresh/);
           assert.match(candidate,/lts-v180-documentary-refresh\.js\?v=20260922-v180a/);
-          assert.match(candidate,/lts-v181-regression-closure\.js\?v=20260922-v181a/);
+          assert.match(candidate,/lts-v181-regression-closure\.js\?v=20260922-v181b/);
           assert.doesNotThrow(()=>new Function(runtime));
           assert.match(runtime,/lts_browser_invoice_flow_reconciliation_v181/);
           assert.match(runtime,/lts_browser_expense_review_queue_v181/);
