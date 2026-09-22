@@ -1,0 +1,34 @@
+name: V183 isolated historical reader
+on:
+  pull_request:
+    paths:
+      - 'wip35-v183-candidate.html'
+      - 'lts-v183-expense-history-candidate.js'
+      - '.github/workflows/v183-historical-read.yml'
+permissions:
+  contents: read
+jobs:
+  candidate-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Verify syntax, isolation and completeness guard
+        run: |
+          node <<'JS'
+          const fs=require('node:fs'),crypto=require('node:crypto'),assert=require('node:assert/strict');
+          const candidate=fs.readFileSync('wip35-v183-candidate.html','utf8');
+          const runtime=fs.readFileSync('lts-v183-expense-history-candidate.js','utf8');
+          assert.match(candidate,/V183 · Homologação/);
+          assert.match(candidate,/lts-v183-expense-history-candidate\.js/);
+          assert.match(candidate,/lts-v182-homologation-feedback\.js/);
+          assert.doesNotThrow(()=>new Function(runtime));
+          assert.match(runtime,/function verifyPart/);
+          assert.match(runtime,/halfYearChunks/);
+          assert.match(runtime,/Nenhum total parcial será exibido/);
+          assert.equal(crypto.createHash('sha256').update(fs.readFileSync('index.html')).digest('hex'),'cca36731258680cc15a73fbad61c90ddf803358b741fd3ef58fefe5419eb688b');
+          const manifest=JSON.parse(fs.readFileSync('homologacao-current.json','utf8'));
+          assert.equal(manifest.version,'wip35-v181');
+          JS
