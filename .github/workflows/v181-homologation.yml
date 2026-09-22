@@ -39,7 +39,7 @@ jobs:
           assert.match(candidate,/index\.html\?v181-regression-closure/);
           assert.match(candidate,/lts-v179-cash-recovery\.js\?v=20260922-v180-data-refresh/);
           assert.match(candidate,/lts-v180-documentary-refresh\.js\?v=20260922-v180a/);
-          assert.match(candidate,/lts-v181-regression-closure\.js\?v=20260922-v181b/);
+          assert.match(candidate,/lts-v181-regression-closure\.js\?v=20260922-v181c/);
           assert.doesNotThrow(()=>new Function(runtime));
           assert.match(runtime,/lts_browser_invoice_flow_reconciliation_v181/);
           assert.match(runtime,/lts_browser_expense_review_queue_v181/);
@@ -47,6 +47,7 @@ jobs:
           assert.match(runtime,/Nenhuma opção é presumida/);
           assert.match(runtime,/category_views_are_alternatives:true/);
           assert.match(runtime,/Agregado mensal/);
+          assert.match(runtime,/aggregateGroup\|\|\/consolidado hist/);
           assert.match(runtime,/drawer_decoration_idempotent:true/);
           assert.match(runtime,/const setText=\(node,value\)=>\{if\(node&&node\.textContent!==value\)node\.textContent=value\}/);
           assert.doesNotMatch(runtime,/Bearer\s|access_token|refresh_token/);
