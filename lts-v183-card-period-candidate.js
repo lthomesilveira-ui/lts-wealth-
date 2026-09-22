@@ -89,7 +89,14 @@
             document.querySelectorAll('.v183-card-period [data-v181-flow-date]').forEach(button=>button.onclick=async()=>{
               const due=button.dataset.v181FlowDate;
               if(!/^\d{4}-\d\d-\d\d$/.test(due))return;
-              V='Fluxo Diário';FLOWYEAR=Number(due.slice(0,4));FLOWFROM=due;FLOWTO=due;FLOWPRESET='';renderNav();
+              V='Fluxo Diário';FLOWYEAR=Number(due.slice(0,4));renderNav();render();
+              // The existing route schedules its default interval in a microtask.
+              // Let that run, then the exact date becomes the newest Flow request.
+              await new Promise(resolve=>setTimeout(resolve,0));
+              if(!window.__LTS_V162_FLOW_RECOVERY_STATUS?.default_range_applied){
+                document.getElementById('flowDefaultRange')?.click();
+                await new Promise(resolve=>setTimeout(resolve,0));
+              }
               await loadFlowRange(due,due);
               const day=document.getElementById('d-'+due);
               day?.scrollIntoView({behavior:'smooth',block:'center'});
