@@ -116,6 +116,7 @@
         return{chunk,data:r.data};
       });
       const good=settled.filter(x=>x.ok).map(x=>x.value.data),failed=settled.map((x,i)=>x.ok?null:chunks[i]).filter(Boolean);
+      if(failed.length)return{error:'Histórico incompleto: '+failed.map(x=>x.from.slice(0,4)).join(', ')+'. Tente novamente; nenhum total parcial será exibido.'};
       if(!good.length)return{error:full.error?.message||'Balanço mensal indisponível.'};
       return{data:mergeMonthly(good,from,to,failed),mode:'annual-fallback'};
     }
@@ -318,7 +319,7 @@
       const tab=v168?.expense?.tab;
       if(V==='Despesas'){
         if(['overview','categories'].includes(tab)&&!state.expense.loading){const r=expenseRange(),key=r.from+'|'+r.to;if(!state.expense.data||state.expense.key!==key)queueMicrotask(()=>ensureExpense(false))}
-        if(tab==='monthly'&&!state.monthly.loading){const r=expenseRange(),key=r.from+'|'+r.to;if(!state.monthly.data||state.monthly.key!==key)queueMicrotask(()=>ensureMonthly(false))}
+        if(tab==='monthly'&&!state.monthly.loading&&!state.monthly.error){const r=expenseRange(),key=r.from+'|'+r.to;if(!state.monthly.data||state.monthly.key!==key)queueMicrotask(()=>ensureMonthly(false))}
         if(tab==='cards'&&!state.cards.loading&&!state.cards.data)queueMicrotask(()=>ensureCards(false));
       }
       document.querySelector('[data-v175-month-retry]')?.addEventListener('click',()=>ensureMonthly(true));
