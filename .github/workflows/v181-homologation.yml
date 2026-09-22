@@ -47,6 +47,8 @@ jobs:
           assert.match(runtime,/Nenhuma opção é presumida/);
           assert.match(runtime,/category_views_are_alternatives:true/);
           assert.match(runtime,/Agregado mensal/);
+          assert.match(runtime,/drawer_decoration_idempotent:true/);
+          assert.match(runtime,/const setText=\(node,value\)=>\{if\(node&&node\.textContent!==value\)node\.textContent=value\}/);
           assert.doesNotMatch(runtime,/Bearer\s|access_token|refresh_token/);
           assert.doesNotMatch(runtime,/Lucas|Larissa|Benjamin|Rafiki/);
           assert.match(css,/overflow-y:auto!important/);
