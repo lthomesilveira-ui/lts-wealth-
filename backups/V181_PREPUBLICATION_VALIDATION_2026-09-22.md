@@ -38,7 +38,9 @@ This record distinguishes database verification, static/automated gates, direct-
 
 ## Direct-candidate defect found before exposure
 
-The first authenticated V181 candidate opened with complete cash and its seven documentary cycles reconciled, but a long-detail click exposed a client-thread stall. The drawer observer reapplied identical header text on every mutation, which could retrigger itself. The fixed homologation remained on V180. The runtime was corrected to mutate drawer text only when the value actually changes, and the permanent gate now asserts the idempotent-decoration contract. A fresh direct-candidate browser pass is required after this correction.
+The first authenticated V181 candidate opened with complete cash and its seven documentary cycles reconciled, but a long-detail click exposed a client-thread stall. The drawer observer reapplied identical header text on every mutation, which could retrigger itself. The fixed homologation remained on V180. The runtime was corrected to mutate drawer text only when the value actually changes, and the permanent gate now asserts the idempotent-decoration contract.
+
+The corrected candidate then opened the apartment component, returned 17 of 17 rows and allowed scrolling to the final row. That same pass showed that the two explicit invoice-coverage rows opened correctly but lacked the aggregate-only warning because their account labels were card names rather than the generic historical-aggregate label. V181 now treats the entire reconciled-total coverage group as aggregate-only as well as detecting generic historical aggregate rows. The asset revision was advanced again so no browser can reuse the pre-fix runtime. A fresh direct-candidate pass remains required before exposure.
 
 ## Still required before fixed-entry exposure
 

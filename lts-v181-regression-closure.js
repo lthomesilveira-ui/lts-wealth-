@@ -176,7 +176,8 @@
    if(property){host.classList.add('v181-property-drawer');for(const button of host.querySelectorAll('.v178-components button')){const span=button.querySelector('span');if(normalize(span?.textContent)==='custos de moradia')setText(span,'Apartamento – custos recorrentes')}setText(host.querySelector('.v178-archive small'),'Histórico completo documentado · independente do filtro atual')}
    if(detail.archive)setText(title,'Histórico completo de investimentos');
    const byKey=new Map(arr(detail.rows).map(row=>[String(row.key),row]));
-   for(const tr of host.querySelectorAll('tr[data-row-key]')){if(tr.dataset.v181Row)return;tr.dataset.v181Row='1';const row=byKey.get(String(tr.dataset.rowKey));if(!row)continue;if(/consolidado hist[oó]rico dos cart[oõ]es/i.test(String(row.account_source||''))){const note=document.createElement('small');note.className='v181-aggregate-note';note.textContent='Agregado mensal — envie a fatura desta competência para individualizar as compras.';tr.children[1]?.appendChild(note)}}
+   const aggregateGroup=normalize(detail.group)==='faturas conciliadas pelo total';
+   for(const tr of host.querySelectorAll('tr[data-row-key]')){if(tr.dataset.v181Row)return;tr.dataset.v181Row='1';const row=byKey.get(String(tr.dataset.rowKey));if(!row)continue;if(aggregateGroup||/consolidado hist[oó]rico dos cart[oõ]es/i.test(String(row.account_source||''))){const note=document.createElement('small');note.className='v181-aggregate-note';note.textContent='Agregado mensal — envie a fatura desta competência para individualizar as compras.';tr.children[1]?.appendChild(note)}}
   }
   function decorateVersion(){
    document.querySelectorAll('.brand small').forEach(node=>node.setAttribute('aria-label','V181 · Homologação'));
