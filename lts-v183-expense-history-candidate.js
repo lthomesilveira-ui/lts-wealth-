@@ -97,7 +97,7 @@
       const issues=new Map();
       for(const part of parts)for(const issue of arr(part?.open_audit_issues)){if(issue?.issue_id)issues.set(issue.issue_id,issue)}
       return{
-        ...parts[0],version:'monthly-balance-v5-v183-complete-chunks',from,to,months,monthly_totals,totals,
+        ...parts[0],version:'monthly-balance-v5-v183-complete-chunks',from,to,months,monthly_totals:monthlyTotals,totals,
         revenue_groups:mergeGroups(parts,'revenue_groups',months),
         extraordinary_groups:mergeGroups(parts,'extraordinary_groups',months),
         expense_groups:mergeGroups(parts,'expense_groups',months),
