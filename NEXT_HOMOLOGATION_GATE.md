@@ -1,5 +1,15 @@
 # LTS Wealth — Next Homologation Gate
 
+## V181 published gate — 22/09/2026
+
+- [x] Reproduce systematic documentary invoice plus legacy projection collision and correct precedence per card and competence without changing raw sources.
+- [x] Reconcile seven eligible documented cycles to one Flow cash event per cycle, zero differences and zero legacy conflicts in the audited range.
+- [x] Pass nine exposure pull-request workflows, including V181 and inherited regressions; protect root SHA-256 `cca36731258680cc15a73fbad61c90ddf803358b741fd3ef58fefe5419eb688b`.
+- [x] Verify fixed-entry V181 after authenticated login/session entry and full reload: complete dated Dashboard cash, equality with today's Flow and one documentary invoice on the user-reported due date; return Flow → Dashboard with position intact.
+- [x] Verify no default review decision, alternative expense dimensions, monthly summary, aggregate disclosure and long-detail access in the authenticated candidate.
+- [ ] Obtain user acceptance and physical-phone check. Preserve unresolved identities, invoice purchase composition, April 2026 share-sale source and every earlier open item.
+- [ ] Obtain separate post-merge signed-out published smoke evidence if a subsequent workflow becomes available; do not relabel the authenticated pass as that gate.
+
 ## V167 blank-Dashboard incident gate — 16/09/2026
 - [x] Reproduce the authenticated shell-with-blank-body failure reported by the user.
 - [x] Identify the cause: initial V167 paint waited for four detailed readers as one all-or-nothing group; the real Flow reader alone took about 22.5 seconds and returned about 690 KB.
