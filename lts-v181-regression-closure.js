@@ -170,10 +170,11 @@
   function decorateDrawer(){
    const host=document.getElementById('v178Drawer'),detail=v178?.detail;if(!host||!detail)return;
    const title=host.querySelector('#v178DetailTitle'),period=host.querySelector('.v178-drawer>header small'),summary=host.querySelector('.v178-detail-summary span:first-child'),property=/apartamento/i.test(String(detail.group||''));
-   if(period){if(detail.archive)period.textContent='Histórico completo documentado · independente do filtro atual';else period.textContent='Período selecionado: '+dateLabel(detail.range?.from)+' a '+dateLabel(detail.range?.to)}
-   if(summary?.firstChild)summary.firstChild.textContent=detail.archive?'Investimentos documentados no histórico completo':'Despesas no período selecionado';
-   if(property){host.classList.add('v181-property-drawer');for(const button of host.querySelectorAll('.v178-components button')){const span=button.querySelector('span');if(normalize(span?.textContent)==='custos de moradia')span.textContent='Apartamento – custos recorrentes'}const archive=host.querySelector('.v178-archive small');if(archive)archive.textContent='Histórico completo documentado · independente do filtro atual'}
-   if(detail.archive&&title)title.textContent='Histórico completo de investimentos';
+   const setText=(node,value)=>{if(node&&node.textContent!==value)node.textContent=value};
+   setText(period,detail.archive?'Histórico completo documentado · independente do filtro atual':'Período selecionado: '+dateLabel(detail.range?.from)+' a '+dateLabel(detail.range?.to));
+   setText(summary?.firstChild,detail.archive?'Investimentos documentados no histórico completo':'Despesas no período selecionado');
+   if(property){host.classList.add('v181-property-drawer');for(const button of host.querySelectorAll('.v178-components button')){const span=button.querySelector('span');if(normalize(span?.textContent)==='custos de moradia')setText(span,'Apartamento – custos recorrentes')}setText(host.querySelector('.v178-archive small'),'Histórico completo documentado · independente do filtro atual')}
+   if(detail.archive)setText(title,'Histórico completo de investimentos');
    const byKey=new Map(arr(detail.rows).map(row=>[String(row.key),row]));
    for(const tr of host.querySelectorAll('tr[data-row-key]')){if(tr.dataset.v181Row)return;tr.dataset.v181Row='1';const row=byKey.get(String(tr.dataset.rowKey));if(!row)continue;if(/consolidado hist[oó]rico dos cart[oõ]es/i.test(String(row.account_source||''))){const note=document.createElement('small');note.className='v181-aggregate-note';note.textContent='Agregado mensal — envie a fatura desta competência para individualizar as compras.';tr.children[1]?.appendChild(note)}}
   }
@@ -207,7 +208,7 @@
   render=function(){const result=previousRender();bind();return result};
   renderNav=function(){const result=previousNav();decorateVersion();return result};
   const observer=new MutationObserver(()=>decorateDrawer());observer.observe(document.body,{childList:true,subtree:true});
-  window.__LTS_V181_REGRESSION_CLOSURE={installed:true,version:'v181-regression-closure',baseline:'v180-documentary-refresh',contracts:{one_invoice_per_card_cycle:true,review_has_no_default:true,owner_category_has_no_prefix:true,category_views_are_alternatives:true,aggregate_only_rows_disclosed:true,protected_root_unchanged:true},state};
+  window.__LTS_V181_REGRESSION_CLOSURE={installed:true,version:'v181-regression-closure',baseline:'v180-documentary-refresh',contracts:{one_invoice_per_card_cycle:true,review_has_no_default:true,owner_category_has_no_prefix:true,category_views_are_alternatives:true,aggregate_only_rows_disclosed:true,drawer_decoration_idempotent:true,protected_root_unchanged:true},state};
   if(D&&!N.classList.contains('hidden'))render();
  }
  function install(){try{
