@@ -56,3 +56,7 @@ The corrected candidate then opened the apartment component, returned 17 of 17 r
 - Fixed-entry exposure in a separate change, served-byte/signed-out gate, Pages completion, then the same authenticated reload and Dashboard → Flow → Dashboard path.
 
 Until those checks pass, V181 is **in progress**, not ready for user testing, and no completion claim is allowed.
+
+## Post-publication outcome
+
+The pending list above documents the pre-exposure checkpoint. PR #36 merged its final aggregate disclosure and v181c asset. PR #37 exposed V181 at the fixed entry after nine green pull-request workflows. The served manifest returned V181 after the Pages update; an earlier browser visit had still received V180 while publication lagged. The authorized authenticated browser then opened the fixed entry, fully reloaded into a complete dated Dashboard, compared today's total with Flow, observed one documentary invoice on the reported date, and returned Flow → Dashboard with the cash position intact. Card reconciliation, classification no-default behavior, alternative expense views, long-detail scrolling and aggregate-only disclosure had passed on the directly published candidate. See the immutable V181 publication receipt for evidence boundaries and open dependencies. User acceptance and physical-phone validation are still open.
