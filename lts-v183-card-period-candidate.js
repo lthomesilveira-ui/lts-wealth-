@@ -86,6 +86,15 @@
             const r=range(),key=r.from+'|'+r.to;
             if(state.status==='idle'||(state.key!==key&&state.status!=='loading'))queueMicrotask(load);
             document.querySelector('[data-v183-card-retry]')?.addEventListener('click',()=>{state.status='idle';load()});
+            document.querySelectorAll('.v183-card-period [data-v181-flow-date]').forEach(button=>button.onclick=async()=>{
+              const due=button.dataset.v181FlowDate;
+              if(!/^\d{4}-\d\d-\d\d$/.test(due))return;
+              V='Fluxo Diário';FLOWYEAR=Number(due.slice(0,4));renderNav();render();
+              await loadFlowRange(due,due);
+              const day=document.getElementById('d-'+due);
+              day?.scrollIntoView({behavior:'smooth',block:'center'});
+              const expand=day?.querySelector('button');if(expand&&window.EXP instanceof Set&&!EXP.has(due))expand.click();
+            });
           }
           return result;
         };
