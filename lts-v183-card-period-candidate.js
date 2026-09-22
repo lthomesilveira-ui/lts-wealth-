@@ -89,7 +89,7 @@
             document.querySelectorAll('.v183-card-period [data-v181-flow-date]').forEach(button=>button.onclick=async()=>{
               const due=button.dataset.v181FlowDate;
               if(!/^\d{4}-\d\d-\d\d$/.test(due))return;
-              V='Fluxo Diário';FLOWYEAR=Number(due.slice(0,4));renderNav();render();
+              V='Fluxo Diário';FLOWYEAR=Number(due.slice(0,4));FLOWFROM=due;FLOWTO=due;FLOWPRESET='';renderNav();
               await loadFlowRange(due,due);
               const day=document.getElementById('d-'+due);
               day?.scrollIntoView({behavior:'smooth',block:'center'});
