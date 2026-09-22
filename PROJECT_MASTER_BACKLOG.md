@@ -1,5 +1,17 @@
 # LTS Wealth — Master Backlog
 
+## P0 — V181 user feedback and financial regression — 22/09/2026
+
+Persistent register: `backups/V181_USER_FEEDBACK_REGISTER_2026-09-22.md`; publication evidence: `backups/V181_HOMOLOGATION_PUBLICATION_2026-09-22.md`. The twelve user items are complementary to this complete list, never replacements.
+
+- [x] V181-01/02: persist this lot and expose an unequivocal V181 candidate in fixed homologation; authenticated reload and Dashboard → Flow → Dashboard passed. User acceptance still open.
+- [~] V181-03: expose source-keyed authenticated identity queue with no default. Genuine ambiguous rows remain pending; no bulk guesses.
+- [x] V181-04/07: audit expense source uniqueness and central card-cycle precedence; documented invoices reconcile to one Flow cash obligation per cycle. Continue historical documentary gaps separately.
+- [~] V181-05/06/08/09/11: publish the clearer apartment/history, card, monthly, category and long-detail views; responsive/agent browser passed the scoped checks, physical-phone acceptance remains open.
+- [~] V181-10: preserve extraordinary receipt/transfer/RSU distinctions; original source for April 2026 share sale remains open.
+- [~] V181-12: mark aggregate-only rows explicitly; obtain missing purchase-level invoice statements before calling those totals fully itemized.
+- [ ] Obtain the user's consolidated notebook/phone acceptance of V181 without asking them to rediscover the corrected cash regression.
+
 Status legend: [x] concluded, [~] in progress, [ ] open.
 
 Canonical persistent project list. Never remove an open financial, documentary, classification, reconciliation or product dependency during compaction. Detailed immutable evidence remains in `backups/`, `HISTORICAL_RECOVERY_LOG.md`, `PLANNING_EXCEL_TO_CURRENT_AUDIT_2026-08-30.md`, `NEXT_HOMOLOGATION_GATE.md` and release checkpoints.
