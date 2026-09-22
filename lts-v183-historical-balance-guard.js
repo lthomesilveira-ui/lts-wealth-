@@ -13,11 +13,12 @@
         function guard(){
           pending=false;
           const rows=document.querySelectorAll('.fx87-row.fx87-cons[id^="d-"]');
+          const relative=new Set(typeof mergedFlowDays==='function'?mergedFlowDays().filter(x=>x?.historical&&x.relative_balance_display===true).map(x=>x.date):[]);
           let masked=0;
           for(const row of rows){
             const cells=row.children;
-            if(cells.length<11||cells[1].textContent.trim()!=='—'||cells[4].textContent.trim()!=='—')continue;
-            for(const index of [6,8,10]){
+            if(cells.length<11||!relative.has(row.id.slice(2)))continue;
+            for(const index of [1,4,6,8,10]){
               const cell=cells[index];
               if(cell.textContent.trim()==='—')continue;
               cell.textContent='—';cell.title=explanation;cell.classList.remove('neg','pos');
