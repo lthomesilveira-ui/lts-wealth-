@@ -110,8 +110,10 @@
       if(!full.error&&full.data)return{data:full.data,mode:'direct'};
       const chunks=yearChunks(from,to);
       state.monthly.progress='Leitura anual progressiva…';if(V==='Despesas'&&v168?.expense?.tab==='monthly')render();
-      const settled=await mapLimit(chunks,3,async chunk=>{
-        const r=await directRpc('lts_browser_monthly_balance_v5',{p_from:chunk.from,p_to:chunk.to},12000);
+      const settled=await mapLimit(chunks,1,async chunk=>{
+        const args={p_from:chunk.from,p_to:chunk.to};
+        let r=await directRpc('lts_browser_monthly_balance_v5',args,15000);
+        if((r.error||!r.data)&&![401,403].includes(r.error?.status))r=await directRpc('lts_browser_monthly_balance_v5',args,15000);
         if(r.error||!r.data)throw Error(r.error?.message||'Ano indisponível');
         return{chunk,data:r.data};
       });
