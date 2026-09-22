@@ -1,5 +1,20 @@
 # LTS Wealth — Next Homologation Gate
 
+## V183 successor gate — current V182 test frozen, 22/09/2026
+
+The user will not test the current V182 build/link. The fixed homologation manifest remains V181 and the public root remains protected. Do not ask for QA or hand out a successor link until the complete gate below is evidenced. See V183-F01–F10 and V182-F01–F12 in `PROJECT_MASTER_BACKLOG.md`; this is not a replacement for earlier open items.
+
+- [x] Record the new batch with frozen QA and exact Visa Aeternum spelling in the master backlog and private continuity.
+- [ ] Make the authenticated “Desde 2013” Balanço mensal finish with all 156 supported months; compare source totals, expense/cash universe and month-group sums. Fail closed if a portion is unavailable.
+- [ ] Reconcile documentary invoices, card-view cycles and the Daily Flow for every supported card family from its original available history, identifying genuine aggregate-only or missing-source cycles. A seven-cycle recent check is not a full-history audit.
+- [ ] Verify exactly one invoice cash obligation per card-cycle and click-through to purchase-level detail where evidenced; no second expense for payment, no invented line when source is aggregate.
+- [ ] Validate vested RSU dates and Morgan Stanley quantity/gross/net/availability layers, awards, action price and FX provenance; no bank receipt at vesting.
+- [ ] Reconcile assets, liabilities and net equity from dated sources; do not convert paid expenses into outstanding debt.
+- [ ] Test the successor published in an authorized session after login, complete reload and Dashboard → Fluxo → Dashboard; check today's cash equals Flow, historical/period filters, classifications, detail to last item and error/recovery. Check notebook and mobile where accessible.
+- [ ] Record specific test outputs, limitations and remaining dependencies by backlog ID before offering a *new* link. Production/root promotion is not authorized.
+
+Measured blockers: the full 2013–2026 v3 balance took about 15 s, before V5 adds more work, versus an 8 s HTTP database role limit. The existing cards screen queries only today's/future window; seven recent invoice cycles passed but other historical families are absent from that result. Optimize and verify rather than raising a global timeout, equating a partial audit with full coverage or inventing data.
+
 ## V181 published gate — 22/09/2026
 
 - [x] Reproduce systematic documentary invoice plus legacy projection collision and correct precedence per card and competence without changing raw sources.
