@@ -1,0 +1,102 @@
+name: V180 homologation verification
+on:
+  pull_request:
+    paths:
+      - 'wip35-v180-candidate.html'
+      - 'lts-v180-documentary-refresh.js'
+      - 'homologacao-current.json'
+      - '.github/workflows/v180-homologation.yml'
+      - 'backups/V180_PREPUBLICATION_VALIDATION_2026-09-22.md'
+  push:
+    branches: [main]
+    paths:
+      - 'homologacao-current.json'
+      - '.github/workflows/v180-homologation.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: v180-homologation-verification
+  cancel-in-progress: true
+jobs:
+  protected-static-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Verify V180 candidate and protected root
+        run: |
+          node <<'JS'
+          const fs=require('node:fs'),crypto=require('node:crypto'),assert=require('node:assert/strict');
+          const hash=p=>crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex');
+          const candidate=fs.readFileSync('wip35-v180-candidate.html','utf8');
+          assert.match(candidate,/V180 · Homologação/);
+          assert.match(candidate,/index\.html\?v180-documentary-refresh/);
+          assert.match(candidate,/lts-v179-cash-recovery\.js\?v=20260922-v180-data-refresh/);
+          assert.match(candidate,/lts-v180-documentary-refresh\.js\?v=20260922-v180a/);
+          assert.match(candidate,/lts-v178-review-actions\.js/);
+          assert.equal(hash('index.html'),'cca36731258680cc15a73fbad61c90ddf803358b741fd3ef58fefe5419eb688b');
+          const manifest=JSON.parse(fs.readFileSync('homologacao-current.json','utf8'));
+          if(manifest.version==='wip35-v180'){
+            assert.equal(manifest.path,'wip35-v180-candidate.html');
+            assert.equal(manifest.promotion_status,'not_promoted');
+            assert.equal(manifest.protected_index_sha256,hash('index.html'));
+          }
+          console.log(JSON.stringify({pass:true,candidate:true,protected_index_sha256:hash('index.html'),manifest:manifest.version}));
+          JS
+  published-signed-out-smoke:
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Verify served bytes and signed-out gate when V180 is selected
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+          node <<'JS'
+          const fs=require('node:fs'),crypto=require('node:crypto'),assert=require('node:assert/strict');
+          const {chromium}=require('playwright');
+          const expected=JSON.parse(fs.readFileSync('homologacao-current.json','utf8'));
+          const base='https://lthomesilveira-ui.github.io/lts-wealth-/';
+          const hash=body=>crypto.createHash('sha256').update(body).digest('hex');
+          (async()=>{
+            if(expected.version!=='wip35-v180'){console.log('V180 not selected; no publication claim.');return;}
+            const names=['homologacao-current.json','wip35-v180-candidate.html','lts-v179-cash-recovery.js','lts-v180-documentary-refresh.js','lts-v178-review-actions.js','index.html'];
+            let verified=false,lastError='';
+            for(let attempt=0;attempt<30;attempt++){
+              try{
+                for(const name of names){
+                  const response=await fetch(base+name+'?verify='+Date.now(),{signal:AbortSignal.timeout(15000),cache:'no-store'});
+                  assert(response.ok,name+' HTTP '+response.status);
+                  const body=Buffer.from(await response.arrayBuffer());
+                  assert.equal(hash(body),hash(fs.readFileSync(name)),name+' served hash');
+                }
+                verified=true;break;
+              }catch(error){lastError=error.message;await new Promise(resolve=>setTimeout(resolve,10000));}
+            }
+            assert(verified,'Publication bytes mismatch: '+lastError);
+            const browser=await chromium.launch({headless:true});
+            const page=await browser.newPage({viewport:{width:1440,height:1000}}),errors=[];
+            page.on('pageerror',error=>errors.push(error.message));
+            try{
+              await page.goto(base+'homologacao.html?verify='+Date.now(),{waitUntil:'domcontentloaded'});
+              let frame;
+              for(let i=0;i<200;i++){
+                frame=page.frames().find(candidate=>{try{return new URL(candidate.url()).pathname.endsWith('/index.html')}catch{return false}});
+                if(frame&&await frame.evaluate(()=>window.__LTS_V178_REVIEW?.version==='v179-cash-recovery'&&window.__LTS_V180_DOCUMENTARY_REFRESH?.version==='v180-documentary-refresh'&&!!window.__LTS_V178_REVIEW_ACTIONS?.installed).catch(()=>false))break;
+                await page.waitForTimeout(200);
+              }
+              assert(frame&&await frame.evaluate(()=>window.__LTS_V178_REVIEW?.version==='v179-cash-recovery'&&window.__LTS_V180_DOCUMENTARY_REFRESH?.version==='v180-documentary-refresh'&&!!window.__LTS_V178_REVIEW_ACTIONS?.installed),'V180 runtime installed from published candidate');
+              const text=await frame.locator('body').innerText();
+              assert(/Entrar|Acessar|Login|e-mail|email/i.test(text),'Signed-out authentication surface visible');
+              assert.equal(await frame.locator('#v178Drawer').count(),0,'No private detail while signed out');
+              assert.deepEqual(errors,[]);
+            }finally{await browser.close()}
+          })().catch(error=>{console.error(error);process.exitCode=1});
+          JS
