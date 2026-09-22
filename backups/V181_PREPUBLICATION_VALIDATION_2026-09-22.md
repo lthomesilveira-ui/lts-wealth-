@@ -36,6 +36,10 @@ This record distinguishes database verification, static/automated gates, direct-
 - Detail scrolling uses a full-height flex drawer, real overflow, touch panning and mobile-safe sizing.
 - Visible candidate/version labels are V181; the protected root remains unchanged.
 
+## Direct-candidate defect found before exposure
+
+The first authenticated V181 candidate opened with complete cash and its seven documentary cycles reconciled, but a long-detail click exposed a client-thread stall. The drawer observer reapplied identical header text on every mutation, which could retrigger itself. The fixed homologation remained on V180. The runtime was corrected to mutate drawer text only when the value actually changes, and the permanent gate now asserts the idempotent-decoration contract. A fresh direct-candidate browser pass is required after this correction.
+
 ## Still required before fixed-entry exposure
 
 - Product pull-request gate and exact protected-root hash.
