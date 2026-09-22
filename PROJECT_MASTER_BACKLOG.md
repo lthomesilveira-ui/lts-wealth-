@@ -1,5 +1,24 @@
 # LTS Wealth — Master Backlog
 
+## P0 — V181 homologation feedback, new user lot — 22/09/2026
+
+The user finished a three-message review and authorized consolidated implementation. Private examples and amounts are in the corresponding Library record. All IDs below remain open until specific implementation and authenticated published validation are recorded. Prior V181 checks do not close later user observations.
+
+- [ ] V182-F01: expand Dashboard loans into documented components with matching sum and source detail.
+- [ ] V182-F02: expand CIPÓ 396 into acquisition, financing, construction, recurring costs and taxes as supported, with clear period and no double counting.
+- [ ] V182-F03: audit Benjamin Education purchase nature against original source; beneficiary alone does not establish Education.
+- [ ] V182-F04: recover purchase-level rows from original Excel history through July 2026 for Benjamin and Rafiki before requesting missing invoices. Reconcile rows and disclose genuine residual gaps.
+- [ ] V182-F05: review unclassified expenses using existing history and evidence-led suggestions, including known restaurants and property financing.
+- [ ] V182-F06: apply the user's owner default for expenses without explicit other beneficiary/context, preserving confirmed assignments and auditing exceptions before bulk write.
+- [ ] V182-F07: make Flow receipt classification open the exact income event and permit source-keyed Family classification without duplicate cash.
+- [ ] V182-F08: make 12 months and Since 2013 govern monthly summary, group matrices, cards and details with truthful bounds and totals.
+- [ ] V182-F09: add monthly group subtotals and final income-minus-expense line under matrices, reconciled to selected-period cards.
+- [ ] V182-F10: make expense-category treasury groups expandable into subgroups and original rows, preserving alternative dimensions without addition.
+- [ ] V182-F11: show documented invoices by card and selected period before technical reconciliation/planning; each opens its purchase composition or a specific gap.
+- [ ] V182-F12: enforce source drill-down for closed totals across the product, with explicit aggregate-only exception if individual evidence is absent.
+
+The user deferred Patrimônio acceptance. No public-root promotion is authorized.
+
 ## P0 — V181 user feedback and financial regression — 22/09/2026
 
 Persistent register: `backups/V181_USER_FEEDBACK_REGISTER_2026-09-22.md`; publication evidence: `backups/V181_HOMOLOGATION_PUBLICATION_2026-09-22.md`. The twelve user items are complementary to this complete list, never replacements.
