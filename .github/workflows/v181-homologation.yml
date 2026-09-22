@@ -1,0 +1,118 @@
+name: V181 homologation verification
+on:
+  pull_request:
+    paths:
+      - 'wip35-v181-candidate.html'
+      - 'lts-v181-regression-closure.js'
+      - 'lts-v181-regression-closure.css'
+      - 'homologacao-current.json'
+      - '.github/workflows/v181-homologation.yml'
+      - 'backups/V181_PREPUBLICATION_VALIDATION_2026-09-22.md'
+  push:
+    branches: [main]
+    paths:
+      - 'homologacao-current.json'
+      - '.github/workflows/v181-homologation.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: v181-homologation-verification
+  cancel-in-progress: true
+jobs:
+  protected-static-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Verify V181 candidate, contracts and protected root
+        run: |
+          node <<'JS'
+          const fs=require('node:fs'),crypto=require('node:crypto'),assert=require('node:assert/strict');
+          const hash=p=>crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex');
+          const candidate=fs.readFileSync('wip35-v181-candidate.html','utf8');
+          const runtime=fs.readFileSync('lts-v181-regression-closure.js','utf8');
+          const css=fs.readFileSync('lts-v181-regression-closure.css','utf8');
+          assert.match(candidate,/V181 · Homologação/);
+          assert.match(candidate,/index\.html\?v181-regression-closure/);
+          assert.match(candidate,/lts-v179-cash-recovery\.js\?v=20260922-v180-data-refresh/);
+          assert.match(candidate,/lts-v180-documentary-refresh\.js\?v=20260922-v180a/);
+          assert.match(candidate,/lts-v181-regression-closure\.js\?v=20260922-v181a/);
+          assert.doesNotThrow(()=>new Function(runtime));
+          assert.match(runtime,/lts_browser_invoice_flow_reconciliation_v181/);
+          assert.match(runtime,/lts_browser_expense_review_queue_v181/);
+          assert.match(runtime,/lts_browser_expense_review_decision_v181/);
+          assert.match(runtime,/Nenhuma opção é presumida/);
+          assert.match(runtime,/category_views_are_alternatives:true/);
+          assert.match(runtime,/Agregado mensal/);
+          assert.doesNotMatch(runtime,/Bearer\s|access_token|refresh_token/);
+          assert.doesNotMatch(runtime,/Lucas|Larissa|Benjamin|Rafiki/);
+          assert.match(css,/overflow-y:auto!important/);
+          assert.match(css,/touch-action:pan-y!important/);
+          assert.equal(hash('index.html'),'cca36731258680cc15a73fbad61c90ddf803358b741fd3ef58fefe5419eb688b');
+          const manifest=JSON.parse(fs.readFileSync('homologacao-current.json','utf8'));
+          if(manifest.version==='wip35-v181'){
+            assert.equal(manifest.path,'wip35-v181-candidate.html');
+            assert.equal(manifest.promotion_status,'not_promoted');
+            assert.equal(manifest.protected_index_sha256,hash('index.html'));
+          }
+          console.log(JSON.stringify({pass:true,candidate:true,review_without_default:true,protected_index_sha256:hash('index.html'),manifest:manifest.version}));
+          JS
+  published-signed-out-smoke:
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Verify served bytes and signed-out surface when V181 is selected
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+          node <<'JS'
+          const fs=require('node:fs'),crypto=require('node:crypto'),assert=require('node:assert/strict');
+          const {chromium}=require('playwright');
+          const expected=JSON.parse(fs.readFileSync('homologacao-current.json','utf8'));
+          const base='https://lthomesilveira-ui.github.io/lts-wealth-/';
+          const hash=body=>crypto.createHash('sha256').update(body).digest('hex');
+          (async()=>{
+            if(expected.version!=='wip35-v181'){console.log('V181 not selected; no publication claim.');return;}
+            const names=['homologacao-current.json','wip35-v181-candidate.html','lts-v179-cash-recovery.js','lts-v180-documentary-refresh.js','lts-v178-review-actions.js','lts-v181-regression-closure.js','lts-v181-regression-closure.css','index.html'];
+            let verified=false,lastError='';
+            for(let attempt=0;attempt<30;attempt++){
+              try{
+                for(const name of names){
+                  const response=await fetch(base+name+'?verify='+Date.now(),{signal:AbortSignal.timeout(15000),cache:'no-store'});
+                  assert(response.ok,name+' HTTP '+response.status);
+                  const body=Buffer.from(await response.arrayBuffer());
+                  assert.equal(hash(body),hash(fs.readFileSync(name)),name+' served hash');
+                }
+                verified=true;break;
+              }catch(error){lastError=error.message;await new Promise(resolve=>setTimeout(resolve,10000));}
+            }
+            assert(verified,'Publication bytes mismatch: '+lastError);
+            const browser=await chromium.launch({headless:true});
+            const errors=[];
+            try{
+              for(const viewport of [{width:1440,height:1000},{width:390,height:844}]){
+                const page=await browser.newPage({viewport});page.on('pageerror',error=>errors.push(error.message));
+                await page.goto(base+'homologacao.html?verify='+Date.now(),{waitUntil:'domcontentloaded'});
+                let frame;
+                for(let i=0;i<200;i++){
+                  frame=page.frames().find(candidate=>{try{return new URL(candidate.url()).pathname.endsWith('/index.html')}catch{return false}});
+                  if(frame&&await frame.evaluate(()=>window.__LTS_V181_REGRESSION_CLOSURE?.installed===true).catch(()=>false))break;
+                  await page.waitForTimeout(200);
+                }
+                assert(frame&&await frame.evaluate(()=>window.__LTS_V181_REGRESSION_CLOSURE?.contracts?.one_invoice_per_card_cycle===true),'V181 runtime installed');
+                assert.match(await frame.locator('body').innerText(),/Entrar|Acessar|Login|e-mail|email/i,'Signed-out authentication surface visible');
+                assert.equal(await frame.locator('#v178Drawer').count(),0,'No private detail while signed out');
+                await page.close();
+              }
+              assert.deepEqual(errors,[]);
+            }finally{await browser.close()}
+          })().catch(error=>{console.error(error);process.exitCode=1});
+          JS
