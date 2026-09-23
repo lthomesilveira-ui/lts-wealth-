@@ -13,6 +13,9 @@
         function guard(){
           pending=false;
           const rows=document.querySelectorAll('.fx87-row.fx87-cons[id^="d-"]');
+          // Wait for the authenticated product state; rendering and historical data
+          // may arrive independently. Never derive a position from missing data.
+          if(typeof D==='undefined'||!D)return;
           const relative=new Set(typeof mergedFlowDays==='function'?mergedFlowDays().filter(x=>x?.historical&&x.relative_balance_display===true).map(x=>x.date):[]);
           let masked=0;
           for(const row of rows){
