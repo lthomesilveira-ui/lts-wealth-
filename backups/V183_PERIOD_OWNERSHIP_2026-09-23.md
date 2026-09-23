@@ -38,3 +38,7 @@ A rapid live Since 2013 → 12 months switch left the new filter waiting for the
 These scoped checks do not certify invoice bank settlement, a historical bank-balance start, all historical card instruments, Morgan/award valuation, debt balances, user acceptance or physical-phone validation. Current-candidate mobile and source-led financial verification remain open. The older V177 intermittent load failure is not claimed fixed simply because this PR's regression matrix passed.
 
 Receipt classification remains a separate implementation task: the current Flow badge routes to the generic expense review; the existing description-wide semantic writer stamps expense semantics and is not a safe source-keyed income editor. Inspection was read-only; no receipt or other real financial fact was changed.
+
+## Additional isolated display correction
+
+Authenticated inspection of the RSU page found statement totals whose displayed components omitted the existing residuals. The V183-only wealth wrapper now explicitly compares available and future totals against their respective displayed components in integer cents. Missing components stay unavailable; a negative residual is labelled as a divergence, not an asset. Residuals are already included in existing totals and do not create cash, infer taxes or change values. One additional deterministic test covers exact, zero, negative and missing cases (14 tests total). Published recheck of this addition remains required.

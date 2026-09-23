@@ -10,6 +10,7 @@ on:
       - 'test-v183-period-ownership.cjs'
       - 'lts-v183-v182-feedback-safe.js'
       - 'lts-v183-card-period-candidate.js'
+      - 'lts-v183-wealth-debt-integrity.js'
       - 'audit_original_daily_balances.py'
       - 'reconcile_historical_scope.py'
       - 'test_reconcile_historical_scope.py'
