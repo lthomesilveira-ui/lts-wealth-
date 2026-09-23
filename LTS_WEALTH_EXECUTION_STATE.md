@@ -1,5 +1,9 @@
 # LTS Wealth — Execution State
 
+## Active execution — 23/09/2026
+
+Manual browser login succeeded. PR #68/main `4c651486bc13ac06cd870f7ca3add2cdc09c87d7` passed authenticated reload, current Dashboard/Flow equality and unavailable uncertified historical balances with preserved movements. A subsequent isolated V183 period-ownership fix is locally passing 13 deterministic tests; publication and authenticated rapid-filter checks remain next. See the current master-backlog section and `backups/V183_PERIOD_OWNERSHIP_2026-09-23.md`. Do not ask for another login while the authorized browser session works, or claim the complete successor is ready from these scoped checks.
+
 ## Latest authorized scope — 23/09/2026
 
 Implement bounded backwards historical reconciliation, not an exhaustive 2013 balance gate. Preserve 2013+ expenses, certify balances only over an evidenced contiguous interval, disclose unknown earlier balances, and protect app events from 08/07/2026 onward. September 2018 is not a certified start merely because later workbook date cells are valid. See the current override at the top of the master backlog and homologation gate. The independent coverage policy is being added only to isolated V183; fixed V181 and protected root remain unchanged. Other backlog items remain open unless individually proven closed.

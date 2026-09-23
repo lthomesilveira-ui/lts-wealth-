@@ -10,7 +10,7 @@
       const runtime=function(){
         const v168=window.__LTS_V168_STATE,v175=window.__LTS_V175_STATE;
         const oldExpenses=despesas,oldRender=render;
-        const state=window.__LTS_V183_CARD_PERIOD={installed:true,status:'idle',key:'',rows:[],documentary:[],legacy:[],error:null,periods:0};
+        const state=window.__LTS_V183_CARD_PERIOD={installed:true,status:'idle',key:'',token:0,rows:[],documentary:[],legacy:[],error:null,periods:0};
         const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
         const money=x=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(x)||0);
         const date=x=>/^\d{4}-\d\d-\d\d$/.test(String(x||''))?x.split('-').reverse().join('/'):String(x||'—');
@@ -29,13 +29,15 @@
           while(start<=to){const d=new Date(start+'T12:00:00Z');d.setUTCFullYear(d.getUTCFullYear()+2);d.setUTCDate(d.getUTCDate()-1);const end=d.toISOString().slice(0,10);result.push({from:start,to:end<to?end:to});d.setUTCDate(d.getUTCDate()+1);start=d.toISOString().slice(0,10)}
           return result;
         }
-        async function load(){
+        async function load(force=false){
           const r=range(),key=r.from+'|'+r.to;
-          if(state.status==='loading'||(state.key===key&&state.status==='ready'))return;
+          if(state.key===key&&(state.status==='loading'||(!force&&['ready','error'].includes(state.status))))return;
+          const token=++state.token,isCurrent=()=>{const active=range();return state.token===token&&state.key===key&&key===active.from+'|'+active.to};
           state.key=key;state.status='loading';state.error=null;state.rows=[];state.documentary=[];state.legacy=[];render();
           try{
             if(r.from>r.to)throw Error('Período inválido');
             const evidence=await S.rpc('lts_browser_invoice_documentary_only_v1');
+            if(!isCurrent())return;
             if(evidence?.error||evidence?.data?.financial_effect!=='none'||!Array.isArray(evidence?.data?.invoices))throw Error('Evidência documental indisponível');
             const periods=chunks(r.from,r.to),rows=[],legacy=[],seen=new Set(),seenLegacy=new Set();state.periods=periods.length;
             for(const period of periods){
@@ -43,6 +45,7 @@
                 S.rpc('lts_browser_invoice_flow_reconciliation_v183',{p_from:period.from,p_to:period.to}),
                 S.rpc('lts_browser_legacy_invoice_gap_v183',{p_from:period.from,p_to:period.to})
               ]);
+              if(!isCurrent())return;
               if(response?.error||!response?.data||!Array.isArray(response.data.rows))throw Error(response?.error?.message||'Conciliação indisponível');
               for(const item of response.data.rows){
                 const key=[item.card_name,item.reference_month,item.due_date,item.documented_amount].join('|');
@@ -57,20 +60,20 @@
                 seenLegacy.add(invoiceKey);legacy.push(item);
               }
             }
-            if(state.key!==key)return;
+            if(!isCurrent())return;
             state.documentary=evidence.data.invoices.filter(x=>x.due_date>=r.from&&x.due_date<=r.to);
             state.rows=rows.sort((a,b)=>String(a.due_date).localeCompare(String(b.due_date))||String(a.card_name).localeCompare(String(b.card_name)));
             state.legacy=legacy.sort((a,b)=>String(a.due_date).localeCompare(String(b.due_date)));
             state.status='ready';
-          }catch(e){if(state.key===key){state.status='error';state.error=String(e?.message||e);state.rows=[];state.documentary=[];state.legacy=[]}}
-          if(state.key===key&&V==='Despesas'&&v168?.expense?.tab==='cards')render();
+          }catch(e){if(isCurrent()){state.status='error';state.error=String(e?.message||e);state.rows=[];state.documentary=[];state.legacy=[]}}
+          if(isCurrent()&&V==='Despesas'&&v168?.expense?.tab==='cards')render();
         }
         function panel(){
-          const r=range(),period=date(r.from)+' a '+date(r.to),rows=state.rows;
+          const r=range(),period=date(r.from)+' a '+date(r.to),matches=state.key===r.from+'|'+r.to,status=matches?state.status:'loading',rows=matches?state.rows:[];
           let body='';
-          if(state.status==='loading')body='<p>Conferindo faturas documentadas neste período…</p>';
-          else if(state.status==='error')body='<p role="alert">'+esc(state.error)+' Nenhum resultado parcial é exibido.</p><button class="v168-btn" data-v183-card-retry>Tentar novamente</button>';
-          else if(state.status==='ready'){
+          if(status==='loading'||status==='idle')body='<p role="status">Conferindo faturas documentadas neste período…</p>';
+          else if(status==='error')body='<p role="alert">'+esc(state.error)+' Nenhum resultado parcial é exibido.</p><button class="v168-btn" data-v183-card-retry>Tentar novamente</button>';
+          else if(status==='ready'){
             const good=rows.filter(x=>x.reconciliation_status==='reconciled'&&Math.abs(Number(x.difference)||0)<=0.02).length;
             body='<p><b>'+rows.length+' fatura(s) do cadastro atual neste recorte; '+good+' com documento e evento do Fluxo correspondentes.</b> Essa conciliação compara cartão, competência, vencimento, sinal e valor. Não comprova que o banco já debitou a fatura; a confirmação de pagamento permanece separada no detalhe. Para vencimentos anteriores a hoje, ausência de evento nesta consulta não comprova ausência de pagamento no caixa histórico. Cartões ou ciclos sem fatura individual permanecem sem conferência.</p>'+
               (rows.length?'<div class="v181-tablewrap"><table class="v181-table"><thead><tr><th>Cartão</th><th>Vencimento</th><th>Documento</th><th>Fluxo</th><th>Diferença</th><th>Situação</th><th>Origem</th></tr></thead><tbody>'+rows.map(row=>{
@@ -84,7 +87,7 @@
           const cardList='<section class="v183-card-families" aria-label="Cartões identificados no histórico"><h3>Cartões identificados no histórico ('+cards.length+')</h3>'+
             (cards.length?'<ul style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px;list-style:none;padding:0">'+cards.map(x=>'<li style="padding:10px;border:1px solid #d8e1e9;border-radius:9px"><b>'+esc((x.bank||'Banco não identificado')+' · '+(x.card_name||'Cartão não identificado'))+'</b>'+(x.last4?'<small style="display:block">Final '+esc(x.last4)+'</small>':'')+'<small style="display:block">Evidência: '+esc(date(x.first_seen))+' a '+esc(date(x.last_seen))+'</small></li>').join('')+'</ul>':'<p>Inventário histórico indisponível. Os cartões ainda não podem ser conferidos integralmente.</p>')+
             '<p>Presença no histórico não comprova fatura individual para todos os meses. Produtos sem identificação documental continuam pendentes.</p></section>';
-          const evidence=state.status==='ready'&&state.documentary.length?'<section aria-label="Faturas documentais ainda não integradas ao Fluxo"><h3>Faturas com documento, ainda sem conciliação operacional</h3><p>Estas evidências não criam nova saída, despesa ou dívida. Um débito de mesmo banco, data e valor é apenas candidato; pagamento deste cartão não foi confirmado.</p>'+state.documentary.map(x=>{
+          const evidence=status==='ready'&&state.documentary.length?'<section aria-label="Faturas documentais ainda não integradas ao Fluxo"><h3>Faturas com documento, ainda sem conciliação operacional</h3><p>Estas evidências não criam nova saída, despesa ou dívida. Um débito de mesmo banco, data e valor é apenas candidato; pagamento deste cartão não foi confirmado.</p>'+state.documentary.map(x=>{
             const purchases=Array.isArray(x.purchases)?x.purchases:[];
             const cents=purchases.reduce((sum,p)=>sum+Math.round(Number(p.amount)*100),0);
             const total=Math.round(Number(x.invoice_amount)*100);
@@ -93,7 +96,7 @@
               :'<p>Composição documental ainda não conciliada com o total.</p>';
             return'<div style="border-top:1px solid #d8e1e9;padding:12px 0"><b>'+esc(x.bank)+' · '+esc(x.card_label)+' · final '+esc(x.card_last4)+'</b><p>Vencimento '+esc(date(x.due_date))+' · fatura '+money(x.invoice_amount)+' · pagamento bancário não confirmado'+(x.bank_debit_candidate?' · débito candidato identificado':'')+'</p>'+detail+'</div>';
           }).join('')+'</section>':'';
-          const legacy=state.status==='ready'&&state.legacy.length?'<section aria-label="Faturas históricas importadas"><h3>Faturas históricas importadas ('+state.legacy.length+')</h3><p>Os itens destas faturas fecham com o total importado. Elas ainda não integram o cadastro atual; sua exibição não adiciona saída ao Fluxo nem confirma pagamento no banco.</p>'+state.legacy.map(x=>
+          const legacy=status==='ready'&&state.legacy.length?'<section aria-label="Faturas históricas importadas"><h3>Faturas históricas importadas ('+state.legacy.length+')</h3><p>Os itens destas faturas fecham com o total importado. Elas ainda não integram o cadastro atual; sua exibição não adiciona saída ao Fluxo nem confirma pagamento no banco.</p>'+state.legacy.map(x=>
             '<details style="border-top:1px solid #d8e1e9;padding:12px 0"><summary><b>'+esc(x.card_name)+'</b> · '+esc(date(x.due_date))+' · '+money(x.documented_amount)+' · '+x.purchases.length+' itens</summary><p>Composição conferida na importação. Pagamento bancário deste cartão ainda não confirmado.</p><ul>'+x.purchases.map(p=>'<li>'+esc(date(p.date))+' · '+esc(p.description||'Lançamento')+(p.card_final?' · final '+esc(p.card_final):'')+' · '+money(p.amount)+'</li>').join('')+'</ul></details>'
           ).join('')+'</section>':'';
           return'<article class="v168-card v183-card-period"><div class="v168-cardhead"><div><span>Faturas documentadas · '+esc(period)+'</span><h2>Cartões e faturas do período</h2></div></div>'+cardList+body+legacy+evidence+'</article>';
@@ -112,8 +115,8 @@
         render=function(){const result=oldRender();
           if(V==='Despesas'&&v168?.expense?.tab==='cards'){
             const r=range(),key=r.from+'|'+r.to;
-            if(state.status==='idle'||(state.key!==key&&state.status!=='loading'))queueMicrotask(load);
-            document.querySelector('[data-v183-card-retry]')?.addEventListener('click',()=>{state.status='idle';load()});
+            if(state.status==='idle'||state.key!==key)queueMicrotask(()=>load());
+            document.querySelector('[data-v183-card-retry]')?.addEventListener('click',()=>load(true));
             document.querySelectorAll('.v183-card-period [data-v181-flow-date]').forEach(button=>button.onclick=async()=>{
               const due=button.dataset.v181FlowDate;
               if(!/^\d{4}-\d\d-\d\d$/.test(due))return;

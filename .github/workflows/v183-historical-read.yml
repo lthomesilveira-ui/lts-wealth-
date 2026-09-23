@@ -7,6 +7,9 @@ on:
       - 'lts-v183-historical-balance-guard.js'
       - 'lts-history-coverage-policy.js'
       - 'test-history-coverage.cjs'
+      - 'test-v183-period-ownership.cjs'
+      - 'lts-v183-v182-feedback-safe.js'
+      - 'lts-v183-card-period-candidate.js'
       - 'audit_original_daily_balances.py'
       - 'reconcile_historical_scope.py'
       - 'test_reconcile_historical_scope.py'
@@ -24,6 +27,7 @@ jobs:
       - name: Verify syntax, isolation and completeness guard
         run: |
           node test-history-coverage.cjs
+          node --test test-v183-period-ownership.cjs
           python3 -B -m unittest test_reconcile_historical_scope.py
           node <<'JS'
           const fs=require('node:fs'),crypto=require('node:crypto'),assert=require('node:assert/strict');
