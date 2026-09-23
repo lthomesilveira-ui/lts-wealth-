@@ -92,3 +92,8 @@ Zero category-pending does not certify all historical/future sources or turn ope
 
 - [x] Published authenticated browser after full reload: consolidated historical windows on 04–05/08 suppress uncertified balances and derived totals; entries/exits stay visible, Itaú tab retains its balance. Return to current-day Flow and Dashboard retains complete cash. Gate for display guard passed; historical bank balances remain unproven.
 - [ ] Correct invoice reconciliation identity: the historical C6 cashflow on 05/08 appears in Flow and the invoice drawer detail sums to the documented invoice, yet the reconciliation RPC reports no `card_invoice` event and the drawer says payment unconfirmed. Check source keys before any status change; transfer between own accounts is not the payment itself.
+
+### 23/09 V183 invoice-source checkpoint
+
+- [x] Published authenticated candidate shows three additional legacy invoice cycles (191 purchase rows) separately from the four current-register cycles and one documentary-only card cycle. The current-cycle jump loads the correct date, expands its Flow movements, opens its source detail, and returns to today's Dashboard with matching cash. The August C6 cycle has independent issuer payment evidence and one historical cash event; this does not confer paid status on other cards.
+- [ ] Establish independent bank opening and payment attribution for the remaining historical banks/cycles, resolve the incomplete card-family inventory, and reconcile each supported year against original source. Internal daily arithmetic, source purchase totals, and masked historical balances do not meet the release gate. Retain the V181 fixed entry and do not offer V183 for user QA yet.
