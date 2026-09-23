@@ -26,11 +26,13 @@
           let assigned=0;
           const items=rows.map((x,i)=>{const cents=i===rows.length-1?grossCents-assigned:Math.round(grossCents*shares[i]);assigned+=cents;return {label:x.label||`Parcela ${i+1}`,detail:x.detail||'',cents}});
           if(items.some(x=>x.cents<0)||assigned!==grossCents){audit.status='sum_mismatch';return}
+          const events=Array.isArray(state.wealth?.data?.employment_awards?.retention_projected_events)?state.wealth.data.employment_awards.retention_projected_events:[];
+          const future=events.filter(x=>/^\d{4}-\d\d-\d\d$/.test(String(x.date||''))&&Number.isFinite(Number(x.amount))&&Number(x.amount)>0&&x.direction==='entrada');
           const details=document.createElement('details');details.className='v183-retention-composition';
           details.style.cssText='margin:12px 0;padding:12px;border:1px solid #d8e1e9;border-radius:10px';
-          details.innerHTML='<summary style="cursor:pointer;font-weight:700">Abrir composição contratual · '+rows.length+' parcelas</summary><div style="display:grid;gap:8px;margin-top:10px">'+items.map(x=>'<div style="display:flex;justify-content:space-between;gap:12px"><span><b>'+esc(x.label)+'</b><small style="display:block">'+esc(x.detail)+'</small></span><strong>'+money(x.cents)+'</strong></div>').join('')+'</div><p>Parcelas do acordo bruto, separadas das RSUs. Os marcos são relativos ao Closing; data exata, vesting e disponibilidade exigem conferência documental. Não representam entrada bancária.</p>';
+          details.innerHTML='<summary style="cursor:pointer;font-weight:700">Abrir composição contratual · '+rows.length+' parcelas</summary><div style="display:grid;gap:8px;margin-top:10px">'+items.map(x=>'<div style="display:flex;justify-content:space-between;gap:12px"><span><b>'+esc(x.label)+'</b><small style="display:block">'+esc(x.detail)+'</small></span><strong>'+money(x.cents)+'</strong></div>').join('')+'</div><p>Parcelas brutas do acordo, separadas das RSUs. Os marcos contratuais são relativos ao Closing; a data exata e o status de vesting exigem conferência documental.</p>'+(future.length?'<h3>Projeções já registradas no Fluxo</h3><ul>'+future.map(x=>'<li>'+esc(x.date.split('-').reverse().join('/'))+' · '+money(Math.round(Number(x.amount)*100))+'</li>').join('')+'</ul><p>Estes valores são projeções de entrada, em uma camada diferente do total bruto. A diferença entre as camadas não é atribuída automaticamente a imposto.</p>':'<p>Não há projeções de entrada vinculáveis nesta leitura.</p>');
           card.querySelector('.v183-retention-composition')?.remove();card.appendChild(details);
-          audit.status='ready';audit.amount_cents=grossCents;audit.component_cents=assigned;audit.count=rows.length;
+          audit.status='ready';audit.amount_cents=grossCents;audit.component_cents=assigned;audit.count=rows.length;audit.projected_events=future.length;
         }
         render=function(){const result=oldRender();queueMicrotask(decorate);return result};
         decorate();
