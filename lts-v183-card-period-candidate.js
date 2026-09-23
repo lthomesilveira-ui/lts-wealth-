@@ -10,7 +10,7 @@
       const runtime=function(){
         const v168=window.__LTS_V168_STATE,v175=window.__LTS_V175_STATE;
         const oldExpenses=despesas,oldRender=render;
-        const state=window.__LTS_V183_CARD_PERIOD={installed:true,status:'idle',key:'',rows:[],documentary:[],error:null,periods:0};
+        const state=window.__LTS_V183_CARD_PERIOD={installed:true,status:'idle',key:'',rows:[],documentary:[],legacy:[],error:null,periods:0};
         const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
         const money=x=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(x)||0);
         const date=x=>/^\d{4}-\d\d-\d\d$/.test(String(x||''))?x.split('-').reverse().join('/'):String(x||'—');
@@ -32,26 +32,37 @@
         async function load(){
           const r=range(),key=r.from+'|'+r.to;
           if(state.status==='loading'||(state.key===key&&state.status==='ready'))return;
-          state.key=key;state.status='loading';state.error=null;state.rows=[];state.documentary=[];render();
+          state.key=key;state.status='loading';state.error=null;state.rows=[];state.documentary=[];state.legacy=[];render();
           try{
             if(r.from>r.to)throw Error('Período inválido');
             const evidence=await S.rpc('lts_browser_invoice_documentary_only_v1');
             if(evidence?.error||evidence?.data?.financial_effect!=='none'||!Array.isArray(evidence?.data?.invoices))throw Error('Evidência documental indisponível');
-            const periods=chunks(r.from,r.to),rows=[],seen=new Set();state.periods=periods.length;
+            const periods=chunks(r.from,r.to),rows=[],legacy=[],seen=new Set(),seenLegacy=new Set();state.periods=periods.length;
             for(const period of periods){
-              const response=await S.rpc('lts_browser_invoice_flow_reconciliation_v183',{p_from:period.from,p_to:period.to});
+              const [response,old]=await Promise.all([
+                S.rpc('lts_browser_invoice_flow_reconciliation_v183',{p_from:period.from,p_to:period.to}),
+                S.rpc('lts_browser_legacy_invoice_gap_v183',{p_from:period.from,p_to:period.to})
+              ]);
               if(response?.error||!response?.data||!Array.isArray(response.data.rows))throw Error(response?.error?.message||'Conciliação indisponível');
               for(const item of response.data.rows){
                 const key=[item.card_name,item.reference_month,item.due_date,item.documented_amount].join('|');
                 if(seen.has(key))throw Error('Fatura repetida em intervalos de leitura');
                 seen.add(key);rows.push(item);
               }
+              if(old?.error||old?.data?.financial_effect!=='none'||!Array.isArray(old?.data?.invoices))throw Error(old?.error?.message||'Faturas históricas indisponíveis');
+              for(const item of old.data.invoices){
+                const invoiceKey=[item.card_name,item.due_date].join('|');
+                if(seenLegacy.has(invoiceKey)||!Array.isArray(item.purchases)||item.purchases.length!==Number(item.detail_lines)||Math.abs(Number(item.detail_difference))>0.02)
+                  throw Error('Composição histórica inconsistente');
+                seenLegacy.add(invoiceKey);legacy.push(item);
+              }
             }
             if(state.key!==key)return;
             state.documentary=evidence.data.invoices.filter(x=>x.due_date>=r.from&&x.due_date<=r.to);
             state.rows=rows.sort((a,b)=>String(a.due_date).localeCompare(String(b.due_date))||String(a.card_name).localeCompare(String(b.card_name)));
+            state.legacy=legacy.sort((a,b)=>String(a.due_date).localeCompare(String(b.due_date)));
             state.status='ready';
-          }catch(e){if(state.key===key){state.status='error';state.error=String(e?.message||e);state.rows=[];state.documentary=[]}}
+          }catch(e){if(state.key===key){state.status='error';state.error=String(e?.message||e);state.rows=[];state.documentary=[];state.legacy=[]}}
           if(state.key===key&&V==='Despesas'&&v168?.expense?.tab==='cards')render();
         }
         function panel(){
@@ -82,7 +93,10 @@
               :'<p>Composição documental ainda não conciliada com o total.</p>';
             return'<div style="border-top:1px solid #d8e1e9;padding:12px 0"><b>'+esc(x.bank)+' · '+esc(x.card_label)+' · final '+esc(x.card_last4)+'</b><p>Vencimento '+esc(date(x.due_date))+' · fatura '+money(x.invoice_amount)+' · pagamento bancário não confirmado'+(x.bank_debit_candidate?' · débito candidato identificado':'')+'</p>'+detail+'</div>';
           }).join('')+'</section>':'';
-          return'<article class="v168-card v183-card-period"><div class="v168-cardhead"><div><span>Faturas documentadas · '+esc(period)+'</span><h2>Cartões e faturas do período</h2></div></div>'+cardList+body+evidence+'</article>';
+          const legacy=state.status==='ready'&&state.legacy.length?'<section aria-label="Faturas históricas importadas"><h3>Faturas históricas importadas ('+state.legacy.length+')</h3><p>Os itens destas faturas fecham com o total importado. Elas ainda não integram o cadastro atual; sua exibição não adiciona saída ao Fluxo nem confirma pagamento no banco.</p>'+state.legacy.map(x=>
+            '<details style="border-top:1px solid #d8e1e9;padding:12px 0"><summary><b>'+esc(x.card_name)+'</b> · '+esc(date(x.due_date))+' · '+money(x.documented_amount)+' · '+x.purchases.length+' itens</summary><p>Composição conferida na importação. Pagamento bancário deste cartão ainda não confirmado.</p><ul>'+x.purchases.map(p=>'<li>'+esc(date(p.date))+' · '+esc(p.description||'Lançamento')+(p.card_final?' · final '+esc(p.card_final):'')+' · '+money(p.amount)+'</li>').join('')+'</ul></details>'
+          ).join('')+'</section>':'';
+          return'<article class="v168-card v183-card-period"><div class="v168-cardhead"><div><span>Faturas documentadas · '+esc(period)+'</span><h2>Cartões e faturas do período</h2></div></div>'+cardList+body+legacy+evidence+'</article>';
         }
         despesas=function(){
           const t=document.createElement('template');t.innerHTML=oldExpenses();const root=t.content.querySelector('.v168-expenses');
