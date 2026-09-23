@@ -5,8 +5,9 @@
   function install(){
     try{
       const w=shell?.contentWindow,d=shell?.contentDocument;
-      if(!w||!d||!String(w.location.pathname||'').endsWith('/index.html'))return false;
+      if(!w||!d||!String(w.location.pathname||'').endsWith('/index.html')||typeof w.fluxo!=='function')return false;
       if(w.__LTS_V183_CORE_LOADING_GUARD?.installed)return true;
+      if(d.getElementById('v183-core-loading-guard'))return false;
       const runtime=function(){
         if(window.__LTS_V183_CORE_LOADING_GUARD?.installed)return;
         const original=fluxo;
