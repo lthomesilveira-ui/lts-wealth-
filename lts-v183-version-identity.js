@@ -10,15 +10,12 @@
       const runtime=function(){
         const oldRender=render;
         function stamp(){
-          document.querySelectorAll('.brand small').forEach(x=>{if(x.textContent!=='V183 · Homologação')x.textContent='V183 · Homologação';if(x.getAttribute('aria-label')!=='V183 · Homologação')x.setAttribute('aria-label','V183 · Homologação')});
-          document.querySelectorAll('.v168-release').forEach(x=>{if(x.textContent!=='V183 · Homologação')x.textContent='V183 · Homologação';if(x.getAttribute('aria-label')!=='V183 · Homologação')x.setAttribute('aria-label','V183 · Homologação')});
+          document.querySelectorAll('.brand small').forEach(x=>{x.textContent='V183 · Homologação';x.setAttribute('aria-label','V183 · Homologação')});
+          document.querySelectorAll('.v168-release').forEach(x=>{x.textContent='V183 · Homologação';x.setAttribute('aria-label','V183 · Homologação')});
           document.querySelectorAll('.v181-release').forEach(x=>x.remove());
-          try{const scope=window.parent.document.getElementById('scope');if(scope){if(scope.textContent)scope.textContent='';if(scope.getAttribute('aria-label')!=='V183 · Homologação')scope.setAttribute('aria-label','V183 · Homologação')}}catch{}
+          try{const scope=window.parent.document.getElementById('scope');if(scope){scope.textContent='';scope.setAttribute('aria-label','V183 · Homologação')}}catch{}
         }
         render=function(){const value=oldRender();stamp();return value};
-        const observer=new MutationObserver(stamp);
-        observer.observe(document.body,{childList:true,subtree:true,characterData:true});
-        try{observer.observe(window.parent.document.getElementById('scope'),{childList:true,subtree:true,characterData:true})}catch{}
         window.__LTS_V183_VERSION={installed:true};stamp();
       };
       const s=d.createElement('script');s.id='v183-version-runtime';s.textContent='('+runtime.toString()+')();';d.head.appendChild(s);
