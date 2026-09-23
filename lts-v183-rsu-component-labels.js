@@ -20,11 +20,16 @@
      const date=a?.as_of,shares=Number(a?.vested_shares),cash=Number(a?.brokerage_cash),other=Number(a?.other_available),available=Number(a?.brokerage_available);
      if(!/^\d{4}-\d\d-\d\d$/.test(date||'')||![shares,cash,other,available].every(Number.isFinite)||Math.abs(shares+cash+other-available)>.02)return;
      const row=document.getElementById('d-'+date);if(!row||row.children.length<11)return;
-     let note=row.children[7].querySelector('.v183-rsu-components');
      const label='Corretora disponível: '+fmt(available)+' = ações vested '+fmt(shares)+' + saldo em corretora '+fmt(cash)+(Math.abs(other)>.005?' + não alocado '+fmt(other):'')+'. Não é entrada bancária.';
-     if(!note){note=document.createElement('small');note.className='v183-rsu-components';note.style.cssText='display:block;white-space:normal;font-size:10px;line-height:1.25;color:#44546b';row.children[7].appendChild(note)}
-     if(note.textContent!==label)note.textContent=label;
+     row.children[7].querySelector('.v183-rsu-components')?.remove();
+     if(row.children[7].title!==label)row.children[7].title=label;
      row.children[8].title='Inclui caixa bancário, D0 e total disponível na corretora; componentes da corretora identificados na coluna RSU vested.';
+     const details=row.nextElementSibling;
+     if(details?.classList.contains('fx89-details')){
+      let note=details.querySelector('.v183-rsu-components');
+      if(!note){note=document.createElement('section');note.className='v183-rsu-components';note.style.cssText='margin:12px;padding:10px 12px;border-radius:8px;background:#edf4ff;color:#263b57;line-height:1.4';details.appendChild(note)}
+      if(note.textContent!==label)note.textContent=label;
+     }
     }
     new MutationObserver(()=>{if(!pending){pending=true;requestAnimationFrame(decorate)}}).observe(document.body,{childList:true,subtree:true,characterData:true});
     window.__LTS_V183_RSU_LABELS={installed:true,source:'awards-v180',finance_rows_changed:false};
