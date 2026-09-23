@@ -10,7 +10,7 @@
       const runtime=function(){
         const v168=window.__LTS_V168_STATE,v175=window.__LTS_V175_STATE;
         const oldExpenses=despesas,oldRender=render;
-        const state=window.__LTS_V183_CARD_PERIOD={installed:true,status:'idle',key:'',rows:[],error:null,periods:0};
+        const state=window.__LTS_V183_CARD_PERIOD={installed:true,status:'idle',key:'',rows:[],documentary:[],error:null,periods:0};
         const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
         const money=x=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(x)||0);
         const date=x=>/^\d{4}-\d\d-\d\d$/.test(String(x||''))?x.split('-').reverse().join('/'):String(x||'—');
@@ -32,9 +32,11 @@
         async function load(){
           const r=range(),key=r.from+'|'+r.to;
           if(state.status==='loading'||(state.key===key&&state.status==='ready'))return;
-          state.key=key;state.status='loading';state.error=null;state.rows=[];render();
+          state.key=key;state.status='loading';state.error=null;state.rows=[];state.documentary=[];render();
           try{
             if(r.from>r.to)throw Error('Período inválido');
+            const evidence=await S.rpc('lts_browser_invoice_documentary_only_v1');
+            if(evidence?.error||evidence?.data?.financial_effect!=='none'||!Array.isArray(evidence?.data?.invoices))throw Error('Evidência documental indisponível');
             const periods=chunks(r.from,r.to),rows=[],seen=new Set();state.periods=periods.length;
             for(const period of periods){
               const response=await S.rpc('lts_browser_invoice_flow_reconciliation_v183',{p_from:period.from,p_to:period.to});
@@ -46,9 +48,10 @@
               }
             }
             if(state.key!==key)return;
+            state.documentary=evidence.data.invoices.filter(x=>x.due_date>=r.from&&x.due_date<=r.to);
             state.rows=rows.sort((a,b)=>String(a.due_date).localeCompare(String(b.due_date))||String(a.card_name).localeCompare(String(b.card_name)));
             state.status='ready';
-          }catch(e){if(state.key===key){state.status='error';state.error=String(e?.message||e);state.rows=[]}}
+          }catch(e){if(state.key===key){state.status='error';state.error=String(e?.message||e);state.rows=[];state.documentary=[]}}
           if(state.key===key&&V==='Despesas'&&v168?.expense?.tab==='cards')render();
         }
         function panel(){
@@ -70,7 +73,16 @@
           const cardList='<section class="v183-card-families" aria-label="Cartões identificados no histórico"><h3>Cartões identificados no histórico ('+cards.length+')</h3>'+
             (cards.length?'<ul style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px;list-style:none;padding:0">'+cards.map(x=>'<li style="padding:10px;border:1px solid #d8e1e9;border-radius:9px"><b>'+esc((x.bank||'Banco não identificado')+' · '+(x.card_name||'Cartão não identificado'))+'</b>'+(x.last4?'<small style="display:block">Final '+esc(x.last4)+'</small>':'')+'<small style="display:block">Evidência: '+esc(date(x.first_seen))+' a '+esc(date(x.last_seen))+'</small></li>').join('')+'</ul>':'<p>Inventário histórico indisponível. Os cartões ainda não podem ser conferidos integralmente.</p>')+
             '<p>Presença no histórico não comprova fatura individual para todos os meses. Produtos sem identificação documental continuam pendentes.</p></section>';
-          return'<article class="v168-card v183-card-period"><div class="v168-cardhead"><div><span>Faturas documentadas · '+esc(period)+'</span><h2>Cartões e faturas do período</h2></div></div>'+cardList+body+'</article>';
+          const evidence=state.status==='ready'&&state.documentary.length?'<section aria-label="Faturas documentais ainda não integradas ao Fluxo"><h3>Faturas com documento, ainda sem conciliação operacional</h3><p>Estas evidências não criam nova saída, despesa ou dívida. Um débito de mesmo banco, data e valor é apenas candidato; pagamento deste cartão não foi confirmado.</p>'+state.documentary.map(x=>{
+            const purchases=Array.isArray(x.purchases)?x.purchases:[];
+            const cents=purchases.reduce((sum,p)=>sum+Math.round(Number(p.amount)*100),0);
+            const total=Math.round(Number(x.invoice_amount)*100);
+            const detail=purchases.length&&Number.isFinite(cents)&&cents===total
+              ?'<details><summary>Ver '+purchases.length+' lançamento(s) · total '+money(x.invoice_amount)+'</summary><ul>'+purchases.map(p=>'<li>'+esc(date(p.date))+' · '+esc(p.description)+' · '+money(p.amount)+'</li>').join('')+'</ul></details>'
+              :'<p>Composição documental ainda não conciliada com o total.</p>';
+            return'<div style="border-top:1px solid #d8e1e9;padding:12px 0"><b>'+esc(x.bank)+' · '+esc(x.card_label)+' · final '+esc(x.card_last4)+'</b><p>Vencimento '+esc(date(x.due_date))+' · fatura '+money(x.invoice_amount)+' · pagamento bancário não confirmado'+(x.bank_debit_candidate?' · débito candidato identificado':'')+'</p>'+detail+'</div>';
+          }).join('')+'</section>':'';
+          return'<article class="v168-card v183-card-period"><div class="v168-cardhead"><div><span>Faturas documentadas · '+esc(period)+'</span><h2>Cartões e faturas do período</h2></div></div>'+cardList+body+evidence+'</article>';
         }
         despesas=function(){
           const t=document.createElement('template');t.innerHTML=oldExpenses();const root=t.content.querySelector('.v168-expenses');
