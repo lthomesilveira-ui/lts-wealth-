@@ -1,6 +1,12 @@
 /* Candidate-only Patrimônio: distinguish payoff evidence, initial financing and future installments. */
 (function(){
   'use strict';
+  function componentRemainder(total,values){
+    const cents=value=>value===null||value===undefined||value===''||!Number.isFinite(Number(value))?null:Math.round(Number(value)*100);
+    const target=cents(total),parts=values.map(cents);
+    if(target===null||parts.some(x=>x===null))return null;
+    return (target-parts.reduce((a,b)=>a+b,0))/100;
+  }
   const shell=document.getElementById('shell');
   function install(){
     try{
@@ -8,6 +14,7 @@
       if(!w?.__LTS_V183_RETENTION?.installed||!w?.__LTS_V168_STATE)return false;
       if(w.__LTS_V183_WEALTH_INTEGRITY?.installed)return true;
       const runtime=function(){
+        const componentRemainder=window.parent.__LTS_V183_COMPONENT_REMAINDER;
         const state=window.__LTS_V168_STATE,previous=patrimonio;
         const amount=v=>v===null||v===undefined||v===''||!Number.isFinite(Number(v))?null:Number(v);
         const money=v=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(v);
@@ -26,6 +33,25 @@
           if(!j?.wealth||!html)return html;
           const t=document.createElement('template');t.innerHTML=html;
           const root=t.content.querySelector('.v168-wealth');if(!root)return html;
+          if(state.wealth.tab==='rsu'){
+            const m=j.morgan_statement||{},a=m.available_components||{},f=m.future_components||{},r=j.rsu_summary||{};
+            const available=componentRemainder(m.available_total_brl??r.available_total_brl,[a.vested_shares_brl??r.vested_shares_brl,a.brokerage_cash_brl??r.brokerage_cash_brl]);
+            const future=componentRemainder(f.future_after_reserve_brl??r.future_considered_total_brl,[f.regular_rsu_gross_brl,f.cash_rsu_after_reserve_brl]);
+            const components=root.querySelector('.v172-morgan-components');
+            if(components){
+              const card=document.createElement('article');card.className='v168-card v183-statement-remainders';
+              const title=document.createElement('h3');title.textContent='Conferência da composição';card.appendChild(title);
+              const list=document.createElement('div');list.className='v172-value-list';card.appendChild(list);
+              const label=value=>value===null?'Composição indisponível':value<0?'Componentes acima do total':'Parcela não detalhada';
+              for(const [name,value] of [['Disponível agora',available],['Posições futuras',future]]){
+                const line=row(name,value,label(value));if(value===null)line.querySelector('b').textContent='—';list.appendChild(line);
+              }
+              card.appendChild(note('Diferenças entre o total e os componentes exibidos, na posição de '+date(m.as_of||r.as_of)+'. Já estão incluídas nos totais; não são novas entradas, imposto presumido ou valores a somar novamente.'));
+              components.after(card);
+              const kpi=[...root.querySelectorAll('.v168-kpi')].find(x=>x.querySelector('span')?.textContent==='Disponível agora');
+              if(kpi&&available!==null&&Math.abs(available)>=0.005)kpi.querySelector('small').textContent=available<0?'Composição divergente; veja a conferência abaixo':'ações vested + saldo em corretora + parcela não detalhada';
+            }
+          }
           const commitments=Array.isArray(j.financing?.summary?.commitments)?j.financing.summary.commitments:[];
           const docs=Array.isArray(j.financing?.documentary?.items)?j.financing.documentary.items:[];
           const names={cipo_396:'Financiamento imobiliário · CIPÓ 396',volvo:'Financiamento do Volvo XC40',coopharma:'Empréstimo consignado · Coopharma',pai_mae:'Empréstimo familiar · Pai e Mãe'};
@@ -74,6 +100,7 @@
       return !!w.__LTS_V183_WEALTH_INTEGRITY?.installed;
     }catch{return false}
   }
+  window.__LTS_V183_COMPONENT_REMAINDER=componentRemainder;
   let tries=0;const timer=setInterval(()=>{if(install()||++tries>120)clearInterval(timer)},150);
   shell?.addEventListener('load',()=>{tries=0;if(!install())setTimeout(install,300)});
 })();

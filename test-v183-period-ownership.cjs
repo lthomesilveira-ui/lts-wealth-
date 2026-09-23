@@ -147,3 +147,18 @@ test('monthly overlay and new assets are restricted to the isolated candidate',(
   const hash=require('node:crypto').createHash('sha256').update(read('index.html')).digest('hex');
   assert.equal(hash,'cca36731258680cc15a73fbad61c90ddf803358b741fd3ef58fefe5419eb688b');
 });
+
+test('statement composition exposes exact residual without adding a cash event',()=>{
+  const source=read('lts-v183-wealth-debt-integrity.js');
+  const remainder=vm.runInNewContext(between(source,'  function componentRemainder(','  const shell=')+'\ncomponentRemainder');
+  assert.equal(remainder(110.25,[70.10,40.05]),0.10);
+  assert.equal(remainder(100,[70,40]),-10,'negative differences are divergences, not assets');
+  assert.equal(remainder(100,[60,40]),0);
+  for(const missing of [null,undefined,'',NaN,Infinity]){
+    assert.equal(remainder(missing,[10,20]),null);
+    assert.equal(remainder(100,[missing,20]),null);
+  }
+  assert.match(source,/não são novas entradas, imposto presumido/);
+  assert.doesNotMatch(source,/S\.rpc|fetch\(|financial_events|\.insert\(|\.update\(/);
+  assert.match(read('wip35-v183-candidate.html'),/lts-v183-wealth-debt-integrity\.js\?v=20260923-component-coverage/);
+});
