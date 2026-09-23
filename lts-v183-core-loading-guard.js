@@ -15,6 +15,16 @@
           if(typeof D==='undefined'||!D)return '<div class="notice" role="status">Preparando o Fluxo Diário…</div>';
           return original();
         };
+        // The base renderer binds Flow controls after calling fluxo(). A
+        // placeholder alone still raises when those controls do not exist.
+        const originalRender=render;
+        render=function(){
+          if(V==='Fluxo Diário'&&(typeof D==='undefined'||!D)){
+            A.innerHTML='<div class="notice" role="status">Preparando o Fluxo Diário…</div>';
+            return;
+          }
+          return originalRender();
+        };
         window.__LTS_V183_CORE_LOADING_GUARD={installed:true,financial_data_changed:false};
       };
       const script=d.createElement('script');script.id='v183-core-loading-guard';script.textContent='('+runtime.toString()+')();';d.head.appendChild(script);
