@@ -10,8 +10,8 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#f3f6f9;fon
 #shell{display:block;width:100%;height:100%;border:0;background:#f3f6f9}
 #gate{position:fixed;inset:0;z-index:2147483646;display:grid;place-items:center;background:#f3f6f9;color:#536174;font-size:13px}
 #gate[hidden]{display:none}
-#scope{position:fixed;right:12px;bottom:12px;z-index:2147483647;border:1px solid #d7e0e8;border-radius:999px;background:#fffc;color:#42546a;padding:7px 10px;font:800 0/1 system-ui;box-shadow:0 5px 20px #102b501f;pointer-events:none}
-#scope::before{content:'V183 · Homologação';font-size:9px}
+#scope{position:fixed;right:12px;bottom:12px;z-index:2147483647;border:1px solid #d7e0e8;border-radius:999px;background:#fffc;color:#42546a;padding:7px 10px;font:800 12px/1.2 system-ui;box-shadow:0 5px 20px #102b501f;pointer-events:none}
+#scope::before{content:'V183 · Homologação';font-size:12px}
 </style>
 </head>
 <body>
@@ -42,5 +42,21 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#f3f6f9;fon
 <script src="lts-v183-historical-balance-guard.js?v=20260922-v183e"></script>
 <script src="lts-v183-rsu-component-labels.js?v=20260923-v183g"></script>
 <script src="lts-v183-retention-composition.js?v=20260923-v183i"></script>
+<script>
+/* Candidate-only release badge: CSS survives internal render without observing mutations. */
+(function(){
+  const frame=document.getElementById('shell');
+  function install(){
+    const doc=frame.contentDocument;
+    if(!doc?.head||doc.getElementById('v183-static-release-scope'))return;
+    const style=doc.createElement('style');
+    style.id='v183-static-release-scope';
+    style.textContent='header.hdr .brand small[aria-label*="Homologação"],span.v168-release,span.v181-release{display:none!important}';
+    doc.head.appendChild(style);
+  }
+  frame.addEventListener('load',install);
+  install();
+})();
+</script>
 </body>
 </html>

@@ -57,7 +57,7 @@ async function run(browser,viewport,label){
  const context=await browser.newContext({viewport});
  await context.addInitScript(f=>{const N=Date,ms=N.parse(f);class F extends N{constructor(...a){super(...(a.length?a:[ms]))}static now(){return ms}}window.Date=F},'2026-09-18T12:00:00Z');
  await context.addInitScript(v=>localStorage.setItem('lts_supabase_session_v1',JSON.stringify(v)),session);
- const page=await context.newPage();page.setDefaultTimeout(30000);const calls=[],errors=[];page.on('pageerror',e=>errors.push(String(e.message||e)));
+ const page=await context.newPage();page.setDefaultTimeout(30000);const calls=[],errors=[];page.on('pageerror',e=>errors.push(String(e.stack||e.message||e)));
  await page.route('https://tadhkamnwtsbdozwkyut.supabase.co/**',async route=>{
   const req=route.request(),name=new URL(req.url()).pathname.split('/').pop();let args={};try{args=JSON.parse(req.postData()||'{}')}catch{}calls.push({name,args});
   let body={ok:true,rows:[],items:[]};
