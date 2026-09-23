@@ -37,7 +37,7 @@
             if(r.from>r.to)throw Error('Período inválido');
             const periods=chunks(r.from,r.to),rows=[],seen=new Set();state.periods=periods.length;
             for(const period of periods){
-              const response=await S.rpc('lts_browser_invoice_flow_reconciliation_v181',{p_from:period.from,p_to:period.to});
+              const response=await S.rpc('lts_browser_invoice_flow_reconciliation_v183',{p_from:period.from,p_to:period.to});
               if(response?.error||!response?.data||!Array.isArray(response.data.rows))throw Error(response?.error?.message||'Conciliação indisponível');
               for(const item of response.data.rows){
                 const key=[item.card_name,item.reference_month,item.due_date,item.documented_amount].join('|');

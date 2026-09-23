@@ -5,6 +5,7 @@ on:
       - 'wip35-v183-candidate.html'
       - 'lts-v183-card-period-candidate.js'
       - '.github/workflows/v183-card-period.yml'
+      - 'v183_invoice_confirmed_fact_reconciliation.sql'
 permissions:
   contents: read
 jobs:
@@ -20,7 +21,11 @@ jobs:
           const html=fs.readFileSync('wip35-v183-candidate.html','utf8');
           assert.doesNotThrow(()=>new Function(js));
           assert.match(html,/lts-v183-card-period-candidate\.js/);
-          assert.match(js,/lts_browser_invoice_flow_reconciliation_v181/);
+          assert.match(js,/lts_browser_invoice_flow_reconciliation_v183/);
+          const sql=fs.readFileSync('v183_invoice_confirmed_fact_reconciliation.sql','utf8');
+          assert.match(sql,/f.source in \('card_invoice','confirmed_fact'\)/);
+          assert.match(sql,/f.source_ref=i.expected_ref and f.event_date=i.due_date and f.signed_amount<0/);
+          assert.match(sql,/grant execute on function public.lts_browser_invoice_flow_reconciliation_v183\(date,date\) to authenticated/);
           assert.match(js,/Nenhum resultado parcial é exibido/);
           assert.match(js,/data-v181-flow-date/);
           assert.equal(JSON.parse(fs.readFileSync('homologacao-current.json','utf8')).version,'wip35-v181');
