@@ -2,10 +2,12 @@
 
 ## Active execution — 23/09/2026: authenticated period ownership
 
+**Published validation:** PR #69 merged as `1187e9d3af5958be8db5d5cf89253059ff483959`; Pages run `35924579834` succeeded. All ten PR workflows passed first attempt. Authenticated full reload and rapid Since 2013 → 12 months now load the selected three semester chunks rather than the obsolete 27. The complete real 156-month historical report was ready by the 62-second observation, with zero DOM arithmetic differences across summary, all three group matrices, final result and KPI cards. Twelve-month arithmetic also passed. This proves scoped report/read consistency, not economic uniqueness or bank-balance certification. Cards survived rapid all/12-month switching with period-correct rows and withheld old rows during an exact-day custom reload. Dashboard loans and property drilldowns loaded every row and matched their displayed totals; private amounts are in the persistent private register.
+
 The user completed manual login. Published PR #68 was checked after full reload: current Dashboard/Flow cash agreed, and an early historical interval kept movements visible while uncertified balances/derived totals stayed unavailable. A live rapid switch from Since 2013 to 12 months reproduced the obsolete long-reader wait. The isolated V183 follow-up gives monthly, expense and invoice requests explicit period/generation ownership, stops superseded historical chunk loops, hides mismatched payloads and lets a new period recover from an earlier error without an automatic retry loop. Thirteen deterministic read-only regression tests pass, including all 156 fixture months and fail-closed missing-month coverage. Publication/live recheck is still required; no financial rows or fixed/root entry were changed.
 
-- [~] V182-F08 / V183-F09: period-switch correction implemented and locally tested; verify the published candidate before closing.
-- [~] V182-F09: authenticated 12-month summary, group subtotals and final result were visible before this correction; exact DOM arithmetic and new-build reload remain to be recorded.
+- [~] V182-F08 / V183-F09: period-switch correction published and authenticated 12/156-month arithmetic passed; complete source-led financial audit, current-candidate mobile/error injection and universal detail coverage remain separate open work.
+- [x] V182-F09: selected-period monthly group subtotals and final result agree with summary/KPIs in the published 12- and 156-month reports. This is the requested presentation/arithmetic check, not universal source certification.
 - [x] Revised historical-scope display check: 2018 movements remain accessible without claiming certified bank balances. This does not certify an opening date or close unrelated financial items.
 
 ## Binding scope update — 23/09/2026: bounded historical reconciliation
@@ -48,15 +50,15 @@ Status legend remains [x] concluded, [~] in progress, [ ] open. Private figures 
 
 The user finished a three-message review and authorized consolidated implementation. Private examples and amounts are in the corresponding Library record. All IDs below remain open until specific implementation and authenticated published validation are recorded. Prior V181 checks do not close later user observations.
 
-- [ ] V182-F01: expand Dashboard loans into documented components with matching sum and source detail.
-- [ ] V182-F02: expand CIPÓ 396 into acquisition, financing, construction, recurring costs and taxes as supported, with clear period and no double counting.
+- [x] V182-F01: expand Dashboard loans into documented components with matching sum and source detail. Authenticated 23/09: all 13 selected-year rows and component sum matched the displayed total. Wider historical source gaps remain separately tracked.
+- [~] V182-F02: expand CIPÓ 396 into acquisition, financing, construction, recurring costs and taxes as supported, with clear period and no double counting. Authenticated 23/09: acquisition, work, recurring-cost and tax components opened; all 34 selected-year rows summed to the displayed total. Outstanding financing/debt-source distinctions remain separately open.
 - [ ] V182-F03: audit Benjamin Education purchase nature against original source; beneficiary alone does not establish Education.
 - [ ] V182-F04: recover purchase-level rows from original Excel history through July 2026 for Benjamin and Rafiki before requesting missing invoices. Reconcile rows and disclose genuine residual gaps.
 - [ ] V182-F05: review unclassified expenses using existing history and evidence-led suggestions, including known restaurants and property financing.
 - [ ] V182-F06: apply the user's owner default for expenses without explicit other beneficiary/context, preserving confirmed assignments and auditing exceptions before bulk write.
 - [ ] V182-F07: make Flow receipt classification open the exact income event and permit source-keyed Family classification without duplicate cash.
 - [ ] V182-F08: make 12 months and Since 2013 govern monthly summary, group matrices, cards and details with truthful bounds and totals.
-- [ ] V182-F09: add monthly group subtotals and final income-minus-expense line under matrices, reconciled to selected-period cards.
+- [x] V182-F09: add monthly group subtotals and final income-minus-expense line under matrices, reconciled to selected-period cards. Published 12- and 156-month DOM checks on PR #69 found zero differences; source certification is separate.
 - [ ] V182-F10: make expense-category treasury groups expandable into subgroups and original rows, preserving alternative dimensions without addition.
 - [ ] V182-F11: show documented invoices by card and selected period before technical reconciliation/planning; each opens its purchase composition or a specific gap.
 - [ ] V182-F12: enforce source drill-down for closed totals across the product, with explicit aggregate-only exception if individual evidence is absent.

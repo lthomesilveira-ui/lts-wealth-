@@ -2,6 +2,8 @@
 
 ## Immediate continuation — 23/09/2026
 
+Update: PR #69 merged/published at `1187e9d3af5958be8db5d5cf89253059ff483959`. Ten CI workflows passed, Pages `35924579834` succeeded, and authenticated 12/156-month reports passed exact summary/matrix/KPI arithmetic after full reload. Rapid filters no longer wait for or display the old period. Loans/property source lists were complete for the selected-year test. Continue from these verified results, not by rerunning a broad 2013 bank reconciliation. Receipt classification still routes generically to the expense queue; the existing semantic-feedback writer is expense/description-wide and must not be repurposed for one receipt. No classifications or financial facts were changed during QA.
+
 User completed the shared-browser login; the authenticated session works. Continue from the isolated V183 period-ownership follow-up, not from an authentication blocker. PR #68 historical-scope behavior is live-verified; newer monthly/card filter generation guards and 13 read-only tests are ready for publication/live recheck. Financial facts, fixed V181 and protected public root are unchanged. The precise implementation and remaining gates are in `backups/V183_PERIOD_OWNERSHIP_2026-09-23.md` and the top of the master backlog. Never substitute a historic full-history certification claim for the current bounded policy.
 
 ## Start here: latest user decision — 23/09/2026

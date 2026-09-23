@@ -2,6 +2,8 @@
 
 ## Active execution — 23/09/2026
 
+PR #69 is now merged (`1187e9d3af5958be8db5d5cf89253059ff483959`) and published (Pages `35924579834` success); all ten PR workflows passed first attempt. Authenticated new-build reload, rapid selected-period replacement and exact DOM arithmetic over 12 and 156 months passed. The full-history read was ready at the 62-second observation. Real loans/property drilldowns matched every displayed row. These close the scoped period-ownership/subtotal issues, not unrelated source, receipt-classification, net-asset/debt or physical-phone acceptance gates. The paragraph below records the earlier pre-publication state.
+
 Manual browser login succeeded. PR #68/main `4c651486bc13ac06cd870f7ca3add2cdc09c87d7` passed authenticated reload, current Dashboard/Flow equality and unavailable uncertified historical balances with preserved movements. A subsequent isolated V183 period-ownership fix is locally passing 13 deterministic tests; publication and authenticated rapid-filter checks remain next. See the current master-backlog section and `backups/V183_PERIOD_OWNERSHIP_2026-09-23.md`. Do not ask for another login while the authorized browser session works, or claim the complete successor is ready from these scoped checks.
 
 ## Latest authorized scope — 23/09/2026
