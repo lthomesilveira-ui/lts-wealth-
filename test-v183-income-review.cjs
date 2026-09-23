@@ -61,3 +61,51 @@ test('SQL API is authenticated, category-only, and rejects ambiguity/stale snaps
  assert.match(sql,/revoke all on function public\.lts_browser_income_category_v183[^;]+from public,anon,authenticated/);
  assert.doesNotMatch(sql,/insert into public\.financial_events|delete from|update public\.lts_semantic_rule/);
 });
+function runtimeFixture(rpc){
+ const controls={};let dialog=null,save=null,alerts=[];const calls=[];
+ const button={dataset:{incomeKey:fn('receiptKey')(event)},isConnected:true,focus(){}};
+ const simple=()=>({disabled:false,textContent:'',value:'',focus(){},remove(){this.removed=true}});
+ const content=simple(),select=simple(),close=simple(),status=simple();
+ content.querySelector=()=>select;
+ const actions={prepend(x){save=x}};
+ const document={
+  head:{appendChild(){}},body:{appendChild(x){x.isConnected=true}},
+  getElementById(){return dialog?.isConnected?dialog:null},
+  querySelectorAll(){return [button]},
+  createElement(tag){if(tag!=='dialog')return simple();dialog={...simple(),isConnected:false,setAttribute(){},showModal(){this.open=true},close(){this.open=false},remove(){this.isConnected=false},querySelector(s){return {'.income-status':status,'.income-content':content,'.income-close':close,'.income-actions':actions}[s]}};return dialog}
+ };
+ const context={document,window:{__LTS_V175_STATE:{monthly:{token:1,data:{},key:'old'}}},
+ flowClassificationBadge:()=>'<button>expense</button>',bindFlowEditor:()=>{},
+ mergedFlowEvents:()=>[event],brl:x=>'R$ '+x,S:{rpc:async(name,args)=>{calls.push({name,args});return rpc(name,args)}},
+ loadFlowRange:async(...args)=>{controls.reloaded=args},FLOWFROM:event.event_date,FLOWTO:event.event_date,
+ D:null,alert:x=>alerts.push(x)};
+ vm.createContext(context);
+ vm.runInContext('('+source.slice(source.indexOf('function runtime(){'),source.indexOf('\n const shell='))+')()',context);
+ context.bindFlowEditor();
+ return {context,button,select,close,content,status,calls,controls,get save(){return save},get dialog(){return dialog},alerts};
+}
+const tick=()=>new Promise(resolve=>setImmediate(resolve));
+test('shipped dialog previews first and saves only explicit selection with exact token',async()=>{
+ const ui=runtimeFixture(async(name,args)=>({data:args.p_category?{ok:true,saved:true}:{ok:true,editable:true,token:'snapshot',options:['Família']}}));
+ ui.button.onclick();await tick();
+ assert.equal(ui.calls.length,1);assert.equal(ui.save.disabled,true);
+ ui.select.value='Família';ui.select.onchange();assert.equal(ui.save.disabled,false);
+ await ui.save.onclick();
+ assert.equal(ui.calls.length,2);assert.equal(ui.calls[1].args.p_expected,'snapshot');assert.equal(ui.calls[1].args.p_category,'Família');
+ assert.deepEqual(ui.controls.reloaded,[event.event_date,event.event_date]);
+ assert.match(ui.status.textContent,/salva/);assert.equal(ui.context.window.__LTS_V175_STATE.monthly.data,null);
+});
+test('closing during preview ignores late response and never enables a save',async()=>{
+ let resolve;const ui=runtimeFixture(()=>new Promise(r=>{resolve=r}));
+ ui.button.onclick();ui.close.onclick();resolve({data:{ok:true,editable:true,token:'late',options:['Família']}});await tick();
+ assert.equal(ui.dialog.isConnected,false);assert.equal(ui.save,null);assert.equal(ui.calls.length,1);
+});
+test('already classified preview cannot create a save control',async()=>{
+ const ui=runtimeFixture(async()=>({data:{ok:true,editable:false,category:'Reembolso',reason:'Preservada.'}}));
+ ui.button.onclick();await tick();assert.equal(ui.save,null);assert.match(ui.content.textContent,/Reembolso/);
+});
+test('uncertain save fails closed without automatic retry and permits closing',async()=>{
+ const ui=runtimeFixture(async(name,args)=>args.p_category?{error:{message:'Falha de conexão'}}:{data:{ok:true,editable:true,token:'one',options:['Família']}});
+ ui.button.onclick();await tick();ui.select.value='Família';await ui.save.onclick();
+ assert.equal(ui.calls.length,2);assert.equal(ui.save.removed,true);assert.equal(ui.close.disabled,false);assert.match(ui.status.textContent,/confira novamente/);
+});
