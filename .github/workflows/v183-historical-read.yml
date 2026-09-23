@@ -4,6 +4,12 @@ on:
     paths:
       - 'wip35-v183-candidate.html'
       - 'lts-v183-expense-history-candidate.js'
+      - 'lts-v183-historical-balance-guard.js'
+      - 'lts-history-coverage-policy.js'
+      - 'test-history-coverage.cjs'
+      - 'audit_original_daily_balances.py'
+      - 'reconcile_historical_scope.py'
+      - 'test_reconcile_historical_scope.py'
       - '.github/workflows/v183-historical-read.yml'
 permissions:
   contents: read
@@ -17,6 +23,8 @@ jobs:
           node-version: 22
       - name: Verify syntax, isolation and completeness guard
         run: |
+          node test-history-coverage.cjs
+          python3 -B -m unittest test_reconcile_historical_scope.py
           node <<'JS'
           const fs=require('node:fs'),crypto=require('node:crypto'),assert=require('node:assert/strict');
           const candidate=fs.readFileSync('wip35-v183-candidate.html','utf8');

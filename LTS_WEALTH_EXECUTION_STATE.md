@@ -1,5 +1,9 @@
 # LTS Wealth — Execution State
 
+## Latest authorized scope — 23/09/2026
+
+Implement bounded backwards historical reconciliation, not an exhaustive 2013 balance gate. Preserve 2013+ expenses, certify balances only over an evidenced contiguous interval, disclose unknown earlier balances, and protect app events from 08/07/2026 onward. September 2018 is not a certified start merely because later workbook date cells are valid. See the current override at the top of the master backlog and homologation gate. The independent coverage policy is being added only to isolated V183; fixed V181 and protected root remain unchanged. Other backlog items remain open unless individually proven closed.
+
 ## Current state — V181 homologation (22/09/2026)
 
 V181 is selected at the fixed entry after PR #37 exposure merge `7a885d5a35204cc40e6661aa19369e89b3a65b01`. The authorized browser verified the published Dashboard after login/session entry and full reload, the current-day Flow equality, exactly one documentary movement on the reported due date, and Dashboard → Flow → Dashboard return. Nine exposure PR gates passed. This is agent-run QA, not user acceptance. The V180 record below remains a historical checkpoint. Continue the V181 register and publication receipt. Keep 137 unresolved identity reviews, aggregate-only invoice composition, April 2026 share-sale source, physical-phone QA and all prior open dependencies. Do not infer a successful post-merge signed-out smoke workflow or promote the protected root.

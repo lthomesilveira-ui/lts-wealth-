@@ -8,6 +8,8 @@
       if(!w?.__LTS_V182_FEEDBACK?.installed)return false;
       if(d.getElementById('v183-historical-balance-guard-runtime'))return true;
       const runtime=function(){
+        const policy=window.parent.LTSHistoryCoverage;
+        if(!policy)return;
         const explanation='Sem abertura documental completa das contas nesta data, o saldo bancário consolidado e os totais que dependem dele não estão disponíveis. Entradas e saídas do dia permanecem visíveis; confira cada banco na respectiva aba.';
         const bankExplanation='Sem abertura documental desta conta nesta data, os saldos anterior e final não estão disponíveis. Entradas e saídas do dia permanecem visíveis.';
         let pending=false;
@@ -25,32 +27,41 @@
           const opening=String(contract?.consolidated_first_complete_opening||'');
           const account=typeof ACC==='undefined'?'Consolidado':ACC;
           const bankOpening=String(({Itaú:contract?.itau_first_documentary_opening,Bradesco:contract?.bradesco_first_documentary_opening,C6:contract?.c6_first_documentary_opening})[account]||'');
+          const controls=document.querySelector('.flow-sticky-controls');
+          if(controls){
+            let coverage=controls.querySelector('.v183-history-coverage');
+            if(!coverage){coverage=document.createElement('p');coverage.className='v183-history-coverage';coverage.style.cssText='margin:8px 12px;font-size:13px;line-height:1.5;color:#42546a';controls.appendChild(coverage)}
+            const message=policy.flowMessage(account,contract);
+            if(coverage.textContent!==message)coverage.textContent=message;
+          }
           let masked=0;
           for(const row of rows){
             const cells=row.children;
             const day=row.id.slice(2);
+            const status=policy.dayStatus(day,account,contract);
+            row.dataset.historyCoverage=status;
+            const uncertified=status==='uncertified'||status==='unavailable';
             if(row.classList.contains('fx87-bank')){
-              if(cells.length<5||day>=today()||(bankOpening&&day>=bankOpening))continue;
+              if(cells.length<5||(!uncertified&&(day>=today()||(bankOpening&&day>=bankOpening))))continue;
               for(const index of [1,4]){
                 const cell=cells[index];
                 if(cell.textContent.trim()==='—')continue;
-                cell.textContent='—';cell.title=bankExplanation;cell.classList.remove('neg','pos');
+                cell.textContent='—';cell.title=uncertified?policy.uncertifiedMessage:bankExplanation;cell.classList.remove('neg','pos');
               }
               row.classList.add('v183-relative-history');masked++;continue;
             }
             if(!row.classList.contains('fx87-cons')||cells.length<11)continue;
             const beforeDocumentaryOpening=day<today()&&(!opening||day<opening);
             const missingBankBasis=cells[1].textContent.trim()==='—'||cells[4].textContent.trim()==='—';
-            if(!relative.has(day)&&!missingBankBasis&&!beforeDocumentaryOpening)continue;
+            if(!uncertified&&!relative.has(day)&&!missingBankBasis&&!beforeDocumentaryOpening)continue;
             for(const index of [1,4,6,8,10]){
               const cell=cells[index];
               if(cell.textContent.trim()==='—')continue;
-              cell.textContent='—';cell.title=explanation;cell.classList.remove('neg','pos');
+              cell.textContent='—';cell.title=uncertified?policy.uncertifiedMessage:explanation;cell.classList.remove('neg','pos');
             }
             row.classList.add('v183-relative-history');masked++;
           }
           if(masked){
-            const controls=document.querySelector('.flow-sticky-controls');
             let note=controls?.querySelector('.v183-balance-basis-note');
             if(controls&&!note){note=document.createElement('p');note.className='v183-balance-basis-note';note.setAttribute('role','status');note.style.cssText='margin:8px 12px;padding:9px 12px;border-radius:9px;background:#fff5df;color:#60451e;font-size:12px;line-height:1.45';controls.appendChild(note)}
             const reason=account==='Consolidado'?explanation:bankExplanation;
@@ -67,7 +78,7 @@
         observer.observe(document.body,{childList:true,subtree:true,characterData:true});
         const originalRender=render;
         render=function(){const result=originalRender();guard();return result};
-        window.__LTS_V183_HISTORICAL_BALANCE_GUARD={installed:true,policy:'hide-derived-totals-without-bank-basis',finance_rows_changed:false};
+        window.__LTS_V183_HISTORICAL_BALANCE_GUARD={installed:true,policy:'independent-expense-and-reconciled-balance-coverage',operational_from:policy.operationalFrom,finance_rows_changed:false};
         guard();
       };
       const script=d.createElement('script');script.id='v183-historical-balance-guard-runtime';script.textContent='('+runtime.toString()+')();';d.head.appendChild(script);

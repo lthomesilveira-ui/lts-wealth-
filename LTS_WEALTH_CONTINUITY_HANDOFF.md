@@ -1,5 +1,9 @@
 # LTS Wealth — Continuity Handoff
 
+## Start here: latest user decision — 23/09/2026
+
+The user authorized implementation of a bounded historical scope: expenses since 2013 remain usable; Flow balances are certified only from an actually reconciled date. Reconstruct backwards from 08/07/2026, stop at unsupported history, and disclose limits without inventing openings or requiring all 2013+ balances before a testable release. Protect operational app facts from 08/07/2026 onward. Do not ask for blanket old statements or a remembered 2018 adjustment. Read the current top sections of PROJECT_MASTER_BACKLOG.md and NEXT_HOMOLOGATION_GATE.md before older checkpoints; older full-history release gates are superseded, not newly reopened. All unrelated pending items remain intact.
+
 ## Current homologation — V181 (22/09/2026)
 
 The active fixed entry is V181. Product merge `9cce166287f2d6213c1ee48547df3f1db642145e`; exposure merge `7a885d5a35204cc40e6661aa19369e89b3a65b01`. Nine PR exposure gates passed. The served manifest selected V181; the authorized browser passed login/session entry, full Dashboard reload, current-day cash equality with Flow, the reported single-invoice due date, and Flow → Dashboard return. See `backups/V181_HOMOLOGATION_PUBLICATION_2026-09-22.md` and `backups/V181_USER_FEEDBACK_REGISTER_2026-09-22.md`. User acceptance, physical-phone validation, ambiguous identifications, aggregate-only invoice composition, April 2026 share-sale source and all other open backlog items remain open. The following V180 section is historical. No root production promotion occurred.
