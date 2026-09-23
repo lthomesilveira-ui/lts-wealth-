@@ -1,5 +1,11 @@
 # LTS Wealth — Master Backlog
 
+## Active execution — 23/09/2026: exact receipt review
+
+- [~] V182-F07: implemented the candidate-only receipt dialog and authenticated category-only RPC. One exact confirmed source row, optimistic concurrency, no description-wide expense rule, no change to cash/date/account. Already classified rows, transfers, projections and ambiguous origins are preserved. Eighteen rolled-back synthetic database assertions passed, including Flow/monthly propagation and unchanged totals. Seven new local contract tests passed. Publication/live UI verification is recorded in the private continuity checkpoint; unsupported historical origins remain outside this writer. No real receipt was classified during tests.
+- [x] PR #70 composition disclosure was published and checked after authenticated reload. Residual components remain explicitly included in statement totals, never additional cash. This does not close unresolved RSU source/quantity/debt assumptions.
+- The user cannot test now and authorized continuing implementation. User QA is not a prerequisite for development; do not request another login while the session remains active.
+
 ## Active execution — 23/09/2026: authenticated period ownership
 
 **Published validation:** PR #69 merged as `1187e9d3af5958be8db5d5cf89253059ff483959`; Pages run `35924579834` succeeded. All ten PR workflows passed first attempt. Authenticated full reload and rapid Since 2013 → 12 months now load the selected three semester chunks rather than the obsolete 27. The complete real 156-month historical report was ready by the 62-second observation, with zero DOM arithmetic differences across summary, all three group matrices, final result and KPI cards. Twelve-month arithmetic also passed. This proves scoped report/read consistency, not economic uniqueness or bank-balance certification. Cards survived rapid all/12-month switching with period-correct rows and withheld old rows during an exact-day custom reload. Dashboard loans and property drilldowns loaded every row and matched their displayed totals; private amounts are in the persistent private register.
