@@ -72,7 +72,7 @@
           else if(state.status==='error')body='<p role="alert">'+esc(state.error)+' Nenhum resultado parcial é exibido.</p><button class="v168-btn" data-v183-card-retry>Tentar novamente</button>';
           else if(state.status==='ready'){
             const good=rows.filter(x=>x.reconciliation_status==='reconciled'&&Math.abs(Number(x.difference)||0)<=0.02).length;
-            body='<p><b>'+rows.length+' fatura(s) documentada(s) neste recorte; '+good+' com documento e evento do Fluxo correspondentes.</b> Essa conciliação compara cartão, competência, vencimento, sinal e valor. Não comprova que o banco já debitou a fatura; a confirmação de pagamento permanece separada no detalhe. Para vencimentos anteriores a hoje, ausência de evento nesta consulta não comprova ausência de pagamento no caixa histórico. Cartões ou ciclos sem fatura individual permanecem sem conferência.</p>'+
+            body='<p><b>'+rows.length+' fatura(s) do cadastro atual neste recorte; '+good+' com documento e evento do Fluxo correspondentes.</b> Essa conciliação compara cartão, competência, vencimento, sinal e valor. Não comprova que o banco já debitou a fatura; a confirmação de pagamento permanece separada no detalhe. Para vencimentos anteriores a hoje, ausência de evento nesta consulta não comprova ausência de pagamento no caixa histórico. Cartões ou ciclos sem fatura individual permanecem sem conferência.</p>'+
               (rows.length?'<div class="v181-tablewrap"><table class="v181-table"><thead><tr><th>Cartão</th><th>Vencimento</th><th>Documento</th><th>Fluxo</th><th>Diferença</th><th>Situação</th><th>Origem</th></tr></thead><tbody>'+rows.map(row=>{
                 const ok=row.reconciliation_status==='reconciled'&&Math.abs(Number(row.difference)||0)<=0.02;
                 const historical=String(row.due_date||'')<today()&&row.reconciliation_status==='invoice_event_count_mismatch'&&Number(row.flow_amount)===0;
@@ -128,7 +128,7 @@
               await loadFlowRange(due,due);
               const day=document.getElementById('d-'+due);
               day?.scrollIntoView({behavior:'smooth',block:'center'});
-              const expand=day?.querySelector('button');if(expand&&window.EXP instanceof Set&&!EXP.has(due))expand.click();
+              const expand=day?.querySelector('button');if(expand?.textContent?.trim()==='+')expand.click();
             });
           }
           return result;
