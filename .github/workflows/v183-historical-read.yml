@@ -23,7 +23,7 @@ jobs:
           const runtime=fs.readFileSync('lts-v183-expense-history-candidate.js','utf8');
           assert.match(candidate,/V183 · Homologação/);
           assert.match(candidate,/lts-v183-expense-history-candidate\.js/);
-          assert.match(candidate,/lts-v182-homologation-feedback\.js/);
+          assert.match(candidate,/lts-v183-v182-feedback-safe\.js/);
           assert.doesNotThrow(()=>new Function(runtime));
           assert.match(runtime,/function verifyPart/);
           assert.match(runtime,/halfYearChunks/);
