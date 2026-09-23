@@ -10,13 +10,14 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#f3f6f9;fon
 #shell{display:block;width:100%;height:100%;border:0;background:#f3f6f9}
 #gate{position:fixed;inset:0;z-index:2147483646;display:grid;place-items:center;background:#f3f6f9;color:#536174;font-size:13px}
 #gate[hidden]{display:none}
-#scope{position:fixed;right:12px;bottom:12px;z-index:2147483647;border:1px solid #d7e0e8;border-radius:999px;background:#fffc;color:#42546a;padding:7px 10px;font:800 12px/1.2 system-ui;box-shadow:0 5px 20px #102b501f;pointer-events:none}
-#scope::before{content:'V183 · Homologação';font-size:12px}
+#scope{display:none!important}
+#release-badge-v183{position:fixed;right:12px;bottom:12px;z-index:2147483647;border:1px solid #d7e0e8;border-radius:999px;background:#fffc;color:#42546a;padding:7px 10px;font:800 12px/1.2 system-ui;box-shadow:0 5px 20px #102b501f;pointer-events:none}
 </style>
 </head>
 <body>
 <div id="gate" role="status" aria-live="polite">Preparando o LTS Wealth V183…</div>
 <div id="scope" aria-label="V183 · Homologação"></div>
+<div id="release-badge-v183" aria-label="V183 · Homologação">V183 · Homologação</div>
 <iframe id="shell" title="LTS Wealth — Homologação V183" src="index.html?v183-historical-complete-read"></iframe>
 <script src="wip35-v162-flow-recovery.js?v=20260917-v172-flow"></script>
 <script src="lts-expense-read-model.js?v=20260914-reader2"></script>
