@@ -39,14 +39,16 @@
             if(evidence?.error||evidence?.data?.financial_effect!=='none'||!Array.isArray(evidence?.data?.invoices))throw Error('Evidência documental indisponível');
             const periods=chunks(r.from,r.to),rows=[],legacy=[],seen=new Set(),seenLegacy=new Set();state.periods=periods.length;
             for(const period of periods){
-              const response=await S.rpc('lts_browser_invoice_flow_reconciliation_v183',{p_from:period.from,p_to:period.to});
+              const [response,old]=await Promise.all([
+                S.rpc('lts_browser_invoice_flow_reconciliation_v183',{p_from:period.from,p_to:period.to}),
+                S.rpc('lts_browser_legacy_invoice_gap_v183',{p_from:period.from,p_to:period.to})
+              ]);
               if(response?.error||!response?.data||!Array.isArray(response.data.rows))throw Error(response?.error?.message||'Conciliação indisponível');
               for(const item of response.data.rows){
                 const key=[item.card_name,item.reference_month,item.due_date,item.documented_amount].join('|');
                 if(seen.has(key))throw Error('Fatura repetida em intervalos de leitura');
                 seen.add(key);rows.push(item);
               }
-              const old=await S.rpc('lts_browser_legacy_invoice_gap_v183',{p_from:period.from,p_to:period.to});
               if(old?.error||old?.data?.financial_effect!=='none'||!Array.isArray(old?.data?.invoices))throw Error(old?.error?.message||'Faturas históricas indisponíveis');
               for(const item of old.data.invoices){
                 const invoiceKey=[item.card_name,item.due_date].join('|');
