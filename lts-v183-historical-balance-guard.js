@@ -10,6 +10,7 @@
       const runtime=function(){
         const explanation='Sem abertura documental completa das contas nesta data, o saldo bancário consolidado e os totais que dependem dele não estão disponíveis. Entradas e saídas do dia permanecem visíveis; confira cada banco na respectiva aba.';
         let pending=false;
+        const today=()=>new Intl.DateTimeFormat('en-CA',{timeZone:'America/Sao_Paulo',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
         function guard(){
           pending=false;
           const rows=document.querySelectorAll('.fx87-row.fx87-cons[id^="d-"]');
@@ -17,12 +18,16 @@
           // may arrive independently. Never derive a position from missing data.
           if(typeof D==='undefined'||!D)return;
           const relative=new Set(typeof mergedFlowDays==='function'?mergedFlowDays().filter(x=>x?.historical&&x.relative_balance_display===true).map(x=>x.date):[]);
+          // The v12 historical upgrade can replace v11 days without carrying its
+          // per-day truth flags. Keep the documentary opening from the v11 contract.
+          const opening=typeof FLOWQ!=='undefined'?String(FLOWQ?.historical_balance_truth_contract?.consolidated_first_complete_opening||''):'';
           let masked=0;
           for(const row of rows){
             const cells=row.children;
             if(cells.length<11)continue;
+            const day=row.id.slice(2),beforeDocumentaryOpening=day<today()&&(!opening||day<opening);
             const missingBankBasis=cells[1].textContent.trim()==='—'||cells[4].textContent.trim()==='—';
-            if(!relative.has(row.id.slice(2))&&!missingBankBasis)continue;
+            if(!relative.has(day)&&!missingBankBasis&&!beforeDocumentaryOpening)continue;
             for(const index of [1,4,6,8,10]){
               const cell=cells[index];
               if(cell.textContent.trim()==='—')continue;
