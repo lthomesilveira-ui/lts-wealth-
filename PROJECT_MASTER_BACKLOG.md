@@ -1,5 +1,13 @@
 # LTS Wealth — Master Backlog
 
+## Active execution — 23/09/2026: authenticated period ownership
+
+The user completed manual login. Published PR #68 was checked after full reload: current Dashboard/Flow cash agreed, and an early historical interval kept movements visible while uncertified balances/derived totals stayed unavailable. A live rapid switch from Since 2013 to 12 months reproduced the obsolete long-reader wait. The isolated V183 follow-up gives monthly, expense and invoice requests explicit period/generation ownership, stops superseded historical chunk loops, hides mismatched payloads and lets a new period recover from an earlier error without an automatic retry loop. Thirteen deterministic read-only regression tests pass, including all 156 fixture months and fail-closed missing-month coverage. Publication/live recheck is still required; no financial rows or fixed/root entry were changed.
+
+- [~] V182-F08 / V183-F09: period-switch correction implemented and locally tested; verify the published candidate before closing.
+- [~] V182-F09: authenticated 12-month summary, group subtotals and final result were visible before this correction; exact DOM arithmetic and new-build reload remain to be recorded.
+- [x] Revised historical-scope display check: 2018 movements remain accessible without claiming certified bank balances. This does not certify an opening date or close unrelated financial items.
+
 ## Binding scope update — 23/09/2026: bounded historical reconciliation
 
 This user decision supersedes every older requirement to certify bank balances back to 2013 before releasing a successor. Preserve expense history from 2013 independently of absolute bank-balance certification. Reconstruct backwards from the original 08/07/2026 boundary only as far as existing sources support. Stop at unresolved date/balance gaps, disclose the proven interval and leave earlier balances unavailable. Do not invent a 2018 start date, opening balance, adjustment or transaction. Early uncertainty is a disclosed historical limitation, not an indefinite release blocker.

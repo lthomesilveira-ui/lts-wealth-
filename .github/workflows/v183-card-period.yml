@@ -4,6 +4,7 @@ on:
     paths:
       - 'wip35-v183-candidate.html'
       - 'lts-v183-card-period-candidate.js'
+      - 'test-v183-period-ownership.cjs'
       - '.github/workflows/v183-card-period.yml'
       - 'v183_invoice_confirmed_fact_reconciliation.sql'
 permissions:
@@ -15,6 +16,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Check period reader and isolation
         run: |
+          node --test test-v183-period-ownership.cjs
           node <<'JS'
           const fs=require('node:fs'),assert=require('node:assert/strict'),crypto=require('node:crypto');
           const js=fs.readFileSync('lts-v183-card-period-candidate.js','utf8');

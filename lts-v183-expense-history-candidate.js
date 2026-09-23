@@ -134,20 +134,35 @@
       }
       return data;
     }
-    async function loadMonthly(from,to){
+    function currentRead(s,key,token){
+      const r=expenseRange();
+      return token===s.token&&s.key===key&&key===r.from+'|'+r.to;
+    }
+    function invalidateExpensePeriod(){
+      for(const s of [state.expense,state.monthly]){
+        s.token++;s.key='';s.data=null;s.loading=false;s.error=null;
+      }
+      state.monthly.progress='';
+    }
+    async function loadMonthly(from,to,isCurrent=()=>true){
+      const checkCurrent=()=>{if(!isCurrent())throw Error('Leitura substituída por outro período.')};
+      checkCurrent();
       const chunks=halfYearChunks(from,to),long=chunks.length>2;
       if(!long){
         state.monthly.progress='Conferindo o período…';
         const full=await directRpc('lts_browser_monthly_balance_v5',{p_from:from,p_to:to},14000);
+        checkCurrent();
         if(!full.error&&full.data)return{data:verifyPart(full.data,from,to),mode:'direct'};
       }
       state.monthly.progress='Conferindo histórico por semestre…';
       if(V==='Despesas'&&v168?.expense?.tab==='monthly')render();
       const good=[],failures=[];
       for(const [index,chunk] of chunks.entries()){
+        checkCurrent();
         state.monthly.progress='Conferindo '+(index+1)+' de '+chunks.length+' períodos…';
         if(V==='Despesas'&&v168?.expense?.tab==='monthly'&&index%4===0)render();
         let result=await directRpc('lts_browser_monthly_balance_v5',{p_from:chunk.from,p_to:chunk.to},12000);
+        checkCurrent();
         try{
           if(result.error||!result.data){
             if([401,403].includes(result.error?.status))throw Error('Acesso negado');
@@ -156,6 +171,7 @@
               const a=year+'-'+start,b=year+'-'+end,lo=a<chunk.from?chunk.from:a,hi=b>chunk.to?chunk.to:b;
               if(lo>hi)continue;
               const part=await directRpc('lts_browser_monthly_balance_v5',{p_from:lo,p_to:hi},12000);
+              checkCurrent();
               if(part.error||!part.data)throw Error(part.error?.message||'Leitura trimestral indisponível');
               pieces.push(verifyPart(part.data,lo,hi));
             }
@@ -163,7 +179,7 @@
             result={data:mergeMonthly(pieces,chunk.from,chunk.to,[]),error:null};
           }
           good.push(verifyPart(result.data,chunk.from,chunk.to));
-        }catch(error){failures.push(chunk.from+' a '+chunk.to)}
+        }catch(error){checkCurrent();failures.push(chunk.from+' a '+chunk.to)}
       }
       if(failures.length)return{error:'Histórico incompleto em '+failures.join(', ')+'. Nenhum total parcial será exibido.'};
       const merged=mergeMonthly(good,from,to,[]);
@@ -178,30 +194,30 @@
 
     async function ensureMonthly(force=false){
       const r=expenseRange(),key=r.from+'|'+r.to,s=state.monthly;
-      if(s.loading||(!force&&s.data&&s.key===key))return;
-      const token=++s.token;s.key=key;s.loading=true;s.error=null;s.progress='Preparando balanço…';
+      if(s.key===key&&(s.loading||(!force&&(s.data||s.error))))return;
+      const token=++s.token;s.key=key;s.data=null;s.loading=true;s.error=null;s.progress='Preparando balanço…';
       if(V==='Despesas'&&v168?.expense?.tab==='monthly')render();
       try{
-        const result=await loadMonthly(r.from,r.to);
-        if(token!==s.token)return;
+        const result=await loadMonthly(r.from,r.to,()=>currentRead(s,key,token));
+        if(!currentRead(s,key,token))return;
         if(result.error||!result.data)throw Error(result.error||'Balanço indisponível');
         s.data=result.data;s.mode=result.mode||'direct';
         const years=[...new Set(arr(s.data.months).map(yearOf))].filter(Boolean);
         if(!years.includes(String(s.year)))s.year=years.at(-1)||today().slice(0,4);
-      }catch(error){if(token===s.token){s.error=String(error?.message||error);s.data=null}}
+      }catch(error){if(currentRead(s,key,token)){s.error=String(error?.message||error);s.data=null}}
       finally{if(token===s.token){s.loading=false;s.progress='';if(V==='Despesas'&&v168?.expense?.tab==='monthly')render()}}
     }
 
     async function ensureExpense(force=false){
       const r=expenseRange(),key=r.from+'|'+r.to,s=state.expense;
-      if(s.loading||(!force&&s.data&&s.key===key))return;
-      const token=++s.token;s.key=key;s.loading=true;s.error=null;
+      if(s.key===key&&(s.loading||(!force&&(s.data||s.error))))return;
+      const token=++s.token;s.key=key;s.data=null;s.loading=true;s.error=null;
       try{
         const result=await directRpc('lts_browser_expense_executive_v8',{p_from:r.from,p_to:r.to},18000);
-        if(token!==s.token)return;
+        if(!currentRead(s,key,token))return;
         if(result.error||!result.data)throw Error(result.error?.message||'Despesas indisponíveis');
         s.data=result.data;
-      }catch(error){if(token===s.token){s.error=String(error?.message||error);s.data=null}}
+      }catch(error){if(currentRead(s,key,token)){s.error=String(error?.message||error);s.data=null}}
       finally{if(token===s.token){s.loading=false;if(V==='Despesas'&&['overview','categories'].includes(v168?.expense?.tab))render()}}
     }
 
@@ -296,8 +312,8 @@
       return '<div class="v175-open-issues">'+issues.map(x=>'<div><b>Pendência de fonte</b><strong>'+esc(x.title)+'</strong><span>'+esc(x.detail)+'</span></div>').join('')+'</div>';
     }
     function monthlyPanel(){
-      const s=state.monthly;
-      if(s.loading&&!s.data)return'<div class="v175-loading"><div class="v168-skeleton"></div><b>'+esc(s.progress||'Carregando…')+'</b><span>O relatório completo é lido sem montar 156 colunas na tela.</span></div>';
+      const s=state.monthly,r=expenseRange(),matches=s.key===r.from+'|'+r.to;
+      if(!matches||(!s.data&&!s.error))return'<div class="v175-loading" role="status"><div class="v168-skeleton"></div><b>'+esc(matches?s.progress||'Carregando…':'Preparando o período selecionado…')+'</b><span>Somente os dados completos do período selecionado serão exibidos.</span></div>';
       if(s.error&&!s.data)return'<div class="v168-error">'+esc(s.error)+'</div><button class="v168-btn primary" data-v175-month-retry>Tentar novamente</button>';
       const j=s.data||{},tot=j.totals||{},years=[...new Set(arr(j.months).map(yearOf))].filter(Boolean),selected=years.includes(String(s.year))?String(s.year):years.at(-1),months=yearMonths(j,selected);
       s.year=selected;
@@ -352,8 +368,8 @@
       tabs.querySelectorAll('[data-v168-exp-tab]').forEach(b=>{const active=b.dataset.v168ExpTab===tab;b.classList.toggle('active',active);b.setAttribute('aria-selected',String(active))});
       if(tab==='categories'){
         let n=tabs.nextSibling;while(n){const q=n.nextSibling;n.remove();n=q}
-        const data=state.expense.data;
-        tabs.insertAdjacentHTML('afterend',state.expense.loading&&!data?'<div class="v168-skeleton"></div>':state.expense.error&&!data?'<div class="v168-error">'+esc(state.expense.error)+'</div>':'<article class="v168-card v175-categories"><div class="v168-cardhead"><div><span>Composição auditada</span><h2>Despesas por categoria</h2></div><small>'+esc(expenseRange().label)+'</small></div>'+rank(data?.management_groups,99,true)+propertyNote(data)+coverageNote(data)+'</article>');
+        const r=expenseRange(),matches=state.expense.key===r.from+'|'+r.to,data=matches?state.expense.data:null,error=matches?state.expense.error:null;
+        tabs.insertAdjacentHTML('afterend',!data&&!error?'<div class="v168-skeleton" role="status" aria-label="Carregando o período selecionado"></div>':error&&!data?'<div class="v168-error">'+esc(error)+'</div><button class="v168-btn primary" data-v183-expense-retry>Tentar novamente</button>':'<article class="v168-card v175-categories"><div class="v168-cardhead"><div><span>Composição auditada</span><h2>Despesas por categoria</h2></div><small>'+esc(r.label)+'</small></div>'+rank(data?.management_groups,99,true)+propertyNote(data)+coverageNote(data)+'</article>');
       }
       if(tab==='monthly'||tab==='cards'){
         let n=tabs.nextSibling;while(n){const q=n.nextSibling;n.remove();n=q}
@@ -373,15 +389,17 @@
       const badge=window.parent?.document?.getElementById('scope');if(badge)badge.dataset.v175Route=V==='Fluxo Diário'?'Fluxo de caixa':V;
       const tab=v168?.expense?.tab;
       if(V==='Despesas'){
-        if(['overview','categories'].includes(tab)&&!state.expense.loading){const r=expenseRange(),key=r.from+'|'+r.to;if(!state.expense.data||state.expense.key!==key)queueMicrotask(()=>ensureExpense(false))}
-        if(tab==='monthly'&&!state.monthly.loading&&!state.monthly.error){const r=expenseRange(),key=r.from+'|'+r.to;if(!state.monthly.data||state.monthly.key!==key)queueMicrotask(()=>ensureMonthly(false))}
+        const r=expenseRange(),key=r.from+'|'+r.to;
+        if(['overview','categories'].includes(tab)&&(state.expense.key!==key||(!state.expense.loading&&!state.expense.data&&!state.expense.error)))queueMicrotask(()=>ensureExpense(false));
+        if(tab==='monthly'&&(state.monthly.key!==key||(!state.monthly.loading&&!state.monthly.data&&!state.monthly.error)))queueMicrotask(()=>ensureMonthly(false));
         if(tab==='cards'&&!state.cards.loading&&!state.cards.data)queueMicrotask(()=>ensureCards(false));
       }
       document.querySelector('[data-v175-month-retry]')?.addEventListener('click',()=>ensureMonthly(true));
+      document.querySelector('[data-v183-expense-retry]')?.addEventListener('click',()=>ensureExpense(true));
       document.querySelector('[data-v175-year]')?.addEventListener('change',e=>{state.monthly.year=e.currentTarget.value;render()});
       document.querySelectorAll('[data-v175-card-bank]').forEach(b=>b.onclick=()=>{state.cards.bank=b.dataset.v175CardBank;render()});
-      document.querySelectorAll('[data-v168-exp-range]').forEach(b=>{const old=b.onclick;b.onclick=e=>{state.expense.data=null;state.monthly.data=null;state.expense.key='';state.monthly.key='';return old?.call(b,e)}});
-      const apply=document.getElementById('v168ExpenseApply');if(apply){const old=apply.onclick;apply.onclick=e=>{state.expense.data=null;state.monthly.data=null;state.expense.key='';state.monthly.key='';return old?.call(apply,e)}}
+      document.querySelectorAll('[data-v168-exp-range]').forEach(b=>{const old=b.onclick;b.onclick=e=>{invalidateExpensePeriod();return old?.call(b,e)}});
+      const apply=document.getElementById('v168ExpenseApply');if(apply){const old=apply.onclick;apply.onclick=e=>{invalidateExpensePeriod();return old?.call(apply,e)}}
     }
 
     dashboard=dashboardV175;despesas=expensesV175;

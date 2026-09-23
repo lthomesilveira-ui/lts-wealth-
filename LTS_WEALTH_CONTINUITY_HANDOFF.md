@@ -1,5 +1,9 @@
 # LTS Wealth — Continuity Handoff
 
+## Immediate continuation — 23/09/2026
+
+User completed the shared-browser login; the authenticated session works. Continue from the isolated V183 period-ownership follow-up, not from an authentication blocker. PR #68 historical-scope behavior is live-verified; newer monthly/card filter generation guards and 13 read-only tests are ready for publication/live recheck. Financial facts, fixed V181 and protected public root are unchanged. The precise implementation and remaining gates are in `backups/V183_PERIOD_OWNERSHIP_2026-09-23.md` and the top of the master backlog. Never substitute a historic full-history certification claim for the current bounded policy.
+
 ## Start here: latest user decision — 23/09/2026
 
 The user authorized implementation of a bounded historical scope: expenses since 2013 remain usable; Flow balances are certified only from an actually reconciled date. Reconstruct backwards from 08/07/2026, stop at unsupported history, and disclose limits without inventing openings or requiring all 2013+ balances before a testable release. Protect operational app facts from 08/07/2026 onward. Do not ask for blanket old statements or a remembered 2018 adjustment. Read the current top sections of PROJECT_MASTER_BACKLOG.md and NEXT_HOMOLOGATION_GATE.md before older checkpoints; older full-history release gates are superseded, not newly reopened. All unrelated pending items remain intact.

@@ -6,10 +6,14 @@ Bank-balance certification back to 2013 is no longer a release requirement. Expe
 
 The original workbook is a historical source through the 08/07/2026 boundary, not authority to overwrite app facts from that date onward. No forced reconciliation, invented adjustments, backward C6/Bradesco balances or spending from savings transfers. Keep the other documented financial and UX gates; do not mark them complete merely because this gate narrowed.
 
-- [ ] Test independent expense/history disclosure, authentic certified bounds only, unavailable historical derived totals and unchanged current-day data.
+- [x] Test independent expense/history disclosure, authentic certified bounds only, unavailable historical derived totals and unchanged current-day data. PR #68 authenticated reload and early historical interval passed on 23/09; this does not establish a certified opening date.
 - [ ] Record the bounded backwards comparison and stop reason. Earlier source gaps are retained as nonblocking limitations, not a request for all old statements.
 
 All older full-history-balance release wording below is superseded by this section.
+
+### Current targeted recheck
+
+The authorized user login is working. Publish/test the isolated V183 period-ownership correction with rapid Since 2013 → 12 months and card interval switches, full selected-month arithmetic and protected-root checks. Keep all other financial gates below explicit; an earlier loading/error response must never repopulate a different selected period. Local deterministic suite: 13 passing tests, no real financial writes.
 
 ## V183 successor gate — current V182 test frozen, 22/09/2026
 
