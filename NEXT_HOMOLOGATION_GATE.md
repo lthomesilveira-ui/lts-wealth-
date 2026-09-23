@@ -1,5 +1,16 @@
 # LTS Wealth — Next Homologation Gate
 
+## Current user override — 23/09/2026
+
+Bank-balance certification back to 2013 is no longer a release requirement. Expense analytics retain their 2013+ records independently. The historical Flow must show a genuinely reconciled contiguous interval, or explicitly state that its start has not yet been established; never infer certification from internal arithmetic or an account-opening date alone. Unsupported earlier balances remain unavailable, not zero, without suppressing the original expenses or movements. Reconciling old unknowns must not block delivery indefinitely.
+
+The original workbook is a historical source through the 08/07/2026 boundary, not authority to overwrite app facts from that date onward. No forced reconciliation, invented adjustments, backward C6/Bradesco balances or spending from savings transfers. Keep the other documented financial and UX gates; do not mark them complete merely because this gate narrowed.
+
+- [ ] Test independent expense/history disclosure, authentic certified bounds only, unavailable historical derived totals and unchanged current-day data.
+- [ ] Record the bounded backwards comparison and stop reason. Earlier source gaps are retained as nonblocking limitations, not a request for all old statements.
+
+All older full-history-balance release wording below is superseded by this section.
+
 ## V183 successor gate — current V182 test frozen, 22/09/2026
 
 The user will not test the current V182 build/link. The fixed homologation manifest remains V181 and the public root remains protected. Do not ask for QA or hand out a successor link until the complete gate below is evidenced. See V183-F01–F10 and V182-F01–F12 in `PROJECT_MASTER_BACKLOG.md`; this is not a replacement for earlier open items.
