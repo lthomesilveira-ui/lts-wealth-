@@ -50,6 +50,8 @@
         }
         const observer=new MutationObserver(()=>{if(!pending){pending=true;requestAnimationFrame(guard)}});
         observer.observe(document.body,{childList:true,subtree:true,characterData:true});
+        const originalRender=render;
+        render=function(){const result=originalRender();guard();return result};
         window.__LTS_V183_HISTORICAL_BALANCE_GUARD={installed:true,policy:'hide-derived-totals-without-bank-basis',finance_rows_changed:false};
         guard();
       };
