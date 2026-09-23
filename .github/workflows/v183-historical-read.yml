@@ -11,6 +11,10 @@ on:
       - 'lts-v183-v182-feedback-safe.js'
       - 'lts-v183-card-period-candidate.js'
       - 'lts-v183-wealth-debt-integrity.js'
+      - 'lts-v183-income-review.js'
+      - 'test-v183-income-review.cjs'
+      - 'test-v183-income-review.sql'
+      - 'supabase/migrations/20260923223926_v183_exact_income_category.sql'
       - 'audit_original_daily_balances.py'
       - 'reconcile_historical_scope.py'
       - 'test_reconcile_historical_scope.py'
@@ -29,6 +33,7 @@ jobs:
         run: |
           node test-history-coverage.cjs
           node --test test-v183-period-ownership.cjs
+          node --test test-v183-income-review.cjs
           python3 -B -m unittest test_reconcile_historical_scope.py
           node <<'JS'
           const fs=require('node:fs'),crypto=require('node:crypto'),assert=require('node:assert/strict');
