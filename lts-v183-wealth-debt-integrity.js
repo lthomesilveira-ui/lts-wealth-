@@ -27,10 +27,10 @@
           const t=document.createElement('template');t.innerHTML=html;
           const root=t.content.querySelector('.v168-wealth');if(!root)return html;
           const commitments=Array.isArray(j.financing?.summary?.commitments)?j.financing.summary.commitments:[];
-          const docs=Array.isArray(j.documentary_commitments?.items)?j.documentary_commitments.items:[];
+          const docs=Array.isArray(j.financing?.documentary?.items)?j.financing.documentary.items:[];
           const names={cipo_396:'Financiamento imobiliário · CIPÓ 396',volvo:'Financiamento do Volvo XC40',coopharma:'Empréstimo consignado · Coopharma',pai_mae:'Empréstimo familiar · Pai e Mãe'};
           const debt=Object.entries(names).map(([id,name])=>{
-            const c=commitments.find(x=>x.id===id)||{},doc=docs.find(x=>x.id===id)||{};
+            const c=commitments.find(x=>x.id===id)||{},doc=docs.find(x=>x.commitment_id===id)||{};
             const balance=amount(c.current_documentary_debt_balance??doc.debt_balance);
             const asOf=c.current_debt_as_of||doc.as_of_date;
             return {id,name,balance:balance!==null&&asOf?balance:null,asOf,remaining:amount(c.remaining_scheduled_outflow_current_terms??c.remaining_scheduled_outflow??c.remaining_economic_outflow)};
