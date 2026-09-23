@@ -66,9 +66,11 @@
               }).join('')+'</tbody></table></div>':'<p>Não há fatura individual cadastrada neste recorte. Os agregados históricos ainda precisam de composição e conferência por cartão.</p>');
           }
           const inventory=Array.isArray(v175?.cards?.data?.inventory?.cards)?v175.cards.data.inventory.cards:[];
-          const names=[...new Set(inventory.map(x=>(x.bank||'Banco não identificado')+' · '+(x.card_name||'Cartão não identificado')+(x.last4?' · final '+x.last4:'')))];
-          return'<article class="v168-card v183-card-period"><div class="v168-cardhead"><div><span>Faturas documentadas · '+esc(period)+'</span><h2>Cartões e faturas do período</h2></div></div>'+body+
-            '<details><summary>Cartões encontrados nas fontes ('+names.length+')</summary><ul>'+names.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul><p>A existência de um cartão no histórico não comprova uma fatura individual para cada mês.</p></details></article>';
+          const cards=[...new Map(inventory.map(x=>[[x.bank,x.card_name,x.last4].join('|'),x])).values()];
+          const cardList='<section class="v183-card-families" aria-label="Cartões identificados no histórico"><h3>Cartões identificados no histórico ('+cards.length+')</h3>'+
+            (cards.length?'<ul style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px;list-style:none;padding:0">'+cards.map(x=>'<li style="padding:10px;border:1px solid #d8e1e9;border-radius:9px"><b>'+esc((x.bank||'Banco não identificado')+' · '+(x.card_name||'Cartão não identificado'))+'</b>'+(x.last4?'<small style="display:block">Final '+esc(x.last4)+'</small>':'')+'<small style="display:block">Evidência: '+esc(date(x.first_seen))+' a '+esc(date(x.last_seen))+'</small></li>').join('')+'</ul>':'<p>Inventário histórico indisponível. Os cartões ainda não podem ser conferidos integralmente.</p>')+
+            '<p>Presença no histórico não comprova fatura individual para todos os meses. Produtos sem identificação documental continuam pendentes.</p></section>';
+          return'<article class="v168-card v183-card-period"><div class="v168-cardhead"><div><span>Faturas documentadas · '+esc(period)+'</span><h2>Cartões e faturas do período</h2></div></div>'+cardList+body+'</article>';
         }
         despesas=function(){
           const t=document.createElement('template');t.innerHTML=oldExpenses();const root=t.content.querySelector('.v168-expenses');
