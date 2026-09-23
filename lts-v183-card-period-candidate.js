@@ -119,7 +119,9 @@
           }
           return result;
         };
-        render();
+        // Authentication may still be fetching the product state. The base renderer
+        // dereferences D.flow, so wait for the core load before first rendering.
+        if(D && !N.classList.contains('hidden'))render();
       };
       const script=d.createElement('script');script.id='v183-card-period-runtime';script.textContent='('+runtime.toString()+')();';d.head.appendChild(script);
       return !!w.__LTS_V183_CARD_PERIOD?.installed;
