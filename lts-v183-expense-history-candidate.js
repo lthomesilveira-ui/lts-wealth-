@@ -128,9 +128,33 @@
       const actual=arr(data?.months).map(x=>String(x).slice(0,10)),expected=monthsExpected(from,to);
       if(actual.length!==expected.length||actual.some((value,i)=>value!==expected[i]))throw Error('Meses ausentes em '+from+' a '+to);
       if(arr(data?.monthly_totals).length!==expected.length)throw Error('Totais mensais ausentes em '+from+' a '+to);
+      const expectedKeys=new Set(expected),seen=new Set();
+      for(const row of arr(data.monthly_totals)){
+        const key=String(row.month).slice(0,10);
+        if(!expectedKeys.has(key)||seen.has(key))throw Error('Mês repetido ou fora do período em '+from+' a '+to);
+        seen.add(key);
+        for(const field of ['revenue','expenses','extraordinary'])if(num(row[field])===null)throw Error('Valor mensal ausente em '+from+' a '+to);
+      }
       for(const key of ['revenue','expenses','extraordinary']){
+        if(num(data?.totals?.[key])===null)throw Error('Total ausente em '+from+' a '+to);
         const monthly=sum(arr(data.monthly_totals).map(x=>x[key]));
         if(Math.abs(monthly-(num(data?.totals?.[key])||0))>0.05)throw Error('Total '+key+' divergente em '+from+' a '+to);
+      }
+      for(const [field,totalField] of [['revenue_groups','revenue'],['extraordinary_groups','extraordinary'],['expense_groups','expenses']]){
+        if(!Array.isArray(data[field]))throw Error('Composição mensal ausente em '+from+' a '+to);
+        const groups=[...data[field]];
+        if(field==='expense_groups'&&data.expense_unclassified_card_coverage)groups.push(data.expense_unclassified_card_coverage);
+        const totals=new Map(expected.map(key=>[key,0]));
+        for(const group of groups){
+          const keys=new Set();
+          for(const row of arr(group.monthly)){
+            const key=String(row.month).slice(0,10),amount=num(row.amount);
+            if(!expectedKeys.has(key)||keys.has(key)||amount===null)throw Error('Composição fora do período ou incompleta em '+from+' a '+to);
+            keys.add(key);totals.set(key,totals.get(key)+amount);
+          }
+          if(keys.size!==expected.length||num(group.total)===null||Math.abs(sum(arr(group.monthly).map(x=>x.amount))-Number(group.total))>0.05)throw Error('Grupo histórico divergente em '+from+' a '+to);
+        }
+        for(const row of data.monthly_totals)if(Math.abs(totals.get(String(row.month).slice(0,10))-Number(row[totalField]))>0.05)throw Error('Composição não fecha com o mês em '+from+' a '+to);
       }
       return data;
     }

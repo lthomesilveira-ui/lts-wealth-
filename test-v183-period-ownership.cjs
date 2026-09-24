@@ -141,11 +141,36 @@ test('card panel cannot label old results with new dates and errors can be retri
 
 test('monthly overlay and new assets are restricted to the isolated candidate',()=>{
   const html=read('wip35-v183-candidate.html');
-  assert.equal((html.match(/20260923-period-ownership/g)||[]).length,3);
+  assert.match(html,/lts-v183-expense-history-candidate\.js\?v=20260924-month-detail/);
+  assert.match(html,/lts-v183-v182-feedback-safe\.js\?v=20260924-month-detail/);
   assert.match(read('lts-v183-v182-feedback-safe.js'),/v175\.monthly\.key!==r\.from\+'\|'\+r\.to/);
   assert.equal(JSON.parse(read('homologacao-current.json')).version,'wip35-v181');
   const hash=require('node:crypto').createHash('sha256').update(read('index.html')).digest('hex');
   assert.equal(hash,'cca36731258680cc15a73fbad61c90ddf803358b741fd3ef58fefe5419eb688b');
+});
+
+test('monthly verification rejects duplicate/missing month keys even when sums match',()=>{
+  const h=expenseHarness(),r={from:'2026-01-01',to:'2026-02-28'},data=monthlyData(h.api,r);
+  data.monthly_totals[1].month=data.monthly_totals[0].month;
+  assert.throws(()=>h.api.verifyPart(data,r.from,r.to),/repetido/);
+});
+
+test('monthly verification rejects absent numbers instead of substituting zero',()=>{
+  const h=expenseHarness(),data=monthlyData(h.api,jan);data.monthly_totals[0].expenses=null;
+  assert.throws(()=>h.api.verifyPart(data,jan.from,jan.to),/ausente/);
+});
+
+test('monthly verification rejects category totals inconsistent with summary',()=>{
+  const h=expenseHarness(),data=monthlyData(h.api,jan);data.expense_groups[0].total=4;data.expense_groups[0].monthly[0].amount=4;
+  assert.throws(()=>h.api.verifyPart(data,jan.from,jan.to),/não fecha/);
+});
+
+test('monthly verification rejects out-of-range source months and accepts explicit aggregate coverage',()=>{
+  const h=expenseHarness(),data=monthlyData(h.api,jan);
+  data.expense_groups[0].monthly[0].month='2025-12-01';
+  assert.throws(()=>h.api.verifyPart(data,jan.from,jan.to),/fora do período/);
+  data.expense_groups=[];data.expense_unclassified_card_coverage={total:3,monthly:[{month:'2026-01-01',amount:3}]};
+  assert.equal(h.api.verifyPart(data,jan.from,jan.to),data);
 });
 
 test('statement composition exposes exact residual without adding a cash event',()=>{
