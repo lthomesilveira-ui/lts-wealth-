@@ -1,5 +1,12 @@
 # LTS Wealth — Master Backlog
 
+## Active execution — monthly expense composition, 24/09/2026 UTC
+
+- [~] V182-F10/F12: monthly expense groups, month values and period totals now reuse the established source-detail drawer, with exact clipped dates, ownership guards and total verification. Aggregate-only coverage is explicit; income drilldown remains separate.
+- [x] Inspection confirmed the current V179 adapter already routes monthly calls through V178. The earlier note suggesting that the candidate still displays unmodified V5 classifications was incomplete. Preserve the existing routing; do not regress to an old reader.
+- [x] 35 JS tests, 30 historical coverage checks and 8 Python tests pass locally. Published validation remains required; all other unresolved backlog items remain open.
+- Public root/fixed V181 and financial rows are unchanged. Details: `backups/V183_MONTHLY_DETAIL_2026-09-24.md`.
+
 ## Active execution — 23/09/2026: exact receipt review
 
 - [~] V182-F07: implemented the candidate-only receipt dialog and authenticated category-only RPC. One exact confirmed source row, optimistic concurrency, no description-wide expense rule, no change to cash/date/account. Already classified rows, transfers, projections and ambiguous origins are preserved. Eighteen rolled-back synthetic database assertions passed, including Flow/monthly propagation and unchanged totals. Seven new local contract tests passed. Publication/live UI verification is recorded in the private continuity checkpoint; unsupported historical origins remain outside this writer. No real receipt was classified during tests.

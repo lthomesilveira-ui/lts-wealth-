@@ -23,21 +23,51 @@
      const r=range(),label=r.from.split('-').reverse().join('/')+' a '+r.to.split('-').reverse().join('/');
      return '<article class="v175-section v182-months"><div class="v168-cardhead"><div><span>'+safe(label)+'</span><h2>Resumo de cada mês</h2></div><small>'+months.length+' meses no período</small></div><div class="v175-tablewrap"><table class="v175-table"><thead><tr><th>Mês</th><th>Receitas operacionais</th><th>Extraordinárias</th><th>Entradas</th><th>Despesas</th><th>Resultado</th></tr></thead><tbody>'+body+'<tr class="v182-total"><th>Total do período</th><td>'+money(operational)+'</td><td>'+money(extra)+'</td><td>'+money(entries)+'</td><td>'+money(expense)+'</td><td>'+money(entries-expense)+'</td></tr></tbody></table></div><p>Resultado é entradas menos despesas; não é saldo bancário acumulado.</p></article>';
     }
-    function matrix(title,groups,months,coverage){
+    function detailButton(label,amount,month,text){
+     if(!Number.isFinite(Number(amount)))return safe(text);
+     return '<button type="button" class="v183-month-detail" data-group="'+safe(label)+'" data-month="'+safe(month||'')+'" data-amount="'+safe(amount)+'" aria-label="'+safe('Ver lançamentos de '+label+(month?' em '+monthText(month):' no período'))+'">'+safe(text)+'</button>';
+    }
+    function detailRange(month,r){
+     if(!month)return {...r};
+     if(!/^\d{4}-\d{2}$/.test(month)||Number(month.slice(5))<1||Number(month.slice(5))>12)return null;
+     const start=month+'-01',end=new Date(Date.UTC(Number(month.slice(0,4)),Number(month.slice(5)),0)).toISOString().slice(0,10);
+     const from=start<r.from?r.from:start,to=end>r.to?r.to:end;
+     return from<=to?{from,to}:null;
+    }
+    function bindMonthlyDetails(){
+     document.querySelectorAll('.v183-month-detail').forEach(button=>{button.onclick=()=>{
+      const r=range(),data=v175?.monthly?.data;
+      if(!data||v175.monthly.loading||v175.monthly.key!==r.from+'|'+r.to)return;
+      const month=button.dataset.month,selected=detailRange(month,r),label=button.dataset.group;
+      if(!selected||!detail?.openDetail)return;
+      const groups=Array.isArray(data.expense_groups)?data.expense_groups:[];
+      const coverage=data.expense_unclassified_card_coverage;
+      const group=groups.find(x=>(x.label||x.name)===label)||(coverage?.label===label?coverage:null);
+      if(!group)return;
+      const amount=month?(group.monthly||[]).find(x=>String(x.month).slice(0,7)===month)?.amount:group.total;
+      if(amount==null||!Number.isFinite(Number(amount))||Math.abs(Number(amount)-Number(button.dataset.amount))>0.02)return;
+      detail.openDetail(label,null,selected,Number(amount));
+     }});
+    }
+    function matrix(title,groups,months,coverage,expandable=false){
      const rows=Array.isArray(groups)?groups:[],totals=months.map(()=>0),items=[];
-     for(const group of rows){const lookup=new Map((group.monthly||[]).map(x=>[String(x.month).slice(0,7),n(x.amount)]));const vals=months.map((k,i)=>{const v=lookup.get(k)||0;totals[i]+=v;return v});if(vals.every(v=>Math.abs(v)<0.005))continue;items.push('<tr><th>'+safe(group.label||group.name)+'</th>'+vals.map(v=>'<td>'+(v?money(v):'—')+'</td>').join('')+'<td>'+money(vals.reduce((a,b)=>a+b,0))+'</td></tr>')}
-     if(coverage){const lookup=new Map((coverage.monthly||[]).map(x=>[String(x.month).slice(0,7),n(x.amount)]));const vals=months.map((k,i)=>{const v=lookup.get(k)||0;totals[i]+=v;return v});if(vals.some(v=>Math.abs(v)>=0.005))items.push('<tr><th>Faturas sem composição individual</th>'+vals.map(v=>'<td>'+(v?money(v):'—')+'</td>').join('')+'<td>'+money(vals.reduce((a,b)=>a+b,0))+'</td></tr>')}
+     function row(label,caption,vals){const total=vals.reduce((a,b)=>a+b,0),show=(v,m,text)=>expandable?detailButton(label,v,m,text):safe(text);return '<tr><th>'+show(total,'',caption)+'</th>'+vals.map((v,i)=>'<td>'+(v?show(v,months[i],money(v)):'—')+'</td>').join('')+'<td>'+show(total,'',money(total))+'</td></tr>'}
+     for(const group of rows){const lookup=new Map((group.monthly||[]).map(x=>[String(x.month).slice(0,7),n(x.amount)]));const vals=months.map((k,i)=>{const v=lookup.get(k)||0;totals[i]+=v;return v});if(vals.every(v=>Math.abs(v)<0.005))continue;items.push(row(group.label||group.name,group.label||group.name,vals))}
+     if(coverage){const lookup=new Map((coverage.monthly||[]).map(x=>[String(x.month).slice(0,7),n(x.amount)]));const vals=months.map((k,i)=>{const v=lookup.get(k)||0;totals[i]+=v;return v});if(vals.some(v=>Math.abs(v)>=0.005))items.push(row(coverage.label||'Faturas conciliadas pelo total','Faturas sem composição individual',vals))}
      return '<article class="v175-section v182-matrix"><div class="v168-cardhead"><div><span>Período selecionado</span><h2>'+safe(title)+'</h2></div></div><div class="v175-tablewrap"><table class="v175-table"><thead><tr><th>Grupo</th>'+months.map(m=>'<th>'+safe(monthText(m))+'</th>').join('')+'<th>Total</th></tr></thead><tbody>'+items.join('')+'<tr class="v182-total"><th>Total '+safe(title.toLowerCase())+'</th>'+totals.map(v=>'<td>'+money(v)+'</td>').join('')+'<td>'+money(totals.reduce((a,b)=>a+b,0))+'</td></tr></tbody></table></div></article>';
     }
     function finalBalance(data,months){const lookup=new Map((data.monthly_totals||[]).map(x=>[String(x.month).slice(0,7),x]));const values=months.map(k=>{const x=lookup.get(k)||{};return n(x.revenue)+n(x.extraordinary)-n(x.expenses)});return '<article class="v175-section v182-matrix"><div class="v168-cardhead"><div><span>Depois de todos os grupos</span><h2>Resultado do período</h2></div></div><div class="v175-tablewrap"><table class="v175-table"><thead><tr><th>Entradas − despesas</th>'+months.map(m=>'<th>'+safe(monthText(m))+'</th>').join('')+'<th>Total</th></tr></thead><tbody><tr class="v182-total"><th>Resultado</th>'+values.map(v=>'<td>'+money(v)+'</td>').join('')+'<td>'+money(values.reduce((a,b)=>a+b,0))+'</td></tr></tbody></table></div></article>'}
     function monthly(root){const host=root.querySelector('.v175-monthly'),data=v175?.monthly?.data,r=range();if(!host||!data||v175.monthly.key!==r.from+'|'+r.to)return;const months=selectedMonths(data);if(!months.length)return;
      host.querySelector('.v181-month-summary')?.remove();host.querySelector('.v175-yearbar')?.remove();host.querySelectorAll('.v175-section').forEach(x=>x.remove());
      const kpis=host.querySelector('.v168-kpis');if(!kpis)return;
-     kpis.insertAdjacentHTML('afterend',summary(data,months)+matrix('Receitas operacionais',data.revenue_groups,months)+matrix('Entradas extraordinárias',data.extraordinary_groups,months)+matrix('Despesas por categoria',data.expense_groups,months,data.expense_unclassified_card_coverage)+finalBalance(data,months));
+     kpis.insertAdjacentHTML('afterend',summary(data,months)+matrix('Receitas operacionais',data.revenue_groups,months)+matrix('Entradas extraordinárias',data.extraordinary_groups,months)+matrix('Despesas por categoria',data.expense_groups,months,data.expense_unclassified_card_coverage,true)+finalBalance(data,months));
     }
     despesas=function(){const t=document.createElement('template');t.innerHTML=oldExpenses();const root=t.content.querySelector('.v168-expenses');if(root&&v168.expense.tab==='monthly')monthly(root);return t.innerHTML};
     render=function(){const result=oldRender();document.querySelectorAll('.v181-release').forEach(x=>x.textContent='V182 · Homologação');if(V==='Dashboard'){document.querySelectorAll('button').forEach(button=>{const label=button.textContent.trim();if(label==='Empréstimos'||label==='Apartamento · CIPÓ 396'){button.setAttribute('aria-label','Abrir '+label+' e seus componentes');button.classList.add('v182-expand-cue');if(!button.querySelector('.v182-expand-mark'))button.insertAdjacentHTML('beforeend','<span class="v182-expand-mark" aria-hidden="true" style="margin-left:.5em;font-size:1.2em;line-height:1">＋</span>')}})}return result};
-    window.__LTS_V182_FEEDBACK={installed:true,version:'v182-monthly-scope',contracts:{full_selected_months:true,group_subtotals:true,source_values_unchanged:true}};
+    const detailRender=render;
+    render=function(){const result=detailRender();bindMonthlyDetails();return result};
+    if(!document.getElementById('v183-month-detail-style')){const style=document.createElement('style');style.id='v183-month-detail-style';style.textContent='.v183-month-detail{font:inherit;color:inherit;background:transparent;border:0;padding:4px 0;cursor:pointer;text-align:inherit;text-decoration:underline;text-decoration-color:#94a3b8;text-underline-offset:3px}.v183-month-detail:focus-visible{outline:2px solid #2563eb;outline-offset:3px;border-radius:2px}';document.head.appendChild(style)}
+    window.__LTS_V182_FEEDBACK={installed:true,version:'v183-monthly-detail',contracts:{full_selected_months:true,group_subtotals:true,source_values_unchanged:true,expense_month_drilldown:true}};
     // A saved Flow route can be restored before the authenticated product loads.
     // The base renderer reads D.flow on that route, so defer the initial paint.
     if(D&&!N.classList.contains('hidden'))render();
