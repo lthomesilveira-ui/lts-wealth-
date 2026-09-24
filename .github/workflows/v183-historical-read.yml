@@ -11,6 +11,8 @@ on:
       - 'test-v183-monthly-detail.cjs'
       - 'lts-v183-search-completeness.js'
       - 'test-v183-search-completeness.cjs'
+      - 'lts-v183-exact-flow-navigation.js'
+      - 'test-v183-exact-flow-navigation.cjs'
       - 'lts-v183-v182-feedback-safe.js'
       - 'lts-v183-card-period-candidate.js'
       - 'lts-v183-wealth-debt-integrity.js'
@@ -38,6 +40,7 @@ jobs:
           node --test test-v183-period-ownership.cjs
           node --test test-v183-monthly-detail.cjs
           node --test test-v183-search-completeness.cjs
+          node --test test-v183-exact-flow-navigation.cjs
           node --test test-v183-income-review.cjs
           python3 -B -m unittest test_reconcile_historical_scope.py
           node <<'JS'
