@@ -11,12 +11,14 @@ The protected index, fixed V181 manifest, original V168 module and financial sou
 2. Authenticated, private-schema provenance endpoint; public wrapper is SECURITY INVOKER, anonymous access revoked. Successful explicit quote/date edits invalidate provenance and refresh the existing dashboard reader. Failures never cause an automatic financial write.
 3. Current invoices expose separately documented payment status and cash-date differences. A reconciled invoice or complete purchase list is not proof of bank debit. Unknown bank/cycle/read failure remains unverified.
 4. Bank-statement upload captures association before asynchronous work, blocks double submission, validates date/bank/size, requires a returned registration protocol and never deletes an uploaded object because registration confirmation was lost. Post-registration refresh failure preserves success. Uncertain registration requires queue inspection before resubmission.
+5. Two-bank receipt/transfer suggestions are blocked from the single-income recurrence writer. Review opens a read-only search of the existing entries, not a new transfer or an assumed destination account.
 
 ## Verification
 
 - `test-v183-award-provenance.cjs`: 8 tests.
 - `test-v183-card-payment-status.cjs`: 6 tests.
 - `test-v183-upload-safety.cjs`: 8 tests, including timeout, double click and refresh failure.
+- `test-v183-transfer-proposal.cjs`: 3 tests preventing isolated income creation for a transfer and preserving ordinary recurrence review.
 - `test-v183-award-provenance.sql`: 13 assertions, authenticated role, rollback of all test writes; tests global/individual assumptions, tax reserve, provenance readback, unchanged statement/bank facts/quantities/original dates and anonymous denial.
 - Existing period, search, history, receipt and flow tests must remain green.
 

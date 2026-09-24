@@ -28,6 +28,7 @@ on:
       - 'lts-v183-award-provenance.js'
       - 'lts-v183-v168-feedback-safe.js'
       - 'test-v183-upload-safety.cjs'
+      - 'test-v183-transfer-proposal.cjs'
       - 'lts-v183-card-payment-status.js'
       - 'test-v183-card-payment-status.cjs'
       - 'test-v183-award-provenance.cjs'
@@ -63,6 +64,7 @@ jobs:
           node --test test-v183-income-review.cjs
           node --test test-v183-award-provenance.cjs
           node --test test-v183-upload-safety.cjs
+          node --test test-v183-transfer-proposal.cjs
           node --test test-v183-card-payment-status.cjs
           python3 -B -m unittest test_reconcile_historical_scope.py
           node <<'JS'

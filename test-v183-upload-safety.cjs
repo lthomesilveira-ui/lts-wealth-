@@ -54,9 +54,9 @@ test('failed storage request re-enables input without a registration',async()=>{
  const f=fixture({uploadError:true});await f.run();assert.equal(f.button.disabled,false);
  assert.equal(f.calls.some(x=>Array.isArray(x)&&x[0]==='lts_browser_register_document_v2'),false);
 });
-test('only uploadStatement differs from the protected shared source',()=>{
+test('only uploadStatement and transfer-proposal guard differ from the protected shared source',()=>{
  const original=fs.readFileSync('lts-v168-feedback-package.js','utf8');
- const normalize=text=>text.replace(/    async function uploadStatement\(bg\)\{[\s\S]*?(?=\n    function nextSuggestion)/,'UPLOAD\n');
+ const normalize=text=>text.replace(/    async function uploadStatement\(bg\)\{[\s\S]*?(?=\n    function nextSuggestion)/,'UPLOAD\n').replace(/    function transferProposal\(x\)\{[\s\S]*?(?=    function openProposal)/,'').replace('if(transferProposal(x))return reviewTransferProposal(x);','');
  assert.equal(normalize(source),normalize(original));assert.doesNotThrow(()=>new Function(source));
  assert.match(fs.readFileSync('wip35-v183-candidate.html','utf8'),/lts-v183-v168-feedback-safe\.js/);
  assert.doesNotMatch(fs.readFileSync('wip35-v181-candidate.html','utf8'),/lts-v183-v168-feedback-safe/);
