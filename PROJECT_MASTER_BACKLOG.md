@@ -1,5 +1,15 @@
 # LTS Wealth — Master Backlog
 
+## Active execution — 24/09/2026: independent technical closure
+
+- [x] V183-F06 engineering: candidate separates statement valuation from the sum of scheduled vestings; exposes source quantities, formula, manual/historical provenance and explicitly unknown quote dates. No live-feed claim. The reader is authorized and read-only; original grants and bank facts are unchanged. Source settlement dates and unknown documentary quantities remain separate evidence gaps.
+- [x] V183-F03 presentation: candidate displays explicit documentary payment status separately from invoice/Flow arithmetic. Unknown payment is not nonpayment. Different registered cash dates are disclosed and not silently applied to bank facts.
+- [x] Guided upload safety: isolated V168 copy captures bank/date before asynchronous work, validates inputs, prevents duplicate clicks, and preserves uploaded files when registration confirmation is uncertain or screen refresh fails. No blind registration retries or financial posting.
+- [x] Transfer recurrence safety: a two-bank receipt suggestion no longer opens the single-income writer with a default account. It opens a read-only search of existing legs before any reconciliation. Ordinary non-transfer recurrence proposals remain available.
+- [x] Local verification: new unit/contract tests plus rolled-back authenticated award-assumption integration test. Publication and live current-candidate QA must be recorded separately before claiming delivery.
+- [~] Still open: source-complete historical card inventory, invoice settlement/date evidence, precise vesting/settlement documentary audit, real upload end-to-end acceptance, full recurring/editor/undo coverage, physical-iPhone acceptance and production promotion. Do not mark these complete merely from unit tests.
+- Classification decisions from the latest explicit user answers are already applied; do not recreate that review queue or ask the same questions. Private figures and row-level evidence remain in the private checkpoint.
+
 ## Active execution — monthly expense composition, 24/09/2026 UTC
 
 - [~] V182-F10/F12: monthly expense groups, month values and period totals now reuse the established source-detail drawer, with exact clipped dates, ownership guards and total verification. Aggregate-only coverage is explicit; income drilldown remains separate.
