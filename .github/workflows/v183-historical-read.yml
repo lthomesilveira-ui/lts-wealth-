@@ -13,6 +13,12 @@ on:
       - 'test-v183-search-completeness.cjs'
       - 'lts-v183-exact-flow-navigation.js'
       - 'test-v183-exact-flow-navigation.cjs'
+      - 'lts-v183-flow-period-state.js'
+      - 'test-v183-flow-period-state.cjs'
+      - 'test-v183-monthly-window.cjs'
+      - 'supabase/migrations/*v183_monthly_window*.sql'
+      - 'test-v183-historical-source-lookup.cjs'
+      - 'supabase/migrations/*v183_historical_source_lookup*.sql'
       - 'lts-v183-v182-feedback-safe.js'
       - 'lts-v183-card-period-candidate.js'
       - 'lts-v183-wealth-debt-integrity.js'
@@ -41,6 +47,9 @@ jobs:
           node --test test-v183-monthly-detail.cjs
           node --test test-v183-search-completeness.cjs
           node --test test-v183-exact-flow-navigation.cjs
+          node --test test-v183-flow-period-state.cjs
+          node --test test-v183-monthly-window.cjs
+          node --test test-v183-historical-source-lookup.cjs
           node --test test-v183-income-review.cjs
           python3 -B -m unittest test_reconcile_historical_scope.py
           node <<'JS'
