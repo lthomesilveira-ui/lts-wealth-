@@ -18,6 +18,8 @@ on:
       - 'test-v183-monthly-window.cjs'
       - 'supabase/migrations/*v183_monthly_window*.sql'
       - 'test-v183-historical-source-lookup.cjs'
+      - 'test-v183-bank-evidence-freshness.cjs'
+      - 'supabase/migrations/*v183_bank_evidence_freshness*.sql'
       - 'supabase/migrations/*v183_historical_source_lookup*.sql'
       - 'lts-v183-v182-feedback-safe.js'
       - 'lts-v183-card-period-candidate.js'
@@ -50,6 +52,7 @@ jobs:
           node --test test-v183-flow-period-state.cjs
           node --test test-v183-monthly-window.cjs
           node --test test-v183-historical-source-lookup.cjs
+          node --test test-v183-bank-evidence-freshness.cjs
           node --test test-v183-income-review.cjs
           python3 -B -m unittest test_reconcile_historical_scope.py
           node <<'JS'
