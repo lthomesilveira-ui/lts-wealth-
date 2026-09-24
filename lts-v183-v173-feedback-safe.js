@@ -10,6 +10,7 @@
     const norm=value=>String(value??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim().replace(/\s+/g,' ');
     const esc=value=>String(value??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
     const canonicalAliases=new Map([
+      ['imagem e cuidados pessoais','Vestuário'],
       ['assinatura','Assinaturas'],['benjamin - educacao','Educação'],['pet','Rafiki'],
       ['benjamin - saude','Saúde'],['larissa - saude','Saúde'],['benjamin - vestuario','Vestuário'],
       ['viagem','Viagens'],['financiamento veiculo','Financiamento veículo']
@@ -48,7 +49,7 @@
       return [...map.values()].sort((a,b)=>a.localeCompare(b,'pt-BR',{sensitivity:'base'}));
     }
     function mentionedCategory(phrase,options){
-      const n=norm(phrase),ordered=options.map(x=>({label:x,key:norm(x)})).filter(x=>x.key.length>=4).sort((a,b)=>b.key.length-a.key.length);
+      const n=norm(phrase).replace(/\bimagem e cuidados pessoais\b/g,'vestuario'),ordered=options.map(x=>({label:x,key:norm(x)})).filter(x=>x.key.length>=4).sort((a,b)=>b.key.length-a.key.length);
       const marker=n.match(/(?:classificad[oa]\s+como|categoria)\s+(.+?)(?:\s+em\s+\d{1,2}[\/-]|\s+no\s+dia\s+\d{1,2}|$)/);
       if(marker){
         const target=norm(marker[1]);
