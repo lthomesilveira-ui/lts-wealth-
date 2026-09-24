@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>LTS Wealth · Homologação V184</title>
+<style>
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#f3f6f9;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}
+#shell{display:block;width:100%;height:100%;border:0;background:#f3f6f9}
+#gate{position:fixed;inset:0;z-index:2147483646;display:grid;place-items:center;background:#f3f6f9;color:#536174;font-size:13px}
+#gate[hidden]{display:none}
+#scope{display:none!important}
+#release-badge-v183{position:fixed;right:12px;bottom:12px;z-index:2147483647;border:1px solid #d7e0e8;border-radius:999px;background:#fffc;color:#42546a;padding:7px 10px;font:800 12px/1.2 system-ui;box-shadow:0 5px 20px #102b501f;pointer-events:none}
+</style>
+</head>
+<body>
+<div id="gate" role="status" aria-live="polite">Preparando o LTS Wealth V184…</div>
+<div id="scope" aria-label="V184 · Homologação"></div>
+<div id="release-badge-v183" aria-label="V184 · Homologação">V184 · Homologação</div>
+<iframe id="shell" title="LTS Wealth — Homologação V184" src="index.html?v184-backend-reconciled-20260924"></iframe>
+<script src="lts-history-coverage-policy.js?v=20260923-bounded-history"></script>
+<script src="lts-v183-core-loading-guard.js?v=20260923-v183u"></script>
+<script src="wip35-v162-flow-recovery.js?v=20260917-v172-flow"></script>
+<script src="lts-expense-read-model.js?v=20260914-reader2"></script>
+<script src="lts-expense-screen-alignment.js?v=20260914-sources2"></script>
+<script src="lts-dashboard-executive-v1.js?v=20260915-authenticated-route-v4"></script>
+<script src="lts-executive-visual-system-v2.js?v=20260916-v165"></script>
+<script src="lts-v166-feedback-closure.js?v=20260916-v166c"></script>
+<script src="lts-v183-v168-feedback-safe.js?v=20260924-safe-transfers"></script>
+<script src="lts-v169-v168-feedback-closure.js?v=20260916-v169a"></script>
+<script src="lts-v170-v169-review.js?v=20260917-v170a"></script>
+<script src="lts-v171-v170-review.js?v=20260917-v171a"></script>
+<script src="lts-v172-v171-review.js?v=20260917-v172a"></script>
+<script src="lts-v183-v173-feedback-safe.js?v=20260924-image-labels"></script>
+<script src="lts-v174-v173-review.js?v=20260918-v174a"></script>
+<script src="lts-v183-expense-history-candidate.js?v=20260924-month-detail"></script>
+<script src="lts-v176-flow-expense-audit.js?v=20260918-v176a"></script>
+<script src="lts-v179-cash-recovery.js?v=20260922-v180-data-refresh"></script>
+<script src="lts-v180-documentary-refresh.js?v=20260922-v180a"></script>
+<script src="lts-v178-review-actions.js?v=20260920"></script>
+<script src="lts-v181-regression-closure.js?v=20260922-v181c"></script>
+<script src="lts-v183-v182-feedback-safe.js?v=20260924-month-detail"></script>
+<script src="lts-v183-income-review.js?v=20260923-exact-income"></script>
+<script src="lts-v183-search-completeness.js?v=20260924-complete-search"></script>
+<script src="lts-v183-exact-flow-navigation.js?v=20260924-exact-flow"></script>
+<script src="lts-v183-flow-period-state.js?v=20260924-period-state"></script>
+<script src="lts-v183-card-period-candidate.js?v=20260923-period-ownership"></script>
+<script src="lts-v183-historical-balance-guard.js?v=20260923-bounded-history"></script>
+<script src="lts-v183-rsu-component-labels.js?v=20260923-v183g"></script>
+<script src="lts-v183-retention-composition.js?v=20260923-v183i"></script>
+<script src="lts-v183-wealth-debt-integrity.js?v=20260923-component-coverage"></script>
+<script src="lts-v183-personal-image-labels.js?v=20260924-image-labels"></script>
+<script src="lts-v183-award-provenance.js?v=20260924-award-provenance"></script>
+<script src="lts-v183-card-payment-status.js?v=20260924-payment-status"></script>
+<script>
+/* Candidate-only release badge: CSS survives internal render without observing mutations. */
+(function(){
+  const frame=document.getElementById('shell');
+  function install(){
+    const doc=frame.contentDocument;
+    if(!doc?.head||doc.getElementById('v183-static-release-scope'))return;
+    const style=doc.createElement('style');
+    style.id='v183-static-release-scope';
+    style.textContent='header.hdr .brand small[aria-label*="Homologação"],span.v168-release,span.v181-release{display:none!important}';
+    doc.head.appendChild(style);
+  }
+  frame.addEventListener('load',install);
+  install();
+})();
+</script>
+<script>
+/* V184: backend reconciliation release marker. Financial/read-model corrections are server-side. */
+(function(){
+ const frame=document.getElementById('shell');
+ function install(){
+  try{
+   const d=frame.contentDocument;if(!d?.body||d.getElementById('v184-backend-state'))return;
+   const m=d.createElement('meta');m.id='v184-backend-state';m.dataset.release='backend-reconciled-20260924';d.head.appendChild(m);
+  }catch(_){}
+ }
+ frame.addEventListener('load',install);install();
+})();
+</script>
+</body>
+</html>
