@@ -1,5 +1,7 @@
 # LTS Wealth — Open Finance Architecture
 
+Current isolated implementation: see [OPEN_FINANCE_EXECUTION.md](OPEN_FINANCE_EXECUTION.md) and [open-finance/README.md](open-finance/README.md). The historical research below is preserved; the pilot has no promotion path.
+
 Status: architecture / implementation preparation. No bank consent, production provider account, paid plan, token or credential has been created by this document.
 
 ## Product objective
