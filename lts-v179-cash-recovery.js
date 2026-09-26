@@ -133,7 +133,7 @@
    })().catch(error=>logError('dashboard_orchestration',error));
    dashboardFlight=job;job.finally(()=>{if(dashboardFlight===job)dashboardFlight=null});return job;
   }
-  function cashComplete(s){const x=s.data;return s.status==='ready'&&s.date===day()&&x?.as_of===day()&&x.status==='complete'&&[x.cash,x.d0,x.brokerage_available,x.available_total].every(v=>finite(v)!=null)&&Math.abs(total([x.cash,x.d0,x.brokerage_available])-Number(x.available_total))<0.02}
+  function cashComplete(s){const x=s.data;return s.status==='ready'&&s.date===day()&&x?.as_of===day()&&x.status==='complete'&&x.version==='cash-today-v179-current-canonical'&&x.basis==='current_open_finance_bank_plus_validated_cofrinho_and_morgan_locks'&&[x.cash,x.d0,x.brokerage_available,x.available_total].every(v=>finite(v)!=null)&&Math.abs(total([x.cash,x.d0,x.brokerage_available])-Number(x.available_total))<0.02}
   function kpi(root,label,value,note,newLabel){
    const el=[...root.querySelectorAll('.v168-kpi')].find(x=>normalize(x.querySelector('span')?.textContent).trim()===normalize(label));
    if(!el)return;
