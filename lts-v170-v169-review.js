@@ -11,13 +11,13 @@
     const state=window.__LTS_V170_STATE||(window.__LTS_V170_STATE={globalAward:{saving:false,message:'',error:''},lastRoute:V,defaultOpening:false});
     const priorRpc=S.rpc.bind(S),rpcCalls=[];
     S.rpc=async function(name,args){
-      const requested=String(name||''),mapped=requested==='lts_browser_flow_v3'||requested==='lts_browser_flow_v4'||requested==='lts_browser_flow_v11'?'lts_browser_flow_v12':requested==='lts_browser_wealth_detail_v3'?'lts_browser_wealth_detail_v4':requested==='lts_browser_expense_executive_v4'?'lts_browser_expense_executive_v5':requested;
+      const requested=String(name||''),mapped=requested==='lts_browser_flow_v3'||requested==='lts_browser_flow_v4'||requested==='lts_browser_flow_v11'?'lts_browser_flow_v13':requested==='lts_browser_wealth_detail_v3'?'lts_browser_wealth_detail_v4':requested==='lts_browser_expense_executive_v4'?'lts_browser_expense_executive_v5':requested;
       rpcCalls.push({requested,mapped,at:new Date().toISOString()});if(rpcCalls.length>50)rpcCalls.shift();
       return priorRpc(mapped,args);
     };
     window.__LTS_V170_V169_REVIEW={
       installed:true,version:'v170',base_version:'v169',public_index_changed:false,
-      data_rpcs:{flow:'lts_browser_flow_v12',wealth:'lts_browser_wealth_detail_v4',expense:'lts_browser_expense_executive_v5'},
+      data_rpcs:{flow:'lts_browser_flow_v13',wealth:'lts_browser_wealth_detail_v4',expense:'lts_browser_expense_executive_v5'},
       default_flow_range:'previous-5-through-next-year-end',historical_balance_basis:'relative_movement_ledger',
       morgan_statement_reconciled:true,global_award_assumption:true,management_groups:true,rpcCalls
     };
