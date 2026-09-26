@@ -94,7 +94,7 @@
    const token=(s.token||0)+1;s.token=token;s.status='loading';s.date=day();s.parts=[];s.data=null;s.error=null;
    const now=day(),year=Number(now.slice(0,4)),ranges=[{p_from:now,p_to:year+'-12-31'},{p_from:(year+1)+'-01-01',p_to:(year+1)+'-12-31'}];
    try{
-    for(const r of ranges){const p=await request('lts_browser_flow_v12',r,24000,force);if(s.token!==token)return;
+    for(const r of ranges){const p=await request('lts_browser_flow_v13',r,24000,force);if(s.token!==token)return;
      if(!arr(p?.flow?.current_future?.days).length)throw Error('Projeção sem dias retornados.');s.parts.push(p);s.data=mergeForecast(s.parts);render();}
     s.status='ready';
    }catch(e){if(s.token===token){s.status=s.parts.length?'partial':'error';s.error=String(e.message||e)}}
