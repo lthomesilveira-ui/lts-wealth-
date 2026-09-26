@@ -192,12 +192,12 @@
     async function performFlowRange(from,to){
       const current=today(),seq=++state.flowSequence,yesterday=shift(current,-1),calls=[];state.flowWarning='';FLOWLOADING=true;FLOWFROM=from;FLOWTO=to;FLOWPRESET=from===shift(current,-5)&&to===current.slice(0,4)+'-12-31'?'5 anteriores + fim de '+current.slice(0,4):FLOWPRESET;if(V==='Fluxo Diário')render();
       if(from<current)calls.push({kind:'history',promise:flowPart('lts_browser_flow_v11',from,to<current?to:yesterday)});
-      if(to>=current)calls.push({kind:'future',promise:flowPart('lts_browser_flow_v12',from>current?from:current,to)});
+      if(to>=current)calls.push({kind:'future',promise:flowPart('lts_browser_flow_v13',from>current?from:current,to)});
       const settled=await Promise.allSettled(calls.map(call=>call.promise));if(seq!==state.flowSequence)return;
       const good=settled.filter(item=>item.status==='fulfilled').map(item=>item.value),failed=settled.filter(item=>item.status==='rejected');
       if(!good.length){FLOWQ={error:'Não foi possível carregar este período. Tente novamente.',historical:{days:[],events:[]},current_future:{days:[],events:[]}};FLOWLOADING=false;if(V==='Fluxo Diário')render();return}
       FLOWQ=mergeFlows(good,from,to);FLOWLOADING=false;if(failed.length)state.flowWarning='Uma parte do período não pôde ser atualizada. Os dados disponíveis continuam visíveis.';if(V==='Fluxo Diário')render();
-      if(from<current){const historicalTo=to<current?to:yesterday;flowPart('lts_browser_flow_v12',from,historicalTo).then(upgrade=>{if(seq!==state.flowSequence)return;FLOWQ={...FLOWQ,...upgrade.data.flow,from,to,historical:upgrade.data.flow.historical,current_future:FLOWQ.current_future};if(V==='Fluxo Diário')render()}).catch(()=>{})}
+      if(from<current){const historicalTo=to<current?to:yesterday;flowPart('lts_browser_flow_v13',from,historicalTo).then(upgrade=>{if(seq!==state.flowSequence)return;FLOWQ={...FLOWQ,...upgrade.data.flow,from,to,historical:upgrade.data.flow.historical,current_future:FLOWQ.current_future};if(V==='Fluxo Diário')render()}).catch(()=>{})}
     }
     loadFlowRange=function(from,to){
       if(isLegacyDefault(from,to)){const range=defaultRange();from=range.from;to=range.to}const key=from+'|'+to;
