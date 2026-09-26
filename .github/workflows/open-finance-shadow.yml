@@ -1,0 +1,22 @@
+name: Open Finance shadow contracts
+on:
+  pull_request:
+    paths:
+      - 'supabase/functions/lts-open-finance-itau/**'
+      - 'supabase/open_finance_itau_shadow.sql'
+      - 'open-finance/**'
+      - '.github/workflows/open-finance-shadow.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: node --check supabase/functions/lts-open-finance-itau/core.mjs
+      - run: node --check supabase/functions/lts-open-finance-itau/handler.mjs
+      - run: node --test open-finance/tests/*.test.mjs
