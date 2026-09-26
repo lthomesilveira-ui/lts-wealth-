@@ -98,7 +98,7 @@
     };
     async function loadDashboard(force){
       if(state.loading)return;state.rpcRequested=true;state.loading=true;state.error=null;status.loading=true;status.calls+=1;const sequence=++state.sequence;if(V==='Dashboard')render();
-      try{const {data,error}=await S.rpc('lts_browser_dashboard_cockpit_v1');if(sequence!==state.sequence)return;if(error||!data)throw new Error(error?.message||'Resumo executivo indisponível');state.cockpit=data;state.loaded=true;D.dashboard_cockpit=data;status.loaded=true;status.error=null;status.as_of=data.as_of||null}
+      try{const [{data,error},{data:live,error:liveError}]=await Promise.all([S.rpc('lts_browser_dashboard_cockpit_v1'),S.rpc('lts_browser_current_liquidity_v1')]);if(sequence!==state.sequence)return;if(error||!data)throw new Error(error?.message||'Resumo executivo indisponível');if(!liveError&&live){data.liquidity=Object.assign({},data.liquidity||{},live.liquidity||{});if(live.morgan&&Number.isFinite(Number(live.morgan.total_available_brl)))data.liquidity.d3_vested=Number(live.morgan.total_available_brl)}state.cockpit=data;state.loaded=true;D.dashboard_cockpit=data;status.loaded=true;status.error=null;status.as_of=data.as_of||null}
       catch(error){if(sequence!==state.sequence)return;state.error=String(error?.message||error||'Falha de leitura');status.error=state.error}
       finally{if(sequence===state.sequence){state.loading=false;status.loading=false;if(V==='Dashboard')render()}}
     }
