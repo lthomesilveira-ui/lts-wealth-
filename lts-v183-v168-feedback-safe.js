@@ -5,7 +5,7 @@
 
   function runtime(){
     'use strict';
-    if(window.__LTS_V168_COMPLETE_REVIEW?.installed||!window.__LTS_V166_FEEDBACK?.installed)return;
+    if(window.__LTS_V168_COMPLETE_REVIEW?.installed)return;
     const baseRender=render,baseNav=renderNav;
     const st=window.__LTS_V168_STATE||(window.__LTS_V168_STATE={
       dashboard:{loading:false,started:false,token:0,pending:0,data:null,error:null,detailErrors:[]},
