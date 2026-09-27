@@ -248,7 +248,7 @@
       if(V==='Despesas'&&v168?.expense?.tab==='cards'&&!state.cardFlow&&!state.cardFlowLoading)queueMicrotask(()=>ensureCardFlow(false));
     }
 
-    dashboard=dashboardV174;despesas=expensesV174;
+    dashboard=baseDashboard;despesas=expensesV174;
     render=function(){const out=baseRender();after();return out};
     renderNav=function(){const out=baseNav();after();return out};
 
