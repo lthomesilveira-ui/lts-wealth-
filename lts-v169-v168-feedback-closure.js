@@ -129,7 +129,7 @@
     }
     function stamp(){document.querySelectorAll('.brand small').forEach(n=>{if(n.textContent.trim()!=='V169 · Homologação')n.innerHTML='<b>V169</b> · Homologação'});document.querySelectorAll('.v168-release').forEach(n=>{if(n.textContent.trim()!=='V169 · Homologação')n.textContent='V169 · Homologação'});const badge=window.parent.document.getElementById('scope'),label='V169 · '+(V==='Fluxo Diário'?'Fluxo de caixa':V)+' · Homologação';if(badge&&badge.textContent!==label)badge.textContent=label}
     function after(){stamp();bind169()}
-    dashboard=dashboardV169;despesas=expensesV169;patrimonio=wealthV169;
+    dashboard=baseDashboard;despesas=expensesV169;patrimonio=wealthV169;
     render=function(){const out=baseRender();after();return out};
     renderNav=function(){const out=baseNav();stamp();return out};
     const versionObserver=new MutationObserver(stamp);versionObserver.observe(document.body,{childList:true,subtree:true,characterData:true});
