@@ -426,7 +426,7 @@
       const apply=document.getElementById('v168ExpenseApply');if(apply){const old=apply.onclick;apply.onclick=e=>{invalidateExpensePeriod();return old?.call(apply,e)}}
     }
 
-    dashboard=dashboardV175;despesas=expensesV175;
+    dashboard=baseDashboard;despesas=expensesV175;
     render=function(){const out=baseRender();after();return out};
     renderNav=function(){const out=baseNav();after();return out};
 
