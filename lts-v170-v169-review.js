@@ -131,7 +131,7 @@
     function stamp(){const badge=window.parent.document.getElementById('scope');if(badge)badge.dataset.v170Route=V==='Fluxo Diário'?'Fluxo de caixa':V}
     function after(){stamp();bind()}
 
-    dashboard=dashboardV170;despesas=expensesV170;patrimonio=wealthV170;
+    dashboard=baseDashboard;despesas=expensesV170;patrimonio=wealthV170;
     render=function(){const entered=V==='Fluxo Diário'&&state.lastRoute!=='Fluxo Diário';state.lastRoute=V;const out=baseRender();after();if(entered)queueMicrotask(()=>{if(V==='Fluxo Diário')openDefault()});return out};
     renderNav=function(){const out=baseNav();stamp();bindFlowDefault();return out};
     const observer=new MutationObserver(()=>requestAnimationFrame(()=>{stamp();decorateFlow()}));observer.observe(document.body,{childList:true,subtree:true});
