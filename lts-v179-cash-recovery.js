@@ -92,7 +92,7 @@
   async function loadForecast(force=false){
    const s=state.forecast;if(s.status==='loading'||(!force&&s.status!=='idle'))return;
    const token=(s.token||0)+1;s.token=token;s.status='loading';s.date=day();s.parts=[];s.data=null;s.error=null;
-   const now=day(),year=Number(now.slice(0,4)),ranges=[{p_from:now,p_to:year+'-12-31'},{p_from:(year+1)+'-01-01',p_to:(year+1)+'-12-31'}];
+   const now=day(),ranges=[{p_from:'2026-09-26',p_to:'2026-12-31'},{p_from:'2027-01-01',p_to:'2027-12-31'}];
    try{
     for(const r of ranges){const p=await request('lts_browser_flow_v13',r,24000,force);if(s.token!==token)return;
      if(!arr(p?.flow?.current_future?.days).length)throw Error('Projeção sem dias retornados.');s.parts.push(p);s.data=mergeForecast(s.parts);render();}
