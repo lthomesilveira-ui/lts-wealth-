@@ -151,7 +151,7 @@
    if(state.wealth.data)ds.data.wealth=state.wealth.data;
    if(state.dashboardReport.data)ds.data.expense=state.dashboardReport.data;
    const f=state.forecast.date===day()?state.forecast.data:null;
-   ds.data.flow=f?structuredClone(f):{flow:{current_future:{days:[],events:[]}}};
+   if(f)ds.data.flow=structuredClone(f); else if(!ds.data.flow)ds.data.flow={flow:{current_future:{days:[],events:[]}}};
    if(cashComplete(state.cash)){
     const days=ds.data.flow.flow.current_future.days.filter(d=>d.date!==day());days.unshift(state.cash.data.day);ds.data.flow.flow.current_future.days=days;
    }
