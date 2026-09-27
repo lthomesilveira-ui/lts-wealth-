@@ -220,7 +220,7 @@
     function stamp(){const badge=window.parent?.document?.getElementById('scope');if(badge)badge.dataset.v172Route=V==='Fluxo Diário'?'Fluxo de caixa':V}
     function after(){stamp();bindFlow()}
 
-    dashboard=dashboardV172;despesas=expensesV172;patrimonio=wealthV172;
+    dashboard=baseDashboard;despesas=expensesV172;patrimonio=wealthV172;
     render=function(){const out=baseRender();after();return out};renderNav=function(){const out=baseNav();stamp();bindFlow();return out};
     if(v168){v168.dashboard.data=null;v168.dashboard.started=false;v168.dashboard.loading=false;v168.expense.data=null;v168.expense.loading=false}if(v169){v169.monthly.data=null;v169.monthly.key='';v169.monthly.error=null}
     if(D&&!N.classList.contains('hidden'))render();
