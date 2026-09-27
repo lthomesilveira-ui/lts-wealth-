@@ -302,7 +302,7 @@
   v168.dashboard.token=(v168.dashboard.token||0)+1;v168.dashboard.started=true;v168.dashboard.loading=false;
   v175.expense.token=(v175.expense.token||0)+1;v175.expense.data=null;v175.expense.key='';v175.expense.loading=false;
   v175.monthly.token=(v175.monthly.token||0)+1;v175.monthly.data=null;v175.monthly.key='';v175.monthly.loading=false;
-  dashboard=dashboard178;despesas=expenses178;
+  dashboard=previousDashboard;despesas=expenses178;
   render=function(){const out=previousRender();after();return out};
   renderNav=function(){const out=previousNav();return out};
   document.addEventListener('visibilitychange',()=>{if(!document.hidden&&V==='Dashboard'&&state.date!==day())startDashboard(true)});
