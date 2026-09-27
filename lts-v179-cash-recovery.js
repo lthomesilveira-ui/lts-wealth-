@@ -311,7 +311,7 @@
   publishCashDiagnostic();
   if(D&&!N.classList.contains('hidden'))render();
  }
- function install(){try{const w=outer?.contentWindow,d=outer?.contentDocument;if(!w?.__LTS_V176_FLOW_EXPENSE_AUDIT?.installed)return false;
+ function install(){try{const w=outer?.contentWindow,d=outer?.contentDocument;if(!w?.__LTS_V168_COMPLETE_REVIEW?.installed)return false;
   if(!d.getElementById('v178-style')){const link=d.createElement('link');link.id='v178-style';link.rel='stylesheet';link.href='lts-v178-integrated-review.css?v=20260920';d.head.appendChild(link)}
   if(!w.__LTS_V178_REVIEW?.installed&&!d.getElementById('v178-runtime')){const script=d.createElement('script');script.id='v178-runtime';script.textContent='('+runtime.toString()+')();';d.head.appendChild(script)}
   if(w.__LTS_V178_REVIEW?.installed){document.getElementById('gate')?.remove();return true}return false;
