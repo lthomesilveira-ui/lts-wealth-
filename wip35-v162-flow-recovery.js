@@ -1,7 +1,7 @@
 (function(){
   'use strict';
-  const CONTRACT='v150-flow-direct-current-read-v3';
-  const TARGET_RPC='lts_browser_flow_v11';
+  const CONTRACT='v207-flow-current-open-finance-anchor';
+  const TARGET_RPC='lts_browser_flow_v13';
   const TARGET_MUTATION_RPC='lts_browser_flow_mutate_v2';
   const SESSION_KEY='lts_supabase_session_v1';
   const outer=document.getElementById('shell');
@@ -9,8 +9,8 @@
   let bootGeneration=0;
   function recoveryRuntime(){
     'use strict';
-    const CONTRACT='v150-flow-direct-current-read-v3';
-    const TARGET_RPC='lts_browser_flow_v11';
+    const CONTRACT='v207-flow-current-open-finance-anchor';
+    const TARGET_RPC='lts_browser_flow_v13';
     const TARGET_MUTATION_RPC='lts_browser_flow_mutate_v2';
     if(window.__LTS_V162_FLOW_RECOVERY_STATUS?.installed===true)return;
     const calls=[];
