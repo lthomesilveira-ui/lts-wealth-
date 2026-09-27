@@ -4,8 +4,8 @@
  const outer=document.getElementById('shell'); let generation=0;
  function runtime(){
   'use strict';
-  if(window.__LTS_V178_REVIEW?.installed||!window.__LTS_V176_FLOW_EXPENSE_AUDIT?.installed)return;
-  const v168=window.__LTS_V168_STATE,v175=window.__LTS_V175_STATE;
+  if(window.__LTS_V178_REVIEW?.installed||!window.__LTS_V168_COMPLETE_REVIEW?.installed)return;
+  const v168=window.__LTS_V168_STATE,v175=window.__LTS_V175_STATE||(window.__LTS_V175_STATE={expense:{key:'',data:null,loading:false,error:null,token:0},monthly:{key:'',data:null,loading:false,error:null,token:0}});
   const previousRender=render,previousNav=renderNav,previousDashboard=dashboard,previousExpenses=despesas;
   const rawFetch=window.fetch.bind(window),inflight=new Map(),cache=new Map();
   const state=window.__LTS_V178_STATE={cash:{status:'idle'},wealth:{status:'idle'},forecast:{status:'idle'},awards:{status:'idle'},dashboardReport:{status:'idle'},detail:null,errors:[],diagnostics:[],date:null};
