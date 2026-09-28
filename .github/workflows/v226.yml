@@ -1,9 +1,9 @@
 name: V226 card composition and bank refresh regression
 on:
   push:
-    branches: ['work/v226-cards-detail', 'work/v226-1-history-closure']
+    branches: ['work/v226-cards-detail', 'work/v226-1-history-closure', 'work/v226-2-startup-sequencing']
   pull_request:
-    paths: ['releases/v226/**', 'releases/v226-1/**', 'supabase/functions/lts-open-finance-itau/**', '.github/scripts/lts_v226*', '.github/workflows/v226.yml']
+    paths: ['releases/v226/**', 'releases/v226-1/**', 'releases/v226-2/**', 'supabase/functions/lts-open-finance-itau/**', '.github/scripts/lts_v226*', '.github/workflows/v226.yml']
 permissions:
   contents: read
 jobs:
@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
-      LTS_RELEASE: v226-1
+      LTS_RELEASE: v226-2
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -26,7 +26,7 @@ jobs:
       - name: Start isolated test server
         run: python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/lts-v226-http.log 2>&1 &
       - name: Current cash and confirmed bank refresh
-        run: mkdir -p qa && node .github/scripts/lts_v225_1_refresh_gate.js
+        run: mkdir -p qa && node .github/scripts/lts_v226_startup_gate.js
       - name: Desktop and mobile card details, classification, totals and preserved workflows
         if: success() || failure()
         run: node .github/scripts/lts_v226_cards_gate.js
