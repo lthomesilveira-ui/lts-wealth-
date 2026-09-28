@@ -23,7 +23,7 @@
     if(total)expense.appendChild(total);
     if(groups)expense.appendChild(groups);
     const restricted=root.querySelector('.v168-kpi-section.restricted')||Array.from(root.querySelectorAll('.v168-kpi-section')).find(e=>/Recursos restritos e consumo/.test(e.textContent));
-    if(restricted){const heading=restricted.querySelector('h2,h3,b');if(heading&&/Recursos restritos/.test(heading.textContent))heading.textContent='Recursos restritos';const subtitle=restricted.querySelector('header span,header small,.v168-sectionhead span,.v168-section-title small');if(subtitle)subtitle.textContent='Posição previdenciária';}
+    if(restricted){const heading=restricted.querySelector('h2,h3,b');if(heading&&/Recursos restritos/.test(heading.textContent))heading.textContent='Recursos restritos';const subtitle=restricted.querySelector('.v168-sectiontitle span');if(subtitle)subtitle.textContent='Posição previdenciária';}
     if(future)root.appendChild(future);
     root.appendChild(expense);
     root.querySelectorAll('.v168-grid').forEach(e=>{if(!e.children.length)e.remove();});
