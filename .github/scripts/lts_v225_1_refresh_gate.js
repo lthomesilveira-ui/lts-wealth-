@@ -41,7 +41,7 @@ const semantic=value=>String(value||'').replace(/\s+/g,' ').trim();
    else if(/expense_context/.test(name))data={contexts:[],natures:[],summary:{}};
    await route.fulfill({status,contentType:'application/json',body:JSON.stringify(data)});
   });
-  await page.goto(BASE+'/releases/v225-1/app.html',{waitUntil:'domcontentloaded'});
+  await page.goto(BASE+'/releases/'+(process.env.LTS_RELEASE||'v225-1')+'/app.html',{waitUntil:'domcontentloaded'});
   for(let i=0;i<200;i++){frame=page.frames().find(candidate=>candidate.url().includes('/index.html'));if(frame&&await frame.evaluate(()=>window.__LTS_V178_REVIEW?.version==='v179-cash-recovery').catch(()=>false))break;await page.waitForTimeout(100)}
   assert(frame,'V179 frame available');
   await frame.waitForFunction(()=>window.__LTS_V178_STATE.cash.status==='ready'&&window.__LTS_V178_STATE.forecast.status==='ready'&&window.__LTS_V178_STATE.dashboardReport.status==='ready');

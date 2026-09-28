@@ -1,3 +1,16 @@
+## Active execution — V226, 28/09/2026
+
+- [x] Restore exact source invoice composition when it reconciles to the existing total; preserve historical annual amounts and the protected operational baseline.
+- [x] Restore source-backed category and beneficiary decisions through the original workbook and existing evidence. New purchases without purpose evidence remain visible and individually reviewable.
+- [x] Add upcoming invoices by bank and billing account to Dashboard, Expenses and Wealth; separate subsequent documented installments, preserve shared/additional-card identity, and make summary values and individual amounts open their components.
+- [x] Remove redundant Dashboard expansion marks and restore the mobile Patrimônio label. Preserve the useful daily Flow expander.
+- [x] Fix bounded observed-source reconciliation and bank-specific failure handling. Successful live refreshes verified for all three connected banks.
+- [x] Keep cached future Flow invoice amounts consistent with fresh received composition through a read-only, idempotent overlay; no historical cash/source changes.
+- [x] Controlled desktop/mobile regression, protected assets, audited classification path, bank-refresh propagation, last-row search and failure recovery pass. Authenticated final-release smoke and public delivery are tracked separately.
+- [ ] Documentary dependencies remain: missing historical invoice detail, property identities/condominium evidence, unsupported current payoff balances and the original April share-sale evidence. Never clear these by inference.
+- [ ] Physical-device/user acceptance and unverified legacy workflows are separate from controlled browser QA. Legacy V171/V172 protected-contract failures remain visible and are not waived or deleted.
+- Public root and earlier release folders remain unchanged. Private financial evidence is outside this public repository. Detailed status supersedes outdated open items below only where explicitly verified above.
+
 # LTS Wealth — Master Backlog
 
 ## Active execution — 24/09/2026: independent technical closure
