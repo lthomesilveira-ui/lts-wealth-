@@ -48,7 +48,7 @@ async function run(browser,viewport,label){
   else if(name==='lts_browser_invoice_documentary_only_v1'||name==='lts_browser_legacy_invoice_gap_v183')data={financial_effect:'none',invoices:[]};
   else if(name==='lts_browser_invoice_flow_reconciliation_v183')data={rows:a.p_from<='2026-09-15'&&a.p_to>='2026-09-15'?[{card_name:'VISA AETERNUM',reference_month:'2026-09-01',due_date:'2026-09-15',documented_amount:100,flow_amount:100,difference:0,reconciliation_status:'reconciled'}]:[]};
   else if(name==='lts_browser_card_settlement_detail_v3')data={matched:true,due_date:'2026-09-15',invoice_total:100,payment_documented:true,cash_effect_date:'2026-09-15'};
-  else if(name==='lts_browser_flow_event_editor_v1')data={editable:true,event_date:a.p_event_date,source:a.p_source,source_ref:a.p_source_ref,description:'Despesa manual sintética',amount:100,account:'Itaú'};
+  else if(name==='lts_browser_flow_event_editor_v1')data={editable:true,event_date:a.p_event_date,source:a.p_source,source_ref:a.p_source_ref,description:flags.manualDescription||'Despesa manual sintética',amount:flags.manualDescription?101:100,account:'Itaú'};
   else if(/^lts_browser_flow_mutate_v/.test(name)){if(a.p_action==='edit')flags.manualDescription=a.p_payload.description;if(a.p_action==='cancel')flags.manualDeleted=true;data={ok:true};}
   else if(name==='lts_browser_property_archive_v178')data={rows:[{key:'component1',description:'Obra documentada',amount:10000,component:'Obra e reforma',date_kind:'historical'},{key:'component2',description:'Consórcio documentado',amount:500,component:'Consórcio',date_kind:'historical'}]};
   else if(name==='lts_browser_awards_v178')data=awards();
@@ -121,10 +121,15 @@ async function run(browser,viewport,label){
   await frame.locator('#flowEditDesc').fill('Despesa manual sintética ajustada');
   await frame.locator('#flowEditAmount').fill('101');
   await frame.locator('#flowEditSave').click();
-  await frame.waitForFunction(()=>document.querySelector('.fx89-details')?.innerText.includes('Despesa manual sintética ajustada'));
+  await frame.waitForFunction(()=>!FLOWEDIT&&FLOWQ.current_future.events.some(e=>e.source_ref==='cash-1'&&e.description==='Despesa manual sintética ajustada'));
+  await frame.locator('.floweditbtn[data-mode="edit"]').first().click();
+  assert.equal(await frame.locator('#flowEditDesc').inputValue(),'Despesa manual sintética ajustada');
+  assert.equal(await frame.locator('#flowEditAmount').inputValue(),'101');
+  await frame.locator('#flowEditClose').click();
   const edit=calls.find(x=>/^lts_browser_flow_mutate_v/.test(x.name)&&x.args.p_action==='edit');assert.equal(edit.args.p_payload.amount,101);assert.equal(edit.args.p_source_ref,'cash-1');
   page.once('dialog',dialog=>dialog.accept());await frame.locator('.flowdeletebtn').first().click();
-  await frame.waitForFunction(()=>!document.querySelector('.fx89-details')?.innerText.includes('Despesa manual sintética ajustada'));
+  await frame.waitForFunction(()=>!FLOWQ.current_future.events.some(e=>e.source_ref==='cash-1'));
+  assert.equal(await frame.locator('.flowdeletebtn').count(),0,'deleted entry disappears from visible day details');
   assert(calls.some(x=>/^lts_browser_flow_mutate_v/.test(x.name)&&x.args.p_action==='cancel'),'manual deletion reaches existing audited writer');
   await nav('Dashboard').click();flags.date='2026-09-21';await frame.evaluate(()=>{window.__TEST_NOW__='2026-09-21T13:00:00Z';render()});assert.equal(semantic(await kpi('Total disponível hoje').locator('strong').innerText()),'—','day rollover does not present stale complete total');await frame.waitForFunction(()=>window.__LTS_V178_STATE.cash.data?.as_of==='2026-09-21'&&window.__LTS_V178_STATE.cash.status==='ready');
   const dims=await frame.locator('html').evaluate(e=>({width:e.clientWidth,scroll:e.scrollWidth}));assert(dims.scroll<=dims.width+3,'no horizontal page overflow');
