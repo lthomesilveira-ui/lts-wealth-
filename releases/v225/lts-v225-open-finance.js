@@ -5,15 +5,15 @@
   function runtime() {
     if (window.__LTS_V225?.installed) return;
     const state = { installed: true, version: 'v225', status: null, loading: false,
-      syncing: false, error: '', message: '', started: false, requestedAt: null, timer: null };
+      syncing: false, error: '', message: '', started: false, requestedAt: null, timer: null, pending: {key:'',data:null,loading:false,error:''} };
     window.__LTS_V225 = state;
     const previousRender = render;
     const names = { '341': 'Itaú', '237': 'Bradesco', '336': 'C6' };
     const esc = text => String(text ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
     const stamp = value => value ? new Intl.DateTimeFormat('pt-BR', {timeZone:'America/Sao_Paulo',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}).format(new Date(value)) : 'Sem atualização confirmada';
     const signedIn = () => typeof D !== 'undefined' && !!D && !N.classList.contains('hidden');
-    async function rpc(name) {
-      const result = await S.rpc(name);
+    async function rpc(name,args) {
+      const result = await S.rpc(name,args||{});
       if (result.error || !result.data) throw Error(result.error?.message || 'Não foi possível atualizar agora.');
       return result.data;
     }
@@ -52,6 +52,7 @@
       finally { state.loading = false; paint(); }
     }
     function refreshScreens() {
+      state.pending.key=''; state.pending.data=null; state.pending.loading=false; document.getElementById('v225-pending-dialog')?.remove();
       const exp=window.__LTS_V175_STATE, ui=window.__LTS_V168_STATE;
       if (exp) for (const key of ['expense','monthly','cards']) {
         const item=exp[key]; if (!item) continue;
@@ -95,9 +96,49 @@
         await poll();
       } catch(error) { state.syncing=false; state.error='Não foi possível solicitar a atualização. Tente novamente.'; paint(); }
     }
+    const brl=value=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(value));
+    const civil=()=>new Intl.DateTimeFormat('en-CA',{timeZone:'America/Sao_Paulo',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
+    function pendingRange() {
+      const today=civil(),ytd={p_from:today.slice(0,4)+'-01-01',p_to:today};
+      if(V!=='Despesas')return ytd;
+      const s=window.__LTS_V168_STATE?.expense||{};
+      if(s.key==='all')return {p_from:'2013-10-10',p_to:today};
+      if(s.key==='custom')return {p_from:s.customFrom,p_to:s.customTo};
+      if(s.key==='6m'||s.key==='12m'){const d=new Date(today.slice(0,7)+'-01T12:00:00Z');d.setUTCMonth(d.getUTCMonth()-(s.key==='6m'?5:11));return {p_from:d.toISOString().slice(0,10),p_to:today};}
+      return ytd;
+    }
+    function pendingDetails() {
+      const data=state.pending.data;if(!data)return;
+      document.getElementById('v225-pending-dialog')?.remove();
+      const dialog=document.createElement('dialog');dialog.id='v225-pending-dialog';dialog.className='v225-pending-dialog';
+      dialog.innerHTML='<header><h2>Despesas de cartão em processamento</h2><button type="button" data-close>Fechar</button></header><p>Consumo provisório: '+esc(brl(data.net_expense))+' · '+data.transaction_count+' transações. Créditos reduzem o total. A posição é revista automaticamente quando o banco confirma, altera ou reverte o registro.</p><div class="v225-pending-table"><table><thead><tr><th>Data</th><th>Banco / cartão</th><th>Descrição</th><th>Despesa provisória</th></tr></thead><tbody>'+data.rows.map(r=>'<tr><td>'+esc(r.date.split('-').reverse().join('/'))+'</td><td>'+esc(names[r.institution_code])+(r.last4?' · '+esc(r.last4):'')+'</td><td>'+esc(r.description)+'</td><td>'+esc(brl(r.expense))+'</td></tr>').join('')+'</tbody></table></div><p>O pagamento continua representado por uma única fatura. Estes itens não criam outro débito bancário.</p>';
+      document.body.appendChild(dialog);dialog.querySelector('[data-close]').onclick=()=>dialog.close();dialog.addEventListener('close',()=>dialog.remove());dialog.showModal();
+    }
+    async function loadPending(range,key) {
+      const p=state.pending;p.key=key;p.loading=true;p.error='';p.data=null;
+      try {const data=await rpc('lts_browser_open_finance_pending_v225',range);if(data.version!=='pending-expense-v225')throw Error('Leitura indisponível');if(p.key===key)p.data=data;}
+      catch(error){if(p.key===key)p.error='Despesas provisórias não disponíveis agora.';}
+      finally {if(p.key===key){p.loading=false;paintPending();}}
+    }
+    function paintPending() {
+      if(!signedIn()||!['Dashboard','Despesas','Fluxo Diário'].includes(V))return;
+      const range=pendingRange();if(!range.p_from||!range.p_to)return;
+      const key=range.p_from+'|'+range.p_to,p=state.pending;
+      if(p.key!==key){queueMicrotask(()=>{if(state.pending.key!==key)loadPending(range,key)});return;}
+      const data=p.data;
+      let host;
+      if(V==='Dashboard')host=[...document.querySelectorAll('.v168-kpi')].find(x=>/Total de despesas do período/.test(x.querySelector('span')?.textContent||''));
+      else host=V==='Despesas'?document.querySelector('.v168-expenses .v168-tabs'):document.querySelector('.fx87-mesa');
+      if(!host)return;
+      let box=V==='Dashboard'?host.querySelector('.v225-provisional'):document.querySelector('.v225-provisional');
+      if(!box){box=document.createElement('div');box.className='v225-provisional';if(V==='Dashboard')host.appendChild(box);else host.insertAdjacentElement(V==='Despesas'?'afterend':'beforebegin',box);}
+      const body=p.loading?'Consultando despesas provisórias…':p.error?esc(p.error):!data||!data.transaction_count?'':
+        '<b>'+esc(brl(data.net_expense))+' em despesas provisórias</b><span>'+data.transaction_count+' transações de cartão em processamento. Créditos já abatidos.</span><button type="button" data-pending-detail>Ver composição provisória</button>';
+      box.innerHTML=body;box.hidden=!body;box.querySelector('[data-pending-detail]')?.addEventListener('click',pendingDetails);
+    }
     function after() {
-      if (!signedIn()) { state.started=false; clearTimeout(state.timer); return; }
-      paint();
+      if (!signedIn()) { state.started=false; state.syncing=false; state.pending={key:'',data:null,loading:false,error:''}; clearTimeout(state.timer); return; }
+      paint(); paintPending();
       if (!state.started) { state.started=true; queueMicrotask(()=>refresh(false)); }
     }
     render=function(){const result=previousRender();after();return result;};

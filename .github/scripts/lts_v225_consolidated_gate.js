@@ -24,6 +24,7 @@ const semantic=value=>String(value||'').replace(/\s+/g,' ').trim();
    else if(name==='lts_browser_product_v1')data={ok:true,mvp:product()};
    else if(name==='lts_browser_dashboard_cockpit_v1')data=cockpit;
    else if(name==='lts_browser_planning_ui_contract_v1')data={version:'planning-ui-contract-v2',period_to:'2027-12-31',fgts_covers_horizon:true,fgts_first_negative:null,labels:{d01:'Cobertura D0 de teste',rsu:'Cobertura RSU de teste',fgts:'Com FGTS, sem ruptura até 31/12/2027'}};
+   else if(name==='lts_browser_open_finance_pending_v225')data={version:'pending-expense-v225',transaction_count:syncMode==='complete'?0:4,net_expense:syncMode==='complete'?0:37,rows:syncMode==='complete'?[]:[{key:'1',institution_code:'341',date:'2026-09-21',description:'Compra provisória A',expense:25},{key:'2',institution_code:'237',date:'2026-09-21',description:'Compra provisória B',expense:12},{key:'3',institution_code:'336',date:'2026-09-21',description:'Compra provisória C',expense:10},{key:'4',institution_code:'336',date:'2026-09-21',description:'Crédito provisório C',expense:-10}]};
    else if(name==='lts_browser_open_finance_status_v1'){statusPolls++;data={connections:['341','237','336'].map((code,i)=>({institution_code:code,status:'connected',last_success_at:syncMode==='complete'||(syncMode==='partial'&&i<2)?'2026-09-21T13:00:01Z':'2026-09-21T11:00:00Z'}))};}
    else if(name==='lts_browser_open_finance_refresh_v1') {refreshCalls++;if(syncMode==='fail'){status=503;data={message:'test refresh failure'};}else data={ok:true,requested_at:'2026-09-21T13:00:00Z'};}
    else if(name==='lts_browser_cash_today_v178'){
@@ -74,6 +75,11 @@ const semantic=value=>String(value||'').replace(/\s+/g,' ').trim();
   assert((await frame.locator('.v168-dashboard').innerText()).includes('Com FGTS, sem ruptura até 31/12/2027'));
   assert(await frame.locator('[data-v225-refresh]').isVisible());
   console.log('Navigation contract and current Planning presentation PASS');
+  await frame.waitForFunction(()=>window.__LTS_V225.pending.data?.transaction_count===4);
+  await frame.locator('[data-pending-detail]').click();
+  assert.equal(await frame.locator('#v225-pending-dialog tbody tr').count(),4,'provisional expenses and credits are visible');
+  assert((await frame.locator('#v225-pending-dialog').innerText()).includes('37,00'),'credits are deducted from provisional consumption');
+  await frame.locator('#v225-pending-dialog [data-close]').click();
   assert.equal(refreshCalls,1,'opening authenticated app automatically requests bank refresh once');
   assert((await frame.locator('.v225-sync').innerText()).includes('Não foi possível solicitar'),'failed refresh is visible');
   syncMode='partial';await frame.locator('[data-v225-refresh]').click();
@@ -87,9 +93,11 @@ const semantic=value=>String(value||'').replace(/\s+/g,' ').trim();
   await frame.locator('.v225-bankstatus summary').click();
   assert.equal(await frame.locator('.v225-bank').count(),3,'last update is shown for each bank');
   assert(statusPolls>=2,'success waits for provider confirmation');
+  await frame.waitForFunction(()=>window.__LTS_V225.pending.data?.transaction_count===0);
+  assert(await frame.locator('.v225-provisional').isHidden(),'provider reconciliation removes provisional effects without creating another obligation');
   assert.deepEqual(pageErrors,[],'no uncaught errors during bank refresh');
   await page.screenshot({path:'qa/v225-dashboard-desktop.png',fullPage:true});
-  const result={pass:true,version:'v225',open_refresh:true,manual_refresh:true,three_bank_confirmation:true,cash_calls:cashCalls,initial_order:ordered.slice(0,6),automatic_retry:true,incomplete_payload_blocked:true,persistent_failure_bounded:true,manual_recovery:true};
+  const result={pass:true,version:'v225',open_refresh:true,manual_refresh:true,three_bank_confirmation:true,pending_visible_reversible:true,cash_calls:cashCalls,initial_order:ordered.slice(0,6),automatic_retry:true,incomplete_payload_blocked:true,persistent_failure_bounded:true,manual_recovery:true};
   fs.writeFileSync('qa/v225-cash-recovery-result.json',JSON.stringify(result,null,2));console.log(JSON.stringify(result,null,2));
  }catch(error){fs.writeFileSync('qa/v225-cash-recovery-result.json',JSON.stringify({pass:false,error:String(error.stack||error),calls},null,2));console.error(error);process.exitCode=1}
  finally{await context?.close();await browser.close()}
