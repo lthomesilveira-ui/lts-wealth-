@@ -203,7 +203,7 @@
       if(isLegacyDefault(from,to)){const range=defaultRange();from=range.from;to=range.to}const key=from+'|'+to;
       if(state.rangePending?.key===key)return state.rangePending.promise;
       const promise=performFlowRange(from,to);state.rangePending={key,promise};
-      promise.finally(()=>setTimeout(()=>{if(state.rangePending?.promise===promise)state.rangePending=null},1200));return promise;
+      promise.finally(()=>{if(state.rangePending?.promise===promise)state.rangePending=null});return promise;
     };
     function openDefault(){
       const range=defaultRange(),key=range.from+'|'+range.to;SHOWZERO=true;FLOWFORCEZERO=false;
