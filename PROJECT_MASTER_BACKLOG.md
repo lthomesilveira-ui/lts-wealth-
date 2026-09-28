@@ -1,3 +1,7 @@
+## V226.2 — cold startup follow-up, 28/09/2026
+
+A fresh authenticated opening reproduced shared database contention between the initial Dashboard reports and three-bank reconciliation. Heavy Dashboard readers now load sequentially after current cash; bank reconciliation waits for those initial reads. Section-level error handling and explicit retries remain intact. Controlled concurrency checks and a fresh authenticated opening are required before final delivery. V226 and V226.1 stay immutable.
+
 ## V226.1 — recovered historical composition and runtime closure, 28/09/2026
 
 - [x] Recovered six previously unresolved historical invoice cycles from workbook rows, with exact reconciliation to independent recorded invoice/payment totals. The source supplies category, amount, card identification and reference month; merchant names, purchase days and exact due dates are explicitly unavailable.
