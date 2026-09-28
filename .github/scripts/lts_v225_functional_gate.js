@@ -79,7 +79,7 @@ async function run(browser,viewport,label){
   const geometry=await scroll.evaluate(e=>({top:e.scrollTop,height:e.clientHeight,scroll:e.scrollHeight,bottom:e.getBoundingClientRect().bottom,last:e.querySelector('tbody tr:last-child').getBoundingClientRect().bottom}));
   assert(geometry.top>0&&geometry.height>0&&geometry.last<=geometry.bottom+2,'last detail row visible '+JSON.stringify(geometry));
   const before=geometry.top;await frame.evaluate(()=>render());assert.equal(await scroll.evaluate(e=>e.scrollTop),before,'background render must preserve scroll');
-  await page.screenshot({path:'v178-'+label+'-last-row.png'});
+  await page.screenshot({path:'qa/v225-'+label+'-last-row.png'});
   await frame.locator('.v178-filter input').fill('1207');assert.equal(await frame.locator('#v178Drawer tbody tr').count(),1,'search full list including last row');
   await frame.locator('.v178-close').click();
   const group=groups[0][0];await frame.locator('.v178-open.amount[data-group="'+group+'"]').first().click();await frame.waitForFunction(()=>window.__LTS_V178_STATE.detail?.rows.length===804&&!window.__LTS_V178_STATE.detail.loading);
@@ -95,17 +95,17 @@ async function run(browser,viewport,label){
   await frame.locator('[data-v168-exp-range="all"]').click();await frame.locator('.v168-tabs [data-v168-exp-tab="monthly"]').click();await frame.waitForFunction(()=>window.__LTS_V175_STATE.monthly.data?.months?.length===156&&!window.__LTS_V175_STATE.monthly.loading);
   assert((await frame.locator('.v175-monthly').innerText()).includes('Benjamin — Educação'));
   await nav('Dashboard').click();await frame.locator('.v178-open.amount[data-group="Larissa — despesas"]').first().click();await frame.waitForFunction(()=>window.__LTS_V178_STATE.detail&&!window.__LTS_V178_STATE.detail.loading);assert.equal(await frame.evaluate(()=>window.__LTS_V178_STATE.detail.range.from),'2026-01-01','Dashboard detail uses own YTD, not all-history expense filter');await frame.locator('.v178-close').click();
-  await nav('Fluxo de caixa').click().catch(()=>nav('Fluxo Diário').click());await frame.evaluate(()=>loadFlowRange('2026-11-04','2026-11-12'));await frame.waitForSelector('#d-2026-11-07');
+  await nav('Fluxo Diário').click();await frame.evaluate(()=>loadFlowRange('2026-11-04','2026-11-12'));await frame.waitForSelector('#d-2026-11-07');
   const val=async(date,index)=>semantic(await frame.locator('#d-'+date+' .fx87-cell').nth(index).innerText());
   assert.equal(await val('2026-11-05',2),money(0));assert.equal(await val('2026-11-05',7),money(1500));assert.equal(await val('2026-11-07',7),money(2200));assert.equal(await val('2026-11-08',7),money(2200),'no duplicate vesting on settlement');assert.equal(await val('2026-11-10',2),money(0));
   assert.equal(await frame.locator('.v176-rsu-delta').count(),0,'no extra inline vesting row');
   const h=await frame.locator('#d-2026-11-05').evaluate(e=>e.getBoundingClientRect().height),h2=await frame.locator('#d-2026-11-06').evaluate(e=>e.getBoundingClientRect().height);assert(Math.abs(h-h2)<1,'RSU does not change row height');
   await frame.locator('#d-2026-11-05 .exp').click();assert.equal(await frame.locator('.v178-award-detail').count(),1);assert((await frame.locator('.v178-award-detail').innerText()).includes('08/11/2026'));
   await frame.locator('#flowZero').click();await page.waitForTimeout(50);assert.equal(await frame.locator('#d-2026-11-07').count(),0);assert.equal(await frame.locator('#d-2026-11-08').count(),0);assert.equal(await frame.locator('#d-2026-11-09').count(),1,'real in and out with zero net must remain');assert.equal(await frame.locator('#d-2026-11-05').count(),1);
-  await page.screenshot({path:'v178-'+label+'-flow.png'});
+  await page.screenshot({path:'qa/v225-'+label+'-flow.png'});
   await nav('Dashboard').click();flags.date='2026-09-21';await frame.evaluate(()=>{window.__TEST_NOW__='2026-09-21T13:00:00Z';render()});assert.equal(semantic(await kpi('Total disponível hoje').locator('strong').innerText()),'—','day rollover does not present stale complete total');await frame.waitForFunction(()=>window.__LTS_V178_STATE.cash.data?.as_of==='2026-09-21'&&window.__LTS_V178_STATE.cash.status==='ready');
   const dims=await frame.locator('html').evaluate(e=>({width:e.clientWidth,scroll:e.scrollWidth}));assert(dims.scroll<=dims.width+3,'no horizontal page overflow');
-  assert.deepEqual(errors,[],'no uncaught errors');await page.screenshot({path:'v178-'+label+'-dashboard.png'});
+  assert.deepEqual(errors,[],'no uncaught errors');await page.screenshot({path:'qa/v225-'+label+'-dashboard.png'});
   return{label,pass:true,scroll:geometry,calls:calls.length,financial_data:'synthetic fixtures; live SQL checks separate'};
  }catch(error){console.error('ORIGINAL FAILURE',String(error.stack||error));await page.screenshot({path:'qa/v225-'+label+'-failure.png'}).catch(e=>console.error('SCREENSHOT FAILED',e.message));console.error(JSON.stringify({label,error:String(error.stack||error),errors,calls:calls.slice(-15),state:await frame?.evaluate(()=>({cash:window.__LTS_V178_STATE?.cash,detail:window.__LTS_V178_STATE?.detail?{group:window.__LTS_V178_STATE.detail.group,error:window.__LTS_V178_STATE.detail.error,rows:window.__LTS_V178_STATE.detail.rows.length}:null})).catch(()=>null)}));throw error}
  finally{await context.close()}
@@ -113,7 +113,7 @@ async function run(browser,viewport,label){
 (async()=>{
  const hash=crypto.createHash('sha256').update(fs.readFileSync('index.html')).digest('hex');assert.equal(hash,'cca36731258680cc15a73fbad61c90ddf803358b741fd3ef58fefe5419eb688b');
  const browser=await chromium.launch({headless:true,...(process.env.LTS_CHROMIUM_PATH?{executablePath:process.env.LTS_CHROMIUM_PATH}:{} )});
- try{const results=[await run(browser,{width:1440,height:1000},'desktop'),await run(browser,{width:390,height:844},'mobile')];const out={pass:true,version:'v178',results};fs.writeFileSync('qa/v225-functional-result.json',JSON.stringify(out,null,2));console.log(JSON.stringify(out,null,2))}
+ try{const results=[await run(browser,{width:1440,height:1000},'desktop'),await run(browser,{width:390,height:844},'mobile')];const out={pass:true,version:'v225',results};fs.writeFileSync('qa/v225-functional-result.json',JSON.stringify(out,null,2));console.log(JSON.stringify(out,null,2))}
  catch(e){fs.writeFileSync('qa/v225-functional-result.json',JSON.stringify({pass:false,error:String(e.stack||e)},null,2));process.exitCode=1}
  finally{await browser.close()}
 })();

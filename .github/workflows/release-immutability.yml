@@ -1,0 +1,17 @@
+name: Published release immutability
+on:
+  pull_request:
+    paths: ['releases/**', 'frozen-v181/**', '.github/scripts/lts_release_immutability_gate.js', '.github/workflows/release-immutability.yml']
+permissions:
+  contents: read
+jobs:
+  preserved:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node .github/scripts/lts_release_immutability_gate.js

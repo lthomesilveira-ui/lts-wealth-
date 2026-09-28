@@ -1,0 +1,11 @@
+'use strict';
+const {execFileSync}=require('node:child_process');
+const assert=require('node:assert/strict');
+const git=(...args)=>execFileSync('git',args,{encoding:'utf8'}).trim();
+const base=process.env.IMMUTABLE_BASE||'origin/main';
+const prior=git('ls-tree','-r','--name-only',base).split('\n');
+const sealed=prior.filter(p=>/^releases\/[^/]+\/manifest\.json$/.test(p)).map(p=>p.slice(0,-'manifest.json'.length));
+const changed=git('diff','--name-only',base+'...HEAD').split('\n').filter(Boolean);
+const violations=changed.filter(p=>p.startsWith('frozen-v181/')||sealed.some(prefix=>p.startsWith(prefix)));
+assert.deepEqual(violations,[],'Published releases and historical evidence are immutable. Create a new release directory.');
+console.log(JSON.stringify({pass:true,sealed_releases:sealed.length,changed_files:changed.length}));

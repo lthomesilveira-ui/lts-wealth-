@@ -24,6 +24,7 @@ jobs:
       - name: Complete and incomplete cash, recovery, Planning and navigation
         run: mkdir -p qa && node .github/scripts/lts_v225_consolidated_gate.js
       - name: Desktop and mobile expense, cash-flow and source-detail regression
+        if: success() || failure()
         run: node .github/scripts/lts_v225_functional_gate.js
       - uses: actions/upload-artifact@v4
         if: always()
