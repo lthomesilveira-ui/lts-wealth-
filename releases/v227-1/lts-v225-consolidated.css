@@ -1,0 +1,22 @@
+/* Preserve the approved composition; only release identity and sync controls. */
+header.hdr .brand small[aria-label*="Homologação"], .brand small,
+span.v168-release, span.v181-release { display:none!important; }
+.v225-sync {display:flex;align-items:center;gap:8px;flex-wrap:wrap;max-width:420px;justify-content:flex-end}
+.v225-sync span {font-size:12px;color:#52667c}
+.v225-bankstatus {font-size:12px;text-align:left;max-width:420px}
+.v225-bankstatus summary {cursor:pointer;color:#195a9c;padding:6px 0}
+.v225-banklist {display:grid;gap:8px;width:100%}
+.v225-bank {display:grid;grid-template-columns:70px minmax(90px,1fr) auto;gap:8px;align-items:center;font-size:12px;padding:6px 0;border-bottom:1px solid #e5ecf2}
+.v225-bank span,.v225-bank time {color:#52667c}
+.v168-openfinance>.v225-banklist {min-width:0}
+@media(max-width:600px){.v225-sync{justify-content:flex-start;max-width:100%}.v225-bank{grid-template-columns:55px 1fr}.v225-bank time{grid-column:2}.v225-bankstatus{max-width:100%}}
+
+.v225-provisional{margin:8px 0;padding:10px 12px;border:1px solid #e4be72;background:#fff8e7;border-radius:8px;display:flex;gap:6px;flex-wrap:wrap;align-items:center;color:#674c18;font-size:12px}
+.v171-expense-total .v225-provisional span{color:#674c18!important}
+.v225-provisional[hidden]{display:none!important}.v225-provisional span{font-size:12px;color:#674c18}.v225-provisional button{background:white;color:#674c18;border:1px solid #e4be72;border-radius:5px;padding:6px;cursor:pointer}
+.v168-kpi .v225-provisional{display:grid;margin-bottom:0}.v225-pending-dialog{width:min(950px,92vw);max-height:88vh;border:1px solid #dce5ee;border-radius:16px;padding:22px;color:#17304b}.v225-pending-dialog::backdrop{background:#0a203a99}.v225-pending-dialog header{display:flex;gap:12px;justify-content:space-between;align-items:center}.v225-pending-dialog h2{font-size:20px}.v225-pending-dialog p{font-size:13px;line-height:1.5}.v225-pending-table{overflow:auto;max-height:55vh}.v225-pending-table table{width:100%;border-collapse:collapse;font-size:13px}.v225-pending-table th,.v225-pending-table td{text-align:left;padding:9px;border-bottom:1px solid #e6edf4}.v225-pending-table td:last-child{white-space:nowrap}
+/* Keep wide month tables inside their own scroll area, including custom ranges. */
+.v168-expenses{grid-template-columns:minmax(0,1fr)}
+.v168-expenses>.v168-head,.v168-expenses .v175-monthly,.v168-expenses .v175-section{min-width:0;max-width:100%}
+.v168-expenses .v168-head{flex-wrap:wrap}
+.v168-expenses .v168-headmeta,.v168-expenses .v168-expense-controls{min-width:0;max-width:100%}
