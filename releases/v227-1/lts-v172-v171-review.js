@@ -202,7 +202,7 @@
     }
     loadFlowRange=function(from,to){
       if(!window.__LTS_V178_REVIEW?.installed)return Promise.resolve();
-      if(V!=='Fluxo Diário'&&from===today()&&to===shift(today(),29))return Promise.resolve();
+      if(from===today()&&to===shift(today(),29)&&(V!=='Fluxo Diário'||!window.__LTS_DASHBOARD_EXECUTIVE_STATUS?.initial_applied_at))return Promise.resolve();
       if(isLegacyDefault(from,to)){const range=defaultRange();from=range.from;to=range.to}const key=from+'|'+to;
       if(state.rangePending?.key===key)return state.rangePending.promise;
       const promise=performFlowRange(from,to);state.rangePending={key,promise};
