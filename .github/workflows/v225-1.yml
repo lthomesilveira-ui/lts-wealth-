@@ -1,0 +1,35 @@
+name: V225.1 confirmed bank refresh regression
+on:
+  push:
+    branches: ['work/v225-1-sync-closure']
+  pull_request:
+    paths: ['releases/v225-1/**', '.github/scripts/lts_v225*', '.github/workflows/v225-1.yml']
+permissions:
+  contents: read
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      LTS_RELEASE: v225-1
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install --no-save --package-lock=false playwright@1.58.2
+      - run: npx playwright install --with-deps chromium
+      - name: Immutable resources and historical preservation
+        run: node .github/scripts/lts_v225_static_gate.js
+      - name: Start isolated test server
+        run: python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/lts-v225-http.log 2>&1 &
+      - name: Complete and incomplete cash, recovery, Planning and navigation
+        run: mkdir -p qa && node .github/scripts/lts_v225_1_refresh_gate.js
+      - name: Desktop and mobile expense, cash-flow and source-detail regression
+        if: success() || failure()
+        run: node .github/scripts/lts_v225_functional_gate.js
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v225-1-controlled-regression
+          path: qa/
