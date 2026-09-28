@@ -71,6 +71,10 @@
       if(!st.options?.length)return 'A classificar · categorias indisponíveis agora. Atualize as faturas para tentar novamente.';
       return '<details class="v226-classify"><summary>Identificar despesa</summary><form data-v226-classify="'+esc(r.source_id)+'"><label>Categoria<select name="category" required><option value="">Selecione…</option>'+(st.options||[]).map(x=>'<option value="'+esc(x)+'">'+esc(category(x))+'</option>').join('')+'</select></label><label>Para quem?<select name="beneficiary"><option value="">Sem identificação adicional</option>'+['Lucas','Larissa','Benjamin','Rafiki'].map(x=>'<option>'+x+'</option>').join('')+'</select></label><button type="submit" class="v168-btn">Salvar categoria</button><span role="status"></span></form></details>';
     }
+    function alternativeSource(data){
+      const rows=data.alternative_items||[];if(!rows.length)return '';
+      return '<details class="v226-alternative"><summary>Detalhes adicionais do banco · '+rows.length+' lançamentos</summary><p class="v226-note">'+esc(data.alternative_note||'Outra fonte da mesma fatura; não somar novamente.')+'</p><div class="v226-scroll"><table><thead><tr><th>Data</th><th>Cartão</th><th>Descrição</th><th>Categoria</th><th>Parcela</th><th>Valor</th></tr></thead><tbody>'+rows.map(r=>'<tr data-v226-alternative-item><td>'+esc(date(r.purchase_date||r.posting_date))+'</td><td>'+esc(r.last4||'—')+'</td><td>'+esc(r.description)+'</td><td>'+esc(category(r.category))+'</td><td>'+(r.installment_number&&r.total_installments?r.installment_number+'/'+r.total_installments:'—')+'</td><td>'+money(r.amount)+'</td></tr>').join('')+'</tbody></table></div></details>';
+    }
     function detailBody(data,cycle){
       const rows=data.items||[],total=sum(rows.map(r=>r.amount)),expected=data.invoice_amount??cycle?.amount;
       const complete=expected!=null&&Math.abs(Number(expected)-total)<0.005;
@@ -79,7 +83,7 @@
         '<div class="v226-breakdown"><section><h3>Por cartão</h3>'+grouped(rows,'last4').map(x=>'<div><span>Final '+esc(x.name)+' · '+x.n+' lançamentos</span><b>'+money(x.amount)+'</b></div>').join('')+'</section><section><h3>Por tipo de despesa</h3>'+grouped(rows,'category').map(x=>'<div><span>'+esc(category(x.name))+'</span><b>'+money(x.amount)+'</b></div>').join('')+'</section></div>'+
         '<label class="v226-search">Buscar nesta fatura <input type="search" data-v226-search placeholder="Compra, cartão ou categoria"></label>'+
         '<div class="v226-scroll"><table><thead><tr><th>Data</th><th>Cartão</th><th>Descrição</th><th>Categoria</th><th>Parcela</th><th>Valor</th></tr></thead><tbody>'+rows.map(r=>'<tr data-v226-item><td>'+esc(r.date_kind==='reference_month'?month(r.reference_month):date(r.purchase_date||r.posting_date))+'</td><td>'+esc(r.last4||'—')+'</td><td>'+esc(r.description)+'</td><td>'+categoryCell(r)+'</td><td>'+(r.installment_number&&r.total_installments?r.installment_number+'/'+r.total_installments:'—')+'</td><td>'+money(r.amount)+'</td></tr>').join('')+'</tbody><tfoot><tr><th colspan="5">Total da composição</th><td>'+money(total)+'</td></tr></tfoot></table></div>'+
-        '<p class="v226-note">Pagamentos da fatura anterior estão separados das compras. Créditos e estornos reduzem o total. Compras em processamento podem ser atualizadas pelo banco.</p>';
+        alternativeSource(data)+'<p class="v226-note">Pagamentos da fatura anterior estão separados das compras. Créditos e estornos reduzem o total. Compras em processamento podem ser atualizadas pelo banco.</p>';
     }
     async function openDetail(family,cycleMonth){
       document.getElementById('v226-detail')?.close();
@@ -95,7 +99,7 @@
         if(!dialog.isConnected||epoch!==st.epoch)return;
         const draw=()=>{
           dialog.querySelector('[data-v226-body]').innerHTML=detailBody(d,cycle);
-          dialog.querySelector('[data-v226-search]').oninput=e=>{const key=e.target.value.toLocaleLowerCase('pt-BR');dialog.querySelectorAll('[data-v226-item]').forEach(r=>r.hidden=!r.textContent.toLocaleLowerCase('pt-BR').includes(key));};
+          dialog.querySelector('[data-v226-search]').oninput=e=>{const key=e.target.value.toLocaleLowerCase('pt-BR');dialog.querySelectorAll('[data-v226-item],[data-v226-alternative-item]').forEach(r=>r.hidden=!r.textContent.toLocaleLowerCase('pt-BR').includes(key));};
           dialog.querySelectorAll('[data-v226-classify]').forEach(form=>form.onsubmit=async event=>{
             event.preventDefault();const button=form.querySelector('button'),status=form.querySelector('[role="status"]'),cat=form.elements.category.value,person=form.elements.beneficiary.value;
             if(!cat||button.disabled)return;button.disabled=true;status.textContent='Salvando…';

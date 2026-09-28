@@ -48,7 +48,7 @@ async function run(browser,viewport,label){
    if(flags.cyclesFail){status=503;data={message:'fixture card unavailable'}}else data=fixtureCycles(flags.cardClassified);
   }
   else if(name==='lts_browser_card_history_v226')data={version:'card-history-v226',invoices:[{bank:'Itaú',family:'itau_mastercard',card_name:'Mastercard Black',reference_month:'2026-07-01',due_date:'2026-07-12',amount:780,detail_total:780,difference:0,item_count:80,detail_complete:true},...(a.p_from<='2024-01-01'&&a.p_to>='2024-01-31'?[{bank:'Itaú',family:'itau_mastercard',reference_month:'2024-01-01',due_date:null,amount:30,detail_total:30,difference:0,item_count:3,detail_complete:true,source:'workbook_reconciled'}]:[])]};
-  else if(name==='lts_browser_card_detail_v226')data=a.p_month==='2024-01-01'?{invoice_amount:30,source_note:'Composição reconciliada da planilha; estabelecimento e dia da compra não informados.',items:Array.from({length:3},(_,i)=>({description:'Linha '+(i+1)+' da planilha · estabelecimento não informado',amount:10,last4:'1111',category:'Mercado',category_basis:'historical_workbook',date_kind:'reference_month',reference_month:'2024-01-01'}))}:{invoice_amount:780,items:fixtureHistory()};
+  else if(name==='lts_browser_card_detail_v226')data=a.p_month==='2024-01-01'?{invoice_amount:30,alternative_note:'Outra fonte da mesma fatura; não somar novamente.',alternative_items:[{description:'Compra bancária complementar',purchase_date:'2023-12-20',amount:20,last4:'1111',category:'Mercado'}],source_note:'Composição reconciliada da planilha; estabelecimento e dia da compra não informados.',items:Array.from({length:3},(_,i)=>({description:'Linha '+(i+1)+' da planilha · estabelecimento não informado',amount:10,last4:'1111',category:'Mercado',category_basis:'historical_workbook',date_kind:'reference_month',reference_month:'2024-01-01'}))}:{invoice_amount:780,items:fixtureHistory()};
   else if(name==='lts_browser_card_category_options_v226')data={categories:['Mercado','Saúde','Presentes']};
   else if(name==='lts_browser_card_classify_v226'){assert.equal(a.p_category,'Saúde');assert.equal(a.p_beneficiary,'Lucas');flags.cardClassified=true;data={ok:true};}
   else if(name==='lts_browser_open_finance_pending_v225')data={version:'pending-expense-v225',transaction_count:0,net_expense:0,rows:[]};
@@ -214,6 +214,10 @@ async function run(browser,viewport,label){
   assert.equal(await frame.locator('#v226-detail [data-v226-item]').count(),3,'all reconciled workbook rows available');
   assert.match(await frame.locator('#v226-detail').innerText(),/estabelecimento e dia da compra não informados/);
   assert.match(await frame.locator('#v226-detail [data-v226-item] td').first().innerText(),/jan.*2024/,'month is not presented as an invented purchase day');
+  await frame.locator('#v226-detail .v226-alternative summary').click();
+  assert.equal(await frame.locator('#v226-detail [data-v226-alternative-item]').count(),1,'bank merchant details remain available alongside monthly evidence');
+  assert.match(await frame.locator('#v226-detail .v226-alternative').innerText(),/não somar novamente/);
+  assert.match(await frame.locator('#v226-detail .v226-totals').innerText(),/30,00/,'alternative source is not added to the invoice total');
   await frame.locator('#v226-detail [data-v226-close]').click();
   await nav('Patrimônio').click();await frame.waitForSelector('.v226-upcoming');
   assert.match(await frame.locator('.v226-totals').innerText(),/2\.100,00/,'same totals in Wealth');
