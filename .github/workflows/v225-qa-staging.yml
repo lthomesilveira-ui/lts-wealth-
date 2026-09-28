@@ -2,6 +2,10 @@ name: V225 QA staging on protected deployment branch
 on:
   pull_request:
     paths: ['qa/v225/**', '.github/workflows/v225-qa-staging.yml']
+  workflow_run:
+    workflows: ['V225 consolidated regression']
+    types: [completed]
+    branches: ['work/v225-consolidated-recovery']
   push:
     branches: [main]
     paths: ['qa/v225/**', '.github/workflows/v225-qa-staging.yml']
@@ -31,7 +35,7 @@ jobs:
           console.log('PASS: 53 tested assets, 19 historical assets, selected app unchanged');
           JS
   deploy:
-    if: github.event_name == 'push'
+    if: github.event_name == 'push' || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_repository.full_name == github.repository && github.event.workflow_run.head_sha == '052aafc3ed7d907d57af553c09b9cd8b110be46c')
     needs: preservation
     environment:
       name: github-pages
