@@ -251,7 +251,7 @@
       if(V==='Despesas'&&v168?.expense?.tab==='cards')render();
       try{
         const from=today(),to=String(Number(from.slice(0,4))+1)+'-12-31';
-        const result=await directRpc('lts_browser_card_flow_schedule_v2',{p_from:from,p_to:to},18000);
+        const result=await directRpc('lts_browser_card_flow_schedule_v2',{p_from:from,p_to:to},22000);
         if(token!==s.token)return;
         if(result.error||!result.data)throw Error(result.error?.message||'Cartões indisponíveis');
         s.data=result.data;
@@ -266,7 +266,7 @@
       if(['lts_browser_monthly_balance_v1','lts_browser_monthly_balance_v2','lts_browser_monthly_balance_v3','lts_browser_monthly_balance_v5'].includes(requested))
         return directRpc('lts_browser_monthly_balance_v5',next,18000);
       if(['lts_browser_card_flow_schedule_v1','lts_browser_card_flow_schedule_v2'].includes(requested))
-        return directRpc('lts_browser_card_flow_schedule_v2',next,18000);
+        return directRpc('lts_browser_card_flow_schedule_v2',next,22000);
       return previousRpc(requested,next);
     };
 
@@ -371,7 +371,7 @@
     function cardBank(name){const n=norm(name);if(n.includes('aeternum')||n.includes('bradesco'))return'Bradesco';if(n.includes('c6')||n.includes('carbon')||n.includes('7873')||n.includes('8304')||n.includes('6610'))return'C6';if(n.includes('personnalite')||n.includes('mastercard')||n.includes('itau')||n.includes('itaú'))return'Itaú';return'Outros'}
     function cardKey(name){const n=norm(name);if(n.includes('aeternum'))return'aeternum';if(n.includes('c6')||n.includes('carbon'))return'c6';if(n.includes('mastercard')||n.includes('personnalite'))return'mastercard-itau';if(n.includes('visa infinite prime'))return'visa-prime';if(n.includes('visa infinite')&&n.includes('itau'))return'visa-infinite-itau';return n.replace(/\W+/g,'-')}
     function cardsPanel(){
-      const s=state.cards;if(s.loading&&!s.data)return'<div class="v175-loading"><div class="v168-skeleton"></div><b>Conferindo cartões com o Fluxo…</b></div>';if(s.error&&!s.data)return'<div class="v168-error">'+esc(s.error)+'</div><button class="v168-btn primary" data-v175-card-retry>Tentar novamente</button>';
+      const s=state.cards;if(s.loading&&!s.data)return'<div class="v175-loading"><div class="v168-skeleton"></div><b>Conferindo cartões com o Fluxo…</b></div>';if(s.error&&!s.data)return'<div class="v168-error">A conferência do histórico com o Fluxo não está disponível agora.</div><button class="v168-btn primary" data-v175-card-retry>Tentar novamente</button>';
       const data=s.data||{},o=D?.card_operating||{},map=new Map(),ensure=(b,c,m)=>{const k=[b,cardKey(c),m].join('|');if(!map.has(k))map.set(k,{bank:b,card:c,month:m,invoices:[],floors:[],flows:[]});return map.get(k)};
       for(const x of [...arr(o.open_cycles),...arr(o.closed_or_due)]){const c=x.card_name||x.description||'Cartão não identificado',m=String(x.due_date||'').slice(0,7);if(m)ensure(cardBank(c),c,m).invoices.push(x)}
       for(const m of arr(o.contracted_installment_floor_months))for(const x of arr(m.detail)){const c=x.card_name||'Cartão não identificado';ensure(cardBank(c),c,String(m.reference_month).slice(0,7)).floors.push(x)}

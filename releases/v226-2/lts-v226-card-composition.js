@@ -130,7 +130,7 @@
       const full=V==='Despesas'&&window.__LTS_V168_STATE?.expense?.tab==='cards';
       if(V==='Despesas'&&!full)return;
       let host=document.querySelector('.v226-upcoming');
-      if(!host){host=document.createElement('article');host.className='v168-card v226-upcoming';const root=document.querySelector(V==='Dashboard'?'.v168-dashboard':V==='Patrimônio'?'.v168-wealth':'.v175-cards');if(!root)return;const after=root.querySelector(V==='Dashboard'?'.v168-kpi-section.current':'.v168-tabs');if(after)after.after(host);else if(V==='Despesas')root.prepend(host);else root.appendChild(host);}
+      if(!host){host=document.createElement('article');host.className='v168-card v226-upcoming';const root=document.querySelector(V==='Dashboard'?'.v168-dashboard':V==='Patrimônio'?'.v168-wealth':'.v168-expenses');if(!root)return;const after=root.querySelector(V==='Dashboard'?'.v168-kpi-section.current':'.v168-tabs');if(after)after.after(host);else if(V==='Despesas')root.prepend(host);else root.appendChild(host);}
       host.innerHTML=upcomingPanel(full);bind(host);
       if(!st.cycles&&!st.loading&&!st.error)queueMicrotask(()=>loadCycles());
       if(full){let h=document.querySelector('.v226-history');if(!h){h=document.createElement('article');h.className='v168-card v226-history';host.after(h);}h.innerHTML=historyPanel();bind(h);queueMicrotask(loadHistory);}

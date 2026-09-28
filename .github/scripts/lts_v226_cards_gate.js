@@ -124,7 +124,10 @@ async function run(browser,viewport,label){
   assert((await frame.locator('.v175-monthly').innerText()).includes('Benjamin — Educação'));
   const monthlyDims=await frame.locator('html').evaluate(e=>({width:e.clientWidth,scroll:e.scrollWidth}));assert(monthlyDims.scroll<=monthlyDims.width+3,'monthly tables do not expand the page '+JSON.stringify(monthlyDims));
   await frame.locator('.v168-tabs [data-v168-exp-tab="cards"]').click();
-  await frame.waitForSelector('[data-v175-card-retry]');const failedCardCalls=calls.filter(x=>x.name==='lts_browser_card_flow_schedule_v2').length;
+  await frame.waitForSelector('[data-v175-card-retry]');
+  await frame.waitForSelector('.v226-upcoming [data-v226-overview="next"]');
+  assert(await frame.locator('.v226-history').isVisible(),'source composition remains available when the legacy Flow comparison fails');
+  const failedCardCalls=calls.filter(x=>x.name==='lts_browser_card_flow_schedule_v2').length;
   await frame.evaluate(()=>render());await page.waitForTimeout(250);assert.equal(calls.filter(x=>x.name==='lts_browser_card_flow_schedule_v2').length,failedCardCalls,'card failure remains visible without an automatic retry loop');
   flags.cardFail=false;await frame.locator('[data-v175-card-retry]').click();
   await frame.waitForFunction(()=>window.__LTS_V183_CARD_PERIOD.status==='ready'&&window.__LTS_V175_STATE.cards.data?.inventory?.cards?.length===5);
