@@ -134,7 +134,10 @@
       if(!box){box=document.createElement('div');box.className='v225-provisional';if(V==='Dashboard')host.appendChild(box);else host.insertAdjacentElement(V==='Despesas'?'afterend':'beforebegin',box);}
       const body=p.loading?'Consultando despesas provisórias…':p.error?esc(p.error):!data||!data.transaction_count?'':
         '<b>'+esc(brl(data.net_expense))+' em despesas provisórias</b><span>'+data.transaction_count+' transações de cartão em processamento. Créditos já abatidos.</span><button type="button" data-pending-detail>Ver composição provisória</button>';
-      box.innerHTML=body;box.hidden=!body;box.querySelector('[data-pending-detail]')?.addEventListener('click',pendingDetails);
+      const report=V==='Dashboard'?window.__LTS_V178_STATE?.dashboardReport.data:V==='Despesas'&&window.__LTS_V175_STATE?.expense.key===key?window.__LTS_V175_STATE.expense.data:null;
+      const reconciled=report?.summary?.selected_total;
+      const combined=data?.transaction_count&&reconciled!=null&&Number.isFinite(Number(reconciled))?'<span>Reconciliadas: '+esc(brl(reconciled))+' · Com provisórias: '+esc(brl(Number(reconciled)+Number(data.net_expense)))+'</span>':'';
+      box.innerHTML=body+combined;box.hidden=!body;box.querySelector('[data-pending-detail]')?.addEventListener('click',pendingDetails);
     }
     function after() {
       if (!signedIn()) { state.started=false; state.syncing=false; state.pending={key:'',data:null,loading:false,error:''}; clearTimeout(state.timer); return; }
