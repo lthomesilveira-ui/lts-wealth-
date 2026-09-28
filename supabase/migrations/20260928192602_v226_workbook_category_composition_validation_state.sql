@@ -1,0 +1,3 @@
+ALTER TABLE public.lts_card_historical_validation_registry DROP CONSTRAINT lts_card_hist_validation_status_ck;
+ALTER TABLE public.lts_card_historical_validation_registry ADD CONSTRAINT lts_card_hist_validation_status_ck CHECK(validation_status IN ('candidate_partial','blocked_documentary','settlement_proven_composition_missing','ledger_only_source_composition_missing','source_category_composition_reconciled'));
+
