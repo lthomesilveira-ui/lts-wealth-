@@ -27,7 +27,7 @@ async function run(browser,viewport,label){
  await context.addInitScript(s=>localStorage.setItem('lts_supabase_session_v1',JSON.stringify(s)),session);
  const page=await context.newPage();page.setDefaultTimeout(20000);const errors=[],calls=[];
  const cardNames=['Bradesco Visa','VISA AETERNUM','Itaú Mastercard Black','Itaú Visa','C6'];
- const flags={manualDescription:null,manualDeleted:false,cashFail:true,forecastFail:true,date:'2026-09-20',cash:-1000,incomplete:false,pageFailure:false};
+ const flags={manualDescription:null,manualDeleted:false,cashFail:true,forecastFail:true,cardFail:true,date:'2026-09-20',cash:-1000,incomplete:false,pageFailure:false};
  page.on('pageerror',e=>errors.push(String(e.stack||e)));
  await page.route('https://tadhkamnwtsbdozwkyut.supabase.co/**',async route=>{
   const req=route.request(),name=new URL(req.url()).pathname.split('/').pop();let a={};try{a=JSON.parse(req.postData()||'{}')}catch{}calls.push({name,args:a});let data={ok:true,items:[],rows:[]},status=200;
@@ -44,7 +44,7 @@ async function run(browser,viewport,label){
   else if(name==='lts_browser_expense_detail_v178'){
    if(flags.pageFailure&&a.p_offset===500){data={message:'deliberate page failure'};status=503;flags.pageFailure=false}else{await new Promise(r=>setTimeout(r,a.p_group==='Rafiki'?80:5));data=details(a)}
   }
-  else if(name==='lts_browser_card_flow_schedule_v2')data={inventory:{cards:cardNames.map((card_name,i)=>({bank:i<2?'Bradesco':i<4?'Itaú':'C6',card_name,first_seen:'2020-01-01',last_seen:'2026-09-20'}))},months:[],summary:{}};
+  else if(name==='lts_browser_card_flow_schedule_v2'){if(flags.cardFail){status=503;data={message:'deliberate card failure'}}else data={inventory:{cards:cardNames.map((card_name,i)=>({bank:i<2?'Bradesco':i<4?'Itaú':'C6',card_name,first_seen:'2020-01-01',last_seen:'2026-09-20'}))},months:[],summary:{}};}
   else if(name==='lts_browser_invoice_documentary_only_v1'||name==='lts_browser_legacy_invoice_gap_v183')data={financial_effect:'none',invoices:[]};
   else if(name==='lts_browser_invoice_flow_reconciliation_v183')data={rows:a.p_from<='2026-09-15'&&a.p_to>='2026-09-15'?[{card_name:'VISA AETERNUM',reference_month:'2026-09-01',due_date:'2026-09-15',documented_amount:100,flow_amount:100,difference:0,reconciliation_status:'reconciled'}]:[]};
   else if(name==='lts_browser_card_settlement_detail_v3')data={matched:true,due_date:'2026-09-15',invoice_total:100,payment_documented:true,cash_effect_date:'2026-09-15'};
@@ -56,7 +56,7 @@ async function run(browser,viewport,label){
   else if(/^lts_browser_flow_v/.test(name)){
    if(flags.forecastFail){data={message:'deliberate forecast failure'};status=503}else {data=flow(a.p_from,a.p_to);data.flow.current_future.events=data.flow.current_future.events.filter(e=>!flags.manualDeleted||e.source_ref!=='cash-1').map(e=>e.source_ref==='cash-1'&&flags.manualDescription?{...e,description:flags.manualDescription}:e);}
   }
-  else if(/^lts_browser_wealth_detail_v/.test(name))data={...baseWealth,pensions:{positions:[],total_gross_brl:0}};
+  else if(/^lts_browser_wealth_detail_v/.test(name))data={...baseWealth,pensions:{positions:[],total_gross_brl:0},current_liquidity:{brokerage_available:1100},current_awards:awards(),morgan_statement:{as_of:'2026-09-17',gross_total_brl:51000,available_total_brl:1500,available_components:{vested_shares_brl:1400,brokerage_cash_brl:100},future_components:{regular_rsu_gross_brl:40000,cash_rsu_after_reserve_brl:7000,future_after_reserve_brl:47000},considered_total_after_reserve_brl:48500}};
   else if(name==='lts_browser_recurring_future_gap_audit_v5')data={horizon_checks:[],items:[]};
   else if(/expense_context/.test(name))data={contexts:[],natures:[],summary:{}};
   await route.fulfill({status,contentType:'application/json',body:JSON.stringify(data)});
@@ -106,12 +106,24 @@ async function run(browser,viewport,label){
   await frame.locator('[data-v181-detail-group="Benjamin — Saúde"]').click();await frame.waitForFunction(()=>window.__LTS_V178_STATE.detail&&!window.__LTS_V178_STATE.detail.loading);assert.equal(await frame.evaluate(()=>window.__LTS_V178_STATE.detail.range.from),'2026-04-01');assert.equal(await frame.locator('#v178Drawer tbody tr').count(),3);await frame.locator('.v178-close').click();
   await frame.locator('[data-v168-exp-range="all"]').click();await frame.locator('.v168-tabs [data-v168-exp-tab="monthly"]').click();await frame.waitForFunction(()=>window.__LTS_V175_STATE.monthly.data?.months?.length===156&&!window.__LTS_V175_STATE.monthly.loading);
   assert((await frame.locator('.v175-monthly').innerText()).includes('Benjamin — Educação'));
+  const monthlyDims=await frame.locator('html').evaluate(e=>({width:e.clientWidth,scroll:e.scrollWidth}));assert(monthlyDims.scroll<=monthlyDims.width+3,'monthly tables do not expand the page '+JSON.stringify(monthlyDims));
   await frame.locator('.v168-tabs [data-v168-exp-tab="cards"]').click();
+  await frame.waitForSelector('[data-v175-card-retry]');const failedCardCalls=calls.filter(x=>x.name==='lts_browser_card_flow_schedule_v2').length;
+  await frame.evaluate(()=>render());await page.waitForTimeout(250);assert.equal(calls.filter(x=>x.name==='lts_browser_card_flow_schedule_v2').length,failedCardCalls,'card failure remains visible without an automatic retry loop');
+  flags.cardFail=false;await frame.locator('[data-v175-card-retry]').click();
   await frame.waitForFunction(()=>window.__LTS_V183_CARD_PERIOD.status==='ready'&&window.__LTS_V175_STATE.cards.data?.inventory?.cards?.length===5);
   const inventory=await frame.locator('.v183-card-families').innerText();for(const name of cardNames)assert(inventory.includes(name),'historical card retained: '+name);
   assert(!inventory.includes('Visa Eternum'),'AETERNUM spelling preserved');
   await frame.waitForFunction(()=>document.querySelector('[data-v183-payment-status]')?.innerText.includes('Pagamento documentado'));
   await page.screenshot({path:'qa/v225-'+label+'-cards.png'});
+  await nav('Patrimônio').click();await frame.waitForSelector('.v172-wealth-overview');
+  const currentMorgan=frame.locator('.v172-value-list>div').filter({hasText:'Morgan Stanley · disponível'});assert.equal(semantic(await currentMorgan.locator('b').innerText()),money(1100),'wealth uses the current validated position');
+  await frame.locator('[data-v168-wealth-tab="rsu"]').click();
+  assert.equal(semantic(await kpi('Disponível agora').locator('strong').innerText()),money(1100));
+  assert.equal(semantic(await kpi('Total bruto do extrato').locator('strong').innerText()),money(51000),'documentary gross remains unchanged');
+  assert.equal(semantic(await kpi('Total líquido projetado').locator('strong').innerText()),money(48100),'current position plus future net');
+  assert.equal(semantic(await frame.locator('.v172-morgan-components article').first().locator('dd').first().innerText()),money(1000),'vested shares use the validated component');
+  await page.screenshot({path:'qa/v225-'+label+'-wealth.png'});
   await nav('Dashboard').click();await frame.locator('.v178-open.amount[data-group="Larissa — despesas"]').first().click();await frame.waitForFunction(()=>window.__LTS_V178_STATE.detail&&!window.__LTS_V178_STATE.detail.loading);assert.equal(await frame.evaluate(()=>window.__LTS_V178_STATE.detail.range.from),'2026-01-01','Dashboard detail uses own YTD, not all-history expense filter');await frame.locator('.v178-close').click();
   await nav('Fluxo Diário').click();await frame.evaluate(()=>loadFlowRange('2026-11-04','2026-11-12'));await frame.waitForSelector('#d-2026-11-07');
   const val=async(date,index)=>semantic(await frame.locator('#d-'+date+' .fx87-cell').nth(index).innerText());

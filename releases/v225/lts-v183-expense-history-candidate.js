@@ -246,7 +246,7 @@
     }
 
     async function ensureCards(force=false){
-      const s=state.cards;if(s.loading||(!force&&s.data))return;
+      const s=state.cards;if(s.loading||(!force&&(s.data||s.error)))return;
       const token=++s.token;s.loading=true;s.error=null;
       if(V==='Despesas'&&v168?.expense?.tab==='cards')render();
       try{
@@ -371,7 +371,7 @@
     function cardBank(name){const n=norm(name);if(n.includes('aeternum')||n.includes('bradesco'))return'Bradesco';if(n.includes('c6')||n.includes('carbon')||n.includes('7873')||n.includes('8304')||n.includes('6610'))return'C6';if(n.includes('personnalite')||n.includes('mastercard')||n.includes('itau')||n.includes('itaú'))return'Itaú';return'Outros'}
     function cardKey(name){const n=norm(name);if(n.includes('aeternum'))return'aeternum';if(n.includes('c6')||n.includes('carbon'))return'c6';if(n.includes('mastercard')||n.includes('personnalite'))return'mastercard-itau';if(n.includes('visa infinite prime'))return'visa-prime';if(n.includes('visa infinite')&&n.includes('itau'))return'visa-infinite-itau';return n.replace(/\W+/g,'-')}
     function cardsPanel(){
-      const s=state.cards;if(s.loading&&!s.data)return'<div class="v175-loading"><div class="v168-skeleton"></div><b>Conferindo cartões com o Fluxo…</b></div>';if(s.error&&!s.data)return'<div class="v168-error">'+esc(s.error)+'</div>';
+      const s=state.cards;if(s.loading&&!s.data)return'<div class="v175-loading"><div class="v168-skeleton"></div><b>Conferindo cartões com o Fluxo…</b></div>';if(s.error&&!s.data)return'<div class="v168-error">'+esc(s.error)+'</div><button class="v168-btn primary" data-v175-card-retry>Tentar novamente</button>';
       const data=s.data||{},o=D?.card_operating||{},map=new Map(),ensure=(b,c,m)=>{const k=[b,cardKey(c),m].join('|');if(!map.has(k))map.set(k,{bank:b,card:c,month:m,invoices:[],floors:[],flows:[]});return map.get(k)};
       for(const x of [...arr(o.open_cycles),...arr(o.closed_or_due)]){const c=x.card_name||x.description||'Cartão não identificado',m=String(x.due_date||'').slice(0,7);if(m)ensure(cardBank(c),c,m).invoices.push(x)}
       for(const m of arr(o.contracted_installment_floor_months))for(const x of arr(m.detail)){const c=x.card_name||'Cartão não identificado';ensure(cardBank(c),c,String(m.reference_month).slice(0,7)).floors.push(x)}
@@ -416,9 +416,10 @@
         const r=expenseRange(),key=r.from+'|'+r.to;
         if(['overview','categories'].includes(tab)&&(state.expense.key!==key||(!state.expense.loading&&!state.expense.data&&!state.expense.error)))queueMicrotask(()=>ensureExpense(false));
         if(tab==='monthly'&&(state.monthly.key!==key||(!state.monthly.loading&&!state.monthly.data&&!state.monthly.error)))queueMicrotask(()=>ensureMonthly(false));
-        if(tab==='cards'&&!state.cards.loading&&!state.cards.data)queueMicrotask(()=>ensureCards(false));
+        if(tab==='cards'&&!state.cards.loading&&!state.cards.data&&!state.cards.error)queueMicrotask(()=>ensureCards(false));
       }
       document.querySelector('[data-v175-month-retry]')?.addEventListener('click',()=>ensureMonthly(true));
+      document.querySelector('[data-v175-card-retry]')?.addEventListener('click',()=>ensureCards(true));
       document.querySelector('[data-v183-expense-retry]')?.addEventListener('click',()=>ensureExpense(true));
       document.querySelector('[data-v175-year]')?.addEventListener('change',e=>{state.monthly.year=e.currentTarget.value;render()});
       document.querySelectorAll('[data-v175-card-bank]').forEach(b=>b.onclick=()=>{state.cards.bank=b.dataset.v175CardBank;render()});

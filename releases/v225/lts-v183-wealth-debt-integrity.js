@@ -35,7 +35,7 @@
           const root=t.content.querySelector('.v168-wealth');if(!root)return html;
           if(state.wealth.tab==='rsu'){
             const m=j.morgan_statement||{},a=m.available_components||{},f=m.future_components||{},r=j.rsu_summary||{};
-            const available=componentRemainder(m.available_total_brl??r.available_total_brl,[a.vested_shares_brl??r.vested_shares_brl,a.brokerage_cash_brl??r.brokerage_cash_brl]);
+            const available=componentRemainder(j.current_liquidity?.brokerage_available??m.available_total_brl??r.available_total_brl,[j.current_awards?.vested_shares??a.vested_shares_brl??r.vested_shares_brl,j.current_awards?.brokerage_cash??a.brokerage_cash_brl??r.brokerage_cash_brl]);
             const future=componentRemainder(f.future_after_reserve_brl??r.future_considered_total_brl,[f.regular_rsu_gross_brl,f.cash_rsu_after_reserve_brl]);
             const components=root.querySelector('.v172-morgan-components');
             if(components){
@@ -46,7 +46,7 @@
               for(const [name,value] of [['Disponível agora',available],['Posições futuras',future]]){
                 const line=row(name,value,label(value));if(value===null)line.querySelector('b').textContent='—';list.appendChild(line);
               }
-              card.appendChild(note('Diferenças entre o total e os componentes exibidos, na posição de '+date(m.as_of||r.as_of)+'. Já estão incluídas nos totais; não são novas entradas, imposto presumido ou valores a somar novamente.'));
+              card.appendChild(note('Diferenças entre o total e os componentes exibidos, na posição de '+date(j.current_awards?.as_of||m.as_of||r.as_of)+'. Já estão incluídas nos totais; não são novas entradas, imposto presumido ou valores a somar novamente.'));
               components.after(card);
               const kpi=[...root.querySelectorAll('.v168-kpi')].find(x=>x.querySelector('span')?.textContent==='Disponível agora');
               if(kpi&&available!==null&&Math.abs(available)>=0.005)kpi.querySelector('small').textContent=available<0?'Composição divergente; veja a conferência abaixo':'ações vested + saldo em corretora + parcela não detalhada';
@@ -88,7 +88,7 @@
               vehicle.appendChild(note(balance===null?'O valor financiado na contratação não é o saldo devedor de hoje. Aguardando extrato para calcular a participação líquida no veículo.':'Participação líquida estimada pela posição de mercado e pelo saldo documental de quitação.'));
             }
             const rsu=[...root.querySelectorAll('.v168-asset')].find(x=>x.querySelector('h3')?.textContent==='RSUs e corretora');
-            if(rsu){const available=amount(j.morgan_statement?.available_total_brl??j.rsu_summary?.available_total_brl);if(available!==null){rsu.querySelector('strong').textContent=money(available);rsu.appendChild(note('O valor em destaque é o disponível agora. Vestings futuros permanecem separados e não são patrimônio disponível hoje.'))}}
+            if(rsu){const available=amount(j.current_liquidity?.brokerage_available??j.morgan_statement?.available_total_brl??j.rsu_summary?.available_total_brl);if(available!==null){rsu.querySelector('strong').textContent=money(available);rsu.appendChild(note('O valor em destaque é o disponível agora. Vestings futuros permanecem separados e não são patrimônio disponível hoje.'))}}
           }
           audit.status=missing.length?'partial_debt_evidence':'documented_debts';audit.missing=missing.map(x=>x.id);audit.documented_count=known.length;
           return t.innerHTML;
