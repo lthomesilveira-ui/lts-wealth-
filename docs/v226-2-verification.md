@@ -10,4 +10,4 @@ Known owner-classification instructions were reapplied privately with an audit t
 
 The earlier V226.2 desktop/mobile fixture regression and deployed-screen inspection remain applicable. The follow-up gate additionally checks bounded multi-year source reads without gaps or overlaps. Emulation is not physical-device acceptance. Existing legacy literal-contract failures were not deleted or weakened.
 
-Remaining evidence gaps are recorded in the private delivery report: ambiguous purchase purpose, historical property/family context, missing older invoice detail, documentary balance/settlement evidence and two visible source-total differences. No inferred adjustment hides those gaps. The continuity automation remains disabled.
+Remaining evidence gaps are recorded in the private delivery report: ambiguous purchase purpose, historical property/family context, missing older invoice detail, documentary balance/settlement evidence and visible source-total differences. No inferred adjustment hides those gaps. The continuity automation remains disabled.
