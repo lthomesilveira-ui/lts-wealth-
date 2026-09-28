@@ -1,0 +1,20 @@
+'use strict';
+const vm=require('node:vm'),fs=require('node:fs'),assert=require('node:assert/strict');
+(async()=>{
+ let calls=0,mode='ok',diagnostic='';
+ const native=async(_input,init)=>{calls++;if(mode==='hang')return new Promise((_,reject)=>init.signal.addEventListener('abort',()=>reject(new DOMException('Aborted','AbortError'))));await new Promise(r=>setTimeout(r,5));return new Response('{"ok":true}',{status:200});};
+ const doc={head:{appendChild(s){vm.runInContext(s.textContent,context)}},createElement:()=>({}),documentElement:{setAttribute(_key,value){diagnostic=value}}};
+ const win={fetch:native,location:{pathname:'/releases/v227/index.html'}};
+ const context=vm.createContext({window:win,document:doc,Headers,Response,AbortController,performance,setTimeout:(fn,ms)=>setTimeout(fn,ms===25000?25:ms),clearTimeout,Map});
+ const shell={contentWindow:win,contentDocument:doc,addEventListener(){}};
+ const outer=vm.createContext({document:{getElementById:()=>shell},setTimeout,clearTimeout});
+ vm.runInContext(fs.readFileSync('releases/v227/lts-v227-read-transport.js','utf8'),outer);
+ const url='https://example.invalid/rest/v1/rpc/lts_browser_flow_v13';
+ const req=token=>({method:'POST',headers:{Authorization:'Bearer '+token},body:'{"p_from":"2026-01-01"}'});
+ const [a,b]=await Promise.all([win.fetch(url,req('a')),win.fetch(url,req('a'))]);assert.equal(calls,1);assert.deepEqual(await a.json(),await b.json());
+ await Promise.all([win.fetch(url,req('a')),win.fetch(url,req('b'))]);assert.equal(calls,3,'different sessions do not share reads');
+ const write='https://example.invalid/rest/v1/rpc/lts_browser_save_award_assumption_v1';await Promise.all([win.fetch(write,req('a')),win.fetch(write,req('a'))]);assert.equal(calls,5,'writes are not deduplicated');
+ mode='hang';await assert.rejects(win.fetch(url,req('a')),{name:'AbortError'});assert.match(diagnostic,/timeout/);assert(!diagnostic.includes('Bearer'));
+ mode='ok';assert.equal((await win.fetch(url,req('a'))).status,200,'timeout releases in-flight key for retry');
+ console.log(JSON.stringify({pass:true,authenticated_dedup:true,session_isolation:true,write_passthrough:true,bounded_read:true,retry_after_timeout:true}));
+})().catch(e=>{console.error(e);process.exitCode=1;});

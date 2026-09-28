@@ -1,0 +1,39 @@
+name: V227 loading and approved layout regression
+on:
+  push:
+    branches: ['work/v227-loading-layout']
+  pull_request:
+    paths: ['releases/v227/**', '.github/scripts/lts_v227*', '.github/workflows/v227.yml']
+permissions:
+  contents: read
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      LTS_RELEASE: v227
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Bounded reads and session isolation
+        run: node .github/scripts/lts_v227_transport_gate.js
+      - name: Open Finance authentication and bank-specific failure handling
+        run: node .github/scripts/lts_v226_open_finance_gate.mjs
+      - run: npm install --no-save --package-lock=false playwright@1.58.2
+      - run: npx playwright install --with-deps chromium
+      - name: Immutable resources and historical preservation
+        run: node .github/scripts/lts_v225_static_gate.js
+      - name: Start isolated test server
+        run: python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/lts-v226-http.log 2>&1 &
+      - name: Current cash and confirmed bank refresh
+        run: mkdir -p qa && node .github/scripts/lts_v226_startup_gate.js
+      - name: Desktop and mobile card details, classification, totals and preserved workflows
+        if: success() || failure()
+        run: node .github/scripts/lts_v227_cards_gate.js
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v227-controlled-regression
+          path: qa/
