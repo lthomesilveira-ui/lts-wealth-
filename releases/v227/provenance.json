@@ -1,5 +1,5 @@
 {
-  "version": "v226-2",
+  "version": "v227",
   "source_commit": "1d3f29524630d753fe158646d5e7b7be91135c81",
   "historical_dashboard_commit": "3489b090580635390a7ad1d328bb9b92a96d089e",
   "files": {
@@ -200,8 +200,8 @@
       "source_sha256": "e9e1de863f4a0887336cad7142489505d51efe98cd3835573be6c08e8935724d"
     }
   },
-  "parent_release": "v226-1",
-  "parent_commit": "d4eb5b35a0ed5aff566361e1cbdece5d51eb5f59",
-  "release": "v226-2",
-  "correction": "Sequential Dashboard reports after current cash; bank source reconciliation waits for initial report reads. Original facts and earlier release folders preserved."
+  "parent_release": "v226-2",
+  "parent_commit": "a98886c14b778d968b4e39291f15e7612f0fb28e",
+  "release": "v227",
+  "correction": "Bound read waits, retain valid screen data after bank ingestion, restore wealth tabs, and group Dashboard expenses below liquidity and own resources. No financial writer or source changes."
 }

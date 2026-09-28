@@ -219,7 +219,7 @@ async function run(browser,viewport,label){
   assert.match(await frame.locator('#v226-detail .v226-alternative').innerText(),/não somar novamente/);
   assert.match(await frame.locator('#v226-detail .v226-totals').innerText(),/30,00/,'alternative source is not added to the invoice total');
   await frame.locator('#v226-detail [data-v226-close]').click();
-  await nav('Patrimônio').click();assert.equal(await frame.locator('.v226-upcoming').count(),0,'overview is not displaced by cards');await frame.getByRole('tab',{name:'RSUs e awards',exact:true}).click();assert.equal(await frame.locator('.v226-upcoming').count(),0,'RSUs are not displaced by cards');await frame.getByRole('tab',{name:'Bens e dívidas',exact:true}).click();await frame.waitForSelector('.v226-upcoming');
+  await nav('Patrimônio').click();await frame.getByRole('tab',{name:'Visão geral',exact:true}).click();assert.equal(await frame.locator('.v226-upcoming').count(),0,'overview is not displaced by cards');await frame.getByRole('tab',{name:'RSUs e awards',exact:true}).click();assert.equal(await frame.locator('.v226-upcoming').count(),0,'RSUs are not displaced by cards');await frame.getByRole('tab',{name:'Bens e dívidas',exact:true}).click();await frame.waitForSelector('.v226-upcoming');
   assert.match(await frame.locator('.v226-totals').innerText(),/2\.100,00/,'same totals in Wealth');
   await nav('Dashboard').click();
   flags.cyclesFail=true;await frame.locator('[data-v226-retry]').click();

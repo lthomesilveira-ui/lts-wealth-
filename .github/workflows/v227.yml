@@ -17,6 +17,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      - name: Bounded reads and session isolation
+        run: node .github/scripts/lts_v227_transport_gate.js
       - name: Open Finance authentication and bank-specific failure handling
         run: node .github/scripts/lts_v226_open_finance_gate.mjs
       - run: npm install --no-save --package-lock=false playwright@1.58.2
