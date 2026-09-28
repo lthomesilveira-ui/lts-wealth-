@@ -174,6 +174,10 @@ async function run(browser,viewport,label){
   assert.equal(await frame.locator('.v226-banks section').count(),3,'bank grouping');
   assert.equal(await frame.locator('.v226-card-line').count(),5,'five billing accounts, not additional-card duplicates');
   assert.match(await frame.locator('.v226-totals').first().innerText(),/2\.100,00/,'next invoice sum');
+  await frame.locator('[data-v226-overview="next"]').click();
+  assert.equal(await frame.locator('#v226-detail [data-v226-overview-row]').count(),3,'summary total opens every component');
+  assert.match(await frame.locator('#v226-detail tfoot').innerText(),/2\.100,00/);
+  await frame.locator('#v226-detail [data-v226-close]').click();
   assert.match(await frame.locator('.v226-card-line').filter({hasText:'Visa Infinite Prime'}).innerText(),/Sem fatura aberta informada/,'unreported is not zero debt');
   await frame.locator('[data-v226-family="aeternum"][data-v226-month="2026-10-01"]').first().click();
   await frame.waitForSelector('#v226-detail [data-v226-item]');

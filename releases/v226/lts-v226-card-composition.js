@@ -51,7 +51,7 @@
       const next=cards.flatMap(c=>c.cycles?.length?[{card:c,cycle:c.cycles[0]}]:[]),nextTotal=sum(next.map(x=>x.cycle.amount));
       const future=cards.flatMap(c=>(c.cycles||[]).slice(1)),futureTotal=sum(future.map(c=>c.amount));
       const bankNames=[...new Set(cards.map(c=>c.bank))];
-      return head+'<div class="v226-totals"><div><span>Próximas faturas conhecidas</span><strong>'+money(nextTotal)+'</strong></div><div><span>Ciclos seguintes conhecidos</span><strong>'+money(futureTotal)+'</strong><small>Valores documentados e parcelas; sem novas compras estimadas</small></div></div>'+
+      return head+'<div class="v226-totals"><div><span>Próximas faturas conhecidas</span><strong><button class="v226-link" data-v226-overview="next">'+money(nextTotal)+'</button></strong></div><div><span>Ciclos seguintes conhecidos</span><strong><button class="v226-link" data-v226-overview="future">'+money(futureTotal)+'</button></strong><small>Valores documentados e parcelas; sem novas compras estimadas</small></div></div>'+
         '<div class="v226-banks">'+bankNames.map(bank=>'<section><h3>'+esc(bank)+'</h3>'+cards.filter(c=>c.bank===bank).map(c=>{
           const cycle=c.cycles?.[0],label=esc(names[c.family]||c.name);
           return '<div class="v226-card-line"><div>'+(cycle?openButton(c,cycle,label):'<b>'+label+'</b>')+'<small>Conta final '+esc(c.last4)+(c.family==='c6'?' · inclui 8304':'')+'</small></div><div>'+(cycle?openButton(c,cycle,money(cycle.amount),'v226-amount'):'<span>Sem fatura aberta informada</span>')+(cycle?'<small>'+esc(month(cycle.month))+' · '+esc(date(cycle.due_date))+'</small><small>'+esc(source(cycle.basis))+'</small>':'')+'</div></div>';
@@ -68,6 +68,7 @@
     function grouped(items,key){const map=new Map();for(const r of items){const k=(key==='category'?category(r[key]):r[key])||'Não informado',v=map.get(k)||{name:k,amount:0,n:0};v.amount+=Number(r.amount);v.n++;map.set(k,v);}return [...map.values()].sort((a,b)=>b.amount-a.amount);}
     function categoryCell(r){
       if(r.category_basis!=='unresolved'||!r.source_id)return esc(category(r.category));
+      if(!st.options?.length)return 'A classificar · categorias indisponíveis agora. Atualize as faturas para tentar novamente.';
       return '<details class="v226-classify"><summary>Identificar despesa</summary><form data-v226-classify="'+esc(r.source_id)+'"><label>Categoria<select name="category" required><option value="">Selecione…</option>'+(st.options||[]).map(x=>'<option value="'+esc(x)+'">'+esc(category(x))+'</option>').join('')+'</select></label><label>Para quem?<select name="beneficiary"><option value="">Sem identificação adicional</option>'+['Lucas','Larissa','Benjamin','Rafiki'].map(x=>'<option>'+x+'</option>').join('')+'</select></label><button type="submit" class="v168-btn">Salvar categoria</button><span role="status"></span></form></details>';
     }
     function detailBody(data,cycle){
@@ -104,6 +105,8 @@
               if(epoch!==st.epoch||!dialog.isConnected)return;
               for(const row of d.items||[])if(row.source_id===form.dataset.v226Classify){row.category=person&&person!=='Lucas'?person+' — '+cat:cat;row.category_basis='user_decision';}
               st.cycles=null;st.history={key:'',loading:false,data:null,error:''};
+              const reports=window.__LTS_V175_STATE;
+              for(const key of ['expense','monthly','cards']){const s=reports?.[key];if(s){s.token=(s.token||0)+1;s.key='';s.data=null;s.loading=false;s.error=null;}}
               if(window.__LTS_V225?.pending){window.__LTS_V225.pending.key='';window.__LTS_V225.pending.data=null;}
               draw();loadCycles(true);window.__LTS_V178_REVIEW?.refresh?.();
             }catch{if(dialog.isConnected){button.disabled=false;status.textContent='Não foi possível salvar. Tente novamente.';}}
@@ -111,6 +114,13 @@
         };draw();
       }
       catch{if(dialog.isConnected)dialog.querySelector('[data-v226-body]').innerHTML='<p role="alert">Não foi possível abrir a composição. Feche e tente novamente.</p>';}
+    }
+    function openOverview(kind){
+      document.getElementById('v226-detail')?.close();
+      const rows=(st.cycles?.cards||[]).flatMap(c=>(kind==='next'?(c.cycles||[]).slice(0,1):(c.cycles||[]).slice(1)).map(cycle=>({card:c,cycle})));
+      const dialog=document.createElement('dialog');dialog.id='v226-detail';dialog.className='v226-dialog';
+      dialog.innerHTML='<header><h2>'+ (kind==='next'?'Próximas faturas conhecidas':'Ciclos seguintes conhecidos')+'</h2><button class="v168-btn" data-v226-close>Fechar</button></header><div class="v226-scroll"><table><thead><tr><th>Banco / cartão</th><th>Ciclo</th><th>Vencimento</th><th>Valor</th></tr></thead><tbody>'+rows.map(({card:c,cycle:x})=>'<tr data-v226-overview-row><td>'+openButton(c,x,esc(c.bank+' · '+(names[c.family]||c.name)))+'</td><td>'+esc(month(x.month))+'</td><td>'+esc(date(x.due_date))+'</td><td>'+openButton(c,x,money(x.amount))+'</td></tr>').join('')+'</tbody><tfoot><tr><th colspan="3">Total</th><td>'+money(sum(rows.map(x=>x.cycle.amount)))+'</td></tr></tfoot></table></div><p class="v226-note">Clique no cartão ou no valor para ver as compras e parcelas. Inclui apenas valores recebidos ou documentados.</p>';
+      document.body.appendChild(dialog);dialog.querySelector('[data-v226-close]').onclick=()=>dialog.close();dialog.addEventListener('close',()=>dialog.remove());bind(dialog);dialog.showModal();
     }
     function paint(){
       if(!active())return;
@@ -125,7 +135,7 @@
       if(!st.cycles&&!st.loading&&!st.error)queueMicrotask(()=>loadCycles());
       if(full){let h=document.querySelector('.v226-history');if(!h){h=document.createElement('article');h.className='v168-card v226-history';host.after(h);}h.innerHTML=historyPanel();bind(h);queueMicrotask(loadHistory);}
     }
-    function bind(root){root.querySelectorAll('[data-v226-family]').forEach(b=>b.onclick=()=>openDetail(b.dataset.v226Family,b.dataset.v226Month));root.querySelector('[data-v226-retry]')?.addEventListener('click',()=>{clear();loadCycles(true);if(V==='Despesas')loadHistory();paint();});}
+    function bind(root){root.querySelectorAll('[data-v226-family]').forEach(b=>b.onclick=()=>openDetail(b.dataset.v226Family,b.dataset.v226Month));root.querySelectorAll('[data-v226-overview]').forEach(b=>b.onclick=()=>openOverview(b.dataset.v226Overview));root.querySelector('[data-v226-retry]')?.addEventListener('click',()=>{clear();loadCycles(true);if(V==='Despesas')loadHistory();paint();});}
     st.openDetail=openDetail;
     render=function(){const result=previousRender();paint();return result;};
     renderNav=function(){const result=previousNav();document.querySelectorAll('[data-mobile-route="Patrimônio"] span').forEach(e=>e.textContent='Patrimônio');return result;};
