@@ -2,6 +2,9 @@ name: Deploy LTS Wealth to GitHub Pages
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['releases/v225/**', 'wip35-v225-candidate.html', '.github/workflows/pages.yml']
 
 permissions:
   contents: read
@@ -21,6 +24,8 @@ jobs:
     steps:
       - name: Checkout validated main
         uses: actions/checkout@v4
+      - name: Verify release assets and protected history
+        run: node .github/scripts/lts_v225_static_gate.js
       - name: Configure Pages
         uses: actions/configure-pages@v5
         with:
