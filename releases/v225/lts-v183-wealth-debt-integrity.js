@@ -88,7 +88,21 @@
               vehicle.appendChild(note(balance===null?'O valor financiado na contratação não é o saldo devedor de hoje. Aguardando extrato para calcular a participação líquida no veículo.':'Participação líquida estimada pela posição de mercado e pelo saldo documental de quitação.'));
             }
             const rsu=[...root.querySelectorAll('.v168-asset')].find(x=>x.querySelector('h3')?.textContent==='RSUs e corretora');
-            if(rsu){const available=amount(j.current_liquidity?.brokerage_available??j.morgan_statement?.available_total_brl??j.rsu_summary?.available_total_brl);if(available!==null){rsu.querySelector('strong').textContent=money(available);rsu.appendChild(note('O valor em destaque é o disponível agora. Vestings futuros permanecem separados e não são patrimônio disponível hoje.'))}}
+            if(rsu){
+              const available=amount(j.current_liquidity?.brokerage_available??j.morgan_statement?.available_total_brl??j.rsu_summary?.available_total_brl);
+              if(available!==null){
+                rsu.querySelector('strong').textContent=money(available);
+                for(const fact of rsu.querySelectorAll('.v168-fact')){
+                  const label=fact.querySelector('span'),value=fact.querySelector('b');
+                  if(label?.textContent==='Disponível agora')value.textContent=money(available);
+                  if(label?.textContent==='Vestings futuros'){
+                    const future=amount(j.morgan_statement?.future_components?.future_after_reserve_brl??j.rsu_summary?.future_considered_total_brl);
+                    label.textContent='Futuro líquido projetado';value.textContent=future===null?'—':money(future);
+                  }
+                }
+                rsu.appendChild(note('O valor em destaque é o disponível agora. Vestings futuros permanecem separados e não são patrimônio disponível hoje.'));
+              }
+            }
           }
           audit.status=missing.length?'partial_debt_evidence':'documented_debts';audit.missing=missing.map(x=>x.id);audit.documented_count=known.length;
           return t.innerHTML;

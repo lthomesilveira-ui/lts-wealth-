@@ -124,6 +124,10 @@ async function run(browser,viewport,label){
   assert.equal(semantic(await kpi('Total líquido projetado').locator('strong').innerText()),money(48100),'current position plus future net');
   assert.equal(semantic(await frame.locator('.v172-morgan-components article').first().locator('dd').first().innerText()),money(1000),'vested shares use the validated component');
   await page.screenshot({path:'qa/v225-'+label+'-wealth.png'});
+  await frame.locator('[data-v168-wealth-tab="assets"]').click();const asset=frame.locator('.v168-asset').filter({has:frame.getByRole('heading',{name:'RSUs e corretora',exact:true})});
+  assert.equal(semantic(await asset.locator('strong').innerText()),money(1100));
+  assert.equal(semantic(await asset.locator('.v168-fact').filter({hasText:'Disponível agora'}).locator('b').innerText()),money(1100));
+  assert.equal(semantic(await asset.locator('.v168-fact').filter({hasText:'Futuro líquido projetado'}).locator('b').innerText()),money(47000));
   await nav('Dashboard').click();await frame.locator('.v178-open.amount[data-group="Larissa — despesas"]').first().click();await frame.waitForFunction(()=>window.__LTS_V178_STATE.detail&&!window.__LTS_V178_STATE.detail.loading);assert.equal(await frame.evaluate(()=>window.__LTS_V178_STATE.detail.range.from),'2026-01-01','Dashboard detail uses own YTD, not all-history expense filter');await frame.locator('.v178-close').click();
   await nav('Fluxo Diário').click();await frame.evaluate(()=>loadFlowRange('2026-11-04','2026-11-12'));await frame.waitForSelector('#d-2026-11-07');
   const val=async(date,index)=>semantic(await frame.locator('#d-'+date+' .fx87-cell').nth(index).innerText());
