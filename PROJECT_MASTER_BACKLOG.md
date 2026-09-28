@@ -1,3 +1,11 @@
+## V226.1 — recovered historical composition and runtime closure, 28/09/2026
+
+- [x] Recovered six previously unresolved historical invoice cycles from workbook rows, with exact reconciliation to independent recorded invoice/payment totals. The source supplies category, amount, card identification and reference month; merchant names, purchase days and exact due dates are explicitly unavailable.
+- [x] Kept historical expense totals, bank events and the existing release intact. The evidence is a separate owner-scoped read model and is not posted again as spending.
+- [x] Removed repeated per-purchase invoice-family evaluation; compared the full reader fingerprint before/after with no change. Finite RPC budgets now cover measured concurrent report workloads without changing global roles or ownership checks.
+- [x] All three bank refreshes completed together from the published application's refresh action; the authenticated Dashboard recovered its full expenses, cash, forecast and card sections.
+- [ ] Final V226.1 controlled/browser publication checks remain tracked until the delivery receipt. Other source gaps and historical identity decisions below are not cleared by this recovery.
+
 ## Active execution — V226, 28/09/2026
 
 - [x] Restore exact source invoice composition when it reconciles to the existing total; preserve historical annual amounts and the protected operational baseline.
