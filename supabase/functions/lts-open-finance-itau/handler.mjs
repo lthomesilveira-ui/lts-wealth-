@@ -91,12 +91,14 @@ export function makeHandler(env, fetcher = fetch) {
         run = bankCode==='341' ? await rpc('lts_open_finance_begin_itau_v1',{p_user_id:userId,p_item_id:item.id,p_item:{...itemSummary,institution_basis:institutionBasis},p_request_id:crypto.randomUUID()}) : await rpc('lts_open_finance_begin_bank_v1',{p_user_id:userId,p_item_id:item.id,p_item:{...itemSummary,institution_basis:institutionBasis},p_request_id:crypto.randomUUID(),p_institution_code:bankCode,p_institution_name:bankName});
       });
       const days = data.records.map(r => r.normalized_payload.date ?? dateOnly(r.normalized_payload.as_of)).filter(Boolean).sort();
-      // Fetch complete bounded source windows. No silent REST row cap, and no old-history rewrite.
+      // Fetch complete bounded source windows. A single year avoids rebuilding the
+      // same historical readers for every month; the RPC remains capped at 20s.
+      // There is no silent REST row cap or change to the source dates/contents.
       const from = days[0] ?? new Date().toISOString().slice(0,10), to = days.at(-1) ?? from;
       const sources = new Map(), windows = [];
       for (let start = from; start <= to;) {
         if (Date.now() - startedAt > 110000) throw new SafeError('SYNC_TIME_BUDGET');
-        const nextDate = new Date(start + 'T12:00:00Z'); nextDate.setUTCDate(nextDate.getUTCDate() + 31);
+        const nextDate = new Date(start + 'T12:00:00Z'); nextDate.setUTCDate(nextDate.getUTCDate() + 365);
         const end = nextDate.toISOString().slice(0,10) < to ? nextDate.toISOString().slice(0,10) : to;
         const snapshot = await rpc('lts_open_finance_sources_v226', { p_user_id: userId, p_from: start, p_to: end });
         if (!snapshot.complete_for_consulted_sources || !Array.isArray(snapshot.rows)) throw new SafeError('INCOMPLETE_LTS_SOURCE_READ');
