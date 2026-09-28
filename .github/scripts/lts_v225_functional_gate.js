@@ -63,7 +63,7 @@ async function run(browser,viewport,label){
  });
  let frame;
  try{
-  await page.goto(BASE+'/releases/v225/app.html',{waitUntil:'domcontentloaded'});
+  await page.goto(BASE+'/releases/'+(process.env.LTS_RELEASE||'v225')+'/app.html',{waitUntil:'domcontentloaded'});
   for(let i=0;i<180;i++){frame=page.frames().find(f=>f.url().includes('/index.html'));if(frame&&await frame.evaluate(()=>!!window.__LTS_V178_REVIEW?.installed).catch(()=>false))break;await page.waitForTimeout(100)}
   assert(await frame.evaluate(()=>!!window.__LTS_V178_REVIEW?.installed),'V178 installed');
   const nav=n=>viewport.width<=520?frame.locator('#dx1MobileNav [data-mobile-route="'+n+'"]'):frame.locator('.nav [data-v="'+n+'"]');

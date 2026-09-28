@@ -1,6 +1,6 @@
 'use strict';
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');
-const root='releases/v225',digest=f=>crypto.createHash('sha256').update(fs.readFileSync(f)).digest('hex');
+const root='releases/'+(process.env.LTS_RELEASE||'v225'),digest=f=>crypto.createHash('sha256').update(fs.readFileSync(f)).digest('hex');
 const manifest=JSON.parse(fs.readFileSync(root+'/manifest.json'));
 for(const [name,hash] of Object.entries(manifest.files)) {
   const file=path.join(root,name);assert.equal(digest(file),hash,'immutable asset '+name);
