@@ -1,5 +1,5 @@
 {
-  "version": "v226-1",
+  "version": "v226-2",
   "source_commit": "1d3f29524630d753fe158646d5e7b7be91135c81",
   "historical_dashboard_commit": "3489b090580635390a7ad1d328bb9b92a96d089e",
   "files": {
@@ -200,8 +200,8 @@
       "source_sha256": "e9e1de863f4a0887336cad7142489505d51efe98cd3835573be6c08e8935724d"
     }
   },
-  "parent_release": "v226",
-  "parent_commit": "52adb4a8bde4e3fdb6382b93ef0259852cbb1334",
-  "release": "v226-1",
-  "correction": "Reconciled workbook invoice history with truthful source-date and merchant coverage labels. Runtime query cost and finite RPC budgets corrected."
+  "parent_release": "v226-1",
+  "parent_commit": "d4eb5b35a0ed5aff566361e1cbdece5d51eb5f59",
+  "release": "v226-2",
+  "correction": "Sequential Dashboard reports after current cash; bank source reconciliation waits for initial report reads. Original facts and earlier release folders preserved."
 }
