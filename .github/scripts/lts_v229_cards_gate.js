@@ -155,7 +155,7 @@ async function run(browser,viewport,label){
   assert.equal(semantic(await asset.locator('.v168-fact').filter({hasText:'Disponível agora'}).locator('b').innerText()),money(1100));
   assert.equal(semantic(await asset.locator('.v168-fact').filter({hasText:'Futuro líquido projetado'}).locator('b').innerText()),money(47000));
   await nav('Dashboard').click();await frame.locator('.v178-open.amount[data-group="Larissa — despesas"]').first().click();await frame.waitForFunction(()=>window.__LTS_V178_STATE.detail&&!window.__LTS_V178_STATE.detail.loading);assert.equal(await frame.evaluate(()=>window.__LTS_V178_STATE.detail.range.from),'2026-01-01','Dashboard detail uses own YTD, not all-history expense filter');await frame.locator('.v178-close').click();
-  await nav('Fluxo Diário').click();await frame.evaluate(()=>loadFlowRange('2026-09-15','2027-12-31'));await frame.waitForSelector('#d-2026-11-07');
+  await nav('Fluxo Diário').click();await frame.waitForSelector('#flowFrom');await frame.locator('#flowFrom').fill('2026-09-14');await frame.locator('#flowTo').fill('2027-12-31');await frame.locator('#flowApply').click();await frame.waitForSelector('#d-2027-12-31');
   const val=async(date,index)=>semantic(await frame.locator('#d-'+date+' .fx87-cell').nth(index).innerText());
   assert.equal(await val('2026-11-05',2),money(0));assert.equal(await val('2026-11-05',7),money(1100));assert.equal(await val('2026-11-07',7),money(1100));assert.equal(await val('2026-11-08',7),money(1600),'first award enters on its availability date');assert.equal(await val('2026-11-10',2),money(0));
   assert.equal(await frame.locator('.v176-rsu-delta').count(),0,'no extra inline vesting row');

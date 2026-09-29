@@ -13,7 +13,8 @@
    if(!url.includes('/rest/v1/rpc/'))return native(input,init);
    if(!readName.test(name)){if(/_decision_|_update_|_save_|_apply_|_delete_|_refresh_|_confirm_|_upload_|_mutate_|_classify_|_create_/.test(name))invalidate();return native(input,init)}
    const headers=new Headers(init?.headers||input?.headers),key=name+'|'+headers.get('Authorization')+'|'+String(init?.body||'');
-   const saved=completed.get(key);if(saved&&performance.now()-saved.at<ttl)return saved.response.clone();
+   const cacheable=!/open_finance_status_/.test(name);
+   const saved=cacheable?completed.get(key):null;if(saved&&performance.now()-saved.at<ttl)return saved.response.clone();
    const generation=revision;
    if(pending.has(key))return (await pending.get(key)).clone();
    const controller=new AbortController(),signal=init?.signal||input?.signal;
@@ -26,7 +27,7 @@
      const body=await response.arrayBuffer();
      publish({name,status:response.status,duration_ms:Math.round(performance.now()-started)});
      const buffered=new Response(body,{status:response.status,statusText:response.statusText,headers:response.headers});
-     if(response.ok&&generation===revision){completed.set(key,{at:performance.now(),response:buffered.clone()});if(completed.size>24)completed.delete(completed.keys().next().value)}
+     if(cacheable&&response.ok&&generation===revision){completed.set(key,{at:performance.now(),response:buffered.clone()});if(completed.size>24)completed.delete(completed.keys().next().value)}
      return buffered;
     }catch(error){publish({name,status:controller.signal.aborted?'timeout':'network_error',duration_ms:Math.round(performance.now()-started)});throw error;}
     finally{clearTimeout(timer);signal?.removeEventListener('abort',cancel);}

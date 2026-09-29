@@ -1,5 +1,5 @@
 {
-  "version": "v228",
+  "version": "v229",
   "source_commit": "1d3f29524630d753fe158646d5e7b7be91135c81",
   "historical_dashboard_commit": "3489b090580635390a7ad1d328bb9b92a96d089e",
   "files": {
@@ -209,5 +209,7 @@
     "Morgan available shares and cash in unchanged RSU Vested column",
     "Dashboard card visual polish only",
     "Expense processing notice moved to Updates"
-  ]
+  ],
+  "candidate_base": "c65f65b57d35263ab2925e6b38c3ceceedba60f3",
+  "changes": "Availability-aligned RSU display, documentary bank identity, review propagation, period comparisons and bounded reads; approved layout preserved."
 }
