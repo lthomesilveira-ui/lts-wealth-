@@ -1,4 +1,4 @@
-## V229 reliability round — in progress, user acceptance pending
+## V229 reliability round — engineering checks recorded, user acceptance pending
 
 The V228 feedback batch is additive. Earlier open items remain below. No untested screen is considered approved.
 
@@ -10,7 +10,7 @@ The V228 feedback batch is additive. Earlier open items remain below. No unteste
 - Performance: one complete range request, authenticated response reuse with write invalidation, source-invalidated historical calculations, measured server and UI timings.
 - Earlier pending: source documents, remaining historical classifications, invoice composition gaps and precise award source audit remain open. Private evidence and the complete batch are maintained in the persistent project backlog.
 
-Engineering validation and publication evidence will be recorded before delivery. Protected V181 resources and previous release files remain unchanged.
+Validation at commit b6093b4: the V229 controlled desktop/mobile workflow passed (run 36511999881), as did release immutability and the protected V182 check. Authenticated private SQL verified every resource/total column across the selected forecast, bank-to-consolidated sums, current observed bank movements, monthly-to-detail expense totals and rolled-back classification propagation. One historical bank position change still lacks an explanatory source movement; it is explicitly incomplete, never balanced with a fabricated transaction. Cold calculation rebuild latency remains above the target even though normal cached reads are substantially faster. Old documentary and classification dependencies stay open. Earlier legacy workflow failures remain recorded and are not hidden or waived. Protected V181 resources and previous release files remain unchanged; publication is tracked in the private delivery receipt.
 
 ## V226.2 — cold startup follow-up, 28/09/2026
 

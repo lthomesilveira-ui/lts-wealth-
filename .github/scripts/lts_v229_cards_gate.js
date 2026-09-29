@@ -155,7 +155,14 @@ async function run(browser,viewport,label){
   assert.equal(semantic(await asset.locator('.v168-fact').filter({hasText:'Disponível agora'}).locator('b').innerText()),money(1100));
   assert.equal(semantic(await asset.locator('.v168-fact').filter({hasText:'Futuro líquido projetado'}).locator('b').innerText()),money(47000));
   await nav('Dashboard').click();await frame.locator('.v178-open.amount[data-group="Larissa — despesas"]').first().click();await frame.waitForFunction(()=>window.__LTS_V178_STATE.detail&&!window.__LTS_V178_STATE.detail.loading);assert.equal(await frame.evaluate(()=>window.__LTS_V178_STATE.detail.range.from),'2026-01-01','Dashboard detail uses own YTD, not all-history expense filter');await frame.locator('.v178-close').click();
-  await nav('Fluxo Diário').click();await frame.waitForSelector('#flowFrom');await frame.locator('#flowFrom').fill('2026-09-14');await frame.locator('#flowTo').fill('2027-12-31');await frame.locator('#flowApply').click();await frame.waitForSelector('#d-2027-12-31');
+  const flowTimings={};let started=Date.now();
+  await nav('Fluxo Diário').click();await frame.waitForFunction(()=>!FLOWLOADING&&document.querySelector('.fx87-row[id^="d-"]'));
+  flowTimings.initial_ms=Date.now()-started;
+  started=Date.now();await frame.locator('#flowFrom').fill('2026-09-14');await frame.locator('#flowTo').fill('2027-12-31');await frame.locator('#flowApply').click();await frame.waitForSelector('#d-2027-12-31');
+  flowTimings.period_change_ms=Date.now()-started;
+  started=Date.now();await frame.locator('[data-a="Itaú"]').click();await frame.waitForSelector('.fx87-row.fx87-bank[id^="d-"]');
+  flowTimings.bank_change_ms=Date.now()-started;
+  await frame.locator('[data-a="Consolidado"]').click();
   const val=async(date,index)=>semantic(await frame.locator('#d-'+date+' .fx87-cell').nth(index).innerText());
   assert.equal(await val('2026-11-05',2),money(0));assert.equal(await val('2026-11-05',7),money(1100));assert.equal(await val('2026-11-07',7),money(1100));assert.equal(await val('2026-11-08',7),money(1600),'first award enters on its availability date');assert.equal(await val('2026-11-10',2),money(0));
   assert.equal(await frame.locator('.v176-rsu-delta').count(),0,'no extra inline vesting row');
@@ -186,6 +193,8 @@ async function run(browser,viewport,label){
   await frame.waitForFunction(()=>!FLOWQ.current_future.events.some(e=>e.source_ref==='cash-1'));
   assert.equal(await frame.locator('.flowdeletebtn').count(),0,'deleted entry disappears from visible day details');
   assert(calls.some(x=>/^lts_browser_flow_mutate_v/.test(x.name)&&x.args.p_action==='cancel'),'manual deletion reaches existing audited writer');
+  await nav('Dashboard').click();started=Date.now();await nav('Fluxo Diário').click();await frame.waitForFunction(()=>!FLOWLOADING&&document.querySelector('.fx87-row[id^="d-"]'));flowTimings.return_ms=Date.now()-started;
+  assert(Object.values(flowTimings).every(ms=>ms<4000),'controlled browser rendering must complete promptly '+JSON.stringify(flowTimings));
   await nav('Dashboard').click();flags.date='2026-09-21';await frame.evaluate(()=>{window.__TEST_NOW__='2026-09-21T13:00:00Z';render()});assert.equal(semantic(await kpi('Total disponível hoje').locator('strong').innerText()),'—','day rollover does not present stale complete total');await frame.waitForFunction(()=>window.__LTS_V178_STATE.cash.data?.as_of==='2026-09-21'&&window.__LTS_V178_STATE.cash.status==='ready');
   await frame.waitForFunction(()=>window.__LTS_V226?.cycles?.cards.length===5);
   assert.equal(await frame.locator('.v182-expand-mark').count(),0,'redundant plus removed');
@@ -248,7 +257,7 @@ async function run(browser,viewport,label){
   const dims=await frame.locator('html').evaluate(e=>({width:e.clientWidth,scroll:e.scrollWidth}));assert(dims.scroll<=dims.width+3,'no horizontal page overflow');
   const order=await frame.locator('.v168-dashboard').evaluate(root=>{const rect=s=>root.querySelector(s).getBoundingClientRect().top;return [rect('.current'),rect('.v227-liquidity'),rect('.v227-expenses')]});assert(order[0]<order[1]&&order[1]<order[2],'balances, liquidity, expenses order');assert.equal(await frame.locator('.v227-expenses .v226-upcoming').count(),1);assert.equal(await frame.locator('.v227-expenses .v171-expense-total').count(),1);
   assert.deepEqual(errors,[],'no uncaught errors');await page.screenshot({path:'qa/v229-'+label+'-dashboard.png'});
-  return{label,pass:true,expense_last_month:true,card_inventory:true,payment_status:true,manual_edit_delete:true,scroll:geometry,calls:calls.length,financial_data:'synthetic fixtures; live SQL checks separate'};
+  return{label,pass:true,expense_last_month:true,card_inventory:true,payment_status:true,manual_edit_delete:true,scroll:geometry,flow_render_timings:flowTimings,calls:calls.length,financial_data:'synthetic fixtures; live SQL checks separate'};
  }catch(error){console.error('ORIGINAL FAILURE',String(error.stack||error));await page.screenshot({path:'qa/v229-'+label+'-failure.png'}).catch(e=>console.error('SCREENSHOT FAILED',e.message));console.error(JSON.stringify({label,error:String(error.stack||error),errors,calls:calls.slice(-15),state:await frame?.evaluate(()=>({cash:window.__LTS_V178_STATE?.cash,monthly:{error:window.__LTS_V175_STATE?.monthly?.error,count:window.__LTS_V175_STATE?.monthly?.data?.months?.length},detail:window.__LTS_V178_STATE?.detail?{group:window.__LTS_V178_STATE.detail.group,error:window.__LTS_V178_STATE.detail.error,rows:window.__LTS_V178_STATE.detail.rows.length}:null})).catch(()=>null)}));throw error}
  finally{await context.close()}
 }
