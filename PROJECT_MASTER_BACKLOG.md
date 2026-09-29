@@ -1,3 +1,17 @@
+## V229 reliability round — engineering checks recorded, user acceptance pending
+
+The V228 feedback batch is additive. Earlier open items remain below. No untested screen is considered approved.
+
+- New: daily Flow arithmetic must use one RSU availability position in every column and Dashboard alert.
+- Regression: preserve approved bank/card layout, transaction descriptions and expanded daily details.
+- Regression: include actual pending bank transactions and purchases in Updates; confirmations must reach Expenses and Flow.
+- Longstanding: restore period comparisons, last twelve months and selected period labels; reconcile totals with details.
+- Critical: source-identity duplicate matching and explicit treatment of unexplained bank position changes. Never manufacture transactions.
+- Performance: one complete range request, authenticated response reuse with write invalidation, source-invalidated historical calculations, measured server and UI timings.
+- Earlier pending: source documents, remaining historical classifications, invoice composition gaps and precise award source audit remain open. Private evidence and the complete batch are maintained in the persistent project backlog.
+
+Validation at commit b6093b4: the V229 controlled desktop/mobile workflow passed (run 36511999881), as did release immutability and the protected V182 check. Authenticated private SQL verified every resource/total column across the selected forecast, bank-to-consolidated sums, current observed bank movements, monthly-to-detail expense totals and rolled-back classification propagation. One historical bank position change still lacks an explanatory source movement; it is explicitly incomplete, never balanced with a fabricated transaction. Cold calculation rebuild latency remains above the target even though normal cached reads are substantially faster. Old documentary and classification dependencies stay open. Earlier legacy workflow failures remain recorded and are not hidden or waived. Protected V181 resources and previous release files remain unchanged; publication is tracked in the private delivery receipt.
+
 ## V226.2 — cold startup follow-up, 28/09/2026
 
 A fresh authenticated opening reproduced shared database contention between the initial Dashboard reports and three-bank reconciliation. Heavy Dashboard readers now load sequentially after current cash; bank reconciliation waits for those initial reads. Section-level error handling and explicit retries remain intact. Controlled concurrency checks and a fresh authenticated opening are required before final delivery. V226 and V226.1 stay immutable.

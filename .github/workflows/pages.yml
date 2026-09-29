@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: ['releases/v225/**', 'releases/v225-1/**', 'releases/v226/**', 'releases/v226-1/**', 'releases/v226-2/**', 'releases/v227/**', 'releases/v227-1/**', 'releases/v227-2/**', 'releases/v228/**', 'wip35-v225-candidate.html', '.github/workflows/pages.yml']
+    paths: ['releases/v225/**', 'releases/v225-1/**', 'releases/v226/**', 'releases/v226-1/**', 'releases/v226-2/**', 'releases/v227/**', 'releases/v227-1/**', 'releases/v227-2/**', 'releases/v228/**', 'releases/v229/**', 'wip35-v225-candidate.html', '.github/workflows/pages.yml']
 
 permissions:
   contents: read
@@ -35,6 +35,7 @@ jobs:
           LTS_RELEASE=v227-1 node .github/scripts/lts_v225_static_gate.js
           LTS_RELEASE=v227-2 node .github/scripts/lts_v225_static_gate.js
           LTS_RELEASE=v228 node .github/scripts/lts_v225_static_gate.js
+          LTS_RELEASE=v229 node .github/scripts/lts_v225_static_gate.js
       - name: Configure Pages
         uses: actions/configure-pages@v5
         with:
