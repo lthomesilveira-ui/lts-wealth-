@@ -1,0 +1,4 @@
+/* V173 — V172 feedback: canonical entry categories and useful-only composition. */
+.brand small::before,.v168-release::before{content:'V173 · Homologação'!important}
+.v173-category-select{width:100%;min-height:38px}
+.v173-category-hint{display:block;margin-top:4px;color:#72859a;font-size:9px;font-weight:600;line-height:1.3}
