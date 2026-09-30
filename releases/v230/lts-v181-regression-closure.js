@@ -38,6 +38,7 @@
   function optionRows(values,empty,selected){
    const seen=new Set(),items=[];
    for(const raw of arr(values)){const value=String(typeof raw==='string'?raw:(raw?.value??raw?.label??'')).trim(),label=String(typeof raw==='string'?raw:(raw?.label??raw?.value??'')).trim();if(!value||seen.has(value)||/^(a classificar|identifica[cç][oõ]es pendentes)$/i.test(value))continue;seen.add(value);items.push({value,label:label||value})}
+   selected=items.find(x=>normalize(x.value)===normalize(selected))?.value||items.find(x=>normalize(x.value)===normalize(String(selected||'').replace(/^(Lucas|Larissa|Benjamin)\s*[-—]\s*/i,'')))?.value;
    return '<option value="">'+escape(empty)+'</option>'+items.map(item=>'<option value="'+escape(item.value)+'"'+(item.value===selected?' selected':'')+'>'+escape(item.label)+'</option>').join('');
   }
   async function ensureReview(force=false){
@@ -171,7 +172,8 @@
    const model=arr(state.review.data?.rows).find(x=>String(x.key)===row.dataset.v181ReviewKey)||{};
    const person=row.querySelector('[data-v181-beneficiary]')?.value,property=row.querySelector('[data-v181-property]')?.value,category=row.querySelector('[data-v181-category]')?.value;
    const needsPerson=/^(saúde|saude|educação|educacao|vestuário|vestuario)$/i.test(category||'');
-   const ready=model.question_kind==='person'?!!person:model.question_kind==='property'?!!property:model.question_kind==='property_purpose'?!!category:!!category&&(!needsPerson||!!person||!!model.beneficiary);
+   const knownCategory=!!model.category&&!/^(a classificar|sem categoria|nao identificado|não identificado)$/i.test(model.category);
+   const ready=model.question_kind==='person'?!!person:model.question_kind==='property'?!!property:model.question_kind==='property_purpose'?!!category:(!!category&&(!needsPerson||!!person||!!model.beneficiary))||(knownCategory&&!!person);
    const button=row.querySelector('[data-v181-review-save]');if(button)button.disabled=!ready||Boolean(state.review.saving);
    const note=row.querySelector('[data-v181-choice-note]');if(note&&needsPerson&&!person&&!model.beneficiary)note.textContent=(model.suggestion?.note||'')+' Confirme também de quem é a despesa.';
 
