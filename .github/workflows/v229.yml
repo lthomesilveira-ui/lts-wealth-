@@ -3,7 +3,7 @@ on:
   push:
     branches: ['work/v229-reliability']
   pull_request:
-    paths: ['releases/v229/**', '.github/scripts/lts_v229*', '.github/workflows/v229.yml']
+    paths: ['releases/v229-1/**', 'releases/v229/**', '.github/scripts/lts_v229*', '.github/workflows/v229.yml', 'supabase/migrations/*_v230_*.sql', 'supabase/tests/v230*']
 permissions:
   contents: read
 jobs:
@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
-      LTS_RELEASE: v229
+      LTS_RELEASE: v229-1
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
