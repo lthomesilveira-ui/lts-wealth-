@@ -160,8 +160,21 @@ async function run(browser,viewport,label){
   flowTimings.initial_ms=Date.now()-started;
   started=Date.now();await frame.locator('#flowFrom').fill('2026-09-14');await frame.locator('#flowTo').fill('2027-12-31');await frame.locator('#flowApply').click();await frame.waitForSelector('#d-2027-12-31');
   flowTimings.period_change_ms=Date.now()-started;
+  const profiler=await context.newCDPSession(page);
+  await profiler.send('Profiler.enable');await profiler.send('Profiler.start');
   started=Date.now();await frame.locator('[data-a="Itaú"]').click();await frame.waitForSelector('.fx87-row.fx87-bank[id^="d-"]');
   flowTimings.bank_change_ms=Date.now()-started;
+  const {profile}=await profiler.send('Profiler.stop');await profiler.detach();
+  const parents=new Map(),nodes=new Map(profile.nodes.map(n=>[n.id,n]));
+  for(const n of profile.nodes)for(const child of n.children||[])parents.set(child,n.id);
+  const totals=new Map();
+  for(let i=0;i<(profile.samples||[]).length;i++){
+   let id=profile.samples[i];const us=profile.timeDeltas?.[i]||0;
+   while(id!=null){const n=nodes.get(id),key=n?.callFrame?.functionName||'(anonymous)';
+    totals.set(key,(totals.get(key)||0)+us);id=parents.get(id);}
+  }
+  console.log('FLOW_BANK_PROFILE '+JSON.stringify({label,elapsed_ms:flowTimings.bank_change_ms,
+   top:[...totals].sort((a,b)=>b[1]-a[1]).slice(0,24).map(([name,us])=>({name,ms:Math.round(us/1000)}))}));
   await frame.locator('[data-a="Consolidado"]').click();
   const val=async(date,index)=>semantic(await frame.locator('#d-'+date+' .fx87-cell').nth(index).innerText());
   assert.equal(await val('2026-11-05',2),money(0));assert.equal(await val('2026-11-05',7),money(1100));assert.equal(await val('2026-11-07',7),money(1100));assert.equal(await val('2026-11-08',7),money(1600),'first award enters on its availability date');assert.equal(await val('2026-11-10',2),money(0));
