@@ -133,7 +133,8 @@ async function run(browser,viewport,label){
   await frame.evaluate(()=>render());await page.waitForTimeout(250);assert.equal(calls.filter(x=>x.name==='lts_browser_card_flow_schedule_v2').length,failedCardCalls,'card failure remains visible without an automatic retry loop');
   flags.cardFail=false;await frame.locator('[data-v175-card-retry]').click();
   await frame.waitForFunction(()=>window.__LTS_V183_CARD_PERIOD.status==='ready'&&window.__LTS_V175_STATE.cards.data?.inventory?.cards?.length===5);
-  const cardStyle=await frame.locator('.v168-expenses .v226-banks>section').first().evaluate(el=>{const s=getComputedStyle(el);return{radius:s.borderRadius,border:s.borderTopWidth,padding:s.paddingTop}});
+  await frame.waitForFunction(()=>{const el=document.querySelector('.v168-expenses .v226-banks>section');return el?.isConnected&&getComputedStyle(el).borderRadius==='14px'});
+  const cardStyle=await frame.evaluate(()=>{const s=getComputedStyle(document.querySelector('.v168-expenses .v226-banks>section'));return{radius:s.borderRadius,border:s.borderTopWidth,padding:s.paddingTop}});
   assert.equal(cardStyle.radius,'14px','Expenses preserves the approved bank card presentation');assert.equal(cardStyle.border,'1px');assert(Number.parseFloat(cardStyle.padding)>=14);
   const inventory=await frame.locator('.v183-card-families').innerText();for(const name of cardNames)assert(inventory.includes(name),'historical card retained: '+name);
   assert(!inventory.includes('Visa Eternum'),'AETERNUM spelling preserved');
