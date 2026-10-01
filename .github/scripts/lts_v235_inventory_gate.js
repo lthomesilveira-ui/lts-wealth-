@@ -1,0 +1,57 @@
+'use strict';
+const {chromium}=require('playwright'),fs=require('node:fs'),assert=require('node:assert/strict');
+const {product,cockpit,wealth}=require('./lts_v165_executive_ux_gate.js');
+const session={access_token:'inventory-fixture',refresh_token:'fixture-refresh',expires_at:4102444800,user:{id:'fixture-user'}};
+const day=date=>({date,summary:{events:0,Consolidado:{entries:0,exits:0}},Consolidado:{bank_balance:600,economic_net:0},Itaú:{balance:600,net:0},Bradesco:{balance:0,net:0},C6:{balance:0,net:0},fix86_columns:{saldo_anterior:600,entradas:0,saidas:0,saldo_final:600,liq_d0_1_recurso:400,rsus_vested:200,fgts:50,saldo_apos_d0_1:1000,saldo_apos_rsu:1200,saldo_apos_fgts:1250}});
+const ev=amount=>[{file:'Fonte_A_teste.xlsx',sheet:'Pagamentos e Recebimentos',row:12,date:'2025-09-05',source_amount:amount},{file:'Fonte_B_teste.xlsx',sheet:'Pagamentos e Recebimentos',row:12,date:'2025-09-05',source_amount:amount}];
+const cycles=Array.from({length:51},(_,i)=>{const d=new Date('2025-09-01T12:00:00Z');d.setUTCMonth(d.getUTCMonth()-i);const month=d.toISOString().slice(0,10);return{bank:'Itaú',card_name:'Cartão de teste',family:'itau_mastercard',reference_month:month,event_date:month.slice(0,8)+'05',source_table:'evento_base',source_ref:'test-'+i,amount:i?100:85,record_count:i?1:2,composition_status:i?'aggregate_only':'partial_source'};});
+async function run(browser,width){
+ const ctx=await browser.newContext({viewport:{width,height:1000}});
+ await ctx.addInitScript(s=>{localStorage.setItem('lts_supabase_session_v1',JSON.stringify(s));const Native=Date;class Fixed extends Native{constructor(...a){super(...(a.length?a:['2026-10-01T13:00:00Z']))}static now(){return Native.parse('2026-10-01T13:00:00Z')}}window.Date=Fixed;},session);
+ const page=await ctx.newPage(),errors=[],calls=[];let failRecord=true;
+ page.setDefaultTimeout(25000);page.on('pageerror',e=>errors.push(String(e)));
+ await page.route('https://tadhkamnwtsbdozwkyut.supabase.co/**',async route=>{
+  const req=route.request(),name=new URL(req.url()).pathname.split('/').pop();let a={};try{a=JSON.parse(req.postData()||'{}')}catch{}calls.push({name,args:a});let status=200,data={ok:true,rows:[],items:[]};
+  if(name==='token')data=session;
+  else if(name==='lts_browser_product_v1')data={ok:true,mvp:product()};
+  else if(name==='lts_browser_dashboard_cockpit_v1')data=cockpit;
+  else if(name==='lts_browser_cash_today_v178')data={version:'cash-today-v179-current-canonical',status:'complete',as_of:'2026-10-01',cash:600,d0:400,brokerage_available:200,available_total:1200,fgts:50,day:day('2026-10-01')};
+  else if(name.startsWith('lts_browser_wealth_detail'))data=wealth;
+  else if(/^lts_browser_flow_v/.test(name))data={ok:true,flow:{historical:{days:[],events:[]},current_future:{days:[day(a.p_from),day(a.p_to)],events:[]}}};
+  else if(/^lts_browser_expenses_|^lts_browser_expense_executive_/.test(name))data={period:{from:a.p_from,to:a.p_to},summary:{selected_total:100,card_total:100,account_total:0,monthly_average:100,rows:1,pending_identification:0},management_groups:[],monthly_detail:[],coverage_disclosure:{total:100,rows:1}};
+  else if(name==='lts_browser_card_cycles_v229')data={version:'card-cycles-v226',as_of:'2026-10-01',cards:[],active_billing_accounts:0};
+  else if(name==='lts_browser_card_history_v226')data={version:'card-history-v226',invoices:[]};
+  else if(name==='lts_browser_expense_review_queue_v229')data={row_count:0,rows:[],pending_projections:[]};
+  else if(name==='lts_browser_card_history_inventory_v235'){
+   const xs=a.p_from==='2013-10-10'?cycles:[];
+   data={version:'card-history-inventory-v235',from:a.p_from,to:a.p_to,offset:a.p_offset,summary:{record_count:xs.length?52:0,cycle_count:xs.length,total:xs.length?5085:0,aggregate_only_cycles:xs.length?50:0,partial_source_cycles:xs.length?1:0,audit_pending_cycles:0},cycles:xs.slice(a.p_offset,a.p_offset+a.p_limit),next_offset:a.p_offset+a.p_limit<xs.length?a.p_offset+a.p_limit:null};
+  }else if(name==='lts_browser_card_history_record_v235'){
+   if(failRecord){failRecord=false;status=503;data={message:'controlled failure'}}
+   else data={version:'card-history-record-v235',bank:'Itaú',card_name:'Cartão de teste',family:'itau_mastercard',reference_month:'2025-09-01',composition_status:'partial_source',record:{amount:-15,original_report_amount:15,sign_corrected:true},cycle_total:85,cycle_records:[{date:'2025-09-05',description:'Cartão',amount:100,kind:'payment',workbook_evidence:ev(100)},{date:'2025-09-05',description:'Cartão',amount:-15,kind:'credit_or_adjustment',workbook_evidence:ev(-15)}],detail_total:110,detail_difference:25,detail_rows:2,nonzero_detail_rows:2,items:[{category:'Mercado',amount:120,source_sheet:'Cartão',source_row:24,source_file:'Composição_A_teste.xlsx',corroboration:{file:'Composição_B_teste.xlsx',sheet:'Cartão',row:34}},{category:'Ajuste da fonte',amount:-10,source_sheet:'Cartão',source_row:25,source_file:'Composição_A_teste.xlsx',corroboration:{file:'Composição_B_teste.xlsx',sheet:'Cartão',row:35}}],source_note:'Composição recebida, com diferença. Não somada novamente às despesas.'};
+  }else if(name==='lts_browser_expense_detail_v229')data={version:'expense-detail-v178',from:a.p_from,to:a.p_to,total:100,row_count:1,matched_count:1,offset:0,next_offset:null,revision:'test',components:[],rows:[{key:'record-test',date:null,date_kind:'month',event_date:'2025-09-05',transaction_date:'2025-09-05',period:'2025-09-01',description:'Registro sintético',account_source:'Cartão de teste',amount:100,category:'Faturas sem composição individual',current_category:'Cartão',source_table:'evento_base',source_ref:'test-0',coverage_mode:'card_invoice_aggregate_fallback',document_status:'composition_missing',can_classify:false}]};
+  await route.fulfill({status,contentType:'application/json',body:JSON.stringify(data)});
+ });
+ try{
+  await page.goto('http://127.0.0.1:8788/releases/'+(process.env.LTS_RELEASE||'v235')+'/app.html');
+  let f;for(let i=0;i<200;i++){f=page.frames().find(x=>x.url().includes('/index.html'));if(f&&await f.evaluate(()=>!!window.__LTS_V235_HISTORY).catch(()=>false))break;await page.waitForTimeout(100);}assert(f);
+  assert(!calls.some(x=>x.name==='lts_browser_card_history_inventory_v235'),'inventory is loaded on request');
+  await f.evaluate(()=>{V='Despesas';window.__LTS_V168_STATE.expense.key='all';window.__LTS_V168_STATE.expense.tab='cards';renderNav();render();});
+  await f.waitForSelector('[data-v235-open]');await f.locator('[data-v235-open]').click();await f.waitForSelector('[data-v235-cycle-row]');assert.equal(await f.locator('[data-v235-cycle-row]').count(),50);
+  assert.match(await f.locator('#v235-history-dialog').innerText(),/52 registros.*51 ciclos/);
+  await f.locator('[data-v235-next]').click();await f.waitForFunction(()=>document.querySelectorAll('[data-v235-cycle-row]').length===1);assert.match(await f.locator('.v235-pagination').innerText(),/51 a 51 de 51/);
+  await f.locator('[data-v235-prev]').click();await f.waitForFunction(()=>document.querySelectorAll('[data-v235-cycle-row]').length===50);
+  if(width<520){const fits=await f.locator('#v235-history-dialog .v226-scroll').evaluateAll(xs=>xs.every(x=>x.scrollWidth<=x.clientWidth+1));assert(fits,'mobile inventory includes all columns without horizontal scrolling');}
+  await page.screenshot({path:'qa/v235-'+width+'-inventory.png',fullPage:true});
+  await f.locator('[data-v235-cycle="0"]').first().click();await f.waitForSelector('[data-v235-retry]');assert.equal(await f.locator('[data-v235-ledger-row]').count(),0);await f.locator('[data-v235-retry]').click();await f.waitForSelector('[data-v235-ledger-row]');
+  assert.equal(await f.locator('[data-v235-ledger-row]').count(),2);assert.equal(await f.locator('[data-v235-source-item]').count(),2);assert.match(await f.locator('.v235-partial-totals').innerText(),/25,00/);assert.match(await f.locator('.v235-credit-note').innerText(),/-R\$\s*15,00/);
+  await f.locator('[data-v235-source-item] .v235-source summary').first().click();assert.match(await f.locator('[data-v235-source-item] .v235-source').first().innerText(),/Composição_A_teste.*Composição_B_teste/s);await f.locator('.v235-source summary').first().click();assert.match(await f.locator('.v235-source').first().innerText(),/Fonte_A_teste.*Fonte_B_teste/s);assert.equal(await f.locator('#v235-history-dialog .v231-edit-classification').count(),0);
+  const fit=await f.locator('#v235-history-dialog').evaluate(e=>{const r=e.getBoundingClientRect();return{left:r.left,right:r.right,width:innerWidth}});assert(fit.left>=-1&&fit.right<=fit.width+1,'dialog fits viewport');
+  if(width<520){const visible=await f.locator('#v235-history-dialog').evaluate(e=>{const body=e.querySelector('[data-v235-body]').getBoundingClientRect();return[...e.querySelectorAll('[data-v235-money]')].every(x=>{const r=document.createRange();r.selectNodeContents(x);return[...r.getClientRects()].every(t=>t.left>=body.left&&t.right<=body.right)});});assert(visible,'every ledger and source amount is horizontally visible');assert(await f.locator('#v235-history-dialog .v226-scroll').evaluateAll(xs=>xs.every(x=>x.scrollWidth<=x.clientWidth+1)),'mobile record has no horizontal table scroll');}
+  await page.screenshot({path:'qa/v235-'+width+'-record.png',fullPage:true});await f.locator('[data-v235-close]').click();
+  await f.evaluate(()=>window.__LTS_V178_REVIEW.openDetail('Faturas sem composição individual',null,{from:'2013-10-10',to:'2026-09-30'},100));await f.waitForSelector('.v235-record-button');await f.locator('.v235-record-button').click();await f.waitForSelector('[data-v235-ledger-row]');assert(calls.some(x=>x.name==='lts_browser_card_history_record_v235'&&x.args.p_source_ref==='test-0'));await f.locator('[data-v235-close]').click();await f.locator('.v178-close').click();
+  await f.evaluate(()=>{window.__LTS_V168_STATE.expense.key='12m';});await f.locator('[data-v235-open]').click();await f.waitForFunction(()=>document.getElementById('v235-history-dialog')?.textContent.includes('Não há composição pendente'));assert.equal(calls.filter(x=>x.name==='lts_browser_card_history_inventory_v235').at(-1).args.p_from,'2025-11-01');await f.locator('[data-v235-close]').click();
+  assert(!calls.some(x=>/_save_|_decision_|_classify_|_classification_|_update_/.test(x.name)),'source audit never writes');assert.deepEqual(errors,[]);
+  return{width,pass:true,cycle_pagination:true,source_dialog:true,credit_and_partial_signs:true,received_difference_visible:true,drawer_link:true,period_filter:true,read_only:true,error_retry:true,dialog_fits:true,mobile_money_visible:true};
+ }catch(e){await page.screenshot({path:'qa/v235-'+width+'-failure.png',fullPage:true});throw e;}finally{await ctx.close();}
+}
+(async()=>{fs.mkdirSync('qa',{recursive:true});const b=await chromium.launch();try{const r=[];for(const width of[1440,390])r.push(await run(b,width));fs.writeFileSync('qa/v235-inventory-regression.json',JSON.stringify(r,null,2));console.log(JSON.stringify(r));}finally{await b.close();}})().catch(e=>{console.error(e);process.exitCode=1;});
