@@ -15,15 +15,15 @@
   function pump(){
    pumpTimer=null;if(active||!waiting.length)return;
    waiting.sort((a,b)=>a.priority-b.priority||a.order-b.order);
-   const next=waiting.shift();next.signal.removeEventListener('abort',next.cancel);active=true;
+   const next=waiting.shift();clearTimeout(next.timer);next.signal.removeEventListener('abort',next.cancel);active=true;
    let released=false;next.resolve(()=>{if(released)return;released=true;active=false;pump();});
   }
   function admit(name,signal){
    if(!heavy.test(name))return Promise.resolve(()=>{});
    return new Promise((resolve,reject)=>{
-    const item={resolve,priority:priority(name),order:order++,signal,cancel:()=>{const i=waiting.indexOf(item);if(i>=0)waiting.splice(i,1);reject(new DOMException('Aborted','AbortError'));}};
+    const item={resolve,priority:priority(name),order:order++,signal,cancel:()=>{clearTimeout(item.timer);signal.removeEventListener('abort',item.cancel);const i=waiting.indexOf(item);if(i>=0)waiting.splice(i,1);reject(new DOMException('Aborted','AbortError'));}};
     if(signal.aborted){item.cancel();return;}
-    signal.addEventListener('abort',item.cancel,{once:true});waiting.push(item);
+    signal.addEventListener('abort',item.cancel,{once:true});item.timer=setTimeout(item.cancel,25000);waiting.push(item);
     if(!active&&!pumpTimer)pumpTimer=setTimeout(pump,30);
    });
   }
