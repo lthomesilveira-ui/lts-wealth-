@@ -43,7 +43,7 @@ async function run(browser,width,label){
   await route.fulfill({status,contentType:'application/json',body:JSON.stringify(data)});
  });
  try{
-  await page.goto('http://127.0.0.1:8788/releases/v231/app.html',{waitUntil:'domcontentloaded'});
+  await page.goto('http://127.0.0.1:8788/releases/'+(process.env.LTS_RELEASE||'v231')+'/app.html',{waitUntil:'domcontentloaded'});
   let frame;for(let n=0;n<200;n++){frame=page.frames().find(f=>f.url().includes('/index.html'));if(frame&&await frame.evaluate(()=>!!window.__LTS_V181_REGRESSION_CLOSURE).catch(()=>false))break;await page.waitForTimeout(100)}
   assert(frame);const nav=width<=520?frame.locator('#dx1MobileNav [data-mobile-route="Despesas"]'):frame.locator('.nav [data-v="Despesas"]');await nav.click();
   await frame.locator('[data-v168-exp-range="all"]').click();
@@ -61,7 +61,7 @@ async function run(browser,width,label){
   }
   await page.screenshot({path:'qa/v231-'+label+'-expense-overview.png',fullPage:true});
   await frame.locator('.v178-coverage-open').first().click();await frame.waitForFunction(()=>window.__LTS_V178_STATE.detail&&!window.__LTS_V178_STATE.detail.loading);
-  assert.equal(await frame.locator('.v231-edit-classification').count(),0);assert.match(await frame.locator('.v181-aggregate-note').innerText(),/sem composição completa/);assert(await frame.locator('.v231-invoice-detail').isVisible());await frame.locator('.v231-invoice-detail').click();await frame.waitForSelector('#v226-detail');assert(calls.some(c=>c.name==='lts_browser_card_detail_v226'&&c.args.p_month==='2025-09-01'));
+  assert.equal(await frame.locator('.v231-edit-classification').count(),0);assert.match(await frame.locator('.v181-aggregate-note').innerText(),/sem composição completa/);assert(await frame.locator('.v231-invoice-detail').isVisible());await frame.locator('.v231-invoice-detail').click();await frame.waitForSelector('#v226-detail [data-v226-body] .v226-totals');assert(calls.some(c=>c.name==='lts_browser_card_detail_v226'&&c.args.p_month==='2025-09-01'));
   await frame.evaluate(()=>{document.getElementById('v226-detail')?.close();window.__LTS_V178_REVIEW.closeDetail()});
   await frame.evaluate(()=>window.__LTS_V178_REVIEW.openDetail('Família',null,{from:'2013-10-10',to:'2026-09-30'},1500.25));
   await frame.waitForSelector('.v231-edit-classification');assert.match(await frame.locator('.v231-source-note').innerText(),/linha\(s\) 25/);
