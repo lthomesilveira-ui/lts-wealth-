@@ -151,7 +151,7 @@
     st.openDetail=openDetail;
     st.refresh=()=>loadCycles(true);
     document.addEventListener('visibilitychange',()=>{if(!document.hidden)paint();});
-    window.addEventListener('focus',paint);
+    window.addEventListener('focus',()=>{if(active()&&!st.loading&&(st.loadedDay!==today()||Date.now()-st.loadedAt>=60000))loadCycles();});
     render=function(){const result=previousRender();paint();return result;};
     renderNav=function(){const result=previousNav();document.querySelectorAll('[data-mobile-route="Patrimônio"] span').forEach(e=>e.textContent='Patrimônio');return result;};
     S.auth.onAuthStateChange?.(event=>{if(event==='SIGNED_OUT')clear();});
