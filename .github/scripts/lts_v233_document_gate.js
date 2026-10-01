@@ -38,7 +38,7 @@ async function run(browser,width){
   await route.fulfill({status,contentType:'application/json',body:JSON.stringify(data)});
  });
  try{
-  await page.goto('http://127.0.0.1:8788/releases/v233/app.html');
+  await page.goto('http://127.0.0.1:8788/releases/'+(process.env.LTS_RELEASE||'v233')+'/app.html');
   let f;for(let i=0;i<200;i++){f=page.frames().find(x=>x.url().includes('/index.html'));if(f&&await f.evaluate(()=>!!window.__LTS_V226).catch(()=>false))break;await page.waitForTimeout(100);}assert(f);page.setDefaultTimeout(25000);
   await f.waitForFunction(()=>window.__LTS_V178_STATE.forecast.status==='ready'&&window.__LTS_V178_STATE.dashboardReport.status==='ready'&&window.__LTS_V226.cycles);
   await f.evaluate(()=>window.__LTS_V225.readStatus());
