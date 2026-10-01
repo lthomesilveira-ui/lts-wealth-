@@ -43,7 +43,7 @@ async function run(browser,width,label){
   await route.fulfill({status,contentType:'application/json',body:JSON.stringify(data)});
  });
  try{
-  await page.goto('http://127.0.0.1:8788/releases/v231/app.html',{waitUntil:'domcontentloaded'});
+  await page.goto('http://127.0.0.1:8788/releases/'+(process.env.LTS_RELEASE||'v231')+'/app.html',{waitUntil:'domcontentloaded'});
   let frame;for(let n=0;n<200;n++){frame=page.frames().find(f=>f.url().includes('/index.html'));if(frame&&await frame.evaluate(()=>!!window.__LTS_V181_REGRESSION_CLOSURE).catch(()=>false))break;await page.waitForTimeout(100)}
   assert(frame);const nav=width<=520?frame.locator('#dx1MobileNav [data-mobile-route="Despesas"]'):frame.locator('.nav [data-v="Despesas"]');await nav.click();
   await frame.locator('[data-v168-exp-range="all"]').click();
