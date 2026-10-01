@@ -1,3 +1,7 @@
+## V231 expense continuity — 1 October 2026
+
+H01/U02/E03/C04 are implemented with source verification and controlled desktop/mobile checks. E04 now covers headline, group and monthly expense composition, plus audited classification corrections. E02 is improved with payment/card/invoice/source references and click-through; genuine missing invoice composition remains OPEN. Do not mark documentary coverage as resolved or request historical classifications already in the workbook. Current-period classification uncertainties and every prior unclosed document item remain open. Final publication and private QA receipt are in LTS_CONTINUAR.md. User acceptance is still pending.
+
 ## V229 reliability round — engineering checks recorded, user acceptance pending
 
 The V228 feedback batch is additive. Earlier open items remain below. No untested screen is considered approved.

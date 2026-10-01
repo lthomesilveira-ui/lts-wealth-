@@ -1,15 +1,3 @@
-# Current execution — V231, 1 October 2026
-
-The authorized Despesas round is implemented in isolated releases/v231, based on main 7d868ec52cf82652dfa77c309c0bbd33024368c5. PR 96 tracks the release; publication and the exact final commit are recorded in the private continuity receipt. Earlier execution statements below are historical. Root, V181 and all earlier releases stay immutable.
-
-Original workbook identities are verified against source date, amount, category and description. The reader preserves original categories and exposes worksheet/row references; it does not infer missing people or properties. Larissa is unified at the source grouping layer. Headline totals, group totals and monthly expense cells open their own dated composition, with audited corrections and invalidation of related reports. Invoice totals without a complete purchase source remain visible documentary gaps, never classifiable purchases. Source-family matching prevents the same received purchase from being appended twice. Current-month purchases remain in the review queue after month rollover.
-
-Real-data checks passed for unchanged source financial records, unique expense keys, report/detail/group/monthly parity, persisted correction with original evidence and unrelated rows preserved, three-bank daily rollforward, pending forecasts, and same-purchase installment learning. All test decisions were rolled back. Controlled desktop/mobile tests passed for full monetary values, complete details, invoice links, cancel/save failure/success, selected-period retention and the existing Dashboard, Flow, RSU, card, refresh and manual-entry workflows. The additional full cold-projection rerun did not produce a confirmed result because of a tool interruption; the projection calculation was unchanged by this release. Existing V230 evidence remains historical evidence, not a new pass.
-
-Open: missing historical invoice composition, current classifications without source evidence, prior documentary dependencies and human acceptance. No values or classifications were invented to clear these items. Legacy V171–177 workflow failures remain visible and were not removed or treated as new acceptance. LTS Continuity Watch stays OFF.
-
---- Previous execution state preserved ---
-
 # LTS Wealth — Execution State
 
 ## Active execution — 23/09/2026

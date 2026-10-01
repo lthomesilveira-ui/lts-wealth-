@@ -124,6 +124,14 @@ async function run(browser,viewport,label){
   await frame.locator('[data-v181-detail-group="Benjamin — Saúde"]').click();await frame.waitForFunction(()=>window.__LTS_V178_STATE.detail&&!window.__LTS_V178_STATE.detail.loading);assert.equal(await frame.evaluate(()=>window.__LTS_V178_STATE.detail.range.from),'2026-04-01');assert.equal(await frame.locator('#v178Drawer tbody tr').count(),3);await frame.locator('.v178-close').click();
   await frame.locator('[data-v168-exp-range="all"]').click();await frame.locator('.v168-tabs [data-v168-exp-tab="monthly"]').click();await frame.waitForFunction(()=>window.__LTS_V175_STATE.monthly.data?.months?.length===156&&!window.__LTS_V175_STATE.monthly.loading);
   assert((await frame.locator('.v175-monthly').innerText()).includes('Benjamin — Educação'));
+  if(process.env.LTS_RELEASE==='v231'){
+   const matrix=frame.locator('.v175-section').filter({has:frame.getByRole('heading',{name:'Despesas por categoria',exact:true})});
+   await matrix.locator('tbody tr').filter({has:frame.locator('th').filter({hasText:'Benjamin — Educação'})}).locator('td').last().locator('button').click();
+   await frame.waitForFunction(()=>window.__LTS_V178_STATE.detail&&!window.__LTS_V178_STATE.detail.loading);
+   assert.equal(await frame.evaluate(()=>window.__LTS_V178_STATE.detail.group),'Benjamin — Educação');
+   assert.equal(await frame.evaluate(()=>window.__LTS_V178_STATE.detail.total),250);
+   await frame.locator('.v178-close').click();
+  }
   const monthlyDims=await frame.locator('html').evaluate(e=>({width:e.clientWidth,scroll:e.scrollWidth}));assert(monthlyDims.scroll<=monthlyDims.width+3,'monthly tables do not expand the page '+JSON.stringify(monthlyDims));
   await frame.locator('.v168-tabs [data-v168-exp-tab="cards"]').click();
   await frame.waitForSelector('[data-v175-card-retry]');
@@ -218,7 +226,7 @@ async function run(browser,viewport,label){
   assert.equal(await frame.locator('.flowdeletebtn').count(),0,'deleted entry disappears from visible day details');
   assert(calls.some(x=>/^lts_browser_flow_mutate_v/.test(x.name)&&x.args.p_action==='cancel'),'manual deletion reaches existing audited writer');
   await nav('Dashboard').click();started=Date.now();await nav('Fluxo Diário').click();await frame.waitForFunction(()=>!FLOWLOADING&&document.querySelector('.fx87-row[id^="d-"]'));flowTimings.return_ms=Date.now()-started;
-  if(['v229-1','v230'].includes(process.env.LTS_RELEASE))assert(flowTimings.bank_change_ms<2000,'bank switching must not repeatedly format the current date');
+  if(['v229-1','v230','v231'].includes(process.env.LTS_RELEASE))assert(flowTimings.bank_change_ms<2000,'bank switching must not repeatedly format the current date');
   assert(Object.values(flowTimings).every(ms=>ms<4000),'controlled browser rendering must complete promptly '+JSON.stringify(flowTimings));
   await nav('Dashboard').click();flags.date='2026-09-21';await frame.evaluate(()=>{window.__TEST_NOW__='2026-09-21T13:00:00Z';render()});assert.equal(semantic(await kpi('Total disponível hoje').locator('strong').innerText()),'—','day rollover does not present stale complete total');await frame.waitForFunction(()=>window.__LTS_V178_STATE.cash.data?.as_of==='2026-09-21'&&window.__LTS_V178_STATE.cash.status==='ready');
   await frame.waitForFunction(()=>window.__LTS_V226?.cycles?.cards.length===5);

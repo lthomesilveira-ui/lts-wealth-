@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: ['releases/v225/**', 'releases/v225-1/**', 'releases/v226/**', 'releases/v226-1/**', 'releases/v226-2/**', 'releases/v227/**', 'releases/v227-1/**', 'releases/v227-2/**', 'releases/v228/**', 'releases/v229/**', 'releases/v229-1/**', 'releases/v230/**', 'wip35-v225-candidate.html', '.github/workflows/pages.yml']
+    paths: ['releases/v225/**', 'releases/v225-1/**', 'releases/v226/**', 'releases/v226-1/**', 'releases/v226-2/**', 'releases/v227/**', 'releases/v227-1/**', 'releases/v227-2/**', 'releases/v228/**', 'releases/v229/**', 'releases/v229-1/**', 'releases/v230/**', 'releases/v231/**', 'wip35-v225-candidate.html', '.github/workflows/pages.yml']
 
 permissions:
   contents: read
@@ -38,6 +38,7 @@ jobs:
           LTS_RELEASE=v229 node .github/scripts/lts_v225_static_gate.js
           LTS_RELEASE=v229-1 node .github/scripts/lts_v225_static_gate.js
           LTS_RELEASE=v230 node .github/scripts/lts_v225_static_gate.js
+          LTS_RELEASE=v231 node .github/scripts/lts_v225_static_gate.js
       - name: Configure Pages
         uses: actions/configure-pages@v5
         with:
@@ -49,3 +50,35 @@ jobs:
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v4
+      - name: Verify published V231 bytes
+        run: |
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';
+          import crypto from 'node:crypto';
+          import assert from 'node:assert/strict';
+          const manifest=JSON.parse(fs.readFileSync('releases/v231/manifest.json','utf8'));
+          const base='https://lthomesilveira-ui.github.io/lts-wealth-/releases/v231/';
+          const entries=Object.entries(manifest.files);
+          const results=[];
+          for(let offset=0;offset<entries.length;offset+=6){
+            results.push(...await Promise.all(entries.slice(offset,offset+6).map(async([name,expected])=>{
+              let error;
+              for(let attempt=0;attempt<4;attempt++){
+                try{
+                  const response=await fetch(base+name+'?verify='+process.env.GITHUB_SHA,{cache:'no-store',signal:AbortSignal.timeout(15000)});
+                  assert(response.ok,name+' HTTP '+response.status);
+                  const actual=crypto.createHash('sha256').update(Buffer.from(await response.arrayBuffer())).digest('hex');
+                  assert.equal(actual,expected,name+' served SHA256 differs');
+                  return {name,sha256:actual,pass:true};
+                }catch(e){error=e;if(attempt<3)await new Promise(resolve=>setTimeout(resolve,5000));}
+              }
+              throw error;
+            })));
+          }
+          fs.writeFileSync('v231-published-verification.json',JSON.stringify({pass:true,head:process.env.GITHUB_SHA,url:base+'app.html',count:results.length,assets:results},null,2));
+          console.log('Published V231 assets verified:',results.length);
+          JS
+      - uses: actions/upload-artifact@v4
+        with:
+          name: v231-published-verification
+          path: v231-published-verification.json
