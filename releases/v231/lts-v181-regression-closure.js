@@ -207,7 +207,7 @@
     if(aggregate){const note=document.createElement('small');note.className='v181-aggregate-note';note.textContent='Pagamento de fatura sem composição completa. Não equivale a compras classificadas.'+(row.transaction_date?' Pagamento em '+dateLabel(row.transaction_date)+'.':'')+(row.invoice_month?' Fatura de '+monthLabel(row.invoice_month)+'.':'');cell?.appendChild(note)}
     if(row.invoice_month&&row.invoice_family&&window.__LTS_V226?.openDetail){const button=document.createElement('button');button.className='v168-btn v231-invoice-detail';button.textContent='Ver composição da fatura';button.onclick=()=>window.__LTS_V226.openDetail(row.invoice_family,row.invoice_month);cell?.appendChild(button)}
     if(row.can_classify===true&&!detail.archive){const button=document.createElement('button');button.className='v168-btn v231-edit-classification';button.textContent='Corrigir classificação';button.onclick=()=>openClassification(row,{...detail.range},button);cell?.appendChild(button)}
-    if(row.source_ref){const reference=document.createElement('details');reference.className='v231-record-reference';const label=document.createElement('summary');label.textContent='Referência do registro';const value=document.createElement('small');value.textContent=row.source_table+' · '+row.source_ref;reference.append(label,value);cell?.appendChild(reference)}
+    if(row.source_ref){const reference=document.createElement('details');reference.className='v231-record-reference';const label=document.createElement('summary');label.textContent='Referência do registro';const value=document.createElement('small');value.textContent='Identificador: '+row.source_ref;reference.append(label,value);cell?.appendChild(reference)}
    }
   }
   let classificationOptions=null;
