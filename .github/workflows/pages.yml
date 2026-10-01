@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: ['releases/v225/**', 'releases/v225-1/**', 'releases/v226/**', 'releases/v226-1/**', 'releases/v226-2/**', 'releases/v227/**', 'releases/v227-1/**', 'releases/v227-2/**', 'releases/v228/**', 'releases/v229/**', 'releases/v229-1/**', 'releases/v230/**', 'releases/v233/**', 'releases/v233/**', 'wip35-v225-candidate.html', '.github/workflows/pages.yml']
+    paths: ['releases/v225/**', 'releases/v225-1/**', 'releases/v226/**', 'releases/v226-1/**', 'releases/v226-2/**', 'releases/v227/**', 'releases/v227-1/**', 'releases/v227-2/**', 'releases/v228/**', 'releases/v229/**', 'releases/v229-1/**', 'releases/v230/**', 'releases/v233/**', 'releases/v234/**', 'wip35-v225-candidate.html', '.github/workflows/pages.yml']
 
 permissions:
   contents: read
@@ -41,6 +41,7 @@ jobs:
           LTS_RELEASE=v231 node .github/scripts/lts_v225_static_gate.js
           LTS_RELEASE=v232 node .github/scripts/lts_v225_static_gate.js
           LTS_RELEASE=v233 node .github/scripts/lts_v225_static_gate.js
+          LTS_RELEASE=v234 node .github/scripts/lts_v225_static_gate.js
       - name: Configure Pages
         uses: actions/configure-pages@v5
         with:
@@ -52,14 +53,14 @@ jobs:
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v4
-      - name: Verify published V233 bytes
+      - name: Verify published V234 bytes
         run: |
           node --input-type=module <<'JS'
           import fs from 'node:fs';
           import crypto from 'node:crypto';
           import assert from 'node:assert/strict';
-          const manifest=JSON.parse(fs.readFileSync('releases/v233/manifest.json','utf8'));
-          const base='https://lthomesilveira-ui.github.io/lts-wealth-/releases/v233/';
+          const manifest=JSON.parse(fs.readFileSync('releases/v234/manifest.json','utf8'));
+          const base='https://lthomesilveira-ui.github.io/lts-wealth-/releases/v234/';
           const entries=Object.entries(manifest.files);
           const results=[];
           for(let offset=0;offset<entries.length;offset+=6){
@@ -77,10 +78,10 @@ jobs:
               throw error;
             })));
           }
-          fs.writeFileSync('v233-published-verification.json',JSON.stringify({pass:true,head:process.env.GITHUB_SHA,url:base+'app.html',count:results.length,assets:results},null,2));
-          console.log('Published V233 assets verified:',results.length);
+          fs.writeFileSync('v234-published-verification.json',JSON.stringify({pass:true,head:process.env.GITHUB_SHA,url:base+'app.html',count:results.length,assets:results},null,2));
+          console.log('Published V234 assets verified:',results.length);
           JS
       - uses: actions/upload-artifact@v4
         with:
-          name: v233-published-verification
-          path: v233-published-verification.json
+          name: v234-published-verification
+          path: v234-published-verification.json
