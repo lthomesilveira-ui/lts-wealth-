@@ -66,7 +66,7 @@ async function run(browser,viewport,label){
   else if(name==='lts_browser_card_settlement_detail_v3')data={matched:true,due_date:'2026-09-15',invoice_total:100,payment_documented:true,cash_effect_date:'2026-09-15'};
   else if(name==='lts_browser_flow_event_editor_v1')data={editable:true,event_date:a.p_event_date,source:a.p_source,source_ref:a.p_source_ref,description:flags.manualDescription||'Despesa manual sintética',amount:flags.manualDescription?101:100,account:'Itaú'};
   else if(/^lts_browser_flow_mutate_v/.test(name)){if(a.p_action==='edit')flags.manualDescription=a.p_payload.description;if(a.p_action==='cancel')flags.manualDeleted=true;data={ok:true};}
-  else if(name==='lts_browser_expense_review_queue_v229'){assert.equal(a.p_from,'2013-10-10','Updates queue is independent of the expense filter');data={row_count:flags.reviewDone?0:1,matched_count:flags.reviewDone?0:1,offset:0,next_offset:null,category_options:['Mercado'],rows:flags.reviewDone?[]:[{key:'pending-fixture',source_table:'lts_open_finance_staging',source_ref:'pending-fixture',date:'2026-09-19',description:'Pagamento sintético para conferir',amount:57,category:'A classificar',account_source:'Itaú',question_kind:'classification'}]};}
+  else if(name==='lts_browser_expense_review_queue_v229'){assert.equal(a.p_from,'2013-10-10','Updates queue is independent of the expense filter');data={row_count:flags.reviewDone?2:3,matched_count:flags.reviewDone?2:3,offset:0,next_offset:null,category_options:['Mercado'],beneficiary_options:[{value:'Lucas',label:'Minha / sem prefixo'}],rows:[...(flags.reviewDone?[]:[{key:'pending-fixture',source_table:'lts_open_finance_staging',source_ref:'pending-fixture',date:'2026-09-19',description:'Pagamento sintético para conferir',amount:57,category:'A classificar',account_source:'Itaú',question_kind:'classification',suggestion:{category:'Mercado',note:'Sugestão baseada no histórico; confirme.'}}]),{key:'uncertain-fixture',source_table:'lts_open_finance_staging',source_ref:'uncertain-fixture',date:'2026-09-18',description:'Compra sem identificação suficiente',amount:23,category:'A classificar',question_kind:'classification',suggestion:{category:null,note:'Confirme a finalidade.'}},{key:'context-fixture',source_table:'evento_base',source_ref:'context-fixture',date:'2026-09-01',description:'Contexto de despesa já categorizada',amount:31,category:'Família',question_kind:'classification'}]};}
   else if(name==='lts_browser_expense_review_decision_v229'){assert.equal(a.p_category_label,'Mercado');flags.reviewDone=true;data={ok:true,resolved:true};}
   else if(name==='lts_browser_property_archive_v178')data={rows:[{key:'component1',description:'Obra documentada',amount:10000,component:'Obra e reforma',date_kind:'historical'},{key:'component2',description:'Consórcio documentado',amount:500,component:'Consórcio',date_kind:'historical'}]};
   else if(name==='lts_browser_awards_v178')data=awards();
@@ -133,14 +133,25 @@ async function run(browser,viewport,label){
   await frame.evaluate(()=>render());await page.waitForTimeout(250);assert.equal(calls.filter(x=>x.name==='lts_browser_card_flow_schedule_v2').length,failedCardCalls,'card failure remains visible without an automatic retry loop');
   flags.cardFail=false;await frame.locator('[data-v175-card-retry]').click();
   await frame.waitForFunction(()=>window.__LTS_V183_CARD_PERIOD.status==='ready'&&window.__LTS_V175_STATE.cards.data?.inventory?.cards?.length===5);
+  await frame.waitForFunction(()=>{const el=document.querySelector('.v168-expenses .v226-banks>section');return el?.isConnected&&getComputedStyle(el).borderRadius==='14px'});
+  const cardStyle=await frame.evaluate(()=>{const s=getComputedStyle(document.querySelector('.v168-expenses .v226-banks>section'));return{radius:s.borderRadius,border:s.borderTopWidth,padding:s.paddingTop}});
+  assert.equal(cardStyle.radius,'14px','Expenses preserves the approved bank card presentation');assert.equal(cardStyle.border,'1px');assert(Number.parseFloat(cardStyle.padding)>=14);
   const inventory=await frame.locator('.v183-card-families').innerText();for(const name of cardNames)assert(inventory.includes(name),'historical card retained: '+name);
   assert(!inventory.includes('Visa Eternum'),'AETERNUM spelling preserved');
   await frame.waitForFunction(()=>document.querySelector('[data-v183-payment-status]')?.innerText.includes('Pagamento documentado'));
   await page.screenshot({path:'qa/v229-'+label+'-cards.png'});
   await nav('Atualizações').click();await frame.waitForSelector('[data-v181-review-key="pending-fixture"]');
+  const contextRow=frame.locator('[data-v181-review-key="context-fixture"]');await contextRow.locator('[data-v181-beneficiary]').selectOption('Lucas');assert(await contextRow.locator('[data-v181-review-save]').isEnabled(),'context can be confirmed without replacing its existing category');
+  const suggested=frame.locator('[data-v181-review-key="pending-fixture"]');
+  assert.equal(await suggested.locator('[data-v181-category]').inputValue(),'Mercado','history suggestion is preselected');
+  assert.equal(await suggested.locator('[data-v181-review-save]').innerText(),'Confirmar sugestão');
+  assert.equal(calls.filter(x=>x.name==='lts_browser_expense_review_decision_v229').length,0,'suggestion never writes automatically');
+  assert.equal(await frame.locator('[data-v181-review-key="uncertain-fixture"] [data-v181-category]').inputValue(),'');
+  assert(await frame.locator('[data-v181-review-key="uncertain-fixture"] [data-v181-review-save]').isDisabled());
+  await suggested.locator('[data-v181-category]').selectOption('');assert(await suggested.locator('[data-v181-review-save]').isDisabled());
   await frame.locator('[data-v181-review-key="pending-fixture"] [data-v181-category]').selectOption('Mercado');
   await frame.locator('[data-v181-review-key="pending-fixture"] [data-v181-review-save]').click();
-  await frame.waitForFunction(()=>window.__LTS_V181_STATE.review.data?.row_count===0);
+  await frame.waitForFunction(()=>window.__LTS_V181_STATE.review.data?.row_count===2);
   assert.equal(await frame.locator('[data-v181-review-key="pending-fixture"]').count(),0,'confirmed item is removed after persistence');
   await nav('Patrimônio').click();await frame.waitForSelector('.v172-wealth-overview');
   const currentMorgan=frame.locator('.v172-value-list>div').filter({hasText:'Morgan Stanley · disponível'});assert.equal(semantic(await currentMorgan.locator('b').innerText()),money(1100),'wealth uses the current validated position');
@@ -207,7 +218,7 @@ async function run(browser,viewport,label){
   assert.equal(await frame.locator('.flowdeletebtn').count(),0,'deleted entry disappears from visible day details');
   assert(calls.some(x=>/^lts_browser_flow_mutate_v/.test(x.name)&&x.args.p_action==='cancel'),'manual deletion reaches existing audited writer');
   await nav('Dashboard').click();started=Date.now();await nav('Fluxo Diário').click();await frame.waitForFunction(()=>!FLOWLOADING&&document.querySelector('.fx87-row[id^="d-"]'));flowTimings.return_ms=Date.now()-started;
-  if(process.env.LTS_RELEASE==='v229-1')assert(flowTimings.bank_change_ms<2000,'bank switching must not repeatedly format the current date');
+  if(['v229-1','v230'].includes(process.env.LTS_RELEASE))assert(flowTimings.bank_change_ms<2000,'bank switching must not repeatedly format the current date');
   assert(Object.values(flowTimings).every(ms=>ms<4000),'controlled browser rendering must complete promptly '+JSON.stringify(flowTimings));
   await nav('Dashboard').click();flags.date='2026-09-21';await frame.evaluate(()=>{window.__TEST_NOW__='2026-09-21T13:00:00Z';render()});assert.equal(semantic(await kpi('Total disponível hoje').locator('strong').innerText()),'—','day rollover does not present stale complete total');await frame.waitForFunction(()=>window.__LTS_V178_STATE.cash.data?.as_of==='2026-09-21'&&window.__LTS_V178_STATE.cash.status==='ready');
   await frame.waitForFunction(()=>window.__LTS_V226?.cycles?.cards.length===5);
