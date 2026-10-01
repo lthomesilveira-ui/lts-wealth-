@@ -40,6 +40,7 @@ async function run(browser,width){
   await page.goto('http://127.0.0.1:8788/releases/v232/app.html');
   let f;for(let i=0;i<200;i++){f=page.frames().find(x=>x.url().includes('/index.html'));if(f&&await f.evaluate(()=>!!window.__LTS_V226).catch(()=>false))break;await page.waitForTimeout(100);}assert(f);page.setDefaultTimeout(25000);
   await f.waitForFunction(()=>window.__LTS_V178_STATE.forecast.status==='ready'&&window.__LTS_V178_STATE.dashboardReport.status==='ready'&&window.__LTS_V226.cycles);
+  await f.evaluate(()=>window.__LTS_V225.readStatus());
   const density=await f.evaluate(()=>window.__LTS_V178_STATE.forecast.data.flow.current_future.days.length);assert(density>=457);
   const render=await f.evaluate(()=>{const intl=window.__qaIntl,t=performance.now();for(let i=0;i<3;i++)render();return{ms:performance.now()-t,formatters:window.__qaIntl-intl};});assert(render.ms<2500,JSON.stringify(render));assert(render.formatters<100,'date formatters scale with renders, not horizon days');
   await f.locator('.v226-upcoming [data-v226-family="aeternum"]').first().click();await f.waitForSelector('[data-v226-item]');assert.match(await f.locator('#v226-detail').innerText(),/8\.765,43/);await f.locator('[data-v226-close]').click();
@@ -50,6 +51,6 @@ async function run(browser,width){
   assert(!calls.some(x=>x.name==='lts_browser_recurring_future_gap_audit_v4'),'superseded hidden audit is not requested');assert.equal(maxActive,1,'shared expensive read admission');
   await f.evaluate(()=>{V='Fluxo Diário';renderNav();render();});await f.waitForFunction(()=>!FLOWLOADING&&FLOWQ&&!FLOWQ.error);await page.screenshot({path:'qa/v232-'+width+'-flow.png',fullPage:true});
   assert.deepEqual(errors,[]);return{width,pass:true,density,three_render_ms:Math.round(render.ms),new_date_formatters:render.formatters,bank_refresh_invoice_and_detail:true,source_time:true,all_unidentified_pages:true,expensive_max_concurrent:maxActive,flow_open:true};
- }catch(e){await page.screenshot({path:'qa/v232-'+width+'-failure.png',fullPage:true});throw e;}finally{await ctx.close();}
+ }catch(e){const f=page.frames().find(x=>x.url().includes('/index.html'));fs.writeFileSync('qa/v232-'+width+'-failure.json',JSON.stringify({error:String(e),calls,errors,state:await f?.evaluate(()=>({cycles:window.__LTS_V226,dialog:document.getElementById('v226-detail')?.outerHTML,route:V})).catch(()=>null)},null,2));await page.screenshot({path:'qa/v232-'+width+'-failure.png',fullPage:true});throw e;}finally{await ctx.close();}
 }
 (async()=>{fs.mkdirSync('qa',{recursive:true});const b=await chromium.launch();try{const result=[];for(const w of[1440,390])result.push(await run(b,w));fs.writeFileSync('qa/v232-loading-regression.json',JSON.stringify(result,null,2));console.log(JSON.stringify(result));}finally{await b.close();}})().catch(e=>{console.error(e);process.exitCode=1;});

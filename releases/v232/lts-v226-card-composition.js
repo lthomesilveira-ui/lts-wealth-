@@ -146,7 +146,8 @@
       if(!st.loading&&!st.error&&(!st.cycles||st.loadedDay!==today()||Date.now()-st.loadedAt>=60000))queueMicrotask(()=>loadCycles());
       if(full){let h=document.querySelector('.v226-history');if(!h){h=document.createElement('article');h.className='v168-card v226-history';host.after(h);}h.innerHTML=historyPanel();bind(h);queueMicrotask(loadHistory);}
     }
-    function bind(root){root.querySelectorAll('[data-v226-family]').forEach(b=>b.onclick=()=>openDetail(b.dataset.v226Family,b.dataset.v226Month));root.querySelectorAll('[data-v226-overview]').forEach(b=>b.onclick=()=>openOverview(b.dataset.v226Overview));root.querySelector('[data-v226-retry]')?.addEventListener('click',()=>{clear();loadCycles(true);if(V==='Despesas')loadHistory();paint();});}
+    function bind(root){root.querySelectorAll('[data-v226-overview]').forEach(b=>b.onclick=()=>openOverview(b.dataset.v226Overview));root.querySelector('[data-v226-retry]')?.addEventListener('click',()=>{clear();loadCycles(true);if(V==='Despesas')loadHistory();paint();});}
+    document.addEventListener('click',event=>{const button=event.target.closest?.('[data-v226-family]');if(!button)return;event.preventDefault();openDetail(button.dataset.v226Family,button.dataset.v226Month);});
     st.openDetail=openDetail;
     st.refresh=()=>loadCycles(true);
     document.addEventListener('visibilitychange',()=>{if(!document.hidden)paint();});
