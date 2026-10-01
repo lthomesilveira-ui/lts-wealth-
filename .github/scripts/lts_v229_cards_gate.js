@@ -124,6 +124,14 @@ async function run(browser,viewport,label){
   await frame.locator('[data-v181-detail-group="Benjamin — Saúde"]').click();await frame.waitForFunction(()=>window.__LTS_V178_STATE.detail&&!window.__LTS_V178_STATE.detail.loading);assert.equal(await frame.evaluate(()=>window.__LTS_V178_STATE.detail.range.from),'2026-04-01');assert.equal(await frame.locator('#v178Drawer tbody tr').count(),3);await frame.locator('.v178-close').click();
   await frame.locator('[data-v168-exp-range="all"]').click();await frame.locator('.v168-tabs [data-v168-exp-tab="monthly"]').click();await frame.waitForFunction(()=>window.__LTS_V175_STATE.monthly.data?.months?.length===156&&!window.__LTS_V175_STATE.monthly.loading);
   assert((await frame.locator('.v175-monthly').innerText()).includes('Benjamin — Educação'));
+  if(process.env.LTS_RELEASE==='v231'){
+   const matrix=frame.locator('.v175-section').filter({has:frame.getByRole('heading',{name:'Despesas por categoria',exact:true})});
+   await matrix.locator('tbody tr').filter({has:frame.locator('th').filter({hasText:'Benjamin — Educação'})}).locator('td').last().locator('button').click();
+   await frame.waitForFunction(()=>window.__LTS_V178_STATE.detail&&!window.__LTS_V178_STATE.detail.loading);
+   assert.equal(await frame.evaluate(()=>window.__LTS_V178_STATE.detail.group),'Benjamin — Educação');
+   assert.equal(await frame.evaluate(()=>window.__LTS_V178_STATE.detail.total),250);
+   await frame.locator('.v178-close').click();
+  }
   const monthlyDims=await frame.locator('html').evaluate(e=>({width:e.clientWidth,scroll:e.scrollWidth}));assert(monthlyDims.scroll<=monthlyDims.width+3,'monthly tables do not expand the page '+JSON.stringify(monthlyDims));
   await frame.locator('.v168-tabs [data-v168-exp-tab="cards"]').click();
   await frame.waitForSelector('[data-v175-card-retry]');

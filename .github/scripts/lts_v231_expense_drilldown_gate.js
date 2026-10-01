@@ -7,6 +7,7 @@ const session={access_token:'expense-fixture-token',refresh_token:'fixture-refre
 const sum=xs=>Math.round(xs.reduce((a,x)=>a+x.amount,0)*100)/100;
 const money=x=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(x).replace(/\s+/g,' ');
 const norm=s=>String(s||'').replace(/\s+/g,' ').trim();
+const flowDay=date=>({date,summary:{events:0,Consolidado:{entries:0,exits:0}},Consolidado:{bank_balance:600,economic_net:0},Itaú:{balance:600,net:0},Bradesco:{balance:0,net:0},C6:{balance:0,net:0},fix86_columns:{saldo_anterior:600,entradas:0,saidas:0,saldo_final:600,liq_d0_1_recurso:400,rsus_vested:200,fgts:50,saldo_apos_d0_1:1000,saldo_apos_rsu:1200,saldo_apos_fgts:1250}});
 async function run(browser,width,label){
  const ctx=await browser.newContext({viewport:{width,height:1000}});
  await ctx.addInitScript(()=>{const Native=Date;class Fixed extends Native{constructor(...args){super(...(args.length?args:['2026-09-30T13:00:00Z']))}static now(){return Native.parse('2026-09-30T13:00:00Z')}}window.Date=Fixed});
@@ -14,13 +15,13 @@ async function run(browser,width,label){
  const rows=[{key:'family',event_date:'2014-01-15',amount:1500.25,category:'Família',card:false},{key:'larissa1',event_date:'2024-06-15',amount:9000000.27,category:'Larissa',card:false},{key:'larissa2',event_date:'2025-06-15',amount:5000.17,category:'Larissa',card:true},{key:'invoice',event_date:'2025-09-15',amount:888888.88,category:'Faturas sem composição individual',card:true},{key:'august',event_date:'2026-08-15',amount:175.3,category:'Mercado',card:false},{key:'september',event_date:'2026-09-15',amount:300.2,category:'Mercado',card:true}];
  const calls=[],errors=[];let writes=0,failSave=true;
  const selected=a=>rows.filter(r=>r.event_date>=a.p_from&&r.event_date<=a.p_to);
- const page=await ctx.newPage();page.setDefaultTimeout(20000);page.on('pageerror',e=>errors.push(String(e)));
+ const page=await ctx.newPage();page.setDefaultTimeout(20000);page.on('pageerror',e=>errors.push(String(e.stack||e)));
  await page.route('https://tadhkamnwtsbdozwkyut.supabase.co/**',async route=>{
   const req=route.request(),name=new URL(req.url()).pathname.split('/').pop();let a={};try{a=JSON.parse(req.postData()||'{}')}catch{}calls.push({name,args:a});let data={ok:true,rows:[],items:[]},status=200;
   if(name==='token')data=session;
   else if(name==='lts_browser_product_v1')data={ok:true,mvp:product()};
   else if(name==='lts_browser_dashboard_cockpit_v1')data=cockpit;
-  else if(name==='lts_browser_cash_today_v178')data={version:'cash-today-v179-current-canonical',status:'complete',as_of:'2026-09-30',cash:600,d0:400,brokerage_available:200,available_total:1200,fgts:50};
+  else if(name==='lts_browser_cash_today_v178')data={version:'cash-today-v179-current-canonical',status:'complete',as_of:'2026-09-30',cash:600,d0:400,brokerage_available:200,available_total:1200,fgts:50,day:flowDay('2026-09-30')};
   else if(name.startsWith('lts_browser_wealth_detail'))data=wealth;
   else if(name==='lts_browser_expenses_v229'||/^lts_browser_expense_executive_v/.test(name)){
    const xs=selected(a),groups=[...new Set(xs.map(r=>r.category))],ms=[...new Set(xs.map(r=>r.event_date.slice(0,7)+'-01'))].sort();
@@ -36,7 +37,7 @@ async function run(browser,width,label){
    if(failSave){failSave=false;status=503;data={message:'falha de teste'}}else{rows[0].category=a.p_category;writes++;data={ok:true};}
   }else if(name==='lts_browser_card_detail_v226')data={invoice_amount:888888.88,items:[],source_note:'Composição individual ainda não recebida.'};
   else if(name==='lts_browser_expense_review_queue_v229')data={row_count:0,rows:[],queue_breakdown:{classification_needed:0,historical_context:0},pending_projections:[]};
-  else if(/^lts_browser_flow_v/.test(name))data={ok:true,flow:{historical:{days:[],events:[]},current_future:{days:[],events:[]}}};
+  else if(/^lts_browser_flow_v/.test(name))data={ok:true,flow:{historical:{days:[],events:[]},current_future:{days:[flowDay(a.p_from),flowDay(a.p_to)],events:[]}}};
   else if(name==='lts_browser_open_finance_refresh_v1'){status=503;data={message:'fixture sync disabled'}}
   else if(name==='lts_browser_open_finance_pending_v225')data={transaction_count:0,rows:[]};
   await route.fulfill({status,contentType:'application/json',body:JSON.stringify(data)});

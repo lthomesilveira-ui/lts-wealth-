@@ -254,13 +254,36 @@
     button.onclick=async()=>{await detailApi.openDetail(spec.group||null,null,spec.range||range,spec.expected);if(spec.note&&document.querySelector('#v178Drawer .v178-detail-summary')){const note=document.createElement('small');note.className='v231-average-note';note.textContent=spec.note;document.querySelector('#v178Drawer .v178-detail-summary').appendChild(note)}};value.replaceChildren(button);
    }
   }
+  function decorateMonthlyNumbers(){
+   if(V!=='Despesas'||v168?.expense?.tab!=='monthly'||!v175?.monthly?.data)return;
+   const data=v175.monthly.data,range=expenseRange(),year=String(v175.monthly.year),months=arr(data.months).filter(m=>String(m).startsWith(year));
+   const bounded=(from,to)=>({from:from<range.from?range.from:from,to:to>range.to?range.to:to});
+   function attach(cell,group,dates,expected){
+    if(!cell||cell.querySelector('button')||finite(expected)==null||expected===0||dates.from>dates.to)return;
+    const button=document.createElement('button');button.className='v231-number-detail';button.textContent=cell.textContent;
+    button.setAttribute('aria-label','Ver lançamentos: '+(group||'Despesas')+' · '+dates.from+' a '+dates.to);
+    button.onclick=()=>detailApi.openDetail(group,null,dates,expected);cell.replaceChildren(button);
+   }
+   for(const section of document.querySelectorAll('.v175-monthly .v175-section')){
+    const title=section.querySelector('h2')?.textContent;
+    if(title==='Despesas por categoria')for(const row of section.querySelectorAll('tbody tr')){
+     const name=row.querySelector('th')?.textContent,group=arr(data.expense_groups).find(g=>g.label===name||g.name===name);if(!group)continue;
+     const cells=[...row.querySelectorAll('td')];
+     months.forEach((month,i)=>{const date=new Date(String(month).slice(0,7)+'-01T12:00:00Z');date.setUTCMonth(date.getUTCMonth()+1);date.setUTCDate(0);attach(cells[i],name,bounded(String(month).slice(0,10),date.toISOString().slice(0,10)),finite(arr(group.monthly).find(x=>String(x.month)===String(month))?.amount))});
+     attach(cells.at(-1),name,bounded(year+'-01-01',year+'-12-31'),sum(arr(group.monthly).filter(m=>String(m.month).startsWith(year)).map(m=>m.amount)));
+    }
+    if(title==='Resultado anual')for(const row of section.querySelectorAll('tbody tr')){
+     const y=row.querySelector('th')?.textContent;attach(row.querySelectorAll('td')[1],null,bounded(y+'-01-01',y+'-12-31'),sum(arr(data.monthly_totals).filter(m=>String(m.month).startsWith(y)).map(m=>m.expenses)));
+    }
+   }
+  }
   function decorateVersion(){
    document.querySelectorAll('.brand small').forEach(node=>node.setAttribute('aria-label','V181 · Homologação'));
    document.querySelectorAll('.v168-headmeta').forEach(node=>{if(!node.querySelector('.v181-release'))node.insertAdjacentHTML('beforeend','<span class="v181-release">V181 · Homologação</span>')});
    try{const scope=window.parent.document.getElementById('scope');if(scope)scope.setAttribute('aria-label','V181 · '+(V==='Fluxo Diário'?'Fluxo de caixa':V)+' · Homologação')}catch{}
   }
   function bind(){
-   decorateVersion();decorateDrawer();decorateExpenseNumbers();
+   decorateVersion();decorateDrawer();decorateExpenseNumbers();decorateMonthlyNumbers();
    if(V==='Atualizações'&&state.review.status==='idle')queueMicrotask(()=>ensureReview(false));
    if(V==='Despesas'&&v168?.expense?.tab==='categories'&&state.review.status==='idle')queueMicrotask(()=>ensureReview(false));
    if(V==='Despesas'&&v168?.expense?.tab==='cards'&&state.reconciliation.status==='idle')queueMicrotask(()=>ensureReconciliation(false));
