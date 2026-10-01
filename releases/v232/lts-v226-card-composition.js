@@ -6,7 +6,7 @@
     const v233Formatters=[new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}),new Intl.DateTimeFormat('pt-BR',{month:'short',year:'numeric'}),new Intl.DateTimeFormat('en-CA',{timeZone:'America/Sao_Paulo',year:'numeric',month:'2-digit',day:'2-digit'})];
 
     if(window.__LTS_V226)return;
-    const st=window.__LTS_V226={installed:true,cycles:null,loading:false,error:'',epoch:0,loadedAt:0,options:null,history:{key:'',loading:false,data:null,error:''}};
+    const st=window.__LTS_V226={installed:true,cycles:null,loading:false,error:'',epoch:0,loadedAt:0,loadedDay:null,options:null,history:{key:'',loading:false,data:null,error:''}};
     const previousRender=render,previousNav=renderNav;
     const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
     const money=x=>x==null?'—':v233Formatters[0].format(Number(x));
@@ -26,13 +26,13 @@
       if(s.key==='6m'||s.key==='12m'){const d=new Date(to.slice(0,7)+'-01T12:00:00Z');d.setUTCMonth(d.getUTCMonth()-(s.key==='6m'?5:11));return{p_from:d.toISOString().slice(0,10),p_to:to};}
       return{p_from:to.slice(0,4)+'-01-01',p_to:to};
     }
-    function clear(){st.epoch++;st.loadedAt=0;st.cycles=null;st.loading=false;st.error='';st.options=null;st.history={key:'',loading:false,data:null,error:''};document.getElementById('v226-detail')?.close();}
+    function clear(){st.epoch++;st.loadedAt=0;st.loadedDay=null;st.cycles=null;st.loading=false;st.error='';st.options=null;st.history={key:'',loading:false,data:null,error:''};document.getElementById('v226-detail')?.close();}
     st.invalidate=clear;
     async function loadCycles(force=false){
       if(force)window.__LTS_V227_TRANSPORT?.invalidate?.();
-      if(st.loading||(!force&&(st.error||(st.cycles&&st.cycles.as_of===today()&&Date.now()-st.loadedAt<60000))))return;
+      if(st.loading||(!force&&(st.error||(st.cycles&&st.loadedDay===today()&&Date.now()-st.loadedAt<60000))))return;
       const epoch=st.epoch;st.loading=true;st.error='';
-      try{const data=await rpc('lts_browser_card_cycles_v229');if(data.version!=='card-cycles-v226'||!Array.isArray(data.cards))throw Error('Formato incompleto');if(epoch===st.epoch){st.cycles=data;st.loadedAt=Date.now();}}
+      try{const data=await rpc('lts_browser_card_cycles_v229');if(data.version!=='card-cycles-v226'||!Array.isArray(data.cards))throw Error('Formato incompleto');if(epoch===st.epoch){st.cycles=data;st.loadedAt=Date.now();st.loadedDay=today();}}
       catch{if(epoch===st.epoch)st.error='As próximas faturas não estão disponíveis agora.';}
       finally{if(epoch===st.epoch){st.loading=false;paint();}}
     }
@@ -91,7 +91,7 @@
         alternativeSource(data)+(data.basis==='user_confirmed_recurring_estimate'?'<p class="v226-note">Assinatura recorrente informada por você. A fatura e seu vencimento ainda precisam ser recebidos; este valor permanece uma previsão.</p>':'')+'<p class="v226-note">Pagamentos da fatura anterior estão separados das compras. Créditos e estornos reduzem o total. Compras em processamento podem ser atualizadas pelo banco.</p>';
     }
     async function openDetail(family,cycleMonth){
-      if(st.cycles&&(st.cycles.as_of!==today()||Date.now()-st.loadedAt>=60000))await loadCycles();
+      if(st.cycles&&(st.loadedDay!==today()||Date.now()-st.loadedAt>=60000))await loadCycles();
       document.getElementById('v226-detail')?.close();
       const dialog=document.createElement('dialog');dialog.id='v226-detail';dialog.className='v226-dialog';
       const card=st.cycles?.cards.find(c=>c.family===family),cycle=card?.cycles?.find(x=>x.month===cycleMonth);
@@ -143,7 +143,7 @@
       let host=document.querySelector('.v226-upcoming');
       if(!host){host=document.createElement('article');host.className='v168-card v226-upcoming';const root=document.querySelector(V==='Dashboard'?'.v168-dashboard':V==='Patrimônio'?'.v168-wealth':'.v168-expenses');if(!root)return;if(V==='Despesas'){const tabs=root.querySelector('.v168-tabs');if(tabs)tabs.after(host);else root.appendChild(host);}else root.appendChild(host);}
       host.innerHTML=upcomingPanel(full);bind(host);
-      if(!st.loading&&!st.error&&(!st.cycles||st.cycles.as_of!==today()||Date.now()-st.loadedAt>=60000))queueMicrotask(()=>loadCycles());
+      if(!st.loading&&!st.error&&(!st.cycles||st.loadedDay!==today()||Date.now()-st.loadedAt>=60000))queueMicrotask(()=>loadCycles());
       if(full){let h=document.querySelector('.v226-history');if(!h){h=document.createElement('article');h.className='v168-card v226-history';host.after(h);}h.innerHTML=historyPanel();bind(h);queueMicrotask(loadHistory);}
     }
     function bind(root){root.querySelectorAll('[data-v226-family]').forEach(b=>b.onclick=()=>openDetail(b.dataset.v226Family,b.dataset.v226Month));root.querySelectorAll('[data-v226-overview]').forEach(b=>b.onclick=()=>openOverview(b.dataset.v226Overview));root.querySelector('[data-v226-retry]')?.addEventListener('click',()=>{clear();loadCycles(true);if(V==='Despesas')loadHistory();paint();});}

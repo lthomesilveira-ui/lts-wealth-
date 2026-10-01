@@ -38,7 +38,7 @@ async function run(browser,width){
  });
  try{
   await page.goto('http://127.0.0.1:8788/releases/v232/app.html');
-  let f;for(let i=0;i<200;i++){f=page.frames().find(x=>x.url().includes('/index.html'));if(f&&await f.evaluate(()=>!!window.__LTS_V226).catch(()=>false))break;await page.waitForTimeout(100);}assert(f);f.setDefaultTimeout(25000);
+  let f;for(let i=0;i<200;i++){f=page.frames().find(x=>x.url().includes('/index.html'));if(f&&await f.evaluate(()=>!!window.__LTS_V226).catch(()=>false))break;await page.waitForTimeout(100);}assert(f);page.setDefaultTimeout(25000);
   await f.waitForFunction(()=>window.__LTS_V178_STATE.forecast.status==='ready'&&window.__LTS_V178_STATE.dashboardReport.status==='ready'&&window.__LTS_V226.cycles);
   const density=await f.evaluate(()=>window.__LTS_V178_STATE.forecast.data.flow.current_future.days.length);assert(density>=457);
   const render=await f.evaluate(()=>{const intl=window.__qaIntl,t=performance.now();for(let i=0;i<3;i++)render();return{ms:performance.now()-t,formatters:window.__qaIntl-intl};});assert(render.ms<2500,JSON.stringify(render));assert(render.formatters<100,'date formatters scale with renders, not horizon days');
