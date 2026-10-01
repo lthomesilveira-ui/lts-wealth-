@@ -1,0 +1,41 @@
+name: V233 documented invoice and loading regression
+on:
+  push:
+    branches: ['work/v234-aeternum-document']
+  pull_request:
+    paths: ['releases/v233/**', '.github/scripts/lts_v233*', '.github/workflows/v233.yml', 'supabase/migrations/*_v234_*.sql', 'supabase/tests/v234*']
+permissions:
+  contents: read
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      LTS_RELEASE: v233
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node .github/scripts/lts_v225_static_gate.js
+      - run: node .github/scripts/lts_v229_flow_gate.js
+      - run: node .github/scripts/lts_v226_open_finance_gate.mjs
+      - run: npm install --no-save --package-lock=false playwright@1.58.2
+      - run: npx playwright install --with-deps chromium
+      - run: python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/lts-v233-http.log 2>&1 &
+      - name: Full horizon loading, live invoice refresh and review coverage
+        run: node .github/scripts/lts_v233_document_gate.js
+      - name: Cash, bounded failures and bank-specific completion
+        if: success() || failure()
+        run: node .github/scripts/lts_v229_startup_gate.js
+      - name: Cards and preserved flows on desktop and mobile
+        if: success() || failure()
+        run: node .github/scripts/lts_v229_cards_gate.js
+      - name: Full expense details and classification
+        if: success() || failure()
+        run: node .github/scripts/lts_v231_expense_drilldown_gate.js
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v233-controlled-regression
+          path: qa/
