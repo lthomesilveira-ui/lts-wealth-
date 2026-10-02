@@ -8,7 +8,7 @@ function flow(from,to){const days=[];for(let date=from;date<=to;date=shift(date,
 async function run(browser,width){
  const ctx=await browser.newContext({viewport:{width,height:1000}});
  await ctx.addInitScript(s=>{localStorage.setItem('lts_supabase_session_v1',JSON.stringify(s));const Native=Date;window.__qaNow='2026-10-01T13:00:00Z';class Fixed extends Native{constructor(...a){super(...(a.length?a:[window.__qaNow]))}static now(){return Native.parse(window.__qaNow)}}window.Date=Fixed;},session);
- const page=await ctx.newPage(),errors=[],calls=[];page.on('pageerror',e=>errors.push(String(e)));let fail=false;
+ const page=await ctx.newPage(),errors=[],calls=[];let f;page.on('pageerror',e=>errors.push(String(e)));let fail=false;
  await page.route('https://tadhkamnwtsbdozwkyut.supabase.co/**',async route=>{
   const req=route.request(),name=new URL(req.url()).pathname.split('/').pop();let a={};try{a=JSON.parse(req.postData()||'{}')}catch{}calls.push({name,args:a});let data={ok:true,rows:[],items:[]},status=200;
   if(name==='token')data=session;
@@ -25,7 +25,7 @@ async function run(browser,width){
   await route.fulfill({status,contentType:'application/json',body:JSON.stringify(data)});
  });
  try{
-  await page.goto('http://127.0.0.1:8788/releases/'+(process.env.LTS_RELEASE||'v236')+'/app.html');let f;
+  await page.goto('http://127.0.0.1:8788/releases/'+(process.env.LTS_RELEASE||'v236')+'/app.html');
   for(let i=0;i<200;i++){f=page.frames().find(x=>x.url().includes('/index.html'));if(f&&await f.evaluate(()=>!!window.__LTS_V226).catch(()=>false))break;await page.waitForTimeout(100)}assert(f);page.setDefaultTimeout(30000);
   const nav=name=>width<520?f.locator('#dx1MobileNav [data-mobile-route="'+name+'"]'):f.locator('.nav [data-v="'+name+'"]');
   await f.waitForFunction(()=>window.__LTS_V178_STATE.forecast.status==='ready'&&window.__LTS_V178_STATE.dashboardReport.status==='ready');
