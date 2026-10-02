@@ -1,0 +1,224 @@
+{
+  "version": "v234",
+  "source_commit": "1d3f29524630d753fe158646d5e7b7be91135c81",
+  "historical_dashboard_commit": "3489b090580635390a7ad1d328bb9b92a96d089e",
+  "files": {
+    "wip35-v162-flow-recovery.js": {
+      "source_commit": "1d3f29524630d753fe158646d5e7b7be91135c81",
+      "source_sha256": "298815f40d8da6f3b9d5c87a2a80653bf6b741397f4505592a7d53c9edca388e"
+    },
+    "lts-v166-feedback-closure.js": {
+      "source_commit": "1d3f29524630d753fe158646d5e7b7be91135c81",
+      "source_sha256": "49afd9aa6d424beb503c2bb01b3dfaacceca811e3899f75ca964d10c85c036bd"
+    },
+    "lts-v178-review-actions.js": {
+      "source_commit": "1d3f29524630d753fe158646d5e7b7be91135c81",
+      "source_sha256": "5a48023ea9c6678cfc0fb133efd75972dfd6537cc637ebf0f76cdb7e729096e4"
+    },
+    "lts-v183-exact-flow-navigation.js": {
+      "source_commit": "1d3f29524630d753fe158646d5e7b7be91135c81",
+      "source_sha256": "d436863cfed960edb2894d897e7b41bf836c068f4c8b83d917054a0985881182"
+    },
+    "lts-v183-v168-feedback-safe.js": {
+      "source_commit": "1d3f29524630d753fe158646d5e7b7be91135c81",
+      "source_sha256": "002821f33b829385558368e97123c399bbebc0de26e0c5ecfe1cdba4a90b8c6b"
+    },
+    "index.html": {
+      "source_commit": "1d3f29524630d753fe158646d5e7b7be91135c81",
+      "source_sha256": "cca36731258680cc15a73fbad61c90ddf803358b741fd3ef58fefe5419eb688b"
+    },
+    "lts-dashboard-executive-v1.js": {
+      "source_commit": "1d3f29524630d753fe158646d5e7b7be91135c81",
+      "source_sha256": "79c42401ac932793c130edd80bb84709fa30340a781c6a39cf37976570d4b250"
+    },
+    "lts-v183-rsu-component-labels.js": {
+      "source_commit": "1d3f29524630d753fe158646d5e7b7be91135c81",
+      "source_sha256": "cd6efbf1b0eb3241b331516546ae39861b97d40e858a472e0b1d0a63c000c2ff"
+    },
+    "lts-v183-core-loading-guard.js": {
+      "source_commit": "1d3f29524630d753fe158646d5e7b7be91135c81",
+      "source_sha256": "f3b4971b051eb00f9daa7a3f7ec5a9b47639810e0f7521df4e4c9b6ec4b29b4a"
+    },
+    "lts-history-coverage-policy.js": {
+      "source_commit": "1d3f29524630d753fe158646d5e7b7be91135c81",
+      "source_sha256": "583c3a2566fc5b93cc012ed99ce95a2ff88890cb83ce6073082b8ce527b68106"
+    },
+    "lts-v180-documentary-refresh.js": {
+      "source_commit": "1d3f29524630d753fe158646d5e7b7be91135c81",
+      "source_sha256": "4bc410b4bb81e518eea4d87f94aaac173e6f0d78d769e94dc229d454c05486d4"
+    },
+    "lts-v183-v182-feedback-safe.js": {
+      "source_commit": "1d3f29524630d753fe158646d5e7b7be91135c81",
+      "source_sha256": "9ad372ab6aaafffc6b10acd8100d5cbcf15a0b5fd488b33d8350493aba066047"
+    },
+    "lts-v183-personal-image-labels.js": {
+      "source_commit": "1d3f29524630d753fe158646d5e7b7be91135c81",
+      "source_sha256": "ff1bf036842d2905ff753aa5eace52f883de5f0cdfb5e0459cd96a6841041369"
+    },
+    "lts-v166-feedback-closure.css": {
+      "source_commit": "1d3f29524630d753fe158646d5e7b7be91135c81",
+      "source_sha256": "0ebb44bd44467ce474eab4661c672e95775ab490b818ab1d02f4f941fe2a5bfb"
+    },
+    "lts-executive-visual-system-v2.js": {
+      "source_commit": "1d3f29524630d753fe158646d5e7b7be91135c81",
+      "source_sha256": "360d117686c42f508b423cd3d34b0c6ae746aa4027229f9c032463a438f4c70f"
+    },
+    "lts-expense-read-model.js": {
+      "source_commit": "1d3f29524630d753fe158646d5e7b7be91135c81",
+      "source_sha256": "76a3d91df2af59256b23c9969e719963a17cd98a51df361742491b074cd60fba"
+    },
+    "lts-v171-v170-review.js": {
+      "source_commit": "1d3f29524630d753fe158646d5e7b7be91135c81",
+      "source_sha256": "b647ec061490765f079dd5d2ed111b75f9e3c1db37e1da1e9897668ac6a12a7e"
+    },
+    "lts-v169-v168-feedback-closure.js": {
+      "source_commit": "1d3f29524630d753fe158646d5e7b7be91135c81",
+      "source_sha256": "c41f1361fe5a6cb26ad9d640ed782d626bae162c1f1f6fb487f3db67ea6e2c93"
+    },
+    "lts-v183-retention-composition.js": {
+      "source_commit": "1d3f29524630d753fe158646d5e7b7be91135c81",
+      "source_sha256": "632220ebef861bb135d6899d4191f9edfa6ef34941ac5c63527b29c91d060250"
+    },
+    "lts-v181-regression-closure.js": {
+      "source_commit": "1d3f29524630d753fe158646d5e7b7be91135c81",
+      "source_sha256": "dcecd9ead8604bcac72d79743808e0712e2898bd706d7e2b461182c70277c8ab"
+    },
+    "lts-dashboard-read-model.js": {
+      "source_commit": "1d3f29524630d753fe158646d5e7b7be91135c81",
+      "source_sha256": "ec2b3615c65fe194b6a6f5589190184c58c4da5aa5c0da044848d3807640d420"
+    },
+    "lts-v183-v173-feedback-safe.js": {
+      "source_commit": "1d3f29524630d753fe158646d5e7b7be91135c81",
+      "source_sha256": "dd75d9e5b5583c44e809586531f5fa07fa20ccb47942017a5d381359e0f2ca35"
+    },
+    "lts-v179-cash-recovery.js": {
+      "source_commit": "1d3f29524630d753fe158646d5e7b7be91135c81",
+      "source_sha256": "3615d625a1cfdc68f1f51b06874e370d58195ba6dbe8a8be7f9ab78726e9d19d"
+    },
+    "lts-v183-search-completeness.js": {
+      "source_commit": "1d3f29524630d753fe158646d5e7b7be91135c81",
+      "source_sha256": "0de2f03f22e7fd4e1ad6d8d97211d127b1873741bd4d65df06a34418be5fdfc2"
+    },
+    "lts-v183-income-review.js": {
+      "source_commit": "1d3f29524630d753fe158646d5e7b7be91135c81",
+      "source_sha256": "c64bce436e26a256f4d1f7a5aefad54e6f019c7ad6d32af595e8076ea2dde9e6"
+    },
+    "lts-v172-v171-review.js": {
+      "source_commit": "1d3f29524630d753fe158646d5e7b7be91135c81",
+      "source_sha256": "c5093eb4a4f80c999b8032068b2c2bd78083bbdfd89c073cede7cc3bcc75fc4d"
+    },
+    "lts-v174-v173-review.js": {
+      "source_commit": "1d3f29524630d753fe158646d5e7b7be91135c81",
+      "source_sha256": "bc32f55be5fa2f46d7f6167412f7d8ed984e1454eae81712708e7d72ac8e508e"
+    },
+    "lts-v176-flow-expense-audit.js": {
+      "source_commit": "1d3f29524630d753fe158646d5e7b7be91135c81",
+      "source_sha256": "e015c637d7356f9f0db3b5c250ab7c5fe819fc938c1755e2d6326caf87b3284c"
+    },
+    "lts-v168-feedback-package.css": {
+      "source_commit": "1d3f29524630d753fe158646d5e7b7be91135c81",
+      "source_sha256": "87341abc4c090fc67eadc04356dad470566e63c91064be32a53c43dec7399592"
+    },
+    "lts-v183-wealth-debt-integrity.js": {
+      "source_commit": "1d3f29524630d753fe158646d5e7b7be91135c81",
+      "source_sha256": "3732253ba298e9a34c683369d6a73183a2eb4b87206c5ded3ee1c13dcb527dd5"
+    },
+    "lts-v183-card-payment-status.js": {
+      "source_commit": "1d3f29524630d753fe158646d5e7b7be91135c81",
+      "source_sha256": "c96317ad7fa07c2e4fae6651a6b4a7227ee42d3a13e8e3df35928058c9fd8d88"
+    },
+    "lts-executive-visual-system-v2.css": {
+      "source_commit": "1d3f29524630d753fe158646d5e7b7be91135c81",
+      "source_sha256": "08fd5215bb212720ee98ad72b6122ab9c4ac8f8d7ffbff24ef2ab792dd6ce77d"
+    },
+    "lts-v181-regression-closure.css": {
+      "source_commit": "1d3f29524630d753fe158646d5e7b7be91135c81",
+      "source_sha256": "720569d37f9719aba68a85d8806c5cebceba0d04f5d391b9a700edc73635df2c"
+    },
+    "lts-expense-screen-alignment.js": {
+      "source_commit": "1d3f29524630d753fe158646d5e7b7be91135c81",
+      "source_sha256": "c08b85b9f18dc33b7eaf76077ad41cdf86c8137b472b19163b9d4af0fd69b031"
+    },
+    "lts-v183-flow-period-state.js": {
+      "source_commit": "1d3f29524630d753fe158646d5e7b7be91135c81",
+      "source_sha256": "f424bf7f7a8ae41fc14d358043494de458eb10538e03b9c21fad8949024fdc7f"
+    },
+    "lts-v183-award-provenance.js": {
+      "source_commit": "1d3f29524630d753fe158646d5e7b7be91135c81",
+      "source_sha256": "2dfc725f92c361001844be1d3b0fb43be84b94f446976e09ba4ad6f45e30e029"
+    },
+    "lts-v183-card-period-candidate.js": {
+      "source_commit": "1d3f29524630d753fe158646d5e7b7be91135c81",
+      "source_sha256": "6bb37def605185fdf1cb05bb3c3a7e7432ae4c4f7b8bd62bcd23f8dc48c1a6c4"
+    },
+    "lts-v178-integrated-review.css": {
+      "source_commit": "1d3f29524630d753fe158646d5e7b7be91135c81",
+      "source_sha256": "0d8dd9eb33522b0fe4b8961646d6882d122e2310ff1cb7f8891ebb0fd52be809"
+    },
+    "lts-v170-v169-review.js": {
+      "source_commit": "1d3f29524630d753fe158646d5e7b7be91135c81",
+      "source_sha256": "157a4ad638a60369a3e4606dacafbb5b2016e113b1e16f300e38dc542430f9d6"
+    },
+    "lts-v183-historical-balance-guard.js": {
+      "source_commit": "1d3f29524630d753fe158646d5e7b7be91135c81",
+      "source_sha256": "7ce9de54b143138efe1d73b0127f49accf0f1f380bc6b1eb185339ba2c0e094f"
+    },
+    "lts-v183-expense-history-candidate.js": {
+      "source_commit": "1d3f29524630d753fe158646d5e7b7be91135c81",
+      "source_sha256": "0702a8a983618a219e97de0a6db572d67e92de21bb059d4ff8f5d655ac76d802"
+    },
+    "lts-v169-v168-feedback-closure.css": {
+      "source_commit": "1d3f29524630d753fe158646d5e7b7be91135c81",
+      "source_sha256": "67e588a9bcd569168a5ba753f2ad8f614668cef2b09f3a308b8998ee656512da"
+    },
+    "lts-v174-v173-review.css": {
+      "source_commit": "1d3f29524630d753fe158646d5e7b7be91135c81",
+      "source_sha256": "f526f69dd2f87af20464931249e7cb46da2ddb6f7fb7d0c130a500dc150ae00c"
+    },
+    "lts-v173-v172-feedback.css": {
+      "source_commit": "1d3f29524630d753fe158646d5e7b7be91135c81",
+      "source_sha256": "3e9f0535e1fe55514af262b505321464afb13bfe024b1a721e80f9182e6e107f"
+    },
+    "lts-v176-flow-expense-audit.css": {
+      "source_commit": "1d3f29524630d753fe158646d5e7b7be91135c81",
+      "source_sha256": "b3f571a42a6b2398c760ef5dfe9ec5ebc3117932c33df3e0a3c532809a04a328"
+    },
+    "lts-v175-expense-financial-audit.css": {
+      "source_commit": "1d3f29524630d753fe158646d5e7b7be91135c81",
+      "source_sha256": "d8681b85fe0a6d69cf98e0b6fecb1c063321c68fd65e15c1b96a887468fbf5e2"
+    },
+    "lts-v171-v170-review.css": {
+      "source_commit": "1d3f29524630d753fe158646d5e7b7be91135c81",
+      "source_sha256": "fefe14999ceb7da28acbd84189cb2f27b4066ed75293bba26f41ee144de02b97"
+    },
+    "lts-v172-v171-review.css": {
+      "source_commit": "1d3f29524630d753fe158646d5e7b7be91135c81",
+      "source_sha256": "997cef48021737697be4649ee7d30739b664f1f012d6fafe14350b77218d0c91"
+    },
+    "lts-v170-v169-review.css": {
+      "source_commit": "1d3f29524630d753fe158646d5e7b7be91135c81",
+      "source_sha256": "e9e1de863f4a0887336cad7142489505d51efe98cd3835573be6c08e8935724d"
+    }
+  },
+  "parent_release": "v235",
+  "parent_commit": "d1911637aa2db6355342024de9fdcd71c8900a33",
+  "release": "v236",
+  "correction": "Remove the obsolete product-flow fallback and apply source formula membership consistently.",
+  "v228_scope": [
+    "Observed bank movements after documentary positions; strict source identity deduplication",
+    "Morgan available shares and cash in unchanged RSU Vested column",
+    "Dashboard card visual polish only",
+    "Expense processing notice moved to Updates"
+  ],
+  "candidate_base": "d1911637aa2db6355342024de9fdcd71c8900a33",
+  "changes": [
+    "Only the canonical period reader supplies displayed Flow balances and movements",
+    "Explicit pending and failed states retain period ownership through refresh and rollover",
+    "Historical card totals preceding their source detail boundary are disclosed as expected history",
+    "Verified original workbook formula membership reaches expense analysis, history and invoice detail",
+    "Excluded original formula rows and source formula references remain visible",
+    "Exact prior purchase classifications recovered; unknown purpose remains reviewable"
+  ],
+  "base_release": "v235",
+  "scope": "Canonical period balances, workbook formula reconciliation and historical detail boundaries"
+}

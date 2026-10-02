@@ -1,3 +1,9 @@
+## Current consolidated register — V236, 1 October 2026
+
+Read [LTS_WEALTH_V236_CLOSEOUT_MATRIX.md](LTS_WEALTH_V236_CLOSEOUT_MATRIX.md) first for current statuses and source limits. The isolated successor is `releases/v236/app.html`; its publication and QA evidence are recorded in the private delivery receipt. The fixed legacy manifest and protected root are separate entries and do not identify the latest isolated release. Earlier sections below remain historical and must not recreate already answered questions or resolved incidents. No user/physical-phone acceptance is implied.
+
+--- Earlier record preserved ---
+
 ## V231 expense continuity — 1 October 2026
 
 H01/U02/E03/C04 are implemented with source verification and controlled desktop/mobile checks. E04 now covers headline, group and monthly expense composition, plus audited classification corrections. E02 is improved with payment/card/invoice/source references and click-through; genuine missing invoice composition remains OPEN. Do not mark documentary coverage as resolved or request historical classifications already in the workbook. Current-period classification uncertainties and every prior unclosed document item remain open. Final publication and private QA receipt are in LTS_CONTINUAR.md. User acceptance is still pending.

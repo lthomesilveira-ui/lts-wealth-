@@ -1,3 +1,9 @@
+## Current consolidated register — V236, 1 October 2026
+
+Read [LTS_WEALTH_V236_CLOSEOUT_MATRIX.md](LTS_WEALTH_V236_CLOSEOUT_MATRIX.md) first for current statuses and source limits. The isolated successor is `releases/v236/app.html`; its publication and QA evidence are recorded in the private delivery receipt. The fixed legacy manifest and protected root are separate entries and do not identify the latest isolated release. Earlier sections below remain historical and must not recreate already answered questions or resolved incidents. No user/physical-phone acceptance is implied.
+
+--- Earlier record preserved ---
+
 # LTS Wealth — Comece aqui
 
 Atualizado em 14/09/2026. A porta de entrada permanente para continuar em outro chat é [RETOMAR_LTS_WEALTH.md](RETOMAR_LTS_WEALTH.md). Ela contém a frase combinada com o usuário e a ordem de leitura das fontes reais.

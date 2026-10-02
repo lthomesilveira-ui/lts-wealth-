@@ -1,3 +1,9 @@
+## Current consolidated register — V236, 1 October 2026
+
+Read [LTS_WEALTH_V236_CLOSEOUT_MATRIX.md](LTS_WEALTH_V236_CLOSEOUT_MATRIX.md) first for current statuses and source limits. The isolated successor is `releases/v236/app.html`; its publication and QA evidence are recorded in the private delivery receipt. The fixed legacy manifest and protected root are separate entries and do not identify the latest isolated release. Earlier sections below remain historical and must not recreate already answered questions or resolved incidents. No user/physical-phone acceptance is implied.
+
+--- Earlier record preserved ---
+
 # LTS Wealth — Retomada sem depender do chat
 
 Criado em 14/09/2026 por pedido explícito do usuário. Este arquivo é a porta de entrada permanente. O estado atualizado fica em LTS_WEALTH_EXECUTION_STATE.md; este guia não substitui os documentos de decisões, pendências e evidências.

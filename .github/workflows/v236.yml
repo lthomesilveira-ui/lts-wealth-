@@ -1,0 +1,50 @@
+name: V236 canonical balances and complete source trace
+on:
+  push:
+    branches: ['work/v236-full-closeout']
+  pull_request:
+    paths: ['releases/v236/**', '.github/scripts/lts_v235*', '.github/workflows/v236.yml', 'supabase/migrations/*_v235_*.sql', 'supabase/migrations/*_v236_*.sql', 'supabase/tests/v236*', '.github/scripts/lts_v236*', 'supabase/migrations/*_v237_*.sql']
+permissions:
+  contents: read
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      LTS_RELEASE: v236
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node .github/scripts/lts_v225_static_gate.js
+      - run: node .github/scripts/lts_v229_flow_gate.js
+      - run: node .github/scripts/lts_v226_open_finance_gate.mjs
+      - run: npm install --no-save --package-lock=false playwright@1.58.2
+      - run: npx playwright install --with-deps chromium
+      - run: python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/lts-v236-http.log 2>&1 &
+      - name: Canonical balances, bank changes, period replacement and refresh
+        run: node .github/scripts/lts_v236_balance_gate.js
+      - name: Cycle pagination, workbook sources, formulas and failures
+        if: success() || failure()
+        run: node .github/scripts/lts_v235_inventory_gate.js
+      - name: Preserved source signs, expense details and classifications
+        if: success() || failure()
+        run: node .github/scripts/lts_v234_source_gate.js
+      - name: Full horizon, documented invoice refresh and review coverage
+        if: success() || failure()
+        run: node .github/scripts/lts_v233_document_gate.js
+      - name: Cash, bounded failures and bank-specific completion
+        if: success() || failure()
+        run: node .github/scripts/lts_v229_startup_gate.js
+      - name: Cards and preserved flows on desktop and mobile
+        if: success() || failure()
+        run: node .github/scripts/lts_v229_cards_gate.js
+      - name: Full expense details and classification
+        if: success() || failure()
+        run: node .github/scripts/lts_v231_expense_drilldown_gate.js
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v236-controlled-regression
+          path: qa/
