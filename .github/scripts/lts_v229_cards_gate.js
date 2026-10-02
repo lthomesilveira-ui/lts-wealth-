@@ -276,7 +276,7 @@ async function run(browser,viewport,label){
   if(process.env.LTS_RELEASE==='v236'){await frame.locator('[data-v237-formula] summary').click();assert.match(await frame.locator('[data-v237-formula]').innerText(),/40,00.*30,00/s);assert.match(await frame.locator('[data-v237-excluded]').innerText(),/10,00/);}
   await frame.locator('#v226-detail .v226-alternative').filter({has:frame.locator('[data-v226-alternative-item]')}).locator('summary').click();
   assert.equal(await frame.locator('#v226-detail [data-v226-alternative-item]').count(),1,'bank merchant details remain available alongside monthly evidence');
-  assert.match(await frame.locator('#v226-detail .v226-alternative').innerText(),/não somar novamente/);
+  assert.match(await frame.locator('#v226-detail .v226-alternative').filter({has:frame.locator('[data-v226-alternative-item]')}).innerText(),/não somar novamente/);
   assert.match(await frame.locator('#v226-detail .v226-totals').innerText(),/30,00/,'alternative source is not added to the invoice total');
   await frame.locator('#v226-detail [data-v226-close]').click();
   await nav('Patrimônio').click();await frame.getByRole('tab',{name:'Visão geral',exact:true}).click();assert.equal(await frame.locator('.v226-upcoming').count(),0,'overview is not displaced by cards');await frame.getByRole('tab',{name:'RSUs e awards',exact:true}).click();assert.equal(await frame.locator('.v226-upcoming').count(),0,'RSUs are not displaced by cards');await frame.getByRole('tab',{name:'Bens e dívidas',exact:true}).click();await frame.waitForSelector('.v226-upcoming');

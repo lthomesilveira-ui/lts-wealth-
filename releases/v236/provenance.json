@@ -217,7 +217,8 @@
     "Historical card totals preceding their source detail boundary are disclosed as expected history",
     "Verified original workbook formula membership reaches expense analysis, history and invoice detail",
     "Excluded original formula rows and source formula references remain visible",
-    "Exact prior purchase classifications recovered; unknown purpose remains reviewable"
+    "Exact prior purchase classifications recovered; unknown purpose remains reviewable",
+    "Cached Flow navigation explicitly renders the selected route before reusing its response"
   ],
   "base_release": "v235",
   "scope": "Canonical period balances, workbook formula reconciliation and historical detail boundaries"

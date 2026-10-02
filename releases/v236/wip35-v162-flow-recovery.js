@@ -59,7 +59,7 @@
     const preservedRender=render;
     render=function(){const entered=V==='Fluxo Diário'&&lastRenderedRoute!=='Fluxo Diário';lastRenderedRoute=V;preservedRender();bindDefaultRange();if(entered&&D&&status.default_range_applied){queueMicrotask(()=>{if(V==='Fluxo Diário')openDefaultRange()})}};
     const preservedRenderNav=renderNav;
-    renderNav=function(){preservedRenderNav();const button=document.querySelector('.nav [data-v="Fluxo Diário"]');if(button)button.onclick=()=>{V='Fluxo Diário';lastRenderedRoute=V;renderNav();openDefaultRange()}};
+    renderNav=function(){preservedRenderNav();const button=document.querySelector('.nav [data-v="Fluxo Diário"]');if(button)button.onclick=()=>{V='Fluxo Diário';lastRenderedRoute=V;renderNav();render();openDefaultRange()}};
     renderNav();bindDefaultRange();
     status.invoice_contract='all-cards-aeternum-summary-source-v1';
     const previousCardPredicate=isCardSettlement;

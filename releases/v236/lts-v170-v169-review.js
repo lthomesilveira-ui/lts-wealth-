@@ -119,7 +119,7 @@
     flowSemanticMeta=function(e){return baseFlowSemanticMeta(e)};
     function openDefault(){const r=defaultRange();FLOWPRESET='5 anteriores + fim do próximo ano';SHOWZERO=true;FLOWFORCEZERO=false;return loadFlowRange(r.from,r.to)}
     function bindFlowDefault(){
-      const nav=document.querySelector('.nav [data-v="Fluxo Diário"]');if(nav)nav.onclick=()=>{V='Fluxo Diário';state.lastRoute=V;renderNav();openDefault()};
+      const nav=document.querySelector('.nav [data-v="Fluxo Diário"]');if(nav)nav.onclick=()=>{V='Fluxo Diário';state.lastRoute=V;renderNav();render();openDefault()};
       if(V!=='Fluxo Diário')return;const b=document.getElementById('flowDefaultRange');if(b){const r=defaultRange();b.textContent='5 anteriores + fim de '+r.to.slice(0,4);b.title='Cinco dias anteriores até 31 de dezembro do ano subsequente';b.classList.toggle('active',FLOWFROM===r.from&&FLOWTO===r.to);b.onclick=openDefault}const go=document.getElementById('goToday');if(go)go.onclick=openDefault;
     }
     function decorateFlow(){
