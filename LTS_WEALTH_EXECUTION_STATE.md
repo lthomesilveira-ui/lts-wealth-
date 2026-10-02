@@ -1,3 +1,9 @@
+## Current consolidated register — V236, 1 October 2026
+
+Read [LTS_WEALTH_V236_CLOSEOUT_MATRIX.md](LTS_WEALTH_V236_CLOSEOUT_MATRIX.md) first for current statuses and source limits. The isolated successor is `releases/v236/app.html`; its publication and QA evidence are recorded in the private delivery receipt. The fixed legacy manifest and protected root are separate entries and do not identify the latest isolated release. Earlier sections below remain historical and must not recreate already answered questions or resolved incidents. No user/physical-phone acceptance is implied.
+
+--- Earlier record preserved ---
+
 # Current execution — V231, 1 October 2026
 
 The authorized Despesas round is implemented in isolated releases/v231, based on main 7d868ec52cf82652dfa77c309c0bbd33024368c5. PR 96 tracks the release; publication and the exact final commit are recorded in the private continuity receipt. Earlier execution statements below are historical. Root, V181 and all earlier releases stay immutable.

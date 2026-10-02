@@ -49,7 +49,8 @@ async function run(browser,viewport,label){
   }
   else if(name==='lts_browser_card_history_v226')data={version:'card-history-v226',invoices:[{bank:'Itaú',family:'itau_mastercard',card_name:'Mastercard Black',reference_month:'2026-07-01',due_date:'2026-07-12',amount:780,detail_total:780,difference:0,item_count:80,detail_complete:true},...(a.p_from<='2024-01-01'&&a.p_to>='2024-01-31'?[{bank:'Itaú',family:'itau_mastercard',reference_month:'2024-01-01',due_date:null,amount:30,detail_total:30,difference:0,item_count:3,detail_complete:true,source:'workbook_reconciled'}]:[])]};
   else if(name==='lts_browser_card_detail_v226')data=a.p_month==='2024-01-01'?{invoice_amount:30,alternative_note:'Outra fonte da mesma fatura; não somar novamente.',alternative_items:[{description:'Compra bancária complementar',purchase_date:'2023-12-20',amount:20,last4:'1111',category:'Mercado'}],source_note:'Composição reconciliada da planilha; estabelecimento e dia da compra não informados.',items:Array.from({length:3},(_,i)=>({description:'Linha '+(i+1)+' da planilha · estabelecimento não informado',amount:10,last4:'1111',category:'Mercado',category_basis:'historical_workbook',date_kind:'reference_month',reference_month:'2024-01-01'}))}:{invoice_amount:780,items:fixtureHistory()};
-  else if(name==='lts_browser_card_category_options_v226')data={categories:['Mercado','Saúde','Presentes']};
+  if(name==='lts_browser_card_detail_v226'&&a.p_month==='2024-01-01'&&process.env.LTS_RELEASE==='v236'){data.detail_total=30;data.formula_resolution={source_note:'Composição conciliada pela fórmula original.',raw_item_count:4,raw_detail_total:40,excluded_items:[{source_sheet:'Cartão',source_row:4,category:'Categoria não incluída',amount:10}],formula_evidence:[{file:'Composição_teste.xlsx',total_cell:'Z4',total_formula:'=SUM(Z7,Z18)',category_formula:'=SUMIFS(D:D,B:B,G12)'}]};}
+  if(name==='lts_browser_card_category_options_v226')data={categories:['Mercado','Saúde','Presentes']};
   else if(name==='lts_browser_card_classify_v226'){assert.equal(a.p_category,'Saúde');assert.equal(a.p_beneficiary,'Lucas');flags.cardClassified=true;data={ok:true};}
   else if(name==='lts_browser_open_finance_pending_v225')data={version:'pending-expense-v225',transaction_count:0,net_expense:0,rows:[]};
   else if(name==='lts_browser_open_finance_refresh_v1'){status=503;data={message:'deliberate sync failure'};}
@@ -124,7 +125,7 @@ async function run(browser,viewport,label){
   await frame.locator('[data-v181-detail-group="Benjamin — Saúde"]').click();await frame.waitForFunction(()=>window.__LTS_V178_STATE.detail&&!window.__LTS_V178_STATE.detail.loading);assert.equal(await frame.evaluate(()=>window.__LTS_V178_STATE.detail.range.from),'2026-04-01');assert.equal(await frame.locator('#v178Drawer tbody tr').count(),3);await frame.locator('.v178-close').click();
   await frame.locator('[data-v168-exp-range="all"]').click();await frame.locator('.v168-tabs [data-v168-exp-tab="monthly"]').click();await frame.waitForFunction(()=>window.__LTS_V175_STATE.monthly.data?.months?.length===156&&!window.__LTS_V175_STATE.monthly.loading);
   assert((await frame.locator('.v175-monthly').innerText()).includes('Benjamin — Educação'));
-  if(['v231','v235'].includes(process.env.LTS_RELEASE)){
+  if(['v231','v235','v236'].includes(process.env.LTS_RELEASE)){
    const matrix=frame.locator('.v175-section').filter({has:frame.getByRole('heading',{name:'Despesas por categoria',exact:true})});
    await matrix.locator('tbody tr').filter({has:frame.locator('th').filter({hasText:'Benjamin — Educação'})}).locator('td').last().locator('button').click();
    await frame.waitForFunction(()=>window.__LTS_V178_STATE.detail&&!window.__LTS_V178_STATE.detail.loading);
@@ -157,6 +158,12 @@ async function run(browser,viewport,label){
   assert.equal(await frame.locator('[data-v181-review-key="uncertain-fixture"] [data-v181-category]').inputValue(),'');
   assert(await frame.locator('[data-v181-review-key="uncertain-fixture"] [data-v181-review-save]').isDisabled());
   await suggested.locator('[data-v181-category]').selectOption('');assert(await suggested.locator('[data-v181-review-save]').isDisabled());
+  if(process.env.LTS_RELEASE==='v236'){
+   await frame.evaluate(()=>render());
+   assert.equal(await suggested.locator('[data-v181-category]').inputValue(),'','a background repaint preserves the explicit blank choice');
+   assert(await suggested.locator('[data-v181-review-save]').isDisabled(),'a suggestion is not restored over an unsaved choice');
+   assert.equal(calls.filter(x=>x.name==='lts_browser_expense_review_decision_v229').length,0,'an unsaved draft never writes');
+  }
   await frame.locator('[data-v181-review-key="pending-fixture"] [data-v181-category]').selectOption('Mercado');
   await frame.locator('[data-v181-review-key="pending-fixture"] [data-v181-review-save]').click();
   await frame.waitForFunction(()=>window.__LTS_V181_STATE.review.data?.row_count===2);
@@ -226,7 +233,7 @@ async function run(browser,viewport,label){
   assert.equal(await frame.locator('.flowdeletebtn').count(),0,'deleted entry disappears from visible day details');
   assert(calls.some(x=>/^lts_browser_flow_mutate_v/.test(x.name)&&x.args.p_action==='cancel'),'manual deletion reaches existing audited writer');
   await nav('Dashboard').click();started=Date.now();await nav('Fluxo Diário').click();await frame.waitForFunction(()=>!FLOWLOADING&&document.querySelector('.fx87-row[id^="d-"]'));flowTimings.return_ms=Date.now()-started;
-  if(['v229-1','v230','v231','v235'].includes(process.env.LTS_RELEASE))assert(flowTimings.bank_change_ms<2000,'bank switching must not repeatedly format the current date');
+  if(['v229-1','v230','v231','v235','v236'].includes(process.env.LTS_RELEASE))assert(flowTimings.bank_change_ms<2000,'bank switching must not repeatedly format the current date');
   assert(Object.values(flowTimings).every(ms=>ms<4000),'controlled browser rendering must complete promptly '+JSON.stringify(flowTimings));
   await nav('Dashboard').click();flags.date='2026-09-21';await frame.evaluate(()=>{window.__TEST_NOW__='2026-09-21T13:00:00Z';render()});assert.equal(semantic(await kpi('Total disponível hoje').locator('strong').innerText()),'—','day rollover does not present stale complete total');await frame.waitForFunction(()=>window.__LTS_V178_STATE.cash.data?.as_of==='2026-09-21'&&window.__LTS_V178_STATE.cash.status==='ready');
   await frame.waitForFunction(()=>window.__LTS_V226?.cycles?.cards.length===5);
@@ -272,9 +279,10 @@ async function run(browser,viewport,label){
   assert.equal(await frame.locator('#v226-detail [data-v226-item]').count(),3,'all reconciled workbook rows available');
   assert.match(await frame.locator('#v226-detail').innerText(),/estabelecimento e dia da compra não informados/);
   assert.match(await frame.locator('#v226-detail [data-v226-item] td').first().innerText(),/jan.*2024/,'month is not presented as an invented purchase day');
-  await frame.locator('#v226-detail .v226-alternative summary').click();
+  if(process.env.LTS_RELEASE==='v236'){await frame.locator('[data-v237-formula] summary').click();assert.match(await frame.locator('[data-v237-formula]').innerText(),/40,00.*30,00/s);assert.match(await frame.locator('[data-v237-excluded]').innerText(),/10,00/);}
+  await frame.locator('#v226-detail .v226-alternative').filter({has:frame.locator('[data-v226-alternative-item]')}).locator('summary').click();
   assert.equal(await frame.locator('#v226-detail [data-v226-alternative-item]').count(),1,'bank merchant details remain available alongside monthly evidence');
-  assert.match(await frame.locator('#v226-detail .v226-alternative').innerText(),/não somar novamente/);
+  assert.match(await frame.locator('#v226-detail .v226-alternative').filter({has:frame.locator('[data-v226-alternative-item]')}).innerText(),/não somar novamente/);
   assert.match(await frame.locator('#v226-detail .v226-totals').innerText(),/30,00/,'alternative source is not added to the invoice total');
   await frame.locator('#v226-detail [data-v226-close]').click();
   await nav('Patrimônio').click();await frame.getByRole('tab',{name:'Visão geral',exact:true}).click();assert.equal(await frame.locator('.v226-upcoming').count(),0,'overview is not displaced by cards');await frame.getByRole('tab',{name:'RSUs e awards',exact:true}).click();assert.equal(await frame.locator('.v226-upcoming').count(),0,'RSUs are not displaced by cards');await frame.getByRole('tab',{name:'Bens e dívidas',exact:true}).click();await frame.waitForSelector('.v226-upcoming');
