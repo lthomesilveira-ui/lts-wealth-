@@ -8,7 +8,7 @@
   const v168=window.__LTS_V168_STATE,v175=window.__LTS_V175_STATE,v178=window.__LTS_V178_STATE,detailApi=window.__LTS_V178_REVIEW;
   const previousRender=render,previousNav=renderNav,previousExpenses=despesas,previousUpdates=atualizacoes;
   const state=window.__LTS_V181_STATE={
-   review:{status:'idle',data:null,error:null,key:'',offset:0,query:'',saving:null,notice:''},
+   review:{status:'idle',data:null,error:null,key:'',offset:0,query:'',saving:null,notice:'',drafts:new Map()},
    reconciliation:{status:'idle',data:null,error:null,key:''},
    categoryView:'beneficiary',focusQueue:false
   };
@@ -58,7 +58,8 @@
    finally{render()}
   }
   function reviewFields(row,data){
-   const person=optionRows(data?.beneficiary_options,'Selecione a pessoa/contexto',row.suggestion?.beneficiary),property=optionRows(data?.property_options,'Selecione o imóvel',row.suggestion?.property_code),category=optionRows(data?.category_options,'Selecione a categoria',row.suggestion?.category);
+   const draft=state.review.drafts.get(String(row.key)),choice=name=>draft&&Object.hasOwn(draft,name)?draft[name]:row.suggestion?.[name];
+   const person=optionRows(data?.beneficiary_options,'Selecione a pessoa/contexto',choice('beneficiary')),property=optionRows(data?.property_options,'Selecione o imóvel',choice('property_code')),category=optionRows(data?.category_options,'Selecione a categoria',choice('category'));
    if(row.question_kind==='person')return '<label>Pessoa/contexto<select data-v181-beneficiary>'+person+'</select></label>';
    if(row.question_kind==='property')return '<label>Imóvel<select data-v181-property>'+property+'</select></label>';
    if(row.question_kind==='property_purpose')return '<label>Finalidade/categoria<select data-v181-category>'+category+'</select></label>';
@@ -169,9 +170,10 @@
    if(v178?.dashboardReport){v178.dashboardReport.token=(v178.dashboardReport.token||0)+1;v178.dashboardReport.status='idle';v178.dashboardReport.data=null}
    detailApi.refresh?.();
   }
-  function updateReviewChoice(row){
+  function updateReviewChoice(row,remember=false){
    const model=arr(state.review.data?.rows).find(x=>String(x.key)===row.dataset.v181ReviewKey)||{};
    const person=row.querySelector('[data-v181-beneficiary]')?.value,property=row.querySelector('[data-v181-property]')?.value,category=row.querySelector('[data-v181-category]')?.value;
+   if(remember){const draft={};if(person!==undefined)draft.beneficiary=person;if(property!==undefined)draft.property_code=property;if(category!==undefined)draft.category=category;state.review.drafts.set(String(row.dataset.v181ReviewKey),draft)}
    const needsPerson=/^(saúde|saude|educação|educacao|vestuário|vestuario)$/i.test(category||'');
    const knownCategory=!!model.category&&!/^(a classificar|sem categoria|nao identificado|não identificado)$/i.test(model.category);
    const ready=model.question_kind==='person'?!!person:model.question_kind==='property'?!!property:model.question_kind==='property_purpose'?!!category:(!!category&&(!needsPerson||!!person||!!model.beneficiary))||(knownCategory&&!!person);
@@ -183,7 +185,7 @@
    const host=button.closest('[data-v181-review-key]'),key=host?.dataset.v181ReviewKey,row=arr(state.review.data?.rows).find(item=>String(item.key)===String(key));if(!row)return;
    const beneficiary=host.querySelector('[data-v181-beneficiary]')?.value||null,property=host.querySelector('[data-v181-property]')?.value||null,category=host.querySelector('[data-v181-category]')?.value||null;if(!beneficiary&&!property&&!category)return;
    state.review.saving=key;button.disabled=true;button.textContent='Salvando…';
-   try{await rpc('lts_browser_expense_review_decision_v229',{p_source_table:row.source_table,p_source_ref:row.source_ref,p_beneficiary:beneficiary,p_property_code:property,p_category_label:category});state.review.notice='Classificação salva. Parcelas identificadas da mesma compra passam a usar essa decisão.';state.review.status='idle';state.review.data=null;invalidateExpense();await ensureReview(true)}
+   try{await rpc('lts_browser_expense_review_decision_v229',{p_source_table:row.source_table,p_source_ref:row.source_ref,p_beneficiary:beneficiary,p_property_code:property,p_category_label:category});state.review.drafts.delete(String(key));state.review.notice='Classificação salva. Parcelas identificadas da mesma compra passam a usar essa decisão.';state.review.status='idle';state.review.data=null;invalidateExpense();await ensureReview(true)}
    catch(error){state.review.notice='Não foi possível salvar: '+String(error?.message||error);state.review.saving=null;render()}
    finally{state.review.saving=null}
   }
@@ -291,9 +293,9 @@
    if(V==='Despesas'&&v168?.expense?.tab==='cards'&&state.reconciliation.status==='idle')queueMicrotask(()=>ensureReconciliation(false));
    document.querySelectorAll('.v178-pending-open').forEach(button=>{button.textContent=button.textContent.replace('Identificações pendentes','Classificar identificações');button.onclick=goReview});
    document.querySelectorAll('.v178-coverage-open').forEach(button=>{button.textContent=button.textContent.replace('Faturas a detalhar','Faturas sem composição individual')});
-   document.querySelectorAll('[data-v181-review-key] select').forEach(select=>select.onchange=()=>updateReviewChoice(select.closest('[data-v181-review-key]')));
+   document.querySelectorAll('[data-v181-review-key] select').forEach(select=>select.onchange=()=>updateReviewChoice(select.closest('[data-v181-review-key]'),true));
    document.querySelectorAll('[data-v181-review-save]').forEach(button=>button.onclick=()=>saveReview(button));
-   document.querySelectorAll('[data-v181-review-key]').forEach(updateReviewChoice);
+   document.querySelectorAll('[data-v181-review-key]').forEach(row=>updateReviewChoice(row));
    document.querySelectorAll('[data-v230-review-projection]').forEach(button=>button.onclick=async()=>{
     const e=arr(state.review.data?.pending_projections)[Number(button.dataset.v230ReviewProjection)];if(!e)return;
     V='Fluxo Diário';renderNav();await loadFlowRange(e.event_date,addDays(e.event_date,5));await openFlowEditor(e);document.getElementById('d-'+e.event_date)?.scrollIntoView({block:'center'});

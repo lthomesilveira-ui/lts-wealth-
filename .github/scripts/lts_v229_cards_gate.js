@@ -158,6 +158,12 @@ async function run(browser,viewport,label){
   assert.equal(await frame.locator('[data-v181-review-key="uncertain-fixture"] [data-v181-category]').inputValue(),'');
   assert(await frame.locator('[data-v181-review-key="uncertain-fixture"] [data-v181-review-save]').isDisabled());
   await suggested.locator('[data-v181-category]').selectOption('');assert(await suggested.locator('[data-v181-review-save]').isDisabled());
+  if(process.env.LTS_RELEASE==='v236'){
+   await frame.evaluate(()=>render());
+   assert.equal(await suggested.locator('[data-v181-category]').inputValue(),'','a background repaint preserves the explicit blank choice');
+   assert(await suggested.locator('[data-v181-review-save]').isDisabled(),'a suggestion is not restored over an unsaved choice');
+   assert.equal(calls.filter(x=>x.name==='lts_browser_expense_review_decision_v229').length,0,'an unsaved draft never writes');
+  }
   await frame.locator('[data-v181-review-key="pending-fixture"] [data-v181-category]').selectOption('Mercado');
   await frame.locator('[data-v181-review-key="pending-fixture"] [data-v181-review-save]').click();
   await frame.waitForFunction(()=>window.__LTS_V181_STATE.review.data?.row_count===2);

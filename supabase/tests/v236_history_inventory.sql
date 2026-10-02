@@ -38,9 +38,15 @@ BEGIN
   END IF;
   IF (detail->>'detail_rows')::integer<>jsonb_array_length(detail->'items') THEN RAISE EXCEPTION 'source lines truncated'; END IF;
   IF jsonb_array_length(detail->'items')>0 AND
-   ((detail->>'detail_total')::numeric<>(SELECT sum((x->>'amount')::numeric) FROM jsonb_array_elements(detail->'items') x)
+   ((detail->>'detail_total')::numeric<>(SELECT sum((x->>'amount')::numeric) FROM jsonb_array_elements(detail->'items') x WHERE x->>'included_in_source_total' IS DISTINCT FROM 'false')
     OR (detail->>'detail_difference')::numeric<>(detail->>'detail_total')::numeric-(detail->>'cycle_total')::numeric) THEN
    RAISE EXCEPTION 'source difference is not explicit';
+  END IF;
+  IF detail->>'composition_status'='formula_reconciled' AND
+   ((detail->>'raw_detail_total')::numeric<>(SELECT sum((x->>'amount')::numeric) FROM jsonb_array_elements(detail->'items') x)
+    OR EXISTS(SELECT 1 FROM jsonb_array_elements(detail->'items') x WHERE jsonb_typeof(x->'included_in_source_total') IS DISTINCT FROM 'boolean')
+    OR (SELECT count(*) FROM jsonb_array_elements(detail->'items') x WHERE x->>'included_in_source_total'='false')<>jsonb_array_length(detail->'excluded_rows')) THEN
+   RAISE EXCEPTION 'raw workbook lines or formula exclusions are not explicit';
   END IF;
  END LOOP;
 END $test$;

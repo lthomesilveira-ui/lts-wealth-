@@ -16,6 +16,7 @@ This register supersedes earlier unchecked status only for the rows below. Older
 | B02: bank yield discrepancy | Closed by received yield evidence; preserved | The unsupported balancing adjustment stays removed |
 | Salary forecast versus posted salary | Closed by source-specific match; preserved | A posted payroll replaces its matched prediction even with different date/value |
 | C01: effective review queue and propagation | Complete source-backed queue and correction path retained | Exact prior purchase decisions recovered; purchases/Pix without purpose evidence remain actionable, never silently cleared |
+| Unsaved review choices | Background repaints retain the user's selected or cleared fields until confirmed | Session-only drafts never call the writer; clearing a suggestion keeps Save disabled |
 | H01: classifications already in Excel | Historical source labels retained and traceable | No historical question is recreated merely because an additional beneficiary/property field is missing |
 | U01: approved card layout | Preserved | No replacement dashboard/card design |
 | U02: full monetary values | Preserved and tested across viewport sizes | No tooltip requirement or ellipsis for amounts |
