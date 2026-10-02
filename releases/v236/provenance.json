@@ -1,5 +1,5 @@
 {
-  "version": "v234",
+  "version": "v236",
   "source_commit": "1d3f29524630d753fe158646d5e7b7be91135c81",
   "historical_dashboard_commit": "3489b090580635390a7ad1d328bb9b92a96d089e",
   "files": {
@@ -218,8 +218,11 @@
     "Verified original workbook formula membership reaches expense analysis, history and invoice detail",
     "Excluded original formula rows and source formula references remain visible",
     "Exact prior purchase classifications recovered; unknown purpose remains reviewable",
-    "Cached Flow navigation explicitly renders the selected route before reusing its response"
+    "Cached Flow navigation explicitly renders the selected route before reusing its response",
+    "A verified existing documented loan is realized once and reaches cash and analytical expense readers",
+    "Source fingerprints protect operational cache reuse",
+    "Current day commitments carry into future projections without changing observed bank snapshots"
   ],
   "base_release": "v235",
-  "scope": "Canonical period balances, workbook formula reconciliation and historical detail boundaries"
+  "scope": "Canonical balances, realized bank source, projection continuity and complete historical card sources"
 }

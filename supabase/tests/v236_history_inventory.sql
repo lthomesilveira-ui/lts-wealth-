@@ -9,15 +9,14 @@ DECLARE
  expected_rows bigint; expected_sum numeric; sample record; detail jsonb;
 BEGIN
  SELECT count(*),round(coalesce(sum(amount),0),2) INTO expected_rows,expected_sum
- FROM public.lts_v229_expense_rows(u,'2013-10-10',current_date)
- WHERE coverage_mode IN ('card_invoice_aggregate_fallback','card_workbook_signed_adjustment_v235');
- first_page:=public.lts_browser_card_history_inventory_v235('2013-10-10',current_date,0,50);
+ FROM (SELECT signed_amount AS amount FROM public.lts_card_history_evidence_v235 WHERE user_id=u AND event_date BETWEEN '2013-10-10' AND current_date) signed_source;
+ first_page:=public.lts_browser_card_history_inventory_v237('2013-10-10',current_date,0,50);
  IF (first_page#>>'{summary,record_count}')::bigint<>expected_rows
     OR (first_page#>>'{summary,total}')::numeric<>expected_sum THEN
   RAISE EXCEPTION 'inventory differs from canonical expenses';
  END IF;
  LOOP
-  page:=public.lts_browser_card_history_inventory_v235('2013-10-10',current_date,offset_value,50);
+  page:=public.lts_browser_card_history_inventory_v237('2013-10-10',current_date,offset_value,50);
   cycle_rows:=cycle_rows+jsonb_array_length(page->'cycles');
   cycle_sum:=cycle_sum+(SELECT coalesce(sum((x->>'amount')::numeric),0) FROM jsonb_array_elements(page->'cycles') x);
   IF page->'summary'<>first_page->'summary' THEN RAISE EXCEPTION 'pagination changed the summary'; END IF;
@@ -33,7 +32,7 @@ BEGIN
   FROM public.lts_card_history_evidence_v235 WHERE user_id=u
   ORDER BY composition_status,signed_amount<0,event_date
  LOOP
-  detail:=public.lts_browser_card_history_record_v235(sample.source_table,sample.source_ref,sample.event_date);
+  detail:=public.lts_browser_card_history_record_v237(sample.source_table,sample.source_ref,sample.event_date);
   IF (detail->>'cycle_total')::numeric<>(SELECT sum((x->>'amount')::numeric) FROM jsonb_array_elements(detail->'cycle_records') x) THEN
    RAISE EXCEPTION 'record ledger does not match cycle total';
   END IF;

@@ -3,7 +3,7 @@ on:
   push:
     branches: ['work/v236-full-closeout']
   pull_request:
-    paths: ['releases/v236/**', '.github/scripts/lts_v235*', '.github/workflows/v236.yml', 'supabase/migrations/*_v235_*.sql', 'supabase/migrations/*_v236_*.sql', 'supabase/tests/v236*', '.github/scripts/lts_v236*', 'supabase/migrations/*_v237_*.sql']
+    paths: ['releases/v236/**', '.github/scripts/lts_v235*', '.github/workflows/v236.yml', 'supabase/migrations/*_v235_*.sql', 'supabase/migrations/*_v236_*.sql', 'supabase/tests/v236*', '.github/scripts/lts_v236*', 'supabase/migrations/*_v237_*.sql', 'supabase/migrations/*_v238_*.sql']
 permissions:
   contents: read
 jobs:

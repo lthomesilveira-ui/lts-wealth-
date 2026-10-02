@@ -229,7 +229,7 @@
       promise.finally(()=>setTimeout(()=>{if(state.defaultPending?.promise===promise)state.defaultPending=null},1200));return promise;
     }
     function bindFlow(){
-      const activate=()=>{V='Fluxo Diário';if(window.__LTS_V170_STATE)window.__LTS_V170_STATE.lastRoute=V;renderNav();openDefault()};
+      const activate=()=>{V='Fluxo Diário';if(window.__LTS_V170_STATE)window.__LTS_V170_STATE.lastRoute=V;renderNav();render();openDefault()};
       document.querySelectorAll('.nav [data-v="Fluxo Diário"],#dx1MobileNav [data-mobile-route="Fluxo Diário"]').forEach(button=>button.onclick=activate);
       if(V!=='Fluxo Diário')return;const range=defaultRange(),button=document.getElementById('flowDefaultRange');if(button){button.textContent='5 anteriores + fim de '+range.to.slice(0,4);button.title='Cinco dias anteriores até 31 de dezembro do ano corrente';button.classList.toggle('active',FLOWFROM===range.from&&FLOWTO===range.to);button.onclick=openDefault}const todayButton=document.getElementById('goToday');if(todayButton)todayButton.onclick=openDefault;
       document.querySelectorAll('.v168-history-note').forEach(node=>node.remove());document.querySelector('.v172-flow-warning')?.remove();if(state.flowWarning){document.querySelector('.flow-sticky-controls')?.insertAdjacentHTML('beforeend','<div class="v172-flow-warning">'+esc(state.flowWarning)+'</div>')}

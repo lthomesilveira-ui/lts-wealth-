@@ -5,6 +5,9 @@ This register supersedes earlier unchecked status only for the rows below. Older
 | ID / requirement | Current engineering result | Evidence and remaining limit |
 |---|---|---|
 | V235-BAL-01: all balances and initial Flow | Corrected the obsolete product fallback; pending, failed and invalidated periods show an explicit state | Canonical three-bank and layered arithmetic, overlapping periods and Dashboard cash checked; browser gates cover startup, navigation, errors, recovery and rollover |
+| Operational source cache | Responses reuse their data only while the financial source fingerprint matches | Existing cache rows are retained; source changes rebuild through the normal read path |
+| Documented loan incorrectly marked as a projection | Existing event adopted by exact matching bank debit and contract identity | No additional event; dated bank positions and source values retained; one expense row reaches analysis |
+| Current-day commitments and future closing | Calculated operational closing carries through all projected days, including a future-only selection | Bank snapshots stay separate facts; unposted current commitments do not invalidate certified past positions |
 | F01: every balance and RSU column | Preserved canonical cumulative liquidity arithmetic | All days in the available projection horizon checked; dated RSU availability is not bank income |
 | F02: opening, return and bank/period changes | Preserved serialized startup, authenticated response reuse, bounded failure and formatter improvements | Regression includes bank switching; SQL timings do not certify physical-device latency |
 | F03: internal movement annotation | Previously closed; preserved | Daily details and bank/asset effects remain available |

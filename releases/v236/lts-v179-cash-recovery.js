@@ -170,7 +170,7 @@
    root.querySelectorAll('.v168-loadstatus').forEach(x=>x.remove());
    const complete=cashComplete(state.cash),c=complete?state.cash.data:null;
    const pendingCash=state.cash.status==='idle'||state.cash.status==='loading';
-   const note=pendingCash?'Carregando a posição de hoje':complete?'Posição calculada no Fluxo · '+dateLabel(c.as_of):'Posição indisponível';
+   const note=pendingCash?'Carregando a posição de hoje':complete?(c.day?.position_only?'Posição bancária recebida · ':'Posição calculada no Fluxo · ')+dateLabel(c.as_of):'Posição indisponível';
    kpi(root,'Contas correntes hoje',c?.cash,note);
    kpi(root,'Aplicações D0',c?.d0,complete?'Disponibilidade de curto prazo':'Aguardando posição completa');
    kpi(root,'RSUs já disponíveis',c?.brokerage_available,complete?'Ações disponíveis + saldo em corretora':'Aguardando posição completa');

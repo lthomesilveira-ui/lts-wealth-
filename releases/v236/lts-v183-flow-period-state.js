@@ -33,6 +33,14 @@
    const hide=!data||loading||stale||!!data?.error;
    table.hidden=hide;table.style.display=hide?'none':'';
    table.setAttribute('aria-busy',String(loading));
+   document.getElementById('v236-current-position-note')?.remove();
+   const anchor=data?.projected_operational_anchor;
+   if(!hide&&anchor&&Number.isFinite(anchor.observed_bank_cash)&&Number.isFinite(anchor.calculated_day_closing)){
+    const money=value=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(value);
+    const note=document.createElement('div');note.id='v236-current-position-note';note.className='v168-note';note.setAttribute('role','note');
+    note.textContent='Saldo bancário recebido hoje: '+money(anchor.observed_bank_cash)+'. Fechamento calculado hoje: '+money(anchor.calculated_day_closing)+'. O fluxo mantém os compromissos do dia nas projeções seguintes.';
+    table.before(note);
+   }
   }
   render=function(){
    if(V==='Fluxo Diário')syncYear();
