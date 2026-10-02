@@ -43,9 +43,9 @@ async function run(browser,width){
    await f.locator('[data-a="'+bank+'"]').click();const text=await f.locator('#d-2026-10-01').innerText();assert(text.includes(expected),bank+' closes from the canonical period');
   }
   await f.evaluate(()=>loadFlowRange('2026-10-02','2026-10-03'));assert.match(await f.locator('#d-2026-10-02').innerText(),/500,00/,'a sliced future range retains the same anchor and cumulative movements');
-  await f.evaluate(()=>{V='Dashboard';renderNav();render();});await nav('Fluxo Diário').click();await f.waitForFunction(()=>!FLOWLOADING&&FLOWQ?.from==='2026-09-26');
+  await f.evaluate(()=>{V='Dashboard';renderNav();render();});await nav('Fluxo Diário').click();await f.waitForFunction(()=>!FLOWLOADING&&FLOWQ&&!FLOWQ.error);assert.match(await f.locator('#d-2026-10-02').innerText(),/500,00/,'returning from Dashboard preserves a canonical balance');
   await f.evaluate(async()=>{await Promise.all([loadFlowRange('2024-02-01','2024-02-03'),loadFlowRange('2025-02-01','2025-02-03')])});
-  assert.equal(await f.evaluate(()=>FLOWQ.from),'2025-02-01');assert.equal(await f.locator('#d-2024-02-01').count(),0,'an older response cannot repopulate a newer period');
+  assert.equal(await f.evaluate(()=>FLOWFROM),'2025-02-01');assert.equal(await f.locator('#d-2024-02-01').count(),0,'an older response cannot repopulate a newer period');
   fail=true;await f.evaluate(()=>loadFlowRange('2026-11-01','2026-11-02'));assert.equal(await f.locator('.fx87-mesa:visible').count(),0,'failed period does not expose another response');assert(!(await f.locator('#app').innerText()).includes('8.888,88'));
   fail=false;await f.evaluate(()=>window.__LTS_V227_TRANSPORT.invalidate());await f.evaluate(()=>loadFlowRange('2026-10-01','2026-10-03'));assert.match(await f.locator('#d-2026-10-01').innerText(),/600,00/,'recovery returns canonical cash');
   await f.evaluate(()=>loadFlowRange('2018-01-01','2018-01-02'));
@@ -54,7 +54,7 @@ async function run(browser,width){
   }
   await f.locator('[data-a="Consolidado"]').click();await f.evaluate(()=>loadFlowRange('2026-10-01','2026-10-03'));
   await f.evaluate(()=>{FLOWQ=null;FLOWLOADING=false;render();});assert.equal(await f.locator('.fx87-row[id^="d-"]').count(),0,'refresh invalidation cannot resurrect product cash');
-  await f.evaluate(()=>{window.__qaNow='2026-10-02T13:00:00Z'});await nav('Fluxo Diário').click();await f.waitForFunction(()=>!FLOWLOADING&&FLOWQ?.from==='2026-09-27');assert.match(await f.locator('#d-2026-10-02').innerText(),/500,00/,'the next day retains the canonical ledger');
+  await f.evaluate(()=>{window.__qaNow='2026-10-02T13:00:00Z'});await f.locator('#flowDefaultRange').click();await f.waitForFunction(()=>!FLOWLOADING&&FLOWFROM==='2026-09-27');assert.match(await f.locator('#d-2026-10-02').innerText(),/500,00/,'the next day retains the canonical ledger');
   await page.screenshot({path:'qa/v236-'+width+'-balances.png',fullPage:true});assert.deepEqual(errors,[]);return{width,pass:true,no_product_fallback:true,three_banks_and_consolidated:true,selected_range_independent:true,newer_period_wins:true,error_and_recovery:true,refresh_and_rollover:true};
  }catch(e){await page.screenshot({path:'qa/v236-'+width+'-balance-failure.png',fullPage:true});fs.writeFileSync('qa/v236-'+width+'-balance-failure.json',JSON.stringify({error:String(e),errors,calls},null,2));throw e}finally{await ctx.close()}
 }
