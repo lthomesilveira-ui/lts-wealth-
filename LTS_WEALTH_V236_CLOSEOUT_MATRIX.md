@@ -51,6 +51,8 @@ The Planning browser contract was checked directly in the authenticated role aft
 
 The paid-invoice card summary also revalidates against current effective invoices and recorded payment confirmations. It uses the canonical classification queue, and its payload participates in the summary fingerprint so a stale payment warning cannot survive a refresh. This changes the derived summary only; it does not create another cash movement.
 
+The next-day review preserves bank receipt age across midnight and includes the freshness boundary in the cache fingerprint. The ninety-day Dashboard horizon crosses the calendar year when necessary. Verified current-cycle bank statements resolve only their corresponding document request; future cycles stay pending. Closed statement source identities now retain their documented cycle and due date even while the provider still reports those transactions as pending. Browser detail shows the official total, actual composition gap and document provenance without creating a payment. These contracts are covered by supabase/tests/v236_closed_bank_document_regression.sql; private statement values and identities are stored only in the private evidence package.
+
 ## Rules for continuing
 
 Read this register before copying older pending counts. Use original workbook formulas and confirmed source identity before asking a classification again. Verify exact dates, family, card and purchase identity before reusing a decision. Public merchant descriptions are suggestions that require confirmation. Do not invent Pix purpose or classify a whole marketplace from its name. Preserve previous releases and the public root. A new release does not turn an unknown financial fact into a known one.
