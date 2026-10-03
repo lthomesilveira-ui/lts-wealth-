@@ -49,6 +49,8 @@ This register supersedes earlier unchecked status only for the rows below. Older
 
 The Planning browser contract was checked directly in the authenticated role after the final source alignment. Its former projected FGTS accrual has been removed from this reader: it now uses canonical operational Flow and only the documented fixed FGTS contingency. It retains the existing JSON contract and calendar horizon; no raw money, source event, layout or frontend file changed.
 
+The paid-invoice card summary also revalidates against current effective invoices and recorded payment confirmations. It uses the canonical classification queue, and its payload participates in the summary fingerprint so a stale payment warning cannot survive a refresh. This changes the derived summary only; it does not create another cash movement.
+
 ## Rules for continuing
 
 Read this register before copying older pending counts. Use original workbook formulas and confirmed source identity before asking a classification again. Verify exact dates, family, card and purchase identity before reusing a decision. Public merchant descriptions are suggestions that require confirmation. Do not invent Pix purpose or classify a whole marketplace from its name. Preserve previous releases and the public root. A new release does not turn an unknown financial fact into a known one.
