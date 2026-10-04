@@ -30,7 +30,7 @@ async function run(browser,width){
  try{
   await page.goto('http://127.0.0.1:8788/releases/'+(process.env.LTS_RELEASE||'v239')+'/app.html');
   let f;for(let i=0;i<200;i++){f=page.frames().find(x=>x.url().includes('/index.html'));if(f&&await f.evaluate(()=>!!window.__LTS_V226).catch(()=>false))break;await page.waitForTimeout(100)}assert(f);
-  await f.waitForSelector('[data-v239-fgts-summary]');await f.waitForFunction(()=>!window.__LTS_V168_STATE.dashboard.loading);
+  await f.waitForSelector('[data-v239-fgts-summary]');await f.waitForFunction(()=>!window.__LTS_V168_STATE.dashboard.loading&&window.__LTS_V178_STATE?.forecast?.status==='ready'&&window.__LTS_V178_STATE?.dashboardReport?.status==='ready'&&window.__LTS_V178_STATE?.cash?.status==='ready');
   const text=await f.locator('[data-v239-fgts-summary]').innerText();assert.match(text,/primeiro déficit em 30\/12\/2026/);assert.match(text,/mínimo.*1\.850,00.*30\/01\/2027/);
   assert.equal(await f.locator('[data-v239-first-negative]').getAttribute('data-v239-first-negative'),'2026-12-30');
   const path=await f.locator('.v168-chart path.fgts').getAttribute('d');assert(path.split('L').length>=450,'daily points, not monthly endpoints');
@@ -40,7 +40,7 @@ async function run(browser,width){
   assert(!calls.some(x=>/mutate|classify|create_future/.test(x)));assert.deepEqual(errors,[]);
   // Dashboard can repaint after a secondary reader completes. Re-resolve the chart;
   // a DOM-detachment during capture must not be confused with a failed assertion.
-  await f.locator('.v168-chart').scrollIntoViewIfNeeded();
+  await f.evaluate(()=>document.querySelector('.v168-chart').scrollIntoView({block:'center'}));
   await page.waitForTimeout(150);
   const box=await f.locator('.v168-chart').boundingBox();assert(box&&box.width>0&&box.height>0);
   await page.screenshot({path:'qa/v239-'+width+'-liquidity-chart.png',clip:box});
