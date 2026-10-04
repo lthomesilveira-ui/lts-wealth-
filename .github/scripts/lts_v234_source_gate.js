@@ -21,7 +21,7 @@ async function run(browser,width,label){
   if(name==='token')data=session;
   else if(name==='lts_browser_product_v1')data={ok:true,mvp:product()};
   else if(name==='lts_browser_dashboard_cockpit_v1')data=cockpit;
-  else if(name==='lts_browser_cash_today_v178')data={version:'cash-today-v179-current-canonical',status:'complete',as_of:'2026-09-30',cash:600,d0:400,brokerage_available:200,available_total:1200,fgts:50,day:flowDay('2026-09-30')};
+  else if((name==='lts_browser_cash_today_v178'||name==='lts_browser_cash_today_v242'))data={version:'cash-today-v179-current-canonical',status:'complete',as_of:'2026-09-30',cash:600,d0:400,brokerage_available:200,available_total:1200,fgts:50,day:flowDay('2026-09-30')};
   else if(name.startsWith('lts_browser_wealth_detail'))data=wealth;
   else if(name==='lts_browser_expenses_v229'||/^lts_browser_expense_executive_v/.test(name)){
    const xs=selected(a),groups=[...new Set(xs.map(r=>r.category))],ms=[...new Set(xs.map(r=>r.event_date.slice(0,7)+'-01'))].sort();

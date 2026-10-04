@@ -14,7 +14,7 @@ async function run(browser,width){
   if(name==='token')data=session;
   else if(name==='lts_browser_product_v1'){const p=product(),bad=row('2026-10-01');bad.fix86_columns.saldo_final=-8888.88;bad.fix86_columns.saldo_anterior=-8888.88;bad.Consolidado.bank_balance=42;p.flow={days:[bad],events:[]};data={ok:true,mvp:p};}
   else if(name==='lts_browser_dashboard_cockpit_v1')data=cockpit;
-  else if(name==='lts_browser_cash_today_v178')data={version:'cash-today-v179-current-canonical',status:'complete',as_of:'2026-10-01',cash:600,d0:400,brokerage_available:200,available_total:1200,fgts:50,day:row('2026-10-01')};
+  else if((name==='lts_browser_cash_today_v178'||name==='lts_browser_cash_today_v242'))data={version:'cash-today-v179-current-canonical',status:'complete',as_of:'2026-10-01',cash:600,d0:400,brokerage_available:200,available_total:1200,fgts:50,day:row('2026-10-01')};
   else if(name.startsWith('lts_browser_wealth_detail'))data=wealth;
   else if(/^lts_browser_flow_v/.test(name)){await new Promise(r=>setTimeout(r,150));if(fail){status=400;data={code:'22023',message:'fixture unavailable'};}else data=flow(a.p_from,a.p_to);}
   else if(/^lts_browser_expenses_|^lts_browser_expense_executive_/.test(name))data={period:{from:a.p_from,to:a.p_to},summary:{selected_total:10,card_total:5,account_total:5,monthly_average:10,rows:1,pending_identification:0},management_groups:[],monthly_detail:[],coverage_disclosure:{total:0,rows:0}};

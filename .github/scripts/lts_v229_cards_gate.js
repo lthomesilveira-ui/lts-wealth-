@@ -56,7 +56,7 @@ async function run(browser,viewport,label){
   else if(name==='lts_browser_card_classify_v226'){assert.equal(a.p_category,'Saúde');assert.equal(a.p_beneficiary,'Lucas');flags.cardClassified=true;data={ok:true};}
   else if(name==='lts_browser_open_finance_pending_v225')data={version:'pending-expense-v225',transaction_count:0,net_expense:0,rows:[]};
   else if(name==='lts_browser_open_finance_refresh_v1'){status=503;data={message:'deliberate sync failure'};}
-  else if(name==='lts_browser_cash_today_v178'){
+  else if((name==='lts_browser_cash_today_v178'||name==='lts_browser_cash_today_v242')){
    if(flags.cashFail){data={message:'deliberate cash failure'};status=503}else data={version:'cash-today-v179-current-canonical',status:'complete',as_of:flags.date,cash:flags.incomplete?null:flags.cash,d0:100,brokerage_available:1100,fgts:5000,available_total:flags.incomplete?1200:flags.cash+1200,day:dayRow(flags.date,0,0,flags.cash)};
   }
   else if(name==='lts_browser_expenses_v229'||/^lts_browser_expense_executive_v/.test(name))data=report(a.p_from,a.p_to);

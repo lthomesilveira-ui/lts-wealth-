@@ -21,7 +21,7 @@ async function run(browser,width){
   if(name==='token')data=session;
   else if(name==='lts_browser_product_v1')data={ok:true,mvp:product()};
   else if(name==='lts_browser_dashboard_cockpit_v1')data=cockpit;
-  else if(name==='lts_browser_cash_today_v178')data={version:'cash-today-v179-current-canonical',status:'complete',as_of:'2026-10-01',cash:550,d0:400,brokerage_available:200,available_total:1150,fgts:50,day:day('2026-10-01')};
+  else if((name==='lts_browser_cash_today_v178'||name==='lts_browser_cash_today_v242'))data={version:'cash-today-v179-current-canonical',status:'complete',as_of:'2026-10-01',cash:550,d0:400,brokerage_available:200,available_total:1150,fgts:50,day:day('2026-10-01')};
   else if(name.startsWith('lts_browser_wealth_detail'))data=wealth;
   else if(/^lts_browser_flow_v/.test(name))data=flow(a.p_from,a.p_to);
   else if(name==='lts_browser_recurring_future_gap_audit_v5')data=audit;
