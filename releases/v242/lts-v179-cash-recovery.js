@@ -93,7 +93,7 @@
   }
   async function loadForecast(force=false){
    const s=state.forecast;if(s.status==='loading'||(!force&&s.status!=='idle'))return;
-   const token=(s.token||0)+1;s.token=token;s.status='loading';s.date=day();s.parts=[];s.data=null;s.error=null;
+   const token=(s.token||0)+1;s.token=token;s.status='loading';s.date=day();s.parts=[];s.data=null;s.error=null;let releaseWaiting;s.waiting=new Promise(resolve=>{releaseWaiting=resolve});
    const now=day(),year=Number(now.slice(0,4)),past=new Date(now+'T12:00:00Z');past.setUTCDate(past.getUTCDate()-5);const ranges=[{p_from:past.toISOString().slice(0,10),p_to:(year+1)+'-12-31'}];
    try{
     for(const r of ranges){const p=await request('lts_browser_flow_v242',r,48000,force);if(s.token!==token)return;
@@ -102,7 +102,7 @@
     const rows=arr(s.data?.flow?.current_future?.days),first=key=>rows.find(d=>finite(d.fix86_columns?.[key])!=null&&Number(d.fix86_columns[key])<0)?.date||null;
     state.planningUI={status:'ready',date:now,data:{version:'planning-ui-contract-v2',scenario_revision:'v242',period_to:ranges[0].p_to,d01_first_need:first('saldo_apos_d0_1'),rsu_first_need:first('saldo_apos_rsu'),fgts_first_negative:first('saldo_apos_fgts'),fgts_covers_horizon:!first('saldo_apos_fgts')}};
    }catch(e){if(s.token===token){s.status=s.parts.length?'partial':'error';s.error=String(e.message||e)}}
-   finally{if(s.token===token&&D&&!N.classList.contains('hidden'))render()}
+   finally{releaseWaiting();if(s.token===token&&D&&!N.classList.contains('hidden'))render()}
   }
   function retryableCashFailure(s){return s?.status==='error'&&(s.outcome==='client_timeout'||s.outcome==='network_error'||String(s.code)==='57014'||[408,429,500,502,503,504].includes(Number(s.httpStatus)))}
   async function priorityCash(force=false,serial){
@@ -320,7 +320,7 @@
   S.auth.onAuthStateChange?.((event)=>{if(event==='SIGNED_OUT'){cache.clear();inflight.clear();closeDetail();state.date=null;for(const k of ['cash','wealth','forecast','awards','dashboardReport'])state[k]={status:'idle'}}});
   window.addEventListener('lts:data-invalidated',()=>{cache.clear();dashboardSerial++;for(const k of ['cash','wealth','forecast','planningUI','dashboardReport']){state[k].token=(state[k].token||0)+1;state[k].status='idle';state[k].data=null;state[k].parts=[]}});
   async function cachedFlow(from,to){
-   const s=state.forecast,token=(await S.auth.getSession())?.data?.session?.access_token;
+   const s=state.forecast,token=(await S.auth.getSession())?.data?.session?.access_token;if(s.status==='loading'&&s.waiting)await s.waiting;
    if(s.status!=='ready'||s.date!==day()||s.authToken!==token||Date.now()-s.updatedAt>=30000)return null;
    const j=s.parts?.[0];if(!j?.flow||typeof j.flow.from!=='string'||typeof j.flow.to!=='string'||j.flow.from>from||j.flow.to<to)return null;
    const out=structuredClone(j);out.flow.from=from;out.flow.to=to;
