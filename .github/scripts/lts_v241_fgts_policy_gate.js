@@ -11,7 +11,7 @@ function row(date,staleLegacy=false){
 function flow(from,to,staleLegacy=false){const days=[];for(let d=from;d<=to;d=shift(d,1))days.push(row(d,staleLegacy));return{ok:true,flow:{from,to,fgts_projection_contract:{version:'documentary-owner-fgts-v241',enabled:false,owner_policy:'documented_only_no_new_contributions',legacy_configuration_authorizes_projection:false,monthly_estimate_brl:0},historical:{days:[],events:[]},current_future:{days,events:[]}}};}
 async function run(browser,width){
  const ctx=await browser.newContext({viewport:{width,height:1000}});await ctx.addInitScript(s=>{localStorage.setItem('lts_supabase_session_v1',JSON.stringify(s));const N=Date;class Fixed extends N{constructor(...a){super(...(a.length?a:['2026-10-04T13:00:00Z']))}static now(){return N.parse('2026-10-04T13:00:00Z')}}window.Date=Fixed;},session);
- const page=await ctx.newPage(),errors=[],calls=[];let staleLegacy=false;page.on('pageerror',e=>errors.push(String(e)));
+ const page=await ctx.newPage(),errors=[],calls=[];let staleLegacy=false,heldFirstFlow=false,releaseFirstFlow;const firstFlow=new Promise(resolve=>{releaseFirstFlow=resolve});page.on('pageerror',e=>errors.push(String(e)));
  await page.route('https://tadhkamnwtsbdozwkyut.supabase.co/**',async route=>{
   const req=route.request(),name=new URL(req.url()).pathname.split('/').pop();let a={};try{a=JSON.parse(req.postData()||'{}')}catch{}calls.push(name);let data={ok:true,rows:[],items:[]},status=200;
   if(name==='token')data=session;
@@ -19,7 +19,7 @@ async function run(browser,width){
   else if(name==='lts_browser_dashboard_cockpit_v1')data=cockpit;
   else if(name==='lts_browser_cash_today_v178')data={version:'cash-today-v179-current-canonical',status:'complete',as_of:'2026-10-04',cash:600,d0:400,brokerage_available:200,available_total:1200,fgts:50,day:row('2026-10-04')};
   else if(name.startsWith('lts_browser_wealth_detail'))data=wealth;
-  else if(/^lts_browser_flow_v/.test(name))data=flow(a.p_from,a.p_to,staleLegacy);
+  else if(/^lts_browser_flow_v/.test(name)){if(!heldFirstFlow){heldFirstFlow=true;await firstFlow}data=flow(a.p_from,a.p_to,staleLegacy);}
   else if(name==='lts_browser_planning_ui_contract_v241')data={version:'planning-ui-contract-v2',scenario_revision:'v241',period_to:'2027-12-31',d01_first_need:'2026-12-30',rsu_first_need:'2026-12-30',fgts_first_negative:'2026-12-30',fgts_documented_first_negative:'2026-12-30',labels:{d01:'Caixa após D0 em 30/12/2026',rsu:'RSUs e vestings em 30/12/2026',fgts:'Com FGTS documental, a primeira falta ocorre em 30/12/2026'}};
   else if(/^lts_browser_expenses_|^lts_browser_expense_executive_/.test(name))data={summary:{selected_total:10},period:{from:a.p_from,to:a.p_to}};
   else if(name==='lts_browser_open_finance_refresh_v1'){status=503;data={message:'fixture sync disabled'};}
@@ -31,6 +31,9 @@ async function run(browser,width){
  try{
   await page.goto('http://127.0.0.1:8788/releases/'+(process.env.LTS_RELEASE||'v241')+'/app.html');
   let f;for(let i=0;i<200;i++){f=page.frames().find(x=>x.url().includes('/index.html'));if(f&&await f.evaluate(()=>!!window.__LTS_V226).catch(()=>false))break;await page.waitForTimeout(100)}assert(f);
+  await f.waitForFunction(()=>window.__LTS_V178_STATE?.forecast?.status==='loading');
+  assert.equal(await f.locator('.v168-chart svg').count(),0,'a stale cockpit horizon must not substitute for the canonical daily reader during loading');
+  releaseFirstFlow();
   await f.waitForSelector('[data-v239-fgts-summary]');await f.waitForFunction(()=>!window.__LTS_V168_STATE.dashboard.loading&&window.__LTS_V178_STATE?.forecast?.status==='ready'&&window.__LTS_V178_STATE?.dashboardReport?.status==='ready'&&window.__LTS_V178_STATE?.cash?.status==='ready');
   const text=await f.locator('[data-v239-fgts-summary]').innerText();assert.match(text,/FGTS documental: primeiro déficit em 30\/12\/2026/);assert.match(text,/mínimo.*4\.350,00.*30\/01\/2027/);
   assert.equal(await f.locator('[data-v239-first-negative]').getAttribute('data-v239-first-negative'),'2026-12-30');
@@ -63,7 +66,7 @@ async function run(browser,width){
   await f.evaluate(async()=>{SHOWZERO=true;await loadFlowRange('2027-01-12','2027-01-30')});
   await f.waitForSelector('#ltsFgtsScenarioNote');assert.match(await f.locator('#ltsFgtsScenarioNote').innerText(),/sem novos aportes estimados.*D\+30.*não entrada bancária/s);
   assert.match(await f.locator('#d-2027-01-30').locator(':scope > *').nth(9).getAttribute('title'),/FGTS documental.*Sem novos aportes estimados.*D\+30/s);
-  assert.deepEqual(errors,[]);return{width,pass:true,daily_points:points.length,owner_documentary_policy:true,no_new_contributions:true,stale_increment_ignored_by_chart:true,planning_chart_parity:true,flow_policy_disclosure:true,first_negative_and_daily_minimum:true,conditional_vestings_disclosed:true,no_financial_write:true};
+  assert.deepEqual(errors,[]);return{width,pass:true,daily_points:points.length,owner_documentary_policy:true,no_new_contributions:true,stale_increment_ignored_by_chart:true,no_stale_cockpit_fallback:true,planning_chart_parity:true,flow_policy_disclosure:true,first_negative_and_daily_minimum:true,conditional_vestings_disclosed:true,no_financial_write:true};
  }finally{await ctx.close()}
 }
 (async()=>{fs.mkdirSync('qa',{recursive:true});const b=await chromium.launch();try{const results=[];for(const width of[1440,390])results.push(await run(b,width));fs.writeFileSync('qa/v241-daily-liquidity.json',JSON.stringify(results,null,2));console.log(JSON.stringify(results));}finally{await b.close()}})().catch(e=>{console.error(e);process.exitCode=1});
