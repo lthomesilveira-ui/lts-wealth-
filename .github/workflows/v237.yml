@@ -1,0 +1,46 @@
+name: V237 historical positions and monthly audit
+on:
+  push:
+    branches: ['work/v237-history-monthly-audit']
+  pull_request:
+    paths: ['releases/v237/**', '.github/scripts/lts_v237*', '.github/workflows/v237.yml', 'backend/patches/*v237.sql']
+permissions:
+  contents: read
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      LTS_RELEASE: v237
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node .github/scripts/lts_v225_static_gate.js
+      - run: node .github/scripts/lts_v229_flow_gate.js
+      - run: npm install --no-save --package-lock=false playwright@1.58.2
+      - run: npx playwright install --with-deps chromium
+      - run: python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/lts-v237-http.log 2>&1 &
+      - name: Historical source positions and year/month audit
+        run: node .github/scripts/lts_v237_history_audit_gate.js
+      - name: Canonical balances and navigation
+        if: success() || failure()
+        run: node .github/scripts/lts_v236_balance_gate.js
+      - name: Cards, partial invoices and full review
+        if: success() || failure()
+        run: node .github/scripts/lts_v233_document_gate.js
+      - name: Source signs and classification
+        if: success() || failure()
+        run: node .github/scripts/lts_v234_source_gate.js
+      - name: Historical inventory and all cycles
+        if: success() || failure()
+        run: node .github/scripts/lts_v235_inventory_gate.js
+      - name: Expense details
+        if: success() || failure()
+        run: node .github/scripts/lts_v231_expense_drilldown_gate.js
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v237-browser-regression
+          path: qa/

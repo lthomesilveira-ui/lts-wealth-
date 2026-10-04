@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: ['releases/v225/**', 'releases/v225-1/**', 'releases/v226/**', 'releases/v226-1/**', 'releases/v226-2/**', 'releases/v227/**', 'releases/v227-1/**', 'releases/v227-2/**', 'releases/v228/**', 'releases/v229/**', 'releases/v229-1/**', 'releases/v230/**', 'releases/v233/**', 'releases/v234/**', 'releases/v235/**', 'releases/v236/**', 'wip35-v225-candidate.html', '.github/workflows/pages.yml']
+    paths: ['releases/v225/**', 'releases/v225-1/**', 'releases/v226/**', 'releases/v226-1/**', 'releases/v226-2/**', 'releases/v227/**', 'releases/v227-1/**', 'releases/v227-2/**', 'releases/v228/**', 'releases/v229/**', 'releases/v229-1/**', 'releases/v230/**', 'releases/v233/**', 'releases/v234/**', 'releases/v235/**', 'releases/v236/**', 'releases/v237/**', 'wip35-v225-candidate.html', '.github/workflows/pages.yml']
 
 permissions:
   contents: read
@@ -44,6 +44,7 @@ jobs:
           LTS_RELEASE=v234 node .github/scripts/lts_v225_static_gate.js
           LTS_RELEASE=v235 node .github/scripts/lts_v225_static_gate.js
           LTS_RELEASE=v236 node .github/scripts/lts_v225_static_gate.js
+          LTS_RELEASE=v237 node .github/scripts/lts_v225_static_gate.js
       - name: Configure Pages
         uses: actions/configure-pages@v5
         with:
@@ -55,14 +56,14 @@ jobs:
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v4
-      - name: Verify published V236 bytes
+      - name: Verify published V237 bytes
         run: |
           node --input-type=module <<'JS'
           import fs from 'node:fs';
           import crypto from 'node:crypto';
           import assert from 'node:assert/strict';
-          const manifest=JSON.parse(fs.readFileSync('releases/v236/manifest.json','utf8'));
-          const base='https://lthomesilveira-ui.github.io/lts-wealth-/releases/v236/';
+          const manifest=JSON.parse(fs.readFileSync('releases/v237/manifest.json','utf8'));
+          const base='https://lthomesilveira-ui.github.io/lts-wealth-/releases/v237/';
           const entries=Object.entries(manifest.files);
           const results=[];
           for(let offset=0;offset<entries.length;offset+=6){
@@ -80,10 +81,10 @@ jobs:
               throw error;
             })));
           }
-          fs.writeFileSync('v236-published-verification.json',JSON.stringify({pass:true,head:process.env.GITHUB_SHA,url:base+'app.html',count:results.length,assets:results},null,2));
-          console.log('Published V236 assets verified:',results.length);
+          fs.writeFileSync('v237-published-verification.json',JSON.stringify({pass:true,head:process.env.GITHUB_SHA,url:base+'app.html',count:results.length,assets:results},null,2));
+          console.log('Published V237 assets verified:',results.length);
           JS
       - uses: actions/upload-artifact@v4
         with:
-          name: v236-published-verification
-          path: v236-published-verification.json
+          name: v237-published-verification
+          path: v237-published-verification.json
