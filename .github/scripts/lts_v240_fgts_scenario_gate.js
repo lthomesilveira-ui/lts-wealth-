@@ -8,7 +8,7 @@ function row(date){
  const accrual=(Number(date>='2026-11-30')+Number(date>='2026-12-31'))*1200;
  return{date,is_today:date==='2026-10-04',Itaú:{balance:cash,net:0},Bradesco:{balance:0,net:0},C6:{balance:0,net:0},Consolidado:{bank_balance:cash,economic_net:0},summary:{events:0,Consolidado:{entries:0,exits:0}},fix86_columns:{saldo_anterior:cash,saldo_final:cash,entradas:0,saidas:0,liq_d0_1_recurso:400,rsus_vested:200,fgts:50+accrual,fgts_documental:50,fgts_aportes_projetados:accrual,saldo_apos_d0_1:cash+400,saldo_apos_rsu:cash+600,saldo_apos_fgts:cash+650+accrual,saldo_apos_fgts_documental:cash+650}};
 }
-function flow(from,to){const days=[];for(let d=from;d<=to;d=shift(d,1))days.push(row(d));return{ok:true,flow:{from,to,fgts_projection_contract:{enabled:true,monthly_estimate_brl:1200},historical:{days:[],events:[]},current_future:{days,events:[]}}};}
+function flow(from,to){const days=[];for(let d=from;d<=to;d=shift(d,1))days.push(row(d));return{ok:true,flow:{from,to,fgts_projection_contract:{version:'configured-future-fgts-v240',enabled:true,monthly_estimate_brl:1200},historical:{days:[],events:[]},current_future:{days,events:[]}}};}
 async function run(browser,width){
  const ctx=await browser.newContext({viewport:{width,height:1000}});await ctx.addInitScript(s=>{localStorage.setItem('lts_supabase_session_v1',JSON.stringify(s));const N=Date;class Fixed extends N{constructor(...a){super(...(a.length?a:['2026-10-04T13:00:00Z']))}static now(){return N.parse('2026-10-04T13:00:00Z')}}window.Date=Fixed;},session);
  const page=await ctx.newPage(),errors=[],calls=[];page.on('pageerror',e=>errors.push(String(e)));
@@ -51,7 +51,9 @@ async function run(browser,width){
   const box=await f.locator('.v168-chart').boundingBox();assert(box&&box.width>0&&box.height>0);
   await page.screenshot({path:'qa/v240-'+width+'-liquidity-chart.png',clip:box});
   await page.screenshot({path:'qa/v240-'+width+'-daily-liquidity.png',fullPage:true});
-  await f.evaluate(async()=>{V='Fluxo Diário';ACC='Consolidado';renderNav();render();await loadFlowRange('2027-01-12','2027-01-30')});
+  await f.evaluate(()=>{V='Fluxo Diário';ACC='Consolidado';SHOWZERO=true;renderNav();render()});
+  await f.waitForFunction(()=>!FLOWLOADING&&FLOWQ&&!FLOWQ.error);
+  await f.evaluate(async()=>{SHOWZERO=true;await loadFlowRange('2027-01-12','2027-01-30')});
   await f.waitForSelector('#ltsFgtsScenarioNote');assert.match(await f.locator('#ltsFgtsScenarioNote').innerText(),/1\.200,00 por mês.*não entrada bancária/s);
   assert.match(await f.locator('#d-2027-01-30').locator(':scope > *').nth(9).getAttribute('title'),/FGTS documental.*depósitos estimados.*Não é saldo recebido/s);
   assert.deepEqual(errors,[]);return{width,pass:true,daily_points:points.length,documentary_and_configured_scenarios:true,planning_chart_parity:true,flow_projection_disclosure:true,first_negative_and_daily_minimum:true,conditional_vestings_disclosed:true,no_financial_write:true};
