@@ -20,7 +20,7 @@ async function run(browser,width){
   else if(name==='lts_browser_cash_today_v178')data={version:'cash-today-v179-current-canonical',status:'complete',as_of:'2026-10-04',cash:600,d0:400,brokerage_available:200,available_total:1200,fgts:50,day:row('2026-10-04')};
   else if(name.startsWith('lts_browser_wealth_detail'))data=wealth;
   else if(/^lts_browser_flow_v/.test(name))data=flow(a.p_from,a.p_to);
-  else if(name==='lts_browser_planning_ui_contract_v240')data={version:'planning-ui-contract-v2',period_to:'2027-12-31',d01_first_need:'2026-12-30',rsu_first_need:'2026-12-30',fgts_first_negative:'2026-12-30',labels:{d01:'Caixa após D0 em 30/12/2026',rsu:'RSUs e vestings em 30/12/2026',fgts:'Mesmo com FGTS, a primeira falta ocorre em 30/12/2026'}};
+  else if(name==='lts_browser_planning_ui_contract_v240')data={version:'planning-ui-contract-v2',scenario_revision:'v240',period_to:'2027-12-31',d01_first_need:'2026-12-30',rsu_first_need:'2026-12-30',fgts_first_negative:'2027-01-12',fgts_documented_first_negative:'2026-12-30',labels:{d01:'Caixa após D0 em 30/12/2026',rsu:'RSUs e vestings em 30/12/2026',fgts:'Com FGTS projetado, a primeira falta ocorre em 12/01/2027'}};
   else if(/^lts_browser_expenses_|^lts_browser_expense_executive_/.test(name))data={summary:{selected_total:10},period:{from:a.p_from,to:a.p_to}};
   else if(name==='lts_browser_open_finance_refresh_v1'){status=503;data={message:'fixture sync disabled'};}
   else if(name==='lts_browser_open_finance_status_v1')data={connected:true,connections:[]};
@@ -39,6 +39,8 @@ async function run(browser,width){
   assert((await f.locator('.v168-chart path.fgts-documental').getAttribute('d')).split('L').length>=450,'documentary comparison also daily');
   assert.match(await f.locator('.v168-legend').innerText(),/Com FGTS projetado/);assert.match(text,/Depósitos projetados não são saldo recebido/);
   assert(calls.includes('lts_browser_flow_v240'));assert(!calls.includes('lts_browser_flow_v229'),'frozen documentary reader must not be used for the projected scenario');
+  assert.equal(await f.evaluate(()=>window.__LTS_V178_STATE.planningUI.data.fgts_first_negative),'2027-01-12');
+  assert.match(await f.locator('.v168-decision').last().innerText(),/Com FGTS projetado.*12\/01\/2027/s,'action plan must match the chart scenario');
   assert(!(await f.locator('#app').innerText()).includes('Somente posições já disponíveis entram neste cenário.'));
   const points=await f.evaluate(()=>window.__LTS_V168_STATE.dashboard.data.flow.flow.current_future.days);assert.equal(points.at(-1).date,'2027-12-31');assert(points.find(x=>x.date==='2026-12-31').fix86_columns.saldo_apos_fgts>0,'positive month-end must not hide Dec30');
   assert(!calls.some(x=>/mutate|classify|create_future/.test(x)));assert.deepEqual(errors,[]);
@@ -48,7 +50,11 @@ async function run(browser,width){
   await page.waitForTimeout(150);
   const box=await f.locator('.v168-chart').boundingBox();assert(box&&box.width>0&&box.height>0);
   await page.screenshot({path:'qa/v240-'+width+'-liquidity-chart.png',clip:box});
-  await page.screenshot({path:'qa/v240-'+width+'-daily-liquidity.png',fullPage:true});return{width,pass:true,daily_points:points.length,negative_before_positive_month_end:true,first_negative_and_daily_minimum:true,conditional_vestings_disclosed:true,no_financial_write:true};
+  await page.screenshot({path:'qa/v240-'+width+'-daily-liquidity.png',fullPage:true});
+  await f.evaluate(async()=>{V='Fluxo Diário';ACC='Consolidado';renderNav();render();await loadFlowRange('2027-01-12','2027-01-30')});
+  await f.waitForSelector('#ltsFgtsScenarioNote');assert.match(await f.locator('#ltsFgtsScenarioNote').innerText(),/1\.200,00 por mês.*não entrada bancária/s);
+  assert.match(await f.locator('#d-2027-01-30').locator(':scope > *').nth(9).getAttribute('title'),/FGTS documental.*depósitos estimados.*Não é saldo recebido/s);
+  assert.deepEqual(errors,[]);return{width,pass:true,daily_points:points.length,documentary_and_configured_scenarios:true,planning_chart_parity:true,flow_projection_disclosure:true,first_negative_and_daily_minimum:true,conditional_vestings_disclosed:true,no_financial_write:true};
  }finally{await ctx.close()}
 }
 (async()=>{fs.mkdirSync('qa',{recursive:true});const b=await chromium.launch();try{const results=[];for(const width of[1440,390])results.push(await run(b,width));fs.writeFileSync('qa/v240-daily-liquidity.json',JSON.stringify(results,null,2));console.log(JSON.stringify(results));}finally{await b.close()}})().catch(e=>{console.error(e);process.exitCode=1});

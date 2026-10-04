@@ -11,7 +11,7 @@
     const state=window.__LTS_V172_STATE||(window.__LTS_V172_STATE={flowSequence:0,flowWarning:'',monthlyChunkCalls:0});
     const previousRpc=S.rpc.bind(S);
     async function directRpc(name,args){
-      const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),25000);
+      const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),name==='lts_browser_flow_v240'?48000:25000);
       try{
         const auth=await S.auth.getSession(),token=auth?.data?.session?.access_token||K,response=await fetch(U+'/rest/v1/rpc/'+encodeURIComponent(name),{method:'POST',headers:{apikey:K,Authorization:'Bearer '+token,'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify(args||{}),signal:controller.signal}),payload=await response.json().catch(()=>null);
         if(!response.ok)return{data:null,error:{message:String(payload?.message||payload?.error_description||('HTTP '+response.status)),status:response.status,code:payload?.code}};

@@ -125,6 +125,13 @@
     window.__LTS_RECONCILIATION_NOTICE_ELIGIBLE=reconciliationNoticeEligible;
     function addReconciliationNotice(){
       if(V!=='Fluxo Diário'||!FLOWQ)return;
+      document.getElementById('ltsFgtsScenarioNote')?.remove();
+      const fgtsContract=FLOWQ.fgts_projection_contract;
+      if(fgtsContract?.version==='configured-future-fgts-v240'&&FLOWQ.current_future?.days?.length){
+        const host=document.querySelector('.flowbar');
+        if(host){const note=document.createElement('div');note.id='ltsFgtsScenarioNote';note.className='notice';note.setAttribute('role','note');note.textContent=fgtsContract.enabled?'FGTS nas datas futuras: saldo comprovado + depósitos estimados de '+brl(fgtsContract.monthly_estimate_brl)+' por mês com salário previsto. Recurso restrito, não entrada bancária. O Dashboard compara com o cenário sem depósitos futuros.':'FGTS documental, sem depósitos futuros estimados. Recurso restrito, não entrada bancária.';host.insertAdjacentElement('afterend',note);}
+        for(const day of FLOWQ.current_future.days){const cell=document.getElementById('d-'+day.date)?.children?.[9],c=day.fix86_columns||{};if(cell&&c.fgts_documental!=null)cell.title='FGTS documental: '+brl(c.fgts_documental)+'; depósitos estimados: '+brl(c.fgts_aportes_projetados||0)+'. Não é saldo recebido.';}
+      }
       const gaps=(FLOWQ.historical?.days||[]).flatMap(day=>Object.entries(day.reconciliation_gaps||{}).filter(([bank,value])=>reconciliationNoticeEligible(day,bank,value)).map(([bank,value])=>({bank,value,date:day.date})));
       const priorEvidence=document.getElementById('ltsBankEvidence');if(priorEvidence)priorEvidence.remove();
       const banks=(FLOWQ.bank_evidence_as_of||[]).filter(bank=>ACC==='Consolidado'||ACC===bank.bank),rangeHost=document.querySelector('.flowbar');
