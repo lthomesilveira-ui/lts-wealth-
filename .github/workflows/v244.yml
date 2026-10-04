@@ -1,0 +1,29 @@
+name: V244 synchronization and financial UI regression
+on:
+  push:
+    branches: ['work/v244-regression-repair']
+  pull_request:
+    paths: ['releases/v244/**', 'backend/patches/*v244*', 'backend/qa/*v244*', '.github/scripts/lts_v244*', '.github/workflows/v244.yml']
+permissions:
+  contents: read
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      LTS_RELEASE: v242
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install --no-save --package-lock=false playwright@1.58.2
+      - run: npx playwright install --with-deps chromium
+      - run: python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/lts-v244-http.log 2>&1 &
+      - name: Year selection, daily chart, loading and editing
+        run: node .github/scripts/lts_v244_regression_gate.js
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v244-regression
+          path: qa/
