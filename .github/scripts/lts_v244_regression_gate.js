@@ -45,7 +45,7 @@ async function run(browser,width){
   if((process.env.LTS_RELEASE||'v242')==='v244'){
    const svg=f.locator('.v168-chart svg');await svg.focus();await svg.press('End');
    assert.equal(await f.locator('#v244-chart-values').getAttribute('data-date'),'2026-12-31');
-   assert((await f.locator('#v244-chart-values').innerText()).includes('R$ 6.310,00'),'inspected values are exact source values');
+   assert((await f.locator('#v244-chart-values').innerText()).replace(/\s+/g,' ').includes('R$ 6.310,00'),'inspected values are exact source values');
    await svg.press('Home');assert.equal(await f.locator('#v244-chart-values').getAttribute('data-date'),'2026-10-04');
    assert.equal(await f.locator('[data-v244-axis-date]').first().getAttribute('data-v244-axis-date'),'2026-10-04');
    assert.equal(await f.locator('[data-v244-axis-date]').last().getAttribute('data-v244-axis-date'),'2026-12-31');
