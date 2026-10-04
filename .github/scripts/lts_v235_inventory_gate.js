@@ -1,7 +1,7 @@
 'use strict';
 const {chromium}=require('playwright'),fs=require('node:fs'),assert=require('node:assert/strict');
 const {product,cockpit,wealth}=require('./lts_v165_executive_ux_gate.js');
-const release=process.env.LTS_RELEASE||'v235',latest=['v236','v237','v238','v239','v240','v241'].includes(release),revision=latest?'v237':'v235',inventoryRpc='lts_browser_card_history_inventory_'+revision,recordRpc='lts_browser_card_history_record_'+revision;
+const release=process.env.LTS_RELEASE||'v235',latest=['v236','v237','v238','v239','v240','v241','v242'].includes(release),revision=latest?'v237':'v235',inventoryRpc='lts_browser_card_history_inventory_'+revision,recordRpc='lts_browser_card_history_record_'+revision;
 const session={access_token:'inventory-fixture',refresh_token:'fixture-refresh',expires_at:4102444800,user:{id:'fixture-user'}};
 const day=date=>({date,summary:{events:0,Consolidado:{entries:0,exits:0}},Consolidado:{bank_balance:600,economic_net:0},Itaú:{balance:600,net:0},Bradesco:{balance:0,net:0},C6:{balance:0,net:0},fix86_columns:{saldo_anterior:600,entradas:0,saidas:0,saldo_final:600,liq_d0_1_recurso:400,rsus_vested:200,fgts:50,saldo_apos_d0_1:1000,saldo_apos_rsu:1200,saldo_apos_fgts:1250}});
 const ev=amount=>[{file:'Fonte_A_teste.xlsx',sheet:'Pagamentos e Recebimentos',row:12,date:'2025-09-05',source_amount:amount},{file:'Fonte_B_teste.xlsx',sheet:'Pagamentos e Recebimentos',row:12,date:'2025-09-05',source_amount:amount}];
@@ -16,7 +16,7 @@ async function run(browser,width){
   if(name==='token')data=session;
   else if(name==='lts_browser_product_v1')data={ok:true,mvp:product()};
   else if(name==='lts_browser_dashboard_cockpit_v1')data=cockpit;
-  else if(name==='lts_browser_cash_today_v178')data={version:'cash-today-v179-current-canonical',status:'complete',as_of:'2026-10-01',cash:600,d0:400,brokerage_available:200,available_total:1200,fgts:50,day:day('2026-10-01')};
+  else if((name==='lts_browser_cash_today_v178'||name==='lts_browser_cash_today_v242'))data={version:'cash-today-v179-current-canonical',status:'complete',as_of:'2026-10-01',cash:600,d0:400,brokerage_available:200,available_total:1200,fgts:50,day:day('2026-10-01')};
   else if(name.startsWith('lts_browser_wealth_detail'))data=wealth;
   else if(/^lts_browser_flow_v/.test(name))data={ok:true,flow:{historical:{days:[],events:[]},current_future:{days:[day(a.p_from),day(a.p_to)],events:[]}}};
   else if(/^lts_browser_expenses_|^lts_browser_expense_executive_/.test(name))data={period:{from:a.p_from,to:a.p_to},summary:{selected_total:100,card_total:100,account_total:0,monthly_average:100,rows:1,pending_identification:0},management_groups:[],monthly_detail:[],coverage_disclosure:{total:100,rows:1}};

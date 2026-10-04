@@ -4,7 +4,7 @@ const start=source.indexOf('    async function flowPart('),end=source.indexOf(' 
 assert(start>=0&&end>start);
 async function scenario(failures){
  const calls=[],state={flowSequence:0},attempts={};let active=0,maxActive=0;
- const scope={state,today:()=> '2026-09-28',shift:(_date,n)=>n===-1?'2026-09-27':'2026-09-23',V:'Fluxo Diário',FLOWPRESET:'',render:()=>{},
+ const scope={window:{},state,today:()=> '2026-09-28',shift:(_date,n)=>n===-1?'2026-09-27':'2026-09-23',V:'Fluxo Diário',FLOWPRESET:'',render:()=>{},
   mergeFlows:(parts)=>({parts:parts.map(x=>x.data.flow.kind)}),
   directRpc:async(_name,args)=>{const kind='complete';calls.push(kind);attempts[kind]=(attempts[kind]||0)+1;maxActive=Math.max(maxActive,++active);
    await new Promise(resolve=>setTimeout(resolve,1));active--;

@@ -15,3 +15,4 @@ assert.equal(digest('index.html'),'cca36731258680cc15a73fbad61c90ddf803358b741fd
 assert.match(fs.readFileSync(root+'/lts-v179-cash-recovery.js','utf8'),/dashboard=dashboard178/);
 assert.match(fs.readFileSync(root+'/lts-v183-v168-feedback-safe.js','utf8'),/!window.__LTS_V166_FEEDBACK\?\.installed/);
 console.log(JSON.stringify({pass:true,assets:Object.keys(manifest.files).length,protected:Object.keys(manifest.protected).length}));
+

@@ -4,10 +4,13 @@ const {chromium}=require('playwright');
 const {product,cockpit,wealth}=require('./lts_v165_executive_ux_gate.js');
 const BASE='http://127.0.0.1:'+(process.env.LTS_V179_PORT||8788);
 const session={access_token:'fixture-access-token',refresh_token:'fixture-refresh-token',expires_at:4102444800,user:{id:'fixture-user'}};
-const modern=['v240','v241'].includes(process.env.LTS_RELEASE);
+const v242=process.env.LTS_RELEASE==='v242';
+const cashReader=v242?'lts_browser_cash_today_v242':'lts_browser_cash_today_v178';
+const wealthReader=v242?'lts_browser_wealth_detail_v242':'lts_browser_wealth_detail_v4';
+const modern=['v240','v241','v242'].includes(process.env.LTS_RELEASE);
 const flowReader=modern?'lts_browser_flow_'+process.env.LTS_RELEASE:'lts_browser_flow_v229';
 const planningReader=modern?'lts_browser_planning_ui_contract_'+process.env.LTS_RELEASE:'lts_browser_planning_ui_contract_v1';
-const readers=new Set([planningReader,'lts_browser_cash_today_v178','lts_browser_expenses_v229','lts_browser_wealth_detail_v4','lts_browser_awards_v178',flowReader]);
+const readers=new Set([planningReader,cashReader,'lts_browser_expenses_v229',wealthReader,'lts_browser_awards_v178',flowReader]);
 const cash=date=>({version:'cash-today-v179-current-canonical',status:'complete',as_of:date,cash:600,d0:400,brokerage_available:200,available_total:1200,fgts:50,reader_revision:'v230-independent-current-position',day:{date,position_only:true,Consolidado:{bank_balance:600},fix86_columns:{saldo_anterior:null,saldo_final:600,entradas:null,saidas:null,liq_d0_1_recurso:400,rsus_vested:200,fgts:50,saldo_apos_d0_1:1000,saldo_apos_rsu:1200,saldo_apos_fgts:1250}}});
 const report=(from,to)=>({version:'expense-executive-v20-v178-review',as_of:to,period:{from,to},summary:{selected_total:10,card_total:5,account_total:5,monthly_average:10,rows:1,pending_identification:0},management_groups:[{name:'Teste',total:10,rows:1,subgroups:[]}],monthly_detail:[],coverage_disclosure:{total:0,rows:0}});
 const forecastDay=date=>({...cash(date).day,position_only:false,fix86_columns:{...cash(date).day.fix86_columns,saldo_anterior:600,entradas:0,saidas:0}});
@@ -24,7 +27,7 @@ const semantic=value=>String(value||'').replace(/\s+/g,' ').trim();
   page=await context.newPage();page.setDefaultTimeout(30000);const pageErrors=[];page.on('pageerror',error=>pageErrors.push(String(error)));
   await page.route('https://tadhkamnwtsbdozwkyut.supabase.co/**',async route=>{
    const request=route.request(),name=new URL(request.url()).pathname.split('/').pop();let args={};try{args=JSON.parse(request.postData()||'{}')}catch{}
-   const tracked=cashCalls>0&&readers.has(name)&&name!=='lts_browser_cash_today_v178';
+   const tracked=cashCalls>0&&readers.has(name)&&name!==cashReader;
    if(tracked){activeReports++;maxActiveReports=Math.max(maxActiveReports,activeReports);await new Promise(resolve=>setTimeout(resolve,60));}
    calls.push(name);let status=200,data={ok:true,rows:[],items:[]};
    if(name==='token')data=session;
@@ -33,8 +36,8 @@ const semantic=value=>String(value||'').replace(/\s+/g,' ').trim();
    else if(name===planningReader)data={version:'planning-ui-contract-v2',period_to:'2027-12-31',fgts_covers_horizon:true,fgts_first_negative:null,labels:{d01:'Cobertura D0 de teste',rsu:'Cobertura RSU de teste',fgts:'Com FGTS, sem ruptura até 31/12/2027'}};
    else if(name==='lts_browser_open_finance_pending_v225')data={version:'pending-expense-v225',transaction_count:syncMode==='complete'?0:4,net_expense:syncMode==='complete'?0:37,rows:syncMode==='complete'?[]:[{key:'1',institution_code:'341',date:'2026-09-21',description:'Compra provisória A',expense:25},{key:'2',institution_code:'237',date:'2026-09-21',description:'Compra provisória B',expense:12},{key:'3',institution_code:'336',date:'2026-09-21',description:'Compra provisória C',expense:10},{key:'4',institution_code:'336',date:'2026-09-21',description:'Crédito provisório C',expense:-10}]};
    else if(name==='lts_browser_open_finance_status_v1'){statusPolls++;data={connections:['341','237','336'].map((code,i)=>({institution_code:code,status:'connected',last_success_at:syncMode==='complete'||(syncMode==='partial'&&i<2)?'2026-09-21T13:00:01Z':'2026-09-21T11:00:00Z'}))};}
-   else if(name==='lts_browser_open_finance_refresh_v1') {assert.equal(activeReports,0,'bank reconciliation waits for active initial reports');assert(finishedReports>=5,'initial reports finish before bank reconciliation');refreshCalls++;if(syncMode==='fail'){status=503;data={message:'test refresh failure'};}else data={ok:true,requested_at:'2026-09-21T13:00:00Z'};}
-   else if(name==='lts_browser_cash_today_v178'){
+   else if(name==='lts_browser_open_finance_refresh_v1') {assert.equal(activeReports,0,'bank reconciliation waits for active initial reports');assert(finishedReports>=(v242?4:5),'initial reports finish before bank reconciliation');refreshCalls++;if(syncMode==='fail'){status=503;data={message:'test refresh failure'};}else data={ok:true,requested_at:'2026-09-21T13:00:00Z'};}
+   else if(name===cashReader){
     cashCalls++;
     if(mode==='recover'&&cashCalls===1){status=500;data={code:'57014',message:'canceling statement due to statement timeout'}}
     else if(mode==='fail'){status=503;data={code:'57014',message:'temporary cash timeout'}}
@@ -42,7 +45,7 @@ const semantic=value=>String(value||'').replace(/\s+/g,' ').trim();
     else data={...cash('2026-09-21'),cash:syncMode==='complete'?500:600,available_total:syncMode==='complete'?1100:1200};
    }
    else if(name==='lts_browser_expenses_v229'||/^lts_browser_expense_executive_v/.test(name))data=report(args.p_from,args.p_to);
-   else if(name==='lts_browser_wealth_detail_v4'||/^lts_browser_wealth_detail_v/.test(name))data={...wealth,wealth:{...wealth.wealth,liquidity:{...wealth.wealth.liquidity,bank_cash:syncMode==='complete'?500:600,d0:400}},pensions:{positions:[],total_gross_brl:0}};
+   else if(name===wealthReader||/^lts_browser_wealth_detail_v/.test(name))data={...wealth,wealth:{...wealth.wealth,liquidity:{...wealth.wealth.liquidity,bank_cash:syncMode==='complete'?500:600,d0:400}},pensions:{positions:[],total_gross_brl:0}};
    else if(name==='lts_browser_awards_v178')data={as_of:'2026-09-21',vested_shares:200,brokerage_cash:0,brokerage_available:200,events:[]};
    else if(/^lts_browser_flow_v/.test(name))data=flow(args.p_from,args.p_to);
    else if(/expense_context/.test(name))data={contexts:[],natures:[],summary:{}};
@@ -56,7 +59,7 @@ const semantic=value=>String(value||'').replace(/\s+/g,' ').trim();
   assert.equal(maxActiveReports,1,'cold Dashboard reports must run sequentially');
   const ordered=calls.filter(name=>readers.has(name));
   assert.equal(ordered.filter(name=>name===flowReader).length,1,'one complete Dashboard projection range runs at startup');
-  assert.equal(ordered.filter(name=>name==='lts_browser_wealth_detail_v4').length,1,'wealth has one startup owner');
+  assert.equal(ordered.filter(name=>name===wealthReader).length,1,'wealth has one startup owner');
   assert.equal(ordered.filter(name=>name==='lts_browser_expenses_v229').length,1,'expense report has one startup owner');
   assert.equal(cashCalls,2,'one automatic retry recovers the first transient cash failure');
   const value=label=>frame.locator('.v168-dashboard .v168-kpi').filter({has:frame.locator('span').filter({hasText:new RegExp('^'+label+'$')})}).locator('strong');
@@ -66,7 +69,7 @@ const semantic=value=>String(value||'').replace(/\s+/g,' ').trim();
   const diagnostic=await frame.locator('html').getAttribute('data-lts-v179-cash-diagnostic');
   assert(diagnostic&&!diagnostic.includes(session.access_token)&&!diagnostic.includes(session.refresh_token)&&!diagnostic.includes('Authorization'),'diagnostic is redacted');
   const parsed=JSON.parse(diagnostic);assert.deepEqual(parsed.history.slice(0,2).map(item=>item.outcome),['http_error','success']);
-  assert.deepEqual(parsed.concurrent.slice(0,2).map(item=>item.name),['lts_browser_cash_today_v178','lts_browser_cash_today_v178'],'the V179 layer finishes cash and its bounded retry before heavy readers');
+  assert.deepEqual(parsed.concurrent.slice(0,2).map(item=>item.name),[cashReader,cashReader],'the V179 layer finishes cash and its bounded retry before heavy readers');
   assert(await frame.evaluate(()=>window.__LTS_V178_REVIEW.retryableCashFailure({status:'error',outcome:'client_timeout'})),'authenticated client timeout is retryable');
 
   mode='incomplete';let before=cashCalls;await frame.evaluate(()=>window.__LTS_V178_REVIEW.refresh());
@@ -86,7 +89,7 @@ const semantic=value=>String(value||'').replace(/\s+/g,' ').trim();
   await page.screenshot({path:'qa/v229-dashboard-desktop.png',fullPage:true});
   assert.deepEqual(pageErrors,[],'no uncaught page errors');
   const routes=await frame.locator('.nav button').evaluateAll(nodes=>nodes.map(n=>n.dataset.v));assert.deepEqual(routes,['Dashboard','Fluxo Diário','Despesas','Patrimônio','Atualizações']);
-  assert((await frame.locator('.v168-dashboard').innerText()).includes('Com FGTS, sem ruptura até 31/12/2027'));
+  assert((await frame.locator('.v168-dashboard').innerText()).includes(v242?'Cobertura até 31/12/2027':'Com FGTS, sem ruptura até 31/12/2027'));
   assert(await frame.locator('[data-v225-refresh]').isVisible());
   console.log('Navigation contract and current Planning presentation PASS');
   await frame.waitForFunction(()=>window.__LTS_V225.pending.data?.transaction_count===4);
