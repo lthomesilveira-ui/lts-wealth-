@@ -36,6 +36,7 @@ async function run(browser,width){
  try{
   await page.goto('http://127.0.0.1:8788/releases/'+(process.env.LTS_RELEASE||'v237')+'/app.html');
   for(let i=0;i<200;i++){f=page.frames().find(x=>x.url().includes('/index.html'));if(f&&await f.evaluate(()=>!!window.__LTS_V226).catch(()=>false))break;await page.waitForTimeout(100)}assert(f);page.setDefaultTimeout(30000);
+  await f.waitForFunction(()=>window.__LTS_V178_STATE?.forecast?.status==='ready'&&window.__LTS_V178_STATE?.dashboardReport?.status==='ready');
   await f.evaluate(async()=>{V='Fluxo Diário';ACC='Consolidado';renderNav();await loadFlowRange('2019-01-01','2019-01-03')});
   await f.waitForSelector('#d-2019-01-01');await page.waitForTimeout(250);
   let cells=await f.locator('#d-2019-01-01').locator(':scope > *').allTextContents();
@@ -51,7 +52,6 @@ async function run(browser,width){
   await f.locator('[data-v237-coverage-from]').first().click();await f.waitForFunction(()=>!FLOWLOADING&&FLOWFROM==='2031-01-01');
   assert(!calls.some(c=>/mutate|create_future|classify|apply_natural/.test(c.name)),'audit never mutates facts or projections');
   assert.deepEqual(errors,[]);return{width,pass:true,documented_history_visible:true,opening_and_gross_cash_from_source:true,slice_invariant:true,unknown_not_zero:true,coverage_year_month:true,no_financial_write:true};
- }catch(e){if(f)await page.screenshot({path:'qa/v237-'+width+'-failure.png',fullPage:true});fs.writeFileSync('qa/v237-'+width+'-failure.json',JSON.stringify({error:String(e),errors,calls},null,2));throw e}finally{await ctx.close()}
+ }catch(e){if(f)await page.screenshot({path:'qa/v237-'+width+'-failure.png',fullPage:true});fs.writeFileSync('qa/v237-'+width+'-failure.json',JSON.stringify({error:String(e),errors,calls,runtime:f?await f.evaluate(()=>({route:V,from:FLOWFROM,to:FLOWTO,loading:FLOWLOADING,rows:mergedFlowDays().map(x=>x.date),body:document.getElementById('app')?.innerText.slice(0,1500)})).catch(()=>null):null},null,2));throw e}finally{await ctx.close()}
 }
 (async()=>{fs.mkdirSync('qa',{recursive:true});const b=await chromium.launch();try{const result=[];for(const width of[1440,390])result.push(await run(b,width));fs.writeFileSync('qa/v237-history-audit.json',JSON.stringify(result,null,2));console.log(JSON.stringify(result));}finally{await b.close()}})().catch(e=>{console.error(e);process.exitCode=1});
-
