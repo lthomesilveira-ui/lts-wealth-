@@ -57,6 +57,7 @@ async function run(browser,width){
   const before=calls.filter(x=>x.name==='lts_browser_flow_v242').length;
   await f.locator('[data-v168-go="Fluxo Diário"]').click();await f.waitForFunction(()=>!FLOWLOADING&&FLOWQ&&!FLOWQ.error);
   assert.equal(calls.filter(x=>x.name==='lts_browser_flow_v242').length,before,'default flow reuses the authenticated complete forecast');
+  const closeFit=await f.locator('#flowCloseDetails').evaluate(e=>{const r=e.getBoundingClientRect();return{left:r.left,right:r.right,bottom:r.bottom,width:innerWidth}});assert(closeFit.left>=0&&closeFit.right<=closeFit.width&&closeFit.bottom<500,'close-details is visible in the initial desktop/mobile controls');
   assert.equal(await f.locator('#ltsFgtsScenarioNote,#ltsBankEvidence,#ltsReconciliationWarning,#v236-current-position-note').count(),0);
   if((process.env.LTS_RELEASE||'v242')==='v245'&&width===1440){slowYear=true;await f.evaluate(()=>{window.__LTS_V178_STATE.forecast.updatedAt=0});}
   await f.locator('#flowYear').selectOption('2027');
