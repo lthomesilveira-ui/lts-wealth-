@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: ['releases/v225/**', 'releases/v225-1/**', 'releases/v226/**', 'releases/v226-1/**', 'releases/v226-2/**', 'releases/v227/**', 'releases/v227-1/**', 'releases/v227-2/**', 'releases/v228/**', 'releases/v229/**', 'releases/v229-1/**', 'releases/v230/**', 'releases/v233/**', 'releases/v234/**', 'releases/v235/**', 'releases/v236/**', 'releases/v237/**', 'releases/v238/**', 'releases/v239/**', 'releases/v240/**', 'releases/v241/**', 'releases/v242/**', 'wip35-v225-candidate.html', '.github/workflows/pages.yml']
+    paths: ['releases/v225/**', 'releases/v225-1/**', 'releases/v226/**', 'releases/v226-1/**', 'releases/v226-2/**', 'releases/v227/**', 'releases/v227-1/**', 'releases/v227-2/**', 'releases/v228/**', 'releases/v229/**', 'releases/v229-1/**', 'releases/v230/**', 'releases/v233/**', 'releases/v234/**', 'releases/v235/**', 'releases/v236/**', 'releases/v237/**', 'releases/v238/**', 'releases/v239/**', 'releases/v240/**', 'releases/v241/**', 'releases/v242/**', 'releases/v244/**', 'wip35-v225-candidate.html', '.github/workflows/pages.yml']
 
 permissions:
   contents: read
@@ -50,6 +50,7 @@ jobs:
           LTS_RELEASE=v240 node .github/scripts/lts_v225_static_gate.js
           LTS_RELEASE=v241 node .github/scripts/lts_v225_static_gate.js
           LTS_RELEASE=v242 node .github/scripts/lts_v225_static_gate.js
+          LTS_RELEASE=v244 node .github/scripts/lts_v225_static_gate.js
       - name: Configure Pages
         uses: actions/configure-pages@v5
         with:
@@ -61,16 +62,19 @@ jobs:
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v4
-      - name: Verify published V242 bytes
+      - name: Verify published V244 and preserved V242 bytes
         run: |
           node --input-type=module <<'JS'
           import fs from 'node:fs';
           import crypto from 'node:crypto';
           import assert from 'node:assert/strict';
-          const manifest=JSON.parse(fs.readFileSync('releases/v242/manifest.json','utf8'));
-          const base='https://lthomesilveira-ui.github.io/lts-wealth-/releases/v242/';
-          const entries=Object.entries(manifest.files);
           const results=[];
+          const releases=['v242','v244'];
+          for(const release of releases){
+          const rawManifest=fs.readFileSync('releases/'+release+'/manifest.json');
+          const manifest=JSON.parse(rawManifest);
+          const base='https://lthomesilveira-ui.github.io/lts-wealth-/releases/'+release+'/';
+          const entries=Object.entries(manifest.files).concat([['manifest.json',crypto.createHash('sha256').update(rawManifest).digest('hex')]]);
           for(let offset=0;offset<entries.length;offset+=6){
             results.push(...await Promise.all(entries.slice(offset,offset+6).map(async([name,expected])=>{
               let error;
@@ -80,16 +84,17 @@ jobs:
                   assert(response.ok,name+' HTTP '+response.status);
                   const actual=crypto.createHash('sha256').update(Buffer.from(await response.arrayBuffer())).digest('hex');
                   assert.equal(actual,expected,name+' served SHA256 differs');
-                  return {name,sha256:actual,pass:true};
+                  return {release,name,sha256:actual,pass:true};
                 }catch(e){error=e;if(attempt<3)await new Promise(resolve=>setTimeout(resolve,5000));}
               }
               throw error;
             })));
           }
-          fs.writeFileSync('v242-published-verification.json',JSON.stringify({pass:true,head:process.env.GITHUB_SHA,url:base+'app.html',count:results.length,assets:results},null,2));
-          console.log('Published V242 assets verified:',results.length);
+          }
+          fs.writeFileSync('v244-published-verification.json',JSON.stringify({pass:true,head:process.env.GITHUB_SHA,url:'https://lthomesilveira-ui.github.io/lts-wealth-/releases/v244/app.html',releases,count:results.length,assets:results},null,2));
+          console.log('Published V244 and frozen V242 assets verified:',results.length);
           JS
       - uses: actions/upload-artifact@v4
         with:
-          name: v242-published-verification
-          path: v242-published-verification.json
+          name: v244-published-verification
+          path: v244-published-verification.json
