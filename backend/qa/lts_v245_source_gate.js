@@ -15,6 +15,11 @@ assert.match(memo,/set_config\('request.jwt.claims',coalesce\(previous_claims,''
 const identity=fs.readFileSync('backend/patches/cofrinho_documented_identity_v245.sql','utf8');
 assert.match(identity,/bank_raw_hash.*s\.raw_hash/);assert.match(identity,/m\.bank_event_id=f\.id AND m\.status='active'/);
 const movements=fs.readFileSync('backend/patches/cofrinho_movement_identity_v245.sql','utf8');
+const recovery=fs.readFileSync('backend/patches/open_finance_recovery_v245.sql','utf8');
+assert.match(recovery,/last_success_at/);assert.match(recovery,/interval '70 minutes'/);
+assert.match(recovery,/r\.status='running'/);assert.match(recovery,/interval '10 minutes'/);
+assert.match(recovery,/ENABLE ROW LEVEL SECURITY/);
+assert.match(recovery,/REVOKE ALL ON FUNCTION public\.lts_recover_stale_bank_sync_v245\(\) FROM PUBLIC,anon,authenticated/);
 assert.match(movements,/m\.event_date>anchor\.dt AND m\.event_date<=p_date/);
 assert.match(movements,/m\.user_id=p_user_id/);
 assert(!/INSERT INTO public\.financial_events|UPDATE public\.financial_events|GRANT.*authenticated/i.test(movements));
