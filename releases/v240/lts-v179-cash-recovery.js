@@ -81,7 +81,7 @@
   async function loadState(key,name,args={},force=false){
    const s=state[key];if(s.status==='loading'||(!force&&s.status!=='idle'))return;
    const token=(s.token||0)+1;s.token=token;s.status='loading';s.error=null;s.outcome=null;s.code=null;s.httpStatus=null;
-   try{const value=await request(name,args,20000,force);if(s.token!==token)return;s.data=value;s.date=day();s.status='ready';if(key==='wealth'&&!v168.wealth.loading){v168.wealth.data=value;v168.wealth.error=null}}
+   try{const value=await request(name,args,key==='planningUI'?48000:20000,force);if(s.token!==token)return;s.data=value;s.date=day();s.status='ready';if(key==='wealth'&&!v168.wealth.loading){v168.wealth.data=value;v168.wealth.error=null}}
    catch(e){if(s.token===token){s.status='error';s.error=String(e.message||e);s.outcome=e?.ltsOutcome||null;s.code=e?.code||null;s.httpStatus=e?.httpStatus||null}}
    finally{if(s.token===token){publishCashDiagnostic();queueMicrotask(()=>{if(D&&!N.classList.contains('hidden'))render()})}}
    return true;
@@ -89,14 +89,14 @@
   function mergeForecast(parts){
    const days=new Map(),events=new Map();
    for(const part of parts){const f=part?.flow?.current_future||{};for(const d of arr(f.days))days.set(d.date,d);for(const e of arr(f.events))events.set([e.source,e.source_ref,e.event_date].join('|'),e)}
-   return{ok:true,flow:{current_future:{days:[...days.values()].sort((a,b)=>a.date.localeCompare(b.date)),events:[...events.values()]}}};
+   return{ok:true,flow:{fgts_projection_contract:parts.at(-1)?.flow?.fgts_projection_contract||null,current_future:{days:[...days.values()].sort((a,b)=>a.date.localeCompare(b.date)),events:[...events.values()]}}};
   }
   async function loadForecast(force=false){
    const s=state.forecast;if(s.status==='loading'||(!force&&s.status!=='idle'))return;
    const token=(s.token||0)+1;s.token=token;s.status='loading';s.date=day();s.parts=[];s.data=null;s.error=null;
    const now=day(),year=Number(now.slice(0,4)),ranges=[{p_from:now,p_to:(year+1)+'-12-31'}];
    try{
-    for(const r of ranges){const p=await request('lts_browser_flow_v240',r,24000,force);if(s.token!==token)return;
+    for(const r of ranges){const p=await request('lts_browser_flow_v240',r,48000,force);if(s.token!==token)return;
      if(!arr(p?.flow?.current_future?.days).length)throw Error('Projeção sem dias retornados.');s.parts.push(p);s.data=mergeForecast(s.parts);render();}
     s.status='ready';
    }catch(e){if(s.token===token){s.status=s.parts.length?'partial':'error';s.error=String(e.message||e)}}
