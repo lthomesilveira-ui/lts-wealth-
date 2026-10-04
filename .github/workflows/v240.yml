@@ -36,6 +36,12 @@ jobs:
       - name: Cards and full review
         if: success() || failure()
         run: node .github/scripts/lts_v233_document_gate.js
+      - name: Full cards, explicit draft classification and preserved flows
+        if: success() || failure()
+        run: node .github/scripts/lts_v229_cards_gate.js
+      - name: Startup ordering, bounded errors and sync completion
+        if: success() || failure()
+        run: node .github/scripts/lts_v229_startup_gate.js
       - name: Source signs and classification
         if: success() || failure()
         run: node .github/scripts/lts_v234_source_gate.js
