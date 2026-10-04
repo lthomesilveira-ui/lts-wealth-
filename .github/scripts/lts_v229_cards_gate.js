@@ -220,7 +220,7 @@ async function run(browser,viewport,label){
 
   const h=await frame.locator('#d-2026-11-05').evaluate(e=>e.getBoundingClientRect().height),h2=await frame.locator('#d-2026-11-06').evaluate(e=>e.getBoundingClientRect().height);assert(Math.abs(h-h2)<1,'RSU does not change row height');
   await frame.locator('#d-2026-11-05 .exp').click();assert.equal(await frame.locator('.v178-award-detail').count(),1);assert((await frame.locator('.v178-award-detail').innerText()).includes('08/11/2026'));
-  await frame.locator('#flowZero').click();await page.waitForTimeout(50);assert.equal(await frame.locator('#d-2026-11-07').count(),0);assert.equal(await frame.locator('#d-2026-11-08').count(),0);assert.equal(await frame.locator('#d-2026-11-09').count(),1,'real in and out with zero net must remain');assert.equal(await frame.locator('#d-2026-11-05').count(),1);
+  await frame.locator('#flowZero').click();await page.waitForTimeout(50);assert.equal(await frame.locator('#d-2026-11-07').count(),0);assert.equal(await frame.locator('#d-2026-11-08').count(),process.env.LTS_RELEASE==='v245'?1:0,'V245 retains a dated RSU resource change while hiding idle cash days');assert.equal(await frame.locator('#d-2026-11-09').count(),1,'real in and out with zero net must remain');assert.equal(await frame.locator('#d-2026-11-05').count(),1);
   await page.screenshot({path:'qa/v229-'+label+'-flow.png'});
   await frame.locator('.floweditbtn[data-mode="edit"]').first().click();
   await frame.locator('#flowEditDesc').fill('Despesa manual sintética ajustada');
