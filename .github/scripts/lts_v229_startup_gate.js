@@ -4,7 +4,9 @@ const {chromium}=require('playwright');
 const {product,cockpit,wealth}=require('./lts_v165_executive_ux_gate.js');
 const BASE='http://127.0.0.1:'+(process.env.LTS_V179_PORT||8788);
 const session={access_token:'fixture-access-token',refresh_token:'fixture-refresh-token',expires_at:4102444800,user:{id:'fixture-user'}};
-const readers=new Set(['lts_browser_planning_ui_contract_v1','lts_browser_cash_today_v178','lts_browser_expenses_v229','lts_browser_wealth_detail_v4','lts_browser_awards_v178','lts_browser_flow_v229']);
+const flowReader=process.env.LTS_RELEASE==='v240'?'lts_browser_flow_v240':'lts_browser_flow_v229';
+const planningReader=process.env.LTS_RELEASE==='v240'?'lts_browser_planning_ui_contract_v240':'lts_browser_planning_ui_contract_v1';
+const readers=new Set([planningReader,'lts_browser_cash_today_v178','lts_browser_expenses_v229','lts_browser_wealth_detail_v4','lts_browser_awards_v178',flowReader]);
 const cash=date=>({version:'cash-today-v179-current-canonical',status:'complete',as_of:date,cash:600,d0:400,brokerage_available:200,available_total:1200,fgts:50,reader_revision:'v230-independent-current-position',day:{date,position_only:true,Consolidado:{bank_balance:600},fix86_columns:{saldo_anterior:null,saldo_final:600,entradas:null,saidas:null,liq_d0_1_recurso:400,rsus_vested:200,fgts:50,saldo_apos_d0_1:1000,saldo_apos_rsu:1200,saldo_apos_fgts:1250}}});
 const report=(from,to)=>({version:'expense-executive-v20-v178-review',as_of:to,period:{from,to},summary:{selected_total:10,card_total:5,account_total:5,monthly_average:10,rows:1,pending_identification:0},management_groups:[{name:'Teste',total:10,rows:1,subgroups:[]}],monthly_detail:[],coverage_disclosure:{total:0,rows:0}});
 const forecastDay=date=>({...cash(date).day,position_only:false,fix86_columns:{...cash(date).day.fix86_columns,saldo_anterior:600,entradas:0,saidas:0}});
@@ -27,7 +29,7 @@ const semantic=value=>String(value||'').replace(/\s+/g,' ').trim();
    if(name==='token')data=session;
    else if(name==='lts_browser_product_v1')data={ok:true,mvp:product()};
    else if(name==='lts_browser_dashboard_cockpit_v1')data=cockpit;
-   else if(name==='lts_browser_planning_ui_contract_v1')data={version:'planning-ui-contract-v2',period_to:'2027-12-31',fgts_covers_horizon:true,fgts_first_negative:null,labels:{d01:'Cobertura D0 de teste',rsu:'Cobertura RSU de teste',fgts:'Com FGTS, sem ruptura até 31/12/2027'}};
+   else if(name===planningReader)data={version:'planning-ui-contract-v2',period_to:'2027-12-31',fgts_covers_horizon:true,fgts_first_negative:null,labels:{d01:'Cobertura D0 de teste',rsu:'Cobertura RSU de teste',fgts:'Com FGTS, sem ruptura até 31/12/2027'}};
    else if(name==='lts_browser_open_finance_pending_v225')data={version:'pending-expense-v225',transaction_count:syncMode==='complete'?0:4,net_expense:syncMode==='complete'?0:37,rows:syncMode==='complete'?[]:[{key:'1',institution_code:'341',date:'2026-09-21',description:'Compra provisória A',expense:25},{key:'2',institution_code:'237',date:'2026-09-21',description:'Compra provisória B',expense:12},{key:'3',institution_code:'336',date:'2026-09-21',description:'Compra provisória C',expense:10},{key:'4',institution_code:'336',date:'2026-09-21',description:'Crédito provisório C',expense:-10}]};
    else if(name==='lts_browser_open_finance_status_v1'){statusPolls++;data={connections:['341','237','336'].map((code,i)=>({institution_code:code,status:'connected',last_success_at:syncMode==='complete'||(syncMode==='partial'&&i<2)?'2026-09-21T13:00:01Z':'2026-09-21T11:00:00Z'}))};}
    else if(name==='lts_browser_open_finance_refresh_v1') {assert.equal(activeReports,0,'bank reconciliation waits for active initial reports');assert(finishedReports>=5,'initial reports finish before bank reconciliation');refreshCalls++;if(syncMode==='fail'){status=503;data={message:'test refresh failure'};}else data={ok:true,requested_at:'2026-09-21T13:00:00Z'};}
@@ -52,7 +54,7 @@ const semantic=value=>String(value||'').replace(/\s+/g,' ').trim();
   await frame.waitForFunction(()=>window.__LTS_V178_STATE.cash.status==='ready'&&window.__LTS_V178_STATE.forecast.status==='ready'&&window.__LTS_V178_STATE.dashboardReport.status==='ready');
   assert.equal(maxActiveReports,1,'cold Dashboard reports must run sequentially');
   const ordered=calls.filter(name=>readers.has(name));
-  assert.equal(ordered.filter(name=>name==='lts_browser_flow_v229').length,1,'one complete Dashboard projection range runs at startup');
+  assert.equal(ordered.filter(name=>name===flowReader).length,1,'one complete Dashboard projection range runs at startup');
   assert.equal(ordered.filter(name=>name==='lts_browser_wealth_detail_v4').length,1,'wealth has one startup owner');
   assert.equal(ordered.filter(name=>name==='lts_browser_expenses_v229').length,1,'expense report has one startup owner');
   assert.equal(cashCalls,2,'one automatic retry recovers the first transient cash failure');
