@@ -216,6 +216,7 @@
     "app.html",
     "lts-v183-historical-balance-guard.js",
     "lts-v183-exact-flow-navigation.js",
+    "lts-v228-bank-flow.js",
     "lts-v183-v168-feedback-safe.js"
   ],
   "base_release": "v236",

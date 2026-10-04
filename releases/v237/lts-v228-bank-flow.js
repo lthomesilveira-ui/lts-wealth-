@@ -7,6 +7,22 @@
   const previous=flowVals,previousTitle=flowSemanticTitle,previousMeta=flowSemanticMeta,previousRender=render;
   flowVals=function(x,prev){
    const value=previous(x,prev);
+   // Historical source positions own both their opening and gross cash columns.
+   // Earlier presentation layers may have retained only a subset of the events.
+   if(x?.historical){
+    const p=x[ACC],consolidated=ACC==='Consolidado',c=x.fix86_columns||{};
+    const documented=(p?.workbook_cash_reconciled===true||p?.documentary_reconstruction===true)
+     &&(consolidated?x.v170_cash_arithmetic?.balanced===true:!!(p.workbook_evidence_ref||p.documentary_anchor_ref));
+    if(documented){
+     value.prev=consolidated?(c.saldo_anterior_operacional??c.saldo_anterior??null):(p.opening_balance??null);
+     value.en=consolidated?(c.entradas??null):(p.cash_entries??null);
+     value.ex=consolidated?(c.saidas??null):(p.cash_exits??null);
+     value.fin=consolidated?(c.saldo_final_operacional??p.bank_balance??null):(p.balance??null);
+     value.basis=p.balance_basis;
+    }else if(p?.balance_basis==='relative_tracked_bank_ledger'||x.relative_balance_display===true){
+     value.prev=null;value.fin=null;
+    }
+   }
    if(ACC==='Consolidado'&&x.Itaú?.balance_basis==='observed_bank_position_and_recent_movements'){
     value.prev=x.fix86_columns.saldo_anterior_operacional;
    }else if(x[ACC]?.balance_basis==='observed_bank_position_and_recent_movements'){

@@ -56,9 +56,9 @@
     "lts-v226-card-composition.js": "a40ea2a44a014a4c34921fa5396decf3a09d600a588681cc28af9a15413b04a2",
     "lts-v227-layout.js": "f99596a68af577a1dc447287f2de6d1006f44bf2bd98a1ba4c35b0f08bab2c46",
     "lts-v227-read-transport.js": "3f2ed31b00a847b3189c9dfaa12462dffed94d0e27482125158a2408a5a8604d",
-    "lts-v228-bank-flow.js": "bab6e5ed24b1b57dd985c1d561b4c8169c852b48800a21823be587694e93b77d",
+    "lts-v228-bank-flow.js": "f159bfbe221badeed9a32f8b47337650874a43d2e990596d44be24906b75cd61",
     "lts-v235-history-inventory.js": "52824599b5a53e8cbd2f5c289754f45b95a9cd7a48bc75e4366bc71860c638b6",
-    "provenance.json": "8610767351d0c585d2c39e6b0333637cbcb5bbb0b70eef31890a46b74143141b",
+    "provenance.json": "0a2b2c03f1ed735681de73c70737aad4d9e4d8b6c450c3954f879b204fb5436a",
     "wip35-v162-flow-recovery.js": "ff51459b658ad0dbbad683924e4079926b179762bfcdfbd966eef7cd85f93ff4"
   },
   "protected": {
