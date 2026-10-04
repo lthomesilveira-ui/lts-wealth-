@@ -176,7 +176,7 @@
    kpi(root,'Aplicações D0',c?.d0,complete?'Disponibilidade de curto prazo':'Aguardando posição completa');
    kpi(root,'RSUs já disponíveis',c?.brokerage_available,complete?'Ações disponíveis + saldo em corretora':'Aguardando posição completa');
    kpi(root,'FGTS',c?.fgts,'Recurso restrito');
-   kpi(root,'Total disponível hoje',c?.available_total,complete?'Contas + D0 + corretora · posição calculada':'Não calculado sem a posição completa');
+   kpi(root,'Total disponível hoje',c?.available_total,complete?'Contas, aplicações e ações disponíveis':'Indisponível');
    const warnings=[];
    if(!complete)warnings.push(pendingCash?'Atualizando a posição de caixa…':'Não foi possível obter a posição completa de caixa.');
    if(state.wealth.status==='error')warnings.push('Posições patrimoniais não atualizadas.');
