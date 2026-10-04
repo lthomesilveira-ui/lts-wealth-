@@ -7,7 +7,7 @@ async function run(browser,width){
  const ctx=await browser.newContext({viewport:{width,height:1000}});
  await ctx.addInitScript(s=>{localStorage.setItem('lts_supabase_session_v1',JSON.stringify(s));const N=Date;class Fixed extends N{constructor(...a){super(...(a.length?a:['2026-10-04T13:00:00Z']))}static now(){return N.parse('2026-10-04T13:00:00Z')}}window.Date=Fixed;},session);
  const page=await ctx.newPage(),errors=[],calls=[],dialogs=[],writes=[];page.on('pageerror',e=>errors.push(String(e)));page.on('dialog',async d=>{dialogs.push(d.message());await d.accept()});
- let condo={date:'2026-10-05',amount:500},hold=true,release;const held=new Promise(r=>release=r);
+ let condo={date:'2026-10-05',amount:500},hold=true,release,slowYear=false;const held=new Promise(r=>release=r);
  const events=()=>[{source:'legacy_fix86',source_ref:'evento_base:fixture-condo',event_date:condo.date,description:'Condomínio · Exemplo',account:'Itaú',signed_amount:-condo.amount,direction:'saida',confidence:'legacy_projection_adjusted'}];
  function row(date){let cash=600+(date>='2026-10-08'?5010:0)-(date>=condo.date?condo.amount:0);if(date==='2027-01-12')cash=-3000;if(date==='2027-01-30')cash=-5000;const accrual=200*['2026-10-31','2026-11-30','2026-12-31','2027-01-31'].filter(d=>date>=d).length,restricted=date<'2026-10-08'?5010:0;return{date,is_today:date==='2026-10-04',Itaú:{balance:cash,net:0},Bradesco:{balance:0,net:0},C6:{balance:0,net:0},Consolidado:{bank_balance:cash,economic_net:0},summary:{events:date===condo.date?1:0,Consolidado:{entries:0,exits:date===condo.date?condo.amount:0}},fix86_columns:{saldo_anterior:cash,saldo_final:cash,entradas:0,saidas:date===condo.date?condo.amount:0,liq_d0_1_recurso:400,rsus_vested:200,fgts:restricted+accrual,fgts_documental:restricted,fgts_aportes_projetados:accrual,saldo_apos_d0_1:cash+400,saldo_apos_rsu:cash+600,saldo_apos_fgts:cash+600+restricted+accrual,saldo_apos_fgts_documental:cash+600+restricted}}}
  function flow(from,to){const days=[];for(let d=from;d<=to;d=shift(d,1))days.push(row(d));return{ok:true,flow:{from,to,fgts_projection_contract:{version:'owner-withdrawal-and-recomposition-v242',enabled:true,receipt_date:'2026-10-08',withdrawal_brl:5010,monthly_estimate_brl:200},historical:{days:days.filter(d=>d.date<'2026-10-04'),events:[]},current_future:{days:days.filter(d=>d.date>='2026-10-04'),events:events().filter(e=>e.event_date>=from&&e.event_date<=to)}}}}
@@ -18,7 +18,7 @@ async function run(browser,width){
   else if(name==='lts_browser_dashboard_cockpit_v1')data=cockpit;
   else if(name==='lts_browser_cash_today_v242')data={version:'cash-today-v179-current-canonical',status:'complete',as_of:'2026-10-04',cash:600,d0:400,brokerage_available:200,available_total:1200,fgts:5010,day:row('2026-10-04')};
   else if(/^lts_browser_wealth_detail/.test(name))data=wealth;
-  else if(/^lts_browser_flow_v/.test(name)){if(hold)await held;data=flow(a.p_from,a.p_to)}
+  else if(/^lts_browser_flow_v/.test(name)){if(hold)await held;if(slowYear&&a.p_from==='2027-01-01')await new Promise(r=>setTimeout(r,26000));data=flow(a.p_from,a.p_to)}
   else if(name==='lts_browser_flow_event_editor_v1')data={editable:true,kind:'legacy_projection',source:'legacy_fix86',source_ref:'evento_base:fixture-condo',event_date:condo.date,amount:condo.amount,display_amount:condo.amount,account:'Itaú',description:'Condomínio · Exemplo',direction:'saida',actions:['edit','duplicate','split','cancel'],parts:[]};
   else if(name==='lts_browser_flow_mutate_v2'){writes.push(a);if(writes.length===1){status=503;data={message:'DELETE requires a WHERE clause'}}else{condo={date:a.p_payload.event_date,amount:a.p_payload.amount};data={ok:true,action:'edit'}}}
   else if(/^lts_browser_expenses_|^lts_browser_expense_executive_/.test(name))data={period:{from:a.p_from,to:a.p_to},summary:{selected_total:10,card_total:5,account_total:5,rows:1},management_groups:[],monthly_detail:[],coverage_disclosure:{total:0,rows:0}};
@@ -42,12 +42,24 @@ async function run(browser,width){
   await f.locator('#v242ChartYear').selectOption('all');assert.equal(Number(await f.locator('.v168-chart svg').getAttribute('data-v242-points')),454);
   const path=await f.locator('.v168-chart path.fgts').getAttribute('d'),numbers=path.match(/[MC]|-?\d+(?:\.\d+)?/g);let i=0,previous;while(i<numbers.length){const op=numbers[i++];if(op==='M'){previous=[+numbers[i++],+numbers[i++]];continue}assert.equal(op,'C');const p1=[+numbers[i++],+numbers[i++]],p2=[+numbers[i++],+numbers[i++]],p3=[+numbers[i++],+numbers[i++]];for(let t=.1;t<1;t+=.1){const v=(1-t)**3*previous[1]+3*(1-t)**2*t*p1[1]+3*(1-t)*t*t*p2[1]+t**3*p3[1];assert(v>=Math.min(previous[1],p3[1])-.02&&v<=Math.max(previous[1],p3[1])+.02,'smooth path cannot invent an extremum')}previous=p3;}
   await f.locator('#v242ChartYear').selectOption('2026');await page.screenshot({path:'qa/v242-'+width+'-dashboard.png',fullPage:true});
+  if((process.env.LTS_RELEASE||'v242')==='v244'){
+   const svg=f.locator('.v168-chart svg');await svg.focus();await svg.press('End');
+   assert.equal(await f.locator('#v244-chart-values').getAttribute('data-date'),'2026-12-31');
+   assert((await f.locator('#v244-chart-values').innerText()).includes('R$ 6.310,00'),'inspected values are exact source values');
+   await svg.press('Home');assert.equal(await f.locator('#v244-chart-values').getAttribute('data-date'),'2026-10-04');
+   assert.equal(await f.locator('[data-v244-axis-date]').first().getAttribute('data-v244-axis-date'),'2026-10-04');
+   assert.equal(await f.locator('[data-v244-axis-date]').last().getAttribute('data-v244-axis-date'),'2026-12-31');
+   await f.locator('.v168-chart').screenshot({path:'qa/v244-'+width+'-chart.png'});
+   assert((await svg.boundingBox()).height>=200,'mobile daily chart is not shrunk into an unreadable thumbnail');
+  }
   const before=calls.filter(x=>x.name==='lts_browser_flow_v242').length;
   await f.locator('[data-v168-go="Fluxo Diário"]').click();await f.waitForFunction(()=>!FLOWLOADING&&FLOWQ&&!FLOWQ.error);
   assert.equal(calls.filter(x=>x.name==='lts_browser_flow_v242').length,before,'default flow reuses the authenticated complete forecast');
   assert.equal(await f.locator('#ltsFgtsScenarioNote,#ltsBankEvidence,#v236-current-position-note').count(),0);
+  if((process.env.LTS_RELEASE||'v242')==='v244'&&width===1440){slowYear=true;await f.evaluate(()=>{window.__LTS_V178_STATE.forecast.updatedAt=0});}
   await f.locator('#flowYear').selectOption('2027');
-  await f.waitForFunction(()=>!FLOWLOADING&&FLOWQ&&!FLOWQ.error&&FLOWFROM==='2027-01-01'&&FLOWTO==='2027-12-31');
+  if(slowYear){await f.waitForSelector('#v242-flow-loading');assert.equal(await f.locator('.fx87-mesa:visible').count(),0)}
+  await f.waitForFunction(()=>!FLOWLOADING&&FLOWQ&&!FLOWQ.error&&FLOWFROM==='2027-01-01'&&FLOWTO==='2027-12-31',null,{timeout:60000});slowYear=false;
   assert.equal(await f.locator('#flowYear').inputValue(),'2027');
   assert.equal(await f.locator('.fx87-mesa:visible').count(),1,'selected 2027 table is visible');
   assert.equal(await f.evaluate(()=>mergedFlowDays().length),365,'2027 has all 365 source days');
