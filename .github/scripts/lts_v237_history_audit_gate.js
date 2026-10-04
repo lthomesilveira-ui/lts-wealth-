@@ -37,14 +37,16 @@ async function run(browser,width){
   await page.goto('http://127.0.0.1:8788/releases/'+(process.env.LTS_RELEASE||'v237')+'/app.html');
   for(let i=0;i<200;i++){f=page.frames().find(x=>x.url().includes('/index.html'));if(f&&await f.evaluate(()=>!!window.__LTS_V226).catch(()=>false))break;await page.waitForTimeout(100)}assert(f);page.setDefaultTimeout(30000);
   await f.waitForFunction(()=>window.__LTS_V178_STATE?.forecast?.status==='ready'&&window.__LTS_V178_STATE?.dashboardReport?.status==='ready');
-  await f.evaluate(async()=>{V='Fluxo Diário';ACC='Consolidado';renderNav();await loadFlowRange('2019-01-01','2019-01-03')});
+  const nav=name=>width<520?f.locator('#dx1MobileNav [data-mobile-route="'+name+'"]'):f.locator('.nav [data-v="'+name+'"]');
+  await nav('Fluxo Diário').click();await f.waitForFunction(()=>!FLOWLOADING&&FLOWQ&&!FLOWQ.error);
+  await f.locator('#flowFrom').fill('2019-01-01');await f.locator('#flowTo').fill('2019-01-03');await f.locator('#flowApply').click();
   await f.waitForSelector('#d-2019-01-01');await page.waitForTimeout(250);
   let cells=await f.locator('#d-2019-01-01').locator(':scope > *').allTextContents();
   assert.match(cells[1],/600,00/);assert.match(cells[2],/20,00/);assert.match(cells[3],/70,00/);assert.match(cells[4],/550,00/);
   await f.locator('[data-a="Itaú"]').click();cells=await f.locator('#d-2019-01-01').locator(':scope > *').allTextContents();assert.match(cells[1],/100,00/);assert.match(cells[2],/5,00/);assert.match(cells[3],/25,00/);assert.match(cells[4],/80,00/);
   for(const bank of ['Itaú','Bradesco','C6','Consolidado']){await f.locator('[data-a="'+bank+'"]').click();const c=await f.locator('#d-2019-01-03').locator(':scope > *').allTextContents();assert.equal(c[1].trim(),'—');assert.equal(c[4].trim(),'—');}
   await f.evaluate(async()=>{ACC='Consolidado';await loadFlowRange('2019-01-02','2019-01-02')});cells=await f.locator('#d-2019-01-02').locator(':scope > *').allTextContents();assert.match(cells[1],/550,00/);assert.match(cells[4],/560,00/);
-  await f.evaluate(()=>{V='Atualizações';renderNav();render()});await f.waitForSelector('#v237CoverageYear');
+  await nav('Atualizações').click();await f.waitForSelector('#v237CoverageYear');
   assert.match(await f.locator('#v237CoverageAudit').innerText(),/Adiantamento quinzenal/);assert.match(await f.locator('#v237CoverageAudit').innerText(),/1 de 2 períodos/);assert.match(await f.locator('#v237CoverageAudit').innerText(),/Revisar: nov/);
   await f.locator('#v237CoverageYear').selectOption('2031');assert.match(await f.locator('#v237CoverageAudit').innerText(),/jan, fev, mar, abr, mai, jun, jul, ago, set, out, nov, dez/);
   assert(calls.some(c=>c.name==='lts_browser_recurring_future_gap_audit_v5'&&c.args.p_horizon_end==='2031-12-31'));

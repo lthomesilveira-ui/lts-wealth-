@@ -5,7 +5,7 @@
   if(window.__LTS_V183_EXACT_FLOW_NAVIGATION)return;
   const baseRender=render;
   function bind(){
-   document.querySelectorAll('[data-v168-search-flow],[data-v168-search-edit],[data-v168-flow-row]').forEach(button=>{
+   document.querySelectorAll('[data-v168-search-flow],[data-v168-search-edit],[data-v168-flow-row],[data-v237-coverage-from]').forEach(button=>{
     const previous=button.onclick;
     if(typeof previous!=='function'||previous.__v183ExactFlow)return;
     function explicitNavigation(event){

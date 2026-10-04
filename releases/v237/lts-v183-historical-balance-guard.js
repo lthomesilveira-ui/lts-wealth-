@@ -41,9 +41,10 @@
             const record=dayMap.get(day),position=record?.[account];
             const documentary=record?.historical===true&&(position?.workbook_cash_reconciled===true||position?.documentary_reconstruction===true)
               &&(account==='Consolidado'||!!position.workbook_evidence_ref||!!position.documentary_anchor_ref)
+              &&(account==='Consolidado'?position.bank_balance:position.balance)!=null
               &&Number.isFinite(Number(account==='Consolidado'?position.bank_balance:position.balance))
               &&(account==='Consolidado'?record.v170_cash_arithmetic?.balanced===true:Math.abs(Number(position.source_arithmetic_gap))<.005);
-            if(documentary){row.dataset.historyCoverage='documented_workbook';row.title='Posição das planilhas originais com precedência de pagamentos bancários comprovados. Não é certificação integral por extrato.';continue}
+            if(documentary){row.dataset.historyCoverage='documented_workbook';row.title='Posição histórica reconstruída a partir das fontes identificadas. Não é certificação integral por extrato.';continue}
             row.dataset.historyCoverage=status;
             const uncertified=status==='uncertified'||status==='unavailable';
             if(row.classList.contains('fx87-bank')){
