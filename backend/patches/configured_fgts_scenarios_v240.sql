@@ -54,7 +54,7 @@ BEGIN
  j:=public.lts_browser_flow_v229(least(p_from,current_date),p_to);
  f:=public.lts_flow_configured_fgts_v240(u,j->'flow',current_date);
  FOREACH part IN ARRAY ARRAY['historical','current_future'] LOOP
-  f:=jsonb_set(f,ARRAY[part,'days'],coalesce((SELECT jsonb_agg(d ORDER BY d->>'date') FROM jsonb_array_elements(coalesce(f#>ARRAY[part,'days'],'[]'))d WHERE (d->>'date')::date BETWEEN p_from AND p_to),'[]'));
+  f:=jsonb_set(f,ARRAY[part,'days'],coalesce((SELECT jsonb_agg(day_row ORDER BY day_row->>'date') FROM jsonb_array_elements(coalesce(f#>ARRAY[part,'days'],'[]'))day_row WHERE (day_row->>'date')::date BETWEEN p_from AND p_to),'[]'));
   f:=jsonb_set(f,ARRAY[part,'events'],coalesce((SELECT jsonb_agg(e ORDER BY e->>'event_date',e->>'source_ref') FROM jsonb_array_elements(coalesce(f#>ARRAY[part,'events'],'[]'))e WHERE (e->>'event_date')::date BETWEEN p_from AND p_to),'[]'));
  END LOOP;
  -- An unanchored cumulative ledger is not an absolute bank position.
