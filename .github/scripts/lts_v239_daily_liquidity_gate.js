@@ -38,7 +38,12 @@ async function run(browser,width){
   assert(!(await f.locator('#app').innerText()).includes('Somente posições já disponíveis entram neste cenário.'));
   const points=await f.evaluate(()=>window.__LTS_V168_STATE.dashboard.data.flow.flow.current_future.days);assert.equal(points.at(-1).date,'2027-12-31');assert(points.find(x=>x.date==='2026-12-31').fix86_columns.saldo_apos_fgts>0,'positive month-end must not hide Dec30');
   assert(!calls.some(x=>/mutate|classify|create_future/.test(x)));assert.deepEqual(errors,[]);
-  await f.locator('.v168-chart').screenshot({path:'qa/v239-'+width+'-liquidity-chart.png'});
+  // Dashboard can repaint after a secondary reader completes. Re-resolve the chart;
+  // a DOM-detachment during capture must not be confused with a failed assertion.
+  await f.locator('.v168-chart').scrollIntoViewIfNeeded();
+  await page.waitForTimeout(150);
+  const box=await f.locator('.v168-chart').boundingBox();assert(box&&box.width>0&&box.height>0);
+  await page.screenshot({path:'qa/v239-'+width+'-liquidity-chart.png',clip:box});
   await page.screenshot({path:'qa/v239-'+width+'-daily-liquidity.png',fullPage:true});return{width,pass:true,daily_points:points.length,negative_before_positive_month_end:true,first_negative_and_daily_minimum:true,conditional_vestings_disclosed:true,no_financial_write:true};
  }finally{await ctx.close()}
 }
