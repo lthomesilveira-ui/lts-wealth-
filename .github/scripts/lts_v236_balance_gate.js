@@ -31,7 +31,7 @@ async function run(browser,width){
   await f.waitForFunction(()=>window.__LTS_V178_STATE.forecast.status==='ready'&&window.__LTS_V178_STATE.dashboardReport.status==='ready');
   assert.match(await f.locator('.v168-kpi').filter({has:f.locator('span').filter({hasText:/^Contas correntes hoje$/})}).innerText(),/600,00/,'Dashboard uses the independently verified cash reader');
   // Exercise the uncached period path; V242 shared forecast reuse has its own gate.
-  if(['v242','v244'].includes(process.env.LTS_RELEASE))await f.evaluate(()=>{window.__LTS_V178_REVIEW.cachedFlow=()=>null});
+  if(['v242','v244','v245'].includes(process.env.LTS_RELEASE))await f.evaluate(()=>{window.__LTS_V178_REVIEW.cachedFlow=()=>null});
   // Reproduce the observed product path before a canonical period response exists.
   await f.evaluate(()=>{FLOWQ=null;FLOWLOADING=false;V='Fluxo Diário';renderNav();render();});
   assert.equal(await f.evaluate(()=>mergedFlowDays().length),0,'no period response may borrow old product balances');
