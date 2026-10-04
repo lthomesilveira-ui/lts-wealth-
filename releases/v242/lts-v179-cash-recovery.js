@@ -123,7 +123,7 @@
    if(force){cache.clear();window.__LTS_V227_TRANSPORT?.invalidate?.()}
    const t=day();
    const changed=state.date!==t;
-   if(changed){state.date=t;dashboardSerial++;for(const k of ['cash','forecast','dashboardReport','planningUI']){state[k].token=(state[k].token||0)+1;state[k].status='idle';state[k].data=null}cache.clear()}
+   if(changed){window.__LTS_V227_TRANSPORT?.invalidate?.(false);state.date=t;dashboardSerial++;for(const k of ['cash','wealth','awards','forecast','dashboardReport','planningUI']){state[k].token=(state[k].token||0)+1;state[k].status='idle';state[k].data=null}cache.clear()}
    if(dashboardFlight)return (changed||force)?dashboardFlight.then(()=>startDashboard(force)):dashboardFlight;
    const serial=++dashboardSerial,r=yearRange();
    const job=(async()=>{

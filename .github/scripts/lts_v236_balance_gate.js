@@ -30,12 +30,14 @@ async function run(browser,width){
   const nav=name=>width<520?f.locator('#dx1MobileNav [data-mobile-route="'+name+'"]'):f.locator('.nav [data-v="'+name+'"]');
   await f.waitForFunction(()=>window.__LTS_V178_STATE.forecast.status==='ready'&&window.__LTS_V178_STATE.dashboardReport.status==='ready');
   assert.match(await f.locator('.v168-kpi').filter({has:f.locator('span').filter({hasText:/^Contas correntes hoje$/})}).innerText(),/600,00/,'Dashboard uses the independently verified cash reader');
+  // Exercise the uncached period path; V242 shared forecast reuse has its own gate.
+  if(process.env.LTS_RELEASE==='v242')await f.evaluate(()=>{window.__LTS_V178_REVIEW.cachedFlow=()=>null});
   // Reproduce the observed product path before a canonical period response exists.
   await f.evaluate(()=>{FLOWQ=null;FLOWLOADING=false;V='Fluxo Diário';renderNav();render();});
   assert.equal(await f.evaluate(()=>mergedFlowDays().length),0,'no period response may borrow old product balances');
   assert.equal(await f.locator('.fx87-row[id^="d-"]').count(),0,'legacy product rows are never rendered as current cash');
   assert(!(await f.locator('#app').innerText()).includes('8.888,88'),'wrong old closing never appears');
-  assert.match(await f.locator('#app').innerText(),/Carregando Fluxo/,'an explicit pending state replaces the old fallback');
+  assert.match(await f.locator('#app').innerText(),/Carregando (?:Fluxo|fluxo de caixa)/,'an explicit pending state replaces the old fallback');
   await nav('Fluxo Diário').click();await f.waitForFunction(()=>!FLOWLOADING&&FLOWQ&&!FLOWQ.error);
   assert.match(await f.locator('#d-2026-10-01').innerText(),/600,00/);
   assert.match(await f.locator('#d-2026-10-02').innerText(),/500,00/);
