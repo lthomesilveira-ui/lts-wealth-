@@ -1,7 +1,7 @@
 'use strict';
 const {chromium}=require('playwright'),fs=require('node:fs'),assert=require('node:assert/strict');
 const {product,cockpit,wealth}=require('./lts_v165_executive_ux_gate.js');
-const release=process.env.LTS_RELEASE||'v235',latest=['v236','v237','v238','v239'].includes(release),revision=latest?'v237':'v235',inventoryRpc='lts_browser_card_history_inventory_'+revision,recordRpc='lts_browser_card_history_record_'+revision;
+const release=process.env.LTS_RELEASE||'v235',latest=['v236','v237','v238','v239','v240'].includes(release),revision=latest?'v237':'v235',inventoryRpc='lts_browser_card_history_inventory_'+revision,recordRpc='lts_browser_card_history_record_'+revision;
 const session={access_token:'inventory-fixture',refresh_token:'fixture-refresh',expires_at:4102444800,user:{id:'fixture-user'}};
 const day=date=>({date,summary:{events:0,Consolidado:{entries:0,exits:0}},Consolidado:{bank_balance:600,economic_net:0},Itaú:{balance:600,net:0},Bradesco:{balance:0,net:0},C6:{balance:0,net:0},fix86_columns:{saldo_anterior:600,entradas:0,saidas:0,saldo_final:600,liq_d0_1_recurso:400,rsus_vested:200,fgts:50,saldo_apos_d0_1:1000,saldo_apos_rsu:1200,saldo_apos_fgts:1250}});
 const ev=amount=>[{file:'Fonte_A_teste.xlsx',sheet:'Pagamentos e Recebimentos',row:12,date:'2025-09-05',source_amount:amount},{file:'Fonte_B_teste.xlsx',sheet:'Pagamentos e Recebimentos',row:12,date:'2025-09-05',source_amount:amount}];
