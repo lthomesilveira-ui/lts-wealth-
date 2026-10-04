@@ -1,0 +1,49 @@
+name: V238 bounded historical positions
+on:
+  push:
+    branches: ['work/v238-bounded-history']
+  pull_request:
+    paths: ['releases/v238/**', '.github/scripts/lts_v238*', '.github/workflows/v238.yml', 'backend/patches/*v238.sql']
+permissions:
+  contents: read
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      LTS_RELEASE: v238
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node .github/scripts/lts_v225_static_gate.js
+      - run: node .github/scripts/lts_v229_flow_gate.js
+      - run: npm install --no-save --package-lock=false playwright@1.58.2
+      - run: npx playwright install --with-deps chromium
+      - run: python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/lts-v238-http.log 2>&1 &
+      - name: Bounded source positions and slice
+        run: node .github/scripts/lts_v238_history_gate.js
+      - name: Historical columns and month audit
+        if: success() || failure()
+        run: node .github/scripts/lts_v237_history_audit_gate.js
+      - name: Canonical balances and navigation
+        if: success() || failure()
+        run: node .github/scripts/lts_v236_balance_gate.js
+      - name: Cards and full review
+        if: success() || failure()
+        run: node .github/scripts/lts_v233_document_gate.js
+      - name: Source signs and classification
+        if: success() || failure()
+        run: node .github/scripts/lts_v234_source_gate.js
+      - name: Historical cycles and inventory
+        if: success() || failure()
+        run: node .github/scripts/lts_v235_inventory_gate.js
+      - name: Expense details
+        if: success() || failure()
+        run: node .github/scripts/lts_v231_expense_drilldown_gate.js
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v238-browser-regression
+          path: qa/
