@@ -1,0 +1,25 @@
+'use strict';
+const fs=require('node:fs'),assert=require('node:assert/strict');
+require('./lts_v245_source_gate.js');
+const read=n=>fs.readFileSync('backend/patches/'+n,'utf8');
+const invalidation=read('finance_cache_invalidation_v246.sql');
+assert.match(invalidation,/EXCEPT ALL/);
+assert.match(invalidation,/REFERENCING OLD TABLE AS old_rows NEW TABLE AS new_rows/);
+assert.match(invalidation,/AFTER TRUNCATE/);
+assert.match(invalidation,/provider_record_id=n.provider_record_id AND o.raw_hash=n.raw_hash/);
+assert.match(invalidation,/o.normalized_payload=n.normalized_payload AND o.raw_payload=n.raw_payload/);
+assert(!/DISABLE TRIGGER|DROP POLICY|GRANT.*authenticated/i.test(invalidation));
+const receipt=read('flow_receipt_freshness_v246.sql');
+assert.match(receipt,/current_timestamp-interval '24 hours'/);
+assert.match(receipt,/source_fingerprint='v246\.1:'\|\|cache_epoch\|\|':'\|\|freshness_key/);
+assert.match(receipt,/IF cache_epoch<>/);
+assert.match(receipt,/REVOKE ALL ON FUNCTION public\.lts_flow_bank_freshness_key_v246\(uuid\) FROM PUBLIC,anon,authenticated/);
+const routing=read('semantic_rule_routing_v246.sql');
+assert.match(routing,/r.match_type='exact'/);
+assert.match(routing,/confidence='user_confirmed'/);
+const qa=fs.readFileSync('backend/qa/lts_v246_cache_rollback.sql','utf8');
+assert.match(qa,/BEGIN;/);assert.match(qa,/ROLLBACK;/);
+assert.match(qa,/append-only delete unexpectedly accepted/);
+assert(!/COMMIT;|DISABLE TRIGGER|DROP TRIGGER/i.test(qa));
+console.log('PASS V246 source freshness, transition invalidation, private helpers and immutable V245');
+
