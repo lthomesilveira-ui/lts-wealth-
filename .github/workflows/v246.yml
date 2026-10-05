@@ -1,0 +1,59 @@
+name: V246 backend performance and preserved V245 UI
+on:
+  push:
+    branches: ['work/v246-finance-cache-performance']
+  pull_request:
+    paths: ['backend/patches/*v246*', 'backend/qa/*v246*', '.github/workflows/v246.yml']
+permissions:
+  contents: read
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      LTS_RELEASE: v245
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node backend/qa/lts_v246_source_gate.js
+      - run: node .github/scripts/lts_v225_static_gate.js
+      - run: node .github/scripts/lts_v229_flow_gate.js
+      - run: npm install --no-save --package-lock=false playwright@1.58.2
+      - run: npx playwright install --with-deps chromium
+      - run: python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/lts-v245-http.log 2>&1 &
+      - name: Year selection, daily chart, loading and editing
+        run: node .github/scripts/lts_v245_regression_gate.js
+      - name: Startup and bank refresh
+        if: success() || failure()
+        run: node .github/scripts/lts_v229_startup_gate.js
+      - name: Source-backed historical positions
+        if: success() || failure()
+        run: node .github/scripts/lts_v238_history_gate.js
+      - name: Historical cycles and columns
+        if: success() || failure()
+        run: node .github/scripts/lts_v237_history_audit_gate.js
+      - name: Balances and invalidation
+        if: success() || failure()
+        run: node .github/scripts/lts_v236_balance_gate.js
+      - name: Cards and documents
+        if: success() || failure()
+        run: node .github/scripts/lts_v233_document_gate.js
+      - name: Classifications and card flows
+        if: success() || failure()
+        run: node .github/scripts/lts_v229_cards_gate.js
+      - name: Source signs
+        if: success() || failure()
+        run: node .github/scripts/lts_v234_source_gate.js
+      - name: Historical inventory
+        if: success() || failure()
+        run: node .github/scripts/lts_v235_inventory_gate.js
+      - name: Expense detail
+        if: success() || failure()
+        run: node .github/scripts/lts_v231_expense_drilldown_gate.js
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v246-preserved-v245-regression
+          path: qa/
