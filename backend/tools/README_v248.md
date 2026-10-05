@@ -1,4 +1,4 @@
-# V248 — offline observation archive pilot, NOT a production migration
+# V248 — offline observation archives, NOT a production migration
 
 This isolated candidate stores exact scoped content once, retains every
 observation UUID, run, action and microsecond/timezone timestamp, and reconstructs
@@ -48,8 +48,9 @@ Do not generalize a recent-run compression ratio to all 517k historical observat
 
 Before ANY original is removed:
 
-- Independently recover the COMPLETE archive including failed/partial runs (this
-  pilot currently accepts successful complete runs only), manifest and checksums.
+- Independently recover the COMPLETE archive including failed/partial runs,
+  manifest and checksums. The original pilot intentionally remains success-only;
+  the separate historical codec below preserves other closed-run statuses.
 - Preserve all source contracts: stage_batch_bank_v1, stage_batch_v1,
   finish_bank_v1, finish_itau_v1, report_itau_v1, flow_cache_pre_v240,
   browser_flow_pre_v238 and v246_invalidate_finance_cache. Preserve retry identity,
@@ -69,3 +70,54 @@ Before ANY original is removed:
 
 No delete command exists in this tool. This PR must remain draft until the next
 phase has a validated rollback, complete recovery and the above acceptance checks.
+
+## Historical coverage extension
+
+`lts_observation_snapshot_v248.py` is a separate offline codec. It accepts closed
+success/partial/failed/cancelled runs against an independent owner-scoped SQL
+inventory, including zero-row runs. Legacy `raw_count` is preserved exactly,
+never substituted for the observed row count: failed runs can contain rows and
+successful runs can have counters inconsistent with their historical rows.
+
+Use `observation_historical_export_v248.sql` for the inventory and bounded run
+exports. Each export carries a PostgreSQL SHA256 of the ordered twelve text
+fields, independently recomputed by the codec. Keep the inventory, original
+exports, compressed parts and separate checksum ledger private. Do not discard
+source exports after a successful local reconstruction.
+
+Pack small batches with `pack --inventory PRIVATE_INVENTORY --exports PRIVATE_EXPORTS
+--owner OWNER_UUID --project PROJECT_REF --archive NEW_PRIVATE_PART.json.gz`.
+After capturing every inventory run, run `verify-collection --inventory
+PRIVATE_INVENTORY --ledger PRIVATE_LEDGER --directory PRIVATE_ARCHIVE_DIRECTORY
+--source-directory PRIVATE_SOURCE_DIRECTORY --owner OWNER_UUID --project PROJECT_REF
+--report NEW_PRIVATE_REPORT.json`. The collection verifier requires exact coverage
+of the independent inventory, rejects duplicate run/observation UUIDs across parts,
+checks each external archive checksum and compares all restored fields with the
+retained independent exports.
+
+Repeat the count-and-metadata inventory at the end and compare everything except
+the check timestamp. Each run export has a repeatable-read snapshot; matching
+start/end inventories does not make different export transactions one atomic
+database backup. `database_restore_test` remains `NOT_RUN` until an isolated real
+database restore, consumer parity, privacy, rollback and rebuilt-size tests pass.
+Archiving alone neither frees production disk nor restores bank synchronization.
+
+CI uses synthetic data only and runs both codecs' suites. Full bank archives,
+original exports, real owner/run identifiers and private checksums must never be
+added to this repository or public workflow artifacts.
+
+### Optional smaller read-only transport
+
+For at most six inventory runs, `observation_dictionary_transport_v248.sql` sends
+each exact scoped eight-text-field tuple once, selected by PostgreSQL JSONB-array
+equality, plus every observation's four reference fields. It does not use raw
+hash equality to merge content. Original run metadata, actual counts and separate
+SQL hashes of all twelve source text fields accompany the transport.
+
+`expand-transport --inventory PRIVATE_INVENTORY --transport PRIVATE_TRANSPORT
+--source-directory PRIVATE_SOURCES --owner OWNER_UUID --project PROJECT_REF`
+validates and expands this into the same export-v2 sources. Retained overlapping
+exports must have exactly identical rows, metadata and SQL source hashes; their
+original capture timestamps/files are preserved. New files use exclusive creation
+and mode 0600. Keep the original transport too. This only reduces export traffic,
+not production database size, polling history, or financial transactions.

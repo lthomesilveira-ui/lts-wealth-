@@ -5,9 +5,13 @@ on:
   pull_request:
     paths:
       - backend/tools/lts_observation_archive_v248.py
+      - backend/tools/lts_observation_snapshot_v248.py
       - backend/tools/observation_export_v248.sql
+      - backend/tools/observation_historical_export_v248.sql
+      - backend/tools/observation_dictionary_transport_v248.sql
       - backend/tools/README_v248.md
       - backend/qa/test_lts_observation_archive_v248.py
+      - backend/qa/test_lts_observation_snapshot_v248.py
       - .github/workflows/v248-archive-pilot.yml
 permissions:
   contents: read
@@ -21,7 +25,7 @@ jobs:
         with:
           python-version: '3.12'
       - name: Lossless archive and failure guards
-        run: python3 -m unittest discover -s backend/qa -p 'test_lts_observation_archive_v248.py' -v
+        run: python3 -m unittest discover -s backend/qa -p 'test_lts_observation_*v248.py' -v
       - name: Preserve current backend and frozen frontend gates
         run: |
           node backend/qa/lts_v246_source_gate.js
