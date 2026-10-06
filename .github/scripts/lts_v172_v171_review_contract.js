@@ -17,7 +17,7 @@ assert(candidate.indexOf('lts-v172-v171-review.js')>candidate.indexOf('lts-v171-
 for(const token of [
   "version:'v172'",'public_index_changed:false','previous-5-through-current-year-end',
   "U+'/rest/v1/rpc/'",'Promise.allSettled',
-  "flowPart('lts_browser_flow_v11'","flowPart('lts_browser_flow_v12'",'Promise.allSettled',
+  "flowPart('lts_browser_flow_v11'","flowPart('lts_browser_flow_v13'",'Promise.allSettled',
   'monthly-balance-v3-v172-chunked','yearChunks','mapLimit(chunks,3',
   'Faturas conciliadas pelo total','Venda de ações, RSUs e outros ativos',
   "return'Empréstimos'",'Financiamento imobiliário — CIPÓ 396',

@@ -20,7 +20,7 @@ for(const token of [
   "version:'v171'",'public_index_changed:false','lts_browser_expense_executive_v6','lts_browser_monthly_balance_v2',
   "next.p_direction==='expense'",'next.p_direction=\'saida\'','Receitas operacionais','Entradas extraordinárias','Despesas por grupo',
   'Faturas e parcelas por banco e cartão','Parcelas já contratadas','Considerado no Fluxo',
-  'flow_progressive_load:true','validated_flow_columns_restored:true','lts_browser_flow_v11','lts_browser_flow_v12'
+  'flow_progressive_load:true','validated_flow_columns_restored:true','lts_browser_flow_v11','lts_browser_flow_v13'
 ])assert(js.includes(token),'runtime missing '+token);
 
 for(const token of ['.v168-history-note{display:none!important}','RSU vested','Saldo c/ RSU','.v171-expense-total','.v171-cards','.v171-monthly'])assert(css.includes(token),'style missing '+token);

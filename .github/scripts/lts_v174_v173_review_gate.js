@@ -115,7 +115,7 @@ async function run(browser,viewport,label){
     else if(/^lts_browser_wealth_detail_v/.test(name))body=wealthFixture();
     else if(name==='lts_browser_recurring_future_gap_audit_v5')body={horizon_checks:[],items:[]};
     else if(name==='lts_browser_open_finance_status_v1')body={status:'not_connected'};
-    else if(name==='lts_browser_flow_v11'||name==='lts_browser_flow_v12')body=flowFixture(args.p_from,args.p_to);
+    else if(name==='lts_browser_flow_v11'||name==='lts_browser_flow_v13')body=flowFixture(args.p_from,args.p_to);
     else if(name==='lts_browser_transactions_v2')body={rows:[]};
     await route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(body)});
   });
