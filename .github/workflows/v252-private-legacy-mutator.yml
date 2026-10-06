@@ -1,0 +1,23 @@
+name: V252 legacy mutator permission guards
+on:
+  push:
+    branches: [work/v252-private-legacy-mutator]
+  pull_request:
+    paths:
+      - backend/patches/*v252.sql
+      - backend/qa/*v252*
+      - .github/workflows/v252-private-legacy-mutator.yml
+permissions:
+  contents: read
+jobs:
+  source-and-probe-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - run: |
+          node --check backend/qa/lts_v252_probe.mjs
+          node backend/qa/lts_v252_probe.mjs > /tmp/v252-probe.json
+          node backend/qa/lts_v246_source_gate.js
+          node backend/qa/lts_v245_source_gate.js
+
