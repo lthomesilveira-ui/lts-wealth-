@@ -34,6 +34,7 @@ jobs:
           node --check .github/scripts/lts_v177_expense_ux_gate.js
           node .github/scripts/lts_v177_expense_ux_contract.js
       - name: Install browser dependencies
+        timeout-minutes: 8
         run: |
           npm install --no-save playwright@1.55.0
           python -m pip install playwright==1.55.0
