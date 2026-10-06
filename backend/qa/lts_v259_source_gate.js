@@ -1,0 +1,13 @@
+'use strict';
+const fs=require('node:fs'),assert=require('node:assert/strict');
+const sql=fs.readFileSync('backend/patches/dated_brokerage_readers_v259.sql','utf8');
+assert.equal((sql.match(/definition lease failed:/g)||[]).length,14);
+assert.equal((sql.match(/ACL changed/g)||[]).length,14);
+assert.match(sql,/as_of'\)::date<=p_as_of/);
+assert.match(sql,/as_of'\)::date<=least\(dt,current_date\)/);
+assert.match(sql,/corrected_available_resources_plus_restricted_fgts_and_remaining_scheduled_awards/);
+assert.match(sql,/lts_cofrinho_effective_locked_v245\(p_user_id,current_date\)/);
+assert.doesNotMatch(sql,/\b(?:GRANT|REVOKE|DELETE|TRUNCATE|DROP|INSERT INTO|UPDATE public\.)\b/i);
+assert.doesNotMatch(sql,/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i);
+assert.doesNotMatch(sql,/IMG_7973|12483\.60|1683218\.44/);
+console.log(JSON.stringify({pass:true,leased_functions:14,source_payload_private:true,grants_preserved:true}));
