@@ -1,0 +1,26 @@
+name: V251 expense memo source guards
+on:
+  push:
+    branches: [work/v251-expense-reader-memo]
+  pull_request:
+    paths:
+      - backend/patches/*v251.sql
+      - backend/qa/*v251*
+      - .github/workflows/v251-expense-reader-memo.yml
+permissions:
+  contents: read
+jobs:
+  source-and-probe-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Build rollback probes and preserve current source and frozen UI contracts
+        run: |
+          node --check backend/qa/lts_v251_probe.mjs
+          node backend/qa/lts_v251_probe.mjs year > /tmp/v251-year.json
+          node backend/qa/lts_v251_probe.mjs invalidation > /tmp/v251-invalidation.json
+          node backend/qa/lts_v251_probe.mjs old > /tmp/v251-old.json
+          node backend/qa/lts_v246_source_gate.js
+          node backend/qa/lts_v245_source_gate.js
+
