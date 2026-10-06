@@ -47,7 +47,7 @@ async function run(browser,viewport,label){
   await context.addInitScript(fixed=>{const NativeDate=Date,fixedMs=NativeDate.parse(fixed);class FixedDate extends NativeDate{constructor(...args){super(...(args.length?args:[fixedMs]))}static now(){return fixedMs}}window.Date=FixedDate},'2030-06-15T12:00:00Z');
   await context.addInitScript(value=>localStorage.setItem('lts_supabase_session_v1',JSON.stringify(value)),session);
   const page=await context.newPage();page.setDefaultTimeout(26000);const errors=[],consoleErrors=[],requested=[],flowCalls=[],awardMutations=[];
-  page.on('pageerror',e=>errors.push(String(e.message||e)));page.on('console',m=>{if(m.type()==='error')consoleErrors.push(m.text())});page.on('dialog',d=>d.accept());
+  page.on('pageerror',e=>errors.push(String(e.stack||e.message||e)));page.on('console',m=>{if(m.type()==='error')consoleErrors.push(m.text())});page.on('dialog',d=>d.accept());
   await page.route('https://tadhkamnwtsbdozwkyut.supabase.co/**',async route=>{
     const req=route.request(),name=new URL(req.url()).pathname.split('/').pop();requested.push(name);
     let args={};try{args=JSON.parse(req.postData()||'{}')}catch{}
@@ -55,7 +55,7 @@ async function run(browser,viewport,label){
     if(name==='token')body=session;
     else if(name==='lts_browser_product_v1')body={ok:true,mvp:productFixture()};
     else if(name==='lts_browser_dashboard_cockpit_v1')body=cockpit;
-    else if(name==='lts_browser_flow_v13'){flowCalls.push(args);body=flowFixture()}
+    else if(/^lts_browser_flow_v/.test(name)){if(name==='lts_browser_flow_v13')flowCalls.push(args);body=flowFixture()}
     else if(name==='lts_browser_expense_executive_v5'||name==='lts_browser_expense_executive_v3')body=expenseFixture(args.p_from||'2030-01-01',args.p_to||'2030-06-15');
     else if(name==='lts_browser_expense_context_lens_v1')body=contextFixture();
     else if(name==='lts_browser_expense_context_nature_v1')body={contexts:[],natures:[],summary:{}};
@@ -75,8 +75,9 @@ async function run(browser,viewport,label){
     console.error(JSON.stringify({label,requested,errors,consoleErrors,diagnostic},null,2));
     throw error;
   }
-  let text=semantic(await frame.locator('.v168-dashboard').innerText());for(const phrase of ['top 15','educação · benjamin','educação · lucas','obra e reforma · o parque / cipó 396','faturas históricas sem compras individualizadas'])if(!text.includes(phrase))throw Error(`${label}: Dashboard missing ${phrase}`);
-  const restrictedLabels=await frame.locator('.v168-kpi-section.restricted .v168-kpi span').allTextContents();if(restrictedLabels.indexOf('Total em previdências')<restrictedLabels.indexOf('Novartis'))throw Error(`${label}: pension total was not moved after its components`);
+  let text=semantic(await frame.locator('.v168-dashboard').innerText());for(const phrase of ['contas correntes hoje','aplicações d0','rsus já disponíveis','fgts','despesas do período'])if(!text.includes(phrase))throw Error(`${label}: preserved Dashboard missing ${phrase}: ${text}`);
+  const expenseKpi=frame.locator('.v168-dashboard .v168-kpi').filter({hasText:'Despesas do período'});if(await expenseKpi.count()!==1||!semantic(await expenseKpi.innerText()).includes(semantic(brl(expenseFixture('2030-01-01','2030-06-15').summary.selected_total))))throw Error(`${label}: preserved Dashboard expense amount changed`);
+  const restrictedLabels=await frame.locator('.v168-kpi-section.restricted .v168-kpi span').allTextContents();if(JSON.stringify(restrictedLabels)!==JSON.stringify(['Previdências','Organon','Novartis','Despesas do período']))throw Error(`${label}: preserved restricted positions changed: ${JSON.stringify(restrictedLabels)}`);
   const route=name=>viewport.width<=520?frame.locator(`#dx1MobileNav [data-mobile-route="${name}"]`):frame.locator(`.nav [data-v="${name}"]`);
   await route('Despesas').click();await frame.waitForFunction(()=>window.__LTS_V168_STATE?.expense?.data?.management_groups);text=semantic(await frame.locator('.v168-expenses').innerText());for(const phrase of ['maiores grupos gerenciais','financiamentos auditados','consignado · coopharma','itens de o parque/cipó 396'])if(!text.includes(phrase))throw Error(`${label}: Expenses missing ${phrase}`);await frame.locator('.v168-tabs [data-v168-exp-tab="categories"]').click();if(await frame.locator('.v170-management-card').count()!==1)throw Error(`${label}: management-group card missing`);
   await route('Patrimônio').click();await frame.waitForFunction(()=>window.__LTS_V168_STATE?.wealth?.data?.morgan_statement);text=semantic(await frame.locator('.v168-wealth').innerText());for(const phrase of ['ativos já adquiridos','vestings ainda condicionais','saldo atual separado de parcelas futuras'])if(!text.includes(phrase))throw Error(`${label}: Wealth guide missing ${phrase}`);await frame.locator('[data-v168-wealth-tab="rsu"]').click();await frame.locator('#v170AllAwardApply').waitFor({state:'visible'});text=semantic(await frame.locator('.v168-wealth').innerText());for(const phrase of ['total bruto do extrato',semantic(brl(1745784.67)),'total considerado após reserva',semantic(brl(1569619.51)),'disponível agora',semantic(brl(15913.44)),'aplicar a todos os vestings','cotação individual'])if(!text.includes(phrase))throw Error(`${label}: Morgan panel missing ${phrase}`);
