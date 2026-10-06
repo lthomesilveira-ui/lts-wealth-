@@ -1,0 +1,25 @@
+name: V250 historical liquidity source guards
+on:
+  push:
+    branches: [work/v250-historical-liquidity]
+  pull_request:
+    paths:
+      - backend/patches/*v250.sql
+      - backend/qa/*v250*
+      - .github/workflows/v250-historical-liquidity.yml
+permissions:
+  contents: read
+jobs:
+  source-and-probe-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Build operator probes and retain current source and frozen UI contracts
+        run: |
+          node --check backend/qa/lts_v250_probe.mjs
+          node backend/qa/lts_v250_probe.mjs layers > /tmp/v250-layers-query.json
+          node backend/qa/lts_v250_probe.mjs workbook > /tmp/v250-workbook-query.json
+          node backend/qa/lts_v246_source_gate.js
+          node backend/qa/lts_v245_source_gate.js
+
