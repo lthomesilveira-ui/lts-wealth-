@@ -3,7 +3,7 @@ SELECT set_config('request.jwt.claims',(SELECT jsonb_build_object('sub',c.user_i
 CREATE TEMP TABLE v253_proofs(label text,lo date,hi date,input jsonb,expected jsonb,prior_ms numeric) ON COMMIT DROP;
 DO $baseline$ DECLARE r record;j jsonb; t timestamptz;u uuid:=public.lts_browser_assert_user_v1();
 BEGIN
- FOR r IN SELECT * FROM (VALUES('current_and_next',date '2026-01-01',date '2027-12-31'),('july_boundary',date '2026-06-30',date '2026-07-14'))v(label,lo,hi) LOOP
+ FOR r IN SELECT * FROM (VALUES('current_and_next',date '2026-01-01',date '2027-12-31'),('historical_2019_2020',date '2019-01-01',date '2020-12-31'),('july_boundary',date '2026-06-30',date '2026-07-14'))v(label,lo,hi) LOOP
   j:=public.lts_browser_flow_pre_v248(r.lo,r.hi)->'flow';
   PERFORM public.lts_flow_workbook_positions_v248(u,j);
   t:=clock_timestamp();
@@ -155,7 +155,7 @@ BEGIN
 END $function$
 
 ;
-DO $verify$ DECLARE r record;j jsonb;t timestamptz;metrics jsonb:='[]';u uuid:=public.lts_browser_assert_user_v1();d date;n int;
+DO $verify$ DECLARE r record;j jsonb;t timestamptz;metrics jsonb:='[]';u uuid:=public.lts_browser_assert_user_v1();d date;n int; prior_fp text;
 BEGIN
  FOR r IN SELECT * FROM v253_proofs ORDER BY label LOOP
   PERFORM public.lts_flow_workbook_positions_v248(u,r.input);
@@ -172,13 +172,17 @@ BEGIN
  RAISE EXCEPTION 'V253_INVALID_OWNER_WAS_ACCEPTED' USING ERRCODE='42501';
  EXCEPTION WHEN SQLSTATE 'P0001' THEN NULL;
 END;
+SELECT source_fingerprint INTO prior_fp FROM public.lts_v229_read_cache WHERE user_id=u AND kind='workbook_first_c6_v253';
+UPDATE public.lts_read_cache_epoch_v242 SET epoch=epoch+1 WHERE singleton;
+IF public.lts_workbook_first_c6_date_v253(u) IS DISTINCT FROM d THEN RAISE EXCEPTION 'V253_INVALIDATION_RESULT_CHANGED';END IF;
+IF prior_fp IS NOT DISTINCT FROM (SELECT source_fingerprint FROM public.lts_v229_read_cache WHERE user_id=u AND kind='workbook_first_c6_v253') THEN RAISE EXCEPTION 'V253_EPOCH_REUSED_STALE_MEMO';END IF;
 UPDATE public.lts_v229_read_cache SET refreshed_at=clock_timestamp()-interval '6 minutes'
 WHERE user_id=u AND kind='workbook_first_c6_v253';
  SELECT count(*) INTO n FROM public.lts_v229_read_cache WHERE kind='workbook_first_c6_v253';
  PERFORM set_config('transaction_read_only','on',true);
  IF public.lts_workbook_first_c6_date_v253(u) IS DISTINCT FROM d THEN RAISE EXCEPTION 'V253_READ_ONLY_RESULT_CHANGED';END IF;
  IF n<>(SELECT count(*) FROM public.lts_v229_read_cache WHERE kind='workbook_first_c6_v253') THEN RAISE EXCEPTION 'V253_READ_ONLY_WROTE';END IF;
- PERFORM set_config('lts.v253_receipt',jsonb_build_object('status','PASS','full_output_parity',metrics,'memo_exact',true,'helper_acl_private',true,'no_owner_leak',true,'read_only_stale_miss_preserves_exact_date_without_write',true,'controlled_warm_comparison',true)::text,true);
+ PERFORM set_config('lts.v253_receipt',jsonb_build_object('status','PASS','full_output_parity',metrics,'memo_exact',true,'source_epoch_change_recomputed_memo',true,'helper_acl_private',true,'no_owner_leak',true,'read_only_stale_miss_preserves_exact_date_without_write',true,'controlled_warm_comparison',true)::text,true);
 END $verify$;
 SELECT current_setting('lts.v253_receipt')::jsonb AS receipt;
 ROLLBACK;
