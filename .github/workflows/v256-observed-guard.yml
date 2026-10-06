@@ -1,0 +1,22 @@
+name: V256 observed guard validation
+on:
+  push:
+    branches: [work/v256-linear-observed-guard]
+  pull_request:
+    paths:
+      - backend/patches/*v256*
+      - backend/qa/*v256*
+      - .github/workflows/v256-observed-guard.yml
+permissions:
+  contents: read
+jobs:
+  source-contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Preserve frozen sources and guarded transformations
+        run: |
+          node backend/qa/lts_v245_source_gate.js
+          node backend/qa/lts_v246_source_gate.js
+          node backend/qa/lts_v256_source_gate.js
