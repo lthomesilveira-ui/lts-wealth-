@@ -6,6 +6,10 @@ on:
     paths:
       - backend/open_finance/v249/**
       - backend/qa/lts_v249_card_normalization.test.mjs
+      - backend/qa/lts_v249_private_replay.mjs
+      - backend/qa/lts_v249_staging_rollback.sql
+      - backend/qa/lts_v249_transactional_probe.mjs
+      - backend/patches/card_snapshot_upsert_v249.sql
       - .github/workflows/v249-card-normalization.yml
 permissions:
   contents: read

@@ -180,6 +180,7 @@ export async function normalize(kind, raw, ctx) {
       operation_type: raw.operationType ?? null,
       layer: card ? cardTransactionLayer(raw) : 'bank_cash' });
     if (card) {
+      n.normalization_revision = 'v249-card-identity-and-layer';
       Object.assign(n, { account_last4: cardIdentity.account_last4, card_number_basis: cardIdentity.card_number_basis });
       n.warnings.push(...cardIdentity.warnings);
       if (n.layer === 'card_payment_evidence' && (signed === null || signed <= 0 || raw.type === 'DEBIT')) n.warnings.push('bill_payment_direction_disagreement');
@@ -328,5 +329,4 @@ export function enforceOneToOne(records) {
   }
   return records;
 }
-
 

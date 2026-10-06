@@ -31,7 +31,7 @@ for (const sourcePath of sourcePaths) {
     const rawText = JSON.stringify(raw);
     const old = await before(row.resource_type, raw, ctx), current = await next(row.resource_type, raw, ctx);
     const oldN = old.normalized_payload, nextN = current.normalized_payload;
-    const allowed = row.resource_type === 'card_transaction' ? new Set(['layer', 'last4', 'warnings', 'account_last4', 'card_number_basis']) : new Set();
+    const allowed = row.resource_type === 'card_transaction' ? new Set(['layer', 'last4', 'warnings', 'account_last4', 'card_number_basis', 'normalization_revision']) : new Set();
     for (const key of new Set([...Object.keys(oldN), ...Object.keys(nextN)])) if (!allowed.has(key)) assert.deepEqual(nextN[key], oldN[key], 'normalized financial/source field changed: ' + key);
     for (const key of Object.keys(old)) if (key !== 'normalized_payload') assert.deepEqual(current[key], old[key], 'outer economic/source field changed: ' + key);
     assert.equal(JSON.stringify(raw), rawText); assert.equal(nextN.official_effect, false);

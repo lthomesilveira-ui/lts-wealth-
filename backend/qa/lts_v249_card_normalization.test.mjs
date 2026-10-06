@@ -15,6 +15,7 @@ test('generic PAGAMENTO is consumption, including a posted purchase', async () =
     const n = (await normalize('card_transaction', raw({ status }), ctx)).normalized_payload;
     assert.equal(n.layer, 'card_consumption'); assert.equal(n.amount, -12.34);
     assert.equal(n.status, status); assert.equal(n.official_effect, false);
+    assert.equal(n.normalization_revision, 'v249-card-identity-and-layer');
   }
 });
 test('only exact PAGAMENTO_FATURA identifies bill payment evidence', () => {
