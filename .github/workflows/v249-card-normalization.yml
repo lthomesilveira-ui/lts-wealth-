@@ -1,0 +1,23 @@
+name: V249 card semantic and identity guards
+on:
+  push:
+    branches: [work/v249-card-normalization]
+  pull_request:
+    paths:
+      - backend/open_finance/v249/**
+      - backend/qa/lts_v249_card_normalization.test.mjs
+      - .github/workflows/v249-card-normalization.yml
+permissions:
+  contents: read
+jobs:
+  synthetic-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Semantic classification and identity guards
+        run: node --test backend/qa/lts_v249_card_normalization.test.mjs
+      - name: Preserve current backend and frozen frontend
+        run: |
+          node backend/qa/lts_v246_source_gate.js
+          node backend/qa/lts_v245_source_gate.js
