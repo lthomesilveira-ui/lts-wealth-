@@ -1,0 +1,21 @@
+name: V254 exact Flow reader reuse
+on:
+  push:
+    branches: [work/v251-workbook-range-performance]
+  pull_request:
+    paths:
+      - backend/patches/*v254.sql
+      - backend/qa/*v254*
+      - .github/workflows/v254-exact-flow-reader.yml
+permissions:
+  contents: read
+jobs:
+  preserved-source-contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Preserve private warming and frozen source contracts
+        run: |
+          node backend/qa/lts_v245_source_gate.js
+          node backend/qa/lts_v246_source_gate.js
