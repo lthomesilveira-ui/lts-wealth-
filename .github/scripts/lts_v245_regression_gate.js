@@ -44,7 +44,7 @@ async function run(browser,width){
   await f.locator('#v242ChartYear').selectOption('all');assert.equal(Number(await f.locator('.v168-chart svg').getAttribute('data-v242-points')),454);
   const path=await f.locator('.v168-chart path.fgts').getAttribute('d'),numbers=path.match(/[MC]|-?\d+(?:\.\d+)?/g);let i=0,previous;while(i<numbers.length){const op=numbers[i++];if(op==='M'){previous=[+numbers[i++],+numbers[i++]];continue}assert.equal(op,'C');const p1=[+numbers[i++],+numbers[i++]],p2=[+numbers[i++],+numbers[i++]],p3=[+numbers[i++],+numbers[i++]];for(let t=.1;t<1;t+=.1){const v=(1-t)**3*previous[1]+3*(1-t)**2*t*p1[1]+3*(1-t)*t*t*p2[1]+t**3*p3[1];assert(v>=Math.min(previous[1],p3[1])-.02&&v<=Math.max(previous[1],p3[1])+.02,'smooth path cannot invent an extremum')}previous=p3;}
   await f.locator('#v242ChartYear').selectOption('2026');await page.screenshot({path:'qa/v242-'+width+'-dashboard.png',fullPage:true});
-  if(['v245','v257'].includes(process.env.LTS_RELEASE||'v242')){
+  if(['v245','v257','v258'].includes(process.env.LTS_RELEASE||'v242')){
    const svg=f.locator('.v168-chart svg');await svg.focus();await svg.press('End');
    assert.equal(await f.locator('#v244-chart-values').getAttribute('data-date'),'2026-12-31');
    assert((await f.locator('#v244-chart-values').innerText()).replace(/\s+/g,' ').includes('R$ 6.310,00'),'inspected values are exact source values');
@@ -59,7 +59,7 @@ async function run(browser,width){
   assert.equal(calls.filter(x=>x.name==='lts_browser_flow_v242').length,before,'default flow reuses the authenticated complete forecast');
   const closeFit=await f.locator('#flowCloseDetails').evaluate(e=>{const r=e.getBoundingClientRect();return{left:r.left,right:r.right,bottom:r.bottom,width:innerWidth}});assert(closeFit.left>=0&&closeFit.right<=closeFit.width&&closeFit.bottom<500,'close-details is visible in the initial desktop/mobile controls');
   assert.equal(await f.locator('#ltsFgtsScenarioNote,#ltsBankEvidence,#ltsReconciliationWarning,#v236-current-position-note').count(),0);
-  if(['v245','v257'].includes(process.env.LTS_RELEASE||'v242')&&width===1440){slowYear=true;await f.evaluate(()=>{window.__LTS_V178_STATE.forecast.updatedAt=0});}
+  if(['v245','v257','v258'].includes(process.env.LTS_RELEASE||'v242')&&width===1440){slowYear=true;await f.evaluate(()=>{window.__LTS_V178_STATE.forecast.updatedAt=0});}
   await f.locator('#flowYear').selectOption('2027');
   if(slowYear){await f.waitForSelector('#v242-flow-loading');assert.equal(await f.locator('.fx87-mesa:visible').count(),0)}
   await f.waitForFunction(()=>!FLOWLOADING&&FLOWQ&&!FLOWQ.error&&FLOWFROM==='2027-01-01'&&FLOWTO==='2027-12-31',null,{timeout:60000});slowYear=false;
