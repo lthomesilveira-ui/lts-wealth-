@@ -10,4 +10,9 @@ assert.match(sql,/lts_cofrinho_effective_locked_v245\(p_user_id,current_date\)/)
 assert.doesNotMatch(sql,/\b(?:GRANT|REVOKE|DELETE|TRUNCATE|DROP|INSERT INTO|UPDATE public\.)\b/i);
 assert.doesNotMatch(sql,/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i);
 assert.doesNotMatch(sql,/IMG_7973|12483\.60|1683218\.44/);
+const basis=fs.readFileSync('backend/patches/interim_brokerage_basis_v259.sql','utf8');
+assert.match(basis,/interim_net_receipt_bridge_not_exact_trade_position/);
+assert.match(basis,/'brokerage_position_is_statement',false/);
+assert.match(basis,/prior_acl IS DISTINCT FROM/);
+assert.doesNotMatch(basis,/\b(?:GRANT|REVOKE|DELETE|TRUNCATE|DROP|INSERT INTO)\b/i);
 console.log(JSON.stringify({pass:true,leased_functions:14,source_payload_private:true,grants_preserved:true}));
