@@ -52,6 +52,7 @@ jobs:
           LTS_RELEASE=v242 node .github/scripts/lts_v225_static_gate.js
           LTS_RELEASE=v244 node .github/scripts/lts_v225_static_gate.js
           LTS_RELEASE=v245 node .github/scripts/lts_v225_static_gate.js
+          LTS_RELEASE=v257 node .github/scripts/lts_v225_static_gate.js
       - name: Configure Pages
         uses: actions/configure-pages@v5
         with:
@@ -63,14 +64,14 @@ jobs:
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v4
-      - name: Verify published V245 and preserved V244/V242 bytes
+      - name: Verify published V257 and preserved V245/V244/V242 bytes
         run: |
           node --input-type=module <<'JS'
           import fs from 'node:fs';
           import crypto from 'node:crypto';
           import assert from 'node:assert/strict';
           const results=[];
-          const releases=['v242','v244','v245'];
+          const releases=['v242','v244','v245','v257'];
           for(const release of releases){
           const rawManifest=fs.readFileSync('releases/'+release+'/manifest.json');
           const manifest=JSON.parse(rawManifest);
@@ -92,10 +93,10 @@ jobs:
             })));
           }
           }
-          fs.writeFileSync('v245-published-verification.json',JSON.stringify({pass:true,head:process.env.GITHUB_SHA,url:'https://lthomesilveira-ui.github.io/lts-wealth-/releases/v245/app.html',releases,count:results.length,assets:results},null,2));
-          console.log('Published V245 and frozen V244/V242 assets verified:',results.length);
+          fs.writeFileSync('v257-published-verification.json',JSON.stringify({pass:true,head:process.env.GITHUB_SHA,url:'https://lthomesilveira-ui.github.io/lts-wealth-/releases/v257/app.html',releases,count:results.length,assets:results},null,2));
+          console.log('Published V257 and frozen V245/V244/V242 assets verified:',results.length);
           JS
       - uses: actions/upload-artifact@v4
         with:
-          name: v245-published-verification
-          path: v245-published-verification.json
+          name: v257-published-verification
+          path: v257-published-verification.json
