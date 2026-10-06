@@ -1,17 +1,29 @@
+BEGIN;
+SELECT set_config('request.jwt.claims',(SELECT jsonb_build_object('sub',c.user_id,'email',a.email,'role','authenticated')::text FROM public.lts_open_finance_connection c JOIN auth.users a ON a.id=c.user_id LIMIT 1),true);
+CREATE TEMP TABLE v253_proofs(label text,lo date,hi date,input jsonb,expected jsonb,prior_ms numeric) ON COMMIT DROP;
+DO $baseline$ DECLARE r record;j jsonb; t timestamptz;u uuid:=public.lts_browser_assert_user_v1();
+BEGIN
+ FOR r IN SELECT * FROM (VALUES('current_and_next',date '2026-01-01',date '2027-12-31'),('july_boundary',date '2026-06-30',date '2026-07-14'))v(label,lo,hi) LOOP
+  j:=public.lts_browser_flow_pre_v248(r.lo,r.hi)->'flow';
+  PERFORM public.lts_flow_workbook_positions_v248(u,j);
+  t:=clock_timestamp();
+  INSERT INTO v253_proofs SELECT r.label,r.lo,r.hi,j,public.lts_flow_workbook_positions_v248(u,j),extract(epoch from clock_timestamp()-t)*1000;
+ END LOOP;
+END $baseline$;
 DO $lease$ BEGIN
  IF md5(btrim(pg_get_functiondef('public.lts_flow_workbook_positions_v248(uuid,jsonb)'::regprocedure),E' \t\r\n'))<>'3045d58010bdb36ff1af9ffe0e1a17e2'
- THEN RAISE EXCEPTION 'V251_WORKBOOK_SOURCE_LEASE_CHANGED';END IF;
+ THEN RAISE EXCEPTION 'V253_WORKBOOK_SOURCE_LEASE_CHANGED';END IF;
 END $lease$;
 -- Derived date only. Full source epochs, owner and date remain isolated.
-CREATE OR REPLACE FUNCTION public.lts_workbook_first_c6_date_v251(p_user_id uuid)
+CREATE OR REPLACE FUNCTION public.lts_workbook_first_c6_date_v253(p_user_id uuid)
 RETURNS date LANGUAGE plpgsql SET search_path TO '' SET "TimeZone" TO 'America/Sao_Paulo'
 AS $fn$
 DECLARE k text; d date; j jsonb; epoch_before bigint;
 BEGIN
  SELECT epoch INTO epoch_before FROM public.lts_read_cache_epoch_v242 WHERE singleton;
- k:='workbook-first-c6-v251:'||epoch_before||':'||public.lts_flow_read_source_key_v247(p_user_id);
+ k:='workbook-first-c6-v253:'||epoch_before||':'||public.lts_flow_read_source_key_v247(p_user_id);
  SELECT payload INTO j FROM public.lts_v229_read_cache
- WHERE user_id=p_user_id AND kind='workbook_first_c6_v251' AND as_of=current_date
+ WHERE user_id=p_user_id AND kind='workbook_first_c6_v253' AND as_of=current_date
  AND from_date=date '2013-10-10' AND to_date=date '2026-07-07'
  AND source_fingerprint=k AND refreshed_at>clock_timestamp()-interval '5 minutes';
  IF FOUND THEN RETURN (j->>'date')::date; END IF;
@@ -24,7 +36,7 @@ BEGIN
  IF NOT current_setting('transaction_read_only')::boolean THEN
   BEGIN
    INSERT INTO public.lts_v229_read_cache(user_id,kind,as_of,from_date,to_date,payload,source_fingerprint,refreshed_at)
-   VALUES(p_user_id,'workbook_first_c6_v251',current_date,date '2013-10-10',date '2026-07-07',jsonb_build_object('date',d),k,clock_timestamp())
+   VALUES(p_user_id,'workbook_first_c6_v253',current_date,date '2013-10-10',date '2026-07-07',jsonb_build_object('date',d),k,clock_timestamp())
    ON CONFLICT(user_id,kind,as_of,from_date,to_date) DO UPDATE SET
     payload=excluded.payload,source_fingerprint=excluded.source_fingerprint,refreshed_at=excluded.refreshed_at;
   EXCEPTION WHEN read_only_sql_transaction THEN NULL;
@@ -32,7 +44,7 @@ BEGIN
  END IF;
  RETURN d;
 END $fn$;
-REVOKE ALL ON FUNCTION public.lts_workbook_first_c6_date_v251(uuid) FROM PUBLIC,anon,authenticated,service_role;
+REVOKE ALL ON FUNCTION public.lts_workbook_first_c6_date_v253(uuid) FROM PUBLIC,anon,authenticated,service_role;
 CREATE OR REPLACE FUNCTION public.lts_flow_workbook_positions_v248(p_user_id uuid, p_flow jsonb)
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -53,7 +65,7 @@ BEGIN
  SELECT coalesce(jsonb_agg(to_jsonb(x)),'[]') INTO bank_deltas FROM public.lts_historical_bank_position_deltas_v1(p_user_id,hi) x;
  SELECT min(e.evidence_date) INTO first_bradesco FROM public.lts_reconciliation_evidence e
  WHERE e.user_id=p_user_id AND e.evidence_type='historical_workbook_cash_day' AND e.account='Bradesco' AND e.status='documented';
- first_c6:=public.lts_workbook_first_c6_date_v251(p_user_id);
+ first_c6:=public.lts_workbook_first_c6_date_v253(p_user_id);
  WITH rows AS MATERIALIZED(SELECT * FROM public.lts_historical_effective_cash_v5(p_user_id,lo,hi)),
  day_totals AS MATERIALIZED(SELECT event_date,account,sum(signed_amount) total FROM rows GROUP BY event_date,account),
  proof AS(
@@ -140,4 +152,33 @@ BEGIN
  RETURN public.lts_historical_bank_total_guard_v1(jsonb_set(jsonb_set(p_flow,'{historical,days}',days),'{historical,events}',events)||jsonb_build_object(
  'historical_workbook_positions',jsonb_build_object('version','corroborated-workbook-cash-v248','basis','two_original_workbooks','bank_certified',false,
  'display_note','Saldos históricos partem das planilhas originais. Pagamentos comprovados pelo banco prevalecem e seu efeito é carregado nos saldos seguintes, sem lançamento de ajuste.')));
-END $function$;
+END $function$
+
+;
+DO $verify$ DECLARE r record;j jsonb;t timestamptz;metrics jsonb:='[]';u uuid:=public.lts_browser_assert_user_v1();d date;n int;
+BEGIN
+ FOR r IN SELECT * FROM v253_proofs ORDER BY label LOOP
+  PERFORM public.lts_flow_workbook_positions_v248(u,r.input);
+  t:=clock_timestamp();j:=public.lts_flow_workbook_positions_v248(u,r.input);
+  IF j IS DISTINCT FROM r.expected THEN RAISE EXCEPTION 'V253_FULL_JSON_PARITY_FAILED: %',r.label;END IF;
+  metrics:=metrics||jsonb_build_array(jsonb_build_object('range',r.label,'prior_ms',r.prior_ms,'candidate_ms',extract(epoch from clock_timestamp()-t)*1000,'exact_json_equal',true,'digest',md5(j::text)));
+  IF public.lts_flow_workbook_positions_v248(u,r.input) IS DISTINCT FROM j THEN RAISE EXCEPTION 'V253_REPEAT_CHANGED';END IF;
+ END LOOP;
+ SELECT min(h.event_date) INTO d FROM public.lts_historical_effective_cash_pre_v246(u,date '2013-10-10',date '2026-07-07')h WHERE h.account='C6';
+ IF public.lts_workbook_first_c6_date_v253(u) IS DISTINCT FROM d THEN RAISE EXCEPTION 'V253_DATE_MISMATCH';END IF;
+ IF has_function_privilege('anon','public.lts_workbook_first_c6_date_v253(uuid)','EXECUTE') OR has_function_privilege('authenticated','public.lts_workbook_first_c6_date_v253(uuid)','EXECUTE') OR has_function_privilege('service_role','public.lts_workbook_first_c6_date_v253(uuid)','EXECUTE') THEN RAISE EXCEPTION 'V253_PRIVATE_HELPER_EXPOSED';END IF;
+ BEGIN
+ PERFORM public.lts_workbook_first_c6_date_v253('00000000-0000-0000-0000-000000000000');
+ RAISE EXCEPTION 'V253_INVALID_OWNER_WAS_ACCEPTED' USING ERRCODE='42501';
+ EXCEPTION WHEN SQLSTATE 'P0001' THEN NULL;
+END;
+UPDATE public.lts_v229_read_cache SET refreshed_at=clock_timestamp()-interval '6 minutes'
+WHERE user_id=u AND kind='workbook_first_c6_v253';
+ SELECT count(*) INTO n FROM public.lts_v229_read_cache WHERE kind='workbook_first_c6_v253';
+ PERFORM set_config('transaction_read_only','on',true);
+ IF public.lts_workbook_first_c6_date_v253(u) IS DISTINCT FROM d THEN RAISE EXCEPTION 'V253_READ_ONLY_RESULT_CHANGED';END IF;
+ IF n<>(SELECT count(*) FROM public.lts_v229_read_cache WHERE kind='workbook_first_c6_v253') THEN RAISE EXCEPTION 'V253_READ_ONLY_WROTE';END IF;
+ PERFORM set_config('lts.v253_receipt',jsonb_build_object('status','PASS','full_output_parity',metrics,'memo_exact',true,'helper_acl_private',true,'no_owner_leak',true,'read_only_stale_miss_preserves_exact_date_without_write',true,'controlled_warm_comparison',true)::text,true);
+END $verify$;
+SELECT current_setting('lts.v253_receipt')::jsonb AS receipt;
+ROLLBACK;

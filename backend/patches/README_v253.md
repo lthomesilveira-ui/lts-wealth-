@@ -1,4 +1,4 @@
-# V251 workbook range reads
+# V253 workbook range reads
 
 The historical workbook overlay repeatedly read the entire cash history to discover the first C6 activity date and recomputed per-day sums for each proof. The patch memoizes the identical first-date query privately and groups identical signed sums once per range. It preserves the original workbook/bank precedence, every event, ordering, unknown values and combined resource totals.
 

@@ -1,12 +1,12 @@
-name: V251 workbook read validation
+name: V253 workbook read validation
 on:
   push:
-    branches: [work/v251-workbook-range-performance]
+    branches: [work/v253-workbook-range-performance]
   pull_request:
     paths:
-      - backend/patches/*v251.sql
-      - backend/qa/*v251*
-      - .github/workflows/v251-workbook-reads.yml
+      - backend/patches/*v253.sql
+      - backend/qa/*v253*
+      - .github/workflows/v253-workbook-reads.yml
 permissions:
   contents: read
 jobs:
