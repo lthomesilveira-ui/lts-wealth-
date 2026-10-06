@@ -262,7 +262,13 @@ async function run(browser,viewport,label){
   assert(calls.some(c=>c.name==='lts_browser_card_classify_v226'),'classification persisted through audited writer');
   await frame.locator('#v226-detail [data-v226-close]').click();
   await frame.waitForFunction(()=>window.__LTS_V226.cycles?.cards.length===5);
+  await frame.waitForFunction(()=>!window.__LTS_V226.loading&&[window.__LTS_V178_STATE?.cash,window.__LTS_V178_STATE?.forecast,window.__LTS_V178_STATE?.dashboardReport].filter(Boolean).every(state=>state.status!=='loading'));
   await frame.locator('.v226-future summary').click();
+  if(process.env.LTS_RELEASE==='v257'){
+   await frame.waitForFunction(()=>window.__LTS_V257_UI_STATE?.installed);
+   await frame.evaluate(()=>render());
+   await frame.waitForFunction(()=>document.querySelector('details.v226-future')?.open);
+  }
   await frame.locator('[data-v226-family="aeternum"][data-v226-month="2026-11-01"]').first().click();
   await frame.waitForSelector('#v226-detail [data-v226-item]');
   assert.match(await frame.locator('#v226-detail').innerText(),/2\/3/,'future installment opens individual composition');

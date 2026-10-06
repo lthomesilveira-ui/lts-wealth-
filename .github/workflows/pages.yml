@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: ['releases/v225/**', 'releases/v225-1/**', 'releases/v226/**', 'releases/v226-1/**', 'releases/v226-2/**', 'releases/v227/**', 'releases/v227-1/**', 'releases/v227-2/**', 'releases/v228/**', 'releases/v229/**', 'releases/v229-1/**', 'releases/v230/**', 'releases/v233/**', 'releases/v234/**', 'releases/v235/**', 'releases/v236/**', 'releases/v237/**', 'releases/v238/**', 'releases/v239/**', 'releases/v240/**', 'releases/v241/**', 'releases/v242/**', 'releases/v244/**', 'releases/v245/**', 'wip35-v225-candidate.html', '.github/workflows/pages.yml']
+    paths: ['releases/v225/**', 'releases/v225-1/**', 'releases/v226/**', 'releases/v226-1/**', 'releases/v226-2/**', 'releases/v227/**', 'releases/v227-1/**', 'releases/v227-2/**', 'releases/v228/**', 'releases/v229/**', 'releases/v229-1/**', 'releases/v230/**', 'releases/v233/**', 'releases/v234/**', 'releases/v235/**', 'releases/v236/**', 'releases/v237/**', 'releases/v238/**', 'releases/v239/**', 'releases/v240/**', 'releases/v241/**', 'releases/v242/**', 'releases/v244/**', 'releases/v245/**', 'releases/v257/**', 'wip35-v225-candidate.html', '.github/workflows/pages.yml']
 
 permissions:
   contents: read

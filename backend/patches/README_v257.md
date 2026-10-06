@@ -1,6 +1,6 @@
 # V257 consolidated release
 
-The isolated release preserves the approved V245 interface and its exact assets except the version marker and provenance. It includes the exact previously deployed V247 and V249–V256 patches and all their QA; V248 is an undeployed archive prototype and is not included.
+The isolated release preserves the approved V245 layout. Its additional UI state guard keeps an expanded card-future section open through asynchronous renders; no financial values are stored or modified. It includes the exact previously deployed V247 and V249–V256 patches and all their QA; V248 is an undeployed archive prototype and is not included.
 
 Two historical transforms now collect identical day rows in PostgreSQL arrays and serialize once. The bank-sum guard preserves unknown balances and subcent decisions. Bounded reconstruction preserves both workbook evidence, interval tests, ordering and recovered rows. Exact source leases protect both private definitions; no new helper, grant, cache key or schedule is introduced by this performance patch.
 

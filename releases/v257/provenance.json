@@ -233,7 +233,8 @@
   "release_changes": [
     "Consolidated verified V245 interface with production reader corrections V246–V256",
     "Preserved financial, historical and security gates; restored legacy reader fixtures",
-    "New isolated release; frozen versions and root application preserved"
+    "New isolated release; frozen versions and root application preserved",
+    "Card future sections retain their expanded state across asynchronous reader renders; financial payloads unchanged"
   ],
   "source_release": "v245"
 }
