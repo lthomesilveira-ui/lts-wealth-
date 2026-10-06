@@ -145,7 +145,7 @@ async function run(browser,viewport,label){
   await context.addInitScript(fixed=>{const Native=Date,ms=Native.parse(fixed);class Fixed extends Native{constructor(...a){super(...(a.length?a:[ms]))}static now(){return ms}}window.Date=Fixed},'2026-09-18T12:00:00Z');
   await context.addInitScript(v=>localStorage.setItem('lts_supabase_session_v1',JSON.stringify(v)),session);
   const page=await context.newPage();page.setDefaultTimeout(30000);const errors=[],calls=[];
-  page.on('pageerror',e=>errors.push(String(e.message||e)));
+  page.on('pageerror',e=>errors.push(String(e.stack||e.message||e)));
   await page.route('https://tadhkamnwtsbdozwkyut.supabase.co/**',async route=>{
     const req=route.request(),name=new URL(req.url()).pathname.split('/').pop();let args={};try{args=JSON.parse(req.postData()||'{}')}catch{}calls.push({name,args});
     let body={ok:true,rows:[],items:[]};
@@ -159,7 +159,7 @@ async function run(browser,viewport,label){
     else if(/^lts_browser_wealth_detail_v/.test(name))body=wealthFixture();
     else if(name==='lts_browser_recurring_future_gap_audit_v5')body={horizon_checks:[],items:[]};
     else if(name==='lts_browser_open_finance_status_v1')body={status:'not_connected'};
-    else if(name==='lts_browser_flow_v11'||name==='lts_browser_flow_v13')body=flowFixture(args.p_from,args.p_to);
+    else if(/^lts_browser_flow_v/.test(name))body=flowFixture(args.p_from,args.p_to);
     else if(name==='lts_browser_transactions_v2')body={rows:[]};
     await route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(body)});
   });
