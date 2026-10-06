@@ -35,7 +35,13 @@ BEGIN
    WHERE table_schema='public' AND table_name=target AND column_name IN('amount','source_signed_amount')
    ORDER BY CASE column_name WHEN 'amount' THEN 0 ELSE 1 END LIMIT 1;
    IF numeric_col IS NULL THEN RAISE EXCEPTION 'numeric source fixture missing: %',target;END IF;
-   EXECUTE format('UPDATE public.%I SET %I=%I+1 WHERE ctid=(SELECT ctid FROM public.%I WHERE user_id=$1 AND %I IS NOT NULL LIMIT 1)',target,numeric_col,numeric_col,target,numeric_col) USING u;
+   IF target='lts_card_history_source_audit_v235' THEN
+    -- Preserve the real schema's signed/absolute amount invariant even in
+    -- the deliberately rolled-back fixture. Never disable its constraints.
+    EXECUTE format('UPDATE public.%I SET source_signed_amount=source_signed_amount+1,ledger_amount=abs(source_signed_amount+1) WHERE ctid=(SELECT ctid FROM public.%I WHERE user_id=$1 AND source_signed_amount IS NOT NULL LIMIT 1)',target,target) USING u;
+   ELSE
+    EXECUTE format('UPDATE public.%I SET %I=%I+1 WHERE ctid=(SELECT ctid FROM public.%I WHERE user_id=$1 AND %I IS NOT NULL LIMIT 1)',target,numeric_col,numeric_col,target,numeric_col) USING u;
+   END IF;
    GET DIAGNOSTICS changed=ROW_COUNT;
    IF changed<>1 OR (SELECT epoch FROM public.lts_read_cache_epoch_v242 WHERE singleton)<>epoch_before+1 OR EXISTS(SELECT 1 FROM public.lts_v229_read_cache) THEN RAISE EXCEPTION 'documentary source did not invalidate: %',target;END IF;
    result:=result||jsonb_build_object(target,'PASS');

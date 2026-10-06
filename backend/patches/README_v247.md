@@ -1,4 +1,4 @@
-# V247 candidate — NOT applied to production
+# V247 backend — applied after transactional validation
 
 Date: 2026-10-05. Preserve the V245 frontend and every frozen release.
 
@@ -16,17 +16,33 @@ Prepared changes:
 
 Verification:
 - Local V247 source gate, V245 static/immutability and flow contracts PASS.
-- Live database mutation, old/new row parity and complete cold tests are still
-  pending. The rollback-only QA script must pass before applying a release.
+- Exact live corrected-cash row parity passed for historical, current/future
+  and calendar-2027 ranges. Documentary invalidation and helper ACL checks PASS.
+- The transactional probe restores all original function definitions/ACLs and
+  candidate DDL; all financial fixtures and temporary cache changes roll back.
+  Only an operator-private, RLS-protected validation receipt persists.
+- Complete 2026–2027 coverage, exact cached replay, and an exact 2027 slice PASS.
+- After guarded production migration, warming covers both calendar years.
+  Warm server reads are sub-second; a full cold rebuild still takes tens of
+  seconds. These measurements are not browser/mobile end-to-end acceptance.
+- A genuinely uncached future range also passed in a local READ ONLY test
+  without overriding the platform's protection or modifying source data.
 - Browser CI is a preserved V245 fixture suite, not real-owner acceptance.
-- No production migration, financial change, bank operation or release has
-  been applied by this candidate.
+- SQL patches are now applied; no financial fact, actual bank operation,
+  frozen frontend or release file has been changed by them.
 
-Infrastructure blocker discovered:
-The project reports ACTIVE_HEALTHY, but default_transaction_read_only is on
-from configuration. Its pg_cron launcher repeatedly exits with read-only UPDATE
-errors. Do not override this safeguard, delete documentary observations,
-restart via pause/restore, or alter spending/billing settings as a workaround.
-Restoring writable service is required for sync, warming and production DDL.
+Infrastructure recovery:
+Supported included capacity has been provisioned, writable service recovered,
+and the existing bank-sync scheduler resumed. Never override read-only safety,
+delete documentary observations, restart via pause/restore, or add spending as
+a workaround. If service regresses, recheck the actual mode before writes.
 Private measurements and bank/source details belong in the continuity record,
 not the public repo.
+
+Operator probe:
+Run `node backend/qa/lts_v247_transactional_probe.mjs` from the repository root
+to build its migration JSON. Apply only through the authorized DDL workflow.
+The private validation table denies all API-role access. Inspect its report and
+the restored function fingerprint before deciding on a production migration.
+The full-flow probe reports unknown historical resource fields without
+inventing zeros, backdating current positions, or changing economic balances.

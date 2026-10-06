@@ -26,4 +26,14 @@ for(const action of ['INSERT','UPDATE','DELETE','TRUNCATE'])assert(dependencies.
 const qa=fs.readFileSync('backend/qa/lts_v247_cash_rollback.sql','utf8');
 assert.match(qa,/EXCEPTION WHEN SQLSTATE 'P2470'/);
 assert.match(qa,/ROLLBACK;/);assert(!/COMMIT;/i.test(qa));
+assert.match(qa,/ledger_amount=abs\(source_signed_amount\+1\)/);
+const probe=fs.readFileSync('backend/qa/lts_v247_transactional_probe.mjs','utf8');
+assert.match(probe,/ERRCODE='P2471'/);
+assert.match(probe,/function_definitions_and_acls_restored/);
+assert.match(probe,/btrim\(pg_get_functiondef/);
+assert.match(probe,/REVOKE ALL ON public\.lts_v247_validation_report FROM PUBLIC,anon,authenticated,service_role/);
+const full=fs.readFileSync('backend/qa/lts_v247_full_flow_probe.sql','utf8');
+assert.match(full,/jsonb_array_length\(full_days\)<>730/);
+assert.match(full,/year_days<>expected_year/);
+assert.match(full,/first_payload<>replay/);
 console.log('PASS V247 exact cash memo, read-only safety, documentary invalidation and preserved V245');
