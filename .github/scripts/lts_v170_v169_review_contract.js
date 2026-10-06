@@ -17,7 +17,7 @@ for(const token of ['V170','lts-v169-v168-feedback-closure.js','lts-v170-v169-re
 assert(candidate.indexOf('lts-v170-v169-review.js')>candidate.indexOf('lts-v169-v168-feedback-closure.js'),'V170 overlay must load after V169');
 
 for(const token of [
-  "version:'v170'",'public_index_changed:false','lts_browser_flow_v12','lts_browser_wealth_detail_v4','lts_browser_expense_executive_v5',
+  "version:'v170'",'public_index_changed:false','lts_browser_flow_v13','lts_browser_wealth_detail_v4','lts_browser_expense_executive_v5',
   'previous-5-through-next-year-end','Top 15 · grupos gerenciais','Educação','Obra e reforma · O Parque / CIPÓ 396',
   'Total bruto do extrato','Total considerado após reserva','Reserva fiscal projetada','Aplicar a todos os vestings','Cotação individual',
   'morgan_statement_reconciled:true','global_award_assumption:true','management_groups:true',

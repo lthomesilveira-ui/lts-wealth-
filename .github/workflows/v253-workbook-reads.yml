@@ -1,0 +1,21 @@
+name: V253 workbook read validation
+on:
+  push:
+    branches: [work/v253-workbook-range-performance]
+  pull_request:
+    paths:
+      - backend/patches/*v253.sql
+      - backend/qa/*v253*
+      - .github/workflows/v253-workbook-reads.yml
+permissions:
+  contents: read
+jobs:
+  preserved-source-contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Preserve current private cache and frozen interface contracts
+        run: |
+          node backend/qa/lts_v245_source_gate.js
+          node backend/qa/lts_v246_source_gate.js

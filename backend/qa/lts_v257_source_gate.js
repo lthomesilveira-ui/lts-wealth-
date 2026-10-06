@@ -1,0 +1,13 @@
+'use strict';
+const fs=require('node:fs'),assert=require('node:assert/strict');
+const linear=fs.readFileSync('backend/patches/linear_historical_guards_v257.sql','utf8');
+assert.equal((linear.match(/CREATE OR REPLACE FUNCTION/g)||[]).length,2);
+for(const name of ['lts_historical_bank_total_guard_v1','lts_flow_bounded_workbook_positions_v238'])assert(linear.includes(name));
+assert.match(linear,/IMMUTABLE/);assert.match(linear,/V257_SOURCE_LEASE_CHANGED/);
+assert(!/GRANT|INSERT INTO|UPDATE public\.|DELETE FROM|ALTER TABLE/i.test(linear));
+const acl=fs.readFileSync('backend/patches/private_function_permissions_v257.sql','utf8');
+assert.equal((acl.match(/REVOKE ALL ON FUNCTION/g)||[]).length,18);
+assert(!/GRANT|CREATE OR REPLACE|ALTER TABLE|INSERT INTO|DELETE FROM/i.test(acl));
+assert.match(acl,/V257_ACL_SOURCE_LEASE_CHANGED/);
+require('../../.github/scripts/lts_v225_static_gate.js');
+console.log('PASS V257 frozen release, exact-source leases, private historical guards and restricted internal functions');
