@@ -8,10 +8,10 @@ const code=fs.readFileSync(root+'lts-v183-v168-feedback-safe.js','utf8');
 const start=code.indexOf('    function dailyScenario('),end=code.indexOf('    function deficitDetail(',start);
 const ctx={today:()=> '2026-10-07',arr:x=>Array.isArray(x)?x:[],num:x=>x==null||x===''||!Number.isFinite(Number(x))?null:Number(x)};
 vm.createContext(ctx);vm.runInContext(code.slice(start,end),ctx);
-const rows=[];for(let d=new Date('2026-10-07T12:00:00Z');d<=new Date('2027-12-31T12:00:00Z');d.setUTCDate(d.getUTCDate()+1)){const date=d.toISOString().slice(0,10);rows.push({date,fix86_columns:{saldo_apos_fgts:date==='2027-01-12'?-3277.56:date==='2027-01-30'?-17252.01:100}});}
+const rows=[];for(let d=new Date('2026-10-07T12:00:00Z');d<=new Date('2027-12-31T12:00:00Z');d.setUTCDate(d.getUTCDate()+1)){const date=d.toISOString().slice(0,10);rows.push({date,fix86_columns:{saldo_apos_fgts:date==='2027-01-12'?-1200.51:date==='2027-01-30'?-8400.42:100}});}
 const flow=days=>({flow:{current_future:{days}}}),run=days=>ctx.dailyScenario(flow(days),'fgts');
 let result=run([{date:'2026-10-01',fix86_columns:{saldo_apos_fgts:-999999}},...rows].reverse());
-assert(result.complete);assert.equal(result.firstNegative.date,'2027-01-12');assert.equal(result.firstAmount,-3277.56);assert.equal(result.worstAmount,-17252.01);assert.equal(result.worstDate,'2027-01-30');
+assert(result.complete);assert.equal(result.firstNegative.date,'2027-01-12');assert.equal(result.firstAmount,-1200.51);assert.equal(result.worstAmount,-8400.42);assert.equal(result.worstDate,'2027-01-30');
 assert(!run(rows.slice(1)).complete,'missing day');assert(!run(rows.map((d,i)=>i===5?{date:d.date,fix86_columns:{saldo_apos_fgts:null}}:d)).complete,'missing balance');assert(!run(rows.slice(0,-1)).complete,'missing horizon');
 result=run(rows.map(d=>({date:d.date,fix86_columns:{saldo_apos_fgts:0}})));assert(result.complete);assert.equal(result.firstNegative,null);assert.equal(result.worstAmount,0);
 const card=fs.readFileSync(root+'lts-v226-card-composition.js','utf8'),a=card.indexOf('    function sourceStamp('),b=card.indexOf('    function upcomingPanel(',a);
