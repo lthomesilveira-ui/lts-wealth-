@@ -38,13 +38,19 @@ async function run(browser,width){
   hold=false;release();await f.waitForFunction(()=>!FLOWLOADING&&FLOWQ&&!FLOWQ.error);
   await f.locator('#flowTo').fill('2027-12-31');await f.evaluate(()=>render());assert.equal(await f.locator('#flowTo').inputValue(),'2027-12-31','background render must preserve typed final date');await f.locator('#flowApply').click();await f.waitForFunction(()=>!FLOWLOADING&&FLOWTO==='2027-12-31');
   await f.evaluate(()=>{V='Dashboard';renderNav();render()});await f.waitForFunction(()=>window.__LTS_V178_STATE.forecast.status==='ready'&&window.__LTS_V178_STATE.dashboardReport.status==='ready');
+  if(process.env.LTS_RELEASE==='v260'){
+   const deficits=await f.locator('.v260-deficit').allTextContents();assert.equal(deficits.length,2);assert.match(deficits[0],/Primeiro saldo negativo:.*1\.800,00.*12\/01\/2027/);assert.match(deficits[1],/Pior saldo:.*3\.800,00.*30\/01\/2027/);
+   assert.match(await f.locator('.v260-horizon').innerText(),/31\/12\/2027/);
+   const overflow=await f.evaluate(()=>document.documentElement.scrollWidth>document.documentElement.clientWidth);assert.equal(overflow,false,'no horizontal overflow');
+   await f.locator('.v168-card').filter({has:f.locator('.v260-deficit')}).screenshot({path:'qa/v260-'+width+'-coverage.png'});
+  }
   await f.waitForSelector('#v242ChartYear');assert.equal(await f.locator('#v242ChartYear').inputValue(),'all');assert.equal(await f.locator('[data-v239-fgts-summary],#ltsFgtsScenarioNote,#v236-current-position-note').count(),0);
   assert(!calls.some(x=>x.name.startsWith('lts_browser_planning_ui_')),'the plan uses the same daily forecast');assert(calls.some(x=>x.name==='lts_browser_cash_today_v242'));
   await f.locator('#v242ChartYear').selectOption('2027');await f.waitForSelector('[data-v242-minimum="2027-01-30"]');assert.equal(await f.locator('[data-v242-minimum]').getAttribute('data-value'),'-3800');
   await f.locator('#v242ChartYear').selectOption('all');assert.equal(Number(await f.locator('.v168-chart svg').getAttribute('data-v242-points')),454);
   const path=await f.locator('.v168-chart path.fgts').getAttribute('d'),numbers=path.match(/[MC]|-?\d+(?:\.\d+)?/g);let i=0,previous;while(i<numbers.length){const op=numbers[i++];if(op==='M'){previous=[+numbers[i++],+numbers[i++]];continue}assert.equal(op,'C');const p1=[+numbers[i++],+numbers[i++]],p2=[+numbers[i++],+numbers[i++]],p3=[+numbers[i++],+numbers[i++]];for(let t=.1;t<1;t+=.1){const v=(1-t)**3*previous[1]+3*(1-t)**2*t*p1[1]+3*(1-t)*t*t*p2[1]+t**3*p3[1];assert(v>=Math.min(previous[1],p3[1])-.02&&v<=Math.max(previous[1],p3[1])+.02,'smooth path cannot invent an extremum')}previous=p3;}
   await f.locator('#v242ChartYear').selectOption('2026');await page.screenshot({path:'qa/v242-'+width+'-dashboard.png',fullPage:true});
-  if(['v245','v257','v258','v259'].includes(process.env.LTS_RELEASE||'v242')){
+  if(['v245','v257','v258','v259','v260'].includes(process.env.LTS_RELEASE||'v242')){
    const svg=f.locator('.v168-chart svg');await svg.focus();await svg.press('End');
    assert.equal(await f.locator('#v244-chart-values').getAttribute('data-date'),'2026-12-31');
    assert((await f.locator('#v244-chart-values').innerText()).replace(/\s+/g,' ').includes('R$ 6.310,00'),'inspected values are exact source values');
@@ -59,7 +65,7 @@ async function run(browser,width){
   assert.equal(calls.filter(x=>x.name==='lts_browser_flow_v242').length,before,'default flow reuses the authenticated complete forecast');
   const closeFit=await f.locator('#flowCloseDetails').evaluate(e=>{const r=e.getBoundingClientRect();return{left:r.left,right:r.right,bottom:r.bottom,width:innerWidth}});assert(closeFit.left>=0&&closeFit.right<=closeFit.width&&closeFit.bottom<500,'close-details is visible in the initial desktop/mobile controls');
   assert.equal(await f.locator('#ltsFgtsScenarioNote,#ltsBankEvidence,#ltsReconciliationWarning,#v236-current-position-note').count(),0);
-  if(['v245','v257','v258','v259'].includes(process.env.LTS_RELEASE||'v242')&&width===1440){slowYear=true;await f.evaluate(()=>{window.__LTS_V178_STATE.forecast.updatedAt=0});}
+  if(['v245','v257','v258','v259','v260'].includes(process.env.LTS_RELEASE||'v242')&&width===1440){slowYear=true;await f.evaluate(()=>{window.__LTS_V178_STATE.forecast.updatedAt=0});}
   await f.locator('#flowYear').selectOption('2027');
   if(slowYear){await f.waitForSelector('#v242-flow-loading');assert.equal(await f.locator('.fx87-mesa:visible').count(),0)}
   await f.waitForFunction(()=>!FLOWLOADING&&FLOWQ&&!FLOWQ.error&&FLOWFROM==='2027-01-01'&&FLOWTO==='2027-12-31',null,{timeout:60000});slowYear=false;
