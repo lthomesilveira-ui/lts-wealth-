@@ -1,0 +1,22 @@
+'use strict';
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict'),crypto=require('node:crypto');
+const root='releases/v260/',m=JSON.parse(fs.readFileSync(root+'manifest.json'));
+const digest=p=>crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex');
+for(const [f,h] of Object.entries(m.files))assert.equal(digest(root+f),h,f);
+for(const [f,h] of Object.entries(m.protected))assert.equal(digest(f),h,'protected '+f);
+const code=fs.readFileSync(root+'lts-v183-v168-feedback-safe.js','utf8');
+const start=code.indexOf('    function dailyScenario('),end=code.indexOf('    function deficitDetail(',start);
+const ctx={today:()=> '2026-10-07',arr:x=>Array.isArray(x)?x:[],num:x=>x==null||x===''||!Number.isFinite(Number(x))?null:Number(x)};
+vm.createContext(ctx);vm.runInContext(code.slice(start,end),ctx);
+const rows=[];for(let d=new Date('2026-10-07T12:00:00Z');d<=new Date('2027-12-31T12:00:00Z');d.setUTCDate(d.getUTCDate()+1)){const date=d.toISOString().slice(0,10);rows.push({date,fix86_columns:{saldo_apos_fgts:date==='2027-01-12'?-3277.56:date==='2027-01-30'?-17252.01:100}});}
+const flow=days=>({flow:{current_future:{days}}}),run=days=>ctx.dailyScenario(flow(days),'fgts');
+let result=run([{date:'2026-10-01',fix86_columns:{saldo_apos_fgts:-999999}},...rows].reverse());
+assert(result.complete);assert.equal(result.firstNegative.date,'2027-01-12');assert.equal(result.firstAmount,-3277.56);assert.equal(result.worstAmount,-17252.01);assert.equal(result.worstDate,'2027-01-30');
+assert(!run(rows.slice(1)).complete,'missing day');assert(!run(rows.map((d,i)=>i===5?{date:d.date,fix86_columns:{saldo_apos_fgts:null}}:d)).complete,'missing balance');assert(!run(rows.slice(0,-1)).complete,'missing horizon');
+result=run(rows.map(d=>({date:d.date,fix86_columns:{saldo_apos_fgts:0}})));assert(result.complete);assert.equal(result.firstNegative,null);assert.equal(result.worstAmount,0);
+const card=fs.readFileSync(root+'lts-v226-card-composition.js','utf8'),a=card.indexOf('    function sourceStamp('),b=card.indexOf('    function upcomingPanel(',a);
+Object.assign(ctx,{esc:String,receivedFormatter:new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Sao_Paulo',day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}),date:x=>x.split('-').reverse().join('/')});vm.runInContext(card.slice(a,b),ctx);
+const stamp=ctx.sourceStamp({source_updated_at:'2026-10-06T17:57:26Z',received_at:'2026-10-07T10:43:57Z',document_source_as_of:'2026-10-01T20:52:00Z'},{basis:'bank_document_composition'});
+assert.match(stamp,/Dados do cartão no provedor:.*06\/10\/2026/);assert.match(stamp,/Recebidos pelo LTS:.*07\/10\/2026/);assert.match(stamp,/Fatura parcial complementar:.*01\/10\/2026/);
+assert.equal(ctx.sourceStamp({},{}),'');assert.equal(ctx.sourceStamp({received_at:'invalid'},{}),'');
+console.log('PASS V260: full horizon deficits, missing-source guards, date semantics and frozen releases');
