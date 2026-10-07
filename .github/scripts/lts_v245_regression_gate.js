@@ -42,6 +42,7 @@ async function run(browser,width){
    const deficits=await f.locator('.v260-deficit').allTextContents();assert.equal(deficits.length,2);assert.match(deficits[0],/Primeiro saldo negativo:.*1\.800,00.*12\/01\/2027/);assert.match(deficits[1],/Pior saldo:.*3\.800,00.*30\/01\/2027/);
    assert.match(await f.locator('.v260-horizon').innerText(),/31\/12\/2027/);
    const overflow=await f.evaluate(()=>document.documentElement.scrollWidth>document.documentElement.clientWidth);assert.equal(overflow,false,'no horizontal overflow');
+   await f.locator('.v168-card').filter({has:f.locator('.v260-deficit')}).screenshot({path:'qa/v260-'+width+'-coverage.png'});
   }
   await f.waitForSelector('#v242ChartYear');assert.equal(await f.locator('#v242ChartYear').inputValue(),'all');assert.equal(await f.locator('[data-v239-fgts-summary],#ltsFgtsScenarioNote,#v236-current-position-note').count(),0);
   assert(!calls.some(x=>x.name.startsWith('lts_browser_planning_ui_')),'the plan uses the same daily forecast');assert(calls.some(x=>x.name==='lts_browser_cash_today_v242'));

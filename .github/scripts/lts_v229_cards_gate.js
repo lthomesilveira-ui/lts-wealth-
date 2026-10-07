@@ -159,7 +159,9 @@ async function run(browser,viewport,label){
   assert.equal(calls.filter(x=>x.name==='lts_browser_expense_review_decision_v229').length,0,'suggestion never writes automatically');
   assert.equal(await frame.locator('[data-v181-review-key="uncertain-fixture"] [data-v181-category]').inputValue(),'');
   assert(await frame.locator('[data-v181-review-key="uncertain-fixture"] [data-v181-review-save]').isDisabled());
-  await suggested.locator('[data-v181-category]').selectOption('');assert(await suggested.locator('[data-v181-review-save]').isDisabled());
+  // Observe the synchronous change handler before an unrelated background render replaces the old-release DOM.
+  const blankChoice=await suggested.locator('[data-v181-category]').evaluate(select=>{select.value='';select.dispatchEvent(new Event('input',{bubbles:true}));select.dispatchEvent(new Event('change',{bubbles:true}));return{value:select.value,disabled:select.closest('[data-v181-review-key]').querySelector('[data-v181-review-save]').disabled};});
+  assert.equal(blankChoice.value,'');assert.equal(blankChoice.disabled,true,'a blank category disables confirmation');
   if(currentSource){
    await frame.evaluate(()=>render());
    assert.equal(await suggested.locator('[data-v181-category]').inputValue(),'','a background repaint preserves the explicit blank choice');
