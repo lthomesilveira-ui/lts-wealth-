@@ -17,4 +17,9 @@ assert.match(categories,/lts_browser_card_category_options_v226\(\)->'categories
 assert.match(categories,/unknown category/);assert.match(categories,/Categoria desativada/);
 assert.match(categories,/lts_browser_assert_user_v1/);assert.match(categories,/lts_access_audit/);
 assert(!/INSERT INTO public\.financial_events|UPDATE public\.financial_events|DELETE FROM|ALTER TABLE|GRANT/i.test(categories));
-console.log('PASS V261: source-bound FGTS, unposted forecast guard, safe suggestions, approved category options, unchanged ACLs and no private payload');
+const pending=fs.readFileSync('backend/patches/pending_receipts_v261.sql','utf8');
+assert.match(pending,/lts_bank_fgts_combined_receipt_v261\(p_user_id,s.id\)/);
+assert.match(pending,/settled_fgts/);assert.match(pending,/unposted_past_projection/);
+assert.match(pending,/s.occurred_at<=p.observed_at/);
+assert(!/INSERT INTO|UPDATE public\.financial_events|DELETE FROM|ALTER TABLE|GRANT/i.test(pending));
+console.log('PASS V261: source-bound FGTS in flow and queue, unposted forecast guard, safe suggestions, approved category options, unchanged ACLs and no private payload');
