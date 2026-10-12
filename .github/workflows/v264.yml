@@ -1,0 +1,37 @@
+name: V264 invoices, classification and compact source dates
+on:
+  pull_request:
+    paths: ['releases/v264/**', 'backend/patches/*v264*', '.github/scripts/lts_v264*', '.github/workflows/v264.yml']
+permissions:
+  contents: read
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      LTS_RELEASE: v264
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node .github/scripts/lts_v225_static_gate.js
+      - run: node .github/scripts/lts_v260_detail_gate.js
+      - run: node .github/scripts/lts_v264_invoice_stamp_gate.js
+      - run: npm install --no-save --package-lock=false playwright@1.58.2
+      - run: npx playwright install --with-deps chromium
+        timeout-minutes: 8
+      - run: python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/lts-v264-http.log 2>&1 &
+      - name: Dates, documents, refresh and card classification
+        run: node .github/scripts/lts_v233_document_gate.js
+      - name: Card drill-down and classification flows
+        if: success() || failure()
+        run: node .github/scripts/lts_v229_cards_gate.js
+      - name: Daily cash, period selection and state
+        if: success() || failure()
+        run: node .github/scripts/lts_v245_regression_gate.js
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v264-regression
+          path: qa/
