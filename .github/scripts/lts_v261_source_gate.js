@@ -10,4 +10,11 @@ assert.match(sql,/REVOKE ALL ON FUNCTION public.lts_bank_fgts_combined_receipt_v
 assert.match(sql,/before_acl IS DISTINCT FROM/);assert.equal((sql.match(/EXECUTE \$definition\$/g)||[]).length,3);
 assert(!/INSERT INTO public\.financial_events|UPDATE public\.financial_events|DELETE FROM|ALTER TABLE|GRANT.*authenticated/i.test(sql));
 assert(!/27321\.16|2886\.43|370\.459|c1b23404|020c41d6/.test(sql),'private payload is never published');
-console.log('PASS V261: source-bound FGTS, unposted forecast guard, safe suggestions, unchanged ACLs and no private payload');
+const categories=fs.readFileSync('backend/patches/review_category_options_v261.sql','utf8');
+assert.match(categories,/FROM public\.lts_v178_review_decision d/);
+assert.match(categories,/d\.user_id=u/);assert.match(categories,/NOT retired\.active/);
+assert.match(categories,/lts_browser_card_category_options_v226\(\)->'categories'/);
+assert.match(categories,/unknown category/);assert.match(categories,/Categoria desativada/);
+assert.match(categories,/lts_browser_assert_user_v1/);assert.match(categories,/lts_access_audit/);
+assert(!/INSERT INTO public\.financial_events|UPDATE public\.financial_events|DELETE FROM|ALTER TABLE|GRANT/i.test(categories));
+console.log('PASS V261: source-bound FGTS, unposted forecast guard, safe suggestions, approved category options, unchanged ACLs and no private payload');
