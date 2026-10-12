@@ -1,0 +1,12 @@
+'use strict';
+const fs=require('node:fs'),assert=require('node:assert/strict');
+const s=fs.readFileSync('backend/patches/card_source_memo_v262.sql','utf8');
+assert.match(s,/WHERE singleton=true/);assert.match(s,/c.user_id=p_user_id AND c.kind='card_source_v262'/);
+assert.match(s,/c.as_of=current_date/);assert.match(s,/source_fingerprint=source_key/);
+assert.match(s,/after_epoch=cache_epoch/);assert.match(s,/FOR attempt IN 1\.\.2/);
+assert.match(s,/c.as_of<>current_date/);assert.match(s,/s.last_seen_at,r.observed_at/);
+assert.match(s,/REVOKE ALL ON FUNCTION public.lts_card_source_rows_pre_v262\(uuid\) FROM PUBLIC,anon,authenticated/);
+assert.match(s,/source ACL changed/);assert.match(s,/source privilege escalation/);
+assert(!/SECURITY DEFINER|ALTER TABLE|INSERT INTO public\.financial_events|UPDATE public\.financial_events/i.test(s));
+assert(!/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i.test(s),'no private row identity');
+console.log('PASS V262: owner/date/source guarded memo, fresh receipt timestamp, bounded rollover, unchanged ACLs and no financial source writes');
