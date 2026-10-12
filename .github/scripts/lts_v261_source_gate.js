@@ -1,0 +1,13 @@
+'use strict';
+const fs=require('node:fs'),assert=require('node:assert/strict');
+const sql=fs.readFileSync('backend/patches/settled_sources_v261.sql','utf8');
+assert.match(sql,/lts_bank_fgts_combined_receipt_v261/);
+assert.match(sql,/receipt_count<>1/);assert.match(sql,/count_rows<>2/);assert.match(sql,/count_components<>2/);
+assert.match(sql,/count\(DISTINCT f.metadata->>'receipt_group_id'\)/);
+assert.match(sql,/paymentData,receiver,documentNumber,type/);assert.match(sql,/provider_account_ref=s.provider_account_ref/);
+assert.match(sql,/unposted_past_projection/);assert.match(sql,/recipient_does_not_establish_purpose/);
+assert.match(sql,/REVOKE ALL ON FUNCTION public.lts_bank_fgts_combined_receipt_v261\(uuid,uuid\) FROM PUBLIC,anon,authenticated/);
+assert.match(sql,/before_acl IS DISTINCT FROM/);assert.equal((sql.match(/EXECUTE \$definition\$/g)||[]).length,3);
+assert(!/INSERT INTO public\.financial_events|UPDATE public\.financial_events|DELETE FROM|ALTER TABLE|GRANT.*authenticated/i.test(sql));
+assert(!/27321\.16|2886\.43|370\.459|c1b23404|020c41d6/.test(sql),'private payload is never published');
+console.log('PASS V261: source-bound FGTS, unposted forecast guard, safe suggestions, unchanged ACLs and no private payload');
