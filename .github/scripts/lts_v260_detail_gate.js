@@ -1,6 +1,6 @@
 'use strict';
 const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict'),crypto=require('node:crypto');
-const root='releases/v260/',m=JSON.parse(fs.readFileSync(root+'manifest.json'));
+const root='releases/'+(process.env.LTS_RELEASE||'v260')+'/',m=JSON.parse(fs.readFileSync(root+'manifest.json'));
 const digest=p=>crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex');
 for(const [f,h] of Object.entries(m.files))assert.equal(digest(root+f),h,f);
 for(const [f,h] of Object.entries(m.protected))assert.equal(digest(f),h,'protected '+f);
