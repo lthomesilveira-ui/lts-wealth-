@@ -1,3 +1,9 @@
+## Current continuation — 13 October 2026 (V267 backend)
+
+The interface remains V264. V267 improves source-invalidated reads by inlining two fully qualified pure text expressions and reusing the unchanged paid-identity query plan. Complete private Flow, Expenses and Wealth response comparisons passed; financial sources, identities, ACLs, prior fixes and protected assets stay unchanged. Read the current execution state and `backend/patches/README_v267.md` for the bounded scope and the two intentional static-lint observations. P13 and all other unclosed work remain open. Do not ask resolved financial questions or activate Continuity Watch.
+
+--- Prior continuation preserved ---
+
 ## Current continuation — 13 October 2026
 
 Read the current top of `LTS_WEALTH_EXECUTION_STATE.md` before the earlier checkpoints. The interface is V264; V266 is a backend correction for received-invoice due-date rollover, payment-evidence versus forecast-gap classification, and server-only lock protection. The complete private current status and source limits are in LTS_CONTINUAR.md. Older release/status sections below remain historical and cannot recreate answered financial questions.

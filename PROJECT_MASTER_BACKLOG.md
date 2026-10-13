@@ -1,3 +1,13 @@
+## Current bounded performance round — 13 October 2026
+
+V267 removes repeated text-function context and paid-identity query planning work. The complete source-invalidated Flow and Expenses responses match their pre-change digests; Wealth matches except its calculation clock. Source events, expense identities, payment predicates and ACLs are unchanged. Positive/negative live-source tests, daily arithmetic/current cash and the 147 no-identity denial tests passed. See the V267 README and private continuity receipt for exact timings and evidence limits.
+
+P13 is improved, not closed: initial calculation still takes seconds, and signed-session/device/write performance is a separate gate. Two immutable, fully qualified server-only invoker expressions intentionally produce static search_path lint observations; no definer data reader loses its fixed path. Keep this narrow exception under review if bodies/grants change.
+
+The interface remains V264. Historical reconciliation, future-series evidence, unreceived bank/payment facts, residual assets/contracts, administrative Auth, full isolated recovery, PENDING/POSTED identity, individual UX/report cases, the pre-existing V165/V167 workflow failure and personal acceptance remain open. No financial row, classification, answered question, protected asset, V248 draft or schedule is changed. Continuity Watch remains OFF.
+
+--- Prior backlog preserved ---
+
 ## Current bounded backend round — 13 October 2026
 
 V266 fixes loss of a received unresolved invoice after its due date, retains exact received composition, and separates unconfirmed current obligations from absent future forecasts. Actual database evidence/negative/rollback tests passed; existing expense identities and financial source events remain unchanged. Server-only lock protection is active and all 147 tested authenticated LTS routines rejected calls without identity claims.
