@@ -1,0 +1,43 @@
+name: V268 signed historical sources and isolated homologation
+on:
+  push:
+    branches: ['codex/v268-source-and-homologation']
+  pull_request:
+    paths: ['releases/v268/**', 'backend/patches/*v268*', 'backend/qa/*v268*', '.github/scripts/lts_v268*', '.github/workflows/v268.yml']
+permissions:
+  contents: read
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      LTS_RELEASE: v268
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node backend/qa/lts_v268_read_tools_unit.js
+      - run: node .github/scripts/lts_v225_static_gate.js
+      - run: node .github/scripts/lts_v260_detail_gate.js
+      - run: node .github/scripts/lts_v264_invoice_stamp_gate.js
+      - run: npm install --no-save --package-lock=false playwright@1.58.2
+      - run: npx playwright install --with-deps chromium webkit
+        timeout-minutes: 8
+      - run: python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/lts-v268-http.log 2>&1 &
+      - name: States, clipboard, missing-source guards and exact navigation
+        run: node .github/scripts/lts_v268_homologation_gate.js
+      - name: Preserved documents, source dates and updates
+        if: success() || failure()
+        run: node .github/scripts/lts_v233_document_gate.js
+      - name: Preserved card drill-down and classification
+        if: success() || failure()
+        run: node .github/scripts/lts_v229_cards_gate.js
+      - name: Preserved daily cash, selected periods and state
+        if: success() || failure()
+        run: node .github/scripts/lts_v245_regression_gate.js
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v268-homologation-evidence
+          path: qa/
