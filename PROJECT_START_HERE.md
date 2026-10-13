@@ -1,3 +1,9 @@
+## Current continuation — 13 October 2026
+
+Read the current top of `LTS_WEALTH_EXECUTION_STATE.md` before the earlier checkpoints. The interface is V264; V266 is a backend correction for received-invoice due-date rollover, payment-evidence versus forecast-gap classification, and server-only lock protection. The complete private current status and source limits are in LTS_CONTINUAR.md. Older release/status sections below remain historical and cannot recreate answered financial questions.
+
+--- Earlier continuation records preserved ---
+
 ## Current consolidated register — V236, 1 October 2026
 
 Read [LTS_WEALTH_V236_CLOSEOUT_MATRIX.md](LTS_WEALTH_V236_CLOSEOUT_MATRIX.md) first for current statuses and source limits. The isolated successor is `releases/v236/app.html`; its publication and QA evidence are recorded in the private delivery receipt. The fixed legacy manifest and protected root are separate entries and do not identify the latest isolated release. Earlier sections below remain historical and must not recreate already answered questions or resolved incidents. No user/physical-phone acceptance is implied.

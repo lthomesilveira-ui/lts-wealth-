@@ -1,3 +1,17 @@
+## Current execution — 13 October 2026 (V266 backend; V264 interface)
+
+The published interface remains `releases/v264/app.html`. The V266 backend round fixes a due-date rollover: an unresolved recorded invoice must continue using its uniquely matched received bill after the due date, rather than reverting to an older snapshot. Received amount, composition, source date and unreported-payment status remain separate facts. Closed cycles, newer documentary overrides, ambiguous sources and unrelated periods retain their prior guards.
+
+The calendar audit now distinguishes a recorded past-due obligation awaiting payment evidence from a missing projection. It keeps genuine future gaps, without creating or extending forecasts. The server-only lock registry has RLS and no client grants; existing internal readers remain available.
+
+Actual private database validation passed: nine invoice/evidence/rollback checks, full 2026–2027 daily coverage and arithmetic, current cash parity, unchanged expense identities, unchanged financial source events, repeated wealth facts, and denial of 147 authenticated LTS routines without identity claims. Cold-read timings are recorded in the private receipt and are not physical-device acceptance.
+
+Open work remains: historical anchors and source links, future-series conditions, unreceived bank/payment evidence, residual debt/property/award/investment reconciliation, leaked-password Auth configuration, cold/device performance, V248 isolated PostgreSQL/Storage recovery, PENDING/POSTED identity work, individual UX/report cases and personal acceptance. A daily backup integrity pass is not a complete recovery pass. No new financial question is required by this round. Keep resolved decisions and the historical source limits.
+
+No interface asset, protected root, prior release, payment, banking connection or personal acceptance was changed. The V248 draft remains separate. Publication and source integration evidence are in the private continuity record.
+
+--- Earlier execution records preserved ---
+
 ## Current consolidated register — V236, 1 October 2026
 
 Read [LTS_WEALTH_V236_CLOSEOUT_MATRIX.md](LTS_WEALTH_V236_CLOSEOUT_MATRIX.md) first for current statuses and source limits. The isolated successor is `releases/v236/app.html`; its publication and QA evidence are recorded in the private delivery receipt. The fixed legacy manifest and protected root are separate entries and do not identify the latest isolated release. Earlier sections below remain historical and must not recreate already answered questions or resolved incidents. No user/physical-phone acceptance is implied.
