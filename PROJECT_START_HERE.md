@@ -1,3 +1,9 @@
+## Current continuation — 13 October 2026 (V267 backend)
+
+Read the current top of `LTS_WEALTH_EXECUTION_STATE.md` and `backend/patches/README_v267.md`. V267 is execution-only reader optimization; the published interface remains V264 and the V266 evidence/payment guards remain applied. The complete private state is in LTS_CONTINUAR.md. Prior records below are history, not instructions to recreate resolved questions.
+
+--- Prior continuation preserved ---
+
 ## Current continuation — 13 October 2026
 
 Read the current top of `LTS_WEALTH_EXECUTION_STATE.md` before the earlier checkpoints. The interface is V264; V266 is a backend correction for received-invoice due-date rollover, payment-evidence versus forecast-gap classification, and server-only lock protection. The complete private current status and source limits are in LTS_CONTINUAR.md. Older release/status sections below remain historical and cannot recreate answered financial questions.

@@ -1,3 +1,17 @@
+## Current execution — 13 October 2026 (V267 backend; V264 interface)
+
+V267 is an execution-only backend optimization. Two immutable invoker text expressions now inline with every function reference explicitly qualified. The existing paid-cycle identity query now reuses a prepared plan; its entire source query, uniqueness and payment/owner/date/status guards are unchanged. This caches a plan, never a financial result. Prior V266 fixes remain applied.
+
+Actual private database evidence passed: complete Flow/Expenses response parity and Wealth parity excluding only its calculation clock; unchanged source events and expense identities; 2,414 source/edge texts with zero differences; 730 unique daily rows and current-cash arithmetic; five paid-identity checks including deleted invoice and unposted debit rejection; all 147 authenticated no-identity calls denied. Owners/ACLs remain identical. Local public source contracts pass 36 checks. Publication/controlled-browser results are tracked separately in the private receipt; no signed-session or physical-device acceptance is implied.
+
+One paired source-invalidated server observation improved Flow from 11,498.0 to 9,100.1 ms and Expenses from 8,801.8 to 7,142.1 ms. Fifteen independent paid-identity expression sites improved from 726.6 to 91.4 ms, with the exact same source result. This is not an SLA: P13 remains open, as do all unrelated backlog/source/recovery/acceptance items. Do not infer restored historical anchors, recovered missing identities, paid bills or future-series renewals from a performance change.
+
+The static security advisor records two intentional `function_search_path_mutable` observations for fully qualified, table-free, immutable invoker helpers with no client grants. Every SECURITY DEFINER data reader retains its fixed path. See `backend/patches/README_v267.md` for the narrow justification and review trigger; administrative Auth and remaining signed-session/cross-owner proof are not cleared.
+
+The published app stays `releases/v264/app.html`. No root/interface/prior-release asset, financial source, classification, bank connection, V248 draft or schedule changes. Continuity Watch stays OFF. No new financial question is needed. The exact previous execution state is archived as `backups/EXECUTION_STATE_BEFORE_V267_2026-10-13.md`; the complete private current state/receipts remain in LTS_CONTINUAR.md.
+
+--- Prior execution preserved ---
+
 ## Current execution — 13 October 2026 (V266 backend; V264 interface)
 
 The published interface remains `releases/v264/app.html`. The V266 backend round fixes a due-date rollover: an unresolved recorded invoice must continue using its uniquely matched received bill after the due date, rather than reverting to an older snapshot. Received amount, composition, source date and unreported-payment status remain separate facts. Closed cycles, newer documentary overrides, ambiguous sources and unrelated periods retain their prior guards.
