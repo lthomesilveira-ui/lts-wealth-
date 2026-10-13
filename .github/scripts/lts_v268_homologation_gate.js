@@ -16,7 +16,7 @@ async function run(browser,width,engine){
   if(name==='token')data=session;
   else if(name==='lts_browser_product_v1')data={ok:true,mvp:product()};
   else if(name==='lts_browser_dashboard_cockpit_v1')data=cockpit;
-  else if(/^lts_browser_cash_today/.test(name))data={version:'cash-today-v179-current-canonical',status:'complete',as_of:'2026-10-13',cash:1234.56,d0:0,brokerage_available:null,available_total:1234.56,fgts:20,day:day('2026-10-13')};
+  else if(/^lts_browser_cash_today/.test(name))data={version:'cash-today-v179-current-canonical',status:'complete',as_of:'2026-10-13',cash:1234.56,d0:0,brokerage_available:50,available_total:1284.56,fgts:20,day:day('2026-10-13')};
   else if(/^lts_browser_wealth_detail/.test(name))data=wealth;
   else if(/^lts_browser_flow_v/.test(name))data=flow(a.p_from,a.p_to);
   else if(name==='lts_browser_recurring_future_gap_audit_v5')data=audit;
