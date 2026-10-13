@@ -133,7 +133,7 @@ FROM reconciled r WHERE r.due_date IS NOT NULL AND NOT EXISTS(SELECT 1 FROM base
  OR (CASE WHEN i.metadata->>'as_of' ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}$'
  THEN (i.metadata->>'as_of')::date ELSE '-infinity'::date END)
  >(b.source_updated_at AT TIME ZONE 'America/Sao_Paulo')::date))
-)
+), legacy_output AS MATERIALIZED (
 SELECT r.user_id,r.card_name,r.reference_month,r.due_date,
  CASE WHEN b.payment_status='paid' AND r.status IN('open','projected') THEN 'paid' ELSE r.status END status,
  CASE WHEN b.invoice_source_id IS NOT NULL AND r.status IN('open','projected') THEN b.amount ELSE r.amount END amount,
@@ -145,4 +145,22 @@ SELECT p_user_id,b.card_name,b.reference_month,b.due_date,
  CASE WHEN b.payment_status='paid' THEN 'paid' ELSE 'open' END,b.amount,'open_finance_invoice_v263'
 FROM received_bills b WHERE NOT EXISTS(SELECT 1 FROM baseline r
  WHERE r.reference_month=b.reference_month AND public.lts_card_family_v226(r.card_name,r.card_name)=b.family)
+), c6_cycles AS MATERIALIZED (
+ SELECT ca->>'name' card_name,cy FROM jsonb_array_elements(public.lts_card_cycles_v226(p_user_id)->'cards') ca
+ CROSS JOIN LATERAL jsonb_array_elements(ca->'cycles') cy WHERE ca->>'family'='c6'
+)
+SELECT * FROM legacy_output WHERE public.lts_card_family_v226(card_name,card_name)<>'c6'
+UNION ALL
+SELECT i.user_id,i.card_name,i.reference_month,coalesce((c.cy->>'due_date')::date,i.due_date),
+ CASE WHEN i.status IN('open','projected') AND c.cy->>'payment_status'='paid' THEN 'paid' ELSE i.status END,
+ CASE WHEN i.status IN('open','projected') AND c.cy IS NOT NULL THEN (c.cy->>'amount')::numeric ELSE i.amount END,
+ CASE WHEN i.status IN('open','projected') AND c.cy IS NOT NULL THEN c.cy->>'basis' ELSE i.source END
+FROM public.card_invoices i LEFT JOIN c6_cycles c ON (c.cy->>'month')::date=i.reference_month
+WHERE i.user_id=p_user_id AND public.lts_card_family_v226(i.card_name,i.card_name)='c6'
+UNION ALL
+SELECT p_user_id,c.card_name,(c.cy->>'month')::date,(c.cy->>'due_date')::date,
+ CASE WHEN c.cy->>'payment_status'='paid' THEN 'paid' WHEN (c.cy->>'month')::date>date_trunc('month',current_date)::date THEN 'projected' ELSE 'open' END,
+ (c.cy->>'amount')::numeric,c.cy->>'basis'
+FROM c6_cycles c WHERE c.cy->>'due_date' IS NOT NULL AND NOT EXISTS(SELECT 1 FROM public.card_invoices i WHERE i.user_id=p_user_id
+ AND public.lts_card_family_v226(i.card_name,i.card_name)='c6' AND i.reference_month=(c.cy->>'month')::date)
 $function$;

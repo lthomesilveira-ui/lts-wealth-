@@ -30,6 +30,10 @@
    }
    const incomplete=ACC==='Consolidado'?x.movements_complete===false:x[ACC]?.movements_complete===false;
    if(incomplete){value.prev=ACC==='Consolidado'?x.fix86_columns.saldo_anterior:x[ACC].opening_balance;value.en=null;value.ex=null}
+   if(x?.projection_complete===false&&(ACC==='C6'||ACC==='Consolidado')){
+    if(x[ACC]?.projection_complete===false){value.prev=null;value.fin=null;value.ex=null;value.basis='incomplete_card_cycle';}
+    if(ACC==='Consolidado')for(const key of ['liq_d30','d30'])if(key in value)value[key]=null;
+   }
    return value;
   };
   flowSemanticTitle=function(e){if(e.asset_movement&&/resgate cofrinh/i.test(e.description||''))return 'Resgate Cofrinho';if(e.internal_transfer&&/^Transferência entre contas/.test(e.description||''))return e.description;return previousTitle(e)};
@@ -62,3 +66,4 @@
  function install(){try{const w=shell?.contentWindow,d=shell?.contentDocument;if(!w?.__LTS_V227_LAYOUT)return false;if(!w.__LTS_V228_FLOW){const s=d.createElement('script');s.textContent='('+runtime.toString()+')();';d.head.appendChild(s);}return !!w.__LTS_V228_FLOW;}catch{return false;}}
  let tries=0;function start(){if(!install()&&++tries<400)setTimeout(start,100);}shell?.addEventListener('load',()=>{tries=0;start();});start();
 })();
+

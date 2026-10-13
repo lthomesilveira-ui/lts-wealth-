@@ -7,6 +7,8 @@ IF md5(pg_get_functiondef('public.lts_card_invoice_amounts_v230_engine_v243(uuid
 IF md5(pg_get_functiondef('public.lts_card_cycles_v226(uuid)'::regprocedure))<>'77efe46f9b6a5e3c117434eb233464b9' THEN RAISE EXCEPTION 'Source lease changed: lts_card_cycles_v226.sql'; END IF;
 IF md5(pg_get_functiondef('public.lts_card_invoices_effective_v226(uuid)'::regprocedure))<>'86c8d7c225436171c8059c75676d7626' THEN RAISE EXCEPTION 'Source lease changed: lts_card_invoices_effective_v226.sql'; END IF;
 IF md5(pg_get_functiondef('public.lts_browser_card_detail_v226(text,date)'::regprocedure))<>'c4c73a09b7a29ec5a5cc3d0d12a2e921' THEN RAISE EXCEPTION 'Source lease changed: lts_browser_card_detail_v226.sql'; END IF;
+IF md5(pg_get_functiondef('public.lts_browser_flow_v242(date,date)'::regprocedure))<>'bdfe29622c38fb4200d4bc6fdf5d1b24' THEN RAISE EXCEPTION 'Source lease changed: lts_browser_flow_v242.sql'; END IF;
+IF md5(pg_get_functiondef('public.lts_current_received_card_bills_v263(uuid)'::regprocedure))<>'aae890a623fdd870b2c1973f1891a84f' THEN RAISE EXCEPTION 'Payment reader dependency changed'; END IF;
 IF to_regprocedure('public.lts_c6_cycle_identity_v269(uuid)') IS NOT NULL THEN RAISE EXCEPTION 'New helper already exists; inspect concurrent change'; END IF;
 END $lease$;
 -- Candidate, not applied. Resolve only the documented C6 one-month forecast/due offset.
@@ -26,7 +28,7 @@ WITH unique_account AS MATERIALIZED (
  FROM public.card_invoices ci JOIN public.source_documents sd
   ON sd.id::text=ci.metadata->>'bank_statement_document_id' AND sd.user_id=ci.user_id
  WHERE ci.user_id=p_user_id AND public.lts_card_family_v226(ci.card_name,sd.institution)='c6'
-  AND ci.status='closed' AND ci.metadata->>'bank_statement_closed'='true'
+  AND ci.status IN ('closed','paid') AND ci.metadata->>'bank_statement_closed'='true'
   AND ci.metadata->>'bank_statement_full_composition'='true'
   AND sd.document_type='credit_card_statement' AND sd.processing_status='processed'
   AND sd.sha256=ci.metadata->>'bank_statement_sha256'
@@ -41,22 +43,64 @@ WITH unique_account AS MATERIALIZED (
  JOIN public.lts_open_finance_staging s ON s.user_id=p_user_id AND s.id::text=e->>'source_id'
   AND s.resource_type='card_transaction' AND s.provider_deleted_at IS NULL AND s.institution_code='336'
  WHERE NOT coalesce((e->>'is_payment')::boolean,false) AND nullif(s.provider_account_ref,'') IS NOT NULL
-), anchors AS MATERIALIZED (
+), documentary_anchors AS MATERIALIZED (
  SELECT provider_account_ref,reference_month,min(due_date) due_date,min(closing_date) closing_date,min(forecast) forecast
  FROM closed_rows GROUP BY provider_account_ref,reference_month
  HAVING count(DISTINCT due_date)=1 AND count(DISTINCT closing_date)=1
   AND count(forecast)=count(*) AND count(DISTINCT forecast)=1
   AND min(forecast)=(reference_month-interval '1 month')::date
   AND min(forecast)=date_trunc('month',min(closing_date))::date
+), provider_rows AS MATERIALIZED (
+ SELECT b.provider_account_ref,date_trunc('month',b.posting_date)::date reference_month,b.posting_date due_date,
+ CASE WHEN b.normalized_payload->>'closing_date' ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}$' THEN (b.normalized_payload->>'closing_date')::date END closing_date,
+ b.id bill_source_id,b.signed_amount invoice_amount,
+ CASE WHEN tx.raw_payload#>>'{creditCardMetadata,billForecastDate}' ~ '^[0-9]{4}-[0-9]{2}$'
+ THEN (tx.raw_payload#>>'{creditCardMetadata,billForecastDate}'||'-01')::date END forecast,-tx.signed_amount amount
+ FROM public.lts_open_finance_staging b JOIN public.lts_open_finance_staging tx
+ ON tx.user_id=b.user_id AND tx.institution_code=b.institution_code AND tx.provider_account_ref=b.provider_account_ref
+ AND tx.resource_type='card_transaction' AND tx.provider_deleted_at IS NULL AND tx.normalized_payload->>'status'='POSTED'
+ AND tx.raw_payload#>>'{creditCardMetadata,billId}'=b.normalized_payload->>'provider_id'
+ WHERE b.user_id=p_user_id AND b.institution_code='336' AND b.resource_type='invoice' AND b.provider_deleted_at IS NULL
+ AND b.currency='BRL' AND tx.currency='BRL' AND b.signed_amount>=0
+ AND coalesce(jsonb_array_length(b.normalized_payload->'warnings'),0)=0
+ AND NOT(coalesce(tx.raw_payload->>'operationType','')='PAGAMENTO_FATURA'
+ OR coalesce(tx.raw_payload->>'category','')='Credit card payment'
+ OR public.lts_v178_norm(tx.description_raw) ~ '^(inclusao de pagamento ciclo corrente|pagamento recebido|pagto fatura)')
+), provider_anchors AS MATERIALIZED (
+ SELECT provider_account_ref,reference_month,min(due_date) due_date,min(closing_date) closing_date,
+ CASE WHEN count(forecast)=count(*) AND count(DISTINCT forecast)=1 THEN min(forecast) END forecast
+ FROM provider_rows GROUP BY provider_account_ref,reference_month,bill_source_id,invoice_amount
+ HAVING count(DISTINCT due_date)=1 AND count(closing_date)=count(*) AND count(DISTINCT closing_date)=1
+ AND min(closing_date)<=current_date AND min(closing_date)<min(due_date)
+ AND round(sum(amount),2)=invoice_amount
+), anchor_groups AS MATERIALIZED (
+ -- Keep conflicting observations: they prevent older calibration from silently
+ -- winning for later cycles. A later observation cannot erase an earlier cycle.
+ -- If same-month closing dates differ, require posting after BOTH boundaries.
+ -- This conservative cutoff does not rewrite either source closing date.
+ SELECT provider_account_ref,reference_month,min(due_date) due_date,
+  max(closing_date) closing_date,min(forecast) forecast,
+  (count(DISTINCT due_date)=1 AND count(due_date)=count(*)
+   AND count(closing_date)=count(*) AND max(closing_date)-min(closing_date)<=1
+   AND count(DISTINCT forecast)=1 AND count(forecast)=count(*)
+   AND bool_and(forecast=(reference_month-interval '1 month')::date
+    AND forecast=date_trunc('month',closing_date)::date)) AS calibration_valid
+ FROM (SELECT * FROM documentary_anchors UNION ALL SELECT * FROM provider_anchors) observations
+ GROUP BY provider_account_ref,reference_month
 ), candidates AS MATERIALIZED (
- SELECT a.provider_account_ref,a.closing_date,a.forecast,(a.reference_month+interval '1 month')::date reference_month,
+ SELECT a.provider_account_ref,a.closing_date,a.forecast,ci.reference_month,
   min(ci.due_date) due_date
- FROM anchors a JOIN unique_account ua ON ua.provider_account_ref=a.provider_account_ref
+ FROM anchor_groups a JOIN unique_account ua ON ua.provider_account_ref=a.provider_account_ref
  JOIN public.card_invoices ci ON ci.user_id=p_user_id
   AND public.lts_card_family_v226(ci.card_name,ci.card_name)='c6'
-  AND ci.reference_month=(a.reference_month+interval '1 month')::date
+  AND ci.reference_month>a.reference_month
   AND ci.due_date>=ci.reference_month AND ci.due_date<(ci.reference_month+interval '1 month')::date
- GROUP BY a.provider_account_ref,a.closing_date,a.forecast,a.reference_month
+ WHERE a.calibration_valid
+  AND NOT EXISTS(SELECT 1 FROM anchor_groups newer
+   WHERE newer.provider_account_ref=a.provider_account_ref
+    AND newer.reference_month>a.reference_month
+    AND newer.reference_month<ci.reference_month)
+ GROUP BY a.provider_account_ref,a.closing_date,a.forecast,ci.reference_month
  HAVING count(DISTINCT ci.due_date)=1
 ), resolved AS (
  SELECT s.id source_id,c.reference_month,c.due_date
@@ -66,26 +110,43 @@ WITH unique_account AS MATERIALIZED (
   AND NOT EXISTS(SELECT 1 FROM public.lts_open_finance_staging b WHERE b.user_id=s.user_id
    AND b.institution_code=s.institution_code AND b.resource_type='invoice' AND b.provider_deleted_at IS NULL
    AND b.normalized_payload->>'provider_id'=s.raw_payload#>>'{creditCardMetadata,billId}')
-  AND s.raw_payload#>>'{creditCardMetadata,billForecastDate}'=to_char(c.forecast+interval '1 month','YYYY-MM')
-  AND s.posting_date>c.closing_date AND s.posting_date<c.due_date
+  AND s.raw_payload#>>'{creditCardMetadata,billForecastDate}'=to_char(c.reference_month-interval '1 month','YYYY-MM')
+  AND coalesce(CASE WHEN s.raw_payload#>>'{creditCardMetadata,billPostDate}' ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}$' THEN (s.raw_payload#>>'{creditCardMetadata,billPostDate}')::date END,s.posting_date)>c.closing_date
+  AND coalesce(CASE WHEN s.raw_payload#>>'{creditCardMetadata,billPostDate}' ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}$' THEN (s.raw_payload#>>'{creditCardMetadata,billPostDate}')::date END,s.posting_date)<c.due_date
   AND NOT(coalesce(s.raw_payload->>'operationType','')='PAGAMENTO_FATURA'
  OR coalesce(s.raw_payload->>'category','')='Credit card payment'
  OR public.lts_v178_norm(s.description_raw) ~ '^(inclusao de pagamento ciclo corrente|pagamento recebido|pagto fatura)')
   AND NOT EXISTS(SELECT 1 FROM documented d CROSS JOIN LATERAL jsonb_array_elements(d.items) e WHERE e->>'source_id'=s.id::text)
+), unique_resolved AS (
+ SELECT source_id,min(reference_month) reference_month,min(due_date) due_date,
+ 'verified_account_forecast_offset_and_due_calendar'::text cycle_basis
+ FROM resolved GROUP BY source_id HAVING count(DISTINCT reference_month)=1 AND count(DISTINCT due_date)=1
 )
-SELECT source_id,min(reference_month),min(due_date),'documented_forecast_offset_and_successor'::text
-FROM resolved GROUP BY source_id HAVING count(DISTINCT reference_month)=1 AND count(DISTINCT due_date)=1
+SELECT * FROM unique_resolved
+UNION ALL
+SELECT s.id source_id,NULL::date reference_month,NULL::date due_date,'unresolved'::text cycle_basis FROM public.lts_open_finance_staging s
+ WHERE s.user_id=p_user_id AND s.institution_code='336' AND s.resource_type='card_transaction'
+ AND s.provider_deleted_at IS NULL AND s.normalized_payload->>'status' IN('PENDING','POSTED')
+ AND s.raw_payload#>>'{creditCardMetadata,billForecastDate}' ~ '^[0-9]{4}-[0-9]{2}$'
+ AND EXISTS(SELECT 1 FROM public.card_invoices ci WHERE ci.user_id=p_user_id
+ AND public.lts_card_family_v226(ci.card_name,ci.card_name)='c6'
+ AND ci.reference_month=((s.raw_payload#>>'{creditCardMetadata,billForecastDate}'||'-01')::date+interval '1 month')::date
+ AND (ci.due_date>=current_date OR ci.status IN('open','projected')))
+ AND NOT EXISTS(SELECT 1 FROM unique_resolved r WHERE r.source_id=s.id)
+ AND NOT EXISTS(SELECT 1 FROM public.lts_open_finance_staging b WHERE b.user_id=s.user_id AND b.institution_code=s.institution_code
+ AND b.provider_account_ref=s.provider_account_ref AND b.resource_type='invoice' AND b.provider_deleted_at IS NULL
+ AND b.normalized_payload->>'provider_id'=s.raw_payload#>>'{creditCardMetadata,billId}')
+ AND NOT EXISTS(SELECT 1 FROM documented d CROSS JOIN LATERAL jsonb_array_elements(d.items)e WHERE e->>'source_id'=s.id::text)
+ AND NOT(coalesce(s.raw_payload->>'operationType','')='PAGAMENTO_FATURA' OR coalesce(s.raw_payload->>'category','')='Credit card payment'
+ OR public.lts_v178_norm(s.description_raw) ~ '^(inclusao de pagamento ciclo corrente|pagamento recebido|pagto fatura)');
 $function$;
 REVOKE ALL ON FUNCTION public.lts_c6_cycle_identity_v269(uuid) FROM PUBLIC,anon,authenticated;
 GRANT EXECUTE ON FUNCTION public.lts_c6_cycle_identity_v269(uuid) TO service_role;
 
-CREATE OR REPLACE FUNCTION public.lts_card_document_matches_v234(p_user_id uuid)
- RETURNS TABLE(document_id uuid, provider_id uuid)
- LANGUAGE sql
- STABLE
- SET search_path TO ''
-AS $function$
- WITH identities AS MATERIALIZED (SELECT * FROM public.lts_c6_cycle_identity_v269(p_user_id)), documents AS MATERIALIZED (
+CREATE OR REPLACE FUNCTION public.lts_card_document_candidates_v269(p_user_id uuid)
+RETURNS TABLE(document_id uuid,provider_id uuid,dc bigint,pc bigint)
+LANGUAGE sql STABLE SET search_path='' AS $function$
+WITH identities AS MATERIALIZED (SELECT * FROM public.lts_c6_cycle_identity_v269(p_user_id)), documents AS MATERIALIZED (
   SELECT * FROM public.lts_card_document_supplement_v234 WHERE user_id=p_user_id
  ), candidates AS MATERIALIZED (
   SELECT d.id document_id,s.id provider_id
@@ -101,15 +162,23 @@ AS $function$
   AND CASE WHEN left(s.raw_payload#>>'{creditCardMetadata,purchaseDate}',10) ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}$'
       THEN abs(left(s.raw_payload#>>'{creditCardMetadata,purchaseDate}',10)::date-d.purchase_date)<=2 ELSE false END
   AND (EXISTS(SELECT 1 FROM identities ci WHERE ci.source_id=s.id AND ci.reference_month=d.reference_month AND ci.due_date=d.due_date)
-   OR s.raw_payload#>>'{creditCardMetadata,billForecastDate}'=to_char(d.reference_month,'YYYY-MM')
+   OR (NOT EXISTS(SELECT 1 FROM identities ci WHERE ci.source_id=s.id) AND s.raw_payload#>>'{creditCardMetadata,billForecastDate}'=to_char(d.reference_month,'YYYY-MM'))
    OR EXISTS(SELECT 1 FROM public.lts_open_finance_staging b
-    WHERE b.user_id=s.user_id AND b.institution_code=s.institution_code AND b.resource_type='invoice'
+    WHERE b.user_id=s.user_id AND b.institution_code=s.institution_code AND b.provider_account_ref=s.provider_account_ref AND b.resource_type='invoice'
     AND b.provider_deleted_at IS NULL AND b.normalized_payload->>'provider_id'=s.raw_payload#>>'{creditCardMetadata,billId}'
     AND date_trunc('month',b.posting_date)::date=d.reference_month))
  ), unique_candidates AS (
   SELECT *,count(*) OVER(PARTITION BY document_id) dc,count(*) OVER(PARTITION BY provider_id) pc FROM candidates
  )
- SELECT document_id,provider_id FROM unique_candidates WHERE dc=1 AND pc=1
+SELECT document_id,provider_id,dc,pc FROM unique_candidates;
+$function$;
+REVOKE ALL ON FUNCTION public.lts_card_document_candidates_v269(uuid) FROM PUBLIC,anon,authenticated;
+GRANT EXECUTE ON FUNCTION public.lts_card_document_candidates_v269(uuid) TO service_role;
+
+CREATE OR REPLACE FUNCTION public.lts_card_document_matches_v234(p_user_id uuid)
+RETURNS TABLE(document_id uuid,provider_id uuid)
+LANGUAGE sql STABLE SET search_path='' AS $function$
+SELECT document_id,provider_id FROM public.lts_card_document_candidates_v269(p_user_id) WHERE dc=1 AND pc=1;
 $function$;
 
 CREATE OR REPLACE FUNCTION public.lts_card_source_rows_pre_v262(p_user_id uuid)
@@ -181,7 +250,7 @@ with installment_decisions as materialized (
  FROM public.card_invoices ci JOIN public.source_documents sd
   ON sd.id::text=ci.metadata->>'bank_statement_document_id' AND sd.user_id=ci.user_id
  CROSS JOIN LATERAL jsonb_array_elements(sd.metadata->'existing_source_items') e
- WHERE ci.user_id=p_user_id AND ci.status='closed'
+ WHERE ci.user_id=p_user_id AND ci.status IN ('closed','paid')
   AND ci.metadata->>'bank_statement_closed'='true'
   AND ci.metadata->>'bank_statement_full_composition'='true'
   AND sd.document_type='credit_card_statement' AND sd.processing_status='processed'
@@ -257,11 +326,15 @@ select s.id,s.bank,s.family,s.normalized_payload->>'card_name',
  s.payment,s.raw_bill_id,s.last_seen_at
 from provider_classification s
 ), documented_decisions AS MATERIALIZED (
- SELECT m.provider_id,d.category_label,d.beneficiary
+ SELECT m.provider_id,coalesce(rv.category_label,d.category) category_label,rv.beneficiary
  FROM public.lts_card_document_matches_v234(p_user_id) m
- JOIN public.lts_v178_review_decision d ON d.user_id=p_user_id
-  AND d.source_table='lts_card_document_supplement_v234' AND d.source_ref=m.document_id::text
- WHERE d.category_label IS NOT NULL
+ JOIN public.lts_card_document_supplement_v234 d ON d.id=m.document_id AND d.user_id=p_user_id
+ LEFT JOIN public.lts_v178_review_decision rv ON rv.user_id=p_user_id
+ AND rv.source_table='lts_card_document_supplement_v234' AND rv.source_ref=d.id::text
+ WHERE (rv.category_label IS NOT NULL OR (d.family='c6' AND d.metadata->>'source_kind'='owner_bank_app_screenshot' AND d.category IS NOT NULL))
+ AND NOT EXISTS(SELECT 1 FROM public.lts_v178_review_decision exact WHERE exact.user_id=p_user_id
+ AND exact.source_table='lts_open_finance_staging' AND exact.source_ref=m.provider_id::text
+ AND (exact.category_label IS NOT NULL OR exact.beneficiary IS NOT NULL))
 )
 SELECT p.source_id,p.bank,p.family,p.card_name,p.last4,p.billing_last4,p.posting_date,p.purchase_date,p.reference_month,p.due_date,
  p.provider_status,p.amount,p.description,
@@ -408,7 +481,7 @@ FROM reconciled r WHERE r.due_date IS NOT NULL AND NOT EXISTS(SELECT 1 FROM base
  OR (CASE WHEN i.metadata->>'as_of' ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}$'
  THEN (i.metadata->>'as_of')::date ELSE '-infinity'::date END)
  >(b.source_updated_at AT TIME ZONE 'America/Sao_Paulo')::date))
-)
+), legacy_output AS MATERIALIZED (
 SELECT r.user_id,r.card_name,r.reference_month,r.due_date,
  CASE WHEN b.payment_status='paid' AND r.status IN('open','projected') THEN 'paid' ELSE r.status END status,
  CASE WHEN b.invoice_source_id IS NOT NULL AND r.status IN('open','projected') THEN b.amount ELSE r.amount END amount,
@@ -420,15 +493,70 @@ SELECT p_user_id,b.card_name,b.reference_month,b.due_date,
  CASE WHEN b.payment_status='paid' THEN 'paid' ELSE 'open' END,b.amount,'open_finance_invoice_v263'
 FROM received_bills b WHERE NOT EXISTS(SELECT 1 FROM baseline r
  WHERE r.reference_month=b.reference_month AND public.lts_card_family_v226(r.card_name,r.card_name)=b.family)
+), c6_cycles AS MATERIALIZED (
+ SELECT ca->>'name' card_name,cy FROM jsonb_array_elements(public.lts_card_cycles_v226(p_user_id)->'cards') ca
+ CROSS JOIN LATERAL jsonb_array_elements(ca->'cycles') cy WHERE ca->>'family'='c6'
+)
+SELECT * FROM legacy_output WHERE public.lts_card_family_v226(card_name,card_name)<>'c6'
+UNION ALL
+SELECT i.user_id,i.card_name,i.reference_month,coalesce((c.cy->>'due_date')::date,i.due_date),
+ CASE WHEN i.status IN('open','projected') AND c.cy->>'payment_status'='paid' THEN 'paid' ELSE i.status END,
+ CASE WHEN i.status IN('open','projected') AND c.cy IS NOT NULL THEN (c.cy->>'amount')::numeric ELSE i.amount END,
+ CASE WHEN i.status IN('open','projected') AND c.cy IS NOT NULL THEN c.cy->>'basis' ELSE i.source END
+FROM public.card_invoices i LEFT JOIN c6_cycles c ON (c.cy->>'month')::date=i.reference_month
+WHERE i.user_id=p_user_id AND public.lts_card_family_v226(i.card_name,i.card_name)='c6'
+UNION ALL
+SELECT p_user_id,c.card_name,(c.cy->>'month')::date,(c.cy->>'due_date')::date,
+ CASE WHEN c.cy->>'payment_status'='paid' THEN 'paid' WHEN (c.cy->>'month')::date>date_trunc('month',current_date)::date THEN 'projected' ELSE 'open' END,
+ (c.cy->>'amount')::numeric,c.cy->>'basis'
+FROM c6_cycles c WHERE c.cy->>'due_date' IS NOT NULL AND NOT EXISTS(SELECT 1 FROM public.card_invoices i WHERE i.user_id=p_user_id
+ AND public.lts_card_family_v226(i.card_name,i.card_name)='c6' AND i.reference_month=(c.cy->>'month')::date)
 $function$;
 
 CREATE OR REPLACE FUNCTION public.lts_card_cycles_v226(p_user_id uuid)
  RETURNS jsonb
- LANGUAGE sql
+ LANGUAGE plpgsql
  STABLE
  SET search_path TO ''
  SET "TimeZone" TO 'America/Sao_Paulo'
 AS $function$
+DECLARE result jsonb; c6_contract_uncertain boolean; c6_unresolved jsonb; c6_document_ambiguous jsonb;
+BEGIN
+ SELECT EXISTS(WITH rows AS MATERIALIZED (SELECT * FROM public.lts_card_source_rows_v226(p_user_id)),
+c6_contract_rows AS MATERIALIZED (
+ SELECT r.*,jsonb_build_array(s.institution_code,s.provider_account_ref,r.last4,
+ (s.raw_payload#>>'{creditCardMetadata,purchaseDate}')::timestamptz,
+ public.lts_card_merchant_key_v226(r.description),r.total_installments)::text contract_key,
+ (extract(year FROM r.reference_month)::int*12+extract(month FROM r.reference_month)::int-r.installment_number) cycle_offset
+ FROM rows r LEFT JOIN public.lts_card_document_supplement_v234 doc ON doc.id=r.source_id AND doc.user_id=p_user_id
+ JOIN public.lts_open_finance_staging s ON s.user_id=p_user_id
+ AND (s.id=r.source_id OR (doc.id IS NOT NULL AND s.id::text=doc.metadata->>'prior_purchase_source_id'))
+ WHERE r.family='c6' AND r.provider_status IN('PENDING','POSTED','DOCUMENTED') AND NOT r.is_payment AND r.amount>0 AND r.total_installments>1
+ AND r.installment_number BETWEEN 1 AND r.total_installments AND r.reference_month IS NOT NULL
+ AND s.resource_type='card_transaction' AND s.institution_code='336' AND nullif(s.provider_account_ref,'') IS NOT NULL
+ AND nullif(r.last4,'') IS NOT NULL
+ AND s.raw_payload#>>'{creditCardMetadata,purchaseDate}' ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}T.*(Z|[+-][0-9]{2}:[0-9]{2})$'
+ AND (doc.id IS NULL OR (doc.installment_number=(s.raw_payload#>>'{creditCardMetadata,installmentNumber}')::int+1
+ AND doc.total_installments=(s.raw_payload#>>'{creditCardMetadata,totalInstallments}')::int
+ AND doc.last4=coalesce(s.raw_payload#>>'{creditCardMetadata,cardNumber}',s.normalized_payload->>'last4')
+ AND doc.purchase_date=((s.raw_payload#>>'{creditCardMetadata,purchaseDate}')::timestamptz AT TIME ZONE 'America/Sao_Paulo')::date))
+), c6_contract_validity AS MATERIALIZED (
+ SELECT contract_key,count(DISTINCT cycle_offset)=1 AND count(*)=count(DISTINCT installment_number) valid,
+ max(reference_month+make_interval(months=>total_installments-installment_number)) end_month
+ FROM c6_contract_rows GROUP BY contract_key
+), c6_projection_sources AS MATERIALIZED (
+ SELECT DISTINCT ON(r.contract_key,(r.reference_month+make_interval(months=>step))::date) r.*,step projection_step
+ FROM c6_contract_rows r JOIN c6_contract_validity v USING(contract_key)
+ CROSS JOIN LATERAL generate_series(1,least(120,r.total_installments-r.installment_number)) step
+ WHERE v.valid AND NOT EXISTS(SELECT 1 FROM c6_contract_rows actual WHERE actual.contract_key=r.contract_key
+ AND actual.reference_month=(r.reference_month+make_interval(months=>step))::date)
+ ORDER BY r.contract_key,(r.reference_month+make_interval(months=>step))::date,r.installment_number DESC
+)
+ SELECT 1 FROM c6_contract_validity WHERE NOT valid AND end_month>=date_trunc('month',current_date)::date
+ UNION ALL SELECT 1 FROM rows r WHERE r.family='c6' AND r.provider_status IN('PENDING','POSTED','DOCUMENTED') AND NOT r.is_payment
+ AND r.amount>0 AND r.total_installments>r.installment_number AND r.installment_number>0
+ AND (r.reference_month IS NULL OR r.reference_month+make_interval(months=>r.total_installments-r.installment_number)>=date_trunc('month',current_date)::date)
+ AND NOT EXISTS(SELECT 1 FROM c6_contract_rows identified WHERE identified.source_id=r.source_id)) INTO c6_contract_uncertain;
 with c6_eligible AS MATERIALIZED (
  SELECT ci.source_id FROM (
  SELECT * FROM public.lts_c6_cycle_identity_v269(p_user_id)
@@ -444,6 +572,35 @@ with c6_eligible AS MATERIALIZED (
  AND open_cycle.reference_month=ci.reference_month AND open_cycle.due_date=ci.due_date
  AND open_cycle.status IN('open','projected')
 ), rows as materialized (select * from public.lts_card_source_rows_v226(p_user_id)),
+c6_contract_rows AS MATERIALIZED (
+ SELECT r.*,jsonb_build_array(s.institution_code,s.provider_account_ref,r.last4,
+ (s.raw_payload#>>'{creditCardMetadata,purchaseDate}')::timestamptz,
+ public.lts_card_merchant_key_v226(r.description),r.total_installments)::text contract_key,
+ (extract(year FROM r.reference_month)::int*12+extract(month FROM r.reference_month)::int-r.installment_number) cycle_offset
+ FROM rows r LEFT JOIN public.lts_card_document_supplement_v234 doc ON doc.id=r.source_id AND doc.user_id=p_user_id
+ JOIN public.lts_open_finance_staging s ON s.user_id=p_user_id
+ AND (s.id=r.source_id OR (doc.id IS NOT NULL AND s.id::text=doc.metadata->>'prior_purchase_source_id'))
+ WHERE r.family='c6' AND r.provider_status IN('PENDING','POSTED','DOCUMENTED') AND NOT r.is_payment AND r.amount>0 AND r.total_installments>1
+ AND r.installment_number BETWEEN 1 AND r.total_installments AND r.reference_month IS NOT NULL
+ AND s.resource_type='card_transaction' AND s.institution_code='336' AND nullif(s.provider_account_ref,'') IS NOT NULL
+ AND nullif(r.last4,'') IS NOT NULL
+ AND s.raw_payload#>>'{creditCardMetadata,purchaseDate}' ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}T.*(Z|[+-][0-9]{2}:[0-9]{2})$'
+ AND (doc.id IS NULL OR (doc.installment_number=(s.raw_payload#>>'{creditCardMetadata,installmentNumber}')::int+1
+ AND doc.total_installments=(s.raw_payload#>>'{creditCardMetadata,totalInstallments}')::int
+ AND doc.last4=coalesce(s.raw_payload#>>'{creditCardMetadata,cardNumber}',s.normalized_payload->>'last4')
+ AND doc.purchase_date=((s.raw_payload#>>'{creditCardMetadata,purchaseDate}')::timestamptz AT TIME ZONE 'America/Sao_Paulo')::date))
+), c6_contract_validity AS MATERIALIZED (
+ SELECT contract_key,count(DISTINCT cycle_offset)=1 AND count(*)=count(DISTINCT installment_number) valid,
+ max(reference_month+make_interval(months=>total_installments-installment_number)) end_month
+ FROM c6_contract_rows GROUP BY contract_key
+), c6_projection_sources AS MATERIALIZED (
+ SELECT DISTINCT ON(r.contract_key,(r.reference_month+make_interval(months=>step))::date) r.*,step projection_step
+ FROM c6_contract_rows r JOIN c6_contract_validity v USING(contract_key)
+ CROSS JOIN LATERAL generate_series(1,least(120,r.total_installments-r.installment_number)) step
+ WHERE v.valid AND NOT EXISTS(SELECT 1 FROM c6_contract_rows actual WHERE actual.contract_key=r.contract_key
+ AND actual.reference_month=(r.reference_month+make_interval(months=>step))::date)
+ ORDER BY r.contract_key,(r.reference_month+make_interval(months=>step))::date,r.installment_number DESC
+),
 accounts as materialized (
  select s.institution_name bank,public.lts_card_family_v226(s.normalized_payload->>'name',s.institution_name) family,
  s.normalized_payload->>'name' name,s.normalized_payload->>'last4' last4,
@@ -454,22 +611,35 @@ accounts as materialized (
  select family,reference_month,min(due_date) due_date,count(*) n,round(sum(amount),2) amount,
  count(*) filter(where category_basis='unresolved') unclassified,max(observed_at) observed_at,
  jsonb_agg((to_jsonb(r)-'bank'-'family'-'card_name'-'billing_last4'-'bill_id')||coalesce((SELECT jsonb_build_object('source_document',jsonb_build_object('file_ref',d.source_file_ref,'sha256',d.source_sha256,'page',d.source_page,'line',d.source_line,'as_of',d.source_as_of,'amount',d.amount)) FROM public.lts_card_document_supplement_v234 d WHERE d.user_id=p_user_id AND (d.id=r.source_id OR d.id=(SELECT m.document_id FROM public.lts_card_document_matches_v234(p_user_id) m WHERE m.provider_id=r.source_id))),'{}'::jsonb) order by posting_date desc,description,source_id) items
- from rows r where not is_payment and (r.provider_status IN ('PENDING','DOCUMENTED') OR (r.provider_status='POSTED' AND r.source_id IN (SELECT source_id FROM c6_eligible))) and reference_month>=date_trunc('month',current_date)::date group by family,reference_month
+ from rows r where NOT EXISTS(SELECT 1 FROM public.card_invoices paid WHERE paid.user_id=p_user_id AND r.family='c6' AND public.lts_card_family_v226(paid.card_name,paid.card_name)=r.family AND paid.reference_month=r.reference_month AND paid.status='paid') and not is_payment and (r.provider_status IN ('PENDING','DOCUMENTED') OR (r.provider_status='POSTED' AND r.source_id IN (SELECT source_id FROM c6_eligible))) and reference_month>=date_trunc('month',current_date)::date group by family,reference_month
 ), first_cycles as materialized (select family,min(reference_month) AS month from pending group by family),
 installments as materialized (
  select r.family,(r.reference_month+make_interval(months=>n))::date reference_month,r.amount,r.category_basis,r.observed_at,
  to_jsonb(r)||coalesce((SELECT jsonb_build_object('source_document',jsonb_build_object('file_ref',d.source_file_ref,'sha256',d.source_sha256,'page',d.source_page,'line',d.source_line,'as_of',d.source_as_of,'amount',d.amount)) FROM public.lts_card_document_supplement_v234 d WHERE d.user_id=p_user_id AND (d.id=r.source_id OR d.id=(SELECT m.document_id FROM public.lts_card_document_matches_v234(p_user_id) m WHERE m.provider_id=r.source_id))),'{}'::jsonb)||jsonb_build_object('reference_month',(r.reference_month+make_interval(months=>n))::date,'installment_number',r.installment_number+n,'provider_status','PROJECTED','projection_basis','remaining_installments_of_received_purchase') item
  from rows r join first_cycles f on f.family=r.family and f.month=r.reference_month
  cross join lateral generate_series(1,least(120,r.total_installments-r.installment_number)) n
- where not r.is_payment and (r.provider_status IN ('PENDING','DOCUMENTED') OR (r.provider_status='POSTED' AND r.source_id IN (SELECT source_id FROM c6_eligible))) and r.amount>0 and r.installment_number>0 and r.total_installments>r.installment_number
+ where r.family<>'c6' AND not r.is_payment and (r.provider_status IN ('PENDING','DOCUMENTED') OR (r.provider_status='POSTED' AND r.source_id IN (SELECT source_id FROM c6_eligible))) and r.amount>0 and r.installment_number>0 and r.total_installments>r.installment_number
+
+ UNION ALL
+ SELECT r.family,(r.reference_month+make_interval(months=>n))::date,r.amount,r.category_basis,r.observed_at,
+ (to_jsonb(r)-'contract_key'-'cycle_offset'-'projection_step')||coalesce((SELECT jsonb_build_object('source_document',jsonb_build_object('file_ref',d.source_file_ref,'sha256',d.source_sha256,'page',d.source_page,'line',d.source_line,'as_of',d.source_as_of,'amount',d.amount))
+ FROM public.lts_card_document_supplement_v234 d WHERE d.user_id=p_user_id AND (d.id=r.source_id OR d.id=(SELECT m.document_id FROM public.lts_card_document_matches_v234(p_user_id)m WHERE m.provider_id=r.source_id))),'{}'::jsonb)
+ ||jsonb_build_object('reference_month',(r.reference_month+make_interval(months=>n))::date,'due_date',NULL,'installment_number',r.installment_number+n,'provider_status','PROJECTED','projection_basis','latest_strongly_identified_purchase_installment')
+ FROM c6_projection_sources r CROSS JOIN LATERAL (SELECT r.projection_step n) step
+ WHERE (r.reference_month+make_interval(months=>n))::date>=date_trunc('month',current_date)::date
+ AND NOT EXISTS(SELECT 1 FROM public.card_invoices paid WHERE paid.user_id=p_user_id AND public.lts_card_family_v226(paid.card_name,paid.card_name)='c6'
+ AND paid.reference_month=(r.reference_month+make_interval(months=>n))::date AND paid.status='paid')
 ), projected as materialized (
  select family,reference_month,count(*) n,round(sum(amount),2) amount,count(*) filter(where category_basis='unresolved') unclassified,
  max(observed_at) observed_at,jsonb_agg(item order by item->>'description',item->>'source_id') items from installments group by family,reference_month
 ), composition as materialized (
  select coalesce(p.family,j.family) family,coalesce(p.reference_month,j.reference_month) reference_month,p.due_date,
- coalesce(p.n,j.n) n,coalesce(p.amount,j.amount) amount,coalesce(p.unclassified,j.unclassified) unclassified,
- coalesce(p.observed_at,j.observed_at) observed_at,coalesce(p.items,j.items) items,
- case when p.n>0 and p.reference_month=f.month AND EXISTS(SELECT 1 FROM rows r WHERE r.family=p.family AND r.reference_month=p.reference_month AND r.provider_status='DOCUMENTED') then 'bank_document_composition' when p.n>0 and p.reference_month=f.month then 'open_finance_composition' when p.n>0 then 'provider_installments' else 'derived_current_installments' end basis
+ CASE WHEN coalesce(p.family,j.family)='c6' THEN coalesce(p.n,0)+coalesce(j.n,0) ELSE coalesce(p.n,j.n) END n,
+ CASE WHEN coalesce(p.family,j.family)='c6' THEN coalesce(p.amount,0)+coalesce(j.amount,0) ELSE coalesce(p.amount,j.amount) END amount,
+ CASE WHEN coalesce(p.family,j.family)='c6' THEN coalesce(p.unclassified,0)+coalesce(j.unclassified,0) ELSE coalesce(p.unclassified,j.unclassified) END unclassified,
+ coalesce(p.observed_at,j.observed_at) observed_at,
+ CASE WHEN coalesce(p.family,j.family)='c6' THEN coalesce(p.items,'[]'::jsonb)||coalesce(j.items,'[]'::jsonb) ELSE coalesce(p.items,j.items) END items,
+ case when coalesce(p.family,j.family)='c6' AND p.n>0 AND j.n>0 THEN 'received_and_projected_installments' when p.n>0 and p.reference_month=f.month AND EXISTS(SELECT 1 FROM rows r WHERE r.family=p.family AND r.reference_month=p.reference_month AND r.provider_status='DOCUMENTED') then 'bank_document_composition' when p.n>0 and p.reference_month=f.month then 'open_finance_composition' when p.n>0 then 'provider_installments' else 'derived_current_installments' end basis
  from pending p full join projected j on j.family=p.family and j.reference_month=p.reference_month
  left join first_cycles f on f.family=coalesce(p.family,j.family)
 ), docs as materialized (
@@ -478,8 +648,8 @@ installments as materialized (
 ), cycles0 as (
  select coalesce(p.family,d.family) family,coalesce(p.reference_month,d.reference_month) AS month,
  coalesce(p.due_date,d.due_date) due_date,
- case when p.basis='derived_current_installments' then greatest(p.amount,coalesce(d.amount,0)) else coalesce(p.amount,d.amount) end amount,
- case when p.basis='derived_current_installments' and d.amount>p.amount then 'documented_floor_partial_detail'
+ case when p.family<>'c6' AND p.basis='derived_current_installments' then greatest(p.amount,coalesce(d.amount,0)) else coalesce(p.amount,d.amount) end amount,
+ case when p.family<>'c6' AND p.basis='derived_current_installments' and d.amount>p.amount then 'documented_floor_partial_detail'
  else coalesce(p.basis,case when d.source='derived_installments' then 'contracted_installments' else 'documented_snapshot' end) end basis,
  coalesce(p.n,0) item_count,coalesce(p.unclassified,0) unclassified,coalesce(p.items,'[]'::jsonb) items,p.observed_at,d.amount documentary_amount,
  case when d.metadata->>'as_of' ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}$' then d.metadata->>'as_of' end documentary_as_of
@@ -521,10 +691,11 @@ installments as materialized (
  FROM public.lts_card_document_supplement_v234 d WHERE d.user_id=p_user_id AND (d.id=br.source_id OR d.id=(SELECT m.document_id FROM public.lts_card_document_matches_v234(p_user_id) m WHERE m.provider_id=br.source_id))),'{}'::jsonb)
  ORDER BY br.posting_date DESC,br.description,br.source_id) items
  FROM rows br WHERE br.family=b.family AND br.reference_month=b.reference_month
- AND br.bill_id=sb.normalized_payload->>'provider_id' AND NOT br.is_payment
+ AND (br.bill_id=sb.normalized_payload->>'provider_id' OR (br.provider_status='DOCUMENTED' AND br.due_date=b.due_date
+ AND EXISTS(SELECT 1 FROM public.lts_card_document_supplement_v234 ds WHERE ds.id=br.source_id AND ds.user_id=p_user_id AND ds.provider_account_ref=sb.provider_account_ref))) AND NOT br.is_payment
  AND br.provider_status IN('POSTED','PENDING','DOCUMENTED')
- AND EXISTS(SELECT 1 FROM public.lts_open_finance_staging tx
- WHERE tx.user_id=p_user_id AND tx.id=br.source_id AND tx.currency='BRL')
+ AND (EXISTS(SELECT 1 FROM public.lts_open_finance_staging tx
+ WHERE tx.user_id=p_user_id AND tx.id=br.source_id AND tx.currency='BRL') OR br.provider_status='DOCUMENTED')
  )t ON true
 ), card_rows as (
  select a.*,coalesce((select jsonb_agg(to_jsonb(c)-'family' order by month) from current_cycles c where c.family=a.family),'[]'::jsonb) cycles from accounts a
@@ -532,7 +703,35 @@ installments as materialized (
 select jsonb_build_object('version','card-cycles-v226','as_of',current_date,'computed_at',clock_timestamp(),
  'active_billing_accounts',(select count(*) from accounts where status='ACTIVE'),
  'cards',coalesce((select jsonb_agg(to_jsonb(c) order by bank,name) from card_rows c),'[]'::jsonb),
- 'financial_effect','none','provider_balance_used_as_invoice',false)
+ 'financial_effect','none','provider_balance_used_as_invoice',false) INTO result;
+-- A family-level uncertainty must not abort the shared reader or disappear in SUM.
+SELECT coalesce(jsonb_agg(to_jsonb(r)), '[]'::jsonb) INTO c6_unresolved
+FROM public.lts_card_source_rows_v226(p_user_id) r
+WHERE r.family='c6' AND NOT r.is_payment AND r.reference_month IS NULL;
+SELECT coalesce(jsonb_agg(to_jsonb(c)), '[]'::jsonb) INTO c6_document_ambiguous
+FROM public.lts_card_document_candidates_v269(p_user_id) c
+JOIN public.lts_card_document_supplement_v234 d ON d.id=c.document_id AND d.user_id=p_user_id
+WHERE d.family='c6' AND (c.dc>1 OR c.pc>1) AND d.reference_month>=date_trunc('month',current_date)::date;
+IF jsonb_array_length(c6_document_ambiguous)>0 THEN
+ WITH evidence AS MATERIALIZED (SELECT * FROM public.lts_card_source_rows_v226(p_user_id))
+ SELECT jsonb_agg(c||jsonb_build_object('document_item',to_jsonb(dr),'provider_item',to_jsonb(pr))) INTO c6_document_ambiguous
+ FROM jsonb_array_elements(c6_document_ambiguous) c LEFT JOIN evidence dr ON dr.source_id::text=c->>'document_id'
+ LEFT JOIN evidence pr ON pr.source_id::text=c->>'provider_id';
+END IF;
+IF c6_contract_uncertain OR jsonb_array_length(c6_unresolved)>0 OR jsonb_array_length(c6_document_ambiguous)>0 THEN
+ SELECT result||jsonb_build_object('complete',false,'incomplete_families',jsonb_build_array('c6'),
+  'cards',coalesce(jsonb_agg(CASE WHEN card->>'family'='c6' THEN card||jsonb_build_object(
+   'complete',false,'uncertainty_reason',CASE WHEN c6_contract_uncertain THEN 'installment_identity' ELSE 'cycle_identity' END,
+   'unresolved_items',c6_unresolved,'ambiguous_document_candidates',c6_document_ambiguous,
+   'cycles',coalesce((SELECT jsonb_agg(CASE WHEN cycle->>'payment_status'='paid' OR (cycle->>'month')::date<date_trunc('month',current_date)::date THEN cycle ELSE cycle||jsonb_build_object('observed_unreconciled_amount',cycle->'amount','amount',NULL,
+    'basis','incomplete_cycle_identity','complete',false,'invoice_composition_complete',false) END)
+    FROM jsonb_array_elements(card->'cycles') cycle),'[]'::jsonb)) ELSE card END),'[]'::jsonb))
+ INTO result FROM jsonb_array_elements(result->'cards') card;
+ELSE
+ result:=result||jsonb_build_object('complete',true,'incomplete_families','[]'::jsonb);
+END IF;
+RETURN result;
+END
 $function$;
 
 CREATE OR REPLACE FUNCTION public.lts_card_invoices_effective_v226(p_user_id uuid)
@@ -573,7 +772,7 @@ CREATE OR REPLACE FUNCTION public.lts_browser_card_detail_v226(p_family text, p_
  SET search_path TO ''
  SET "TimeZone" TO 'America/Sao_Paulo'
 AS $function$
-declare u uuid:=public.lts_browser_assert_user_v1(); result jsonb; alternative jsonb; official record; matched boolean;
+declare u uuid:=public.lts_browser_assert_user_v1(); result jsonb; alternative jsonb; official record; matched boolean; cycle_state jsonb;
 begin
  if p_family not in ('aeternum','bradesco_prime','itau_mastercard','itau_visa','c6') or p_month is null then raise exception 'invalid card cycle'; end if;
  with r as materialized(select * from public.lts_card_source_rows_v226(u) where family=p_family and reference_month=date_trunc('month',p_month)::date and not is_payment),
@@ -654,9 +853,102 @@ begin
    'financial_effect','none');
  END IF;
 
+ IF p_family='c6' AND date_trunc('month',p_month)::date>=date_trunc('month',current_date)::date THEN
+  SELECT ca INTO cycle_state FROM jsonb_array_elements(public.lts_card_cycles_v226(u)->'cards') ca WHERE ca->>'family'='c6' LIMIT 1;
+  IF cycle_state->>'complete'='false' THEN
+   result:=result||jsonb_build_object('complete',false,'amount',NULL,'detail_total',NULL,'difference',NULL,
+    'invoice_composition_complete',false,'detail_complete',false,'categories','[]'::jsonb,'instruments','[]'::jsonb,
+    'unresolved_items',cycle_state->'unresolved_items','ambiguous_document_candidates',cycle_state->'ambiguous_document_candidates',
+    'source_note','Evidências ainda não conciliadas. Não somar possíveis correspondências duplicadas como despesas.');
+  END IF;
+ END IF;
  return result;
 end
 $function$;
+
+-- Pure presentation guard: no financial source, position or other-bank mutation.
+CREATE OR REPLACE FUNCTION public.lts_flow_card_completeness_v269(p_payload jsonb,p_cycles jsonb)
+RETURNS jsonb LANGUAGE plpgsql STABLE SET search_path='' SET "TimeZone"='America/Sao_Paulo'
+AS $function$
+DECLARE result jsonb:=p_payload; flow_part jsonb; days jsonb; events jsonb; d jsonb; v jsonb; f jsonb; e jsonb; key text; dt date;
+BEGIN
+ IF p_cycles->>'complete' IS DISTINCT FROM 'false' THEN RETURN p_payload; END IF;
+ flow_part:=p_payload#>'{flow,current_future}';
+ IF flow_part IS NULL THEN RETURN p_payload||jsonb_build_object('complete',false,'incomplete_families',p_cycles->'incomplete_families'); END IF;
+ days:='[]'::jsonb;
+ FOR d IN SELECT value FROM jsonb_array_elements(coalesce(flow_part->'days','[]'::jsonb)) LOOP
+  dt:=(d->>'date')::date; v:=d; f:=coalesce(d->'fix86_columns','{}'::jsonb);
+  IF dt>=current_date THEN
+   -- No reliable due date is assigned to unresolved purchases. Conservatively
+   -- invalidate future projections, retaining the independently observed cash today.
+   v:=v||jsonb_build_object('projection_complete',false,'incomplete_families',jsonb_build_array('c6'));
+   f:=f||jsonb_build_object('liq_d30',NULL);
+   IF dt>current_date THEN
+    v:=v||jsonb_build_object('C6',coalesce(d->'C6','{}'::jsonb)||jsonb_build_object(
+     'projection_complete',false,'balance_certified',false,'arithmetic',coalesce(d#>'{C6,arithmetic}','{}'::jsonb)||jsonb_build_object('balanced',false),'balance',NULL,'operational_balance',NULL,'opening_balance',NULL,'net',NULL,'cash_exits',NULL),
+     'Consolidado',coalesce(d->'Consolidado','{}'::jsonb)||jsonb_build_object(
+     'projection_complete',false,'balance_certified',false,'arithmetic',coalesce(d#>'{Consolidado,arithmetic}','{}'::jsonb)||jsonb_build_object('balanced',false),'bank_balance',NULL,'balance',NULL,'opening_balance',NULL,'net',NULL,'economic_net',NULL),
+     'balance_certified',false,'v170_cash_arithmetic',coalesce(d->'v170_cash_arithmetic','{}'::jsonb)||jsonb_build_object('balanced',false),'arithmetic',coalesce(d->'arithmetic','{}'::jsonb)||jsonb_build_object('balanced',false),
+     'summary',coalesce(d->'summary','{}'::jsonb)||jsonb_build_object('exits',NULL,'net',NULL,'complete',false,'Consolidado',coalesce(d#>'{summary,Consolidado}','{}'::jsonb)||jsonb_build_object('exits',NULL,'net',NULL,'complete',false)));
+    FOREACH key IN ARRAY ARRAY['saidas','saidas_operacionais','saldo_final','saldo_final_operacional','saldo_anterior','saldo_anterior_operacional',
+     'saldo_apos_d0_1','liq_d0_1','saldo_apos_rsu','saldo_apos_fgts','saldo_apos_fgts_documental','disponivel_total',
+     'posicao_antes_rsus','posicao_curto_prazo','posicao_economica_total'] LOOP
+      IF f ? key THEN f:=jsonb_set(f,ARRAY[key],'null'::jsonb); END IF;
+    END LOOP;
+   END IF;
+   v:=v||jsonb_build_object('fix86_columns',f);
+  END IF;
+  days:=days||jsonb_build_array(v);
+ END LOOP;
+ events:='[]'::jsonb;
+ FOR e IN SELECT value FROM jsonb_array_elements(coalesce(flow_part->'events','[]'::jsonb)) LOOP
+  IF e->>'source'='card_invoice' AND e->>'account'='C6' AND (e->>'event_date')::date>=current_date THEN
+   e:=e||jsonb_build_object('observed_unreconciled_signed_amount',CASE WHEN e ? 'observed_unreconciled_signed_amount' THEN e->'observed_unreconciled_signed_amount' ELSE e->'signed_amount' END,'signed_amount',NULL,'complete',false,'uncertainty_reason','card_cycle_identity');
+  END IF;
+  events:=events||jsonb_build_array(e);
+ END LOOP;
+ result:=jsonb_set(result,'{flow,current_future}',flow_part||jsonb_build_object('days',days,'events',events,'complete',false));
+ RETURN result||jsonb_build_object('complete',false,'incomplete_families',p_cycles->'incomplete_families',
+  'completeness_note','C6 com ciclo ou parcela em conferência. Projeções consolidadas incompletas; posições observadas e demais bancos preservados.');
+END
+$function$;
+REVOKE ALL ON FUNCTION public.lts_flow_card_completeness_v269(jsonb,jsonb) FROM PUBLIC,anon,authenticated;
+GRANT EXECUTE ON FUNCTION public.lts_flow_card_completeness_v269(jsonb,jsonb) TO service_role;
+
+CREATE OR REPLACE FUNCTION public.lts_browser_flow_v242(p_from date, p_to date)
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+ SET "TimeZone" TO 'America/Sao_Paulo'
+ SET statement_timeout TO '45s'
+ SET jit TO 'off'
+AS $function$
+DECLARE u uuid:=public.lts_browser_assert_user_v1(); cached jsonb; j jsonb; f jsonb; cache_epoch bigint; freshness_key text;
+BEGIN
+ IF p_from IS NULL OR p_to IS NULL OR p_from>p_to OR p_to-p_from>12000 THEN RAISE EXCEPTION 'invalid range'; END IF;
+ SELECT epoch INTO cache_epoch FROM public.lts_read_cache_epoch_v242 WHERE singleton=true;
+ freshness_key:=public.lts_flow_bank_freshness_key_v246(u);
+ SELECT payload INTO cached FROM public.lts_v229_read_cache WHERE user_id=u AND kind='flow_v242' AND as_of=current_date
+ AND from_date<=p_from AND to_date>=p_to AND source_fingerprint='v246.1:'||cache_epoch||':'||freshness_key AND refreshed_at>clock_timestamp()-interval '30 minutes'
+ ORDER BY to_date-from_date,refreshed_at DESC LIMIT 1;
+ IF FOUND THEN RETURN public.lts_flow_card_completeness_v269(public.lts_flow_slice_v242(cached,p_from,p_to),public.lts_card_cycles_v226(u)); END IF;
+ -- Keep the original bank and historical arithmetic, including unknown positions.
+ j:=public.lts_browser_flow_v241(least(p_from,current_date),p_to);
+ f:=public.lts_flow_liquidity_adjustments_v242(u,j->'flow',current_date);
+ j:=j||jsonb_build_object('flow',f,'reader_revision','v245-dated-resources-and-movement-identity');
+ j:=public.lts_flow_slice_v242(j,p_from,p_to);
+ IF cache_epoch<>(SELECT epoch FROM public.lts_read_cache_epoch_v242 WHERE singleton=true) THEN RAISE EXCEPTION USING ERRCODE='40001',MESSAGE='source changed during read'; END IF;
+ IF NOT current_setting('transaction_read_only')::boolean THEN
+ BEGIN
+ INSERT INTO public.lts_v229_read_cache(user_id,kind,as_of,from_date,to_date,payload,refreshed_at,source_fingerprint)
+ VALUES(u,'flow_v242',current_date,p_from,p_to,j,clock_timestamp(),'v246.1:'||cache_epoch||':'||freshness_key)
+ ON CONFLICT(user_id,kind,as_of,from_date,to_date) DO UPDATE SET payload=excluded.payload,refreshed_at=excluded.refreshed_at,source_fingerprint=excluded.source_fingerprint;
+ EXCEPTION WHEN read_only_sql_transaction THEN NULL;
+ END;
+ END IF;
+ RETURN public.lts_flow_card_completeness_v269(j,public.lts_card_cycles_v226(u));
+END $function$;
 
 -- Install together with the authorized private source import and its transaction-level assertions.
 ROLLBACK;

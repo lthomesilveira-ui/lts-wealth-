@@ -67,7 +67,7 @@ with installment_decisions as materialized (
  FROM public.card_invoices ci JOIN public.source_documents sd
   ON sd.id::text=ci.metadata->>'bank_statement_document_id' AND sd.user_id=ci.user_id
  CROSS JOIN LATERAL jsonb_array_elements(sd.metadata->'existing_source_items') e
- WHERE ci.user_id=p_user_id AND ci.status='closed'
+ WHERE ci.user_id=p_user_id AND ci.status IN ('closed','paid')
   AND ci.metadata->>'bank_statement_closed'='true'
   AND ci.metadata->>'bank_statement_full_composition'='true'
   AND sd.document_type='credit_card_statement' AND sd.processing_status='processed'
@@ -143,11 +143,15 @@ select s.id,s.bank,s.family,s.normalized_payload->>'card_name',
  s.payment,s.raw_bill_id,s.last_seen_at
 from provider_classification s
 ), documented_decisions AS MATERIALIZED (
- SELECT m.provider_id,d.category_label,d.beneficiary
+ SELECT m.provider_id,coalesce(rv.category_label,d.category) category_label,rv.beneficiary
  FROM public.lts_card_document_matches_v234(p_user_id) m
- JOIN public.lts_v178_review_decision d ON d.user_id=p_user_id
-  AND d.source_table='lts_card_document_supplement_v234' AND d.source_ref=m.document_id::text
- WHERE d.category_label IS NOT NULL
+ JOIN public.lts_card_document_supplement_v234 d ON d.id=m.document_id AND d.user_id=p_user_id
+ LEFT JOIN public.lts_v178_review_decision rv ON rv.user_id=p_user_id
+ AND rv.source_table='lts_card_document_supplement_v234' AND rv.source_ref=d.id::text
+ WHERE (rv.category_label IS NOT NULL OR (d.family='c6' AND d.metadata->>'source_kind'='owner_bank_app_screenshot' AND d.category IS NOT NULL))
+ AND NOT EXISTS(SELECT 1 FROM public.lts_v178_review_decision exact WHERE exact.user_id=p_user_id
+ AND exact.source_table='lts_open_finance_staging' AND exact.source_ref=m.provider_id::text
+ AND (exact.category_label IS NOT NULL OR exact.beneficiary IS NOT NULL))
 )
 SELECT p.source_id,p.bank,p.family,p.card_name,p.last4,p.billing_last4,p.posting_date,p.purchase_date,p.reference_month,p.due_date,
  p.provider_status,p.amount,p.description,

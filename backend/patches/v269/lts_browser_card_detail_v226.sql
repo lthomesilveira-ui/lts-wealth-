@@ -5,7 +5,7 @@ CREATE OR REPLACE FUNCTION public.lts_browser_card_detail_v226(p_family text, p_
  SET search_path TO ''
  SET "TimeZone" TO 'America/Sao_Paulo'
 AS $function$
-declare u uuid:=public.lts_browser_assert_user_v1(); result jsonb; alternative jsonb; official record; matched boolean;
+declare u uuid:=public.lts_browser_assert_user_v1(); result jsonb; alternative jsonb; official record; matched boolean; cycle_state jsonb;
 begin
  if p_family not in ('aeternum','bradesco_prime','itau_mastercard','itau_visa','c6') or p_month is null then raise exception 'invalid card cycle'; end if;
  with r as materialized(select * from public.lts_card_source_rows_v226(u) where family=p_family and reference_month=date_trunc('month',p_month)::date and not is_payment),
@@ -86,6 +86,15 @@ begin
    'financial_effect','none');
  END IF;
 
+ IF p_family='c6' AND date_trunc('month',p_month)::date>=date_trunc('month',current_date)::date THEN
+  SELECT ca INTO cycle_state FROM jsonb_array_elements(public.lts_card_cycles_v226(u)->'cards') ca WHERE ca->>'family'='c6' LIMIT 1;
+  IF cycle_state->>'complete'='false' THEN
+   result:=result||jsonb_build_object('complete',false,'amount',NULL,'detail_total',NULL,'difference',NULL,
+    'invoice_composition_complete',false,'detail_complete',false,'categories','[]'::jsonb,'instruments','[]'::jsonb,
+    'unresolved_items',cycle_state->'unresolved_items','ambiguous_document_candidates',cycle_state->'ambiguous_document_candidates',
+    'source_note','Evidências ainda não conciliadas. Não somar possíveis correspondências duplicadas como despesas.');
+  END IF;
+ END IF;
  return result;
 end
 $function$;

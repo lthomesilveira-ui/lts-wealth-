@@ -89,7 +89,7 @@
   function mergeForecast(parts){
    const days=new Map(),events=new Map();
    for(const part of parts){const f=part?.flow?.current_future||{};for(const d of arr(f.days))days.set(d.date,d);for(const e of arr(f.events))events.set([e.source,e.source_ref,e.event_date].join('|'),e)}
-   return{ok:true,flow:{fgts_projection_contract:parts.at(-1)?.flow?.fgts_projection_contract||null,current_future:{days:[...days.values()].sort((a,b)=>a.date.localeCompare(b.date)),events:[...events.values()]}}};
+   return{ok:true,complete:!parts.some(p=>p?.complete===false),incomplete_families:[...new Set(parts.flatMap(p=>p?.incomplete_families||[]))],flow:{fgts_projection_contract:parts.at(-1)?.flow?.fgts_projection_contract||null,current_future:{days:[...days.values()].sort((a,b)=>a.date.localeCompare(b.date)),events:[...events.values()]}}};
   }
   async function loadForecast(force=false){
    const s=state.forecast;if(s.status==='loading'||(!force&&s.status!=='idle'))return;
@@ -101,7 +101,7 @@
     const authToken=(await S.auth.getSession())?.data?.session?.access_token;
     if(state.forecast!==s||s.token!==token)return;s.status='ready';s.updatedAt=Date.now();s.authToken=authToken;
     const rows=arr(s.data?.flow?.current_future?.days).filter(d=>d.date>=now&&d.date<=ranges[0].p_to),first=key=>rows.find(d=>finite(d.fix86_columns?.[key])!=null&&Number(d.fix86_columns[key])<0)?.date||null;
-    state.planningUI={status:'ready',date:now,data:{version:'planning-ui-contract-v2',scenario_revision:'v242',period_to:ranges[0].p_to,d01_first_need:first('saldo_apos_d0_1'),rsu_first_need:first('saldo_apos_rsu'),fgts_first_negative:first('saldo_apos_fgts'),fgts_covers_horizon:!first('saldo_apos_fgts')}};
+    state.planningUI=s.data?.complete===false||rows.some(d=>['saldo_apos_d0_1','saldo_apos_rsu','saldo_apos_fgts'].some(k=>finite(d.fix86_columns?.[k])==null))?{status:'incomplete',date:now,data:null}:{status:'ready',date:now,data:{version:'planning-ui-contract-v2',scenario_revision:'v242',period_to:ranges[0].p_to,d01_first_need:first('saldo_apos_d0_1'),rsu_first_need:first('saldo_apos_rsu'),fgts_first_negative:first('saldo_apos_fgts'),fgts_covers_horizon:!first('saldo_apos_fgts')}};
    }catch(e){if(state.forecast===s&&s.token===token){s.status=s.parts.length?'partial':'error';s.error=String(e.message||e)}}
    finally{releaseWaiting();if(state.forecast===s&&s.token===token&&D&&!N.classList.contains('hidden'))render()}
   }
@@ -185,8 +185,8 @@
    if(state.dashboardReport.status==='error')warnings.push('Relatório de despesas não atualizado.');
    if(warnings.length)(root.querySelector('.v168-pagehead')||root.firstElementChild)?.insertAdjacentHTML('afterend','<div class="v178-notice" role="status">'+escape(warnings.join(' '))+' <button class="v178-refresh">Tentar novamente</button></div>');
    const cards=[...root.querySelectorAll('.v168-card')];
-   const forecastReady=!!f&&arr(f.flow?.current_future?.days).length>1&&state.forecast.date===day();
-   if(!forecastReady){for(const card of cards.filter(x=>/Evolução projetada|O que exige decisão/.test(x.querySelector('h2')?.textContent||''))){const head=card.querySelector('.v168-cardhead')?.outerHTML||'';card.innerHTML=head+'<div class="v178-empty" role="status">'+(state.forecast.status==='loading'?'<span class="v242-spinner" style="display:inline-block;vertical-align:middle;margin-right:8px" aria-hidden="true"></span>Carregando projeção…':'Projeção indisponível.')+'</div><button class="v178-refresh">Atualizar projeção</button>'}}
+   const forecastReady=!!f&&f.complete!==false&&arr(f.flow?.current_future?.days).length>1&&state.forecast.date===day();
+   if(!forecastReady){for(const card of cards.filter(x=>/Evolução projetada|O que exige decisão/.test(x.querySelector('h2')?.textContent||''))){const head=card.querySelector('.v168-cardhead')?.outerHTML||'';card.innerHTML=head+'<div class="v178-empty" role="status">'+(state.forecast.status==='loading'?'<span class="v242-spinner" style="display:inline-block;vertical-align:middle;margin-right:8px" aria-hidden="true"></span>Carregando projeção…':(f?.complete===false?'Projeção consolidada incompleta: C6 em conferência. Os demais bancos continuam disponíveis no fluxo.':'Projeção indisponível.'))+'</div><button class="v178-refresh">Atualizar projeção</button>'}}
    else if(state.forecast.status!=='ready'){
     const last=arr(f.flow.current_future.days).at(-1)?.date;const title=cards.find(x=>/Evolução projetada/.test(x.querySelector('h2')?.textContent||''))?.querySelector('h2');if(title)title.textContent='Evolução projetada até '+dateLabel(last);
     cards.find(x=>/Evolução projetada/.test(x.querySelector('h2')?.textContent||''))?.insertAdjacentHTML('beforeend','<div class="v178-notice">Projeção disponível até '+escape(dateLabel(last))+'. O restante ainda não foi atualizado.</div>');

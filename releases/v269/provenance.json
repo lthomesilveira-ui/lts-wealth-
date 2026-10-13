@@ -6,7 +6,8 @@
   "scope": [
     "Proved C6 cycle identities and continuing installment sources",
     "Preserve exact classification and beneficiary origin",
-    "Distinguish documentary and received-bank composition"
+    "Distinguish documentary and received-bank composition",
+    "Isolate uncertain C6 cycles without certifying partial consolidated projections"
   ],
   "financial_source_policy": "No private financial evidence in the public repository.",
   "acceptance_limits": [
@@ -279,4 +280,3 @@
     }
   }
 }
-
