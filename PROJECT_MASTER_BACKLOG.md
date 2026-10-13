@@ -1,3 +1,25 @@
+# Estado vigente — V268 publicada em 13/10/2026
+
+Homologação: https://lthomesilveira-ui.github.io/lts-wealth-/releases/v268/app.html
+Código incorporado pelo PR133: https://github.com/lthomesilveira-ui/lts-wealth-/pull/133
+Head validado: 02c0235415b863997a6c0e4720ead81a69c3fdcb
+Commit do código no main: 823b4ba5aaf86afd76a53330d83f2992e626db0d
+
+A V268 tem uma interface isolada. Diferencia realizado, previsão, pagamento a confirmar, lacuna e ausência de comprovação. Copiar Consolidado preserva a seleção e os valores desconhecidos. A recuperação de leituras invalidadas contempla solicitações em andamento, troca de sessão e saída da rota. As fontes e os controles financeiros anteriores foram preservados; evidências financeiras particulares ficam fora deste repositório público.
+
+Validação: 18 checks finais aprovados; novos controles em Chromium/WebKit, desktop/celular; documentos, cartões, classificações, períodos, edição e repetição idempotente exercitados com dados controlados. Pages run38466150522 PASS: 669 arquivos de V268 e dez releases anteriores conferidos por SHA256. O endereço foi aberto diretamente e mostrou V268 e a tela de entrada. Isso não é prova de sessão real autenticada nem de iPhone físico.
+
+Antes deste handoff, 2.998 dos 2.999 blobs preexistentes estavam iguais. A única alteração anterior era o workflow de Pages para publicar/verificar V268. Raiz, V264, outros releases publicados e frozen-v181 não foram alterados. O estado V267 abaixo é histórico; sua cópia integral está também em evidence/archive/LTS_WEALTH_EXECUTION_STATE_v267_20261013.md.
+
+O projeto não está integralmente encerrado. Permanecem evidências de conciliação histórica, premissas futuras, pagamentos não comprovados, verificações administrativas de Auth, sessões reais, restauração completa e aceite em aparelho. As respostas financeiras já recebidas continuam válidas; não criar lançamentos ou novas perguntas por ausência de evidência técnica.
+
+Checkpoint privado: LTS-CONTINUAR-V268-20261013.
+Retomada canônica: LTS_CONTINUAR.md e Evidencias_LTS_Wealth_V268_2026-10-13.json no conjunto privado do projeto. Health fora; Continuity Watch OFF.
+
+---
+
+## Histórico preservado
+
 ## Current bounded performance round — 13 October 2026
 
 V267 removes repeated text-function context and paid-identity query planning work. The complete source-invalidated Flow and Expenses responses match their pre-change digests; Wealth matches except its calculation clock. Source events, expense identities, payment predicates and ACLs are unchanged. Positive/negative live-source tests, daily arithmetic/current cash and the 147 no-identity denial tests passed. See the V267 README and private continuity receipt for exact timings and evidence limits.
