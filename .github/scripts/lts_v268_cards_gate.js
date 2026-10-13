@@ -308,6 +308,7 @@ async function run(browser,viewport,label){
   flags.cyclesFail=false;await frame.locator('[data-v226-retry]').click();
   await frame.waitForFunction(()=>window.__LTS_V226.cycles?.cards.length===5);
   const dims=await frame.locator('html').evaluate(e=>({width:e.clientWidth,scroll:e.scrollWidth}));assert(dims.scroll<=dims.width+3,'no horizontal page overflow');
+  await frame.waitForFunction(()=>{const root=document.querySelector('.v168-dashboard');if(!root)return false;const nodes=['.current','.v227-liquidity','.v227-expenses'].map(s=>root.querySelector(s));if(nodes.some(n=>!n))return false;const tops=nodes.map(n=>n.getBoundingClientRect().top);return tops[0]<tops[1]&&tops[1]<tops[2]});
   const order=await frame.locator('.v168-dashboard').evaluate(root=>{const rect=s=>root.querySelector(s).getBoundingClientRect().top;return [rect('.current'),rect('.v227-liquidity'),rect('.v227-expenses')]});assert(order[0]<order[1]&&order[1]<order[2],'balances, liquidity, expenses order');assert.equal(await frame.locator('.v227-expenses .v226-upcoming').count(),1);assert.equal(await frame.locator('.v227-expenses .v171-expense-total').count(),1);
   assert.deepEqual(errors,[],'no uncaught errors');await page.screenshot({path:'qa/v229-'+label+'-dashboard.png'});
   return{label,pass:true,expense_last_month:true,card_inventory:true,payment_status:true,manual_edit_delete:true,scroll:geometry,flow_render_timings:flowTimings,calls:calls.length,financial_data:'synthetic fixtures; live SQL checks separate'};
