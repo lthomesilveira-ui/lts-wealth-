@@ -1,0 +1,3 @@
+do $check$ begin if has_table_privilege('anon','public.lts_validated_lock_registry','SELECT') or has_table_privilege('authenticated','public.lts_validated_lock_registry','SELECT') then raise exception 'unexpected browser access: review required'; end if; if not has_table_privilege('service_role','public.lts_validated_lock_registry','SELECT') then raise exception 'service access missing'; end if; end $check$;
+alter table public.lts_validated_lock_registry enable row level security;
+comment on table public.lts_validated_lock_registry is 'Server-only approved financial locks. Browser grants remain absent; RLS without client policies adds defense in depth. Internal service and owner-definer readers retain their existing access.';

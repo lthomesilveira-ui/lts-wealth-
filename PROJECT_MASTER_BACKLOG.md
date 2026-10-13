@@ -1,3 +1,13 @@
+## Current bounded backend round — 13 October 2026
+
+V266 fixes loss of a received unresolved invoice after its due date, retains exact received composition, and separates unconfirmed current obligations from absent future forecasts. Actual database evidence/negative/rollback tests passed; existing expense identities and financial source events remain unchanged. Server-only lock protection is active and all 147 tested authenticated LTS routines rejected calls without identity claims.
+
+These scoped corrections do not close the overall product backlog. Keep historical anchors/links, future-series conditions, missing bank/payment evidence, residual asset/contract reconciliation, administrative Auth configuration, cold/device performance, V248 complete isolated recovery, distinct PENDING/POSTED cases, individual UX/report cases and personal acceptance open. Daily backup integrity is a separate check from recovery. No new broad document or financial question is needed for this round.
+
+The current interface remains V264 and all protected/prior assets remain unchanged. Exact private evidence and current state are retained in LTS_CONTINUAR.md.
+
+--- Earlier backlog records preserved ---
+
 ## Current consolidated register — V236, 1 October 2026
 
 Read [LTS_WEALTH_V236_CLOSEOUT_MATRIX.md](LTS_WEALTH_V236_CLOSEOUT_MATRIX.md) first for current statuses and source limits. The isolated successor is `releases/v236/app.html`; its publication and QA evidence are recorded in the private delivery receipt. The fixed legacy manifest and protected root are separate entries and do not identify the latest isolated release. Earlier sections below remain historical and must not recreate already answered questions or resolved incidents. No user/physical-phone acceptance is implied.
