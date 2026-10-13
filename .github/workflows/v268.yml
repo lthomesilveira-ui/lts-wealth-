@@ -29,10 +29,10 @@ jobs:
         run: node .github/scripts/lts_v268_homologation_gate.js
       - name: Preserved documents, source dates and updates
         if: success() || failure()
-        run: node .github/scripts/lts_v233_document_gate.js
+        run: node .github/scripts/lts_v268_document_gate.js
       - name: Preserved card drill-down and classification
         if: success() || failure()
-        run: node .github/scripts/lts_v229_cards_gate.js
+        run: node .github/scripts/lts_v268_cards_gate.js
       - name: Preserved daily cash, selected periods and state
         if: success() || failure()
         run: node .github/scripts/lts_v245_regression_gate.js

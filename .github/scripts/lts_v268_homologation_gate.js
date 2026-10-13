@@ -3,7 +3,7 @@ const {chromium,webkit}=require('playwright'),fs=require('node:fs'),assert=requi
 const {product,cockpit,wealth}=require('./lts_v165_executive_ux_gate.js');
 const session={access_token:'v268-fixture',refresh_token:'fixture',expires_at:4102444800,user:{id:'fixture-user'}};
 const shift=(d,n)=>{const x=new Date(d+'T12:00:00Z');x.setUTCDate(x.getUTCDate()+n);return x.toISOString().slice(0,10)};
-function day(date){return {date,Consolidado:{bank_balance:1234.56,economic_net:0},Itaú:{balance:1200,net:0},Bradesco:{balance:34.56,net:0},C6:{balance:0,net:0},summary:{events:0,Consolidado:{entries:0,exits:0}},fix86_columns:{saldo_anterior:1234.56,saldo_final:1234.56,entradas_operacionais:0,saidas_operacionais:0,liq_d0_1_recurso:0,saldo_apos_d0_1:1234.56,rsus_vested:null,saldo_apos_rsu:null,fgts:20,saldo_apos_fgts:1254.56}};}
+function day(date){return {date,Consolidado:{bank_balance:1234.56,economic_net:0},Itaú:{balance:1200,net:0},Bradesco:{balance:34.56,net:0},C6:{balance:0,net:0},summary:{events:0,Consolidado:{entries:0,exits:0}},fix86_columns:{saldo_anterior:1234.56,saldo_final:1234.56,entradas_operacionais:0,saidas_operacionais:0,liq_d0_1_recurso:0,saldo_apos_d0_1:1234.56,rsus_vested:50,saldo_apos_rsu:1284.56,fgts:20,saldo_apos_fgts:1304.56}};}
 function flow(from,to){const days=[];for(let d=from;d<=to;d=shift(d,1))days.push(day(d));return {ok:true,flow:{from,to,historical:{days:[],events:[]},current_future:{days,events:[]}}};}
 const period=(month,status,actual_events=0,future_events=0)=>({period_start:month+'-01',period_end:month+'-28',status,actual_events,future_events});
 const audit={items:[],horizon_review_count:1,horizon_checks:[{key:'fixture-composition',title:'Compromisso de teste',direction:'expense',cadence:'monthly',period_coverage:[period('2026-10','covered',1),period('2026-11','covered',0,1),period('2026-12','awaiting_payment_evidence'),period('2027-01','review'),period('2031-12','review')]}]};
@@ -35,6 +35,9 @@ async function run(browser,width,engine){
   await nav('Fluxo Diário').click();await f.waitForFunction(()=>!FLOWLOADING&&FLOWQ&&!FLOWQ.error);
   await f.locator('#flowFrom').fill('2026-10-12');await f.locator('#flowTo').fill('2026-10-13');await f.locator('#flowApply').click();await f.waitForFunction(()=>!FLOWLOADING&&FLOWFROM==='2026-10-12'&&FLOWTO==='2026-10-13');
   await f.locator('[data-a="Bradesco"]').click();
+  // A complete startup forecast must not depend on missing-source fixtures.
+  // Exercise unknown export cells only in the explicitly loaded local range.
+  await f.evaluate(()=>{const d=mergedFlowDays().find(x=>x.date==='2026-10-12');d.fix86_columns.rsus_vested=null;d.fix86_columns.saldo_apos_rsu=null;});
   const before=await f.evaluate(()=>({bank:ACC,from:FLOWFROM,to:FLOWTO,showZero:SHOWZERO,expanded:[...EXP]}));
   await f.locator('#flowCopyConsolidated').click();await f.waitForFunction(()=>!!window.__qaClipboard);
   const exported=await f.evaluate(()=>window.__qaClipboard);assert.equal(exported.split('\n').length,3);assert.match(exported,/2026-10-12\t1234,56\t0,00\t0,00\t1234,56/);assert.match(exported,/Não comprovado/);
@@ -50,6 +53,6 @@ async function run(browser,width,engine){
   const overflow=await f.evaluate(()=>document.documentElement.scrollWidth>innerWidth+2);assert(!overflow,'page must fit viewport');
   assert(!calls.some(c=>/mutate|create_future|classify|apply_natural|feedback|create_internal_transfer/.test(c.name)),'read-only actions must not write financial facts');assert.deepEqual(errors,[]);
   return {engine,width,pass:true,states_distinct:true,clipboard_selected_range:true,bank_and_filters_unchanged:true,loading_and_error_guard:true,exact_month_navigation:true,no_financial_write:true};
- }catch(e){await page.screenshot({path:'qa/v268-'+engine+'-'+width+'-failure.png',fullPage:true});fs.writeFileSync('qa/v268-'+engine+'-'+width+'-failure.json',JSON.stringify({error:String(e),errors,calls},null,2));throw e;}finally{await ctx.close();}
+ }catch(e){await page.screenshot({path:'qa/v268-'+engine+'-'+width+'-failure.png',fullPage:true});const runtime=await page.frames().find(x=>x.url().includes('/index.html'))?.evaluate(()=>({state:window.__LTS_V178_STATE?.forecast,report:window.__LTS_V178_STATE?.dashboardReport,route:V})).catch(()=>null);fs.writeFileSync('qa/v268-'+engine+'-'+width+'-failure.json',JSON.stringify({error:String(e),errors,calls,runtime},null,2));console.error(JSON.stringify({error:String(e),errors,calls: calls.slice(-10),runtime}));throw e;}finally{await ctx.close();}
 }
 (async()=>{fs.mkdirSync('qa',{recursive:true});const results=[];for(const [engine,launcher]of [['chromium',chromium],['webkit',webkit]]){const b=await launcher.launch();try{for(const width of [1440,390])results.push(await run(b,width,engine));}finally{await b.close();}}fs.writeFileSync('qa/v268-homologation.json',JSON.stringify(results,null,2));console.log(JSON.stringify(results));})().catch(e=>{console.error(e);process.exitCode=1;});
