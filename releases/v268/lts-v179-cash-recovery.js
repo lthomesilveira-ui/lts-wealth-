@@ -319,7 +319,13 @@
   renderNav=function(){const out=previousNav();return out};
   document.addEventListener('visibilitychange',()=>{if(!document.hidden&&V==='Dashboard'&&state.date!==day())startDashboard(true)});
   S.auth.onAuthStateChange?.((event)=>{if(event==='SIGNED_OUT'){cache.clear();inflight.clear();closeDetail();state.date=null;for(const k of ['cash','wealth','forecast','awards','dashboardReport'])state[k]={status:'idle'}}});
-  window.addEventListener('lts:data-invalidated',()=>{cache.clear();dashboardSerial++;for(const k of ['cash','wealth','forecast','planningUI','dashboardReport']){state[k].token=(state[k].token||0)+1;state[k].status='idle';state[k].data=null;state[k].parts=[]}});
+  window.addEventListener('lts:data-invalidated',()=>{
+   cache.clear();dashboardSerial++;
+   for(const k of ['cash','wealth','forecast','planningUI','dashboardReport']){state[k].token=(state[k].token||0)+1;state[k].status='idle';state[k].data=null;state[k].parts=[]}
+   // Invalidated readers must not remain idle on the visible Dashboard.
+   // Restart through the existing owner/deduplication path, once per event.
+   queueMicrotask(()=>{if(V==='Dashboard'&&D&&!N.classList.contains('hidden')){startDashboard(false);render()}});
+  });
   async function cachedFlow(from,to){
    const s=state.forecast,token=(await S.auth.getSession())?.data?.session?.access_token;if(s.status==='loading'&&s.waiting)await s.waiting;
    if(s.status!=='ready'||s.date!==day()||s.authToken!==token||Date.now()-s.updatedAt>=300000)return null;

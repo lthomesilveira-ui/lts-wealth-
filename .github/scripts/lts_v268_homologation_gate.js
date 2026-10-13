@@ -31,6 +31,9 @@ async function run(browser,width,engine){
   await page.waitForFunction(()=>document.getElementById('shell')?.contentWindow?.__LTS_V268_READ_TOOLS?.installed);
   const f=page.frames().find(x=>x.url().includes('/index.html'));assert(f);page.setDefaultTimeout(30000);
   await f.waitForFunction(()=>window.__LTS_V178_STATE?.forecast?.status==='ready'&&window.__LTS_V178_STATE?.dashboardReport?.status==='ready');
+  const generation=await f.evaluate(()=>window.__LTS_V178_STATE.forecast.token);
+  await f.evaluate(()=>window.dispatchEvent(new Event('lts:data-invalidated')));
+  await f.waitForFunction(g=>window.__LTS_V178_STATE?.forecast?.token>g&&window.__LTS_V178_STATE?.forecast?.status==='ready'&&window.__LTS_V178_STATE?.dashboardReport?.status==='ready',generation);
   const nav=name=>width<520?f.locator('#dx1MobileNav [data-mobile-route="'+name+'"]'):f.locator('.nav [data-v="'+name+'"]');
   await nav('Fluxo Diário').click();await f.waitForFunction(()=>!FLOWLOADING&&FLOWQ&&!FLOWQ.error);
   await f.locator('#flowFrom').fill('2026-10-12');await f.locator('#flowTo').fill('2026-10-13');await f.locator('#flowApply').click();await f.waitForFunction(()=>!FLOWLOADING&&FLOWFROM==='2026-10-12'&&FLOWTO==='2026-10-13');
