@@ -81,9 +81,9 @@
   async function loadState(key,name,args={},force=false){
    const s=state[key];if(s.status==='loading'||(!force&&s.status!=='idle'))return;
    const token=(s.token||0)+1;s.token=token;s.status='loading';s.error=null;s.outcome=null;s.code=null;s.httpStatus=null;
-   try{const value=await request(name,args,key==='planningUI'?48000:20000,force);if(s.token!==token)return;s.data=value;s.date=day();s.status='ready';if(key==='wealth'&&!v168.wealth.loading){v168.wealth.data=value;v168.wealth.error=null}}
-   catch(e){if(s.token===token){s.status='error';s.error=String(e.message||e);s.outcome=e?.ltsOutcome||null;s.code=e?.code||null;s.httpStatus=e?.httpStatus||null}}
-   finally{if(s.token===token){publishCashDiagnostic();queueMicrotask(()=>{if(D&&!N.classList.contains('hidden'))render()})}}
+   try{const value=await request(name,args,key==='planningUI'?48000:20000,force);if(state[key]!==s||s.token!==token)return;s.data=value;s.date=day();s.status='ready';if(key==='wealth'&&!v168.wealth.loading){v168.wealth.data=value;v168.wealth.error=null}}
+   catch(e){if(state[key]===s&&s.token===token){s.status='error';s.error=String(e.message||e);s.outcome=e?.ltsOutcome||null;s.code=e?.code||null;s.httpStatus=e?.httpStatus||null}}
+   finally{if(state[key]===s&&s.token===token){publishCashDiagnostic();queueMicrotask(()=>{if(D&&!N.classList.contains('hidden'))render()})}}
    return true;
   }
   function mergeForecast(parts){
@@ -96,13 +96,14 @@
    const token=(s.token||0)+1;s.token=token;s.status='loading';s.date=day();s.parts=[];s.data=null;s.error=null;let releaseWaiting;s.waiting=new Promise(resolve=>{releaseWaiting=resolve});
    const now=day(),year=Number(now.slice(0,4)),past=new Date(now+'T12:00:00Z');past.setUTCDate(past.getUTCDate()-5);const ranges=[{p_from:past.toISOString().slice(0,10),p_to:(year+1)+'-12-31'}];
    try{
-    for(const r of ranges){let p;try{p=await request('lts_browser_flow_v242',r,48000,force)}catch(error){if(s.token!==token)return;if(!['40001','57014'].includes(String(error?.code))&&![408,429,500,502,503,504].includes(Number(error?.httpStatus)))throw error;p=await request('lts_browser_flow_v242',r,48000,true)}if(s.token!==token)return;
+    for(const r of ranges){let p;try{p=await request('lts_browser_flow_v242',r,48000,force)}catch(error){if(state.forecast!==s||s.token!==token)return;if(!['40001','57014'].includes(String(error?.code))&&![408,429,500,502,503,504].includes(Number(error?.httpStatus)))throw error;p=await request('lts_browser_flow_v242',r,48000,true)}if(state.forecast!==s||s.token!==token)return;
      if(!arr(p?.flow?.current_future?.days).length)throw Error('Projeção sem dias retornados.');s.parts.push(p);s.data=mergeForecast(s.parts);render();}
-    s.status='ready';s.updatedAt=Date.now();s.authToken=(await S.auth.getSession())?.data?.session?.access_token;
+    const authToken=(await S.auth.getSession())?.data?.session?.access_token;
+    if(state.forecast!==s||s.token!==token)return;s.status='ready';s.updatedAt=Date.now();s.authToken=authToken;
     const rows=arr(s.data?.flow?.current_future?.days).filter(d=>d.date>=now&&d.date<=ranges[0].p_to),first=key=>rows.find(d=>finite(d.fix86_columns?.[key])!=null&&Number(d.fix86_columns[key])<0)?.date||null;
     state.planningUI={status:'ready',date:now,data:{version:'planning-ui-contract-v2',scenario_revision:'v242',period_to:ranges[0].p_to,d01_first_need:first('saldo_apos_d0_1'),rsu_first_need:first('saldo_apos_rsu'),fgts_first_negative:first('saldo_apos_fgts'),fgts_covers_horizon:!first('saldo_apos_fgts')}};
-   }catch(e){if(s.token===token){s.status=s.parts.length?'partial':'error';s.error=String(e.message||e)}}
-   finally{releaseWaiting();if(s.token===token&&D&&!N.classList.contains('hidden'))render()}
+   }catch(e){if(state.forecast===s&&s.token===token){s.status=s.parts.length?'partial':'error';s.error=String(e.message||e)}}
+   finally{releaseWaiting();if(state.forecast===s&&s.token===token&&D&&!N.classList.contains('hidden'))render()}
   }
   function retryableCashFailure(s){return s?.status==='error'&&(s.outcome==='client_timeout'||s.outcome==='network_error'||String(s.code)==='57014'||[408,429,500,502,503,504].includes(Number(s.httpStatus)))}
   async function priorityCash(force=false,serial){
@@ -318,13 +319,26 @@
   render=function(){const out=previousRender();after();return out};
   renderNav=function(){const out=previousNav();return out};
   document.addEventListener('visibilitychange',()=>{if(!document.hidden&&V==='Dashboard'&&state.date!==day())startDashboard(true)});
-  S.auth.onAuthStateChange?.((event)=>{if(event==='SIGNED_OUT'){cache.clear();inflight.clear();closeDetail();state.date=null;for(const k of ['cash','wealth','forecast','awards','dashboardReport'])state[k]={status:'idle'}}});
+  S.auth.onAuthStateChange?.((event)=>{if(event==='SIGNED_OUT'){
+   cache.clear();inflight.clear();closeDetail();state.date=null;dashboardSerial++;
+   // Invalidate captured slots before replacing them, regardless of listener order.
+   for(const k of ['cash','wealth','forecast','awards','dashboardReport','planningUI']){
+    const previous=state[k];if(previous)previous.token=(previous.token||0)+1;
+    state[k]={status:'idle',token:previous?.token||0};
+   }
+  }});
   window.addEventListener('lts:data-invalidated',()=>{
    cache.clear();dashboardSerial++;
    for(const k of ['cash','wealth','forecast','planningUI','dashboardReport']){state[k].token=(state[k].token||0)+1;state[k].status='idle';state[k].data=null;state[k].parts=[]}
-   // Invalidated readers must not remain idle on the visible Dashboard.
-   // Restart through the existing owner/deduplication path, once per event.
-   queueMicrotask(()=>{if(V==='Dashboard'&&D&&!N.classList.contains('hidden')){startDashboard(false);render()}});
+   // Invalidation may follow a successful HTTP response whose payload is unusable.
+   // Resume canonical reads after the superseded flight; never replay the mutation.
+   const invalidatedSerial=dashboardSerial;
+   const recover=()=>{
+    if(invalidatedSerial===dashboardSerial&&D&&!N.classList.contains('hidden')&&V==='Dashboard')startDashboard(false);
+   };
+   // Let queued explicit refresh continuations claim their generation first.
+   const schedule=()=>queueMicrotask(recover);
+   Promise.resolve(dashboardFlight).then(schedule,schedule);
   });
   async function cachedFlow(from,to){
    const s=state.forecast,token=(await S.auth.getSession())?.data?.session?.access_token;if(s.status==='loading'&&s.waiting)await s.waiting;
@@ -347,3 +361,4 @@
  function burst(){const gen=++generation;let count=0;function step(){if(gen!==generation)return;if(!install()&&++count<320)setTimeout(step,100)}step()}
  outer?.addEventListener('load',burst);burst();
 })();
+

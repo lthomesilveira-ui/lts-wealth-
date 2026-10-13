@@ -18,6 +18,8 @@ jobs:
         with:
           node-version: 22
       - run: node backend/qa/lts_v268_read_tools_unit.js
+      - run: node backend/qa/lts_v268_invalidation_recovery.js
+      - run: node backend/qa/lts_v268_session_replacement.js
       - run: node .github/scripts/lts_v225_static_gate.js
       - run: node .github/scripts/lts_v260_detail_gate.js
       - run: node .github/scripts/lts_v264_invoice_stamp_gate.js
@@ -41,3 +43,4 @@ jobs:
         with:
           name: v268-homologation-evidence
           path: qa/
+
