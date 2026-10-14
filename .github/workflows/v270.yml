@@ -16,6 +16,7 @@ jobs:
         with:
           node-version: 22
       - run: node backend/qa/lts_v270_category_display.js
+      - run: node .github/scripts/lts_v225_static_gate.js
       - name: Check candidate and protected hashes
         run: |
           python3 - <<'PY'
