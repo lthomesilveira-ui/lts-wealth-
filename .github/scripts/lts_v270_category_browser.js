@@ -226,7 +226,7 @@ async function run(browser,viewport,label){
   await page.screenshot({path:'qa/v229-'+label+'-flow.png'});
   await frame.locator('#d-2026-11-09 .exp').click();
   const invoiceRow=frame.locator('.fx89-detail-row').filter({has:frame.getByText('Fatura sintética',{exact:true})});
-  await invoiceRow.scrollIntoViewIfNeeded();assert.match(await invoiceRow.innerText(),/Classificação nos itens da fatura/);assert.equal(await invoiceRow.locator('.flow-unclassified-link').count(),0);assert.equal(await invoiceRow.locator('.carddetailbtn').count(),1,'invoice detail remains actionable');
+  await invoiceRow.scrollIntoViewIfNeeded();assert.match(await invoiceRow.innerText(),/Consulte composição e eventuais pendências em Abrir fatura/);assert.equal(await invoiceRow.locator('.flow-unclassified-link').count(),0);assert.equal(await invoiceRow.locator('.carddetailbtn').count(),1,'invoice detail remains actionable');
   await page.screenshot({path:'qa/v270-'+label+'-invoice-aggregate.png',fullPage:true});
   await frame.locator('#d-2026-11-09 .exp').click();
 
@@ -270,7 +270,7 @@ async function run(browser,viewport,label){
 
   await page.screenshot({path:'qa/v270-'+label+'-category-targets.png',fullPage:true});
   const aggregate=await frame.evaluate(()=>({invoice:flowClassificationBadge({source:'card_invoice',description:'Fatura C6',signed_amount:-100}),unknownPurchase:flowClassificationBadge({description:'Compra sintética',category:'A classificar',signed_amount:-10}),meta:flowSemanticMeta({source:'card_invoice',description:'Fatura C6',signed_amount:-100})}));
-  assert.match(aggregate.invoice,/Classificação nos itens da fatura/);assert(!aggregate.invoice.includes('flow-unclassified-link'));assert.match(aggregate.unknownPurchase,/A classificar · revisar/);assert.match(aggregate.meta,/composição e eventuais pendências/);
+  assert.equal(aggregate.invoice,'');assert(!aggregate.invoice.includes('flow-unclassified-link'));assert.match(aggregate.unknownPurchase,/A classificar · revisar/);assert.match(aggregate.meta,/composição e eventuais pendências/);
   await frame.locator('#v226-detail select[name="category"]').selectOption('Saúde');
   await frame.locator('#v226-detail select[name="beneficiary"]').selectOption('Lucas');
   await frame.locator('#v226-detail button[type="submit"]').click();

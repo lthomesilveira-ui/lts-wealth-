@@ -33,7 +33,7 @@ console.log('PASS: exact category formatter; four people and four separators; re
 vm.runInContext(idx.slice(idx.indexOf('function flowSemanticMeta(e){'),idx.indexOf('function fluxo(){')),ctx);
 ctx.isCardSettlement=e=>e.syntheticInvoice===true;
 assert.equal(ctx.flowClassificationBadge({syntheticInvoice:true,category:'A classificar'}).includes('flow-unclassified-link'),false);
-assert.match(ctx.flowClassificationBadge({syntheticInvoice:true}),/Classificação nos itens da fatura/);
+assert.equal(ctx.flowClassificationBadge({syntheticInvoice:true}),'');
 assert.match(ctx.flowSemanticMeta({syntheticInvoice:true}),/composição e eventuais pendências/);
 assert.match(ctx.flowClassificationBadge({category:'A classificar'}),/A classificar · revisar/);
 assert.equal(ctx.flowSemanticMeta({category:'A classificar'}),'Classificação pendente');
