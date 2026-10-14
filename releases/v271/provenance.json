@@ -1,0 +1,7 @@
+{
+  "release": "v271",
+  "base_release": "v270",
+  "base_commit": "0c64186b07594981d7cc4ae973c95e06c2c2b9df",
+  "purpose": "Route modern Flow invoices to canonical family-cycle composition",
+  "status": "candidate"
+}
