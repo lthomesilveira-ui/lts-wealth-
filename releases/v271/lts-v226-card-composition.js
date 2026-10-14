@@ -204,7 +204,7 @@
       const request=++settlementRequest,epoch=st.epoch;
       if(event?.source!=='card_invoice')return previousSettlement(event);
       const button=document.activeElement;
-      try{await loadCycles();}catch{}
+      try{await loadCycles(Boolean(st.error));}catch{}
       if(request!==settlementRequest||epoch!==st.epoch||!active()||V!=='Fluxo Diário')return;
       const target=window.LTSFlowInvoiceTarget.resolve(event,st.error?null:st.cycles);
       if(target.ok){await openDetail(target.family,target.month);return;}
@@ -223,7 +223,7 @@
     paint();
   }
   let tries=0;
-  function install(){try{const w=shell?.contentWindow,d=shell?.contentDocument;if(!w?.__LTS_V225?.installed)return false;if(!d.getElementById('v226-style')){const s=d.createElement('link');s.id='v226-style';s.rel='stylesheet';s.href='lts-v226-card-composition.css';d.head.appendChild(s);}if(!w.__LTS_V226){const s=d.createElement('script');s.textContent='('+runtime.toString()+')();';d.head.appendChild(s);}return Boolean(w.__LTS_V226);}catch{return false;}}
+  function install(){try{const w=shell?.contentWindow,d=shell?.contentDocument;if(!w?.__LTS_V225?.installed)return false;if(!d.getElementById('v226-style')){const s=d.createElement('link');s.id='v226-style';s.rel='stylesheet';s.href='lts-v226-card-composition.css';d.head.appendChild(s);}if(!w.LTSFlowInvoiceTarget){if(!window.LTSFlowInvoiceTarget)return false;w.LTSFlowInvoiceTarget=window.LTSFlowInvoiceTarget;}if(!w.__LTS_V226){const s=d.createElement('script');s.textContent='('+runtime.toString()+')();';d.head.appendChild(s);}return Boolean(w.__LTS_V226);}catch{return false;}}
   function start(){if(!install()&&++tries<320)setTimeout(start,125);}shell?.addEventListener('load',()=>{tries=0;start();});start();
 })();
 
