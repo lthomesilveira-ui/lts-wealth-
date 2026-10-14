@@ -1,0 +1,52 @@
+name: V269 C6 cycles and classification provenance
+on:
+  push:
+    branches: ['codex/v269-c6-cycle-and-classification']
+  pull_request:
+    paths: ['releases/v269/**', 'backend/patches/v269/**', 'backend/qa/*v269*', '.github/scripts/lts_v269*', '.github/workflows/v269.yml']
+permissions:
+  contents: read
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      LTS_RELEASE: v269
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node backend/qa/lts_v269_composition_contract.js
+      - run: python3 backend/qa/lts_v269_classification_contract.py
+      - run: node backend/qa/lts_v268_read_tools_unit.js
+      - run: node backend/qa/lts_v268_invalidation_recovery.js
+      - run: node backend/qa/lts_v268_session_replacement.js
+      - run: node .github/scripts/lts_v225_static_gate.js
+      - run: node .github/scripts/lts_v260_detail_gate.js
+      - run: node .github/scripts/lts_v264_invoice_stamp_gate.js
+      - run: npm install --no-save --package-lock=false playwright@1.58.2
+      - run: npx playwright install --with-deps chromium webkit
+        timeout-minutes: 8
+      - run: python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/lts-v268-http.log 2>&1 &
+      - run: node backend/qa/lts_v269_transport_contract.js
+      - name: Full app legacy compatibility, bootstrap and transitions
+        run: node .github/scripts/lts_v269_legacy_boundary_gate.js
+      - name: Incomplete C6 evidence and other-bank isolation
+        run: node .github/scripts/lts_v269_isolation_component.js
+      - name: States, clipboard, missing-source guards and exact navigation
+        run: node .github/scripts/lts_v269_homologation_gate.js
+      - name: Preserved documents, source dates and updates
+        if: success() || failure()
+        run: node .github/scripts/lts_v269_document_gate.js
+      - name: Preserved card drill-down and classification
+        if: success() || failure()
+        run: node .github/scripts/lts_v269_cards_gate.js
+      - name: Preserved daily cash, selected periods and state
+        if: success() || failure()
+        run: node .github/scripts/lts_v269_preserved_regression_gate.js
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v269-homologation-evidence
+          path: qa/

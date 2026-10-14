@@ -1,0 +1,20 @@
+name: P04 distinct planning review count
+on:
+  pull_request:
+    paths:
+      - 'releases/v269/lts-v183-v168-feedback-safe.js'
+      - 'backend/qa/lts_p04_review_count_gate.js'
+      - '.github/workflows/p04-review-count.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  count-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --check releases/v269/lts-v183-v168-feedback-safe.js
+      - run: node backend/qa/lts_p04_review_count_gate.js
