@@ -75,9 +75,15 @@ async function run(browser,engine,width,coldIncomplete){
   await page.reload();await page.waitForFunction(()=>document.getElementById('shell')?.contentWindow?.__LTS_V269_COMPLETENESS?.().incomplete);
   const fresh=page.frames().find(x=>x.url().includes('/index.html'));
   await fresh.waitForFunction(()=>window.__LTS_V178_REVIEW?.completeness_contract===269);
+  // Presentation guard must not hide the existing signed-out login form.
+  await fresh.evaluate(()=>login());
+  await fresh.waitForFunction(()=>document.querySelector('#app .login')&&document.getElementById('app').dataset.v269Blocked==='false');
+  assert(await fresh.locator('#app .login').isVisible());assert.equal(await fresh.locator('#app').evaluate(x=>x.inert),false);
+  await page.reload();await page.waitForFunction(()=>document.getElementById('shell')?.contentWindow?.__LTS_V269_COMPLETENESS?.().incomplete);
+  const recovered=page.frames().find(x=>x.url().includes('/index.html'));
   incomplete=false;epoch++;
-  await fresh.evaluate(async()=>{await S.rpc('lts_browser_product_v1');window.__LTS_V269_RECHECK();});
-  await fresh.waitForFunction(()=>!window.__LTS_V269_COMPLETENESS().incomplete&&document.getElementById('app').dataset.v269Blocked==='false');
+  await recovered.evaluate(async()=>{await S.rpc('lts_browser_product_v1');window.__LTS_V269_RECHECK();});
+  await recovered.waitForFunction(()=>!window.__LTS_V269_COMPLETENESS().incomplete&&document.getElementById('app').dataset.v269Blocked==='false');
   assert(!calls.some(n=>/mutate|classify|create_future|create_internal_transfer/.test(n)));
   assert.deepEqual(errors,[]);return {label,pass:true,synthetic:true,full_app:true,cold_bootstrap:true,warm_refresh:true,transitions:true,other_bank:true,legacy_routes_blocked:true};
  }catch(e){await page.screenshot({path:'qa/v269-legacy-'+label+'-failure.png',fullPage:true});fs.writeFileSync('qa/v269-legacy-'+label+'-failure.json',JSON.stringify({error:String(e),errors,calls,runtime:await page.frames().find(x=>x.url().includes('/index.html'))?.evaluate(()=>({view:typeof V==='undefined'?null:V,contract:window.__LTS_V269_COMPLETENESS?.(),blocked:document.getElementById('app')?.dataset.v269Blocked,cardsOnly:document.getElementById('app')?.dataset.v269CardsOnly})).catch(()=>null)},null,2));throw e;}finally{await context.close();}
