@@ -53,7 +53,11 @@ async function run(browser,engine,width,coldIncomplete){
   const dashboard=(await f.locator('#app').innerText()).replace(/\s+/g,' ');
   assert.match(dashboard,/1\.234,56/,'observed cash remains');assert.match(dashboard,/incompleta/i);
   await page.screenshot({path:'qa/v269-legacy-'+label+'-dashboard.png',fullPage:true});
-  for(const view of ['Despesas','Patrimônio','Planejamento']){
+  // Planejamento is an existing alias to the prepared Dashboard, not a separate legacy screen.
+  await f.evaluate(()=>{V='Planejamento';renderNav();render();});
+  await f.waitForFunction(()=>V==='Dashboard'&&document.getElementById('app').dataset.v269Blocked==='false');
+  assert.match(await f.locator('#app').innerText(),/incompleta/i);
+  for(const view of ['Despesas','Patrimônio']){
    await f.evaluate(v=>{V=v;if(v==='Despesas')window.__LTS_V168_STATE.expense.tab='overview';renderNav();render();},view);
    await f.waitForFunction(()=>document.getElementById('app').dataset.v269Blocked==='true');
    assert(await f.locator('#v269-incomplete-panel').isVisible());assert.equal(await f.locator('#app').evaluate(x=>x.inert),true);
@@ -75,6 +79,6 @@ async function run(browser,engine,width,coldIncomplete){
   await fresh.waitForFunction(()=>!window.__LTS_V269_COMPLETENESS().incomplete&&document.getElementById('app').dataset.v269Blocked==='false');
   assert(!calls.some(n=>/mutate|classify|create_future|create_internal_transfer/.test(n)));
   assert.deepEqual(errors,[]);return {label,pass:true,synthetic:true,full_app:true,cold_bootstrap:true,warm_refresh:true,transitions:true,other_bank:true,legacy_routes_blocked:true};
- }catch(e){await page.screenshot({path:'qa/v269-legacy-'+label+'-failure.png',fullPage:true});fs.writeFileSync('qa/v269-legacy-'+label+'-failure.json',JSON.stringify({error:String(e),errors,calls},null,2));throw e;}finally{await context.close();}
+ }catch(e){await page.screenshot({path:'qa/v269-legacy-'+label+'-failure.png',fullPage:true});fs.writeFileSync('qa/v269-legacy-'+label+'-failure.json',JSON.stringify({error:String(e),errors,calls,runtime:await page.frames().find(x=>x.url().includes('/index.html'))?.evaluate(()=>({view:typeof V==='undefined'?null:V,contract:window.__LTS_V269_COMPLETENESS?.(),blocked:document.getElementById('app')?.dataset.v269Blocked,cardsOnly:document.getElementById('app')?.dataset.v269CardsOnly})).catch(()=>null)},null,2));throw e;}finally{await context.close();}
 }
 (async()=>{fs.mkdirSync('qa',{recursive:true});const out=[];for(const [engine,launcher]of [['chromium',chromium],['webkit',webkit]]){const b=await launcher.launch();try{for(const width of [390,1440])out.push(await run(b,engine,width,width===390));}finally{await b.close()}}fs.writeFileSync('qa/v269-legacy-result.json',JSON.stringify(out,null,2));console.log(JSON.stringify(out));})().catch(e=>{console.error(e);process.exitCode=1});
