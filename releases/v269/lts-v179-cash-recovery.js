@@ -91,6 +91,15 @@
    for(const part of parts){const f=part?.flow?.current_future||{};for(const d of arr(f.days))days.set(d.date,d);for(const e of arr(f.events))events.set([e.source,e.source_ref,e.event_date].join('|'),e)}
    return{ok:true,complete:!parts.some(p=>p?.complete===false),incomplete_families:[...new Set(parts.flatMap(p=>p?.incomplete_families||[]))],flow:{fgts_projection_contract:parts.at(-1)?.flow?.fgts_projection_contract||null,current_future:{days:[...days.values()].sort((a,b)=>a.date.localeCompare(b.date)),events:[...events.values()]}}};
   }
+  function observedTodayForForecast(cashDay,forecast){
+   const observed=structuredClone(cashDay);
+   if(forecast?.complete===false){
+    observed.projection_complete=false;
+    observed.incomplete_families=forecast.incomplete_families||[];
+    observed.fix86_columns={...observed.fix86_columns,liq_d30:null};
+   }
+   return observed;
+  }
   async function loadForecast(force=false){
    const s=state.forecast;if(s.status==='loading'||(!force&&s.status!=='idle'))return;
    const token=(s.token||0)+1;s.token=token;s.status='loading';s.date=day();s.parts=[];s.data=null;s.error=null;let releaseWaiting;s.waiting=new Promise(resolve=>{releaseWaiting=resolve});
@@ -163,7 +172,7 @@
    const f=state.forecast.date===day()?state.forecast.data:null;
    ds.data.flow=f?structuredClone(f):{flow:{current_future:{days:[],events:[]}}};
    if(cashComplete(state.cash)){
-    const days=ds.data.flow.flow.current_future.days.filter(d=>d.date!==day());days.unshift(state.cash.data.day);ds.data.flow.flow.current_future.days=days;
+    const days=ds.data.flow.flow.current_future.days.filter(d=>d.date!==day());days.unshift(observedTodayForForecast(state.cash.data.day,f));ds.data.flow.flow.current_future.days=days;
    }
    const saved=v175.expense.data;
    v175.expense.data=state.dashboardReport.data||null;
