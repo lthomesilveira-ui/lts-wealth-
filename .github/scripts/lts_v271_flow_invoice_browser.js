@@ -247,12 +247,14 @@ async function run(browser,viewport,label){
   assert.match(await flowDialog.innerText(),/única fatura com segurança/);
   await flowDialog.locator('[data-v226-close]').click();
   await frame.evaluate(()=>{window.__LTS_V226.cycles.cards=window.__flowTestCards;delete window.__flowTestCards;});
-  flags.cyclesFail=true;await frame.evaluate(()=>window.__LTS_V226.invalidate());
+  flags.cyclesFail=true;const beforeFailureRead=calls.filter(x=>x.name==='lts_browser_card_cycles_v229').length;await frame.evaluate(()=>{window.__LTS_V227_TRANSPORT.invalidate();window.__LTS_V226.invalidate();});
   await invoiceRow.locator('.carddetailbtn').click();await flowDialog.getByRole('alert').waitFor();
+  assert(calls.filter(x=>x.name==='lts_browser_card_cycles_v229').length>beforeFailureRead,'failure injected at an actual source read');
   assert.equal(await flowDialog.locator('[data-v226-item]').count(),0,'failed fresh load does not reuse stale composition');
   await flowDialog.locator('[data-v226-close]').click();
-  flags.cyclesFail=false;
+  const beforeRecoveryRead=calls.filter(x=>x.name==='lts_browser_card_cycles_v229').length;flags.cyclesFail=false;
   await invoiceRow.locator('.carddetailbtn').click();await flowDialog.locator('[data-v226-item]').first().waitFor();
+  assert(calls.filter(x=>x.name==='lts_browser_card_cycles_v229').length>beforeRecoveryRead,'second click reads source again');
   assert.equal(await flowDialog.locator('[data-v226-item]').count(),2,'new click recovers after source failure');
   await flowDialog.locator('[data-v226-close]').click();
 
