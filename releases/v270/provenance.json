@@ -1,0 +1,7 @@
+{
+  "release": "v270",
+  "base_release": "v269",
+  "base_commit": "570d817f352227ae8f5a69e0c61a3be597cd28d2",
+  "purpose": "Exact category presentation; stored taxonomy and financial values unchanged",
+  "status": "candidate; not published"
+}
