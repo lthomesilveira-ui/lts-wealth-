@@ -29,6 +29,9 @@ jobs:
       - run: npx playwright install --with-deps chromium webkit
         timeout-minutes: 8
       - run: python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/lts-v268-http.log 2>&1 &
+      - run: node backend/qa/lts_v269_transport_contract.js
+      - name: Full app legacy compatibility, bootstrap and transitions
+        run: node .github/scripts/lts_v269_legacy_boundary_gate.js
       - name: Incomplete C6 evidence and other-bank isolation
         run: node .github/scripts/lts_v269_isolation_component.js
       - name: States, clipboard, missing-source guards and exact navigation

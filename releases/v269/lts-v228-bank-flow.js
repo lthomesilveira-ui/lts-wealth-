@@ -61,7 +61,7 @@
    box.textContent='Conferência de posições anteriores: '+rows.map(([bank,value])=>bank+' · '+new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(value)).join('; ')+'. Os saldos atuais vêm dos bancos. Falta o movimento que explique a mudança de posição; o ajuste sem comprovante foi retirado.';
   }
   render=function(){const result=previousRender.apply(this,arguments);after();return result;};
-  window.__LTS_V228_FLOW={installed:true};after();
+  window.__LTS_V228_FLOW={installed:true,completeness_contract:269};after();
  }
  function install(){try{const w=shell?.contentWindow,d=shell?.contentDocument;if(!w?.__LTS_V227_LAYOUT)return false;if(!w.__LTS_V228_FLOW){const s=d.createElement('script');s.textContent='('+runtime.toString()+')();';d.head.appendChild(s);}return !!w.__LTS_V228_FLOW;}catch{return false;}}
  let tries=0;function start(){if(!install()&&++tries<400)setTimeout(start,100);}shell?.addEventListener('load',()=>{tries=0;start();});start();

@@ -358,7 +358,7 @@
    if(arr(out.flow.historical?.days).length+arr(out.flow.current_future?.days).length!==(Date.parse(to+'T12:00:00Z')-Date.parse(from+'T12:00:00Z'))/86400000+1)return null;
    return out;
   }
-  window.__LTS_V178_REVIEW={installed:true,version:'v242-flow-reuse',baseline:'v178',cashComplete,retryableCashFailure,openDetail,closeDetail,cachedFlow,refresh:()=>startDashboard(true),ready:()=>startDashboard(false)};
+  window.__LTS_V178_REVIEW={installed:true,completeness_contract:269,version:'v242-flow-reuse',baseline:'v178',cashComplete,retryableCashFailure,openDetail,closeDetail,cachedFlow,refresh:()=>startDashboard(true),ready:()=>startDashboard(false)};
   publishCashDiagnostic();
   if(D&&!N.classList.contains('hidden'))render();
  }

@@ -6,7 +6,7 @@
     const v233Formatters=[new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}),new Intl.DateTimeFormat('pt-BR',{month:'short',year:'numeric'}),new Intl.DateTimeFormat('en-CA',{timeZone:'America/Sao_Paulo',year:'numeric',month:'2-digit',day:'2-digit'})];
 
     if(window.__LTS_V226)return;
-    const st=window.__LTS_V226={installed:true,cycles:null,loading:false,error:'',epoch:0,loadedAt:0,loadedDay:null,options:null,history:{key:'',loading:false,data:null,error:''}};
+    const st=window.__LTS_V226={installed:true,completeness_contract:269,cycles:null,loading:false,error:'',epoch:0,loadedAt:0,loadedDay:null,options:null,history:{key:'',loading:false,data:null,error:''}};
     const previousRender=render,previousNav=renderNav;
     const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
     const money=x=>x==null?'—':v233Formatters[0].format(Number(x));
