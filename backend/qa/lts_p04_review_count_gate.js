@@ -1,0 +1,24 @@
+const fs=require('fs'),vm=require('vm'),assert=require('assert/strict');
+const file=process.env.P04_RENDERER||'releases/v269/lts-v183-v168-feedback-safe.js';const s=fs.readFileSync(file,'utf8');
+const start=s.indexOf('    function planningReviewCount('),end=s.indexOf('    function actionList(',start);assert(start>0&&end>start);
+const ctx={};vm.createContext(ctx);vm.runInContext("const arr=v=>Array.isArray(v)?v:[]; const num=v=>v===null||v===undefined||v===''?null:(Number.isFinite(Number(v))?Number(v):null);const norm=s=>String(s??'').normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').toLowerCase();"+s.slice(start,end),ctx);
+const count=ctx.planningReviewCount;
+const r=(description,direction='expense')=>({description,description_key:description,direction,review_kind:'planning_review'});
+assert.equal(count(null),null);assert.equal(count({items:[],horizon_checks:[],horizon_review_count:0}),0);
+assert.equal(count({horizon_checks:[r('Saúde')],horizon_review_count:1,items:[r('saude')]}),1);
+assert.equal(count({horizon_checks:[r('mesma'),r('mesma','income')],horizon_review_count:2,items:[]}),2);
+assert.equal(count({horizon_checks:[r('Uma')],horizon_review_count:2,items:[]}),null);
+assert.equal(count({horizon_checks:[r('Uma')],horizon_review_count:1,items:[r('Outra')]}),2);
+assert.equal(count({horizon_checks:[r('Uma')],horizon_review_count:1,items:[{...r('Outra'),review_kind:'reconciliation_review'}]}),1);
+assert.equal(count({horizon_checks:[r('Uma')],horizon_review_count:1,items:[{review_kind:'planning_review'},{review_kind:'planning_review'}]}),3);
+assert.equal(count({horizon_checks:[{...r('Same'),key:'A'},{...r('Same'),key:'B'}],horizon_review_count:2,items:[]}),2);
+assert.equal(count({horizon_checks:[{...r('Same'),key:'A'},{...r('Same'),key:'B'}],horizon_review_count:2,items:[r('Same')]}),3);
+assert.equal(count({horizon_checks:[{...r('Same'),key:'A'}],horizon_review_count:1,items:[r('Same')]}),1);
+// Synthetic series only: no owner data, source IDs, balances or records.
+const checks=Array.from({length:17},(_,i)=>({...r('Synthetic series '+i),key:'synthetic-'+i}));
+assert.equal(count({horizon_checks:[{...r('Same'),series_id:'',key:'A'},{...r('Same'),series_id:' ',key:'B'}],horizon_review_count:2,items:[]}),2);
+const snapshot={horizon_checks:checks,horizon_review_count:17,items:checks.slice(0,3).map(({key,...row})=>row)};
+const before=JSON.stringify(snapshot);assert.equal(count(snapshot),17);assert.equal(JSON.stringify(snapshot),before);
+assert.equal(snapshot.items.filter(x=>x.review_kind==='planning_review').length+snapshot.horizon_review_count,20);
+assert(s.includes('Revisões em aberto'));assert(!s.includes('<h2>O que precisa de você</h2>'));assert(s.includes('não comprova término de contrato'));
+console.log('PASS: 13 synthetic count cases, 20 to 17 distinct series without payload mutation, neutral wording. No browser or production pass claimed.');
