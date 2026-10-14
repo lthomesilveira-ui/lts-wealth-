@@ -229,7 +229,7 @@
       promise.finally(()=>setTimeout(()=>{if(state.defaultPending?.promise===promise)state.defaultPending=null},1200));return promise;
     }
     function bindFlow(){
-      const activate=()=>{V='Fluxo Diário';if(window.__LTS_V170_STATE)window.__LTS_V170_STATE.lastRoute=V;renderNav();render();openDefault()};
+      const activate=()=>{const hasPeriod=/^\d{4}-\d{2}-\d{2}$/.test(String(FLOWFROM||''))&&/^\d{4}-\d{2}-\d{2}$/.test(String(FLOWTO||''))&&FLOWFROM<=FLOWTO;V='Fluxo Diário';if(window.__LTS_V170_STATE)window.__LTS_V170_STATE.lastRoute=V;renderNav();render();if(!hasPeriod)openDefault()};
       document.querySelectorAll('.nav [data-v="Fluxo Diário"],#dx1MobileNav [data-mobile-route="Fluxo Diário"]').forEach(button=>button.onclick=activate);
       if(V!=='Fluxo Diário')return;const range=defaultRange(),button=document.getElementById('flowDefaultRange');if(button){button.textContent='5 anteriores + fim de '+range.to.slice(0,4);button.title='Cinco dias anteriores até 31 de dezembro do próximo ano';button.classList.toggle('active',FLOWFROM===range.from&&FLOWTO===range.to);button.onclick=openDefault}const todayButton=document.getElementById('goToday');if(todayButton)todayButton.onclick=openDefault;
       document.querySelectorAll('.v168-history-note').forEach(node=>node.remove());document.querySelector('.v172-flow-warning')?.remove();if(state.flowWarning){document.querySelector('.flow-sticky-controls')?.insertAdjacentHTML('beforeend','<div class="v172-flow-warning">'+esc(state.flowWarning)+'</div>')}
@@ -248,3 +248,4 @@
   function burst(){const current=++generation;let attempt=0;function step(){if(current!==generation)return;const ready=install();attempt++;if(!ready&&attempt<320)setTimeout(step,100)}step();[400,900,1800,3600,7000,12000,20000,30000].forEach(ms=>setTimeout(()=>{if(current===generation)install()},ms))}
   outer?.addEventListener('load',burst);document.readyState==='loading'?document.addEventListener('DOMContentLoaded',burst,{once:true}):burst();window.__LTS_TOP_CANDIDATE_VERSION='v172-v171-review';
 })();
+
