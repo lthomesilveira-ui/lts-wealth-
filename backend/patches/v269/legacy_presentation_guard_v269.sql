@@ -305,9 +305,10 @@ CREATE OR REPLACE FUNCTION public.lts_browser_card_flow_schedule_v2(p_from date,
  SET statement_timeout TO '18s'
 AS $function$
 DECLARE v269_revision text;
-  v_base jsonb:=public.lts_browser_card_flow_schedule_v1(p_from,p_to);
+  v_base jsonb;
 begin
  v269_revision:=public.lts_card_read_start_v269(public.lts_browser_assert_user_v1());
+ v_base:=public.lts_browser_card_flow_schedule_v1(p_from,p_to);
   RETURN public.lts_card_read_finish_v269(public.lts_browser_assert_user_v1(),v269_revision,v_base||jsonb_build_object(
     'version','card-flow-schedule-v2-v175',
     'inventory',public.lts_browser_card_inventory_v1(),
@@ -650,9 +651,10 @@ CREATE OR REPLACE FUNCTION public.lts_browser_planning_ui_contract_v1()
  SET "TimeZone" TO 'America/Sao_Paulo'
  SET statement_timeout TO '18s'
 AS $function$
-DECLARE v269_revision text; j jsonb:=public.lts_browser_planning_executive_v2(); d01 text; rsu text; fg text;
+DECLARE v269_revision text; j jsonb; d01 text; rsu text; fg text;
 begin
  v269_revision:=public.lts_card_read_start_v269(public.lts_browser_assert_user_v1());
+ j:=public.lts_browser_planning_executive_v2();
  if j->>'version'<>'planning-executive-v2-current-anchors' then raise exception 'planning v2 not ready'; end if;
  select x->>'first_need_next_layer' into d01 from jsonb_array_elements(j->'layers') x where x->>'id'='d01';
  select x->>'first_need_next_layer' into rsu from jsonb_array_elements(j->'layers') x where x->>'id'='future_vestings';
@@ -789,9 +791,15 @@ CREATE OR REPLACE FUNCTION public.lts_browser_wealth_detail_v242()
  SET search_path TO ''
  SET "TimeZone" TO 'America/Sao_Paulo'
 AS $function$
-DECLARE v269_revision text; u uuid:=public.lts_browser_assert_user_v1(); j jsonb:=public.lts_browser_wealth_detail_v4(); a jsonb:=public.lts_liquidity_adjustments_v242(u,current_date); cash jsonb:=public.lts_browser_cash_today_v242(); s jsonb:=j->'rsu_summary'; summary jsonb:=j#>'{wealth,summary}'; delta numeric; key text; d0_delta numeric:=coalesce((j#>>'{wealth,liquidity,d0}')::numeric,0)-(cash->>'d0')::numeric;
+DECLARE v269_revision text; u uuid:=public.lts_browser_assert_user_v1(); j jsonb; a jsonb; cash jsonb; s jsonb; summary jsonb; delta numeric; key text; d0_delta numeric;
 BEGIN
  v269_revision:=public.lts_card_read_start_v269(public.lts_browser_assert_user_v1());
+ j:=public.lts_browser_wealth_detail_v4();
+ a:=public.lts_liquidity_adjustments_v242(u,current_date);
+ cash:=public.lts_browser_cash_today_v242();
+ s:=j->'rsu_summary';
+ summary:=j#>'{wealth,summary}';
+ d0_delta:=coalesce((j#>>'{wealth,liquidity,d0}')::numeric,0)-(cash->>'d0')::numeric;
  j:=jsonb_set(j,'{rsu_summary}',s||jsonb_build_object('available_total_brl',cash->'brokerage_available','settled_withdrawals_brl',a->'brokerage_settled_withdrawals','component_position_requires_new_statement',(a->>'brokerage_settled_withdrawals')::numeric>0));
  j:=jsonb_set(j,'{wealth,liquidity}',coalesce(j#>'{wealth,liquidity}','{}')||jsonb_build_object('bank_cash',cash->'cash','fgts_contingency',cash->'fgts','d0',cash->'d0'));
  j:=jsonb_set(j,'{morgan_statement,available_after_settled_transfers_brl}',cash->'brokerage_available');

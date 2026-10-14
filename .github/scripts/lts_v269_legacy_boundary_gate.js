@@ -61,6 +61,7 @@ async function run(browser,engine,width,coldIncomplete){
    await f.evaluate(v=>{V=v;if(v==='Despesas')window.__LTS_V168_STATE.expense.tab='overview';renderNav();render();},view);
    await f.waitForFunction(()=>document.getElementById('app').dataset.v269Blocked==='true');
    assert(await f.locator('#v269-incomplete-panel').isVisible());assert.equal(await f.locator('#app').evaluate(x=>x.inert),true);
+   await page.screenshot({path:'qa/v269-legacy-'+label+'-blocked-'+view.normalize('NFD').replace(/[\u0300-\u036f]/g,'')+'.png',fullPage:true});
   }
   await f.locator('#v269-incomplete-panel button').click();
   await f.waitForFunction(()=>document.getElementById('app').dataset.v269CardsOnly==='true');

@@ -3,6 +3,10 @@ const calls=[],base='https://tadhkamnwtsbdozwkyut.supabase.co',cap='lts-wealth-v
 let nextPayload=null,closed=0;
 const w={document:{querySelectorAll:()=>[{close(){closed++}}]},location:{href:'https://app.example/'},fetch:async(input,init)=>{calls.push({input,init});return nextPayload===null?{ok:true}:new Response(JSON.stringify(nextPayload),{status:200})}};
 vm.runInNewContext(fs.readFileSync('releases/v269/lts-v269-client-contract.js','utf8'),{window:w,URL,Headers,Request});
+const sqlPath=fs.existsSync('backend/patches/v269/legacy_presentation_guard_v269.sql')?'backend/patches/v269/legacy_presentation_guard_v269.sql':__dirname+'/legacy-patch.sql';
+const wrappers=fs.readFileSync(sqlPath,'utf8').split('CREATE OR REPLACE FUNCTION public.').filter(x=>x.startsWith('lts_browser_'));
+assert.equal(wrappers.length,18);
+for(const source of wrappers){const gate=source.indexOf('v269_revision:=');assert(gate>0);assert(!/:=\s*public\.lts_browser_(?!assert_user)/.test(source.slice(0,gate)),'reader initializer escaped lease');assert(source.includes('RETURN public.lts_card_read_finish_v269'));}
 (async()=>{
 const prepared=w.__LTS_V269_PRESENTATION.prepared;assert.equal(prepared.length,5);
 for(const name of prepared){await w.fetch(base+'/rest/v1/rpc/'+name,{method:'POST',headers:{Authorization:'synthetic-auth'},body:'{}'});const c=calls.at(-1);assert.equal(c.init.headers.get('x-client-info'),cap);assert.equal(c.init.headers.get('Authorization'),'synthetic-auth');assert.equal(c.init.body,'{}');}
