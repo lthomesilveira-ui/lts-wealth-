@@ -38,3 +38,23 @@ jobs:
         with:
           name: v270-category-evidence
           path: qa/
+  database-fixture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: fixture-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Synthetic cache invalidation and parity
+        env:
+          PGPASSWORD: fixture-only
+        run: psql -h 127.0.0.1 -U postgres -v ON_ERROR_STOP=1 -f backend/qa/lts_v270_c6_cache_key_rollback.sql
