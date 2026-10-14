@@ -29,3 +29,14 @@ assert.equal(ctx.flowSemanticTitle({counterparty:'Reembolso plano de saúde',cat
 assert.equal(ctx.flowSemanticTitle({description:'Apartamento CIPÓ 396',category:'Vestuário'}),'Apartamento CIPÓ 396');
 assert(idx.indexOf('lts-category-display.js')<idx.indexOf('supabase.createClient'),'helper loaded before runtime');
 console.log('PASS: exact category formatter; four people and four separators; repeated person; technical owner; intentional category boundaries; raw option keys. Synthetic only.');
+
+vm.runInContext(idx.slice(idx.indexOf('function flowSemanticMeta(e){'),idx.indexOf('function fluxo(){')),ctx);
+ctx.isCardSettlement=e=>e.syntheticInvoice===true;
+assert.equal(ctx.flowClassificationBadge({syntheticInvoice:true,category:'A classificar'}).includes('flow-unclassified-link'),false);
+assert.match(ctx.flowClassificationBadge({syntheticInvoice:true}),/Classificação nos itens da fatura/);
+assert.match(ctx.flowSemanticMeta({syntheticInvoice:true}),/composição e eventuais pendências/);
+assert.match(ctx.flowClassificationBadge({category:'A classificar'}),/A classificar · revisar/);
+assert.equal(ctx.flowSemanticMeta({category:'A classificar'}),'Classificação pendente');
+assert.equal(cardLabel(null),'A classificar','unknown purchases remain unresolved');
+assert(read('lts-v226-card-composition.js').includes('sem composição conciliada'),'missing composition warning preserved');
+console.log('PASS: invoice aggregate directs to item review; actual unknown purchases and missing composition remain visible.');

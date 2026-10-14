@@ -262,6 +262,8 @@ async function run(browser,viewport,label){
   const displayContract=await frame.evaluate(()=>({ready:!!window.LTSCategoryDisplay,flow:flowSemanticTitle({description:'Synthetic clothing',category:'Vestuário',center_cost:'Lucas'}),duplicate:flowSemanticTitle({description:'Synthetic health',category:'Benjamin — Saúde',center_cost:'Benjamin'}),rafiki:window.__LTS_V183_PERSONAL_IMAGE_LABELS.label('Rafiki — Vestuário')}));
   assert.deepEqual(displayContract,{ready:true,flow:'Imagem e cuidados pessoais',duplicate:'Benjamin — Saúde',rafiki:'Rafiki — Imagem e cuidados pessoais'});
 
+  const aggregate=await frame.evaluate(()=>({invoice:flowClassificationBadge({source:'card_invoice',description:'Fatura C6',signed_amount:-100}),unknownPurchase:flowClassificationBadge({description:'Compra sintética',category:'A classificar',signed_amount:-10}),meta:flowSemanticMeta({source:'card_invoice',description:'Fatura C6',signed_amount:-100})}));
+  assert.match(aggregate.invoice,/Classificação nos itens da fatura/);assert(!aggregate.invoice.includes('flow-unclassified-link'));assert.match(aggregate.unknownPurchase,/A classificar · revisar/);assert.match(aggregate.meta,/composição e eventuais pendências/);
   await frame.locator('#v226-detail select[name="category"]').selectOption('Saúde');
   await frame.locator('#v226-detail select[name="beneficiary"]').selectOption('Lucas');
   await frame.locator('#v226-detail button[type="submit"]').click();

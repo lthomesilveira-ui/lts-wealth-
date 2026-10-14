@@ -354,6 +354,7 @@ function flowSemanticTitle(e){
 function flowSemanticMeta(e){
  const d=String(e.description||e.description_raw||''),cat=String(e.category||'').trim(),cp=String(e.counterparty||'').trim(),rid=String(e.semantic_rule_id||'');
  if(e.internal_transfer)return 'Transferência própria · neutra no consolidado';
+ if(isCardSettlement(e))return 'Consulte composição e eventuais pendências em Abrir fatura';
  if(rid==='context_sulamerica_to_larissa_same_amount_7d')return 'Repasse do reembolso · não é consumo';
  if(/resgate cofrinhos/i.test(d))return 'Movimentação do Cofrinho · não é renda nem consumo';
  if(/seguro cart[aã]o/i.test(d))return 'Categoria analítica: Seguros';
@@ -362,7 +363,7 @@ function flowSemanticMeta(e){
  if(cat&&cat.toLowerCase()!=='a classificar')return '';
  return cp&&cp.toLowerCase()!=='não identificado'?cp:'Classificação pendente';
 }
-function flowClassificationBadge(e){const cat=String(e.category||'').trim();return (!cat||cat.toLowerCase()==='a classificar'||cat==='—')?'<button type="button" class="tag flow-unclassified flow-unclassified-link">A classificar · revisar</button>':''}
+function flowClassificationBadge(e){if(isCardSettlement(e))return '<span class="tag flow-invoice-classification">Classificação nos itens da fatura</span>';const cat=String(e.category||'').trim();return (!cat||cat.toLowerCase()==='a classificar'||cat==='—')?'<button type="button" class="tag flow-unclassified flow-unclassified-link">A classificar · revisar</button>':''}
 function fluxo(){
  const allDays=mergedFlowDays(),visible=allDays.map((x,i)=>({x,prev:i?allDays[i-1]:null})).filter(o=>SHOWZERO||FLOWFORCEZERO||flowDayMaterial(o.x,o.prev)),yf=Number(FLOWQ?.available_year_from||2013),yt=Number(FLOWQ?.available_year_to||2041),years=Array.from({length:Math.max(1,yt-yf+1)},(_,i)=>yf+i),isCons=ACC==='Consolidado';
  const rows=visible.map(({x,prev})=>{
