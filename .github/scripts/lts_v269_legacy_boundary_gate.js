@@ -76,8 +76,11 @@ async function run(browser,engine,width,coldIncomplete){
   const fresh=page.frames().find(x=>x.url().includes('/index.html'));
   await fresh.waitForFunction(()=>window.__LTS_V178_REVIEW?.completeness_contract===269);
   // Presentation guard must not hide the existing signed-out login form.
-  await fresh.evaluate(()=>login());
+  await fresh.waitForFunction(()=>window.__LTS_V178_STATE?.forecast?.status==='ready');
+  await fresh.locator('#logout').click();
   await fresh.waitForFunction(()=>document.querySelector('#app .login')&&document.getElementById('app').dataset.v269Blocked==='false');
+  await fresh.locator('#app .login').waitFor({state:'visible'});
+  assert.equal(await fresh.evaluate(()=>localStorage.getItem('lts_supabase_session_v1')),null,'real sign-out removes session');
   assert(await fresh.locator('#app .login').isVisible());assert.equal(await fresh.locator('#app').evaluate(x=>x.inert),false);
   await page.reload();await page.waitForFunction(()=>document.getElementById('shell')?.contentWindow?.__LTS_V269_COMPLETENESS?.().incomplete);
   const recovered=page.frames().find(x=>x.url().includes('/index.html'));
