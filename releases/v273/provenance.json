@@ -1,0 +1,12 @@
+{
+  "release": "v273",
+  "base_release": "v272",
+  "base_commit": "f8ba107681e2e6c6545caa72e99a38929273e4be",
+  "scope": [
+    "expense reader terminal error state",
+    "explicit retry and period validation",
+    "stale response and BRT date boundary protection"
+  ],
+  "financial_sources_unchanged": true,
+  "p05_presentation_refresh_included": false
+}
