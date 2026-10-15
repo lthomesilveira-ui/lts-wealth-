@@ -1,0 +1,38 @@
+name: P04 recurrence cadence
+on:
+  pull_request:
+    paths:
+      - 'sql/diagnostics/lts_recurring_future_gap_audit_v6_candidate.sql'
+      - '.github/scripts/lts_p04_cadence_gate.py'
+      - '.github/workflows/p04-cadence.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  synthetic-postgres:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: synthetic
+          POSTGRES_DB: cadence_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      PGOPTIONS: -c statement_timeout=15000
+      PGHOST: localhost
+      PGPORT: 5432
+      PGUSER: postgres
+      PGPASSWORD: synthetic
+      PGDATABASE: cadence_test
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test extracted cadence expression on synthetic data
+        run: python3 .github/scripts/lts_p04_cadence_gate.py
