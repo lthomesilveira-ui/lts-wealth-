@@ -159,6 +159,14 @@ async function run(browser,viewport,label){
   assert.match(freshness,/Dados recebidos pelo Wealth em/);assert.match(freshness,/Atualização da conexão na origem/);assert.match(freshness,/Essa data não confirma a atualização de cada saldo ou transação/);assert.match(freshness,/20\/09\/2026,? 09:15 BRT/);assert.match(freshness,/19\/09\/2026,? 15:00 BRT/);assert.match(freshness,/indisponível/);assert.match(freshness,/Falha na última coleta/);
   await page.screenshot({path:'qa/v272-'+label+'-collection-origin-updates.png',fullPage:true});
   await captureTarget(frame.locator('.v168-openfinance'),'collection-origin-updates-target');
+  const banks=frame.locator('.v168-openfinance .v225-bank');
+  assert.equal(await banks.count(),3);
+  for(let i=0;i<3;i++){
+   const bank=banks.nth(i);await bank.evaluate(el=>el.scrollIntoView({block:'center',inline:'nearest'}));
+   const box=await bank.boundingBox();
+   assert(box&&box.y>=60&&box.y+box.height<=viewport.height-75,'bank clear of fixed navigation '+JSON.stringify({i,box,viewport}));
+   await page.screenshot({path:'qa/v272-'+label+'-collection-origin-bank-'+i+'-target.png'});
+  }
   const contextRow=frame.locator('[data-v181-review-key="context-fixture"]');await contextRow.locator('[data-v181-beneficiary]').selectOption('Lucas');assert(await contextRow.locator('[data-v181-review-save]').isEnabled(),'context can be confirmed without replacing its existing category');
   const suggested=frame.locator('[data-v181-review-key="pending-fixture"]');
   assert.equal(await suggested.locator('[data-v181-category]').inputValue(),'Mercado','history suggestion is preselected');

@@ -45,7 +45,7 @@
       }
       if (V === 'Atualizações') {
         const host = document.querySelector('.v168-openfinance');
-        if (host) host.innerHTML = '<div class="v225-banklist">'+bankRows()+'</div>';
+        if (host) host.innerHTML = '<div class="v225-banklist" style="grid-column:1/-1">'+bankRows()+'</div>';
       } else if (V === 'Dashboard') {
         let line = document.querySelector('.v225-bankstatus');
         if (!line && host) { line = document.createElement('details'); line.className='v225-bankstatus'; host.appendChild(line); }
