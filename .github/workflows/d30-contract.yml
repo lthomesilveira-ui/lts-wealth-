@@ -1,0 +1,44 @@
+name: D30 synthetic PostgreSQL contracts
+on:
+  pull_request:
+    paths:
+      - 'qa/d30-contract/**'
+      - '.github/workflows/d30-contract.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  synthetic-postgres:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: synthetic_ci_only
+          POSTGRES_DB: synthetic_contracts
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: 5432
+      PGUSER: postgres
+      PGPASSWORD: synthetic_ci_only
+      PGDATABASE: synthetic_contracts
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify reviewed fixture digests
+        run: cd qa/d30-contract && sha256sum -c SHA256SUMS
+      - name: Slice cold and warm contract
+        run: psql -X -v ON_ERROR_STOP=1 -f qa/d30-contract/synthetic-candidate-slice9-rollback.sql
+      - name: Anchored short and long contract
+        run: psql -X -v ON_ERROR_STOP=1 -f qa/d30-contract/synthetic-candidate-current229-rollback.sql
+      - name: Full supported synthetic horizon
+        run: psql -X -v ON_ERROR_STOP=1 -f qa/d30-contract/synthetic-candidate-full-horizon-rollback.sql
+      - name: Canonical DDL hash roundtrip
+        run: psql -X -v ON_ERROR_STOP=1 -f qa/d30-contract/synthetic-ddl-roundtrip-rollback.sql
