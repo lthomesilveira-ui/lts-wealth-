@@ -144,7 +144,7 @@ async function run(browser,viewport,label){
   assert.equal(countMain('2026-09-01','2026-09-30'),0,'categories does not send future range');
   await frame.locator('[data-v168-exp-tab="overview"]').click();
   flags.expenseFail=true;await applyExpense('2026-09-02','2026-09-20');
-  await frame.waitForFunction(()=>window.__LTS_V168_STATE.expense.error?.includes('temporary expense fixture')&&!window.__LTS_V168_STATE.expense.loading);
+  await frame.waitForFunction(()=>window.__LTS_V168_STATE.expense.error==='Não foi possível atualizar este relatório.'&&!window.__LTS_V168_STATE.expense.loading);
   const failedReads=countMain('2026-09-02','2026-09-20');assert.equal(failedReads,1,'one main network read per failed attempt');
   await page.waitForTimeout(600);assert.equal(countMain('2026-09-02','2026-09-20'),failedReads,'error does not auto-retry on full-stack rerender');
   await captureTarget(frame.locator('[data-v168-exp-retry]'),'explicit-retry');
