@@ -10,8 +10,8 @@ class Button{constructor(dataset={}){this.dataset=dataset;this.listeners=[];this
 function harness(src,{rpc:respond,now='2026-10-15T18:00:00Z',fallback=true}={}){
  let instant=now;class FixedDate extends Date{constructor(...args){super(...(args.length?args:[instant]))}static now(){return new Date(instant).getTime()}}
  const st={expense:{key:'custom',tab:'overview',loading:false,token:0,data:null,context:null,error:null,customFrom:'2026-10-01',customTo:'2026-10-15'},transactions:{rows:null},wealth:{}};
- const calls=[],views=[],notices=[],elements={},buttons=['ytd','6m','12m','all','custom'].map(v168ExpRange=>new Button({v168ExpRange}));
- const context={st,v168:st,state:{expenseLoadScheduled:false},V:'Despesas',topScope:null,Date:FixedDate,Intl,Promise,Error,Number,String,Array,Map,Set,JSON,Math,queueMicrotask,setTimeout:fn=>setImmediate(fn),clearTimeout:clearImmediate,
+ const contextTimers=[];const calls=[],views=[],notices=[],elements={},buttons=['ytd','6m','12m','all','custom'].map(v168ExpRange=>new Button({v168ExpRange}));
+ const context={st,v168:st,state:{expenseLoadScheduled:false},V:'Despesas',topScope:null,Date:FixedDate,Intl,Promise,Error,Number,String,Array,Map,Set,JSON,Math,queueMicrotask,setTimeout:(fn,ms)=>ms===12000?(contextTimers.push({fn,active:true}),contextTimers.at(-1)):setImmediate(fn),clearTimeout:t=>t&&'active' in t?t.active=false:clearImmediate(t),
  today:()=>new Intl.DateTimeFormat('en-CA',{timeZone:'America/Sao_Paulo',year:'numeric',month:'2-digit',day:'2-digit'}).format(new FixedDate()),
  addMonths:(iso,n)=>{let d=new Date(iso+'T12:00:00Z');d.setUTCMonth(d.getUTCMonth()+n);return d.toISOString().slice(0,10)},date:v=>String(v).split('-').reverse().join('/'),
  S:{rpc(name,args){calls.push({name,args});return respond?respond(name,args,calls):Promise.resolve({data:{period:{from:args.p_from,to:args.p_to},id:args.p_from},error:null})}},
@@ -21,11 +21,11 @@ function harness(src,{rpc:respond,now='2026-10-15T18:00:00Z',fallback=true}={}){
  };
  vm.createContext(context);
  const snippets=[line(src,'expenseRange'),line(src,'rpc'),src.split('\n').find(x=>x.includes('const pause=')),line(src,'rpcRead'),line(src,'ensureExpense'),line(src,'despesasV168Final'),block(src,'    function bindCommonV168(){','    function bindWealthV168()')];
- if(src.includes('function expenseRangeError'))snippets.unshift(line(src,'expenseRangeError'));
+ if(src.includes('function expenseRangeError'))snippets.unshift(line(src,'expenseRangeError'),line(src,'expenseContextWithinBudget'));
  vm.runInContext(snippets.join('\n'),context);
  if(fallback){const legacy=fs.readFileSync(path.join('releases',src===original?'v272':'v273','lts-v171-v170-review.js'),'utf8');vm.runInContext(block(legacy,'    async function ensureExpenseV171(){','    async function ensureWealthV171(){')+'\n'+line(legacy,'after').replace('function after(){','function after171(){'),context)}
  context.render=()=>{const html=context.despesasV168Final();views.push(html);elements.v168ExpenseFrom={value:st.expense.customFrom};elements.v168ExpenseTo={value:st.expense.customTo};elements.v168ExpenseApply=new Button();elements.retry=html.includes('data-v168-exp-retry')?new Button():null;context.bindCommonV168();if(fallback)context.after171();return html};
- return {st,calls,views,notices,context,buttons,elements,setNow:v=>instant=v,apply(from,to){elements.v168ExpenseFrom.value=from;elements.v168ExpenseTo.value=to;elements.v168ExpenseApply.click()}};
+ return {st,calls,views,notices,context,buttons,elements,expireContext(){contextTimers.filter(t=>t.active).forEach(t=>{t.active=false;t.fn()})},setNow:v=>instant=v,apply(from,to){elements.v168ExpenseFrom.value=from;elements.v168ExpenseTo.value=to;elements.v168ExpenseApply.click()}};
 }
 const results=[];async function test(name,fn){await fn();results.push({name,status:'PASS'});console.log('PASS',name)}
 (async()=>{
@@ -64,6 +64,9 @@ const results=[];async function test(name,fn){await fn();results.push({name,stat
  });
  await test('Context is still a load barrier, but context rejection cannot discard successful main data',async()=>{
   let contextDone;const h=harness(candidate,{rpc:name=>name.includes('context')?new Promise((resolve,reject)=>contextDone=reject):Promise.resolve({data:{id:'main'},error:null})});h.context.render();await flush();assert.equal(h.st.expense.loading,true);assert.equal(h.st.expense.data,null);contextDone(Error('context unavailable'));await flush();assert.equal(h.st.expense.data.id,'main');assert.equal(h.st.expense.context,null);
+ });
+ await test('Optional context has a bounded wait; late context cannot overwrite the completed main report',async()=>{
+  let finish;const h=harness(candidate,{rpc:name=>name.includes('context')?new Promise(resolve=>finish=resolve):Promise.resolve({data:{id:'main'},error:null})});h.context.render();await flush();assert.equal(h.st.expense.loading,true);h.expireContext();await flush();assert.equal(h.st.expense.loading,false);assert.equal(h.st.expense.data.id,'main');assert.equal(h.st.expense.context,null);finish({data:{late:true},error:null});await flush();assert.equal(h.st.expense.context,null);assert.equal(h.calls.length,2);
  });
  await test('Candidate V175 categories reader independently rejects future before RPC and holds terminal state',async()=>{
   const src=fs.readFileSync('releases/v273/lts-v183-expense-history-candidate.js','utf8');let calls=0,renders=0;const state={expense:{token:0,key:'',data:null,loading:false,error:null}};const c={state,v168:{expense:{tab:'categories'}},expenseRange:()=>({from:'2026-10-01',to:'2026-10-31'}),today:()=> '2026-10-15',Date,Number,Error,String,V:'Despesas',render(){renders++},directRpc:async()=>{calls++;return{data:{},error:null}},currentRead:()=>true};vm.createContext(c);vm.runInContext(block(src,'    async function ensureExpense(force=false){','    async function ensureCards('),c);await c.ensureExpense();for(let i=0;i<10;i++)await c.ensureExpense();assert.equal(calls,0);assert.equal(renders,1);assert.equal(state.expense.loading,false);assert.equal(state.expense.rangeInvalid,true);
