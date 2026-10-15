@@ -1,0 +1,46 @@
+name: Documentary payment presentation contracts
+on:
+  pull_request:
+    paths:
+      - 'qa/p05-documentary-payment/**'
+      - '.github/workflows/p05-documentary-payment.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  presentation-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: synthetic_ci_only
+          POSTGRES_DB: synthetic_contracts
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: 5432
+      PGUSER: postgres
+      PGPASSWORD: synthetic_ci_only
+      PGDATABASE: synthetic_contracts
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Verify reviewed synthetic files
+        run: cd qa/p05-documentary-payment && sha256sum -c SHA256SUMS
+      - name: Presentation text and immutable input
+        run: node qa/p05-documentary-payment/documentary-payment-note.test.cjs
+      - name: PostgreSQL isolated presentation contract
+        run: psql -X -v ON_ERROR_STOP=1 -f qa/p05-documentary-payment/synthetic-presentation-test.sql
+      - name: Restricted ACL and generic DDL roundtrip
+        run: psql -X -v ON_ERROR_STOP=1 -f qa/p05-documentary-payment/synthetic-acl-test.sql
+      - name: Exact browser wrapper and synthetic session owners
+        run: psql -X -v ON_ERROR_STOP=1 -f qa/p05-documentary-payment/synthetic-wrapper-test.sql

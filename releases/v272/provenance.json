@@ -1,0 +1,11 @@
+{
+  "release": "v272",
+  "base_release": "v271",
+  "base_commit": "2caaa1bf58d35a78a54f2a797d81d71636fbc1ee",
+  "scope": [
+    "documentary payment presentation only",
+    "exact Organon expense display alias",
+    "collection versus provider freshness labels"
+  ],
+  "financial_sources_unchanged": true
+}
