@@ -68,6 +68,12 @@ const results=[];async function test(name,fn){await fn();results.push({name,stat
  await test('Optional context has a bounded wait; late context cannot overwrite the completed main report',async()=>{
   let finish;const h=harness(candidate,{rpc:name=>name.includes('context')?new Promise(resolve=>finish=resolve):Promise.resolve({data:{id:'main'},error:null})});h.context.render();await flush();assert.equal(h.st.expense.loading,true);h.expireContext();await flush();assert.equal(h.st.expense.loading,false);assert.equal(h.st.expense.data.id,'main');assert.equal(h.st.expense.context,null);finish({data:{late:true},error:null});await flush();assert.equal(h.st.expense.context,null);assert.equal(h.calls.length,2);
  });
+ await test('Unavailable context is not displayed as confirmed absence; main-report fallback remains available',async()=>{
+  const c={st:{expense:{key:'x',context:null}},expenseRange:()=>({label:'Teste',from:'2026-10-01',to:'2026-10-15'}),arr:v=>Array.isArray(v)?v:[],num:v=>v==null?null:Number(v),norm:v=>String(v).toLowerCase(),esc:String,date:String,money:String,drillEntry:()=>''};vm.createContext(c);vm.runInContext(line(candidate,'expenseContextGroups')+'\n'+line(candidate,'expenseCategoriesV168'),c);
+  assert(c.expenseCategoriesV168({}).includes('Detalhamento de contextos indisponível'));assert(!c.expenseCategoriesV168({}).includes('Sem contextos no período'));
+  assert(c.expenseCategoriesV168({rankings:{centers:[{name:'Casa',total:10}]}}).includes('Casa'));
+  c.st.expense.context={contexts:[]};assert(c.expenseCategoriesV168({}).includes('Sem contextos no período'));
+ });
  await test('Candidate V175 categories reader independently rejects future before RPC and holds terminal state',async()=>{
   const src=fs.readFileSync('releases/v273/lts-v183-expense-history-candidate.js','utf8');let calls=0,renders=0;const state={expense:{token:0,key:'',data:null,loading:false,error:null}};const c={state,v168:{expense:{tab:'categories'}},expenseRange:()=>({from:'2026-10-01',to:'2026-10-31'}),today:()=> '2026-10-15',Date,Number,Error,String,V:'Despesas',render(){renders++},directRpc:async()=>{calls++;return{data:{},error:null}},currentRead:()=>true};vm.createContext(c);vm.runInContext(block(src,'    async function ensureExpense(force=false){','    async function ensureCards('),c);await c.ensureExpense();for(let i=0;i<10;i++)await c.ensureExpense();assert.equal(calls,0);assert.equal(renders,1);assert.equal(state.expense.loading,false);assert.equal(state.expense.rangeInvalid,true);
  });
