@@ -1,0 +1,19 @@
+{
+  "purpose": "Synthetic-only PostgreSQL 16 transaction QA. Not a production migration.",
+  "synthetic_logic_sha256": {
+    "apply": "f49b6210240acf637fa4d659581ef908e624ece4f9d8a5bf48afb9ef7455807e",
+    "recovery": "1b64a82e9f8461c56292c9ec36644b03ed1271a6e3685a7764801cdc03b07cc0"
+  },
+  "fixture_sizes": {
+    "old": 36,
+    "new": 24,
+    "legacy": 12
+  },
+  "schema": "Original public/auth schema names inside a fresh disposable database; no schema rewrite and no helper hash substitution.",
+  "helper_md5": {
+    "owner": "5e133d88399606315302e30389240f8a",
+    "cache": "99f49c4f11e130d6cab4196173f41ec0",
+    "block_delete": "e976144079c14d8f30a7741554928fe4"
+  },
+  "legacy_predicate_sha256": "49b4a395bd323183b4139ac15810e0be5d01eb15506e6fe93c469bacfcbe44f9"
+}

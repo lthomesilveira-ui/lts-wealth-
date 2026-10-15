@@ -1,0 +1,7 @@
+function docFinDetail(){
+ if(!FINSEL)return '';
+ const id=FINSEL==='CIPÓ 396'?'cipo_396':FINSEL,doc=(D.documentary_commitments?.items||[]).find(x=>x.commitment_id===id);
+ if(!doc)return financingDetail();
+ const rows=doc.schedule_loaded?.rows||[],isCipo=id==='cipo_396';
+ return `<div class="section f112-panel"><div class="flowbar"><div><div class="title" style="margin:0">${isCipo?'CIPÓ 396':'Coopharma'} · cronograma documental</div><div class="mut">${esc(doc.source_label||'')} · posição ${fmt(doc.as_of_date)}</div></div><button id="closeFin" class="btn ghost">Fechar</button></div>${isCipo?`<div class="f112-insight">Saldo devedor ${brl(doc.debt_balance)} · SAC/TR · ${num(doc.metadata?.remaining_installments)} parcelas restantes no contrato completo até ${fmt(doc.metadata?.final_due)}.</div>`:`<div class="f112-insight">${num(doc.metadata?.remaining_installments)} parcelas restantes · total programado ${brl(doc.metadata?.total_to_pay)}. Isto não é saldo de principal.</div>`}<div class="f112-detail-list">${rows.map(e=>`<div class="item"><span>${fmt(e.due_date)} · parcela ${num(e.installment_number)}</span><b>${brl(e.amount)}</b></div>`).join('')||'<div class="empty">Sem linhas carregadas.</div>'}</div>${isCipo&&num(doc.metadata?.remaining_installments)>rows.length?`<div class="notice">O detalhe carregado é um trecho operacional. O contrato documental completo informa ${num(doc.metadata.remaining_installments)} parcelas restantes e término em ${fmt(doc.metadata.final_due)}.</div>`:''}</div>`;
+}

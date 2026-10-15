@@ -1,0 +1,38 @@
+{
+  "scope": "Financial data and fixtures are synthetic. Only fixed product identifiers from reviewed public source code and the minimal selections required to exercise that API are preserved. No private financial values, UUIDs, contract number, source labels or source documents are exempted.",
+  "files": {
+    "documentary_renderer_source.cjs": {
+      "sha256": "491674a4ecb4b8f721e2d030ea1739bca96b321f51cd066a81f1d895f58ff63f",
+      "identifiers": [
+        "CIPÓ 396",
+        "cipo_396",
+        "Coopharma",
+        "CIPÓ"
+      ]
+    },
+    "documentary_renderer_gate.cjs": {
+      "sha256": "15cc80deea790e8f2ea3ede8ac65fbeabbd5a73b7df96d49d5cf6334841ba042",
+      "identifiers": [
+        "cipo_396"
+      ]
+    },
+    "documentary_reader_candidate.sql": {
+      "sha256": "17bbe70c3ccee34963f046c8ff7de55004e8f9631f5076f35ce56a706204d57c",
+      "identifiers": [
+        "CIPÓ"
+      ]
+    },
+    "documentary_reader_original.sql": {
+      "sha256": "9f368715839915bc52c21a919350a0d1c1a014a2d4e4541a0d641023b0411dd4",
+      "identifiers": [
+        "CIPÓ"
+      ]
+    },
+    "documentary_position_gate.py": {
+      "sha256": "31ef9fe1f346af21c05e88507c52aca0dada78f6214b01d878a0d966f1efb2ab",
+      "identifiers": [
+        "cipo_396"
+      ]
+    }
+  }
+}
