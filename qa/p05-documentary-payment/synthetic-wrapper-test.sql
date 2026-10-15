@@ -127,6 +127,11 @@ BEGIN
  RETURN public.lts_card_read_finish_v269(public.lts_browser_assert_user_v1(),v269_revision,public.lts_card_documentary_payment_presentation_v272(u,j||jsonb_build_object('cards',cards,'recurring_estimates_separate',true)));
 END $function$;
 
+DO $hash$ BEGIN
+ IF md5(pg_get_functiondef('public.lts_browser_card_cycles_v229()'::regprocedure)) IS DISTINCT FROM '68a6ba83a6e4024dc78a38d388038711' THEN RAISE EXCEPTION 'canonical wrapper hash mismatch'; END IF;
+ IF (SELECT md5(prosrc) FROM pg_proc WHERE oid='public.lts_card_documentary_payment_presentation_v272(uuid,jsonb)'::regprocedure) IS DISTINCT FROM '2551764656fdc21cfaed325b74c606f0' THEN RAISE EXCEPTION 'helper body hash mismatch'; END IF;
+ IF NOT EXISTS(SELECT 1 FROM pg_proc WHERE oid='public.lts_card_documentary_payment_presentation_v272(uuid,jsonb)'::regprocedure AND NOT prosecdef AND cardinality(proconfig)=2 AND proconfig @> ARRAY['search_path=""','TimeZone=America/Sao_Paulo']) THEN RAISE EXCEPTION 'helper configuration mismatch'; END IF;
+END $hash$;
 REVOKE ALL ON public.payload FROM PUBLIC,anon,authenticated;
 REVOKE ALL ON public.lts_open_finance_staging FROM PUBLIC,anon,authenticated;
 REVOKE ALL ON FUNCTION public.lts_browser_card_cycles_v229() FROM PUBLIC,anon;
