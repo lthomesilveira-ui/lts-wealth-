@@ -1,0 +1,104 @@
+{
+  "triggers": [
+    {
+      "name": "financial_events_no_delete",
+      "table": "financial_events",
+      "enabled": "O",
+      "function": "block_delete()",
+      "definition": "CREATE TRIGGER financial_events_no_delete BEFORE DELETE ON public.financial_events FOR EACH ROW EXECUTE FUNCTION block_delete()"
+    },
+    {
+      "name": "lts_v246_read_d",
+      "table": "financial_events",
+      "enabled": "O",
+      "function": "lts_v246_invalidate_finance_cache()",
+      "definition": "CREATE TRIGGER lts_v246_read_d AFTER DELETE ON public.financial_events REFERENCING OLD TABLE AS old_rows FOR EACH STATEMENT EXECUTE FUNCTION lts_v246_invalidate_finance_cache()"
+    },
+    {
+      "name": "lts_v246_read_i",
+      "table": "financial_events",
+      "enabled": "O",
+      "function": "lts_v246_invalidate_finance_cache()",
+      "definition": "CREATE TRIGGER lts_v246_read_i AFTER INSERT ON public.financial_events REFERENCING NEW TABLE AS new_rows FOR EACH STATEMENT EXECUTE FUNCTION lts_v246_invalidate_finance_cache()"
+    },
+    {
+      "name": "lts_v246_read_t",
+      "table": "financial_events",
+      "enabled": "O",
+      "function": "lts_v246_invalidate_finance_cache()",
+      "definition": "CREATE TRIGGER lts_v246_read_t AFTER TRUNCATE ON public.financial_events FOR EACH STATEMENT EXECUTE FUNCTION lts_v246_invalidate_finance_cache()"
+    },
+    {
+      "name": "lts_v246_read_u",
+      "table": "financial_events",
+      "enabled": "O",
+      "function": "lts_v246_invalidate_finance_cache()",
+      "definition": "CREATE TRIGGER lts_v246_read_u AFTER UPDATE ON public.financial_events REFERENCING OLD TABLE AS old_rows NEW TABLE AS new_rows FOR EACH STATEMENT EXECUTE FUNCTION lts_v246_invalidate_finance_cache()"
+    },
+    {
+      "name": "lts_v246_read_d",
+      "table": "lts_projection_replacement_rule",
+      "enabled": "O",
+      "function": "lts_v246_invalidate_finance_cache()",
+      "definition": "CREATE TRIGGER lts_v246_read_d AFTER DELETE ON public.lts_projection_replacement_rule REFERENCING OLD TABLE AS old_rows FOR EACH STATEMENT EXECUTE FUNCTION lts_v246_invalidate_finance_cache()"
+    },
+    {
+      "name": "lts_v246_read_i",
+      "table": "lts_projection_replacement_rule",
+      "enabled": "O",
+      "function": "lts_v246_invalidate_finance_cache()",
+      "definition": "CREATE TRIGGER lts_v246_read_i AFTER INSERT ON public.lts_projection_replacement_rule REFERENCING NEW TABLE AS new_rows FOR EACH STATEMENT EXECUTE FUNCTION lts_v246_invalidate_finance_cache()"
+    },
+    {
+      "name": "lts_v246_read_t",
+      "table": "lts_projection_replacement_rule",
+      "enabled": "O",
+      "function": "lts_v246_invalidate_finance_cache()",
+      "definition": "CREATE TRIGGER lts_v246_read_t AFTER TRUNCATE ON public.lts_projection_replacement_rule FOR EACH STATEMENT EXECUTE FUNCTION lts_v246_invalidate_finance_cache()"
+    },
+    {
+      "name": "lts_v246_read_u",
+      "table": "lts_projection_replacement_rule",
+      "enabled": "O",
+      "function": "lts_v246_invalidate_finance_cache()",
+      "definition": "CREATE TRIGGER lts_v246_read_u AFTER UPDATE ON public.lts_projection_replacement_rule REFERENCING OLD TABLE AS old_rows NEW TABLE AS new_rows FOR EACH STATEMENT EXECUTE FUNCTION lts_v246_invalidate_finance_cache()"
+    }
+  ],
+  "constraints": [
+    {
+      "name": "financial_events_account_id_fkey",
+      "table": "financial_events",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE SET NULL"
+    },
+    {
+      "name": "financial_events_pkey",
+      "table": "financial_events",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "name": "financial_events_user_id_fkey",
+      "table": "financial_events",
+      "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+    },
+    {
+      "name": "financial_events_user_id_legacy_id_key",
+      "table": "financial_events",
+      "definition": "UNIQUE (user_id, legacy_id)"
+    },
+    {
+      "name": "lts_projection_replacement_rule_action_check",
+      "table": "lts_projection_replacement_rule",
+      "definition": "CHECK ((action = ANY (ARRAY['suppress_legacy'::text, 'replace_legacy'::text])))"
+    },
+    {
+      "name": "lts_projection_replacement_rule_pkey",
+      "table": "lts_projection_replacement_rule",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "name": "lts_projection_replacement_rule_user_id_fkey",
+      "table": "lts_projection_replacement_rule",
+      "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+    }
+  ]
+}

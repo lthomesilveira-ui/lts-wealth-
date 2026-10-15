@@ -1,0 +1,4 @@
+__pycache__/
+*.py[cod]
+postgres16-result.txt
+documentary-postgres16-result.txt
