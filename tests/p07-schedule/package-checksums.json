@@ -1,10 +1,15 @@
 {
-  ".github/workflows/p07-postgres16.yml": "e9b36b29d1cf3cf9883d468390fa8ed00e7c79b9b76b38381fa3668810f4dae9",
-  ".gitignore": "ccaec3d5744a1cd705fee1f5cbee281822dab383221c624b55531425189ccb81",
-  "README.md": "e9a75dc4a937f76ff175526345dd41d7cd0b5bf261b8fb8a38b500beb9c122da",
+  ".github/workflows/p07-postgres16.yml": "b509dda89170e2e92090588f0a984d126d0e55af16986b124dee82d8efa0d7c3",
+  ".gitignore": "5187d399ba760a22826f33eb48f53d52d7b16d43a43b04f70bb393632cf3cef2",
+  "COMBINED-REVIEW.md": "d026df00cb6e717972c8c6385eaf41648cb2fd822d42359c18a2e041740dc8d8",
+  "README.md": "65b0ab33d21de01176e32ddd23997f917145148512cb63a2bce718a262d0e019",
   "apply.review.sql": "04bd8fd7425075208a26e4c308f04d31f8462e5b6a238eb5d6d042df47eb4b8a",
   "block-delete.sql": "d412e37a20b5ba6a7bedd023729a6e594f1416c2412db6e82e57b629386bcedb",
   "cache-trigger.sql": "158d0bbefdfd12b936c9c19247ceffa79edb514389f784c8406de0bd8e0fc6c9",
+  "combined-apply-guard.sql": "2eabad2d29e0cf21fd019e78137c0d9824e9829e36de4230a7466040f32a68bf",
+  "combined-recovery-guard.sql": "4085962cbf7d68930088fa821c44611888717760ed3ce745e8444185e0a1c926",
+  "combined_atomicity_gate.py": "2bc92afb76292eb827ea1ecc54a70573688065f0ed77c684954de345dfd30baf",
+  "combined_state_guard.py": "b1b735b84a240bbe9eb4375e5fbe1c5c72badc668daf6f236dcd9db753fc7ade",
   "connection_config.py": "c07138ca28d4b99c880ec3d9826a77d9e5a70bde0c27cd412695afecd9c44b07",
   "documentary_position_gate.py": "31ef9fe1f346af21c05e88507c52aca0dada78f6214b01d878a0d966f1efb2ab",
   "documentary_position_gate.sql": "74597b1d433c7fe1059bee70068df8f34f3d544add8da1a66e2271c9b6f1fdf3",
@@ -22,5 +27,5 @@
   "source-contract.json": "b9e3d0cb4bd19febb449d828854eb95194b3de60d444a3746fa446c3e3828b46",
   "structural-contract.json": "f22dfea2409fac0c1266c47ca8c80e41a4e5a65ae5372d098209ff5fa2a00ff8",
   "test_postgres.py": "d68a984ff4ea50c5ee804269c28de27bc803b26f3d0de41569fcc6ac20136c63",
-  "test_static.py": "78aaa16794a14a42a7b35c6c87cc6c7867efb2d0bc351f719ba2ed288a408ed5"
+  "test_static.py": "67b091d6351e0713e5aeb3b677efd2a3c071f6bb775548dede3bae58c37e38b3"
 }

@@ -25,6 +25,7 @@ The two leased functions, owner resolution and cache invalidation, are included 
 - `test_static.py`: offline integrity, synthetic identity and fixture checks
 - `test_postgres.py`: 38 PostgreSQL 16 financial integration and concurrency tests
 - `documentary_*`: separate reader/renderer gate, with five offline and six PostgreSQL tests
+- `combined_*`, `combined-*-guard.sql`, `COMBINED-REVIEW.md`: reviewed joint-state guard, five offline checks and eight combined atomicity cases
 - `public-source-exceptions.json`: bounded public product-identifier exceptions, pinned per file
 - `.github/workflows/p07-postgres16.yml`: isolated CI service, no repository or production secrets
 
@@ -70,8 +71,17 @@ The frozen candidate remains review-only. A passing synthetic suite cannot attes
 
 The six `documentary_*` files preserve the exact reviewed reader definitions and the exact public `docFinDetail` renderer. Offline checks compare the source delta, fixed hashes, schema constraints, explicit time-zone boundary calculations and first-match/fallback rendering. PostgreSQL tests compare original and candidate results, latest eligible positions, boolean-only TR notes without duplication, owner isolation, future-only and empty cases, constraints and the extracted local-day expression at explicit boundary instants. They check that both data tables stay unchanged.
 
-The workflow uses separate financial and documentary jobs, each with its own PostgreSQL 16 service and log. With Node 22 and the repository's real release HTML available, the documentary job runs:
+The workflow uses separate financial, documentary and combined-atomicity jobs, each with its own PostgreSQL 16 service and log. With Node 22 and the repository's real release HTML available, the documentary job runs:
 
     python documentary_position_gate.py --postgres --ui-source ../../releases/v271/index.html
 
 This uses its own newly generated disposable database through the same loopback-only connection configuration. The HTML path is relative to `tests/p07-schedule/`. The renderer hash must match the actual repository function; a generic recreated renderer is not accepted. The standalone default gate is offline and uses the frozen public renderer, while `--ui-source` additionally verifies the actual release source. PostgreSQL execution and browser behavior are never inferred from offline success.
+
+## Combined atomicity gate
+
+`COMBINED-REVIEW.md` describes the reviewed joint guard and eight focused PostgreSQL cases. The gate runs the existing documentary DDL and unchanged economic DO in one SERIALIZABLE transaction. It checks exact function/owner/ACL/OID preservation, all-or-nothing rollback immediately after DDL and after DML in both directions, repeated final states without extra invalidation, rejected crossed states, and the destination reader definition at both real cache invalidations. A fixture-only observer is attached to the cache epoch, outside the guarded financial trigger set.
+
+    python combined_atomicity_gate.py
+    P07_QA_ALLOW_DISPOSABLE=1 python combined_atomicity_gate.py --postgres
+
+The combined PostgreSQL gate is prepared for CI. Offline verification alone does not establish transactional behavior. Its five new files do not modify any previously tested financial SQL, documentary SQL or fixture.

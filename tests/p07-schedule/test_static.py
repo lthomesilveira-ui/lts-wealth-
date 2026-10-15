@@ -58,7 +58,7 @@ class StaticContract(unittest.TestCase):
    self.assertNotRegex(text,r'https?://[^\s]*supabase')
  def test_no_unlisted_publishable_files(self):
   pin=json.loads((P/'package-checksums.json').read_text())
-  allowed=set(pin)|{'package-checksums.json','offline-result.txt','postgres16-result.txt','documentary-postgres16-result.txt'}
+  allowed=set(pin)|{'package-checksums.json','offline-result.txt','postgres16-result.txt','documentary-postgres16-result.txt','combined-postgres16-result.txt'}
   for artifact in P.rglob('*'):
    if not artifact.is_file() or '__pycache__' in artifact.parts:continue
    self.assertIn(str(artifact.relative_to(P)),allowed,'Unexpected file must be reviewed before publication')
