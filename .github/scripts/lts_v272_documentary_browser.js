@@ -37,6 +37,7 @@ async function run(browser,viewport,label){
  await context.addInitScript(()=>{const Native=Date;window.__TEST_NOW__='2026-09-20T13:00:00Z';class TestDate extends Native{constructor(...args){super(...(args.length?args:[Native.parse(window.__TEST_NOW__)]))}static now(){return Native.parse(window.__TEST_NOW__)}}window.Date=TestDate});
  await context.addInitScript(s=>localStorage.setItem('lts_supabase_session_v1',JSON.stringify(s)),session);
  const page=await context.newPage();page.setDefaultTimeout(20000);const errors=[],calls=[];
+ const captureTarget=async(locator,name)=>{await locator.scrollIntoViewIfNeeded();const box=await locator.boundingBox();assert(box&&box.x>=-1&&box.y>=-1&&box.x+box.width<=viewport.width+1&&box.y+box.height<=viewport.height+1,'target inside viewport '+JSON.stringify({name,box,viewport}));await page.screenshot({path:'qa/v272-'+label+'-'+name+'.png'});};
  const cardNames=['Bradesco Visa','VISA AETERNUM','Itaú Mastercard Black','Itaú Visa','C6'];
  const flags={reviewDone:false,manualDescription:null,manualDeleted:false,cashFail:true,forecastFail:true,cardFail:true,date:'2026-09-20',cash:-1000,incomplete:false,pageFailure:false,cyclesFail:false,cardClassified:false,paymentStale:false};
  page.on('pageerror',e=>errors.push(String(e.stack||e)));
@@ -157,6 +158,7 @@ async function run(browser,viewport,label){
   const freshness=await frame.locator('.v168-openfinance').innerText();
   assert.match(freshness,/Dados recebidos pelo Wealth em/);assert.match(freshness,/Atualização da conexão na origem/);assert.match(freshness,/Essa data não confirma a atualização de cada saldo ou transação/);assert.match(freshness,/20\/09\/2026,? 09:15 BRT/);assert.match(freshness,/19\/09\/2026,? 15:00 BRT/);assert.match(freshness,/indisponível/);assert.match(freshness,/Falha na última coleta/);
   await page.screenshot({path:'qa/v272-'+label+'-collection-origin-updates.png',fullPage:true});
+  await captureTarget(frame.locator('.v168-openfinance'),'collection-origin-updates-target');
   const contextRow=frame.locator('[data-v181-review-key="context-fixture"]');await contextRow.locator('[data-v181-beneficiary]').selectOption('Lucas');assert(await contextRow.locator('[data-v181-review-save]').isEnabled(),'context can be confirmed without replacing its existing category');
   const suggested=frame.locator('[data-v181-review-key="pending-fixture"]');
   assert.equal(await suggested.locator('[data-v181-category]').inputValue(),'Mercado','history suggestion is preselected');
@@ -245,6 +247,7 @@ async function run(browser,viewport,label){
   assert.equal(await frame.evaluate(()=>window.__LTS_V226.cycles.cards.find(c=>c.family==='itau_mastercard').cycles[0].payment_status),'payment_not_reported','documentary note does not change API status');
   assert.equal(calls.filter(x=>x.name==='lts_browser_card_settlement_detail_v2').length,legacyBefore,'modern click does not call legacy settlement');
   await page.screenshot({path:'qa/v272-'+label+'-flow-documentary-detail.png',fullPage:true});
+  await captureTarget(flowDialog.locator('.v226-note').filter({hasText:'Pagamento identificado no extrato'}),'documentary-detail-target');
   await flowDialog.locator('[data-v226-close]').click();
   assert.deepEqual(await frame.evaluate(()=>({account:ACC,from:FLOWFROM,to:FLOWTO,expanded:[...EXP]})),beforeTarget,'closing preserves Flow selection');
   // Synthetic ambiguity: two cards in the same canonical family must not select the first.
@@ -271,6 +274,7 @@ async function run(browser,viewport,label){
   assert.doesNotMatch(await flowDialog.innerText(),/Pagamento identificado no extrato em/);
   assert.equal(await flowDialog.locator('[data-v226-item]').count(),2);
   await page.screenshot({path:'qa/v272-'+label+'-documentary-stale.png',fullPage:true});
+  await captureTarget(flowDialog.locator('.v226-note').filter({hasText:'A fonte do pagamento mudou'}),'documentary-stale-target');
   await flowDialog.locator('[data-v226-close]').click();
   flags.paymentStale=false;
   await frame.evaluate(()=>{window.__LTS_V227_TRANSPORT.invalidate();window.__LTS_V226.invalidate();});
@@ -306,6 +310,7 @@ async function run(browser,viewport,label){
   assert.equal(await frame.locator('.v226-card-line').count(),5,'five billing accounts, not additional-card duplicates');
   assert.match(await frame.locator('.v226-banks').innerText(),/Pagamento identificado no extrato/);
   await page.screenshot({path:'qa/v272-'+label+'-documentary-summary.png',fullPage:true});
+  await captureTarget(frame.locator('.v226-card-line').filter({hasText:'Pagamento identificado no extrato'}),'documentary-summary-target');
   assert.match(await frame.locator('.v226-totals').first().innerText(),/2\.100,00/,'next invoice sum');
   await frame.locator('[data-v226-overview="next"]').click();
   assert.equal(await frame.locator('#v226-detail [data-v226-overview-row]').count(),3,'summary total opens every component');
