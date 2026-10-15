@@ -38,3 +38,5 @@ jobs:
         run: psql -X -v ON_ERROR_STOP=1 -f qa/d30-contract/synthetic-candidate-slice9-rollback.sql
       - name: Anchored short and long contract
         run: psql -X -v ON_ERROR_STOP=1 -f qa/d30-contract/synthetic-candidate-current229-rollback.sql
+      - name: Full supported synthetic horizon
+        run: psql -X -v ON_ERROR_STOP=1 -f qa/d30-contract/synthetic-candidate-full-horizon-rollback.sql
