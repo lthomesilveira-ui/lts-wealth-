@@ -159,7 +159,7 @@
     function after() {
       if (!signedIn()) { state.started=false; state.syncing=false; state.pending={key:'',data:null,loading:false,error:''}; clearTimeout(state.timer); return; }
       paint(); paintPending();if(!statusTimer)watch();
-      if (!state.started) { state.started=true; queueMicrotask(()=>refresh(false)); }
+      if (!state.started) { state.started=true; queueMicrotask(async()=>{if(!signedIn())return;await readStatus();await refresh(false);}); }
     }
     render=function(){const result=previousRender();after();return result;};
     state.refresh=()=>refresh(true);
