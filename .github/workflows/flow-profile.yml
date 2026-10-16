@@ -1,7 +1,7 @@
 name: V277 flow rendering diagnosis
 on:
   pull_request:
-    paths: ['.github/scripts/lts_flow_observer_profile.js', '.github/scripts/lts_flow_observer_cycles.cjs', '.github/workflows/flow-profile.yml']
+    paths: ['.github/scripts/lts_flow_observer_profile.js', '.github/scripts/lts_flow_observer_cycles.cjs', '.github/workflows/flow-profile.yml', '.github/fixtures/flow-observer-candidate/**']
 permissions:
   contents: read
 jobs:
@@ -25,6 +25,9 @@ jobs:
       - name: Full-stack synthetic profile
         if: success() || failure()
         run: timeout 240s node .github/scripts/lts_flow_observer_profile.js
+      - name: Full-stack candidate control
+        if: success() || failure()
+        run: PROFILE_MODE=candidate timeout 240s node .github/scripts/lts_flow_observer_profile.js
       - uses: actions/upload-artifact@v4
         if: always()
         with:

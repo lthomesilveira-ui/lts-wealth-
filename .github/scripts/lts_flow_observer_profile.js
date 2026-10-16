@@ -35,6 +35,7 @@ function fixtureCycles(classified=false, stale=false){
 }
 
 async function run(browser,viewport,label){
+ label=label+'-'+(process.env.PROFILE_MODE||'baseline');
  const context=await browser.newContext({viewport});
  await context.addInitScript(()=>{const Native=Date;window.__TEST_NOW__='2026-09-20T13:00:00Z';class TestDate extends Native{constructor(...args){super(...(args.length?args:[Native.parse(window.__TEST_NOW__)]))}static now(){return Native.parse(window.__TEST_NOW__)}}window.Date=TestDate});
  await context.addInitScript(s=>localStorage.setItem('lts_supabase_session_v1',JSON.stringify(s)),session);
@@ -49,6 +50,7 @@ async function run(browser,viewport,label){
  const cardNames=['Bradesco Visa','VISA AETERNUM','Itaú Mastercard Black','Itaú Visa','C6'];
  const flags={reviewDone:false,manualDescription:null,manualDeleted:false,cashFail:false,forecastFail:false,cardFail:false,date:'2026-09-20',cash:-1000,incomplete:false,pageFailure:false,cyclesFail:false,cardClassified:false,paymentStale:false,expenseFail:false,contextHang:false,expenseDelayFrom:null,balanceScenario:false,overdueMode:1,bankPositions:true,accountAsOf:'2026-09-19T18:00:00Z',statusReceipt:'2026-09-20T12:15:00Z',statusOrigin:'2026-09-19T18:00:00Z',allOrigins:false,refreshOk:false,requestedAt:'2026-09-20T12:30:00Z'};
  page.on('pageerror',e=>errors.push(String(e.stack||e)));
+ if(process.env.PROFILE_MODE==='candidate')for(const name of ['lts-v183-v168-feedback-safe.js','lts-v170-v169-review.js'])await page.route('**/releases/v277/'+name+'*',route=>route.fulfill({contentType:'application/javascript',body:fs.readFileSync('.github/fixtures/flow-observer-candidate/'+name,'utf8')}));
  await page.route('https://tadhkamnwtsbdozwkyut.supabase.co/**',async route=>{
   const req=route.request(),name=new URL(req.url()).pathname.split('/').pop();let a={};try{a=JSON.parse(req.postData()||'{}')}catch{}calls.push({name,args:a});let data={ok:true,items:[],rows:[]},status=200;
   if(name==='token')data=session;
@@ -109,9 +111,13 @@ async function run(browser,viewport,label){
  for(let i=0;i<200;i++){frame=page.frames().find(f=>f.url().includes('/index.html'));if(frame&&await frame.evaluate(()=>!!window.__LTS_V225?.installed&&!!window.__LTS_V228_FLOW).catch(()=>false))break;await page.waitForTimeout(100)}
  await frame.waitForFunction(()=>window.__LTS_V178_STATE?.cash.status==='ready'&&window.__LTS_V178_STATE?.forecast.status==='ready');
  await frame.evaluate(()=>{const old=render;render=function(){const s=performance.now();try{return old.apply(this,arguments)}finally{__FLOW_PROFILE.renderCount++;__FLOW_PROFILE.lastRenderMs=performance.now()-s}}});
+ await frame.evaluate(()=>{V='Fluxo Diário';ACC='Consolidado';renderNav();render()});
+ await frame.waitForFunction(()=>!FLOWLOADING&&FLOWQ?.current_future?.days?.length>0);await page.waitForTimeout(800);
  const snapshot=()=>frame.evaluate(()=>({...JSON.parse(JSON.stringify(__FLOW_PROFILE)),route:V,account:ACC,days:typeof mergedFlowDays==='function'?mergedFlowDays().length:0,events:typeof mergedFlowEvents==='function'?mergedFlowEvents().length:0,domNodes:document.querySelectorAll('*').length,rows:document.querySelectorAll('.fx87-row[id]').length,loading:FLOWLOADING}));
  for(const range of [{name:'five_days',from:'2026-09-16',to:'2026-09-20'},{name:'default_horizon',from:'2026-09-15',to:'2027-12-31'}]){
- await frame.evaluate(async r=>{V='Fluxo Diário';ACC='Consolidado';renderNav();await loadFlowRange(r.from,r.to)},range);
+ await frame.locator('[data-a="Consolidado"]').click();
+ await frame.locator('#flowFrom').fill(range.from);await frame.locator('#flowTo').fill(range.to);await frame.locator('#flowApply').click();
+ await frame.waitForFunction(r=>!FLOWLOADING&&FLOWFROM===r.from&&FLOWTO===r.to&&FLOWQ?.from===r.from&&FLOWQ?.to===r.to,range); 
  await frame.waitForFunction(()=>!FLOWLOADING);await page.waitForTimeout(1000);
  const before=await snapshot();await page.waitForTimeout(2000);const idle=await snapshot();
  const start=performance.now();await frame.locator('[data-a="Itaú"]').click({timeout:15000});const clickMs=performance.now()-start;
@@ -122,4 +128,4 @@ async function run(browser,viewport,label){
  }catch(e){fs.writeFileSync('qa/flow-profile-'+label+'-failure.json',JSON.stringify({error:String(e.stack||e),results,errors,calls:calls.map(c=>c.name)},null,2));throw e}
  finally{await context.close()}
 }
-(async()=>{fs.mkdirSync('qa',{recursive:true});const browser=await chromium.launch({headless:true});try{const results=[await run(browser,{width:1440,height:1000},'desktop'),await run(browser,{width:390,height:844},'mobile')];fs.writeFileSync('qa/flow-profile-summary.json',JSON.stringify(results,null,2));console.log(JSON.stringify(results,null,2))}finally{await browser.close()}})().catch(e=>{console.error(e);process.exitCode=1});
+(async()=>{fs.mkdirSync('qa',{recursive:true});const browser=await chromium.launch({headless:true});try{const results=[await run(browser,{width:1440,height:1000},'desktop'),await run(browser,{width:390,height:844},'mobile')];fs.writeFileSync('qa/flow-profile-summary-'+(process.env.PROFILE_MODE||'baseline')+'.json',JSON.stringify(results,null,2));console.log(JSON.stringify(results,null,2))}finally{await browser.close()}})().catch(e=>{console.error(e);process.exitCode=1});
