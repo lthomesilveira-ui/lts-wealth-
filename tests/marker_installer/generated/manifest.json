@@ -1,0 +1,32 @@
+{
+  "synthetic_only": true,
+  "postgresql_executed_during_generation": false,
+  "source_installer_sha256": {
+    "apply": "f2395eca45c9730b92373b4d53667c206fe8cebb275ed23cf73908d8dbc85646",
+    "rollback": "b41a1ae69a5667378fd5bafb61036825b3390f1ef439b047c94be6fff007b622"
+  },
+  "private_baseline_sha256": {
+    "original": "3cba3ce6b36644627c74d2a32b9a44cd1df612c4118db4527e4d797f57b0a0f2",
+    "candidate": "5dea9970c52b42e33781ec2dab000a51ac807ddd405c2522da78ef1b90b225f2"
+  },
+  "sanitization_count": 84,
+  "sanitization_reversal_exact": true,
+  "baseline_diff_only_marker": true,
+  "function_contract_count": 71,
+  "relation_contract_count": 49,
+  "files": {
+    "baseline-original-synthetic.sql": "23d8cc0fca3418ca799b4ad19bc8866e88f3307d440613e0690e5f6e091b474a",
+    "baseline-candidate-synthetic.sql": "2a52f9d092678e5832390b0a934a82b25e41c9ac75522e888ff75c26f8771c70",
+    "apply-synthetic.sql": "836e3319d0a3bfcfec422bd15fd40720507c244647483165eb6eb575b6c6f348",
+    "rollback-synthetic.sql": "83f5e5edd2832208edeb7c07a135671e7521e5777cd1f83367ce2d1d71ea2b66",
+    "contracts-synthetic.json": "2d1a05b910f5ebb810e5ef6b5a2d24befae994672adbcf3891c0601c4fa75bee",
+    "bootstrap-synthetic.sql": "9f72653b4817e7614959a3900eef25122f01a4c7487b6c7c8361bbd9e8ff6b95",
+    "reset-synthetic.sql": "7fc9f4cd7c6fb4fc5983eb0a8eb32f4c61261292295e3a3e6c6c535c1631a29a",
+    "measure-lease-synthetic.sql": "6a0a2f1ccc0a9752cdae7785c17c5f14bfe5f74a1c7f7d1686324f7d35657d99"
+  },
+  "limits": [
+    "Full sanitized baseline compiles and runs against synthetic contract tables and stubbed upstream readers; not full production reader-chain integration.",
+    "A fixture source table is additionally leased to test post-DDL metadata drift.",
+    "Published templates retain ready=false. Only an in-memory copy is enabled after disposable database identity/version/empty-schema checks."
+  ]
+}
