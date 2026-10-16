@@ -1,0 +1,45 @@
+# Proposed only. This file is not installed under .github/workflows.
+# Copy ONLY candidate-pure-guard.sql and tests/ to the authorized CI package.
+# Do not copy the parent directory's diagnostic/lease/invoice/private SQL files.
+name: P05 synthetic PostgreSQL17 regression
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'wealth-p05-regression-20261016/candidate-pure-guard.sql'
+      - 'wealth-p05-regression-20261016/tests/**'
+permissions:
+  contents: read
+jobs:
+  p05-pure-synthetic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_DB: lts_p05_synthetic
+          POSTGRES_USER: lts_p05_synthetic
+          POSTGRES_PASSWORD: synthetic-ci-only
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U lts_p05_synthetic -d lts_p05_synthetic"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install PostgreSQL client
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+      - name: Pure guard regression, no application database
+        run: python3 wealth-p05-regression-20261016/tests/run_postgres17.py --allow-fresh-synthetic-postgres17
+      - name: Upload synthetic receipt only
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: p05-pure-synthetic-postgres17
+          path: |
+            wealth-p05-regression-20261016/tests/generated/manifest.json
+            wealth-p05-regression-20261016/tests/results/
+

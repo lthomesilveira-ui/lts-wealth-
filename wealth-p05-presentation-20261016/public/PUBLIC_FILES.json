@@ -1,0 +1,31 @@
+{
+  "files": [
+    ".gitignore",
+    "README.md",
+    "CONTRACT.json",
+    "PUBLIC_FILES.json",
+    "build_candidate.py",
+    "build_tests.py",
+    "build_shared_policy_test.py",
+    "build_acl_test.py",
+    "validate_static.py",
+    "run_postgres17.py",
+    "postgres17-presentation.proposed.yml",
+    "economic-guard-reference.sql",
+    "fixtures-input-synthetic.json",
+    "original-presentation-helper.sql",
+    "payment-refresh-annotation.template.sql",
+    "payment-refresh-annotation.sql",
+    "documentary-payment-presentation.sql",
+    "documentary-payment-note.cjs",
+    "lts-v226-card-composition.js",
+    "v280-card-composition.original.js",
+    "presentation.test.cjs",
+    "legacy-note.test.cjs",
+    "browser-note.patch",
+    "presentation-helper.patch",
+    "candidate-rollback-default.sql"
+  ],
+  "synthetic_only": true,
+  "production_mutation": false
+}

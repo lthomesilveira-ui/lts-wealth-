@@ -1,0 +1,44 @@
+name: P05 presentation envelope PostgreSQL17 synthetic
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'wealth-p05-presentation-20261016/envelope-tests/**'
+      - 'wealth-p05-presentation-20261016/public/**'
+      - '.github/workflows/p05-presentation-envelope-synthetic.yml'
+permissions:
+  contents: read
+jobs:
+  synthetic-presentation-envelope:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: lts_p05_synthetic
+          POSTGRES_USER: lts_p05_synthetic
+          POSTGRES_PASSWORD: synthetic-ci-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U lts_p05_synthetic -d lts_p05_synthetic"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install PostgreSQL client
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+      - name: Static envelope boundary
+        run: python3 wealth-p05-presentation-20261016/envelope-tests/validate_static.py
+      - name: Atomic apply and recovery with fictional data
+        run: python3 wealth-p05-presentation-20261016/envelope-tests/run_postgres17.py --allow-fresh-synthetic-postgres17
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: p05-presentation-envelope-synthetic
+          path: wealth-p05-presentation-20261016/envelope-tests/results/
+          if-no-files-found: warn
