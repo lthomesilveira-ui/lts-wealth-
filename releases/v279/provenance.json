@@ -1,0 +1,10 @@
+{
+  "release": "v279",
+  "base_release": "v278",
+  "base_commit": "32a790cab4c89c1b3c6a79f738e1838f7dd5de5c",
+  "scope": [
+    "Recover received cash snapshot after collection without waiting for heavy Dashboard reads"
+  ],
+  "financial_calculations_unchanged": true,
+  "backend_changed": false
+}
