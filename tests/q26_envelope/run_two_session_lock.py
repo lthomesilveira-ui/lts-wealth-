@@ -6,7 +6,7 @@ p=argparse.ArgumentParser();p.add_argument('--coordinator-approved-synthetic-sql
 if not a.coordinator_approved_synthetic_sql or os.environ.get('Q26_DISPOSABLE_FIXTURE')!='I_CREATED_AN_EMPTY_LOCAL_PG17':raise SystemExit('Disposable fixture attestation required; synthetic PR159 execution is already authorized.')
 if not 1024<=a.port<=65535:raise SystemExit('Invalid local fixture port')
 setup=Path(__file__).with_name('pg17_envelope_lock_setup.sql')
-if hashlib.sha256(setup.read_bytes()).hexdigest()!='a6233f09ca41d51d2d1ea3629d29ab8825a526b1581082a03d36c1af0f45b149':raise SystemExit('Frozen setup hash mismatch')
+if hashlib.sha256(setup.read_bytes()).hexdigest()!='dd93df9d5311142218654e00d6233a19be1b15df644941abd441d33419e5ac57':raise SystemExit('Frozen setup hash mismatch')
 env={'PATH':os.environ.get('PATH','/usr/bin:/bin'),'PGPASSWORD':'q26_local_disposable_only','PGCONNECT_TIMEOUT':'5','PGSSLMODE':'disable','PGAPPNAME':'q26_two_session_disposable'}
 cmd=['psql','-X','--no-psqlrc','-q','-A','-t','-v','ON_ERROR_STOP=1','-h','127.0.0.1','-p',str(a.port),'-U','postgres','-d','q26_synthetic_nominal_20261016']
 created=subprocess.run(cmd+['-f',str(setup)],env=env,text=True,capture_output=True,timeout=60)

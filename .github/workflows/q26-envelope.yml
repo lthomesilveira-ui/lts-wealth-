@@ -36,9 +36,9 @@ jobs:
           persist-credentials: false
       - name: Verify frozen sources
         run: |
-          echo '7be775d160cbab074cdff753801df539ec66a363366c135205a1cf4b552f3d85  tests/q26_envelope/pg17_envelope_synthetic.sql' | sha256sum -c -
-          echo 'a6233f09ca41d51d2d1ea3629d29ab8825a526b1581082a03d36c1af0f45b149  tests/q26_envelope/pg17_envelope_lock_setup.sql' | sha256sum -c -
-          echo 'd506eee56ba405fa3fdd88b9b5a6332bc7d07faec2e4b4f68f93955a50e7a245  tests/q26_envelope/run_two_session_lock.py' | sha256sum -c -
+          echo '843d73e0a692c321703edf736df8c7447317e9062bcec5dc1408209139e0f3c0  tests/q26_envelope/pg17_envelope_synthetic.sql' | sha256sum -c -
+          echo 'dd93df9d5311142218654e00d6233a19be1b15df644941abd441d33419e5ac57  tests/q26_envelope/pg17_envelope_lock_setup.sql' | sha256sum -c -
+          echo '99ffa2b0357b61ea3633b18bad39ca98d83811a4a9d0d4086acc7e103e15aaf5  tests/q26_envelope/run_two_session_lock.py' | sha256sum -c -
       - name: Functional envelope and compensation
         run: |
           mkdir -p qa
@@ -48,8 +48,11 @@ jobs:
           p=pathlib.Path('qa')
           rows=[json.loads(s) for s in (p/'functional.log').read_text().splitlines() if s.startswith('{') and 'synthetic_envelope_checks_passed' in s]
           assert len(rows)==1,rows
-          r=rows[0];assert r['synthetic_envelope_checks_passed']==46 and len(r['labels'])==len(set(r['labels']))==46,r
+          r=rows[0];assert r['synthetic_envelope_checks_passed']==52 and len(r['labels'])==len(set(r['labels']))==52,r
           (p/'functional-result.json').write_text(json.dumps(r,indent=2))
+          canonical=[json.loads(s) for s in (p/'functional.log').read_text().splitlines() if s.startswith('{') and 'compiled_public_definitions' in s]
+          assert len(canonical)==1
+          (p/'compiled-public-definitions.json').write_text(json.dumps(canonical[0],indent=2))
           CHECK
           test "$(psql -X -Atc "select count(*) from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname='public' and c.relkind in ('r','v','m','p','f')")" = 0
           test "$(psql -X -Atc "select count(*) from pg_roles where rolname in ('q26_fixture_owner','service_role','anon','authenticated')")" = 0
