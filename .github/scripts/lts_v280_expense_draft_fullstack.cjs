@@ -176,7 +176,23 @@ async function run(browser,build,viewport,label,isBaseline){
   // Observation only: original production render function, handlers and readers remain intact.
   await frame.evaluate(()=>{
    const snapshot=()=>{const a=window.__LTS_V168_STATE.expense,b=window.__LTS_V175_STATE.expense;return {view:V,boot:BOOT.generation,inputFrom:document.getElementById('v168ExpenseFrom')?.value??null,inputTo:document.getElementById('v168ExpenseTo')?.value??null,focused:document.activeElement?.id,applied:{key:a.key,from:a.customFrom,to:a.customTo},v168:{loading:a.loading,error:a.error,period:a.data?.period,marker:a.data?.__draftFixtureMarker},v175:{loading:b.loading,error:b.error,key:b.key,token:b.token,period:b.data?.period,marker:b.data?.__draftFixtureMarker}};};
-   const test=window.__EXPENSE_TEST__={snapshot,events:[],phase:'boot'};test.bodies=[];const nativeJSON=Response.prototype.json;Response.prototype.json=function(){const stack=new Error('expense-response-consumed').stack;return nativeJSON.call(this).then(data=>{if(data?.__draftFixtureMarker)test.bodies.push({marker:data.__draftFixtureMarker,stack,boot:BOOT.generation});return data;});};
+   const test=window.__EXPENSE_TEST__={snapshot,events:[],phase:'boot'};
+   // Observe final consumer Responses separately from V179's canonical raw
+   // Response. V179 intentionally replaces a raw 503 with a marker-free envelope.
+   test.bodies=[];test.consumerReads=[];const finalResponses=new WeakMap();let responseIdentity=0;
+   const nativeFetch=window.fetch.bind(window),nativeJSON=Response.prototype.json;
+   window.fetch=function(input,init){
+    const url=typeof input==='string'?input:input?.url||'',name=url.split('/').pop();
+    if(!/^lts_browser_(?:expenses_|expense_executive_)/.test(name))return nativeFetch(input,init);
+    const headers=new Headers(init?.headers||input?.headers);let args={};try{args=JSON.parse(init?.body||'{}');}catch{}
+    const read={id:test.consumerReads.length+1,name,args,auth_session:Number((headers.get('Authorization')||'').match(/synthetic-expense-token-(\d+)$/)?.[1]??-1),generation:BOOT.generation,issuedStack:new Error('expense-consumer-issued').stack,responseIdentity:null,status:null,parsed:false};test.consumerReads.push(read);
+    const result=nativeFetch(input,init);result.then(response=>{read.responseIdentity=finalResponses.get(response)?.responseIdentity||++responseIdentity;read.status=response.status;finalResponses.set(response,read);},error=>{read.fetchError=String(error);});return result;
+   };
+   Response.prototype.json=function(){const read=finalResponses.get(this),stack=new Error('expense-response-consumed').stack,status=this.status,result=nativeJSON.call(this);result.then(data=>{
+    const parsed={marker:data?.__draftFixtureMarker??null,message:data?.message??null,status,stack,boot:BOOT.generation,consumerId:read?.id??null,responseIdentity:read?.responseIdentity??null};
+    if(read){read.parsed=true;read.parsedGeneration=BOOT.generation;read.marker=parsed.marker;read.message=parsed.message;read.parseStack=stack;}
+    if(parsed.marker!==null||read)test.bodies.push(parsed);
+   },error=>{if(read)read.parseError=String(error);});return result;};
    test.record=(kind,extra={})=>{test.events.push({kind,at:performance.now(),phase:test.phase,...extra,snapshot:snapshot()});};
    for(const type of ['input','change'])document.addEventListener(type,event=>{if(event.target?.matches?.('#v168ExpenseFrom,#v168ExpenseTo'))test.record(type,{target:event.target.id});},true);
    document.addEventListener('click',event=>{if(event.target?.closest?.('#v168ExpenseApply,[data-v168-exp-range]'))test.record('click-before-handler');},true);
@@ -283,10 +299,16 @@ async function run(browser,build,viewport,label,isBaseline){
    mark('logout-login-isolates-report-and-draft-old-'+mode);
    const logoutKey=(await applied()).key==='6m'?'12m':'6m',oldSession=authSerial,nextSession=oldSession+1,oldLabel='old-session-'+mode,newLabel='new-session-'+mode;
    const oldTotal=mode==='success'?717171.25:717172.25,newTotal=mode==='success'?828281.75:828282.75;
+   const consumerStart=await frame.evaluate(()=>window.__EXPENSE_TEST__.consumerReads.length);
    const logoutRead=await startHeldPreset(logoutKey,oldLabel,{session:oldSession,total:oldTotal});
    await frame.waitForFunction(()=>window.__LTS_V168_STATE.expense.loading&&window.__LTS_V175_STATE.expense.loading);
    await openEditor();const priorSessionDraft={from:mode==='success'?'2026-03-04':'2026-03-05',to:mode==='success'?'2026-03-19':'2026-03-20'};await write(priorSessionDraft);
    await frame.evaluate(()=>{const t=window.__EXPENSE_TEST__;t.oldSessionNode=document.getElementById('v168ExpenseFrom');t.oldBoot=BOOT.generation;t.oldTokens=[window.__LTS_V168_STATE.expense.token,window.__LTS_V175_STATE.expense.token];});
+   const consumerQuery={session:oldSession,range:logoutRead.range,afterId:consumerStart};
+   await frame.waitForFunction(({session,range,afterId})=>{const t=window.__EXPENSE_TEST__;return t.consumerReads.filter(read=>read.id>afterId&&read.generation===t.oldBoot&&read.auth_session===session&&read.args.p_from===range.from&&read.args.p_to===range.to).length===2;},consumerQuery);
+   const capturedConsumers=await frame.evaluate(({session,range,afterId})=>{const t=window.__EXPENSE_TEST__,reads=t.consumerReads.filter(read=>read.id>afterId&&read.generation===t.oldBoot&&read.auth_session===session&&read.args.p_from===range.from&&read.args.p_to===range.to);t.oldConsumerIds=reads.map(read=>read.id);return reads;},consumerQuery);
+   assert.equal(capturedConsumers.length,2,'Both real expense consumers were issued before logout');
+   assert(capturedConsumers.every(read=>!read.parsed&&read.status===null),'Both captured consumer Responses remain unresolved behind the old network barrier');
    await frame.locator('#logout').click();await frame.waitForFunction(()=>document.body.dataset.ltsBootState==='signed-out');
    // The inherited boot boundary hides #app instead of deleting its DOM.
    // Draft retirement and old-node rejection remain asserted after the new boot.
@@ -309,11 +331,19 @@ async function run(browser,build,viewport,label,isBaseline){
    assert.equal(await editor().count(),0,'New session does not reopen previous session draft editor');
    const storeBefore=await frame.evaluate(()=>{const t=window.__EXPENSE_TEST__;t.newSessionSlots=[window.__LTS_V168_STATE.expense,window.__LTS_V175_STATE.expense];t.sessionEventStart=t.events.length;t.sessionBodyStart=t.bodies.length;return JSON.stringify(t.newSessionSlots);});
    if(mode==='error')await barriers.release(oldLabel,{message:'Erro sintético da sessão anterior.',__draftFixtureMarker:logoutRead.marker},503);else await barriers.release(oldLabel);
-   // Both real consumers parsed the old response before the assertion. This
-   // is an explicit completion boundary, not a guessed delay or a forced render.
-   await frame.waitForFunction(marker=>{const t=window.__EXPENSE_TEST__;return t.bodies.slice(t.sessionBodyStart).filter(body=>body.marker===marker).length>=2;},logoutRead.marker);
+   // Await the exact two final consumer Responses captured before logout.
+   // Counting raw markers would miss V179's two normalized error envelopes.
+   await frame.waitForFunction(()=>{const t=window.__EXPENSE_TEST__;return t.oldConsumerIds.length===2&&t.oldConsumerIds.every(id=>t.consumerReads.find(read=>read.id===id)?.parsed);});
    await barriers.seen(newLabel);await settle();
-   const isolated=await frame.evaluate(()=>{const t=window.__EXPENSE_TEST__,slots=[window.__LTS_V168_STATE.expense,window.__LTS_V175_STATE.expense];return{sameIdentity:slots.every((slot,i)=>slot===t.newSessionSlots[i]),store:JSON.stringify(slots),renders:t.events.slice(t.sessionEventStart).filter(event=>event.kind==='before-render'&&/ensureExpense/.test(event.stack||'')),bodies:t.bodies.slice(t.sessionBodyStart)};});
+   const isolated=await frame.evaluate(()=>{const t=window.__EXPENSE_TEST__,slots=[window.__LTS_V168_STATE.expense,window.__LTS_V175_STATE.expense];return{sameIdentity:slots.every((slot,i)=>slot===t.newSessionSlots[i]),store:JSON.stringify(slots),renders:t.events.slice(t.sessionEventStart).filter(event=>event.kind==='before-render'&&/ensureExpense/.test(event.stack||'')),bodies:t.bodies.slice(t.sessionBodyStart),consumers:t.oldConsumerIds.map(id=>t.consumerReads.find(read=>read.id===id))};});
+   assert.equal(new Set(isolated.consumers.map(read=>read.responseIdentity)).size,2,'Two distinct final Responses reached the captured consumers');
+   assert.equal(isolated.bodies.filter(body=>body.consumerId===null&&body.marker===logoutRead.marker).length,1,'The canonical old response was decoded once separately from its consumers');
+   for(const read of isolated.consumers){
+    assert.equal(read.auth_session,oldSession);assert.equal(read.generation,capturedConsumers[0].generation);assert(read.parsedGeneration>read.generation,'Old final response was consumed after the generation changed');
+    assert.equal(read.status,mode==='error'?503:200);assert.match(read.parseStack,/directRpc/,'Production directRpc decoded the final consumer response');
+    assert.equal(read.marker,mode==='error'?null:logoutRead.marker,'Error normalization may remove the marker; success must preserve it');
+    if(mode==='error')assert.equal(read.message,'Não foi possível atualizar este relatório.','Both old consumers received the actual normalized error envelope');
+   }
    assert.equal(isolated.sameIdentity,true,'Old '+mode+' cannot replace new-session report slots');
    assert.equal(isolated.store,storeBefore,'Old '+mode+' cannot write data/error/loading/tokens into new-session V168/V175 report slots');
    assert.deepEqual(isolated.renders,[],'Old '+mode+' cannot repaint from its expense reader callback while the new report remains held');
@@ -333,7 +363,7 @@ async function run(browser,build,viewport,label,isBaseline){
   return{build:build.id,label,viewport,pass:true,baseline:false,checkpoints,geometry,calls,events:await frame.evaluate(()=>window.__EXPENSE_TEST__.events),auth_sessions:authSerial};
  }catch(error){
   await page.screenshot({path:path.join(qa,label+'-failure.png'),fullPage:true}).catch(()=>{});
-  error.expenseEvidence={build:build.id,label,phase,errors,blocked,assetErrors,routeErrors,calls,pending:[...barriers.pending.keys()],snapshot:await snapshot().catch(()=>null),events:await frame?.evaluate(()=>window.__EXPENSE_TEST__?.events).catch(()=>null)};throw error;
+  error.expenseEvidence={build:build.id,label,phase,errors,blocked,assetErrors,routeErrors,calls,pending:[...barriers.pending.keys()],snapshot:await snapshot().catch(()=>null),events:await frame?.evaluate(()=>window.__EXPENSE_TEST__?.events).catch(()=>null),responseObservations:await frame?.evaluate(()=>{const t=window.__EXPENSE_TEST__;return t?{bodies:t.bodies,consumerReads:t.consumerReads,oldConsumerIds:t.oldConsumerIds}:null;}).catch(()=>null)};throw error;
  }finally{await barriers.close();await context.close();}
 }
 (async()=>{
