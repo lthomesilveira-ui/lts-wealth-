@@ -1,0 +1,61 @@
+name: V278 bounded flow observers
+on:
+  pull_request:
+    paths: ['releases/v278/**', 'backend/qa/lts_v278*', '.github/scripts/lts_v278*', '.github/workflows/v278.yml']
+permissions:
+  contents: read
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      LTS_RELEASE: v278
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node .github/scripts/lts_v225_static_gate.js
+      - run: node .github/scripts/lts_v278_bootstrap_contract.cjs releases/v278/lts-v225-open-finance.js
+      - run: node .github/scripts/lts_v272_payment_contract.cjs releases/v278/lts-v226-card-composition.js
+      - run: node .github/scripts/lts_v272_organon_contract.cjs releases/v278/lts-category-display.js
+      - run: TZ=Pacific/Honolulu node .github/scripts/lts_v272_freshness_contract.cjs
+      - run: TZ=Asia/Tokyo node .github/scripts/lts_v272_freshness_contract.cjs
+      - run: node .github/scripts/lts_v278_boot_contract.cjs
+      - run: node .github/scripts/lts_v278_overdue_contract.cjs
+      - run: node .github/scripts/lts_v278_copy_only.cjs
+      - run: node .github/scripts/lts_v278_modal_contract.cjs
+      - run: node .github/scripts/lts_v278_overdue_runtime.cjs
+      - run: node .github/scripts/lts_v278_freshness_readiness.test.cjs .github/scripts/lts_v278_balance_presentation_browser.js
+      - run: node .github/scripts/lts_v278_freshness_model.test.cjs
+      - run: node .github/scripts/lts_v278_freshness_runtime.test.cjs
+      - run: node .github/scripts/lts_v278_observer_contract.cjs
+      - run: node .github/scripts/lts_v278_observer_parity.cjs
+      - name: Check candidate and protected hashes
+        run: |
+          python3 - <<'PY'
+          import hashlib,json,pathlib
+          root=pathlib.Path('.'); base=root/'releases/v278'; m=json.loads((base/'manifest.json').read_text())
+          for n,h in m['files'].items(): assert hashlib.sha256((base/n).read_bytes()).hexdigest()==h,n
+          for n,h in m['protected'].items(): assert hashlib.sha256((root/n).read_bytes()).hexdigest()==h,n
+          print('Candidate manifest and all protected assets verified')
+          PY
+      - run: npm install --no-save --package-lock=false playwright@1.58.2
+      - run: npx playwright install --with-deps chromium webkit
+      - run: python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/lts-v272-http.log 2>&1 &
+      - name: Category UI and card/expense regression
+        run: node .github/scripts/lts_v278_balance_presentation_browser.js
+      - name: Full-stack boot recovery
+        if: success() || failure()
+        run: node .github/scripts/lts_v278_boot_browser.js
+      - name: Flow period navigation
+        if: success() || failure()
+        run: node .github/scripts/lts_flow_navigation_gate.js
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v278-recovery-evidence
+          path: qa/
+
