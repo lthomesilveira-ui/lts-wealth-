@@ -331,7 +331,7 @@ async function run(browser, build, viewport, label, isBaseline) {
     const measurement = await surface.evaluate(element => {
       const box = node => { const rect = node.getBoundingClientRect(); return {left:rect.left, right:rect.right, width:rect.width, height:rect.height, scroll:node.scrollWidth, client:node.clientWidth}; };
       return {viewport:innerWidth, document:document.documentElement.scrollWidth, surface:box(element),
-        controls:[...element.querySelectorAll('button,input')].filter(node => !node.closest('.v168-tablewrap,.v175-tablewrap,.v178-detail-scroll')).map(box),
+        controls:[...element.querySelectorAll('button,input')].filter(node => !node.closest('[hidden]') && !node.closest('.v168-tablewrap,.v175-tablewrap,.v178-detail-scroll')).map(box),
         scrollers:[...element.querySelectorAll('.v168-tablewrap,.v175-tablewrap,.v178-detail-scroll')].map(node => ({...box(node), overflow:getComputedStyle(node).overflowX}))};
     });
     assert(measurement.document <= measurement.viewport+2, 'No document horizontal overflow');
