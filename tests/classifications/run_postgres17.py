@@ -73,7 +73,16 @@ def main():
   if snap()!=before:raise AssertionError(name+' did not restore exact transactional pre-attempt state')
   if restore:sql(restore)
   add(name,expected_rejection=error)
- reset();before=snap();sql(apply);after=snap()
+ reset()
+ # The original fixture used January 2000 -03 while Sao Paulo was on DST -02.
+ # Prove the database's real JSON serialization before any application is attempted.
+ timestamp_proof=query("SET TIME ZONE 'America/Sao_Paulo'; SELECT jsonb_build_object('old_serialized',to_jsonb('2000-01-01T00:00:00-03:00'::timestamptz),'winter_serialized',to_jsonb('2000-07-01T00:00:00-03:00'::timestamptz));")
+ if timestamp_proof!={'old_serialized':'2000-01-01T01:00:00-02:00','winter_serialized':'2000-07-01T00:00:00-03:00'}:raise AssertionError('Unexpected historical timezone serialization: '+json.dumps(timestamp_proof))
+ actual_origins=query("SET TIME ZONE 'America/Sao_Paulo'; SELECT jsonb_agg(to_jsonb(d) ORDER BY source_ref) FROM public.lts_v178_review_decision d WHERE source_table='synthetic_document';")
+ expected_origins=sorted([t['origin_decision'] for t in fixture['targets'] if t['origin_decision']],key=lambda d:d['source_ref'])
+ if actual_origins!=expected_origins:raise AssertionError('Synthetic origin row does not round-trip exactly: '+json.dumps(actual_origins))
+ add('synthetic-origin-timestamptz-json-roundtrip',historical_timezone_proof=timestamp_proof)
+ before=snap();sql(apply);after=snap()
  if len(after['decisions'])-len(before['decisions'])!=5 or len(after['audit'])!=1 or after['epoch']!=701:raise AssertionError('Apply did not create exactly five decisions, one receipt and one cache epoch')
  if after['staging']!=before['staging'] or after['expenses']!=before['expenses']:raise AssertionError('Source fixtures mutated')
  if after['cache']!=[{'user_id':None,'cache_key':'synthetic-null-owner'}]:raise AssertionError('Known global nonnull-user cache deletion mismatch')

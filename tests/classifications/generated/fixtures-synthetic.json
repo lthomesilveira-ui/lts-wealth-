@@ -39,7 +39,7 @@
         "property_code": null,
         "category_label": "Saúde",
         "decision_basis": "SYNTHETIC DOCUMENTED DECISION",
-        "decided_at": "2000-01-01T00:00:00-03:00"
+        "decided_at": "2000-07-01T00:00:00-03:00"
       },
       "final_before": {
         "amount": 10,
@@ -106,7 +106,7 @@
         "property_code": null,
         "category_label": "Vestuário",
         "decision_basis": "SYNTHETIC DOCUMENTED DECISION",
-        "decided_at": "2000-01-01T00:00:00-03:00"
+        "decided_at": "2000-07-01T00:00:00-03:00"
       },
       "final_before": {
         "amount": 20,
@@ -173,7 +173,7 @@
         "property_code": null,
         "category_label": "Vestuário",
         "decision_basis": "SYNTHETIC DOCUMENTED DECISION",
-        "decided_at": "2000-01-01T00:00:00-03:00"
+        "decided_at": "2000-07-01T00:00:00-03:00"
       },
       "final_before": {
         "amount": 30,
@@ -240,7 +240,7 @@
         "property_code": null,
         "category_label": "Vestuário",
         "decision_basis": "SYNTHETIC DOCUMENTED DECISION",
-        "decided_at": "2000-01-01T00:00:00-03:00"
+        "decided_at": "2000-07-01T00:00:00-03:00"
       },
       "final_before": {
         "amount": 40,
