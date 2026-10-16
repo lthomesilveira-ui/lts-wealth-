@@ -113,18 +113,24 @@ async function run(browser,viewport,label){
  await frame.evaluate(()=>{const old=render;render=function(){const s=performance.now();try{return old.apply(this,arguments)}finally{__FLOW_PROFILE.renderCount++;__FLOW_PROFILE.lastRenderMs=performance.now()-s}}});
  await frame.evaluate(()=>{V='Fluxo Diário';ACC='Consolidado';renderNav();render()});
  await frame.waitForFunction(()=>!FLOWLOADING&&FLOWQ?.current_future?.days?.length>0);await page.waitForTimeout(800);
- const snapshot=()=>frame.evaluate(()=>({...JSON.parse(JSON.stringify(__FLOW_PROFILE)),route:V,account:ACC,days:typeof mergedFlowDays==='function'?mergedFlowDays().length:0,events:typeof mergedFlowEvents==='function'?mergedFlowEvents().length:0,domNodes:document.querySelectorAll('*').length,rows:document.querySelectorAll('.fx87-row[id]').length,loading:FLOWLOADING}));
+ const snapshot=async()=>{const out=await frame.evaluate(()=>({...JSON.parse(JSON.stringify(__FLOW_PROFILE)),route:V,account:ACC,from:FLOWFROM,to:FLOWTO,payloadFrom:FLOWQ?.from,payloadTo:FLOWQ?.to,days:typeof mergedFlowDays==='function'?mergedFlowDays().length:0,events:typeof mergedFlowEvents==='function'?mergedFlowEvents().length:0,domNodes:document.querySelectorAll('*').length,rows:document.querySelectorAll('.fx87-row[id]').length,loading:FLOWLOADING,financialRows:Array.from(document.querySelectorAll('.fx87-row[id]')).map(r=>({id:r.id,cells:Array.from(r.children).map(c=>c.textContent)})),payload:JSON.stringify(FLOWQ)}));out.dataHash=crypto.createHash('sha256').update(out.payload).digest('hex');delete out.payload;out.firstRow=out.financialRows[0]?.id;out.lastRow=out.financialRows.at(-1)?.id;out.financialHash=crypto.createHash('sha256').update(JSON.stringify(out.financialRows)).digest('hex');delete out.financialRows;return out};
+ const validate=(s,r)=>{const days=1+Math.round((Date.parse(r.to)-Date.parse(r.from))/86400000);assert.equal(s.from,r.from);assert.equal(s.to,r.to);assert.equal(s.payloadFrom,r.from);assert.equal(s.payloadTo,r.to);assert.equal(s.days,days);assert.equal(s.rows,days);assert.equal(s.firstRow,'d-'+r.from);assert.equal(s.lastRow,'d-'+r.to);assert.equal(s.loading,false);};
  for(const range of [{name:'five_days',from:'2026-09-16',to:'2026-09-20'},{name:'default_horizon',from:'2026-09-15',to:'2027-12-31'}]){
  await frame.locator('[data-a="Consolidado"]').click();
  await frame.locator('#flowFrom').fill(range.from);await frame.locator('#flowTo').fill(range.to);await frame.locator('#flowApply').click();
  await frame.waitForFunction(r=>!FLOWLOADING&&FLOWFROM===r.from&&FLOWTO===r.to&&FLOWQ?.from===r.from&&FLOWQ?.to===r.to,range); 
  await frame.waitForFunction(()=>!FLOWLOADING);await page.waitForTimeout(1000);
- const before=await snapshot();await page.waitForTimeout(2000);const idle=await snapshot();
- const start=performance.now();await frame.locator('[data-a="Itaú"]').click({timeout:15000});const clickMs=performance.now()-start;
- const after=await snapshot();await page.waitForTimeout(2000);const afterIdle=await snapshot();
- results.push({range,clickMs,before,idle,after,afterIdle});fs.writeFileSync('qa/flow-profile-'+label+'.json',JSON.stringify({results,errors},null,2));
+ for(const account of ['Consolidado','Itaú','Bradesco','C6']){
+ const before=await snapshot();validate(before,range);await page.waitForTimeout(1000);const idle=await snapshot();validate(idle,range);
+ const start=performance.now();await frame.locator('[data-a="'+account+'"]').click({timeout:15000});const clickMs=performance.now()-start;
+ const after=await snapshot();validate(after,range);assert.equal(after.account,account);await page.waitForTimeout(1000);const afterIdle=await snapshot();validate(afterIdle,range);assert.equal(afterIdle.account,account);assert.equal(after.dataHash,before.dataHash);assert.equal(afterIdle.dataHash,before.dataHash);assert.equal(afterIdle.financialHash,after.financialHash);
+ results.push({range,account,clickMs,before,idle,after,afterIdle});fs.writeFileSync('qa/flow-profile-'+label+'.json',JSON.stringify({results,errors},null,2));
  }
- return {label,results,errors};
+
+ }
+ await page.waitForTimeout(3500);const settledBefore=await snapshot();await page.waitForTimeout(2000);const settledAfter=await snapshot();
+ const idleProof={rafDelta:settledAfter.rafExecuted-settledBefore.rafExecuted,observerDeltas:settledAfter.observers.map((o,i)=>({callback:o.callback,count:o.count-(settledBefore.observers[i]?.count||0)}))};
+ return {label,results,errors,idleProof};
  }catch(e){fs.writeFileSync('qa/flow-profile-'+label+'-failure.json',JSON.stringify({error:String(e.stack||e),results,errors,calls:calls.map(c=>c.name)},null,2));throw e}
  finally{await context.close()}
 }
