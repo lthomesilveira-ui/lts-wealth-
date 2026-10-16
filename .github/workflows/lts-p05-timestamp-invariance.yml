@@ -1,4 +1,4 @@
-# Synthetic CI only; never connects to the application database.
+# Proposed only. This file is not installed under .github/workflows.
 # Copy ONLY candidate-pure-guard.sql and tests/ to the authorized CI package.
 # Do not copy the parent directory's diagnostic/lease/invoice/private SQL files.
 name: P05 synthetic PostgreSQL17 regression
@@ -24,7 +24,7 @@ jobs:
         ports:
           - 5432:5432
         options: >-
-          --health-cmd 'pg_isready -U lts_p05_synthetic -d lts_p05_synthetic'
+          --health-cmd "pg_isready -U lts_p05_synthetic -d lts_p05_synthetic"
           --health-interval 5s
           --health-timeout 5s
           --health-retries 12
@@ -42,3 +42,4 @@ jobs:
           path: |
             wealth-p05-regression-20261016/tests/generated/manifest.json
             wealth-p05-regression-20261016/tests/results/
+
