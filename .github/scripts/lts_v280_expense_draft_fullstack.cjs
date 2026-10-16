@@ -301,7 +301,11 @@ async function run(browser,build,viewport,label,isBaseline){
    // The new reader is admitted normally while the old response still holds
    // the real transport's heavy slot. No application state is edited by the test.
    await frame.waitForFunction(()=>{const t=window.__EXPENSE_TEST__,a=window.__LTS_V168_STATE.expense,b=window.__LTS_V175_STATE.expense;return BOOT.generation>t.oldBoot&&a.loading&&b.loading&&a.token>t.oldTokens[0]&&b.token>t.oldTokens[1];});
-   await frame.waitForFunction(()=>window.__LTS_V178_STATE.cash.status==='ready'&&!window.__LTS_V225.statusRead&&!window.__LTS_V225.loading);await settle();
+   // Despesas does not demand cash after boot. Settle only the status reader
+   // that actually started; the expense response barriers below remain intact.
+   await frame.waitForFunction(()=>!window.__LTS_V225.statusRead&&!window.__LTS_V225.loading);await settle();
+   assert(calls.some(call=>call.auth_session===nextSession&&/^lts_browser_open_finance_status_/.test(call.name)&&call.status===200),'New-session Open Finance status read completed');
+   assert.equal(calls.filter(call=>call.auth_session===nextSession&&/^lts_browser_cash_today_/.test(call.name)).length,0,'Boot in Despesas does not demand an unrelated cash read');
    assert.equal(await editor().count(),0,'New session does not reopen previous session draft editor');
    const storeBefore=await frame.evaluate(()=>{const t=window.__EXPENSE_TEST__;t.newSessionSlots=[window.__LTS_V168_STATE.expense,window.__LTS_V175_STATE.expense];t.sessionEventStart=t.events.length;t.sessionBodyStart=t.bodies.length;return JSON.stringify(t.newSessionSlots);});
    if(mode==='error')await barriers.release(oldLabel,{message:'Erro sintético da sessão anterior.',__draftFixtureMarker:logoutRead.marker},503);else await barriers.release(oldLabel);
