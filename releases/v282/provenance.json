@@ -1,0 +1,12 @@
+{
+  "release": "v282",
+  "base_release": "v281",
+  "base_commit": "d53c84c51a6f56c374338fe19139b8b12ce3c92f",
+  "scope": [
+    "Read the existing canonical expense detail in the Transactions tab with complete signed pagination and range/session ownership",
+    "Preserve source dates, explicit beneficiaries and monthly date semantics",
+    "Distinguish waiting from failed projection loading"
+  ],
+  "financial_sources_unchanged": true,
+  "backend_changed": false
+}

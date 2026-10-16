@@ -1,0 +1,37 @@
+name: V282 canonical expense ledger
+on:
+  pull_request:
+    paths: ['releases/v282/**', '.github/scripts/lts_v282*', '.github/workflows/v282.yml']
+permissions:
+  contents: read
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      LTS_RELEASE: v282
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: mkdir -p qa
+      - run: node .github/scripts/lts_v282_release_contract.cjs
+      - run: node .github/scripts/lts_v282_test_canonical.cjs
+      - run: node .github/scripts/lts_v282_p12_contract.cjs
+      - run: node .github/scripts/lts_v282_observer_contract.cjs
+      - run: npm install --no-save --package-lock=false playwright@1.58.2
+      - run: npx playwright install --with-deps chromium
+      - run: python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/v282-http.log 2>&1 &
+      - run: node .github/scripts/lts_v282_ledger_fullstack.cjs
+      - run: node .github/scripts/lts_v282_payment_fullstack.js
+        if: success() || failure()
+      - run: node .github/scripts/lts_v282_boot_browser.js
+        if: success() || failure()
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v282-canonical-ledger-evidence
+          path: qa/
