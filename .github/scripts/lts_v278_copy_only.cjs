@@ -1,0 +1,30 @@
+'use strict';
+const assert=require('node:assert/strict'),fs=require('node:fs'),crypto=require('node:crypto'),path=require('node:path');
+const assetPath=path.resolve(process.env.LTS_OVERDUE_ASSET || 'releases/v278/lts-v275-overdue-visibility.js');
+const baselineSource=fs.readFileSync('releases/v275/lts-v275-overdue-visibility.js','utf8');
+const source=fs.readFileSync(assetPath,'utf8');
+const oldApi=require('../../releases/v275/lts-v275-overdue-visibility.js'),api=require(assetPath);
+const replacements=[{"before": "pagamento não confirmado", "after": "baixa ainda não vinculada no LTS"}, {"before": "recebimento não confirmado", "after": "crédito ainda não vinculado no LTS"}, {"before": "realização não confirmada", "after": "movimento ainda não vinculado no LTS"}, {"before": " previsão vencida sem confirmação", "after": " previsão vencida ainda sem conciliação"}, {"before": " previsões vencidas sem confirmação", "after": " previsões vencidas ainda sem conciliação"}, {"before": "Confira estas pendências antes de usar o fluxo para decidir pagamentos. O vencimento original está preservado.", "after": "Podem incluir pagamentos já recebidos pelo banco e ainda não vinculados no LTS."}, {"before": "Previsões vencidas sem confirmação", "after": "Previsões vencidas ainda sem conciliação"}];
+const checks=[],check=(name,fn)=>{fn();checks.push(name)};
+const sha=s=>crypto.createHash('sha256').update(s).digest('hex');
+check('Baseline is the reviewed V275 asset',()=>assert.equal(sha(baselineSource),'b6362709404b310dc97e0ff130ced933e67a79c8d9c61a87534d7eb10a308ca2'));
+let expected=baselineSource,restored=source;
+for(const {before,after} of replacements){
+ check('Exactly one approved copy replacement: '+after,()=>{assert.equal(expected.split(before).length-1,1);assert.equal(source.split(after).length-1,1)});
+ expected=expected.replace(before,after);restored=restored.replace(after,before);
+}
+check('No change outside the seven approved string contents',()=>{assert.equal(source,expected);assert.equal(restored,baselineSource)});
+check('No payment-confirmation claim in the corrected asset',()=>assert.doesNotMatch(source,/pagamento não confirmado|recebimento não confirmado|realização não confirmada|Confira estas pendências/));
+check('Accessible panel title uses the requested wording',()=>assert(source.includes("panel.setAttribute('aria-label', 'Previsões vencidas ainda sem conciliação')")));
+const event={source:'synthetic-source',source_ref:'synthetic-unlinked',event_date:'2026-09-19',account:'Itaú',description:'Previsão sintética de cartão',signed_amount:-84.62};
+const makeFlow=rows=>({from:'2026-09-20',to:'2026-09-20',current_future:{current_anchor_date:'2026-09-20'},observed_bank_movements:{pending_projections:rows},received_bank_balance:987.65,received_bank_movements:[{source_ref:'synthetic-bank-received',event_date:'2026-09-19',signed_amount:-84.62}]});
+const context={today:'2026-09-20',account:'Consolidado',range:{from:'2026-09-20',to:'2026-09-20'}};
+const stripCopy=v=>({...v,rows:v.rows.map(({confirmation,...row})=>row)});
+const equivalent=(flow,ctx=context)=>assert.deepEqual(stripCopy(api.model(flow,ctx)),stripCopy(oldApi.model(flow,ctx)));
+check('Already-received movement does not imply linked reconciliation',()=>{const f=makeFlow([event]),before=JSON.stringify(f),v=api.model(f,context);assert.equal(v.rows.length,1);assert.match(api.markup(v,false),/baixa ainda não vinculada no LTS/);assert.match(api.markup(v,false),/Podem incluir pagamentos já recebidos pelo banco e ainda não vinculados no LTS\./);assert.equal(JSON.stringify(f),before);equivalent(f)});
+check('Singular and plural retain counts and specify reconciliation',()=>{assert.match(api.markup(api.model(makeFlow([event]),context),false),/1 previsão vencida ainda sem conciliação/);assert.match(api.markup(api.model(makeFlow([event,{...event,source_ref:'synthetic-second'}]),context),false),/2 previsões vencidas ainda sem conciliação/)});
+check('Debit, credit and zero status refer only to missing linkage',()=>{for(const [value,copy] of [[-84.62,'baixa ainda não vinculada no LTS'],[84.62,'crédito ainda não vinculado no LTS'],[0,'movimento ainda não vinculado no LTS']]){const f=makeFlow([{...event,signed_amount:value}]);assert.equal(api.model(f,context).rows[0].confirmation,copy);equivalent(f)}});
+check('All availability states and bank filters retain their original logic',()=>{for(const f of [null,{error:'synthetic-error'},makeFlow([]),makeFlow([event]),{...makeFlow([event]),observed_bank_movements:{}},{...makeFlow([event]),current_future:{}},{...makeFlow([event]),current_future:{current_anchor_date:'2026-09-18'}},makeFlow([event,{...event,account:'Bradesco'}]),makeFlow([event,{...event,bank_confirmed:true}])])for(const ctx of [context,{...context,account:'Bradesco'},{...context,loading:true}])equivalent(f,ctx)});
+check('Original signed amount and due date remain unchanged',()=>{const v=api.model(makeFlow([event]),context);assert.equal(v.rows[0].amount,-84.62);assert.equal(v.rows[0].dueDate,'2026-09-19');assert.match(api.markup(v,true),/Vencimento 19\/09\/2026/);assert.match(api.markup(v,true),/84,62/)});
+const result={asset_sha256:sha(source),baseline_sha256:sha(baselineSource),passed:checks.length,checks,scope:'Local copy-only equivalence and synthetic semantics. No browser/network/SQL.'};
+fs.writeFileSync('qa/v278-copy-only-results.json',JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify(result,null,2));

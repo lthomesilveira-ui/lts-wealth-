@@ -1,0 +1,10 @@
+{
+  "release": "v278",
+  "base_release": "v277",
+  "base_commit": "6ec1bce7462c7d381a244baf29d18efc3f0c5a34",
+  "scope": [
+    "Stop repeated legacy branding and flow-decoration mutation cycles"
+  ],
+  "financial_calculations_unchanged": true,
+  "backend_changed": false
+}
