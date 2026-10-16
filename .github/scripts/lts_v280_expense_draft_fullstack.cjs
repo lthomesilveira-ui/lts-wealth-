@@ -287,7 +287,14 @@ async function run(browser,build,viewport,label,isBaseline){
    await frame.waitForFunction(()=>window.__LTS_V168_STATE.expense.loading&&window.__LTS_V175_STATE.expense.loading);
    await openEditor();const priorSessionDraft={from:mode==='success'?'2026-03-04':'2026-03-05',to:mode==='success'?'2026-03-19':'2026-03-20'};await write(priorSessionDraft);
    await frame.evaluate(()=>{const t=window.__EXPENSE_TEST__;t.oldSessionNode=document.getElementById('v168ExpenseFrom');t.oldBoot=BOOT.generation;t.oldTokens=[window.__LTS_V168_STATE.expense.token,window.__LTS_V175_STATE.expense.token];});
-   await frame.locator('#logout').click();await frame.waitForFunction(()=>document.body.dataset.ltsBootState==='signed-out');assert.equal(await frame.locator('#v168ExpenseFrom').count(),0);
+   await frame.locator('#logout').click();await frame.waitForFunction(()=>document.body.dataset.ltsBootState==='signed-out');
+   // The inherited boot boundary hides #app instead of deleting its DOM.
+   // Draft retirement and old-node rejection remain asserted after the new boot.
+   assert(await editor().isHidden(),'Signed-out expense editor is not visible');
+   assert(await frame.locator('#app').isHidden(),'Signed-out report surface is not visible');
+   assert.equal(await frame.locator('#app').getAttribute('aria-hidden'),'true','Signed-out report is hidden from accessibility');
+   assert.equal(await frame.locator('#app').evaluate(node=>getComputedStyle(node).display),'none','Boot CSS isolates the retained report DOM');
+   assert(await frame.locator('#email').isVisible()&&await frame.locator('#signin').isVisible(),'Only the active login surface is available');
    plans.push({hold:newLabel,range:logoutRead.range,session:nextSession,total:newTotal});
    await frame.locator('#email').fill('viewer@example.invalid');await frame.locator('#password').fill('synthetic-fixture-only');await frame.locator('#signin').click();await frame.waitForFunction(()=>document.body.dataset.ltsBootState==='ready');
    if(await frame.evaluate(()=>V!=='Despesas'))await nav('Despesas').click();
