@@ -19,9 +19,9 @@ class Doc{
  createElement(tag){return new Node(tag,this)}
  getElementById(id){const walk=n=>n.id===id?n:n.children.map(walk).find(Boolean);return walk(this.body)||walk(this.head)||null;}
  querySelector(sel){if(sel==='.v168-dashboard .v168-headmeta, .v168-updates .v168-headmeta')return this.host;return this.querySelectorAll(sel)[0]||null;}
- querySelectorAll(sel){if(sel==='.v168-dashboard .v168-kpi')return this.dashboard?[this.kpi]:[];return this.body.querySelectorAll(sel);}
+ querySelectorAll(sel){if(sel==='.v168-dashboard .v168-kpi')return this.dashboard?this.kpis:[];return this.body.querySelectorAll(sel);}
  addEventListener(){}
- reset(view){this.body.children=[];this.dashboard=view==='Dashboard';this.host=new Node('div',this);this.host.className='v168-headmeta';this.body.appendChild(this.host);if(view==='Dashboard'){this.kpi=new Node('div',this);this.kpi.className='v168-kpi';this.body.appendChild(this.kpi);const label=new Node('span',this);label.textContent='Contas correntes hoje';this.kpi.appendChild(label);const value=new Node('strong',this);value.textContent='R$ 100,00';this.kpi.appendChild(value);}if(view==='Fluxo Diário'){const p=new Node('div',this);p.id='v274ReceivedPosition';p.textContent='Last received fixture 100';this.body.appendChild(p);}}
+ reset(view){this.body.children=[];this.dashboard=view==='Dashboard';this.host=new Node('div',this);this.host.className='v168-headmeta';this.body.appendChild(this.host);if(view==='Dashboard'){this.grid=new Node('div',this);this.grid.className='v168-kpis';this.body.appendChild(this.grid);this.kpis=['Total disponível hoje','Contas correntes hoje','FGTS','RSU','Outros'].map(text=>{const card=new Node('div',this);card.className='v168-kpi';this.grid.appendChild(card);const label=new Node('span',this);label.textContent=text;card.appendChild(label);const value=new Node('strong',this);value.textContent='R$ 100,00';card.appendChild(value);return card;});this.kpi=this.kpis[1];}if(view==='Fluxo Diário'){const p=new Node('div',this);p.id='v274ReceivedPosition';p.textContent='Last received fixture 100';this.body.appendChild(p);}}
 }
 const now='2026-09-20T13:00:00Z';class TestDate extends Date{constructor(...args){super(...(args.length?args:[now]))}static now(){return Date.parse(now)}}
 const banks=[['341','Itaú',80],['237','Bradesco',20],['336','C6',0]];
@@ -38,7 +38,9 @@ const frame={window:null,document:doc,Intl,Date:TestDate,Map,Set,Promise,BOOT:{g
 (async()=>{
  const before=JSON.stringify(cash);vm.runInContext(runtime,frame);const state=frame.__LTS_V225;
  check('Real candidate installs with legacy auth shim lacking onAuthStateChange',state.installed);
- let panel=doc.querySelector('.v225-balance-freshness');check('Compact metadata is visible within balance KPI',panel&&panel.parent===doc.kpi&&!panel.innerHTML.includes('<details'));
+ let panel=doc.querySelector('.v225-balance-freshness');check('Compact metadata is a grid sibling immediately after bank KPI',panel&&panel.parent===doc.grid&&doc.grid.children.indexOf(panel)===doc.grid.children.indexOf(doc.kpi)+1&&!panel.innerHTML.includes('<details'));
+ check('Metadata is never nested inside any numeric KPI',doc.kpis.every(card=>card.querySelector('.v225-balance-freshness')===null));
+ check('Panel title explicitly limits its dates to checking accounts',panel.innerHTML.includes('Contas correntes · posição do provedor (BRT)'));
  check('Bank-specific dates are shown without altering balance',panel.innerHTML.includes('19/09/2026, 15:00 BRT')&&doc.kpi.children.find(n=>n.tagName==='strong').textContent==='R$ 100,00');
  check('Today label no longer masquerades as provider-current balance',doc.kpi.querySelector('span').textContent==='Contas correntes · posição recebida');
  const first=deferred();queue.push(first);const a=state.readStatus(),b=state.readStatus();check('Concurrent consumers share existing in-flight status RPC',calls.length===1);first.resolve({data:snapshot(),error:null});await Promise.all([a,b]);

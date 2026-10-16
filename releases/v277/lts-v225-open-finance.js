@@ -158,7 +158,7 @@
       const rows=[...new Map(freshnessRows(codes).map(row=>[row.code,row.ambiguousConnections?{...row,name:names[row.code],originShort:'vínculo com a posição não confirmado'}:row])).values()], levels=rows.map(row=>row.position?.level||'unknown');
       if(!rows.length)return '<p>Posição do provedor indisponível para esta conta.</p>';
       const note=levels.includes('aged')?'Há posições do provedor com 24h ou mais.':levels.includes('previous-day')?'Há posições do provedor de dia anterior.':levels.includes('unknown')?'A data de alguns saldos não está confirmada.':'Horário informado pelo provedor; sem consulta em tempo real.';
-      return '<b class="v225-freshness-title">Posição do provedor (BRT)</b>'+rows.map(row=>{
+      return '<b class="v225-freshness-title">Contas correntes · posição do provedor (BRT)</b>'+rows.map(row=>{
         const position=row.position, level=position?.level||'unknown';
         const suffix=level==='aged'?' · '+position.ageHours+'h':level==='previous-day'?' · dia anterior':'';
         return '<div class="v225-freshness-bank" data-bank="'+esc(row.code)+'" data-freshness="'+esc(level)+'"><b>'+esc(row.name)+'</b> '+'<time title="'+esc(position?.label||'Horário da posição indisponível')+'">'+esc(position?.compact||'indisponível')+'</time>'+esc(suffix)+(!position?'<small>Conexão: '+esc(row.originShort)+'</small>':'')+'</div>';
@@ -166,10 +166,9 @@
     }
     function paintFreshness() {
       document.querySelectorAll('.v225-balance-freshness').forEach(node=>{if(node.dataset.view!==V)node.remove();});
-      let anchor=null,codes,inside=false;
+      let anchor=null,codes;
       if(V==='Dashboard'){
         anchor=[...document.querySelectorAll('.v168-dashboard .v168-kpi')].find(node=>/^Contas correntes(?: hoje| · posição recebida)?$/.test(node.querySelector('span')?.textContent?.trim()||''));
-        inside=true;
       }else if(V==='Fluxo Diário'){
         anchor=document.getElementById('v274ReceivedPosition')||document.getElementById('ltsBankEvidence')||document.querySelector('.flowbar');
         const account=typeof ACC==='string'?ACC:'Consolidado';
@@ -177,8 +176,8 @@
       }
       if(!anchor)return;
       let box=document.querySelector('.v225-balance-freshness');
-      if(!box){box=document.createElement('div');box.className='v225-balance-freshness';box.dataset.view=V;box.setAttribute('aria-label','Atualidade da posição bancária recebida');if(inside)anchor.appendChild(box);else anchor.insertAdjacentElement('afterend',box);}
-      if(inside)anchor.querySelector('span').textContent='Contas correntes · posição recebida';
+      if(!box){box=document.createElement('div');box.className='v225-balance-freshness';box.dataset.view=V;box.setAttribute('aria-label','Atualidade da posição bancária recebida');anchor.insertAdjacentElement('afterend',box);}
+      if(V==='Dashboard')anchor.querySelector('span').textContent='Contas correntes · posição recebida';
       const markup=freshnessMarkup(codes);if(box.innerHTML!==markup)box.innerHTML=markup;
     }
     function paint() {

@@ -112,22 +112,71 @@ async function run(browser,viewport,label){
   // Synthetic freshness checks: account-resource date, receipt and Item remain separate.
   const bankKpi=kpi('Contas correntes · posição recebida');
   const freshnessPanel=()=>frame.locator('.v225-balance-freshness');
+  async function waitFreshnessDashboardReady(){
+    // cash + forecast become ready before the sequential wealth/awards/report readers finish.
+    // Await the application's current orchestration promise, then bootstrap/collection work
+    // that may have queued a forced refresh behind that flight. Never retry a detached node.
+    await frame.evaluate(()=>window.__LTS_V178_REVIEW.ready());
+    await frame.waitForFunction(()=>{
+      const state=window.__LTS_V178_STATE,collection=window.__LTS_V225;
+      return V==='Dashboard'&&collection?.started&&!collection.syncing&&!collection.loading&&!collection.statusRead
+        &&['cash','forecast','wealth','awards','dashboardReport'].every(key=>state?.[key]?.status==='ready')
+        &&!window.__LTS_V226?.loading;
+    });
+    // A forced refresh can have been queued after the first promise. Await that exact
+    // current flight too, then cross rendering frames so queued render microtasks finish.
+    await frame.evaluate(async()=>{
+      await window.__LTS_V178_REVIEW.ready();
+      await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+    });
+    await frame.waitForFunction(()=>{
+      const state=window.__LTS_V178_STATE,collection=window.__LTS_V225;
+      return V==='Dashboard'&&collection?.started&&!collection.syncing&&!collection.loading&&!collection.statusRead
+        &&['cash','forecast','wealth','awards','dashboardReport'].every(key=>state?.[key]?.status==='ready')
+        &&!window.__LTS_V226?.loading;
+    });
+  }
+  await waitFreshnessDashboardReady();
   await freshnessPanel().waitFor({state:'visible'});
-  assert.equal(await bankKpi.locator('.v225-balance-freshness').count(),1,'provenance sits beside received balance');
+  assert.equal(await bankKpi.locator('.v225-balance-freshness').count(),0,'metadata does not stretch the numeric KPI');
+  assert(await freshnessPanel().evaluate(panel=>panel.parentElement.matches('.v168-kpis')&&panel.previousElementSibling?.querySelector('span')?.textContent==='Contas correntes · posição recebida'),'provenance is the grid sibling immediately after checking-account balance');
   assert.equal(await freshnessPanel().locator('details').count(),0,'primary provenance never requires disclosure');
   assert.equal(await freshnessPanel().locator('.v225-freshness-bank').count(),3);
   assert.equal(semantic(await bankKpi.locator('strong').innerText()),money(-1000),'provenance never rewrites received amount');
-  assert.match(await freshnessPanel().innerText(),/Posição do provedor \(BRT\)/);
+  assert.match(await freshnessPanel().innerText(),/Contas correntes · posição do provedor \(BRT\)/);
   assert.match(await freshnessPanel().innerText(),/dia anterior/);
   assert.match(await freshnessPanel().locator('time').first().getAttribute('title'),/19\/09\/2026,? 15:00 BRT/);
   const provenanceGeometry=await freshnessPanel().evaluate(panel=>{
-    const rect=panel.getBoundingClientRect(),parent=panel.parentElement.getBoundingClientRect();
-    return {width:rect.width,height:rect.height,left:rect.left,right:rect.right,parentLeft:parent.left,parentRight:parent.right,overflow:panel.scrollWidth>panel.clientWidth+1,pageOverflow:document.documentElement.scrollWidth>innerWidth+1};
+    const box=node=>{const r=node.getBoundingClientRect();return {top:r.top,bottom:r.bottom,left:r.left,right:r.right,width:r.width,height:r.height};};
+    const grid=panel.parentElement,cards=[...grid.children].filter(node=>node.matches('.v168-kpi'));
+    const heightsWithPanel=cards.map(node=>node.getBoundingClientRect().height);
+    const display=panel.style.getPropertyValue('display'),priority=panel.style.getPropertyPriority('display');
+    let heightsWithoutPanel;
+    try{panel.style.setProperty('display','none','important');heightsWithoutPanel=cards.map(node=>node.getBoundingClientRect().height);}
+    finally{if(display)panel.style.setProperty('display',display,priority);else panel.style.removeProperty('display');}
+    return {panel:box(panel),grid:box(grid),cards:cards.map(box),banks:[...panel.querySelectorAll('.v225-freshness-bank')].map(box),bank:box(panel.previousElementSibling),nextCard:box(panel.nextElementSibling),heightsWithPanel,heightsWithoutPanel,rowGap:parseFloat(getComputedStyle(grid).rowGap),order:getComputedStyle(panel).order,overflow:panel.scrollWidth>panel.clientWidth+1,pageOverflow:document.documentElement.scrollWidth>innerWidth+1};
   });
+  fs.writeFileSync('qa/v277-'+label+'-freshness-geometry.json',JSON.stringify(provenanceGeometry,null,2));
+  assert.equal(provenanceGeometry.cards.length,5,'the five numeric KPIs stay separate from provenance');
   assert(!provenanceGeometry.overflow&&!provenanceGeometry.pageOverflow,'compact provenance fits '+label+' viewport');
-  assert(provenanceGeometry.left>=provenanceGeometry.parentLeft-1&&provenanceGeometry.right<=provenanceGeometry.parentRight+1,'provenance fits the balance KPI');
-  assert(provenanceGeometry.height<=330,'primary provenance stays compact on '+label+' '+JSON.stringify(provenanceGeometry));
-  await captureTarget(freshnessPanel(),'freshness-near-balance');
+  assert(provenanceGeometry.heightsWithPanel.every((height,i)=>Math.abs(height-provenanceGeometry.heightsWithoutPanel[i])<=1),'provenance must not stretch any KPI: '+JSON.stringify(provenanceGeometry));
+  assert(Math.abs(provenanceGeometry.panel.left-provenanceGeometry.grid.left)<=1&&Math.abs(provenanceGeometry.panel.right-provenanceGeometry.grid.right)<=1,'provenance aligns with the full KPI grid');
+  assert(provenanceGeometry.panel.height<=330,'primary provenance stays compact on '+label+' '+JSON.stringify(provenanceGeometry));
+  if(viewport.width>520){
+    assert.equal(provenanceGeometry.order,'1');
+    assert(provenanceGeometry.panel.top>=Math.max(...provenanceGeometry.cards.map(card=>card.bottom)),'desktop provenance follows all five KPIs');
+    assert(provenanceGeometry.banks.every(bank=>Math.abs(bank.top-provenanceGeometry.banks[0].top)<=1),'desktop banks align side by side');
+    assert(provenanceGeometry.banks[0].right<=provenanceGeometry.banks[1].left&&provenanceGeometry.banks[1].right<=provenanceGeometry.banks[2].left,'desktop bank columns never overlap');
+  }else{
+    assert.equal(provenanceGeometry.order,'0');
+    assert(Math.abs(provenanceGeometry.panel.top-provenanceGeometry.bank.bottom-provenanceGeometry.rowGap)<=1,'mobile metadata immediately follows bank balance with the normal grid gap');
+    assert(Math.abs(provenanceGeometry.nextCard.top-provenanceGeometry.panel.bottom-provenanceGeometry.rowGap)<=1,'mobile metadata stays before the next numeric KPI');
+  }
+  console.log('FRESHNESS_GEOMETRY',JSON.stringify({label,...provenanceGeometry}));
+  // Resolve a fresh locator after required readers and queued render work have settled.
+  await waitFreshnessDashboardReady();
+  const settledFreshnessPanel=frame.locator('.v225-balance-freshness');
+  await captureTarget(settledFreshnessPanel,'freshness-near-balance');
   flags.bankPositions=false;await frame.evaluate(()=>window.__LTS_V178_REVIEW.refresh());
   await frame.waitForFunction(()=>window.__LTS_V178_STATE.cash.status==='ready'&&!window.__LTS_V178_STATE.cash.data.bank_positions);
   assert.match(await freshnessPanel().innerText(),/indisponível/);
@@ -138,14 +187,14 @@ async function run(browser,viewport,label){
   await frame.waitForFunction(()=>!window.__LTS_V225.syncing);
   flags.refreshOk=true;flags.allOrigins=true;flags.statusReceipt='2026-09-20T12:40:00Z';
   await frame.evaluate(()=>window.__LTS_V225.refresh());
-  await frame.waitForFunction(()=>!window.__LTS_V225.syncing);
+  await waitFreshnessDashboardReady();
   assert.match(await frame.locator('.v225-sync').innerText(),/mesma origem de conexão/);
   assert.match(await frame.locator('.v225-sync').innerText(),/não confirma nova posição de saldo/);
   assert.match(await freshnessPanel().locator('time').first().getAttribute('title'),/19\/09\/2026/,'new receipt never becomes new resource date');
   // Item advances while the account resource remains old: connection freshness must not replace its date.
   flags.requestedAt='2026-09-20T12:42:00Z';flags.statusReceipt='2026-09-20T12:48:00Z';flags.statusOrigin='2026-09-20T12:44:00Z';
   await frame.evaluate(()=>window.__LTS_V225.refresh());
-  await frame.waitForFunction(()=>!window.__LTS_V225.syncing&&window.__LTS_V178_STATE.cash.status==='ready');
+  await waitFreshnessDashboardReady();
   assert.match(await freshnessPanel().locator('time').first().getAttribute('title'),/19\/09\/2026,? 15:00 BRT/,'Item advance never replaces the old account-resource timestamp');
   assert.match(await freshnessPanel().innerText(),/dia anterior/);
   assert.doesNotMatch(await frame.locator('.v225-sync').innerText(),/saldo atualizado/);
@@ -153,7 +202,8 @@ async function run(browser,viewport,label){
   // Now advance the account timestamp too, while keeping its legitimate unchanged balance.
   flags.requestedAt='2026-09-20T12:50:00Z';flags.statusReceipt='2026-09-20T12:58:00Z';flags.statusOrigin='2026-09-20T12:55:00Z';flags.accountAsOf='2026-09-20T12:45:00Z';
   await frame.evaluate(()=>window.__LTS_V225.refresh());
-  await frame.waitForFunction(()=>!window.__LTS_V225.syncing&&window.__LTS_V178_STATE.cash.status==='ready'&&window.__LTS_V178_STATE.cash.data.bank_positions?.[0]?.as_of==='2026-09-20T12:45:00Z');
+  await waitFreshnessDashboardReady();
+  await frame.waitForFunction(()=>window.__LTS_V178_STATE.cash.data.bank_positions?.[0]?.as_of==='2026-09-20T12:45:00Z');
   assert.match(await freshnessPanel().locator('time').first().getAttribute('title'),/20\/09\/2026,? 09:45 BRT/);
   assert.equal(semantic(await bankKpi.locator('strong').innerText()),money(-1000),'same balance with newer source timestamp is preserved');
   assert.doesNotMatch(await frame.locator('.v225-sync').innerText(),/saldo atualizado/);
@@ -574,7 +624,7 @@ async function run(browser,viewport,label){
   await frame.waitForFunction(()=>{const root=document.querySelector('.v168-dashboard');if(!root)return false;const nodes=['.current','.v227-liquidity','.v227-expenses'].map(s=>root.querySelector(s));if(nodes.some(n=>!n))return false;const tops=nodes.map(n=>n.getBoundingClientRect().top);return tops[0]<tops[1]&&tops[1]<tops[2]});
   const geometryState=await frame.locator('.v168-dashboard').evaluate(root=>{const nodes=['.current','.v227-liquidity','.v227-expenses'].map(selector=>{const e=root.querySelector(selector),r=e.getBoundingClientRect(),s=getComputedStyle(e);return {selector,top:r.top,left:r.left,width:r.width,height:r.height,display:s.display,visibility:s.visibility,parent:e.parentElement.className,connected:e.isConnected}});return {order:nodes.map(n=>n.top),nodes,view:V,contract:window.__LTS_V269_COMPLETENESS?.(),blocked:document.getElementById('app')?.dataset.v269Blocked,readers:Object.fromEntries(['cash','forecast','wealth','awards','dashboardReport'].map(k=>[k,window.__LTS_V178_STATE[k].status]))}});console.log('ORDER_DIAGNOSTIC',JSON.stringify({label,...geometryState}));const order=geometryState.order;assert(order[0]<order[1]&&order[1]<order[2],'balances, liquidity, expenses order: '+JSON.stringify(geometryState));assert.equal(await frame.locator('.v227-expenses .v226-upcoming').count(),1);assert.equal(await frame.locator('.v227-expenses .v171-expense-total').count(),1);
   assert.deepEqual(errors,[],'no uncaught errors');await page.screenshot({path:'qa/v229-'+label+'-dashboard.png'});
-  return{label,pass:true,expense_last_month:true,card_inventory:true,payment_status:true,manual_edit_delete:true,scroll:geometry,flow_render_timings:flowTimings,calls:calls.length,financial_data:'synthetic fixtures; live SQL checks separate'};
+  return{label,pass:true,expense_last_month:true,card_inventory:true,payment_status:true,manual_edit_delete:true,scroll:geometry,freshness_geometry:provenanceGeometry,flow_render_timings:flowTimings,calls:calls.length,financial_data:'synthetic fixtures; live SQL checks separate'};
  }catch(error){console.error('ORIGINAL FAILURE',String(error.stack||error));await page.screenshot({path:'qa/v229-'+label+'-failure.png',fullPage:true}).catch(e=>console.error('SCREENSHOT FAILED',e.message));console.error(JSON.stringify({label,error:String(error.stack||error),errors,calls:calls.slice(-15),state:await frame?.evaluate(()=>({cash:window.__LTS_V178_STATE?.cash,monthly:{error:window.__LTS_V175_STATE?.monthly?.error,count:window.__LTS_V175_STATE?.monthly?.data?.months?.length},detail:window.__LTS_V178_STATE?.detail?{group:window.__LTS_V178_STATE.detail.group,error:window.__LTS_V178_STATE.detail.error,rows:window.__LTS_V178_STATE.detail.rows.length}:null})).catch(()=>null)}));throw error}
  finally{await context.close()}
 }

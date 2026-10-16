@@ -28,6 +28,7 @@ jobs:
       - run: node .github/scripts/lts_v277_copy_only.cjs
       - run: node .github/scripts/lts_v277_modal_contract.cjs
       - run: node .github/scripts/lts_v277_overdue_runtime.cjs
+      - run: node .github/scripts/lts_v277_freshness_readiness.test.cjs .github/scripts/lts_v277_balance_presentation_browser.js
       - run: node .github/scripts/lts_v277_freshness_model.test.cjs
       - run: node .github/scripts/lts_v277_freshness_runtime.test.cjs
       - name: Check candidate and protected hashes
