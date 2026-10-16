@@ -8,6 +8,7 @@ The generated apply/recovery DO bodies preserve the reviewed installer statement
 
 The proposed runtime gate checks:
 
+- Numeric table OID equals its scalar catalog value; a string with identical digits is rejected without mutation
 - Apply, exact candidate contract/body/ACL/OID, one epoch increment, and idempotent retry
 - Recovery, exact original contract/body/ACL/OID, one epoch increment, and retry
 - Post-DDL rejection restores the exact pre-attempt snapshot for coverage, final consumer, unrelated rows, NULL source rows, installed body hash, and documentary evidence failures

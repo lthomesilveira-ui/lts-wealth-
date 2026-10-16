@@ -80,7 +80,10 @@ def main():
     def fn(name):
         return read_json(f"SELECT jsonb_build_object('oid',oid,'owner',proowner::regrole::text,'acl',proacl::text,'definition_md5',md5(pg_get_functiondef(oid))) FROM pg_proc WHERE oid={lit('public.'+name)}::regprocedure;")
     hashes = {'functions': {name: fn(name) for name in placeholders['functions']}}
-    hashes['table'] = read_json("SELECT jsonb_build_object('oid',oid,'owner',relowner::regrole::text,'acl',relacl::text,'rls',relrowsecurity,'force_rls',relforcerowsecurity) FROM pg_class WHERE oid='public.lts_card_settlement_expense_contract_v273'::regclass;")
+    hashes['table'] = read_json("SELECT jsonb_build_object('oid',oid::bigint,'owner',relowner::regrole::text,'acl',relacl::text,'rls',relrowsecurity,'force_rls',relforcerowsecurity) FROM pg_class WHERE oid='public.lts_card_settlement_expense_contract_v273'::regclass;")
+    scalar_oid = read_json("SELECT oid::bigint FROM pg_class WHERE oid='public.lts_card_settlement_expense_contract_v273'::regclass;")
+    if type(hashes['table']['oid']) is not int or hashes['table']['oid'] != scalar_oid:
+        raise AssertionError('Table OID lease must be numeric and equal to scalar catalog OID')
     hashes['original_definition_md5'] = fn(GUARD)['definition_md5']
     original_oid = fn(GUARD)['oid']
     sql((GENERATED / 'guard-candidate-synthetic.sql').read_text())
@@ -148,6 +151,13 @@ def main():
         log.append({'case': name, 'passed': True, 'expected_rejection': error})
     REPORT['phase'] = 'runtime-gates'
     check_state(False, 700)
+    numeric_table = lit(json.dumps(hashes['table'], separators=(',', ':'), sort_keys=True)) + '::jsonb'
+    string_table_value = dict(hashes['table'], oid=str(hashes['table']['oid']))
+    string_table = lit(json.dumps(string_table_value, separators=(',', ':'), sort_keys=True)) + '::jsonb'
+    if apply.count(numeric_table) != 2:
+        raise AssertionError('Expected two numeric table leases')
+    rejected('string-oid-lease-same-digits-blocked', apply.replace(numeric_table, string_table), 'private table metadata changed')
+    log.append({'case':'numeric-table-oid-equals-scalar-catalog','passed':True})
     sql(apply)
     check_state(True, 701)
     log.append({'case': 'apply-postcheck-epoch-once', 'passed': True})
