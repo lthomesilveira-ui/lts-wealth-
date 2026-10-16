@@ -9,11 +9,11 @@ const fields=e=>({from:e.node('from')?.value,to:e.node('to')?.value});
 const test=async(name,fn)=>{try{await fn();results.push({name,pass:true});console.log('PASS '+name)}catch(error){results.push({name,pass:false,error:String(error.stack||error)});console.log('FAIL '+name+' '+error.message)}};
 const apply=e=>e.node('v168ExpenseApply').onclick();
 (async()=>{
-await test('Only V168 and V175 differ; financial range validators and reader functions retain exact source',async()=>{
+await test('Only V168 and V175 differ; financial range and validators retain exact source; session guards are reviewed separately',async()=>{
  const changed=fs.readdirSync(BASE).filter(n=>n.endsWith('.js')||n.endsWith('.css')||n==='index.html').filter(n=>!fs.readFileSync(path.join(BASE,n)).equals(fs.readFileSync(path.join(ROOT,n))));
  assert.deepEqual(changed.sort(),['lts-v183-expense-history-candidate.js','lts-v183-v168-feedback-safe.js']);
  const base=fs.readFileSync(path.join(BASE,'lts-v183-v168-feedback-safe.js'),'utf8'),candidate=fs.readFileSync(path.join(ROOT,'lts-v183-v168-feedback-safe.js'),'utf8');
- for(const prefix of ['function expenseRange(key)','function expenseRangeError(r)','async function ensureExpense(force)','async function ensureTransactions(force)']){
+ for(const prefix of ['function expenseRange(key)','function expenseRangeError(r)']){
   assert.equal(candidate.split('\n').find(s=>s.includes(prefix)),base.split('\n').find(s=>s.includes(prefix)),prefix);
  }
 });
@@ -60,11 +60,11 @@ await test('All expense tabs and route departure retain draft while readers see 
  e.navigate('Fluxo Diário');e.navigate('Despesas');await settle();assert.deepEqual(fields(e),{from:'2026-08-02',to:'2026-08-19'});assert.equal(e.calls.length,0);
 });
 await test('New BOOT generation discards unapplied edits even when the retained applied selector is custom',async()=>{
- const e=environment();e.select('custom');e.input('from','2026-07-01');e.input('to','2026-07-21');apply(e);await settle();e.input('from','2026-08-01');const oldNode=e.node('from'),oldApply=e.node('v168ExpenseApply').onclick,oldChange=oldNode.oninput;e.ctx.BOOT.generation++;e.ctx.D={user:'other'};e.ctx.render();const count=e.calls.length;
+ const e=environment();e.select('custom');e.input('from','2026-07-01');e.input('to','2026-07-21');apply(e);await settle();e.input('from','2026-08-01');const oldNode=e.node('from'),oldApply=e.node('v168ExpenseApply').onclick,oldChange=oldNode.oninput;e.ctx.BOOT.generation++;e.ctx.D={user:'other'};e.ctx.render();await settle();const count=e.calls.length;
  oldNode.value='2026-01-02';oldChange({target:oldNode});oldApply();await settle();assert.notEqual(e.node('from'),oldNode);assert.deepEqual(fields(e),{from:'2026-07-01',to:'2026-07-21'});assert.equal(e.calls.length,count);
 });
 await test('Fallback identity and auth epoch reject retained old actions before invalidating V169/V175',async()=>{
- for(const mode of ['fallback','auth']){const e=environment();if(mode==='fallback'){delete e.ctx.BOOT;e.ctx.render()}e.select('custom');e.input('from','2026-08-01');e.input('to','2026-08-10');const applyOld=e.node('v168ExpenseApply').onclick,presetOld=e.ctx.document.querySelectorAll('[data-v168-exp-range]').find(n=>n.dataset.v168ExpRange==='6m').onclick,before=e.slots();if(mode==='fallback')e.ctx.D={user:'new'};else e.auth('SIGNED_IN');applyOld();presetOld();await settle();assert.equal(e.slots(),before);assert.equal(e.calls.length,0)}
+ for(const mode of ['fallback','auth']){const e=environment();if(mode==='fallback'){delete e.ctx.BOOT;e.ctx.render();await settle()}e.select('custom');e.input('from','2026-08-01');e.input('to','2026-08-10');const applyOld=e.node('v168ExpenseApply').onclick,presetOld=e.ctx.document.querySelectorAll('[data-v168-exp-range]').find(n=>n.dataset.v168ExpRange==='6m').onclick,before=e.slots(),count=e.calls.length;if(mode==='fallback')e.ctx.D={user:'new'};else e.auth('SIGNED_IN');applyOld();presetOld();await settle();assert.equal(e.slots(),before);assert.equal(e.calls.length,count)}
 });
 await test('External change to custom applied dates replaces draft and old input nodes',async()=>{
  const e=environment();e.select('custom');e.input('from','2026-07-01');e.input('to','2026-07-21');apply(e);await settle();e.input('to','2026-08-01');const n=e.node('to');e.st.expense.customFrom='2026-06-01';e.st.expense.customTo='2026-06-20';e.ctx.render();assert.notEqual(e.node('to'),n);assert.deepEqual(fields(e),{from:'2026-06-01',to:'2026-06-20'});

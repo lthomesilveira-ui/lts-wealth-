@@ -37,7 +37,7 @@ function environment(root=ROOT){
  ${line(a,'function periodButtons()')}
  globalThis.controls=periodButtons;globalThis.range168=()=>expenseRange(st.expense.key);globalThis.ensure168=ensureExpense;
  globalThis.bind168=()=>{${bindings}};
- ${candidate?'globalThis.before=preserveExpenseDraftControls;globalThis.restore=restoreExpenseDraftControls;globalThis.draft=()=>syncExpenseDraft();':''}
+ ${candidate?'globalThis.before=preserveExpenseDraftControls;globalThis.restore=restoreExpenseDraftControls;globalThis.draft=()=>syncExpenseDraft();globalThis.sync168=syncExpenseReaders;':''}
  })();`,ctx,{filename:files[0]});
  vm.runInContext(`(()=>{const state=window.__LTS_V169_STATE;globalThis.bind169=()=>{
  ${line(b,"document.querySelectorAll('[data-v168-exp-range]').forEach(b=>{const old=")}
@@ -46,9 +46,9 @@ function environment(root=ROOT){
  const bind175=candidate?block(c,'      const bindPeriodAction=b=>','\n    }\n\n    dashboard='):line(c,"document.querySelectorAll('[data-v168-exp-range]').forEach(b=>{const old=")+line(c,"const apply=document.getElementById('v168ExpenseApply');if(apply){const old=");
  vm.runInContext(`(()=>{const v169=window.__LTS_V169_STATE;
  ${block(c,'function expenseRange(){','async function directRpc(')}
- ${block(c,'function currentRead(s,key,token){','async function loadMonthly(')}
+ ${block(c,'function currentRead(','async function loadMonthly(')}
  ${block(c,'async function ensureExpense(force=false){','async function ensureCards(')}
- globalThis.ensure175=ensureExpense;
+ globalThis.ensure175=ensureExpense;${candidate?'globalThis.sync175=syncExpenseReaders;':''}
  globalThis.bind175=()=>{${bind175}};
  globalThis.after175=()=>{const tab=v168.expense.tab;const r=expenseRange(),key=r.from+'|'+r.to;
  ${line(c,"if(['overview','categories'].includes(tab)&&(state.expense.key!==key")}
@@ -64,7 +64,7 @@ function environment(root=ROOT){
    if(html.includes('id="v168ExpenseApply"'))nodes.set('v168ExpenseApply',makeNode('v168ExpenseApply'));
   }
  };
- ctx.render=()=>{const saved=candidate?ctx.before():null;rebuild();if(candidate)ctx.restore(saved);ctx.bind168();ctx.bind169();ctx.bind175();if(ctx.V==='Despesas')ctx.after175()};
+ ctx.render=()=>{if(candidate){ctx.sync175();ctx.sync168()}const saved=candidate?ctx.before():null;rebuild();if(candidate)ctx.restore(saved);ctx.bind168();ctx.bind169();ctx.bind175();if(ctx.V==='Despesas')ctx.after175()};
  const select=key=>presets.find(n=>n.dataset.v168ExpRange===key).onclick();
  const node=key=>nodes.get(key==='from'?'v168ExpenseFrom':key==='to'?'v168ExpenseTo':key);
  const input=(key,value,event='input')=>{const n=node(key);assert(n,'input '+key);n.value=value;n['on'+event]?.({target:n})};
@@ -88,7 +88,7 @@ async function main(){
  await test('tab and route navigation keep draft and native node in the same session',async()=>{const e=environment();e.select('custom');e.input('from','');const n=e.node('from');n.nativeSegments='08/__/2026';e.st.expense.tab='categories';e.ctx.render();assert.equal(e.node('from'),n);e.navigate('Fluxo Diário');e.navigate('Despesas');assert.equal(e.node('from'),n);assert.equal(n.nativeSegments,'08/__/2026');assert.equal(n.value,'')});
  await test('repeated renderNav does not stack invalidation or clear V169 on invalid Apply',async()=>{const e=environment();e.select('custom');e.input('from','');for(let i=0;i<4;i++)e.renderNav();const before=e.slots();e.node('v168ExpenseApply').onclick();await settle();assert.equal(e.slots(),before);e.input('from','2026-09-01');e.input('to','2026-09-10');for(let i=0;i<4;i++)e.renderNav();const token=e.state.monthly.token;e.node('v168ExpenseApply').onclick();await settle();assert.equal(e.state.monthly.token,token+1);assert.equal(e.calls.filter(x=>x.owner==='v175').length,1)});
  await test('BOOT generation retires draft and old Apply/preset actions before invalidation',async()=>{const e=environment();e.select('custom');e.input('from','2026-08-01');const apply=e.node('v168ExpenseApply').onclick;const oldPreset=e.ctx.document.querySelectorAll('[data-v168-exp-range]').find(n=>n.dataset.v168ExpRange==='6m').onclick;e.ctx.BOOT.generation++;e.ctx.D={user:'b'};const before=e.slots();apply();oldPreset();assert.equal(e.slots(),before);assert.equal(e.calls.length,0);e.ctx.render();assert.equal(e.node('from'),undefined);e.select('custom');assert.equal(e.node('from').value,'2026-01-01')});
- await test('fallback D identity and auth callback also discard editor without querying',async()=>{for(const mode of ['fallback','auth']){const e=environment();if(mode==='fallback'){delete e.ctx.BOOT;e.ctx.render()}e.select('custom');e.input('from','2026-08-01');if(mode==='fallback')e.ctx.D={user:'b'};else e.auth('SIGNED_OUT');e.ctx.render();assert.equal(e.node('from'),undefined);assert.equal(e.calls.length,0)}});
+ await test('fallback D identity and auth callback also discard editor without querying',async()=>{for(const mode of ['fallback','auth']){const e=environment();if(mode==='fallback'){delete e.ctx.BOOT;e.ctx.render()}e.select('custom');e.input('from','2026-08-01');if(mode==='fallback')e.ctx.D={user:'b'};else e.auth('SIGNED_OUT');e.ctx.render();assert.equal(e.node('from'),undefined);await settle();assert(e.calls.every(x=>x.args.p_from==='2026-01-01'))}});
  await test('external applied-signature change discards unrelated editor',async()=>{const e=environment();e.select('6m');await settle();e.select('custom');e.input('from','2026-08-01');e.st.expense.key='ytd';e.ctx.render();assert.equal(e.node('from'),undefined);e.select('custom');assert.equal(e.node('from').value,'2026-01-01')});
  await test('obsolete V175 response cannot replace newly applied data or draft',async()=>{const e=environment();e.hold();e.select('6m');await settle();e.select('custom');e.input('from','2026-09-01');e.input('to','2026-09-10');e.node('v168ExpenseApply').onclick();await settle();assert.equal(e.pending.length,2);e.input('to','2026-09-15');e.resolve(1,'new');await settle();e.resolve(0,'old');await settle();assert.equal(e.state.expense.data.tag,'new');assert.equal(e.node('to').value,'2026-09-15');assert.equal(e.applied().range.to,'2026-09-10')});
  await test('late applied response leaves invalid draft and its error intact',async()=>{const e=environment();e.hold();e.select('6m');await settle();e.select('custom');e.input('from','2026-09-01');e.input('to','2026-09-30');e.node('v168ExpenseApply').onclick();e.resolve();await settle();assert.match(e.ctx.draft().error,/Fluxo Diário/);assert.equal(e.node('to').value,'2026-09-30');assert.equal(e.applied().key,'6m');assert.equal(e.calls.filter(x=>x.owner==='v175').length,1)});

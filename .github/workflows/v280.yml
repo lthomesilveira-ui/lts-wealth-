@@ -36,8 +36,11 @@ jobs:
       - run: node .github/scripts/lts_v280_cash_unit.cjs
       - run: node .github/scripts/lts_v280_cash_independent.cjs
       - run: node .github/scripts/lts_v280_expense_unit.cjs
+      - run: node .github/scripts/lts_v280_reader_session.cjs
       - run: node .github/scripts/lts_v280_expense_independent.cjs
       - run: node .github/scripts/lts_v280_expense_parity.cjs
+      - run: node .github/scripts/lts_v280_session_review.cjs
+      - run: node .github/scripts/lts_v280_legacy_generations.cjs
       - name: Check candidate and protected hashes
         run: |
           python3 - <<'PY'

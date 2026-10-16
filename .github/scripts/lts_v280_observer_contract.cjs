@@ -1,6 +1,6 @@
 'use strict';
 const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),assert=require('node:assert/strict'),crypto=require('node:crypto');
-const root=path.resolve('releases/v280'),baseline=path.resolve('releases/v277');
+const root=path.resolve('releases/v280'),baseline=path.resolve('releases/v279');
 const names=['lts-v183-v168-feedback-safe.js','lts-v170-v169-review.js'];
 const read=(file,old=false)=>fs.readFileSync(path.join(old?baseline:root,file),'utf8');
 const stamp168=read(names[0]).match(/    function stamp\(\)\{[^\n]+/)[0];
@@ -39,7 +39,12 @@ check('Mutation observer remains attached to body childList/subtree',()=>{const 
 check('A mutation burst creates one pending frame and later bursts still work',()=>{const h=harness();install(h);for(let i=0;i<100;i++)h.observers[0].fn();assert.equal(h.frames.length,1);h.flush();h.observers[0].fn();assert.equal(h.frames.length,1);const n=h.writes;h.flush();assert.equal(h.writes,n)});
 check('Queued frame uses current route rather than modifying a departed Flow',()=>{const h=harness();install(h);h.observers[0].fn();h.c.V='Dashboard';h.flush();assert.equal(h.writes,0);h.c.V='Fluxo Diário';h.observers[0].fn();h.flush();assert(h.writes>0)});
 check('Financial payload remains frozen and byte-identical',()=>{const h=harness(),before=JSON.stringify(h.financial);install(h);h.run('decorateFlow()');for(let i=0;i<20;i++)h.observers[0].fn();h.flush();assert.equal(JSON.stringify(h.financial),before)});
-check('All changes stay in the three approved UI functions and observer declaration',()=>{for(const name of names){const normalize=s=>s.split('\n').map(line=>{if(name===names[0]&&/^    function stamp\(|^  function install\(/.test(line))return '__APPROVED_UI_FUNCTION__';if(name===names[1]&&(line.includes("if(V!=='Fluxo Diário')return;document.querySelectorAll('.fx87-cons.fx87-head')")||line.includes('const observer=new MutationObserver')))return '__APPROVED_DECORATOR__';return line}).join('\n');assert.equal(normalize(read(name)),normalize(read(name,true)),name)}});
+check('Published observer, decorator and installer bodies are unchanged by the expense patch',()=>{
+ assert.equal(read(names[1]),read(names[1],true),'V170 is byte-identical to V279');
+ const lines=s=>s.split('\n');
+ const selectors=[line=>line.startsWith('    function stamp(){'),line=>line.startsWith('    function decorateFlow(){'),line=>line.startsWith('  function install(){'),line=>line.includes('const observer=new MutationObserver')];
+ for(const pick of selectors){const before=lines(read(names[0],true)).filter(pick),after=lines(read(names[0])).filter(pick);assert.equal(before.length,1,'Expected exactly one protected declaration');assert.deepEqual(after,before,'V168 observer/installer declaration unchanged');}
+});
 
 const install168=read(names[0]).split('\n').find(line=>line.startsWith('  function install(){'));
 function installHarness({owner=false,ready166=true,ready168=false,top='v277'}={}){

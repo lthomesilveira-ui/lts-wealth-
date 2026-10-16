@@ -100,7 +100,8 @@ async function run(browser,build,viewport,label,isBaseline){
    const req=route.request(),url=new URL(req.url());if(url.origin===baseURL.origin&&['GET','HEAD'].includes(req.method()))return route.continue();
    if(url.origin!==ORIGIN){blocked.push({origin:url.origin,path:url.pathname});return route.abort('blockedbyclient');}
    const name=url.pathname.split('/').pop();let args={};try{args=JSON.parse(req.postData()||'{}');}catch{}
-   const entry={name,args: name==='token'?{grant:url.searchParams.get('grant_type')}:args,phase,status:null,marker:null};calls.push(entry);
+   const authSession=Number((req.headers().authorization||'').match(/synthetic-expense-token-(\d+)$/)?.[1]??-1);
+   const entry={name,args: name==='token'?{grant:url.searchParams.get('grant_type')}:args,auth_session:authSession,phase,status:null,marker:null};calls.push(entry);
    const fulfill=async(status,body)=>{entry.status=status;return route.fulfill({status,contentType:'application/json',body:JSON.stringify(body)});};
    if(url.pathname==='/auth/v1/token')return fulfill(200,{...session,access_token:'synthetic-expense-token-'+(++authSerial),refresh_token:'synthetic-expense-refresh-'+authSerial});
    if(url.pathname==='/auth/v1/logout')return fulfill(200,{});
@@ -109,8 +110,9 @@ async function run(browser,build,viewport,label,isBaseline){
    }
    let data=name==='lts_browser_product_v1'?{ok:true,mvp:fixture.product(authSerial+1)}:fixture.response(name,args),plan;
    if(MAIN.test(name)){
-    if(plans.length&&(!plans[0].range||(plans[0].range.from===args.p_from&&plans[0].range.to===args.p_to)))plan=plans.shift();
+    if(plans.length&&(plans[0].session===undefined||plans[0].session===authSession)&&(!plans[0].range||(plans[0].range.from===args.p_from&&plans[0].range.to===args.p_to)))plan=plans.shift();
     data={...data,__draftFixtureMarker:plan?.marker??++marker};entry.marker=data.__draftFixtureMarker;
+    if(plan?.total!==undefined)data={...data,summary:{...data.summary,selected_total:plan.total,card_total:plan.total,monthly_average:plan.total},management_groups:data.management_groups.map(row=>({...row,total:plan.total})),monthly_detail:data.monthly_detail.map(row=>({...row,total:plan.total}))};
    }
    if(plan?.hold)return barriers.hold(plan.hold,fulfill,data,plan.status??200);
    return fulfill(plan?.status??200,data);
@@ -174,7 +176,8 @@ async function run(browser,build,viewport,label,isBaseline){
   // Observation only: original production render function, handlers and readers remain intact.
   await frame.evaluate(()=>{
    const snapshot=()=>{const a=window.__LTS_V168_STATE.expense,b=window.__LTS_V175_STATE.expense;return {view:V,boot:BOOT.generation,inputFrom:document.getElementById('v168ExpenseFrom')?.value??null,inputTo:document.getElementById('v168ExpenseTo')?.value??null,focused:document.activeElement?.id,applied:{key:a.key,from:a.customFrom,to:a.customTo},v168:{loading:a.loading,error:a.error,period:a.data?.period,marker:a.data?.__draftFixtureMarker},v175:{loading:b.loading,error:b.error,key:b.key,token:b.token,period:b.data?.period,marker:b.data?.__draftFixtureMarker}};};
-   const test=window.__EXPENSE_TEST__={snapshot,events:[],phase:'boot'};test.record=(kind,extra={})=>{test.events.push({kind,at:performance.now(),phase:test.phase,...extra,snapshot:snapshot()});};
+   const test=window.__EXPENSE_TEST__={snapshot,events:[],phase:'boot'};test.bodies=[];const nativeJSON=Response.prototype.json;Response.prototype.json=function(){const stack=new Error('expense-response-consumed').stack;return nativeJSON.call(this).then(data=>{if(data?.__draftFixtureMarker)test.bodies.push({marker:data.__draftFixtureMarker,stack,boot:BOOT.generation});return data;});};
+   test.record=(kind,extra={})=>{test.events.push({kind,at:performance.now(),phase:test.phase,...extra,snapshot:snapshot()});};
    for(const type of ['input','change'])document.addEventListener(type,event=>{if(event.target?.matches?.('#v168ExpenseFrom,#v168ExpenseTo'))test.record(type,{target:event.target.id});},true);
    document.addEventListener('click',event=>{if(event.target?.closest?.('#v168ExpenseApply,[data-v168-exp-range]'))test.record('click-before-handler');},true);
    const original=render;render=function(){test.record('before-render',{stack:new Error('reader-render').stack});const result=original.apply(this,arguments);test.record('after-render');return result;};
@@ -276,18 +279,44 @@ async function run(browser,build,viewport,label,isBaseline){
   assert.notEqual((await snapshot()).v175.marker,oldRead.marker,'Superseded reader cannot become the selected report');
   await barriers.release('latest-period');await reportReady(ranges[newKey]);await assertDraft(latestDraft);assert.deepEqual(await applied(),latestApplied);await capture('stale-reader-rejected');
 
-  mark('logout-login-discards-unapplied-draft');
-  const logoutKey=newKey==='6m'?'12m':'6m',logoutRead=await startHeldPreset(logoutKey,'logout-period');await openEditor();
-  const priorSessionDraft={from:'2026-03-04',to:'2026-03-19'};await write(priorSessionDraft);await frame.evaluate(()=>{window.__EXPENSE_TEST__.oldSessionNode=document.getElementById('v168ExpenseFrom');window.__EXPENSE_TEST__.oldBoot=BOOT.generation;});
-  await frame.locator('#logout').click();await frame.waitForFunction(()=>document.body.dataset.ltsBootState==='signed-out');assert.equal(await frame.locator('#v168ExpenseFrom').count(),0);
-  await frame.locator('#email').fill('viewer@example.invalid');await frame.locator('#password').fill('synthetic-fixture-only');await frame.locator('#signin').click();await frame.waitForFunction(()=>document.body.dataset.ltsBootState==='ready');
-  await barriers.release('logout-period');await settle();
-  if(await frame.evaluate(()=>V!=='Despesas'))await nav('Despesas').click();
-  await frame.waitForFunction(()=>!window.__LTS_V168_STATE.expense.loading&&!window.__LTS_V175_STATE.expense.loading);
-  assert.equal(await editor().count(),0,'New session does not reopen previous session draft editor');
-  await openEditor();const fresh=await inputs();assert.notDeepEqual(fresh,priorSessionDraft,'New session never restores old draft');
-  assert.equal(await frame.evaluate(()=>document.getElementById('v168ExpenseFrom')===window.__EXPENSE_TEST__.oldSessionNode),false,'Old native editor node cannot cross session boundary');
-  assert.equal(await frame.evaluate(()=>BOOT.generation>window.__EXPENSE_TEST__.oldBoot),true);assert.equal(matching(priorSessionDraft),0,'Unapplied prior-session dates were never queried');await capture('new-session-clean-editor');
+  for(const mode of ['success','error']){
+   mark('logout-login-isolates-report-and-draft-old-'+mode);
+   const logoutKey=(await applied()).key==='6m'?'12m':'6m',oldSession=authSerial,nextSession=oldSession+1,oldLabel='old-session-'+mode,newLabel='new-session-'+mode;
+   const oldTotal=mode==='success'?717171.25:717172.25,newTotal=mode==='success'?828281.75:828282.75;
+   const logoutRead=await startHeldPreset(logoutKey,oldLabel,{session:oldSession,total:oldTotal});
+   await frame.waitForFunction(()=>window.__LTS_V168_STATE.expense.loading&&window.__LTS_V175_STATE.expense.loading);
+   await openEditor();const priorSessionDraft={from:mode==='success'?'2026-03-04':'2026-03-05',to:mode==='success'?'2026-03-19':'2026-03-20'};await write(priorSessionDraft);
+   await frame.evaluate(()=>{const t=window.__EXPENSE_TEST__;t.oldSessionNode=document.getElementById('v168ExpenseFrom');t.oldBoot=BOOT.generation;t.oldTokens=[window.__LTS_V168_STATE.expense.token,window.__LTS_V175_STATE.expense.token];});
+   await frame.locator('#logout').click();await frame.waitForFunction(()=>document.body.dataset.ltsBootState==='signed-out');assert.equal(await frame.locator('#v168ExpenseFrom').count(),0);
+   plans.push({hold:newLabel,range:logoutRead.range,session:nextSession,total:newTotal});
+   await frame.locator('#email').fill('viewer@example.invalid');await frame.locator('#password').fill('synthetic-fixture-only');await frame.locator('#signin').click();await frame.waitForFunction(()=>document.body.dataset.ltsBootState==='ready');
+   if(await frame.evaluate(()=>V!=='Despesas'))await nav('Despesas').click();
+   // The new reader is admitted normally while the old response still holds
+   // the real transport's heavy slot. No application state is edited by the test.
+   await frame.waitForFunction(()=>{const t=window.__EXPENSE_TEST__,a=window.__LTS_V168_STATE.expense,b=window.__LTS_V175_STATE.expense;return BOOT.generation>t.oldBoot&&a.loading&&b.loading&&a.token>t.oldTokens[0]&&b.token>t.oldTokens[1];});
+   await frame.waitForFunction(()=>window.__LTS_V178_STATE.cash.status==='ready'&&!window.__LTS_V225.statusRead&&!window.__LTS_V225.loading);await settle();
+   assert.equal(await editor().count(),0,'New session does not reopen previous session draft editor');
+   const storeBefore=await frame.evaluate(()=>{const t=window.__EXPENSE_TEST__;t.newSessionSlots=[window.__LTS_V168_STATE.expense,window.__LTS_V175_STATE.expense];t.sessionEventStart=t.events.length;t.sessionBodyStart=t.bodies.length;return JSON.stringify(t.newSessionSlots);});
+   if(mode==='error')await barriers.release(oldLabel,{message:'Erro sintético da sessão anterior.',__draftFixtureMarker:logoutRead.marker},503);else await barriers.release(oldLabel);
+   // Both real consumers parsed the old response before the assertion. This
+   // is an explicit completion boundary, not a guessed delay or a forced render.
+   await frame.waitForFunction(marker=>{const t=window.__EXPENSE_TEST__;return t.bodies.slice(t.sessionBodyStart).filter(body=>body.marker===marker).length>=2;},logoutRead.marker);
+   await barriers.seen(newLabel);await settle();
+   const isolated=await frame.evaluate(()=>{const t=window.__EXPENSE_TEST__,slots=[window.__LTS_V168_STATE.expense,window.__LTS_V175_STATE.expense];return{sameIdentity:slots.every((slot,i)=>slot===t.newSessionSlots[i]),store:JSON.stringify(slots),renders:t.events.slice(t.sessionEventStart).filter(event=>event.kind==='before-render'&&/ensureExpense/.test(event.stack||'')),bodies:t.bodies.slice(t.sessionBodyStart)};});
+   assert.equal(isolated.sameIdentity,true,'Old '+mode+' cannot replace new-session report slots');
+   assert.equal(isolated.store,storeBefore,'Old '+mode+' cannot write data/error/loading/tokens into new-session V168/V175 report slots');
+   assert.deepEqual(isolated.renders,[],'Old '+mode+' cannot repaint from its expense reader callback while the new report remains held');
+   assert(!semantic(await frame.locator('.v168-expenses').innerText()).includes(semantic(new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(oldTotal))),'Old-session report value is never displayed');
+   const newRequest=calls.find(call=>call.auth_session===nextSession&&MAIN.test(call.name)&&call.status===null&&call.args.p_from===logoutRead.range.from&&call.args.p_to===logoutRead.range.to);assert(newRequest,'Held replacement request belongs to the new synthetic session');
+   assert.notEqual(newRequest.marker,logoutRead.marker);await barriers.release(newLabel);await reportReady(logoutRead.range);
+   const ready=await snapshot();assert.equal(ready.v168.marker,newRequest.marker);assert.equal(ready.v175.marker,newRequest.marker);
+   assert(semantic(await frame.locator('.v168-expenses').innerText()).includes(semantic(new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(newTotal))),'New-session report is functional and displayed');
+   assert.equal(calls.filter(call=>call.auth_session===nextSession&&MAIN.test(call.name)&&call.args.p_from===logoutRead.range.from&&call.args.p_to===logoutRead.range.to).length,1,'New session uses one canonical expense read');
+   await openEditor();await assertDraft(logoutRead.range);
+   assert.equal(await frame.evaluate(()=>document.getElementById('v168ExpenseFrom')===window.__EXPENSE_TEST__.oldSessionNode),false,'Old native editor node cannot cross session boundary');
+   assert.equal(matching(priorSessionDraft),0,'Unapplied prior-session dates were never queried');await capture('new-session-clean-'+mode);
+   checkpoints.push({phase:'session-isolation-'+mode,oldSession,nextSession,oldMarker:logoutRead.marker,newMarker:newRequest.marker,storeBefore,isolated});
+  }
 
   await assertStack();assert.equal(plans.length,0);assert.equal(barriers.pending.size,0);
   return{build:build.id,label,viewport,pass:true,baseline:false,checkpoints,geometry,calls,events:await frame.evaluate(()=>window.__EXPENSE_TEST__.events),auth_sessions:authSerial};

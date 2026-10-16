@@ -38,10 +38,27 @@
       return{from:year+'-01-01',to:t,label:'Ano atual'};
     }
 
+    let expenseReadEpoch=0;
+    const expenseReadGeneration=()=>typeof BOOT!=='undefined'?BOOT.generation:(typeof D!=='undefined'?D:null);
+    let expenseReadOwner={generation:expenseReadGeneration(),epoch:expenseReadEpoch};
+    function readSessionCurrent(owner){return !!owner&&owner.generation===expenseReadGeneration()&&owner.epoch===expenseReadEpoch&&!!D}
+    function syncExpenseReaders(){
+      if(expenseReadOwner.generation!==expenseReadGeneration()||expenseReadOwner.epoch!==expenseReadEpoch){
+        expenseReadOwner={generation:expenseReadGeneration(),epoch:expenseReadEpoch};
+        for(const key of ['expense','monthly','cards']){const s=state[key];if(!s)continue;s.token=(s.token||0)+1;s.loading=false;s.data=null;s.error=null;if(key!=='cards'){s.key='';s.rangeInvalid=false}if(key==='monthly'){s.progress='';s.mode=''}}
+      }
+      return expenseReadOwner;
+    }
+    S.auth.onAuthStateChange?.(event=>{if(event==='SIGNED_OUT'||event==='SIGNED_IN')expenseReadEpoch++});
+
     async function directRpc(name,args,timeoutMs=18000){
+      const owner={generation:expenseReadGeneration(),epoch:expenseReadEpoch};
+      if(!readSessionCurrent(owner))return{data:null,error:{message:'Leitura substituída por outra sessão.'}};
       const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),timeoutMs);
       try{
-        const auth=await S.auth.getSession(),token=auth?.data?.session?.access_token||K;
+        const auth=await S.auth.getSession();
+        if(!readSessionCurrent(owner))return{data:null,error:{message:'Leitura substituída por outra sessão.'}};
+        const token=auth?.data?.session?.access_token||K;
         const response=await fetch(U+'/rest/v1/rpc/'+encodeURIComponent(name),{
           method:'POST',
           headers:{apikey:K,Authorization:'Bearer '+token,'Content-Type':'application/json',Accept:'application/json'},
@@ -49,6 +66,7 @@
           signal:controller.signal
         });
         const payload=await response.json().catch(()=>null);
+        if(!readSessionCurrent(owner))return{data:null,error:{message:'Leitura substituída por outra sessão.'}};
         if(!response.ok)return{data:null,error:{message:String(payload?.message||payload?.error_description||('HTTP '+response.status)),status:response.status}};
         return{data:payload,error:null};
       }catch(error){
@@ -158,9 +176,9 @@
       }
       return data;
     }
-    function currentRead(s,key,token){
+    function currentRead(s,key,token,owner){
       const r=expenseRange();
-      return token===s.token&&s.key===key&&key===r.from+'|'+r.to;
+      return readSessionCurrent(owner)&&(state.expense===s||state.monthly===s)&&token===s.token&&s.key===key&&key===r.from+'|'+r.to;
     }
     function invalidateExpensePeriod(){
       for(const s of [state.expense,state.monthly]){
@@ -217,22 +235,24 @@
     }
 
     async function ensureMonthly(force=false){
+      const owner=syncExpenseReaders();if(!readSessionCurrent(owner))return;
       const r=expenseRange(),key=r.from+'|'+r.to,s=state.monthly;
       if(s.key===key&&(s.loading||(!force&&(s.data||s.error))))return;
       const token=++s.token;s.key=key;s.data=null;s.loading=true;s.error=null;s.progress='Preparando balanço…';
       if(V==='Despesas'&&v168?.expense?.tab==='monthly')render();
       try{
-        const result=await loadMonthly(r.from,r.to,()=>currentRead(s,key,token));
-        if(!currentRead(s,key,token))return;
+        const result=await loadMonthly(r.from,r.to,()=>currentRead(s,key,token,owner));
+        if(!currentRead(s,key,token,owner))return;
         if(result.error||!result.data)throw Error(result.error||'Balanço indisponível');
         s.data=result.data;s.mode=result.mode||'direct';
         const years=[...new Set(arr(s.data.months).map(yearOf))].filter(Boolean);
         if(!years.includes(String(s.year)))s.year=years.at(-1)||today().slice(0,4);
-      }catch(error){if(currentRead(s,key,token)){s.error=String(error?.message||error);s.data=null}}
-      finally{if(token===s.token){s.loading=false;s.progress='';if(V==='Despesas'&&v168?.expense?.tab==='monthly')render()}}
+      }catch(error){if(currentRead(s,key,token,owner)){s.error=String(error?.message||error);s.data=null}}
+      finally{if(readSessionCurrent(owner)&&state.monthly===s&&token===s.token){s.loading=false;s.progress='';if(V==='Despesas'&&v168?.expense?.tab==='monthly')render()}}
     }
 
     async function ensureExpense(force=false){
+      const owner=syncExpenseReaders();if(!readSessionCurrent(owner))return;
       const r=expenseRange(),key=r.from+'|'+r.to,s=state.expense;
       if(s.key===key&&(s.loading||(!force&&(s.data||s.error))))return;
       const token=++s.token;s.key=key;s.data=null;s.loading=true;s.error=null;
@@ -240,25 +260,26 @@
       if(!dateValid(r.from)||!dateValid(r.to)||r.from>r.to||r.from<'2013-10-10'||r.to>today()){s.loading=false;s.error=r.to>today()?'Despesas realizadas estão disponíveis até '+today()+'. Para datas futuras, consulte o Fluxo Diário. O período escolhido foi preservado.':'Informe um período válido a partir de 10/10/2013.';s.rangeInvalid=true;if(V==='Despesas')render();return;}s.rangeInvalid=false;
       try{
         const result=await directRpc('lts_browser_expense_executive_v8',{p_from:r.from,p_to:r.to},18000);
-        if(!currentRead(s,key,token))return;
+        if(!currentRead(s,key,token,owner))return;
         if(result.error||!result.data)throw Error(result.error?.message||'Despesas indisponíveis');
         s.data=result.data;
-      }catch(error){if(currentRead(s,key,token)){s.error=String(error?.message||error);s.data=null}}
-      finally{if(token===s.token){s.loading=false;if(V==='Despesas'&&['overview','categories'].includes(v168?.expense?.tab))render()}}
+      }catch(error){if(currentRead(s,key,token,owner)){s.error=String(error?.message||error);s.data=null}}
+      finally{if(readSessionCurrent(owner)&&state.expense===s&&token===s.token){s.loading=false;if(V==='Despesas'&&['overview','categories'].includes(v168?.expense?.tab))render()}}
     }
 
     async function ensureCards(force=false){
+      const owner=syncExpenseReaders();if(!readSessionCurrent(owner))return;
       const s=state.cards;if(s.loading||(!force&&(s.data||s.error)))return;
       const token=++s.token;s.loading=true;s.error=null;
       if(V==='Despesas'&&v168?.expense?.tab==='cards')render();
       try{
         const from=today(),to=String(Number(from.slice(0,4))+1)+'-12-31';
         const result=await directRpc('lts_browser_card_flow_schedule_v2',{p_from:from,p_to:to},22000);
-        if(token!==s.token)return;
+        if(!readSessionCurrent(owner)||state.cards!==s||token!==s.token)return;
         if(result.error||!result.data)throw Error(result.error?.message||'Cartões indisponíveis');
         s.data=result.data;
-      }catch(error){if(token===s.token){s.error=String(error?.message||error);s.data=null}}
-      finally{if(token===s.token){s.loading=false;if(V==='Despesas'&&v168?.expense?.tab==='cards')render()}}
+      }catch(error){if(readSessionCurrent(owner)&&state.cards===s&&token===s.token){s.error=String(error?.message||error);s.data=null}}
+      finally{if(readSessionCurrent(owner)&&state.cards===s&&token===s.token){s.loading=false;if(V==='Despesas'&&v168?.expense?.tab==='cards')render()}}
     }
 
     S.rpc=async function(name,args){
@@ -433,8 +454,8 @@
     }
 
     dashboard=dashboardV175;despesas=expensesV175;
-    render=function(){const out=baseRender();after();return out};
-    renderNav=function(){const out=baseNav();after();return out};
+    render=function(){syncExpenseReaders();const out=baseRender();after();return out};
+    renderNav=function(){syncExpenseReaders();const out=baseNav();after();return out};
 
     state.expense.data=null;state.expense.key='';state.monthly.data=null;state.monthly.key='';state.cards.data=null;
     if(v168){v168.expense.data=null;v168.expense.loading=false;v168.dashboard.data=null;v168.dashboard.started=false;v168.dashboard.loading=false}
