@@ -263,6 +263,14 @@ async function run(browser,viewport,label){
   const closing=frame.locator('#d-'+flags.date+' > div').nth(4);
   assert.equal(semantic(await closing.locator('b').innerText()),money(1450.30));
   assert.equal(await closing.locator('.v274-ending-label').innerText(),'Encerramento do fluxo');
+  const balanceGeometry=await closing.evaluate(cell=>{const c=cell.getBoundingClientRect(),b=cell.querySelector('b').getBoundingClientRect(),tag=cell.querySelector('.v274-ending-label').getBoundingClientRect(),p=document.querySelector('#v274ReceivedPosition');return{cell:{left:c.left,right:c.right,top:c.top,bottom:c.bottom},number:{left:b.left,right:b.right,top:b.top,bottom:b.bottom},badge:{left:tag.left,right:tag.right,top:tag.top,bottom:tag.bottom},noteOverflow:p.scrollWidth>p.clientWidth+1,pageOverflow:document.documentElement.scrollWidth>innerWidth+1}});
+  assert(balanceGeometry.badge.top>=balanceGeometry.number.bottom-1,'closing label is below amount');
+  for(const part of [balanceGeometry.number,balanceGeometry.badge]){assert(part.left>=balanceGeometry.cell.left-1&&part.right<=balanceGeometry.cell.right+1,'closing text fits cell horizontally');assert(part.top>=balanceGeometry.cell.top-1&&part.bottom<=balanceGeometry.cell.bottom+1,'closing text fits cell vertically');}
+  assert(!balanceGeometry.noteOverflow&&!balanceGeometry.pageOverflow,'received position fits flow viewport');
+  await frame.evaluate(()=>{window.__LTS_V178_STATE.cash.status='error';render()});
+  assert.match(await frame.locator('#v274ReceivedPosition').innerText(),/indisponível/);
+  assert.doesNotMatch(await frame.locator('#v274ReceivedPosition').innerText(),/R\$\s*0,00/);
+  await frame.evaluate(()=>{window.__LTS_V178_STATE.cash.status='ready';render()});
   await page.screenshot({path:'qa/v274-'+label+'-received-vs-closing.png',fullPage:true});
   for(const [account,expected] of [['Itaú',700.30],['Bradesco',0],['C6',500],['Consolidado',1200.30]]){
    const begin=Date.now();await frame.locator('[data-a="'+account+'"]').click();
