@@ -242,7 +242,35 @@ async function run(browser,viewport,label){
   assert((await frame.locator('.v168-expenses').innerText()).includes('set de 26'),'final month appears in the expense overview');
 
   // Full ordered release stack, actual bindings and shared RPC transport; all network payloads synthetic.
-  const applyExpense=async(from,to)=>{await frame.locator('[data-v168-exp-range="custom"]').click();await frame.locator('#v168ExpenseFrom').fill(from);await frame.locator('#v168ExpenseTo').fill(to);await frame.locator('#v168ExpenseApply').click();};
+  // Read-only diagnostic for an expense draft overwritten between input and Apply.
+  // No sleeps, DOM writes, retries, or softened assertions are introduced here.
+  await frame.evaluate(()=>{
+   if(window.__LTS_EXPENSE_DRAFT_PROBE)return;
+   const snapshot=()=>{const s=window.__LTS_V168_STATE?.expense,h=window.__LTS_V175_STATE?.expense,c=window.__LTS_V178_STATE?.cash;return{
+    view:typeof V==='undefined'?null:V,selected_key:s?.key,custom_from:s?.customFrom,custom_to:s?.customTo,
+    input_from:document.getElementById('v168ExpenseFrom')?.value??null,input_to:document.getElementById('v168ExpenseTo')?.value??null,
+    active_element:document.activeElement?.id||null,visibility:document.visibilityState,
+    expense:{loading:s?.loading,error:s?.error,token:s?.token,period:s?.data?.period},
+    history:{loading:h?.loading,error:h?.error,key:h?.key,token:h?.token,period:h?.data?.period},
+    cash:{status:c?.status,date:c?.date,token:c?.token,session_generation:c?.sessionGeneration},
+    boot_generation:typeof BOOT==='undefined'?null:BOOT.generation,transport_revision:window.__LTS_V227_TRANSPORT?.revision};};
+   const probe=window.__LTS_EXPENSE_DRAFT_PROBE={active:false,request:null,events:[],snapshot};
+   probe.record=(phase,extra={})=>{if(!probe.active)return;probe.events.push({sequence:probe.events.length+1,at_ms:performance.now(),phase,request:probe.request,...extra,state:snapshot()});if(probe.events.length>2000)probe.events.shift();};
+   for(const type of ['input','change'])document.addEventListener(type,event=>{if(['v168ExpenseFrom','v168ExpenseTo'].includes(event.target?.id))probe.record(type,{target:event.target.id,value:event.target.value});},true);
+   document.addEventListener('click',event=>{const target=event.target?.closest?.('#v168ExpenseApply,[data-v168-exp-range]');if(target)probe.record('click-capture-before-handler',{target:target.id||target.dataset.v168ExpRange});},true);
+   const originalRender=render;
+   render=function(){const tracked=probe.active&&V==='Despesas';if(tracked)probe.record('before-render',{stack:new Error('expense-render-origin').stack});const result=originalRender.apply(this,arguments);if(tracked)probe.record('after-render');return result;};
+  });
+  const applyExpense=async(from,to)=>{
+   await frame.evaluate(request=>{const p=window.__LTS_EXPENSE_DRAFT_PROBE;p.active=true;p.request=request;p.record('apply-helper-start');},{from,to});
+   await frame.locator('[data-v168-exp-range="custom"]').click();
+   await frame.locator('#v168ExpenseFrom').fill(from);
+   await frame.locator('#v168ExpenseTo').fill(to);
+   await frame.evaluate(()=>window.__LTS_EXPENSE_DRAFT_PROBE.record('before-playwright-apply-click'));
+   await frame.locator('#v168ExpenseApply').click();
+   await frame.evaluate(()=>window.__LTS_EXPENSE_DRAFT_PROBE.record('after-playwright-apply-click'));
+   fs.writeFileSync('qa/v279-'+label+'-expense-draft-probe.json',JSON.stringify(await frame.evaluate(()=>({request:window.__LTS_EXPENSE_DRAFT_PROBE.request,events:window.__LTS_EXPENSE_DRAFT_PROBE.events,state:window.__LTS_EXPENSE_DRAFT_PROBE.snapshot()})),null,2));
+  };
   const countMain=(from,to)=>calls.filter(c=>(c.name==='lts_browser_expenses_v229'||/^lts_browser_expense_executive_v/.test(c.name))&&c.args.p_from===from&&c.args.p_to===to).length;
   await applyExpense('2026-09-01','2026-09-30');
   await frame.waitForFunction(()=>window.__LTS_V168_STATE.expense.error?.includes('Fluxo Diário')&&!window.__LTS_V168_STATE.expense.loading);
@@ -625,7 +653,7 @@ async function run(browser,viewport,label){
   const geometryState=await frame.locator('.v168-dashboard').evaluate(root=>{const nodes=['.current','.v227-liquidity','.v227-expenses'].map(selector=>{const e=root.querySelector(selector),r=e.getBoundingClientRect(),s=getComputedStyle(e);return {selector,top:r.top,left:r.left,width:r.width,height:r.height,display:s.display,visibility:s.visibility,parent:e.parentElement.className,connected:e.isConnected}});return {order:nodes.map(n=>n.top),nodes,view:V,contract:window.__LTS_V269_COMPLETENESS?.(),blocked:document.getElementById('app')?.dataset.v269Blocked,readers:Object.fromEntries(['cash','forecast','wealth','awards','dashboardReport'].map(k=>[k,window.__LTS_V178_STATE[k].status]))}});console.log('ORDER_DIAGNOSTIC',JSON.stringify({label,...geometryState}));const order=geometryState.order;assert(order[0]<order[1]&&order[1]<order[2],'balances, liquidity, expenses order: '+JSON.stringify(geometryState));assert.equal(await frame.locator('.v227-expenses .v226-upcoming').count(),1);assert.equal(await frame.locator('.v227-expenses .v171-expense-total').count(),1);
   assert.deepEqual(errors,[],'no uncaught errors');await page.screenshot({path:'qa/v229-'+label+'-dashboard.png'});
   return{label,pass:true,expense_last_month:true,card_inventory:true,payment_status:true,manual_edit_delete:true,scroll:geometry,freshness_geometry:provenanceGeometry,flow_render_timings:flowTimings,calls:calls.length,financial_data:'synthetic fixtures; live SQL checks separate'};
- }catch(error){console.error('ORIGINAL FAILURE',String(error.stack||error));await page.screenshot({path:'qa/v229-'+label+'-failure.png',fullPage:true}).catch(e=>console.error('SCREENSHOT FAILED',e.message));console.error(JSON.stringify({label,error:String(error.stack||error),errors,calls:calls.slice(-15),state:await frame?.evaluate(()=>({cash:window.__LTS_V178_STATE?.cash,monthly:{error:window.__LTS_V175_STATE?.monthly?.error,count:window.__LTS_V175_STATE?.monthly?.data?.months?.length},detail:window.__LTS_V178_STATE?.detail?{group:window.__LTS_V178_STATE.detail.group,error:window.__LTS_V178_STATE.detail.error,rows:window.__LTS_V178_STATE.detail.rows.length}:null})).catch(()=>null)}));throw error}
+ }catch(error){console.error('ORIGINAL FAILURE',String(error.stack||error));await page.screenshot({path:'qa/v229-'+label+'-failure.png',fullPage:true}).catch(e=>console.error('SCREENSHOT FAILED',e.message));const expenseProbe=await frame?.evaluate(()=>{const p=window.__LTS_EXPENSE_DRAFT_PROBE;return p?{request:p.request,events:p.events,state:p.snapshot()}:null;}).catch(()=>null);if(expenseProbe)fs.writeFileSync('qa/v279-'+label+'-expense-draft-probe.json',JSON.stringify(expenseProbe,null,2));console.error(JSON.stringify({label,error:String(error.stack||error),errors,calls:calls.slice(-15),expenseProbe,state:await frame?.evaluate(()=>({cash:window.__LTS_V178_STATE?.cash,monthly:{error:window.__LTS_V175_STATE?.monthly?.error,count:window.__LTS_V175_STATE?.monthly?.data?.months?.length},detail:window.__LTS_V178_STATE?.detail?{group:window.__LTS_V178_STATE.detail.group,error:window.__LTS_V178_STATE.detail.error,rows:window.__LTS_V178_STATE.detail.rows.length}:null})).catch(()=>null)}));throw error}
  finally{await context.close()}
 }
 (async()=>{

@@ -191,9 +191,20 @@ async function run(browser,viewport,label){
   assert.equal(count(CASH),before.cash,'100 renders do not request/retry cash');assert.equal(heavyCount(),before.heavy,'100 renders do not start heavy data readers');
  };
  const clickStorm=async()=>{
-  const before={cash:count(CASH),heavy:heavyCount()};
-  for(const account of ['Bradesco','C6','Consolidado','Itaú'])await frame.locator('[data-a="'+account+'"]').click();
-  const exp=frame.locator('.exp[data-d="'+DAY+'"]').first();await exp.click();await exp.click();await settle();
+  const before={cash:count(CASH),heavy:heavyCount()},beforeSelection=await selection();
+  // The shipped V162 bank-scope contract intentionally closes days on bank changes.
+  // Test that contract, then restore the user's expansion through actual controls
+  // before checking preservation across cash-only recovery.
+  for(const account of ['Bradesco','C6','Consolidado','Itaú']){
+   await frame.locator('[data-a="'+account+'"]').click();
+   assert.deepEqual(await frame.evaluate(()=>[...EXP]),[],'Changing bank closes the previous bank disclosure');
+  }
+  if(beforeSelection.account!=='Itaú')await frame.locator('[data-a="'+beforeSelection.account+'"]').click();
+  const exp=frame.locator('.exp[data-d="'+DAY+'"]').first();
+  await exp.click();assert.equal(await frame.evaluate(date=>EXP.has(date),DAY),true,'Expand control opens the selected day');
+  await exp.click();assert.equal(await frame.evaluate(date=>EXP.has(date),DAY),false,'Second expand control click closes that day');
+  for(const date of beforeSelection.expanded)await frame.locator('.exp[data-d="'+date+'"]').first().click();
+  await settle();await assertSelection(beforeSelection);
   assert.equal(count(CASH),before.cash,'Bank selection/expansion cannot request cash');assert.equal(heavyCount(),before.heavy,'Bank selection/expansion cannot start heavy readers');
  };
  const assertFreshness=async(time=flags.positionTime)=>{
