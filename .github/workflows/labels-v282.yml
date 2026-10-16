@@ -39,6 +39,10 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - name: Serve only local immutable repository assets
         run: python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/labels-v282-http.log 2>&1 &
+      - name: Diagnose natural-input geometry against unchanged V282
+        env:
+          LTS_LEDGER_QA_DIR: qa/labels-natural-geometry
+        run: node .github/scripts/lts_labels_v282_ledger_fullstack.cjs --natural-geometry-probe
       - name: Canonical ledger plus label interactions in three viewports
         run: node .github/scripts/lts_labels_v282_ledger_fullstack.cjs
       - name: Complete inherited functional matrix with candidate overlay

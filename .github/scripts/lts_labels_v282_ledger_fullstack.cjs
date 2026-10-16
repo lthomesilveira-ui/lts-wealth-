@@ -182,9 +182,9 @@ async function staticCheck() {
     label_fixture:labelScenarios.staticCheck(), label_overlay:labelOverlay.summary(), fixture_contracts:['daily-signed-sum','monthly-two-pages','empty','10005-two-pages','declared-revision-drift','final-sum-mismatch'], report_readiness_contracts:9, barrier_contract:true, limitation:LIMITATION, builds};
 }
 
-async function run(browser, build, viewport, label, isBaseline) {
+async function run(browser, build, viewport, label, isBaseline, useLabelOverlay=true) {
   const context = await browser.newContext({viewport, serviceWorkers:'block', reducedMotion:'reduce'});
-  const overlayAudit = isBaseline ? null : labelOverlay.audit(context, BASE.href);
+  const overlayAudit = isBaseline || !useLabelOverlay ? null : labelOverlay.audit(context, BASE.href);
   const labelSuite = labelScenarios.createSuite();
   await context.addInitScript(({session, now}) => {
     const NativeDate = Date;
@@ -476,6 +476,49 @@ async function run(browser, build, viewport, label, isBaseline) {
     datasets.clear();
   }
 
+  // Diagnostic only. This branch never runs during the complete ledger matrix.
+  // Compare the unchanged V282 stack and exact eight-asset overlay before changing any clipping contract.
+  async function naturalGeometryProbe() {
+    mark('natural-geometry-probe');await nav('Despesas').click();
+    await reportReady({from:'2026-01-01',to:DAILY.to});
+    const financialBefore=await financial();labelSuite.enabled=true;
+    await setRange(MONTH);await reportReady(MONTH);
+    await nav('Atualizações').click();await frame.waitForFunction(()=>!window.__LTS_V168_STATE.updates.loading);await settle();
+    const phrase='paguei R$ 12 na conta Itaú hoje categoria Assinaturas';
+    await frame.locator('#v168NlPhrase').fill(phrase);await frame.locator('#v168NlPreview').click();
+    await frame.locator('select#v168NlCategory').waitFor({state:'visible'});
+    await frame.locator('#v168NlCategory').selectOption('Tarifas e Juros');
+    await frame.locator('.v168-nl').scrollIntoViewIfNeeded();await settle();
+    const measurement=await frame.locator('.v168-nl').evaluate(element=>{
+      const box=node=>{const r=node.getBoundingClientRect();return{left:r.left,right:r.right,width:r.width,height:r.height,scroll:node.scrollWidth,client:node.clientWidth};};
+      return{viewport:innerWidth,document:document.documentElement.scrollWidth,surface:box(element),
+        controls:[...element.querySelectorAll('button,input')].filter(node=>!node.closest('[hidden]')).map(node=>({...box(node),id:node.id,tag:node.tagName,type:node.type,value:node.value,valueLength:node.value.length,disabled:node.disabled,readOnly:!!node.readOnly,overflow:getComputedStyle(node).overflowX}))};
+    });
+    geometry.push({name:'natural-geometry-probe',...measurement});
+    fs.writeFileSync(path.join(QA,label+'-controls.json'),JSON.stringify(measurement,null,2)+'\n');
+    await page.screenshot({path:path.join(QA,label+'-natural.png')});
+    assert(measurement.document<=measurement.viewport+2,'Diagnostic retains document bounds');
+    for(const box of [measurement.surface,...measurement.controls])assert(box.left>=-1&&box.right<=viewport.width+2&&box.width>0&&box.height>0,'Diagnostic retains positive visible control bounds: '+JSON.stringify(box));
+    // Do not exempt clipping here. Report exactly which controls fail the unchanged contract.
+    const clipped=measurement.controls.filter(box=>box.scroll>box.client+2);
+    const field=frame.locator('#v168NlDesc');assert.equal(await field.inputValue(),phrase);
+    const fieldState=()=>field.evaluate(node=>({value:node.value,type:node.type,disabled:node.disabled,readOnly:node.readOnly,selectionStart:node.selectionStart,selectionEnd:node.selectionEnd,scrollLeft:node.scrollLeft,scroll:node.scrollWidth,client:node.clientWidth,focused:document.activeElement===node}));
+    await field.click();await field.press('End');await settle();const afterEnd=await fieldState();
+    await field.screenshot({path:path.join(QA,label+'-description-end.png')});
+    await field.press('Home');await settle();const afterHome=await fieldState();
+    await field.screenshot({path:path.join(QA,label+'-description-home.png')});
+    assert.equal(afterEnd.type,'text');assert(!afterEnd.disabled&&!afterEnd.readOnly);
+    assert.equal(afterEnd.value,phrase);assert.equal(afterHome.value,phrase);assert(afterEnd.focused&&afterHome.focused);
+    assert.equal(afterEnd.selectionStart,phrase.length);assert.equal(afterEnd.selectionEnd,phrase.length);
+    assert.equal(afterHome.selectionStart,0);assert.equal(afterHome.selectionEnd,0);assert.equal(afterHome.scrollLeft,0);
+    if(afterEnd.scroll>afterEnd.client+2)assert(afterEnd.scrollLeft>afterHome.scrollLeft,'Long editable text is reachable by its normal caret scrolling');
+    assert.equal(await frame.locator('#v168NlConfirm').isChecked(),false);assert(await frame.locator('#v168NlApply').isDisabled());
+    assert(!calls.some(call=>/_decision_|_apply_|_create_|_save_|_mutate_|_classify_|_classification_|_delete_|_confirm_|_refresh_|_upload_|_update_/.test(call.name)),'Diagnostic invokes no writer');
+    await assertStack();assert.deepEqual(await financial(),financialBefore);
+    const overlay=overlayAudit?await overlayAudit.assertComplete():null;
+    return{diagnosticOnly:true,id:build.id,label,viewport,overlayEnabled:useLabelOverlay,measurement,clipped,afterEnd,afterHome,geometry,overlay,served:[...served],errors,consoleErrors,blocked,assetErrors,routeErrors};
+  }
+
   try {
     await page.goto(build.appURL, {waitUntil:'domcontentloaded'});
     frame = await (await page.waitForSelector('#shell')).contentFrame(); assert(frame);
@@ -484,6 +527,7 @@ async function run(browser, build, viewport, label, isBaseline) {
       window.__LTS_V225?.installed && window.__LTS_V257_UI_STATE?.installed && window.__LTS_FLOW_OVERDUE_PROJECTIONS?.installed);
     await frame.evaluate(() => window.__LTS_V178_REVIEW.ready());
     await frame.waitForFunction(() => !window.__LTS_V225.statusRead && !window.__LTS_V225.loading && !window.__LTS_V226.loading);
+    if (process.argv.includes('--natural-geometry-probe')) return await naturalGeometryProbe();
     await nav('Despesas').click();
     await reportReady({from:'2026-01-01', to:DAILY.to});
     const financialBefore = await financial();
@@ -596,6 +640,17 @@ async function run(browser, build, viewport, label, isBaseline) {
   try {
     const {chromium} = require('playwright');
     browser = await chromium.launch({headless:true, ...(process.env.LTS_CHROMIUM_PATH ? {executablePath:process.env.LTS_CHROMIUM_PATH} : {})});
+    if (process.argv.includes('--natural-geometry-probe')) {
+      const published=descriptor('v282',process.env.LTS_LEDGER_RELEASE_ROOT,process.env.LTS_LEDGER_APP_PATH);
+      result.scope='Diagnostic counterproof only; full ledger assertions run separately and remain unchanged';
+      result.browserVersion=browser.version();result.playwrightVersion=require('playwright/package.json').version;
+      const viewport={width:320,height:760};
+      const base=await run(browser,published,viewport,'v282-published',false,false);result.results.push(base);
+      const candidate=await run(browser,builds.candidate,viewport,'v282-label-overlay',false,true);result.results.push(candidate);
+      assert.deepEqual(candidate.measurement,base.measurement,'Same natural input geometry on unchanged V282 and reviewed overlay');
+      assert.deepEqual(candidate.afterEnd,base.afterEnd);assert.deepEqual(candidate.afterHome,base.afterHome);
+      result.status='diagnostic-completed';return;
+    }
     for (const [name, viewport] of [['desktop',{width:1440,height:1000}], ['mobile',{width:390,height:844}], ['narrow',{width:320,height:760}]]) {
       const baseline = await run(browser, builds.baseline, viewport, name+'-baseline', true);
       result.results.push(baseline);
