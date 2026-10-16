@@ -120,6 +120,41 @@ function reportSettled(range, observed) {
   return matches(a.data) && (demanded ? currentV175 : currentV175 || dormantV175);
 }
 
+// CI3 proved this one editable field has identical intrinsic text scrolling on published V282.
+// This is not a general exemption for inputs, labels, buttons or offscreen geometry.
+function naturalDescriptionMayScroll(name,selector,box) {
+  return name==='labels-natural-preview'&&selector==='.v168-nl'&&box.id==='v168NlDesc'&&
+    box.tag==='INPUT'&&box.type==='text'&&box.disabled===false&&box.readOnly===false;
+}
+function assertNaturalDescriptionReachable(value,end,home,viewportWidth) {
+  assert(value.length>0,'Editable description remains nonempty');
+  for(const state of [end,home]) {
+    assert.equal(state.value,value,'Caret navigation preserves the complete value');
+    assert.equal(state.type,'text');assert.equal(state.disabled,false);assert.equal(state.readOnly,false);
+    assert.equal(state.focused,true,'Caret navigation keeps input focus');
+    assert(state.left>=-1&&state.right<=viewportWidth+2&&state.width>0&&state.height>0,'Editable input stays inside the viewport');
+  }
+  assert.equal(end.selectionStart,value.length);assert.equal(end.selectionEnd,value.length);
+  assert.equal(home.selectionStart,0);assert.equal(home.selectionEnd,0);assert.equal(home.scrollLeft,0);
+  assert.equal(end.scroll,home.scroll);assert.equal(end.client,home.client);
+  assert(end.scroll> end.client+2&&end.scrollLeft>home.scrollLeft,'Proven intrinsic overflow remains reachable');
+  assert(Math.abs(end.scrollLeft-(end.scroll-end.client))<=2,'End reaches the full horizontal range');
+}
+function checkNaturalGeometryContract() {
+  const target={id:'v168NlDesc',tag:'INPUT',type:'text',disabled:false,readOnly:false};
+  const may=box=>naturalDescriptionMayScroll('labels-natural-preview','.v168-nl',box);
+  const checks=[];const check=(name,fn)=>{fn();checks.push(name);};
+  check('only identified editable description qualifies',()=>assert(may(target)));
+  for(const [name,patch] of Object.entries({otherInput:{id:'v168NlCost'},button:{tag:'BUTTON'},staticText:{tag:'SPAN'},date:{type:'date'},checkbox:{type:'checkbox'},disabled:{disabled:true},readonly:{readOnly:true},missingFlags:{disabled:undefined}}))check(name+' cannot bypass clipping',()=>assert(!may({...target,...patch})));
+  check('other scenario cannot bypass clipping',()=>assert(!naturalDescriptionMayScroll('other','.v168-nl',target)));
+  check('other surface cannot bypass clipping',()=>assert(!naturalDescriptionMayScroll('labels-natural-preview','.other',target)));
+  const common={value:'synthetic',type:'text',disabled:false,readOnly:false,focused:true,left:28,right:292,width:264,height:34,scroll:298,client:262};
+  const end={...common,selectionStart:9,selectionEnd:9,scrollLeft:36};const home={...common,selectionStart:0,selectionEnd:0,scrollLeft:0};
+  check('exact caret-scroll proof passes',()=>assertNaturalDescriptionReachable('synthetic',end,home,320));
+  for(const [name,patch] of Object.entries({changedValue:{value:'changed'},lostFocus:{focused:false},unreachableTail:{scrollLeft:5},wrongCaret:{selectionStart:0},zeroBox:{width:0,height:0},offscreen:{right:330}}))check(name+' rejects editable proof',()=>assert.throws(()=>assertNaturalDescriptionReachable('synthetic',{...end,...patch},home,320)));
+  return checks;
+}
+
 class Barriers {
   constructor() { this.events = new EventEmitter(); this.pending = new Map(); this.used = new Set(); }
   async hold(label, fulfill, body, status=200) {
@@ -178,7 +213,8 @@ async function staticCheck() {
   await barriers.seen('self-test'); assert.equal(received.length, 0);
   await barriers.release('self-test'); await pending;
   assert.deepEqual(received, [{status:200, body:{synthetic:true}}]); assert.equal(barriers.pending.size, 0);
-  return {status:'static-check-passed', browser_started:false, network_used:false, candidate_sha:CANDIDATE_SHA,
+  const natural_geometry_contracts=checkNaturalGeometryContract();
+  return {status:'static-check-passed', browser_started:false, network_used:false, candidate_sha:CANDIDATE_SHA, natural_geometry_contracts,
     label_fixture:labelScenarios.staticCheck(), label_overlay:labelOverlay.summary(), fixture_contracts:['daily-signed-sum','monthly-two-pages','empty','10005-two-pages','declared-revision-drift','final-sum-mismatch'], report_readiness_contracts:9, barrier_contract:true, limitation:LIMITATION, builds};
 }
 
@@ -331,16 +367,29 @@ async function run(browser, build, viewport, label, isBaseline, useLabelOverlay=
     const measurement = await surface.evaluate(element => {
       const box = node => { const rect = node.getBoundingClientRect(); return {left:rect.left, right:rect.right, width:rect.width, height:rect.height, scroll:node.scrollWidth, client:node.clientWidth}; };
       return {viewport:innerWidth, document:document.documentElement.scrollWidth, surface:box(element),
-        controls:[...element.querySelectorAll('button,input')].filter(node => !node.closest('[hidden]') && !node.closest('.v168-tablewrap,.v175-tablewrap,.v178-detail-scroll')).map(box),
+        controls:[...element.querySelectorAll('button,input')].filter(node => !node.closest('[hidden]') && !node.closest('.v168-tablewrap,.v175-tablewrap,.v178-detail-scroll')).map(node => ({...box(node),id:node.id,tag:node.tagName,type:node.type,disabled:!!node.disabled,readOnly:!!node.readOnly})),
         scrollers:[...element.querySelectorAll('.v168-tablewrap,.v175-tablewrap,.v178-detail-scroll')].map(node => ({...box(node), overflow:getComputedStyle(node).overflowX}))};
     });
     assert(measurement.document <= measurement.viewport+2, 'No document horizontal overflow');
     for (const box of [measurement.surface, ...measurement.controls, ...measurement.scrollers]) {
       assert(box.left >= -1 && box.right <= viewport.width+2 && box.width > 0 && box.height > 0, 'Visible geometry fits viewport: '+JSON.stringify(box));
     }
-    for (const box of measurement.controls) assert(box.scroll <= box.client+2, 'Controls do not clip');
+    const editableScrollProofs=[];
+    for(const box of measurement.controls) {
+      if(box.scroll<=box.client+2)continue;
+      assert(naturalDescriptionMayScroll(name,selector,box),'Controls do not clip: '+JSON.stringify(box));
+      const input=surface.locator('input#v168NlDesc');assert.equal(await input.count(),1);
+      const state=()=>input.evaluate(node=>{const r=node.getBoundingClientRect();return{value:node.value,type:node.type,disabled:node.disabled,readOnly:node.readOnly,focused:document.activeElement===node,activeId:document.activeElement?.id||'',selectionStart:node.selectionStart,selectionEnd:node.selectionEnd,scrollLeft:node.scrollLeft,scroll:node.scrollWidth,client:node.clientWidth,left:r.left,right:r.right,width:r.width,height:r.height,windowScrollY:window.scrollY};});
+      const before=await state();assert.equal(before.value,await frame.evaluate(()=>window.__LTS_V168_STATE.nl.preview.description),'Input retains its raw preview description');
+      await input.click();await input.press('End');await settle();const end=await state();
+      await input.screenshot({path:path.join(QA,label+'-'+name+'-description-end.png')});
+      await input.press('Home');await settle();const home=await state();
+      assertNaturalDescriptionReachable(before.value,end,home,viewport.width);
+      await input.screenshot({path:path.join(QA,label+'-'+name+'-description-home.png')});
+      editableScrollProofs.push({id:box.id,before,end,home});
+    }
     for (const box of measurement.scrollers) if (box.scroll > box.client+2) assert(['auto','scroll'].includes(box.overflow), 'Wide table is locally scrollable');
-    geometry.push({name, ...measurement});
+    geometry.push({name, ...measurement, editableScrollProofs});
     await page.screenshot({path:path.join(QA, label+'-'+name+'.png')});
   };
   const observe = async () => frame.evaluate(() => {
