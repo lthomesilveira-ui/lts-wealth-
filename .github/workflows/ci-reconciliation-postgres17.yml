@@ -1,0 +1,60 @@
+name: Synthetic reconciliation PostgreSQL 17
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - 'test/reconciliation-postgres17*'
+    paths:
+      - 'ci/reconciliation-postgres17/**'
+      - '.github/workflows/ci-reconciliation-postgres17.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: synthetic-reconciliation-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  synthetic-postgres17:
+    if: startsWith(github.ref, 'refs/heads/test/reconciliation-postgres17')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: reconciliation_ci
+          POSTGRES_USER: postgres
+          # Public dummy value used only by this disposable service.
+          POSTGRES_PASSWORD: synthetic-fixture-only
+        options: >-
+          --health-cmd "pg_isready -U postgres -d reconciliation_ci"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+        # No host ports, production connection strings, volumes or credentials.
+    steps:
+      - name: Check out test branch
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - name: Scan synthetic source files
+        run: python3 ci/reconciliation-postgres17/scan_public.py
+      - name: Check harness without a database
+        run: python3 ci/reconciliation-postgres17/run_tests.py --static-check-only
+      - name: Compile and test in disposable PostgreSQL 17
+        env:
+          ALLOW_DISPOSABLE_RECONCILIATION_TEST: '1'
+          PG_CONTAINER: ${{ job.services.postgres.id }}
+        run: python3 ci/reconciliation-postgres17/run_tests.py
+      - name: Preserve synthetic test results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: reconciliation-postgres17-results
+          path: ci/reconciliation-postgres17/results.json
+          if-no-files-found: warn
+          retention-days: 7
+          include-hidden-files: false
