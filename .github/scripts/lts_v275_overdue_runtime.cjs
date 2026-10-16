@@ -42,6 +42,27 @@ const panel=()=>doc.getElementById('ltsFlowOverdueProjections');
  const once=frame.render;vm.runInContext(source,outer);flush();check('Repeated install preserves one render wrapper',frame.render===once);
  check('One stylesheet',doc.head.children.filter(n=>n.id==='ltsOverdueForecastStyle').length===1);
  check('Render return value preserved',frame.render()==='render-preserved');flush();check('Panel restored after existing render replaces DOM',!!panel());
+ // Native <details> changes .open synchronously; its toggle event can arrive later.
+ const clickBeforeToggle=panel().detail;clickBeforeToggle.open=true;frame.render();flush();
+ check('Immediate render preserves open before delayed toggle event',panel().detail.open);
+ const oldBeforeLoading=panel().detail;frame.FLOWLOADING=true;frame.render();flush();
+ oldBeforeLoading.open=false;oldBeforeLoading.listeners.toggle();
+ frame.FLOWLOADING=false;frame.render();flush();
+ check('Detached delayed toggle cannot erase expansion during loading',panel().detail.open);
+ const oldBeforeBank=panel().detail;frame.ACC='C6';frame.render();flush();
+ oldBeforeBank.open=false;oldBeforeBank.listeners.toggle();
+ frame.ACC='Consolidado';frame.render();flush();
+ check('Detached delayed toggle cannot erase expansion across bank switch',panel().detail.open);
+ panel().detail.open=false;frame.render();flush();
+ check('Immediate render also preserves closing before delayed toggle',panel().detail.open===false);
+ const replacedDetails=panel().detail;panel().detail.open=true;frame.FLOWQ={...fixture,observed_bank_movements:{pending_projections:[{...fixture.observed_bank_movements.pending_projections[0],description:'Changed fixture label'}]}};
+ // A loader completion can repaint the same section instead of replacing its parent.
+ await frame.loadFlowRange();flush();const sameSection=panel();
+ check('Loader repaint captures open state before replacing details',sameSection.detail.open&&sameSection.detail!==replacedDetails);
+ replacedDetails.open=false;replacedDetails.listeners.toggle();
+ frame.FLOWLOADING=true;frame.render();flush();frame.FLOWLOADING=false;frame.render();flush();
+ check('Replaced details toggle cannot overwrite current expansion',panel().detail.open);
+ frame.FLOWQ=fixture;
  panel().detail.open=true;panel().detail.listeners.toggle();frame.render();flush();check('Expansion preserved after complete rerender',panel().detail.open);
  const chain=frame.render;frame.render=function(){const result=chain();if(panel())panel().remove();return result};frame.render();check('Late layer can replace synchronous DOM',!panel());flush();check('One settling microtask restores after later layer',!!panel());
  frame.ACC='C6';frame.render();flush();check('Bank switch filters without totals',panel().innerHTML.includes('Nenhuma previsão vencida nesta lista recebida para C6'));
@@ -53,7 +74,7 @@ const panel=()=>doc.getElementById('ltsFlowOverdueProjections');
  frame.loadError=true;let error;try{await frame.loadFlowRange()}catch(e){error=e}flush();check('Existing loader errors propagate',error&&error.message==='fixture-failure');
  check('Source financial payload not mutated',JSON.stringify(fixture)===original);
  check('No installation polling after readiness',timers.length===0);
- check('Renders finish without self-triggered loops',micro.length===0&&previousCalls<15);
+ check('Renders finish without self-triggered loops',micro.length===0&&previousCalls<40);
  // Simulate a late wrapper installation, without sleeping or launching a browser.
  const delayedDoc=new Doc(),delayedFrame={...frame,document:delayedDoc,__LTS_V235_HISTORY:null,__LTS_FLOW_OVERDUE_PROJECTIONS:null,render:function(){delayedDoc.reset();return 'new-frame'}};
  delayedFrame.window=delayedFrame;vm.createContext(delayedFrame);delayedDoc.context=delayedFrame;delayedDoc.reset();shell.contentWindow=delayedFrame;shell.contentDocument=delayedDoc;

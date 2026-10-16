@@ -84,7 +84,14 @@
     let scheduled = false;
     const id = 'ltsFlowOverdueProjections';
     const state = window.__LTS_FLOW_OVERDUE_PROJECTIONS = {installed:true, financial_data_changed:false, network_requests_added:false, last_status:null};
+    function rememberExpanded() {
+      const panel = document.getElementById(id), details = panel && panel.querySelector('details');
+      // Native details.open changes before the browser dispatches its queued toggle.
+      // Keep the rendered account, even if ACC has already changed for navigation.
+      if (details && typeof panel.__ltsAccount === 'string') expandedByAccount.set(panel.__ltsAccount, details.open === true);
+    }
     function after() {
+      rememberExpanded();
       let panel = document.getElementById(id);
       if (V !== 'Fluxo Diário') { if (panel) panel.remove(); return; }
       const host = document.getElementById('v274ReceivedPosition') || document.getElementById('ltsBankEvidence') || document.querySelector('.flowbar');
@@ -103,10 +110,13 @@
         panel = document.createElement('section'); panel.id = id; panel.className = 'v168-note lts-overdue-forecasts';
         panel.setAttribute('aria-label', 'Previsões vencidas sem confirmação'); host.insertAdjacentElement('afterend', panel);
       }
-      if (panel.__ltsMarkup !== html) {
-        panel.innerHTML = html; panel.__ltsMarkup = html;
+      if (panel.__ltsMarkup !== html || panel.__ltsAccount !== account) {
+        panel.innerHTML = html; panel.__ltsMarkup = html; panel.__ltsAccount = account;
         const details = panel.querySelector('details');
-        if (details) details.addEventListener('toggle', () => expandedByAccount.set(account, details.open));
+        if (details) details.addEventListener('toggle', () => {
+          // Removed/replaced elements may dispatch an already queued toggle later.
+          if (document.getElementById(id) === panel && panel.querySelector('details') === details && panel.__ltsAccount === account) expandedByAccount.set(account, details.open === true);
+        });
       }
     }
     if (!document.getElementById('ltsOverdueForecastStyle')) {
@@ -118,8 +128,9 @@
       if (scheduled) return; scheduled = true;
       queueMicrotask(() => { scheduled = false; after(); });
     }
-    render = function () { const result = previousRender.apply(this, arguments); after(); settle(); return result; };
+    render = function () { rememberExpanded(); const result = previousRender.apply(this, arguments); after(); settle(); return result; };
     if (previousLoad) loadFlowRange = function () {
+      rememberExpanded();
       const result = previousLoad.apply(this, arguments);
       if (result && typeof result.then === 'function') return result.then(value => { after(); settle(); return value; }, error => { after(); settle(); throw error; });
       after(); settle(); return result;
