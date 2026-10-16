@@ -42,7 +42,7 @@ async function run(browser,viewport,label){
  await context.addInitScript(()=>{
  const OriginalMO=MutationObserver,raf=requestAnimationFrame.bind(window);let serial=0;
  const stats=window.__FLOW_PROFILE={observers:[],rafScheduled:0,rafExecuted:0,renderCount:0};
- window.MutationObserver=class extends OriginalMO{constructor(cb){const item={id:++serial,callback:String(cb).slice(0,240),count:0,records:0,ms:0};stats.observers.push(item);super((records,self)=>{const start=performance.now();item.count++;item.records+=records.length;try{return cb(records,self)}finally{item.ms+=performance.now()-start}})}};
+ window.MutationObserver=class extends OriginalMO{constructor(cb){const item={id:++serial,callback:String(cb).slice(0,240),count:0,records:0,ms:0};stats.observers.push(item);super((records,self)=>{const start=performance.now();item.count++;item.records+=records.length;if(item.id===1){stats.lastMutationAt=performance.now();stats.lastMutations=records.slice(-8).map(r=>({type:r.type,target:r.target.nodeName,id:r.target.id||'',className:String(r.target.className||''),added:Array.from(r.addedNodes).map(n=>({node:n.nodeName,text:(n.textContent||'').slice(0,80)}))}));}try{return cb(records,self)}finally{item.ms+=performance.now()-start}})}};
  window.requestAnimationFrame=cb=>{stats.rafScheduled++;return raf(t=>{stats.rafExecuted++;return cb(t)})};
  });
  const page=await context.newPage();page.setDefaultTimeout(20000);const errors=[],calls=[];
@@ -128,8 +128,8 @@ async function run(browser,viewport,label){
  }
 
  }
- await page.waitForTimeout(3500);const settledBefore=await snapshot();await page.waitForTimeout(2000);const settledAfter=await snapshot();
- const idleProof={rafDelta:settledAfter.rafExecuted-settledBefore.rafExecuted,observerDeltas:settledAfter.observers.map((o,i)=>({callback:o.callback,count:o.count-(settledBefore.observers[i]?.count||0)}))};
+ await page.waitForTimeout(await frame.evaluate(()=>Math.max(0,35000-performance.now())));await page.waitForTimeout(3500);const settledBefore=await snapshot();await page.waitForTimeout(2000);const settledAfter=await snapshot();
+ const idleProof={sampleBefore:settledBefore.lastMutationAt,sampleAfter:settledAfter.lastMutationAt,lastMutations:settledAfter.lastMutations,rafDelta:settledAfter.rafExecuted-settledBefore.rafExecuted,observerDeltas:settledAfter.observers.map((o,i)=>({callback:o.callback,count:o.count-(settledBefore.observers[i]?.count||0)}))};
  return {label,results,errors,idleProof};
  }catch(e){fs.writeFileSync('qa/flow-profile-'+label+'-failure.json',JSON.stringify({error:String(e.stack||e),results,errors,calls:calls.map(c=>c.name)},null,2));throw e}
  finally{await context.close()}

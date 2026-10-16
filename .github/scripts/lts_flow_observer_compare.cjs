@@ -1,6 +1,6 @@
 const fs=require('fs'),assert=require('assert/strict');
 const base=JSON.parse(fs.readFileSync('qa/flow-profile-summary-baseline.json')),candidate=JSON.parse(fs.readFileSync('qa/flow-profile-summary-candidate.json'));
-const rows=[];assert.equal(base.length,candidate.length);
+const rows=[];assert.equal(base.length,2);assert.equal(candidate.length,2);assert.deepEqual(base.map(x=>x.label),['desktop-baseline','mobile-baseline']);assert.deepEqual(candidate.map(x=>x.label),['desktop-candidate','mobile-candidate']);
 for(let i=0;i<base.length;i++){const a=base[i],b=candidate[i];assert.equal(a.results.length,8);assert.equal(b.results.length,8);assert.deepEqual(a.errors,[]);assert.deepEqual(b.errors,[]);
 for(let j=0;j<a.results.length;j++){const x=a.results[j],y=b.results[j];assert.deepEqual(x.range,y.range);assert.equal(x.account,y.account);assert.equal(x.after.dataHash,y.after.dataHash,'unchanged synthetic financial payload');assert.equal(x.after.financialHash,y.after.financialHash,'identical rendered financial values');rows.push({viewport:a.label.replace('-baseline',''),range:x.range.name,account:x.account,baselineClickMs:x.clickMs,candidateClickMs:y.clickMs,baselineIdleRaf:x.afterIdle.rafExecuted-x.after.rafExecuted,candidateIdleRaf:y.afterIdle.rafExecuted-y.after.rafExecuted});}
 assert.equal(b.idleProof.rafDelta,0,'candidate stops scheduling while settled');assert(b.idleProof.observerDeltas.every(x=>x.count===0),'candidate DOM observers settle');}
