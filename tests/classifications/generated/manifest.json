@@ -1,0 +1,27 @@
+{
+  "synthetic_only": true,
+  "database_tests_executed": false,
+  "database_leases": "MEASURE_ON_DISPOSABLE_CLUSTER",
+  "parameterization": [
+    "entire target JSON replaced with invented fixtures",
+    "owner/operation UUIDs replaced",
+    "business date literals replaced with synthetic dates; runtime expiry set to current fixture date",
+    "catalog MD5 lease literals replaced with impossible placeholders"
+  ],
+  "source_sha256": {
+    "apply": "91724eeeb04dc001543b47fe02eb904c08924acbd428c2933721fa47af8abcf5",
+    "rollback": "d2e1f5cf18da803175d496bcc208e7af44a54ae77a5335300cd1ef38d1bb6668"
+  },
+  "files": {
+    "apply-synthetic.sql": "374f3f9e4e1d8124aca5cf597272f8989ed83b23ca60c71c862deb228fab0ce5",
+    "rollback-synthetic.sql": "baac0a92d97d34e06da6168bf818bd42a99f678e65aaa87afad3b352b8f8af98",
+    "bootstrap-synthetic.sql": "ef713c844c4c995b1684981275b4283f598c80d0b6673263df8c324a89681200",
+    "reset-synthetic.sql": "813d63e36060e82d6d50de35dcba5c1bf4a7e427d17dd2faee0780681f280963",
+    "fixtures-synthetic.json": "35460dec2be06f6686e5e7d33e1886ff3e98ec3397205da8b68c18d4d5de37d9"
+  },
+  "limits": [
+    "Exact revised DO envelope executes against synthetic contract tables and stand-in readers. This is not full production reader-chain integration.",
+    "Actual observed cache trigger body is exercised on review decisions.",
+    "No SQL has run during generation."
+  ]
+}
