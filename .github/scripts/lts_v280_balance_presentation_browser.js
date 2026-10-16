@@ -291,12 +291,12 @@ async function run(browser,viewport,label){
   await rejectExpense('2026-09-01','2026-09-30',futureMessage);
   await captureTarget(draftError(),'future-range');
   const futureApplied=await expenseApplied();
-  await frame.locator('[data-v168-exp-tab="categories"]').click();
+  await frame.locator('[role="tab"][data-v168-exp-tab="categories"]').click();
   await frame.waitForFunction(()=>!window.__LTS_V175_STATE.expense.rangeInvalid&&!window.__LTS_V175_STATE.expense.loading);
   assert.equal(semantic(await draftError().innerText()),futureMessage,'categories preserves future draft guidance');
   assert.deepEqual(await expenseApplied(),futureApplied,'categories uses the previously applied period');
   assert.equal(calls.filter(c=>c.args.p_from==='2026-09-01'&&c.args.p_to==='2026-09-30').length,0,'categories does not send future range');
-  await frame.locator('[data-v168-exp-tab="overview"]').click();
+  await frame.locator('[role="tab"][data-v168-exp-tab="overview"]').click();
   await rejectExpense('2026-09-10','2026-09-01','Informe um período válido.');
   await rejectExpense('2013-01-01','2013-02-01','O histórico de despesas começa em 10/10/2013. O período escolhido foi preservado.');
   flags.expenseFail=true;await applyExpense('2026-09-02','2026-09-20');

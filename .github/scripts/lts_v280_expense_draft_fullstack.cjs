@@ -235,7 +235,7 @@ async function run(browser,build,viewport,label,isBaseline){
 
   mark('tabs-and-navigation-preserve-unapplied-draft');
   const navigationDraft={from:'2026-07-03',to:'2026-07-21'};await write(navigationDraft);const navigationApplied=await applied(),navigationCount=count(),navigationStart=calls.length;
-  await frame.locator('[data-v168-exp-tab="categories"]').click();await settle();await assertDraft(navigationDraft);assert.deepEqual(await applied(),navigationApplied);assert.equal(count(),navigationCount);
+  await frame.locator('[role="tab"][data-v168-exp-tab="categories"]').click();await settle();await assertDraft(navigationDraft);assert.deepEqual(await applied(),navigationApplied);assert.equal(count(),navigationCount);
   await nav('Fluxo Diário').click();await nav('Despesas').click();await editor().waitFor({state:'visible'});await settle();await assertDraft(navigationDraft);assert.deepEqual(await applied(),navigationApplied);assert.equal(count(),navigationCount,'Leaving and returning restores editor without reapplying its draft');
   assertNoDraftRPC(navigationDraft,ranges[navigationApplied.key],navigationStart);
   await capture('draft-after-navigation');
@@ -260,7 +260,7 @@ async function run(browser,build,viewport,label,isBaseline){
   const retryKey=discardKey,failedRead=await startHeldPreset(retryKey,'failed-expense-period',{status:503});
   await barriers.release('failed-expense-period',{message:'Falha sintética do relatório.'});
   await frame.waitForFunction(()=>{const a=window.__LTS_V168_STATE.expense,b=window.__LTS_V175_STATE.expense;return !a.loading&&!b.loading&&a.error&&b.error;});await settle();
-  await frame.locator('[data-v168-exp-tab="categories"]').click();await settle();
+  await frame.locator('[role="tab"][data-v168-exp-tab="categories"]').click();await settle();
   await openEditor();const retryDraft={from:'2026-08-11',to:'2026-08-29'},retryApplied=await applied(),retryBefore=count(),retryStart=calls.length;
   await write(retryDraft);await settle();assert.equal(count(),retryBefore,'Editing a draft does not auto-retry the failed applied report');
   const retry=frame.locator('[data-v183-expense-retry]');await retry.waitFor({state:'visible'});await retry.click();
