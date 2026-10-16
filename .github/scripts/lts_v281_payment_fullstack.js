@@ -277,7 +277,7 @@ async function run(browser,viewport,label){
   };
   const countMain=(from,to)=>calls.filter(c=>(c.name==='lts_browser_expenses_v229'||/^lts_browser_expense_executive_v/.test(c.name))&&c.args.p_from===from&&c.args.p_to===to).length;
   const expenseApplied=()=>frame.evaluate(()=>{const s=window.__LTS_V168_STATE.expense;return{key:s.key,customFrom:s.customFrom,customTo:s.customTo}});
-  const draftError=()=>frame.locator('.v168-custom-range [data-v281-expense-draft-error][role="alert"]');
+  const draftError=()=>frame.locator('.v168-custom-range [data-v280-expense-draft-error][role="alert"]');
   const periodReads=()=>calls.filter(c=>Object.hasOwn(c.args,'p_from')||Object.hasOwn(c.args,'p_to'));
   const futureMessage='Despesas realizadas estão disponíveis até 20/09/2026. Para datas futuras, consulte o Fluxo Diário. O período escolhido foi preservado.';
   const rejectExpense=async(from,to,message)=>{

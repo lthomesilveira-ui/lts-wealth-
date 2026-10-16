@@ -53,7 +53,7 @@ async function run(browser,viewport,label,initialSession){
  });
  const countProduct=()=>calls.filter(c=>c.name==='lts_browser_product_v1').length;
  const findFrame=async()=>{for(let i=0;i<200;i++){const f=page.frames().find(f=>new URL(f.url()||'about:blank').pathname.endsWith('/index.html'));if(f)return f;await wait(50);}throw Error('Release iframe missing');};
- const phase=async p=>{frame=await findFrame();await frame.waitForFunction(p=>document.body.dataset.ltsBootState===p,p);};
+ const phase=async p=>{frame=await findFrame();await frame.waitForFunction(p=>document.body?.dataset.ltsBootState===p,p);};
  const installed=async()=>{await frame.waitForFunction(()=>window.__LTS_V183_CORE_LOADING_GUARD?.installed&&window.__LTS_V178_REVIEW?.installed&&window.__LTS_V225?.installed&&window.__LTS_V226&&window.__LTS_V227_TRANSPORT?.installed);};
  const assertStack=async()=>{
   assert.deepEqual(await page.locator('script[src]').evaluateAll(els=>els.map(e=>e.getAttribute('src'))),expectedOuter,'All real outer scripts in original DOM order');
