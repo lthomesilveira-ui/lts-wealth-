@@ -142,7 +142,16 @@ async function run(browser,viewport,label){
   assert.match(await frame.locator('.v225-sync').innerText(),/mesma origem de conexão/);
   assert.match(await frame.locator('.v225-sync').innerText(),/não confirma nova posição de saldo/);
   assert.match(await freshnessPanel().locator('time').first().getAttribute('title'),/19\/09\/2026/,'new receipt never becomes new resource date');
-  flags.requestedAt='2026-09-20T12:45:00Z';flags.statusReceipt='2026-09-20T12:55:00Z';flags.statusOrigin='2026-09-20T12:50:00Z';flags.accountAsOf='2026-09-20T12:45:00Z';
+  // Item advances while the account resource remains old: connection freshness must not replace its date.
+  flags.requestedAt='2026-09-20T12:42:00Z';flags.statusReceipt='2026-09-20T12:48:00Z';flags.statusOrigin='2026-09-20T12:44:00Z';
+  await frame.evaluate(()=>window.__LTS_V225.refresh());
+  await frame.waitForFunction(()=>!window.__LTS_V225.syncing&&window.__LTS_V178_STATE.cash.status==='ready');
+  assert.match(await freshnessPanel().locator('time').first().getAttribute('title'),/19\/09\/2026,? 15:00 BRT/,'Item advance never replaces the old account-resource timestamp');
+  assert.match(await freshnessPanel().innerText(),/dia anterior/);
+  assert.doesNotMatch(await frame.locator('.v225-sync').innerText(),/saldo atualizado/);
+  assert.equal(semantic(await bankKpi.locator('strong').innerText()),money(-1000),'Item-only advance preserves received amount');
+  // Now advance the account timestamp too, while keeping its legitimate unchanged balance.
+  flags.requestedAt='2026-09-20T12:50:00Z';flags.statusReceipt='2026-09-20T12:58:00Z';flags.statusOrigin='2026-09-20T12:55:00Z';flags.accountAsOf='2026-09-20T12:45:00Z';
   await frame.evaluate(()=>window.__LTS_V225.refresh());
   await frame.waitForFunction(()=>!window.__LTS_V225.syncing&&window.__LTS_V178_STATE.cash.status==='ready'&&window.__LTS_V178_STATE.cash.data.bank_positions?.[0]?.as_of==='2026-09-20T12:45:00Z');
   assert.match(await freshnessPanel().locator('time').first().getAttribute('title'),/20\/09\/2026,? 09:45 BRT/);

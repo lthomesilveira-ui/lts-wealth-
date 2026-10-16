@@ -18,7 +18,7 @@ jobs:
         with:
           node-version: 22
       - run: node .github/scripts/lts_v225_static_gate.js
-      - run: node .github/scripts/lts_v272_bootstrap_contract.cjs releases/v277/lts-v225-open-finance.js
+      - run: node .github/scripts/lts_v277_bootstrap_contract.cjs releases/v277/lts-v225-open-finance.js
       - run: node .github/scripts/lts_v272_payment_contract.cjs releases/v277/lts-v226-card-composition.js
       - run: node .github/scripts/lts_v272_organon_contract.cjs releases/v277/lts-category-display.js
       - run: TZ=Pacific/Honolulu node .github/scripts/lts_v272_freshness_contract.cjs
