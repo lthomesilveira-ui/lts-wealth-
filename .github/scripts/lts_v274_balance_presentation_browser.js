@@ -257,7 +257,7 @@ async function run(browser,viewport,label){
   flags.balanceScenario=true;flags.cash=1200.30;
   await frame.evaluate(()=>window.__LTS_V178_REVIEW.refresh());
   await frame.waitForFunction(()=>window.__LTS_V178_STATE.cash.status==='ready'&&window.__LTS_V178_STATE.cash.data.cash===1200.30);
-  await frame.locator('[data-p="Hoje"]').click();
+  await frame.locator('#flowFrom').fill(flags.date);await frame.locator('#flowTo').fill(flags.date);await frame.locator('#flowApply').click();
   await frame.waitForFunction(()=>!FLOWLOADING&&document.querySelector('#v274ReceivedPosition')?.textContent.includes('1.200,30'));
   assert.match(await frame.locator('#v274ReceivedPosition').innerText(),/Não é uma consulta em tempo real/);
   const closing=frame.locator('#d-'+flags.date+' > div').nth(4);
