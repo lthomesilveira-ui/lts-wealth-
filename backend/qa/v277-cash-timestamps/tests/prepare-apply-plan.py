@@ -79,6 +79,62 @@ END $post_check$;
 COMMIT;
 """
 
+
+def plan_single_do(before, after, definition, kind):
+    lease = literal(json.dumps(before, ensure_ascii=False, separators=(',', ':')))
+    expected = literal(json.dumps(after, ensure_ascii=False, separators=(',', ':')))
+    if '$wealth_cash_atomic$' in definition or '$wealth_cash_ddl$' in definition:
+        raise ValueError('unexpected SQL delimiter in canonical definition')
+    projection = """SELECT pg_catalog.jsonb_agg(pg_catalog.jsonb_build_object(
+   'signature',lease_row.signature,'oid',q.oid::text,'acl',q.proacl::text,'owner',q.proowner::text,
+   'security_definer',q.prosecdef,'config',pg_catalog.to_jsonb(q.proconfig),
+   'return_type',q.prorettype::text,'argtypes',q.proargtypes::text) ORDER BY lease_row.signature)
+  FROM pg_catalog.jsonb_to_recordset(lease) AS lease_row(signature text)
+  JOIN pg_catalog.pg_proc q ON q.oid=pg_catalog.to_regprocedure('public.'||lease_row.signature)"""
+    return f"""-- PREPARED ONLY: {kind}; one atomic PostgreSQL statement for migration execution.
+-- PRIVATE deployment lease: never commit this generated file to a public repository.
+-- No transaction-control SQL, temp tables or journal writes. API journal is verified separately.
+DO $wealth_cash_atomic$
+DECLARE
+ lease jsonb := {lease}::jsonb;
+ expected jsonb := {expected}::jsonb;
+ e record; p record; before_identity jsonb; after_identity jsonb;
+BEGIN
+ PERFORM pg_catalog.set_config('lock_timeout','5s',true);
+ PERFORM pg_catalog.set_config('statement_timeout','20s',true);
+ IF NOT pg_catalog.pg_try_advisory_xact_lock(pg_catalog.hashtextextended('wealth_cash178_bank_positions_v1',0)) THEN
+  RAISE EXCEPTION 'CASH_DEPLOYMENT_BUSY';
+ END IF;
+ IF pg_catalog.jsonb_array_length(lease)<>4 THEN RAISE EXCEPTION 'CASH_LEASE_INCOMPLETE'; END IF;
+ FOR e IN SELECT * FROM pg_catalog.jsonb_to_recordset(lease)
+  AS x(signature text,definition_md5 text,acl text,owner text,security_definer boolean,config jsonb) LOOP
+  SELECT q.oid,pg_catalog.md5(pg_catalog.pg_get_functiondef(q.oid)) definition_md5,q.proacl::text acl,
+   pg_catalog.pg_get_userbyid(q.proowner) owner,q.prosecdef security_definer,pg_catalog.to_jsonb(q.proconfig) config INTO p
+  FROM pg_catalog.pg_proc q WHERE q.oid=pg_catalog.to_regprocedure('public.'||e.signature);
+  IF p.oid IS NULL OR p.definition_md5 IS DISTINCT FROM e.definition_md5 OR p.acl IS DISTINCT FROM e.acl
+   OR p.owner IS DISTINCT FROM e.owner OR p.security_definer IS DISTINCT FROM e.security_definer OR p.config IS DISTINCT FROM e.config
+  THEN RAISE EXCEPTION 'CASH_LEASE_MISMATCH'; END IF;
+ END LOOP;
+ before_identity := ({projection});
+ EXECUTE $wealth_cash_ddl$
+{definition.rstrip().removesuffix(chr(59))};
+$wealth_cash_ddl$;
+ -- DDL_COMPLETE_POSTCHECK_FOLLOWS
+ after_identity := ({projection});
+ IF before_identity IS DISTINCT FROM after_identity THEN RAISE EXCEPTION 'CASH_ACCESS_OR_SIGNATURE_CHANGED'; END IF;
+ FOR e IN SELECT * FROM pg_catalog.jsonb_to_recordset(expected)
+  AS x(signature text,definition_md5 text,acl text,owner text,security_definer boolean,config jsonb) LOOP
+  SELECT q.oid,pg_catalog.md5(pg_catalog.pg_get_functiondef(q.oid)) definition_md5,q.proacl::text acl,
+   pg_catalog.pg_get_userbyid(q.proowner) owner,q.prosecdef security_definer,pg_catalog.to_jsonb(q.proconfig) config INTO p
+  FROM pg_catalog.pg_proc q WHERE q.oid=pg_catalog.to_regprocedure('public.'||e.signature);
+  IF p.oid IS NULL OR p.definition_md5 IS DISTINCT FROM e.definition_md5 OR p.acl IS DISTINCT FROM e.acl
+   OR p.owner IS DISTINCT FROM e.owner OR p.security_definer IS DISTINCT FROM e.security_definer OR p.config IS DISTINCT FROM e.config
+  THEN RAISE EXCEPTION 'CASH_POSTCHECK_MISMATCH'; END IF;
+ END LOOP;
+END
+$wealth_cash_atomic$;
+"""
+
 def prepare(lease_path, out_dir):
     lease = json.loads(lease_path.read_text())
     if not isinstance(lease, list) or len(lease) != 4 or set(x.get('signature') for x in lease) != set(SIGNATURES):
@@ -100,9 +156,11 @@ def prepare(lease_path, out_dir):
     post_lease = json.loads(json.dumps(lease))
     next(x for x in post_lease if x['signature']==TARGET)['definition_md5'] = MD5(new)
     out_dir.mkdir(parents=True, exist_ok=True, mode=0o700)
-    for name, data in [('apply.sql',plan(lease,post_lease,new,'apply')),('rollback.sql',plan(post_lease,lease,old,'conditional rollback'))]:
+    for name, data in [('apply.sql',plan(lease,post_lease,new,'apply')),('rollback.sql',plan(post_lease,lease,old,'conditional rollback')),
+        ('apply-single-do.sql',plan_single_do(lease,post_lease,new,'apply')),
+        ('rollback-single-do.sql',plan_single_do(post_lease,lease,old,'conditional rollback'))]:
         path=out_dir/name; path.write_text(data); path.chmod(0o600)
-    return {'baseline_definition_md5':MD5(old),'candidate_definition_md5':MD5(new),'generated':['apply.sql','rollback.sql'],'executed':False}
+    return {'baseline_definition_md5':MD5(old),'candidate_definition_md5':MD5(new),'generated':['apply.sql','rollback.sql','apply-single-do.sql','rollback-single-do.sql'],'executed':False}
 
 if __name__=='__main__':
     parser=argparse.ArgumentParser(description=__doc__)

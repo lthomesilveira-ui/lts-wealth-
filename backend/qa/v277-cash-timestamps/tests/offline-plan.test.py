@@ -32,6 +32,21 @@ class OfflinePlanTests(unittest.TestCase):
                 self.assertEqual((d/'private'/file).stat().st_mode & 0o777,0o600)
             self.assertIn(m.ADDITION,(d/'private/apply.sql').read_text())
             self.assertNotIn(m.ADDITION,(d/'private/rollback.sql').read_text())
+    def test_single_do_contains_exact_ddl_without_transaction_control(self):
+        with tempfile.TemporaryDirectory() as d:
+            d=Path(d); lease=d/'lease.json'; lease.write_text(json.dumps(synthetic_lease()))
+            m.prepare(lease,d/'private')
+            for name,source in [('apply-single-do.sql','candidate'),('rollback-single-do.sql','baseline')]:
+                sql=(d/'private'/name).read_text()
+                self.assertEqual(sql.count('DO $wealth_cash_atomic$'),1)
+                self.assertNotRegex(sql,r'(?m)^\s*(BEGIN|COMMIT|ROLLBACK);')
+                self.assertNotIn('CREATE TEMP TABLE',sql)
+                self.assertIn('pg_try_advisory_xact_lock',sql)
+                self.assertIn('CASH_DEPLOYMENT_BUSY',sql)
+                self.assertIn('CASH_LEASE_MISMATCH',sql); self.assertIn('CASH_POSTCHECK_MISMATCH',sql)
+                embedded=sql.split('EXECUTE $wealth_cash_ddl$\n')[1].split('\n$wealth_cash_ddl$;')[0]
+                self.assertEqual(embedded,(ROOT/source/'lts_browser_cash_today_v178.sql').read_text().rstrip()+';')
+                self.assertTrue(sql.rstrip().endswith('$wealth_cash_atomic$;'))
     def test_stale_definition_is_rejected_offline(self):
         with tempfile.TemporaryDirectory() as d:
             d=Path(d); value=synthetic_lease(); value[0]['definition_md5']='0'*32

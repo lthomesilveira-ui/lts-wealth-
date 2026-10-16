@@ -67,6 +67,46 @@ fi
 grep -q CASH_LEASE_MISMATCH "$TMP/expected-rejection.log" || { cat "$TMP/expected-rejection.log" >&2; exit 1; }
 "$BINDIR/psql" -X -v ON_ERROR_STOP=1 -c "SELECT wealth_test.assert_true(position('synthetic concurrent definition change' in pg_get_functiondef('public.lts_browser_cash_today_v178()'::regprocedure))>0,'stale installer left concurrent definition intact');" >>"$TMP/result.log" 2>&1
 "$BINDIR/psql" -X -v ON_ERROR_STOP=1 -f "$TMP/restore.sql" >>"$TMP/result.log" 2>&1
+# New gate: a single atomic DO, both standalone and inside an outer transaction.
+python3 "$ROOT/tests/single-do-postgres-cases.py" "$ROOT" "$TMP"
+expect_failure() {
+  local file="$1" code="$2"
+  if "$BINDIR/psql" -X -v ON_ERROR_STOP=1 -f "$file" >"$TMP/single-do-expected-error.log" 2>&1; then
+    echo 'FAIL: negative single-DO test unexpectedly succeeded.' >&2; exit 1
+  fi
+  grep -q "$code" "$TMP/single-do-expected-error.log" || { cat "$TMP/single-do-expected-error.log" >&2; exit 1; }
+}
+assert_baseline() {
+  "$BINDIR/psql" -X -v ON_ERROR_STOP=1 -c "SELECT wealth_test.assert_true(NOT EXISTS(SELECT 1 FROM wealth_test.function_metadata_before b LEFT JOIN pg_proc q ON q.oid=b.oid WHERE q.oid IS NULL OR pg_get_functiondef(q.oid) IS DISTINCT FROM b.definition OR q.proacl IS DISTINCT FROM b.proacl OR q.proowner IS DISTINCT FROM b.proowner OR q.prosecdef IS DISTINCT FROM b.prosecdef OR q.proconfig IS DISTINCT FROM b.proconfig),'$1');" >>"$TMP/result.log" 2>&1
+}
+"$BINDIR/psql" -X -v ON_ERROR_STOP=1 -f "$TMP/installer/apply-single-do.sql" >>"$TMP/result.log" 2>&1
+"$BINDIR/psql" -X -v ON_ERROR_STOP=1 -c "SELECT set_config('wealth_test.user_id','10000000-0000-0000-0000-000000000001',false); SELECT wealth_test.assert_true(public.lts_browser_cash_today_v242() ? 'bank_positions','single DO standalone apply');" >>"$TMP/result.log" 2>&1
+"$BINDIR/psql" -X -v ON_ERROR_STOP=1 -f "$TMP/installer/rollback-single-do.sql" >>"$TMP/result.log" 2>&1
+assert_baseline 'single DO standalone recovery preserves full metadata'
+"$BINDIR/psql" -X -v ON_ERROR_STOP=1 -c 'CREATE TABLE wealth_test.synthetic_migration_journal(name text PRIMARY KEY)' >>"$TMP/result.log" 2>&1
+"$BINDIR/psql" -X -v ON_ERROR_STOP=1 -f "$TMP/single-do-wrapped-apply.sql" >>"$TMP/result.log" 2>&1
+"$BINDIR/psql" -X -v ON_ERROR_STOP=1 -f "$TMP/single-do-wrapped-rollback.sql" >>"$TMP/result.log" 2>&1
+assert_baseline 'single DO works inside existing transaction'
+"$BINDIR/psql" -X -v ON_ERROR_STOP=1 -c "SELECT wealth_test.assert_true((SELECT count(*) FROM wealth_test.synthetic_migration_journal)=2,'synthetic outer journal committed with successful statements');" >>"$TMP/result.log" 2>&1
+expect_failure "$TMP/single-do-fail-after-ddl.sql" SYNTHETIC_POST_DDL_FAILURE
+assert_baseline 'single DO error after DDL reverts definition and permissions'
+expect_failure "$TMP/single-do-postcheck-mismatch.sql" CASH_POSTCHECK_MISMATCH
+assert_baseline 'single DO real postcheck failure reverts definition and permissions'
+expect_failure "$TMP/single-do-wrapped-failure.sql" SYNTHETIC_POST_DDL_FAILURE
+assert_baseline 'single DO error reverts enclosing transaction DDL'
+"$BINDIR/psql" -X -v ON_ERROR_STOP=1 -c "SELECT wealth_test.assert_true(NOT EXISTS(SELECT 1 FROM wealth_test.synthetic_migration_journal WHERE name='must_rollback'),'synthetic enclosing journal rolls back on failure');" >>"$TMP/result.log" 2>&1
+"$BINDIR/psql" -X -v ON_ERROR_STOP=1 -f "$TMP/divergent.sql" >>"$TMP/result.log" 2>&1
+expect_failure "$TMP/installer/apply-single-do.sql" CASH_LEASE_MISMATCH
+"$BINDIR/psql" -X -v ON_ERROR_STOP=1 -c "SELECT wealth_test.assert_true(position('synthetic concurrent definition change' in pg_get_functiondef('public.lts_browser_cash_today_v178()'::regprocedure))>0,'single DO stale lease preserves concurrent definition');" >>"$TMP/result.log" 2>&1
+"$BINDIR/psql" -X -v ON_ERROR_STOP=1 -f "$TMP/restore.sql" >>"$TMP/result.log" 2>&1
+"$BINDIR/psql" -X -v ON_ERROR_STOP=1 -f "$TMP/hold-advisory-lock.sql" >"$TMP/held-lock.log" 2>&1 &
+holder=$!
+for attempt in $(seq 1 50); do [[ -f "$TMP/lock-held" ]] && break; sleep 0.1; done
+[[ -f "$TMP/lock-held" ]] || { echo 'FAIL: synthetic lock-holder did not become ready.' >&2; exit 1; }
+expect_failure "$TMP/installer/apply-single-do.sql" CASH_DEPLOYMENT_BUSY
+wait "$holder"
+assert_baseline 'single DO rejects active concurrent publisher without writes'
+
 "$BINDIR/psql" -X -v ON_ERROR_STOP=1 -c 'SELECT count(*) AS synthetic_assertions_passed FROM wealth_test.assertions' >>"$TMP/result.log" 2>&1
 tail -n 6 "$TMP/result.log"
 printf 'PASS: full cash178/cash242, source guards, NULL/ACL and exact apply/rollback/stale lease in discarded PostgreSQL cluster.\n'
