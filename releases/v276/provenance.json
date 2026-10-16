@@ -1,0 +1,10 @@
+{
+  "release": "v276",
+  "base_release": "v275",
+  "base_commit": "321f9a5dd5d06a541b6145d850eea26d37e72be1",
+  "scope": [
+    "Clarify that overdue forecasts may already be paid but not linked in LTS"
+  ],
+  "financial_sources_unchanged": true,
+  "logic_unchanged": true
+}
