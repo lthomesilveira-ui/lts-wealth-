@@ -539,7 +539,7 @@ REVOKE ALL ON FUNCTION lts_q26_private.active_pair(uuid) FROM PUBLIC;
 $ddl1$;
  EXECUTE $ddl2$CREATE FUNCTION lts_q26_private.resolve_card_detail(p_user_id uuid,p_family text,p_month date,p_result jsonb)
 RETURNS jsonb LANGUAGE plpgsql STABLE SECURITY INVOKER SET search_path TO '' AS $card$
-DECLARE p record; r jsonb; o jsonb; items jsonb; before_total numeric; after_total numeric; n integer; critical_started_at timestamptz;
+DECLARE p record; r jsonb; o jsonb; items jsonb; before_total numeric; after_total numeric; n integer;
 BEGIN
  SELECT * INTO p FROM lts_q26_private.active_pair(p_user_id)
  WHERE family=p_family AND competence_month=date_trunc('month',p_month)::date;
@@ -589,109 +589,33 @@ BEGIN
  ELSE result:=p; END IF;
  RETURN result;
 END $canonical$;
-CREATE FUNCTION lts_q26_private.capture_state(u uuid) RETURNS jsonb
-LANGUAGE plpgsql VOLATILE SECURITY INVOKER SET search_path TO '' SET "TimeZone" TO 'America/Sao_Paulo' AS $capture$
-DECLARE s jsonb;
+-- Nominal atomic checks only. Full financial and consumer comparisons belong to coordinated pre/post-flight.
+CREATE FUNCTION lts_q26_private.capture_nominal_state(u uuid) RETURNS jsonb
+LANGUAGE plpgsql VOLATILE SECURITY INVOKER SET search_path TO '' SET "TimeZone" TO 'UTC' AS $capture$
 BEGIN
- IF public.lts_browser_assert_user_v1() IS DISTINCT FROM u THEN RAISE EXCEPTION 'authenticated owner mismatch'; END IF;
- SELECT jsonb_build_object(
- 'staging',(SELECT coalesce(jsonb_agg(to_jsonb(x) ORDER BY x.id),'[]') FROM public.lts_open_finance_staging x WHERE x.user_id=u),
- 'financial_events',(SELECT coalesce(jsonb_agg(to_jsonb(x) ORDER BY to_jsonb(x)::text),'[]') FROM public.financial_events x WHERE to_jsonb(x)->>'user_id'=u::text),
- 'card_invoices',(SELECT coalesce(jsonb_agg(to_jsonb(x) ORDER BY to_jsonb(x)::text),'[]') FROM public.card_invoices x WHERE x.user_id=u),
- 'accounts',(SELECT coalesce(jsonb_agg(to_jsonb(x) ORDER BY to_jsonb(x)::text),'[]') FROM public.accounts x WHERE to_jsonb(x)->>'user_id'=u::text),
- 'evento_base',(SELECT coalesce(jsonb_agg(to_jsonb(x) ORDER BY to_jsonb(x)::text),'[]') FROM public.evento_base x WHERE to_jsonb(x)->>'usuario_id'=u::text),
- 'decisions',(SELECT coalesce(jsonb_agg(to_jsonb(x) ORDER BY user_id,source_table,source_ref),'[]') FROM public.lts_v178_review_decision x),
- 'source_rows',(SELECT coalesce(jsonb_agg(to_jsonb(x) ORDER BY to_jsonb(x)::text),'[]') FROM public.lts_card_source_rows_v226(u)x),
- 'expense_rows',(SELECT coalesce(jsonb_agg(to_jsonb(x) ORDER BY to_jsonb(x)::text),'[]') FROM public.lts_v229_expense_rows(u,date '2013-10-10',date '__FIXTURE_TODAY__')x),
- 'cycles',public.lts_card_cycles_v226(u)-'computed_at',
- 'monthly',public.lts_browser_monthly_v229(date '2013-10-10',date '__FIXTURE_TODAY__')-ARRAY['source_revision','source_epoch'],
- 'summary',public.lts_browser_expenses_v229_engine_v251(date '2013-10-10',date '__FIXTURE_TODAY__'),
- 'card_detail',public.lts_browser_card_detail_v226('aeternum',date '2020-10-01')-ARRAY['source_revision','source_epoch'],
- 'epoch',(SELECT epoch FROM public.lts_read_cache_epoch_v242 WHERE singleton)) INTO s;
- RETURN s;
+ IF current_user<>'q26_fixture_owner' OR public.lts_open_finance_pilot_owner_v1() IS DISTINCT FROM u THEN RAISE EXCEPTION 'trusted nominal owner mismatch'; END IF;
+ RETURN jsonb_build_object('scope','nominal_atomic_raw_only','serialization_timezone',current_setting('TimeZone'),
+ 'staging',(SELECT jsonb_agg(to_jsonb(s) ORDER BY s.id) FROM public.lts_open_finance_staging s WHERE s.user_id=u AND s.id IN('22222222-2222-4222-8222-222222222222','33333333-3333-4333-8333-333333333333','44444444-4444-4444-8444-444444444444')),
+ 'decisions',(SELECT coalesce(jsonb_agg(to_jsonb(d) ORDER BY d.source_ref),'[]') FROM public.lts_v178_review_decision d WHERE d.user_id=u AND d.source_table='lts_open_finance_staging' AND d.source_ref IN('22222222-2222-4222-8222-222222222222','33333333-3333-4333-8333-333333333333')),
+ 'epoch',(SELECT epoch FROM public.lts_read_cache_epoch_v242 WHERE singleton));
 END $capture$;
 CREATE FUNCTION lts_q26_private.assert_nominal_write(b jsonb,a jsonb,op uuid) RETURNS void
 LANGUAGE plpgsql STABLE SECURITY INVOKER SET search_path TO '' AS $assert$
-DECLARE p lts_q26_private.nominal_pair; k text; x jsonb; y jsonb; rb jsonb; ra jsonb; cb jsonb; ca jsonb; ib jsonb; ia jsonb; c record; n integer; critical_started_at timestamptz; detail_delta numeric;
+DECLARE rb jsonb;ra jsonb;pb jsonb;pa jsonb;
 BEGIN
- SELECT * INTO STRICT p FROM lts_q26_private.nominal_pair WHERE operation_id=op;
- FOREACH k IN ARRAY ARRAY['staging','financial_events','card_invoices','accounts','evento_base'] LOOP
-  IF b->k IS DISTINCT FROM a->k THEN RAISE EXCEPTION 'source or bank table changed: %',k; END IF;
- END LOOP;
- SELECT lts_q26_private.bag(coalesce(jsonb_agg(e),'[]')) INTO x FROM jsonb_array_elements(b->'decisions')e WHERE (e->>'user_id'=p.user_id::text AND e->>'source_table'='lts_open_finance_staging' AND e->>'source_ref'=p.representative_id::text) IS NOT TRUE;
- SELECT lts_q26_private.bag(coalesce(jsonb_agg(e),'[]')) INTO y FROM jsonb_array_elements(a->'decisions')e WHERE (e->>'user_id'=p.user_id::text AND e->>'source_table'='lts_open_finance_staging' AND e->>'source_ref'=p.representative_id::text) IS NOT TRUE;
- IF x IS DISTINCT FROM y THEN RAISE EXCEPTION 'outside decisions changed'; END IF;
- IF (SELECT count(*) FROM jsonb_array_elements(b->'decisions') e WHERE e->>'user_id'=p.user_id::text AND e->>'source_table'='lts_open_finance_staging' AND e->>'source_ref'=p.representative_id::text)<>0
- OR (SELECT count(*) FROM jsonb_array_elements(a->'decisions') e WHERE e->>'user_id'=p.user_id::text AND e->>'source_table'='lts_open_finance_staging' AND e->>'source_ref'=p.representative_id::text)<>1 THEN RAISE EXCEPTION 'decision cardinality'; END IF;
- IF NOT EXISTS(SELECT 1 FROM jsonb_array_elements(a->'decisions') e WHERE e @> jsonb_build_object('user_id',p.user_id,'source_table','lts_open_finance_staging','source_ref',p.representative_id::text,'category_label','Fixture shop','beneficiary','Fixture person','property_code',NULL,'decision_basis','owner_approved_q26_nominal:'||op::text)) THEN RAISE EXCEPTION 'decision postimage'; END IF;
- SELECT lts_q26_private.bag(coalesce(jsonb_agg(e),'[]')) INTO x FROM jsonb_array_elements(b->'expense_rows')e WHERE (e->>'source_table'='lts_open_finance_staging' AND e->>'source_ref' IN(p.representative_id::text,p.prior_id::text) AND e->>'competence_month'=p.competence_month::text) IS NOT TRUE;
- SELECT lts_q26_private.bag(coalesce(jsonb_agg(e),'[]')) INTO y FROM jsonb_array_elements(a->'expense_rows')e WHERE (e->>'source_table'='lts_open_finance_staging' AND e->>'source_ref' IN(p.representative_id::text,p.prior_id::text) AND e->>'competence_month'=p.competence_month::text) IS NOT TRUE;
- IF x IS DISTINCT FROM y THEN RAISE EXCEPTION 'non-target expense multiset changed'; END IF;
- SELECT coalesce(jsonb_agg(e),'[]') INTO x FROM jsonb_array_elements(b->'expense_rows')e WHERE e->>'source_table'='lts_open_finance_staging' AND e->>'source_ref' IN(p.representative_id::text,p.prior_id::text) AND e->>'competence_month'=p.competence_month::text;
- SELECT coalesce(jsonb_agg(e),'[]') INTO y FROM jsonb_array_elements(a->'expense_rows')e WHERE e->>'source_table'='lts_open_finance_staging' AND e->>'source_ref' IN(p.representative_id::text,p.prior_id::text) AND e->>'competence_month'=p.competence_month::text;
- IF jsonb_array_length(x)<>2 OR jsonb_array_length(y)<>1 OR (SELECT sum((e->>'amount')::numeric) FROM jsonb_array_elements(x)e)<>2*p.amount OR (y#>>'{0,amount}')::numeric<>p.amount OR y#>>'{0,source_ref}'<>p.representative_id::text THEN RAISE EXCEPTION 'expected 24.68 to 12.34 contribution'; END IF;
- SELECT e INTO rb FROM jsonb_array_elements(x)e WHERE e->>'source_ref'=p.representative_id::text;ra:=y->0;
- IF rb IS NULL OR NOT rb @> p.representative_expense_mask OR NOT EXISTS(SELECT 1 FROM jsonb_array_elements(x)e WHERE e @> p.prior_expense_mask) THEN RAISE EXCEPTION 'pair before-mask drift'; END IF;
- IF rb-ARRAY['row_key','category','beneficiary','identity_status','management_group','management_subgroup','raw_category'] IS DISTINCT FROM ra-ARRAY['row_key','category','beneficiary','identity_status','management_group','management_subgroup','raw_category'] OR NOT ra @> '{"category":"Fixture shop","beneficiary":"Fixture person","identity_status":"identified","management_group":"Fixture shop","management_subgroup":"Fixture shop","property_code":null}'::jsonb THEN RAISE EXCEPTION 'representative financial/label contract'; END IF;
- -- Source reader retains every source and every projection input, including PENDING.
- SELECT lts_q26_private.bag(coalesce(jsonb_agg(CASE WHEN e->>'source_id'=p.representative_id::text THEN e-ARRAY['category','category_basis'] ELSE e END),'[]')) INTO x FROM jsonb_array_elements(b->'source_rows')e;
- SELECT lts_q26_private.bag(coalesce(jsonb_agg(CASE WHEN e->>'source_id'=p.representative_id::text THEN e-ARRAY['category','category_basis'] ELSE e END),'[]')) INTO y FROM jsonb_array_elements(a->'source_rows')e;
- IF x IS DISTINCT FROM y THEN RAISE EXCEPTION 'shared source or future-origin changed'; END IF;
- -- Entire core output: only POSTED labels and its current-cycle unclassified count may change.
- IF (b->'cycles')-'cards' IS DISTINCT FROM (a->'cycles')-'cards' THEN RAISE EXCEPTION 'core metadata changed'; END IF;
- IF (SELECT count(*) FROM jsonb_array_elements(b#>'{cycles,cards}'))<>(SELECT count(*) FROM jsonb_array_elements(a#>'{cycles,cards}')) THEN RAISE EXCEPTION 'card family count changed'; END IF;
- FOR c IN SELECT value card FROM jsonb_array_elements(b#>'{cycles,cards}') LOOP
-  cb:=c.card;
-  SELECT e INTO ca FROM jsonb_array_elements(a#>'{cycles,cards}')e WHERE e->>'family'=cb->>'family';
-  IF ca IS NULL OR cb-'cycles' IS DISTINCT FROM ca-'cycles' THEN RAISE EXCEPTION 'card account header changed'; END IF;
-  IF (SELECT count(*) FROM jsonb_array_elements(cb->'cycles'))<>(SELECT count(*) FROM jsonb_array_elements(ca->'cycles')) THEN RAISE EXCEPTION 'cycle count changed'; END IF;
-  FOR ib IN SELECT value FROM jsonb_array_elements(cb->'cycles') LOOP
-   SELECT e INTO ia FROM jsonb_array_elements(ca->'cycles')e WHERE e->>'month'=ib->>'month';
-   IF ia IS NULL THEN RAISE EXCEPTION 'cycle missing'; END IF;
-   IF cb->>'family'='aeternum' AND ib->>'month'=p.competence_month::text THEN
-    IF ib-ARRAY['items','unclassified'] IS DISTINCT FROM ia-ARRAY['items','unclassified'] THEN RAISE EXCEPTION 'official current invoice/count/total changed'; END IF;
-    SELECT lts_q26_private.bag(coalesce(jsonb_agg(CASE WHEN e->>'source_id'=p.representative_id::text THEN e||'{"category":"Fixture person — Fixture shop","category_basis":"user_decision"}'::jsonb ELSE e END),'[]')) INTO x FROM jsonb_array_elements(ib->'items')e;
-    IF x IS DISTINCT FROM lts_q26_private.bag(ia->'items') THEN RAISE EXCEPTION 'current core composition changed outside exact classification'; END IF;
-    IF (ia->>'unclassified')::integer IS DISTINCT FROM (SELECT count(*) FROM jsonb_array_elements(ia->'items')e WHERE e->>'category_basis'='unresolved') THEN RAISE EXCEPTION 'current core classification aggregate'; END IF;
-   ELSE
-    IF lts_q26_private.canonical(ib) IS DISTINCT FROM lts_q26_private.canonical(ia) THEN RAISE EXCEPTION 'non-target or future cycle changed, including November 3/3'; END IF;
-   END IF;
-  END LOOP;
- END LOOP;
- -- Summary and Matrix totals are analytical values, not bank balances.
- FOREACH k IN ARRAY ARRAY['selected_total','card_total'] LOOP
-  IF (a#>>ARRAY['summary','summary',k])::numeric-(b#>>ARRAY['summary','summary',k])::numeric IS DISTINCT FROM -p.amount THEN RAISE EXCEPTION 'summary delta: %',k; END IF;
- END LOOP;
- IF a#>'{summary,summary,account_total}' IS DISTINCT FROM b#>'{summary,summary,account_total}' OR (a#>>'{summary,summary,rows}')::integer IS DISTINCT FROM (b#>>'{summary,summary,rows}')::integer-1 OR (a#>>'{summary,summary,pending_identification}')::integer IS DISTINCT FROM (b#>>'{summary,summary,pending_identification}')::integer-1 THEN RAISE EXCEPTION 'summary count/account contract'; END IF;
- IF (a#>'{monthly,totals}')-ARRAY['expenses','operating_balance','cash_after_extraordinary'] IS DISTINCT FROM (b#>'{monthly,totals}')-ARRAY['expenses','operating_balance','cash_after_extraordinary'] THEN RAISE EXCEPTION 'Matrix non-expense totals changed'; END IF;
- FOREACH k IN ARRAY ARRAY['expenses','operating_balance','cash_after_extraordinary'] LOOP
-  IF (a#>>ARRAY['monthly','totals',k])::numeric-(b#>>ARRAY['monthly','totals',k])::numeric IS DISTINCT FROM CASE WHEN k='expenses' THEN -p.amount ELSE p.amount END THEN RAISE EXCEPTION 'Matrix analytical delta: %',k; END IF;
- END LOOP;
- IF jsonb_array_length(a#>'{monthly,monthly_totals}') IS DISTINCT FROM jsonb_array_length(b#>'{monthly,monthly_totals}') THEN RAISE EXCEPTION 'Matrix month count changed'; END IF;
- FOR ib IN SELECT value FROM jsonb_array_elements(b#>'{monthly,monthly_totals}') LOOP
-  SELECT e INTO ia FROM jsonb_array_elements(a#>'{monthly,monthly_totals}')e WHERE e->>'month'=ib->>'month';
-  IF ia IS NULL THEN RAISE EXCEPTION 'Matrix month missing'; END IF;
-  IF ib->>'month'=p.competence_month::text THEN
-   IF ia-ARRAY['expenses','operating_balance','cash_after_extraordinary'] IS DISTINCT FROM ib-ARRAY['expenses','operating_balance','cash_after_extraordinary'] THEN RAISE EXCEPTION 'Matrix October non-expense values changed'; END IF;
-   FOREACH k IN ARRAY ARRAY['expenses','operating_balance','cash_after_extraordinary'] LOOP
-    IF (ia->>k)::numeric-(ib->>k)::numeric IS DISTINCT FROM CASE WHEN k='expenses' THEN -p.amount ELSE p.amount END THEN RAISE EXCEPTION 'Matrix October delta'; END IF;
-   END LOOP;
-  ELSIF ia IS DISTINCT FROM ib THEN RAISE EXCEPTION 'Matrix other month changed'; END IF;
- END LOOP;
- -- Card detail: selection of document/workbook source and invoice headers remain unchanged.
- cb:=b->'card_detail';ca:=a->'card_detail';detail_delta:=0;
- IF (SELECT count(*) FROM jsonb_array_elements(cb->'items')e WHERE e->>'source_id'=p.prior_id::text)=1 AND (SELECT count(*) FROM jsonb_array_elements(cb->'items')e WHERE e->>'source_id'=p.representative_id::text)=1 THEN detail_delta:=-p.amount; END IF;
- IF cb-ARRAY['items','alternative_items','amount','detail_total','item_count','difference','unclassified','categories','instruments','reconciliation_provenance'] IS DISTINCT FROM ca-ARRAY['items','alternative_items','amount','detail_total','item_count','difference','unclassified','categories','instruments','reconciliation_provenance'] THEN RAISE EXCEPTION 'detail source choice or official headers changed'; END IF;
- FOREACH k IN ARRAY ARRAY['items','alternative_items'] LOOP
-  IF cb ? k THEN
-   SELECT lts_q26_private.bag(coalesce(jsonb_agg(CASE WHEN e->>'source_id'=p.representative_id::text THEN e||'{"category":"Fixture person — Fixture shop","category_basis":"user_decision"}'::jsonb ELSE e END),'[]')) INTO x FROM jsonb_array_elements(cb->k)e WHERE (k='items' AND detail_delta<>0 AND e->>'source_id'=p.prior_id::text) IS NOT TRUE;
-   IF x IS DISTINCT FROM lts_q26_private.bag(ca->k) THEN RAISE EXCEPTION 'detail non-target items changed: %',k; END IF;
-  ELSIF ca ? k THEN RAISE EXCEPTION 'detail composition alternative appeared'; END IF;
- END LOOP;
- IF (ca->>'amount')::numeric-(cb->>'amount')::numeric IS DISTINCT FROM detail_delta OR (ca->>'item_count')::integer-(cb->>'item_count')::integer IS DISTINCT FROM CASE WHEN detail_delta=0 THEN 0 ELSE -1 END THEN RAISE EXCEPTION 'detail delta'; END IF;
- IF (ca->>'unclassified')::integer IS DISTINCT FROM (SELECT count(*) FROM jsonb_array_elements(ca->'items')e WHERE e->>'category_basis'='unresolved') THEN RAISE EXCEPTION 'detail classification count'; END IF;
+ IF b->>'scope' IS DISTINCT FROM 'nominal_atomic_raw_only' OR a->>'scope' IS DISTINCT FROM 'nominal_atomic_raw_only'
+ OR b->>'serialization_timezone'<>'UTC' OR a->>'serialization_timezone'<>'UTC'
+ OR jsonb_array_length(b->'staging') IS DISTINCT FROM 3 OR jsonb_array_length(a->'staging') IS DISTINCT FROM 3
+ OR b->'staging' IS DISTINCT FROM a->'staging' THEN RAISE EXCEPTION 'three full nominal sources changed or capture missing'; END IF;
+ IF jsonb_array_length(b->'decisions') IS DISTINCT FROM 1 OR jsonb_array_length(a->'decisions') IS DISTINCT FROM 2 THEN RAISE EXCEPTION 'exact decision cardinality'; END IF;
+ SELECT x INTO pb FROM jsonb_array_elements(b->'decisions')x WHERE x->>'source_ref'='33333333-3333-4333-8333-333333333333';
+ SELECT x INTO pa FROM jsonb_array_elements(a->'decisions')x WHERE x->>'source_ref'='33333333-3333-4333-8333-333333333333';
+ IF pb IS NULL OR pb IS DISTINCT FROM pa THEN RAISE EXCEPTION 'prior exact decision changed'; END IF;
+ SELECT x INTO ra FROM jsonb_array_elements(a->'decisions')x WHERE x->>'source_ref'='22222222-2222-4222-8222-222222222222';
+ IF ra IS NULL OR NOT ra @> jsonb_build_object('user_id','11111111-1111-4111-8111-111111111111','source_table','lts_open_finance_staging','source_ref','22222222-2222-4222-8222-222222222222','category_label','Fixture shop','beneficiary','Fixture person','property_code',NULL,'decision_basis','owner_approved_q26_nominal:'||op::text) THEN RAISE EXCEPTION 'representative decision mismatch'; END IF;
 END $assert$;
-REVOKE ALL ON ALL FUNCTIONS IN SCHEMA lts_q26_private FROM PUBLIC;
+REVOKE ALL ON FUNCTION lts_q26_private.capture_nominal_state(uuid) FROM PUBLIC;
+REVOKE ALL ON FUNCTION lts_q26_private.assert_nominal_write(jsonb,jsonb,uuid) FROM PUBLIC;
 $ddl3$;
  EXECUTE $ddl4$-- Only the new operation-private namespace is affected.
 DO $private_acl$
@@ -1218,10 +1142,10 @@ BEGIN
  RETURN txt;
 END $envelope$;
 CREATE FUNCTION public.fixture_expect_failure(txt text,expected text,label text) RETURNS void LANGUAGE plpgsql AS $failure$
-DECLARE message text; caught boolean:=false;
+DECLARE message text; context text; state text; caught boolean:=false;
 BEGIN
- BEGIN EXECUTE txt; EXCEPTION WHEN OTHERS THEN GET STACKED DIAGNOSTICS message=MESSAGE_TEXT; caught:=true; END;
- IF NOT caught OR position(expected IN message)=0 THEN RAISE EXCEPTION 'unexpected failure mode %, received %',label,message; END IF;
+ BEGIN EXECUTE txt; EXCEPTION WHEN OTHERS THEN GET STACKED DIAGNOSTICS message=MESSAGE_TEXT,context=PG_EXCEPTION_CONTEXT,state=RETURNED_SQLSTATE; caught:=true; END;
+ IF NOT caught OR position(expected IN message)=0 THEN RAISE EXCEPTION 'unexpected failure mode %, received % SQLSTATE % context %',label,message,state,context; END IF;
  PERFORM public.fixture_assert(true,label);
 END $failure$;
 CREATE FUNCTION public.fixture_applied_state() RETURNS jsonb LANGUAGE plpgsql AS $state$

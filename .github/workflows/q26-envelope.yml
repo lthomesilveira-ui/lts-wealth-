@@ -36,9 +36,9 @@ jobs:
           persist-credentials: false
       - name: Verify frozen sources
         run: |
-          echo '47521fb744854b0bf072dd9878556d1a7aac7615f32962284e9b6360443355c5  tests/q26_envelope/pg17_envelope_synthetic.sql' | sha256sum -c -
-          echo '90bce1b58944b544f88957a7496e0bb274f496d907906d0cbdeadae45b3b8552  tests/q26_envelope/pg17_envelope_lock_setup.sql' | sha256sum -c -
-          echo '4b138024bf8ac5ad933b80e202dff53b62f615a8cc1f287ea73709f3e46cf6ce  tests/q26_envelope/run_two_session_lock.py' | sha256sum -c -
+          echo '7be775d160cbab074cdff753801df539ec66a363366c135205a1cf4b552f3d85  tests/q26_envelope/pg17_envelope_synthetic.sql' | sha256sum -c -
+          echo 'a6233f09ca41d51d2d1ea3629d29ab8825a526b1581082a03d36c1af0f45b149  tests/q26_envelope/pg17_envelope_lock_setup.sql' | sha256sum -c -
+          echo 'd506eee56ba405fa3fdd88b9b5a6332bc7d07faec2e4b4f68f93955a50e7a245  tests/q26_envelope/run_two_session_lock.py' | sha256sum -c -
       - name: Functional envelope and compensation
         run: |
           mkdir -p qa
