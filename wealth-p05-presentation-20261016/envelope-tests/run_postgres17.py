@@ -61,7 +61,10 @@ def apply(lease):
  return json.loads(line)
 def recovery(lease,receipt,oldlease):return E.render(lease,'recovery',receipt,oldlease)
 try:
- base=reset();receipt=apply(base);now=read_lease()
+ base=reset();assert base['timezone']=='America/Sao_Paulo' and l.get('created_at') is not None
+ assert '-03:00' in sql("SET TimeZone='America/Sao_Paulo'; SELECT to_jsonb(l)->>'created_at' FROM public.lts_card_documentary_payment_link_v272 l;").stdout
+ passed('explicit_timezone_and_nonnull_created_at_fixture')
+ receipt=apply(base);now=read_lease()
  assert now['epoch']==101 and now['rows']==base['rows'] and now['tables']==base['tables'];assert receipt['annotation_allowlisted'] and not receipt['reader_rpc_executed']
  passed('apply_exact_allowlist_without_readers')
  reject_unchanged('same_apply_cannot_double_increment',E.render(base),'epoch lease changed')
@@ -87,6 +90,8 @@ try:
   base=reset();statement=E.render(base);sql(mutation);reject_unchanged(name,statement)
  base=reset('GRANT SELECT(payload) ON public.lts_card_settlement_expense_contract_v273 TO authenticated;')
  reject_unchanged('fresh_lease_cannot_allow_contract_column_grant',E.render(base),'private contract privilege boundary changed')
+ base=reset();wrong_tz=copy.deepcopy(base);wrong_tz['timezone']='UTC'
+ reject_unchanged('lease_timezone_mismatch_atomic',E.render(wrong_tz),'lease timezone mismatch')
  base=reset();typed=copy.deepcopy(base);typed['functions'][0]['oid']=str(typed['functions'][0]['oid'])
  reject_unchanged('oid_string_same_digits_rejected_atomically',E.render(typed),'lease changed')
  base=reset();stale=copy.deepcopy(base);stale['checked_at']='2000-01-01T00:00:00+00:00';reject_unchanged('expired_lease',E.render(stale),'fresh lease required')
@@ -114,6 +119,9 @@ try:
  else:raise AssertionError('Recovery accepted divergent installation receipt')
  base=reset("CREATE FUNCTION public.unexpected_epoch_effect() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RETURN NEW; END $$; CREATE TRIGGER unexpected_epoch_effect BEFORE UPDATE ON public.lts_read_cache_epoch_v242 FOR EACH ROW EXECUTE FUNCTION public.unexpected_epoch_effect();")
  reject_unchanged('epoch_trigger_forbidden',E.render(base),'epoch must have no unreviewed trigger effects')
+ base=reset('CREATE TABLE public.epoch_side_effect(i integer); CREATE RULE epoch_side_effect AS ON UPDATE TO public.lts_read_cache_epoch_v242 DO ALSO INSERT INTO public.epoch_side_effect VALUES(1);')
+ reject_unchanged('epoch_rule_forbidden',E.render(base),'epoch must have no unreviewed rule effects')
+ assert sql('SELECT count(*) FROM public.epoch_side_effect;').stdout.strip()=='0'
  receipt={'status':'passed','cases':len(RESULTS),'results':RESULTS,'production_contacted':False,'private_evidence_in_package':False,'template_sha256':hashlib.sha256((HERE/'build_envelope.py').read_bytes()).hexdigest(),'projector_sha256':E.PINNED['payment-refresh-annotation.sql']}
  (OUT/'receipt.json').write_text(json.dumps(receipt,indent=2)+'\n');print(json.dumps(receipt,indent=2))
 except Exception as e:

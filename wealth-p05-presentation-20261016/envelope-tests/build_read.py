@@ -35,10 +35,11 @@ DEFAULTS_SQL="SELECT coalesce(jsonb_agg(to_jsonb(d) ORDER BY d.oid),'[]'::jsonb)
 query=f"""-- PRIVATE exact current metadata and two-row fingerprint lease. No reader RPC, expense query, history, or cache read.
 BEGIN READ ONLY;
 SET LOCAL search_path=pg_catalog;
+SET LOCAL TimeZone='America/Sao_Paulo';
 SET LOCAL statement_timeout='12s';
 SET LOCAL lock_timeout='2s';
 SELECT jsonb_build_object(
-'checked_at',clock_timestamp(),'read_only',current_setting('transaction_read_only'),'database',current_database(),
+'checked_at',clock_timestamp(),'timezone',current_setting('TimeZone'),'read_only',current_setting('transaction_read_only'),'database',current_database(),
 'executor',current_user,'pilot_owner',public.lts_open_finance_pilot_owner_v1(),
 'epoch',(SELECT epoch FROM public.lts_read_cache_epoch_v242 WHERE singleton),
 'functions',({FUNCTIONS_SQL}),

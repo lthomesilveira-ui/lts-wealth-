@@ -25,6 +25,7 @@ def load_lease(path):
  if isinstance(v,list):assert len(v)==1;v=v[0]
  if 'lease' in v:v=v['lease']
  assert v['read_only']=='on'
+ assert v['timezone']=='America/Sao_Paulo','Lease row fingerprints require the same explicit timezone as the DO'
  assert v['pilot_owner']==TARGET['user_id']
  assert type(v['epoch']) is int
  assert len(v['functions'])==len(FUNCS) and {f['signature'] for f in v['functions']}==set(FUNCS)
@@ -71,6 +72,7 @@ BEGIN
  PERFORM pg_catalog.set_config('search_path','pg_catalog',true);
  PERFORM set_config('lock_timeout','2s',true);
  PERFORM set_config('TimeZone','America/Sao_Paulo',true);
+ IF expected->>'timezone' IS DISTINCT FROM current_setting('TimeZone') THEN RAISE EXCEPTION 'lease timezone mismatch'; END IF;
  IF clock_timestamp() < (expected->>'checked_at')::timestamptz - interval '5 seconds'
  OR clock_timestamp() > (expected->>'checked_at')::timestamptz + interval '10 minutes'
  THEN RAISE EXCEPTION 'fresh lease required'; END IF;
@@ -97,6 +99,8 @@ BEGIN
  before_functions:=actual_functions;
  IF EXISTS(SELECT 1 FROM pg_trigger WHERE tgrelid='public.lts_read_cache_epoch_v242'::regclass AND NOT tgisinternal)
  THEN RAISE EXCEPTION 'epoch must have no unreviewed trigger effects'; END IF;
+ IF EXISTS(SELECT 1 FROM pg_catalog.pg_rewrite WHERE ev_class='public.lts_read_cache_epoch_v242'::regclass AND rulename<>'_RETURN')
+ THEN RAISE EXCEPTION 'epoch must have no unreviewed rule effects'; END IF;
  IF has_function_privilege('anon',{lit(CALLER)},'EXECUTE') OR has_function_privilege('authenticated',{lit(CALLER)},'EXECUTE')
  THEN RAISE EXCEPTION 'presentation helper must already be private'; END IF;
  IF has_any_column_privilege('anon','public.lts_card_settlement_expense_contract_v273','SELECT,INSERT,UPDATE,REFERENCES')
