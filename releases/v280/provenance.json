@@ -1,0 +1,11 @@
+{
+  "release": "v280",
+  "base_release": "v279",
+  "base_commit": "0fb755bb8b4ae83ef9f6f23e494a1bec712a5508",
+  "scope": [
+    "Preserve expense date drafts through asynchronous repaint, apply only validated explicit submission",
+    "Retire expense-family loading and cached results by session generation; discard obsolete response application and retries in V168/V175"
+  ],
+  "financial_calculations_unchanged": true,
+  "backend_changed": false
+}
