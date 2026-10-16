@@ -1,0 +1,11 @@
+{
+  "release": "v274",
+  "base_release": "v273",
+  "base_commit": "2a8446b3e828e51f8b0d635f0ffcae0a5e5fe7fa",
+  "scope": [
+    "separate received bank position and flow closing presentation",
+    "clarify same-day forecasts without changing financial values"
+  ],
+  "financial_sources_unchanged": true,
+  "p05_presentation_refresh_included": false
+}
