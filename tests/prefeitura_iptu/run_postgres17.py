@@ -50,7 +50,16 @@ def main():
   b=snap();sql(s,expected);assert snap()==b,name+' left transactional side effects'
   if restore:sql(restore)
   add(name,expected_rejection=expected)
- c=reset();t=query("SET TIME ZONE 'America/Sao_Paulo';SELECT jsonb_build_object('historical',to_jsonb('2000-01-01T00:00:00-03:00'::timestamptz),'winter',to_jsonb('2000-07-01T00:00:00-03:00'::timestamptz));")
+ c=reset()
+ # BIGINT catalog values must survive JSON intermediaries implemented with IEEE754 numbers.
+ # They are contract text, never rounded numeric JSON.
+ assert c['catalog']['sequences']
+ for seq in c['catalog']['sequences']:
+  for key in ['start','increment','max','min','cache']:assert isinstance(seq[key],str),(key,seq)
+  assert seq['max']=='9223372036854775807',seq
+ assert json.loads(json.dumps(c['catalog']))==c['catalog']
+ add('catalog-bigint-sequence-limits-are-lossless-text')
+ t=query("SET TIME ZONE 'America/Sao_Paulo';SELECT jsonb_build_object('historical',to_jsonb('2000-01-01T00:00:00-03:00'::timestamptz),'winter',to_jsonb('2000-07-01T00:00:00-03:00'::timestamptz));")
  assert t==dict(historical='2000-01-01T01:00:00-02:00',winter='2000-07-01T00:00:00-03:00'),t
  assert query("SET TIME ZONE 'UTC';SELECT to_jsonb(jsonb_populate_record(NULL::public.financial_events,"+L(json.dumps(c['original_event']))+"::jsonb));")==c['original_event'];add('UTC-full-event-roundtrip-and-historical-DST-counterexample')
  b=snap();sql(render(c,'apply'));after=snap();assert epoch()==103
@@ -72,6 +81,8 @@ def main():
  sql(render(c,'apply'),'operation was reversed');assert snap()==restored;add('no-reapply-after-inverse')
  reject('ready-false-before-work',expected='release gates incomplete',mutate=lambda c:{**c,'ready':False})
  reject('missing-approval-gate',expected='release gates incomplete',mutate=lambda c:{**c,'gates':{**c['gates'],'exact_candidate_authorized':False}})
+ reject('missing-nominal-account-context-gate',expected='release gates incomplete',mutate=lambda c:{**c,'gates':{**c['gates'],'nominal_account_context_verified':False}})
+ reject('legacy-account-mapping-gate-is-not-equivalent',expected='release gates incomplete',mutate=lambda c:{**c,'gates':{**{k:v for k,v in c['gates'].items() if k!='nominal_account_context_verified'},'account_mapping_verified':True}})
  reject('missing-pending-stable-hash',expected='protected bank source materially changed',mutate=lambda c:{**c,'protected_sources':[{**x,'stable_md5':None} for x in c['protected_sources']]})
  reject('initial-polling-requires-full-renewal',"UPDATE public.lts_open_finance_staging SET updated_at='2001-01-01' WHERE id="+L(SOURCE)+"::uuid;",'first apply full source lease expired')
  for col,val in [('signed_amount','-99'),('posting_date',"'2000-07-17'"),('currency',"'USD'"),('user_id',L(OTHER)+'::uuid'),('raw_hash',"'changed'")]:
@@ -98,6 +109,7 @@ def main():
   ('decision',"UPDATE public.lts_v178_review_decision SET beneficiary='later';",'classification postimage mismatch'),
   ('receipt',"UPDATE public.lts_access_audit SET action='later';",'pinned committed receipt changed')]:
   c=reset();sql(render(c,'apply'));u=inverse(c);sql(statement);b=snap();sql(u,error);assert snap()==b;add('inverse-preserves-later-'+name)
+ c=reset();sql(render(c,'apply'));sql("UPDATE public.accounts SET currency='USD';");b=snap();sql(render(c,'apply'),'nominal account context changed');assert snap()==b;add('retry-rejects-account-currency-drift')
  c=reset();sql(render(c,'apply'));b=snap();sql(render(c,'rollback'),'inverse requires authorized committed receipt');assert snap()==b;add('inverse-cannot-infer-authorization')
  c=reset();sql(render(c,'apply'));sql("UPDATE public.lts_access_audit SET meta=jsonb_set(meta,'{learning,automatic_expansion}','true');");b=snap();sql(render(c,'apply'),'durable receipt mismatch');assert snap()==b;add('retry-rejects-tampered-learning-receipt')
  c=reset();sql(render(c,'apply'));assert sql("SELECT public.lts_flow_current_effective_v1("+L(OWNER)+"::uuid,'2000-07-16','2000-07-31');")=='0';add('past-day-UI-zero-delta-still-requires-link-and-suppression')

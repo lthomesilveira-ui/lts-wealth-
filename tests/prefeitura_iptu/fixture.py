@@ -12,7 +12,7 @@ OP='synthetic-exact-obligation-v1'
 L=lambda x:"'"+str(x).replace("'","''")+"'"
 def reset_sql():
  s="TRUNCATE public.lts_access_audit,public.lts_flow_event_operation,public.lts_reconciliation_link,public.lts_v178_review_decision,public.financial_events,public.lts_open_finance_staging,public.accounts,public.lts_v229_read_cache,public.lts_read_cache_epoch_v242 RESTART IDENTITY CASCADE;\n"
- s+=f"INSERT INTO public.accounts VALUES('{ACCOUNT}','{OWNER}','Synthetic Bank',1234.56);\n"
+ s+=f"INSERT INTO public.accounts VALUES('{ACCOUNT}','{OWNER}','Synthetic Bank',1234.56,'BRL');\n"
  for i,uid,dt,st in [(SOURCE,OWNER,'2000-07-16','POSTED'),(PENDING[0],OWNER,'2000-07-15','PENDING'),(PENDING[1],OWNER,'2000-08-15','PENDING'),(EXTRA,OTHER,'2000-07-16','POSTED')]:
   s+=f"INSERT INTO public.lts_open_finance_staging VALUES('{i}','{uid}','transaction','BANK_X','synthetic-account','synthetic-record-{i}','99999999-9999-4999-8999-999999999999','BRL','{dt}',-13.37,'Synthetic municipal bill',repeat('a',64),'{{\"status\":\"{st}\",\"provider\":\"synthetic\"}}','{{\"status\":\"{st}\",\"account_type\":\"CHECKING_ACCOUNT\"}}',NULL,NULL,'2000-07-01T12:00:00Z','2000-07-01T12:00:00Z');\n"
  for i,dt in [(TARGET,'2000-07-15'),(EVENTS[0],'2000-06-15'),(EVENTS[1],'2000-08-15'),(OTHER_EVENT,'2000-05-15')]:

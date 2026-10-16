@@ -23,7 +23,8 @@ IF v_source IS NULL THEN RAISE EXCEPTION 'source witness missing'; END IF;
 SELECT to_jsonb(a) INTO STRICT v_account FROM public.accounts a WHERE a.id=(c#>>'{original_event,account_id}')::uuid FOR SHARE;
 IF v_account->>'id' IS DISTINCT FROM c#>>'{account,id}'
  OR v_account->>'institution' IS DISTINCT FROM c#>>'{account,institution}'
- OR v_account->>'user_id' IS DISTINCT FROM c->>'owner_id' THEN RAISE EXCEPTION 'account mapping changed'; END IF;
+ OR v_account->>'currency' IS DISTINCT FROM 'BRL'
+ OR v_account->>'user_id' IS DISTINCT FROM c->>'owner_id' THEN RAISE EXCEPTION 'nominal account context changed'; END IF;
 -- A validated, immediate, non-deferrable FK ensures inserts into operation wait on target FOR UPDATE.
 IF NOT EXISTS(SELECT 1 FROM pg_catalog.pg_constraint
  WHERE conrelid='public.lts_flow_event_operation'::regclass AND contype='f'

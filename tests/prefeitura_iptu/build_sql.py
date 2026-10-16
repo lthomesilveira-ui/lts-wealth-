@@ -5,7 +5,7 @@ from pathlib import Path
 HERE=Path(__file__).resolve().parent
 J=lambda x:json.dumps(x,ensure_ascii=False,separators=(',',':'))
 L=lambda x:"'"+str(x).replace("'","''")+"'"
-GATES=['identity_authorization_verified','fresh_full_preimages_verified','account_mapping_verified','schema_dependencies_reviewed','consumer_integration_verified','postgres17_passed','independent_review_passed','serialized_no_ddl_window','exact_candidate_authorized']
+GATES=['identity_authorization_verified','fresh_full_preimages_verified','nominal_account_context_verified','schema_dependencies_reviewed','consumer_integration_verified','postgres17_passed','independent_review_passed','serialized_no_ddl_window','exact_candidate_authorized']
 def catalog_sql(config):
  return (HERE/'catalog-query.sql').read_text().rstrip().replace('__TABLES__',','.join(L(t) for t in config['tables'])).replace('__FUNCTIONS_JSON__',J(config['functions']).replace("'","''"))
 def render(c,action):
