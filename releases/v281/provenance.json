@@ -1,0 +1,11 @@
+{
+  "release": "v281",
+  "base_release": "v280",
+  "base_commit": "a0181d50c81154f43f753a4f46cfaa18dc346da0",
+  "scope": [
+    "Present reviewed issuer full payment and posted bank debit with separate source dates",
+    "Use consistent card summary label only when the same complete documentary annotation is valid"
+  ],
+  "financial_calculations_unchanged": true,
+  "backend_dependency": "reviewed P05 presentation annotation; separate migration"
+}
