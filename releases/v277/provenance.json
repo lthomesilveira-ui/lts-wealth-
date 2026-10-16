@@ -1,0 +1,10 @@
+{
+  "release": "v277",
+  "base_release": "v276",
+  "base_commit": "c2cfdacb8d302445733b4e1ed43b299fadd61372",
+  "scope": [
+    "Visible account-position provenance and collection/source distinction"
+  ],
+  "financial_calculations_unchanged": true,
+  "backend_addition": "cash178 bank_positions metadata only"
+}

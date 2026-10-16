@@ -1,0 +1,25 @@
+name: Cash timestamp additive contract
+on:
+  pull_request:
+    paths: ['backend/qa/v277-cash-timestamps/**', '.github/workflows/v277-cash-timestamps.yml']
+permissions:
+  contents: read
+jobs:
+  synthetic-postgres:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Pure mapper and exact diff
+        run: node --test backend/qa/v277-cash-timestamps/tests/mapper.test.mjs
+      - name: Offline lease and SQL assembly tests
+        run: python3 backend/qa/v277-cash-timestamps/tests/offline-plan.test.py
+      - name: Install official PostgreSQL binaries
+        run: sudo apt-get update && sudo apt-get install -y postgresql
+      - name: Isolated PostgreSQL full-function suite
+        run: bash backend/qa/v277-cash-timestamps/tests/run-postgres-disposable.sh --disposable-local
