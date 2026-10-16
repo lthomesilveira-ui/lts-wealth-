@@ -65,7 +65,7 @@ DO $presentation_migration$
 DECLARE expected constant jsonb := {j(expected)};
  actual_functions jsonb; actual_tables jsonb; actual_rows jsonb; defaults_now jsonb;
  before_functions jsonb; after_functions jsonb; epoch_before bigint; affected integer;
- c jsonb; l jsonb; inv jsonb; bank jsonb; probe jsonb; result jsonb; annotation jsonb;
+ v_contract jsonb; v_link jsonb; v_invoice jsonb; v_payment jsonb; probe jsonb; result jsonb; annotation jsonb;
  new_oid oid; new_acl jsonb; grantee record; receipt jsonb; owner_name text := {lit(owner)};
 BEGIN
  PERFORM pg_catalog.set_config('search_path','pg_catalog',true);
@@ -103,14 +103,14 @@ BEGIN
  OR has_any_column_privilege('authenticated','public.lts_card_settlement_expense_contract_v273','SELECT,INSERT,UPDATE,REFERENCES')
  OR has_table_privilege('service_role','public.lts_card_settlement_expense_contract_v273','INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER')
  THEN RAISE EXCEPTION 'private contract privilege boundary changed'; END IF;
- SELECT to_jsonb(x) INTO STRICT c FROM public.lts_card_settlement_expense_contract_v273 x WHERE user_id={U}::uuid AND payment_source_id={P}::uuid;
- SELECT to_jsonb(x) INTO STRICT l FROM public.lts_card_documentary_payment_link_v272 x WHERE user_id={U}::uuid AND payment_source_id={P}::uuid AND active;
- SELECT to_jsonb(x) INTO STRICT inv FROM public.lts_open_finance_staging x WHERE user_id={U}::uuid AND id={I}::uuid;
- SELECT to_jsonb(x) INTO STRICT bank FROM public.lts_open_finance_staging x WHERE user_id={U}::uuid AND id={P}::uuid;
- IF c->'active' IS DISTINCT FROM 'true'::jsonb OR (l-'created_at') IS DISTINCT FROM c->'payload'->'link_contract'
+ SELECT to_jsonb(x) INTO STRICT v_contract FROM public.lts_card_settlement_expense_contract_v273 x WHERE user_id={U}::uuid AND payment_source_id={P}::uuid;
+ SELECT to_jsonb(x) INTO STRICT v_link FROM public.lts_card_documentary_payment_link_v272 x WHERE user_id={U}::uuid AND payment_source_id={P}::uuid AND active;
+ SELECT to_jsonb(x) INTO STRICT v_invoice FROM public.lts_open_finance_staging x WHERE user_id={U}::uuid AND id={I}::uuid;
+ SELECT to_jsonb(x) INTO STRICT v_payment FROM public.lts_open_finance_staging x WHERE user_id={U}::uuid AND id={P}::uuid;
+ IF v_contract->'active' IS DISTINCT FROM 'true'::jsonb OR (v_link-'created_at') IS DISTINCT FROM v_contract->'payload'->'link_contract'
  THEN RAISE EXCEPTION 'original documentary link or active contract changed'; END IF;
  probe:=jsonb_build_object('probe_marker','presentation-only','cards',jsonb_build_array(jsonb_build_object('cycles',jsonb_build_array(jsonb_build_object(
- 'invoice_source_id',{I},'due_date',l->'expected_due_date','amount',l->'expected_amount','payment_status','probe_original_status','month','probe_original_month','items','[]'::jsonb)))));
+ 'invoice_source_id',{I},'due_date',v_link->'expected_due_date','amount',v_link->'expected_amount','payment_status','probe_original_status','month','probe_original_month','items','[]'::jsonb)))));
 """
  if not recovery:
   script+=f""" IF to_regprocedure({lit(PROJECTOR)}) IS NOT NULL THEN RAISE EXCEPTION 'new helper must be absent'; END IF;
@@ -134,11 +134,11 @@ BEGIN
  AND proconfig=ARRAY['search_path=""'] AND prorettype='jsonb'::regtype AND md5(prosrc)={lit(md5(PROJECTOR_BODY))})
  THEN RAISE EXCEPTION 'new helper identity, body or attributes mismatch'; END IF;
  EXECUTE $caller_definition${CALLER_DDL}$caller_definition$;
- annotation:=public.lts_card_payment_refresh_annotation_v273({U}::uuid,l,inv,bank,c->'payload',current_date);
+ annotation:=public.lts_card_payment_refresh_annotation_v273({U}::uuid,v_link,v_invoice,v_payment,v_contract->'payload',current_date);
  IF annotation IS DISTINCT FROM jsonb_build_object('status','identified_in_statement','basis','reviewed_original_link_and_exact_issuer_refresh',
- 'payment_date',l->'expected_payment_date','bank_posting_date',l->'expected_payment_date','bank_posting_status','POSTED',
- 'issuer_payment_date',left(c#>>'{{payload,issuer_payments,0,paymentDate}}',10),'issuer_payment_type','FULL_PAYMENT',
- 'amount',l->'expected_amount','currency','BRL','cash_effect','none')
+ 'payment_date',v_link->'expected_payment_date','bank_posting_date',v_link->'expected_payment_date','bank_posting_status','POSTED',
+ 'issuer_payment_date',left(v_contract#>>'{{payload,issuer_payments,0,paymentDate}}',10),'issuer_payment_type','FULL_PAYMENT',
+ 'amount',v_link->'expected_amount','currency','BRL','cash_effect','none')
  THEN RAISE EXCEPTION 'allowlisted annotation projection failed'; END IF;
  result:=public.lts_card_documentary_payment_presentation_v272({U}::uuid,probe);
  IF result#>'{{cards,0,cycles,0,documentary_payment_evidence}}' IS DISTINCT FROM annotation

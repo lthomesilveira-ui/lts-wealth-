@@ -3,9 +3,9 @@
   'use strict';
   const shell=document.getElementById('shell');
   function runtime(){
-function documentaryPaymentNote(cycle, esc, formatDate, mode = 'note') {
+function documentaryPaymentNote(cycle, esc, formatDate, mode = 'note', sourcePrefix = '') {
   const e = cycle?.documentary_payment_evidence;
-  const sourceLabel = cycle?.payment_status === 'payment_not_reported' ? ' · pagamento não informado' : cycle?.payment_status === 'payment_reported' ? ' · pagamento informado' : cycle?.payment_status === 'paid' ? ' · pagamento confirmado' : '';
+  const sourceLabel = sourcePrefix + (cycle?.payment_status === 'payment_not_reported' ? ' · pagamento não informado' : cycle?.payment_status === 'payment_reported' ? ' · pagamento informado' : cycle?.payment_status === 'paid' ? ' · pagamento confirmado' : '');
   const isLabel = mode === 'label';
   if (!e) return isLabel ? sourceLabel : '';
   if (e.status === 'source_changed') return isLabel ? sourceLabel : '<p class="v226-note">A fonte do pagamento mudou. A associação documental precisa ser conferida novamente.</p>';
@@ -19,7 +19,7 @@ function documentaryPaymentNote(cycle, esc, formatDate, mode = 'note') {
   if (e.basis === 'reviewed_original_link_and_exact_issuer_refresh') {
     const refreshValid = e.issuer_payment_type === 'FULL_PAYMENT' && e.bank_posting_status === 'POSTED' && isoDate(e.issuer_payment_date) && isoDate(e.bank_posting_date) && e.payment_date === e.bank_posting_date && typeof cycle.amount === 'number' && Number.isFinite(cycle.amount) && cycle.amount > 0 && cycle.amount === e.amount;
     if (!refreshValid) return isLabel ? sourceLabel : '';
-    if (isLabel) return ' · pagamento integral informado pelo emissor';
+    if (isLabel) return (sourcePrefix && cycle.basis === 'open_finance_composition' ? 'Compras recebidas' : sourcePrefix) + ' · pagamento integral informado pelo emissor';
     return '<p class="v226-note">Emissor: pagamento integral informado em ' + esc(formatDate(e.issuer_payment_date)) + '. Banco: débito lançado no extrato em ' + esc(formatDate(e.bank_posting_date)) + '. Associação documental conferida; cada data corresponde à sua fonte.</p>';
   }
   if (isLabel) return sourceLabel;
@@ -99,7 +99,7 @@ function documentaryPaymentNote(cycle, esc, formatDate, mode = 'note') {
       return head+(st.cycles.complete===false?'<p class="v226-warning" role="status">O C6 tem compras cujo ciclo ou parcela precisa ser conciliado. O total conjunto está incompleto; os demais cartões continuam disponíveis.</p>':'')+(st.loading?'<p role="status">Atualizando faturas…</p>':st.error?'<p role="alert">'+esc(st.error)+' A leitura anterior está indicada abaixo.</p>':'')+'<div class="v226-totals"><div><span>Próximas faturas e valores previstos</span><strong><button class="v226-link" data-v226-overview="next">'+totalLabel(nextTotal)+'</button></strong></div><div><span>Ciclos seguintes conhecidos</span><strong><button class="v226-link" data-v226-overview="future">'+totalLabel(futureTotal)+'</button></strong><small>Valores documentados e parcelas; sem novas compras estimadas</small></div></div>'+
         '<div class="v226-banks">'+bankNames.map(bank=>'<section><h3>'+esc(bank)+'</h3>'+cards.filter(c=>c.bank===bank).map(c=>{
           const cycle=c.cycles?.[0],label=esc(names[c.family]||c.name);
-          return '<div class="v226-card-line"><div>'+(cycle?openButton(c,cycle,label):'<b>'+label+'</b>')+'<small>Conta final '+esc(c.last4)+(c.family==='c6'?' · inclui 8304':'')+'</small></div><div>'+(cycle?openButton(c,cycle,totalLabel(cycle.amount),'v226-amount'):'<span>Sem fatura aberta informada</span>')+(cycle?'<small>'+esc(month(cycle.month))+' · '+esc(date(cycle.due_date))+'</small><small>'+esc(source(cycle.basis)+documentaryPaymentNote(cycle,null,null,'label'))+'</small>'+sourceStamp(c,cycle)+documentaryPaymentNote(cycle,esc,date):'')+'</div></div>'+unresolvedPanel(c);
+          return '<div class="v226-card-line"><div>'+(cycle?openButton(c,cycle,label):'<b>'+label+'</b>')+'<small>Conta final '+esc(c.last4)+(c.family==='c6'?' · inclui 8304':'')+'</small></div><div>'+(cycle?openButton(c,cycle,totalLabel(cycle.amount),'v226-amount'):'<span>Sem fatura aberta informada</span>')+(cycle?'<small>'+esc(month(cycle.month))+' · '+esc(date(cycle.due_date))+'</small><small>'+esc(documentaryPaymentNote(cycle,null,null,'label',source(cycle.basis)))+'</small>'+sourceStamp(c,cycle)+documentaryPaymentNote(cycle,esc,date):'')+'</div></div>'+unresolvedPanel(c);
         }).join('')+'</section>').join('')+'</div>'+
         '<p class="v226-note">'+st.cycles.active_billing_accounts+' contas de cartão ativas. Cartões adicionais compartilham a fatura; clique no nome ou no valor para abrir as compras.</p>'+
         '<details class="v226-future"><summary>Faturas e parcelas dos próximos meses · '+totalLabel(futureTotal)+'</summary><div class="v226-scroll"><table><thead><tr><th>Banco / cartão</th><th>Ciclo</th><th>Valor</th><th>Origem</th></tr></thead><tbody>'+cards.flatMap(c=>(c.cycles||[]).slice(1).map(x=>'<tr><td>'+esc(c.bank+' · '+(names[c.family]||c.name))+'</td><td>'+openButton(c,x,esc(month(x.month)))+'</td><td>'+openButton(c,x,money(x.amount))+'</td><td>'+esc(source(x.basis))+'</td></tr>')).join('')+'</tbody></table></div></details>';

@@ -25,6 +25,28 @@ for(const payment_status of ['payment_not_reported','payment_reported','paid',nu
  assert.equal(JSON.stringify(cycle),before);assert.equal(cycle.due_date,'2026-10-12');assert.equal(cycle.month,'2026-10-01');
  });
 }
+for(const payment_status of ['payment_not_reported','payment_reported','paid',null]) {
+ check('validated full payment removes only open composition prefix / '+payment_status,()=>{
+  const c={...structuredClone(base),basis:'open_finance_composition',payment_status},before=JSON.stringify(c),html=render(c).summary;
+  assert.match(html,/Compras recebidas · pagamento integral informado pelo emissor/);
+  assert.doesNotMatch(html,/Em aberto|pagamento não informado/);assert.match(html,/Emissor: pagamento integral informado em 12\/10\/2026/);
+  assert.equal(JSON.stringify(c),before);
+ });
+}
+for(const patch of [
+ {documentary_payment_evidence:undefined},
+ {documentary_payment_evidence:{status:'source_changed',cash_effect:'none'}},
+ {documentary_payment_evidence:{...ev,issuer_payment_type:'PARTIAL_PAYMENT'}},
+ {documentary_payment_evidence:{...ev,amount:99}},
+ {documentary_payment_evidence:{...ev,amount:'100'}},
+ {amount:[100]},
+ {documentary_payment_evidence:{...ev,currency:'USD'}},
+ {documentary_payment_evidence:{...ev,basis:'reviewed_documentary_alias_and_posted_bank_transaction'}}
+]) check('nonvalidated composition keeps original open prefix '+JSON.stringify(patch),()=>{
+ const c={...structuredClone(base),basis:'open_finance_composition',...patch},before=JSON.stringify(c),html=render(c).summary;
+ assert.match(html,/Em aberto · compras recebidas · pagamento não informado/);
+ assert.doesNotMatch(html,/Compras recebidas · pagamento integral informado pelo emissor/);assert.equal(JSON.stringify(c),before);
+});
 for(const patch of [{issuer_payment_type:'PARTIAL_PAYMENT'},{bank_posting_status:'PENDING'},{bank_posting_date:'2026-10-13'},{issuer_payment_date:'2026-02-30'},{issuer_payment_date:'<img>'},{payment_date:'invalid'},{currency:'USD'},{cash_effect:'debit'},{amount:99},{amount:0},{amount:'Infinity'},{status:'paid'}]){
  check('reject invalid note and badge '+JSON.stringify(patch),()=>{
  const c={...structuredClone(base),documentary_payment_evidence:{...ev,...patch}};
@@ -56,7 +78,7 @@ check('unrelated/no evidence remains source label',()=>{const c={...base};delete
 check('original documentary path remains separate',()=>{const c={...base,documentary_payment_evidence:{status:'identified_in_statement',basis:'reviewed_documentary_alias_and_posted_bank_transaction',payment_date:'2026-10-14',amount:100,currency:'BRL',cash_effect:'none'}};assert.match(note(c,esc,date),/Pagamento identificado no extrato em 14\/10\/2026/);assert.equal(note(c,null,null,'label'),' · pagamento não informado');});
 check('formatter output escaped',()=>{assert.match(note(base,esc,()=>'<img src=x onerror=alert(1)>'),/&lt;img/);assert.doesNotMatch(note(base,esc,()=>'<img>'),/<img>/);});
 check('no private data in expected annotation',()=>{const json=JSON.stringify(ev);assert.doesNotMatch(json,/manifest|raw_hash|source_id|user_id|documentary_sources|NEVER_RETURN/);assert.equal(Object.keys(ev).length,10);});
-check('RPC unchanged and only two note sites',()=>{assert.equal((src.match(/documentaryPaymentNote\(cycle\|\|data,esc,date\)/g)||[]).length,1);assert.equal((src.match(/documentaryPaymentNote\(cycle,esc,date\)/g)||[]).length,1);assert.equal((src.match(/documentaryPaymentNote\(cycle,null,null,'label'\)/g)||[]).length,1);assert.ok(src.includes("rpc('lts_browser_card_cycles_v229')"));});
+check('RPC unchanged and only two note sites',()=>{assert.equal((src.match(/documentaryPaymentNote\(cycle\|\|data,esc,date\)/g)||[]).length,1);assert.equal((src.match(/documentaryPaymentNote\(cycle,esc,date\)/g)||[]).length,1);assert.equal((src.match(/documentaryPaymentNote\(cycle,null,null,'label',source\(cycle.basis\)\)/g)||[]).length,1);assert.ok(src.includes("rpc('lts_browser_card_cycles_v229')"));});
 check('no source writes or expense reader in presentation SQL',()=>{const sql=fs.readFileSync(path.join(root,'candidate-rollback-default.sql'),'utf8');assert.doesNotMatch(sql,/\b(?:UPDATE|DELETE FROM|INSERT INTO|ALTER TABLE|CREATE TABLE)\b/i);assert.doesNotMatch(sql,/lts_expense_effective|lts_current_received|lts_card_cycles_v226\(/);assert.ok(sql.endsWith('ROLLBACK;\n'));});
 
 const out=render(base);fs.writeFileSync(path.join(root,'synthetic-summary.html'),out.summary);fs.writeFileSync(path.join(root,'synthetic-detail.html'),out.detail);
