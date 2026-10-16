@@ -1,0 +1,49 @@
+name: V274 received balance presentation
+on:
+  pull_request:
+    paths: ['releases/v274/**', 'backend/qa/lts_v274*', '.github/scripts/lts_v274*', '.github/workflows/v274.yml']
+permissions:
+  contents: read
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      LTS_RELEASE: v274
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node .github/scripts/lts_v225_static_gate.js
+      - run: node .github/scripts/lts_v272_bootstrap_contract.cjs releases/v274/lts-v225-open-finance.js
+      - run: node .github/scripts/lts_v272_payment_contract.cjs releases/v274/lts-v226-card-composition.js
+      - run: node .github/scripts/lts_v272_organon_contract.cjs releases/v274/lts-category-display.js
+      - run: TZ=Pacific/Honolulu node .github/scripts/lts_v272_freshness_contract.cjs
+      - run: TZ=Asia/Tokyo node .github/scripts/lts_v272_freshness_contract.cjs
+      - run: node .github/scripts/lts_v274_balance_presentation_contract.cjs
+      - name: Check candidate and protected hashes
+        run: |
+          python3 - <<'PY'
+          import hashlib,json,pathlib
+          root=pathlib.Path('.'); base=root/'releases/v274'; m=json.loads((base/'manifest.json').read_text())
+          for n,h in m['files'].items(): assert hashlib.sha256((base/n).read_bytes()).hexdigest()==h,n
+          for n,h in m['protected'].items(): assert hashlib.sha256((root/n).read_bytes()).hexdigest()==h,n
+          print('Candidate manifest and all protected assets verified')
+          PY
+      - run: npm install --no-save --package-lock=false playwright@1.58.2
+      - run: npx playwright install --with-deps chromium webkit
+      - run: python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/lts-v272-http.log 2>&1 &
+      - name: Category UI and card/expense regression
+        run: node .github/scripts/lts_v274_balance_presentation_browser.js
+      - name: Flow period navigation
+        if: success() || failure()
+        run: node .github/scripts/lts_flow_navigation_gate.js
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v274-balance-presentation-evidence
+          path: qa/
+
