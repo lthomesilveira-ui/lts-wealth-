@@ -1,0 +1,54 @@
+name: P05 presentation PostgreSQL17 synthetic
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'wealth-p05-presentation-20261016/public/**'
+      - '.github/workflows/p05-presentation-synthetic.yml'
+permissions:
+  contents: read
+jobs:
+  synthetic-presentation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: lts_p05_synthetic
+          POSTGRES_USER: lts_p05_synthetic
+          POSTGRES_PASSWORD: synthetic-ci-only
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U lts_p05_synthetic -d lts_p05_synthetic"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install PostgreSQL client
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+      - name: Synthetic PostgreSQL17, shared policy, reader and ACL
+        run: python3 wealth-p05-presentation-20261016/public/run_postgres17.py --allow-fresh-synthetic-postgres17
+      - name: Exact candidate UI and prior regression cases
+        run: |
+          node --check wealth-p05-presentation-20261016/public/lts-v226-card-composition.js
+          node wealth-p05-presentation-20261016/public/presentation.test.cjs
+          node wealth-p05-presentation-20261016/public/legacy-note.test.cjs wealth-p05-presentation-20261016/public/lts-v226-card-composition.js
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: p05-presentation-synthetic
+          path: |
+            wealth-p05-presentation-20261016/public/results/
+            wealth-p05-presentation-20261016/public/local-test-result.json
+            wealth-p05-presentation-20261016/public/shared-policy-proof.json
+            wealth-p05-presentation-20261016/public/rebase-receipt.json
+          if-no-files-found: warn

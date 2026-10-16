@@ -1,0 +1,12 @@
+__pycache__/
+results/
+synthetic-presentation-test.sql
+synthetic-presentation-acl-test.sql
+synthetic-fixture.json
+synthetic-summary.html
+synthetic-detail.html
+test-cases.json
+local-test-result.json
+shared-policy-proof.json
+rebase-receipt.json
+STATIC_VALIDATION.json
