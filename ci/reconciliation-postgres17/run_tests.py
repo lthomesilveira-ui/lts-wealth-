@@ -242,7 +242,11 @@ def snapshot(db: Database) -> Snapshot:
     names = db.json("SELECT coalesce(jsonb_agg(c.relname ORDER BY c.relname),'[]') "
                     "FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace "
                     "WHERE n.nspname='reconciliation_fixture' AND c.relkind='S';")
-    sequences = {name: db.json(f"SELECT to_jsonb(s) FROM {identifier(SCHEMA)}.{identifier(name)} s;")
+    # Sequence relations have no composite row type. Capture all three exposed
+    # fields explicitly while retaining exact equality/non-equality assertions.
+    sequences = {name: db.json("SELECT jsonb_build_object('last_value', s.last_value, "
+                              "'log_cnt', s.log_cnt, 'is_called', s.is_called) "
+                              f"FROM {identifier(SCHEMA)}.{identifier(name)} s;")
                  for name in names}
     return Snapshot(tables, sequences)
 

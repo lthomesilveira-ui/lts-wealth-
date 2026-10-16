@@ -144,6 +144,19 @@ class PackageSafety(unittest.TestCase):
             self.assertEqual(committed, rolled_back[:ending.start()] + "COMMIT" + rolled_back[ending.end():])
             self.assertIn("BEGIN ISOLATION LEVEL READ COMMITTED", committed)
 
+    def test_sequence_snapshot_uses_explicit_fields(self):
+        db = mock.Mock()
+        sequence = {"last_value": 7, "log_cnt": 32, "is_called": True}
+        db.json.side_effect = [[], ["links_id_seq"], sequence]
+        state = runner.snapshot(db)
+        self.assertEqual(state, runner.Snapshot({}, {"links_id_seq": sequence}))
+        query = db.json.call_args_list[-1].args[0]
+        self.assertEqual(query,
+                         "SELECT jsonb_build_object('last_value', s.last_value, "
+                         "'log_cnt', s.log_cnt, 'is_called', s.is_called) "
+                         'FROM "reconciliation_fixture"."links_id_seq" s;')
+        self.assertNotIn("to_jsonb(s)", query)
+
 
 class SQLGuardCoverage(unittest.TestCase):
     def test_lock_order_and_deterministic_barriers(self):
