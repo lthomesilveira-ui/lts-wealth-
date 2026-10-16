@@ -103,6 +103,20 @@ function detail(args, spec={}) {
 function matchingRange(args, range) { return args.p_from === range.from && args.p_to === range.to; }
 const datasetKey = (auth, range) => auth+'|'+range.from+'|'+range.to;
 
+// V168 owns the expense header/period on every tab. V175 only demands its
+// category report on overview/categories; Apply deliberately retires that slot
+// on transactions. Never wait for a report that this real screen does not request.
+function reportSettled(range, observed) {
+  const state = observed || {a:window.__LTS_V168_STATE.expense, b:window.__LTS_V175_STATE.expense, tab:window.__LTS_V168_STATE.expense.tab};
+  const {a, b, tab} = state;
+  if (!a || !b || a.loading !== false || a.error !== null || b.loading !== false || b.error !== null) return false;
+  const matches = data => data?.period?.from === range.from && data?.period?.to === range.to;
+  const demanded = ['overview','categories'].includes(tab);
+  const currentV175 = b.key === range.from+'|'+range.to && matches(b.data);
+  const dormantV175 = b.key === '' && b.data === null;
+  return matches(a.data) && (demanded ? currentV175 : currentV175 || dormantV175);
+}
+
 class Barriers {
   constructor() { this.events = new EventEmitter(); this.pending = new Map(); this.used = new Set(); }
   async hold(label, fulfill, body, status=200) {
@@ -143,13 +157,26 @@ async function staticCheck() {
   assert.notEqual(detail(args, {kind:'revision-drift'}).revision, detail({...args, p_offset:2}, {kind:'revision-drift'}).revision);
   const inconsistent = detail(args, {kind:'sum-mismatch'});
   assert.equal(inconsistent.total, inconsistent.matched_total); assert.equal(inconsistent.total, 151);
+  const a = {loading:false, error:null, data:{period:DAILY}};
+  const dormant = {loading:false, error:null, key:'', data:null};
+  const active = {...dormant, key:DAILY.from+'|'+DAILY.to, data:{period:DAILY}};
+  assert(reportSettled(DAILY, {a,b:dormant,tab:'transactions'}), 'Ledger tab admits the intentionally dormant V175 slot');
+  assert(reportSettled(DAILY, {a,b:active,tab:'transactions'}), 'A current previously demanded V175 report is also valid');
+  assert(reportSettled(DAILY, {a,b:active,tab:'categories'}), 'Category tab requires the real current V175 report');
+  assert(!reportSettled(DAILY, {a,b:dormant,tab:'categories'}), 'Missing demanded V175 report must block');
+  assert(!reportSettled(DAILY, {a,b:{...active,data:{period:MONTH}},tab:'transactions'}), 'A stale V175 report is never accepted');
+  assert(!reportSettled(DAILY, {a,b:{...dormant,loading:true},tab:'transactions'}), 'An in-flight V175 read must settle');
+  assert(!reportSettled(DAILY, {a:{...a,data:{period:MONTH}},b:dormant,tab:'transactions'}), 'A stale V168 period must block');
+  assert(!reportSettled(DAILY, {a,b:{key:'',data:null},tab:'transactions'}), 'Absent loading/error flags do not prove dormancy');
+  assert(!reportSettled(DAILY, {a,b:{...dormant,error:'synthetic-error'},tab:'transactions'}), 'A failed V175 slot is not dormant');
+  for (const build of Object.values(builds)) assert(fs.readFileSync(path.join(build.root, 'lts-v183-expense-history-candidate.js'),'utf8').includes("if(['overview','categories'].includes(tab)"), 'V175 ownership predicate remains the inspected production contract');
   const barriers = new Barriers(), received = [];
   const pending = barriers.hold('self-test', async (status, body) => received.push({status, body}), {synthetic:true});
   await barriers.seen('self-test'); assert.equal(received.length, 0);
   await barriers.release('self-test'); await pending;
   assert.deepEqual(received, [{status:200, body:{synthetic:true}}]); assert.equal(barriers.pending.size, 0);
   return {status:'static-check-passed', browser_started:false, network_used:false, candidate_sha:CANDIDATE_SHA,
-    fixture_contracts:['daily-signed-sum','monthly-two-pages','empty','10005-two-pages','declared-revision-drift','final-sum-mismatch'], barrier_contract:true, limitation:LIMITATION, builds};
+    fixture_contracts:['daily-signed-sum','monthly-two-pages','empty','10005-two-pages','declared-revision-drift','final-sum-mismatch'], report_readiness_contracts:9, barrier_contract:true, limitation:LIMITATION, builds};
 }
 
 async function run(browser, build, viewport, label, isBaseline) {
@@ -265,12 +292,7 @@ async function run(browser, build, viewport, label, isBaseline) {
     flow:D.flow.days.map(day => ({date:day.date, consolidated:day.Consolidado, columns:day.fix86_columns}))
   }));
   const reportReady = async range => {
-    await frame.waitForFunction(range => {
-      const a = window.__LTS_V168_STATE.expense, b = window.__LTS_V175_STATE.expense;
-      return !a.loading && !b.loading && !a.error && !b.error &&
-        a.data?.period?.from === range.from && a.data?.period?.to === range.to &&
-        b.data?.period?.from === range.from && b.data?.period?.to === range.to;
-    }, range); await settle();
+    await frame.waitForFunction(reportSettled, range); await settle();
   };
   const ready = async (count, range) => {
     await frame.waitForFunction(({count, range}) => {
@@ -547,7 +569,11 @@ async function run(browser, build, viewport, label, isBaseline) {
     await page.screenshot({path:path.join(QA, label+'-failure.png')}).catch(() => {});
     error.ledgerEvidence = {id:build.id, label, phase, calls, errors, consoleErrors, expectedHttpErrors,
       blocked, assetErrors, routeErrors, plans, pending:[...barriers.pending.keys()],
-      state:await Promise.resolve().then(transactions).catch(() => null), body:await frame?.locator('body').innerText().catch(() => null),
+      state:await Promise.resolve().then(transactions).catch(() => null),
+      reports:await frame?.evaluate(() => {
+        const snapshot = s => s ? {loading:s.loading,error:s.error,key:s.key,token:s.token,period:s.data?.period ?? null,dataPresent:s.data != null} : null;
+        return {tab:window.__LTS_V168_STATE?.expense?.tab, v168:snapshot(window.__LTS_V168_STATE?.expense),v175:snapshot(window.__LTS_V175_STATE?.expense)};
+      }).catch(() => null), body:await frame?.locator('body').innerText().catch(() => null),
       observation:await frame?.evaluate(() => window.__LEDGER_TEST__ ? {reads:window.__LEDGER_TEST__.reads, renders:window.__LEDGER_TEST__.renders.slice(-30)} : null).catch(() => null)};
     throw error;
   } finally { await barriers.close(); await context.close(); }
