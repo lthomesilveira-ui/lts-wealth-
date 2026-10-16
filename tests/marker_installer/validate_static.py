@@ -65,7 +65,7 @@ def check_sql_lexical(text):
 def main():
  files=json.loads((HERE/'PUBLIC_FILES.json').read_text())['files']
  assert len(files)==len(set(files)) and all('private' not in f and '..' not in Path(f).parts for f in files)
- allowed={'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa','bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb'}
+ allowed={'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa','bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb','cccccccc-cccc-4ccc-8ccc-cccccccccccc'}
  for f in files:
   text=(HERE/f).read_text()
   if f.endswith('.py'):ast.parse(text,filename=f)
@@ -77,17 +77,24 @@ def main():
  assert m['function_contract_count']==71 and m['relation_contract_count']==49
  for f,h in m['files'].items():assert hashlib.sha256((HERE/'generated'/f).read_bytes()).hexdigest()==h,f
  old=(HERE/'generated/baseline-original-synthetic.sql').read_text();new=(HERE/'generated/baseline-candidate-synthetic.sql').read_text()
- a="(kind in ('Saúde','Educação','Vestuário') and person_final is null)";b="(kind='Educação' and person_final is null)"
+ a="(kind in ('Saúde','Educação','Vestuário') and person_final is null)";b="(person_final is null and (kind='Educação' or (kind in ('Saúde','Vestuário') and p_user_id is distinct from 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa'::uuid)))"
  assert old.count(a)==new.count(b)==1 and old.replace(a,b)==new
  for action in ['apply','rollback']:
   sql=(HERE/'generated'/f'{action}-synthetic.sql').read_text()
   assert sql.count('ready constant boolean:=false;')==1
   assert sql.count('nineteen protected fields')==2
   assert sql.count('IS NOT TRUE) THEN')==2
-  assert 'BEGIN ISOLATION LEVEL REPEATABLE READ;' in sql and sql.rstrip().endswith('COMMIT;')
+  assert sql.count('DO $marker$')==1 and sql.rstrip().endswith('END $marker$;')
+  assert sql.count("SET LOCAL statement_timeout TO '120s';")==1
+  assert not re.search(r'(?m)^\s*(COMMIT|ROLLBACK|BEGIN ISOLATION|SET TRANSACTION)\b',sql)
+  assert "current_setting('transaction_isolation')<>'read committed'" in sql
+  assert 'LOCK TABLE public.fixture_flow,public.accounts,' in sql and ' IN SHARE MODE;' in sql
   assert sql.count('UPDATE public.lts_read_cache_epoch_v242 SET epoch=epoch+1')==1
   assert 'global_homologation_invalidated' in sql and 'required_fresh_stages' in sql
   assert '__FUNCTIONS_ORIGINAL__' in sql and '__FUNCTIONS_INSTALLED__' in sql and '__RELATIONS__' in sql
+  assert '__BASELINE_SCOPE__' in sql and '__FINAL_SCOPE__' in sql
+  assert 'marker transition count differs from exact reviewed scope' in sql
+  assert 'marker transition identities differ from exact reviewed baseline scope' in sql
   indexes=[sql.index(t) for t in ['IF NOT ready','SELECT epoch INTO STRICT','EXECUTE $definition$','UPDATE public.lts_read_cache_epoch_v242 SET epoch=epoch+1','INTO after_baseline','postinstall function identity','INSERT INTO public.lts_access_audit']]
   assert indexes==sorted(indexes)
  refusal=subprocess.run([sys.executable,str(HERE/'run_postgres17.py')],text=True,capture_output=True)

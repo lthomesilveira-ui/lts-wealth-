@@ -1,4 +1,4 @@
-TRUNCATE public.lts_access_audit,public.lts_read_cache_epoch_v242,public.lts_v178_review_decision,public.lts_v229_read_cache,public.fixture_flow,public.evento_base;
+TRUNCATE public.lts_access_audit,public.lts_read_cache_epoch_v242,public.lts_v178_review_decision,public.lts_v229_read_cache,public.fixture_flow,public.evento_base,public.fixture_migration_sentinel;
 INSERT INTO public.lts_read_cache_epoch_v242(singleton,epoch) VALUES(true,700);
 INSERT INTO public.fixture_flow VALUES('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa','2001-06-15','2001-06-15','2001-06-01','10','Saúde','Não atribuído','SYNTHETIC HEALTH','synthetic','SYNTHETIC ACCOUNT','synthetic_flow','1','synthetic',false,false);
 INSERT INTO public.fixture_flow VALUES('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa','2001-06-15','2001-06-15','2001-06-01','20','Vestuário','Não atribuído','SYNTHETIC CLOTHING','synthetic','SYNTHETIC ACCOUNT','synthetic_flow','2','synthetic',false,false);
@@ -8,6 +8,10 @@ INSERT INTO public.fixture_flow VALUES('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa','2
 INSERT INTO public.fixture_flow VALUES('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa','2001-06-15','2001-06-15','2001-06-01','60','Moradia','Não atribuído','SYNTHETIC PROPERTY','synthetic','SYNTHETIC ACCOUNT','synthetic_flow','6','synthetic',false,false);
 INSERT INTO public.fixture_flow VALUES('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa','2001-06-15','2001-06-15','2001-06-01','70','Saúde','Não atribuído','SYNTHETIC DESCRIPTION REVIEW','synthetic','SYNTHETIC ACCOUNT','evento_base','7','synthetic',false,false);
 INSERT INTO public.fixture_flow VALUES('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa','2001-06-15','2001-06-15','2001-06-01','80','Assinaturas','Não atribuído','SYNTHETIC OTHER','synthetic','SYNTHETIC ACCOUNT','synthetic_flow','8','synthetic',false,false);
+INSERT INTO public.fixture_flow VALUES('cccccccc-cccc-4ccc-8ccc-cccccccccccc','2001-06-15','2001-06-15','2001-06-01','10','Saúde','Não atribuído','SYNTHETIC OUTSIDE OWNER','synthetic','SYNTHETIC ACCOUNT','synthetic_flow','901','synthetic',false,false);
+INSERT INTO public.fixture_flow VALUES('cccccccc-cccc-4ccc-8ccc-cccccccccccc','2001-06-15','2001-06-15','2001-06-01','10','Vestuário','Não atribuído','SYNTHETIC OUTSIDE OWNER','synthetic','SYNTHETIC ACCOUNT','synthetic_flow','902','synthetic',false,false);
+INSERT INTO public.fixture_flow VALUES(NULL,'2001-06-15','2001-06-15','2001-06-01','10','Saúde','Não atribuído','SYNTHETIC OUTSIDE OWNER','synthetic','SYNTHETIC ACCOUNT','synthetic_flow','951','synthetic',false,false);
+INSERT INTO public.fixture_flow VALUES(NULL,'2001-06-15','2001-06-15','2001-06-01','10','Vestuário','Não atribuído','SYNTHETIC OUTSIDE OWNER','synthetic','SYNTHETIC ACCOUNT','synthetic_flow','952','synthetic',false,false);
 INSERT INTO public.evento_base(id,usuario_id,idx,dados) VALUES(7,'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa'::uuid,7,'{"desc":"Descrição pendente","categoria":"Saúde"}'::jsonb);
 INSERT INTO public.lts_access_audit(id,user_id,action,meta) VALUES(1,'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa'::uuid,'agent_restore_exact_classifications_20261016',jsonb_build_object('operation_id','bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb','target_count',5));
 INSERT INTO public.lts_v229_read_cache(user_id) VALUES('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa'::uuid),(NULL);

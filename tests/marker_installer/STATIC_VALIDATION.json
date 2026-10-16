@@ -4,8 +4,8 @@
   "public_files": 15,
   "published_templates_ready_false": true,
   "source_hashes": {
-    "apply": "f2395eca45c9730b92373b4d53667c206fe8cebb275ed23cf73908d8dbc85646",
-    "rollback": "b41a1ae69a5667378fd5bafb61036825b3390f1ef439b047c94be6fff007b622"
+    "apply": "4ae83688c78baee4f9d533d17d38b24cccef91ee85561745dad8fc876636eee5",
+    "rollback": "0ffb88b4a7ad844da9e790e878b8cddd02bb504f36f6eb07b7fd1d577ae9fb70"
   },
   "sql_execution": false,
   "status": "static-passed"
