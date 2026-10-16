@@ -1,0 +1,12 @@
+{
+  "release": "v275",
+  "base_release": "v274",
+  "base_commit": "1f2a024637dcece72159939de2fcde5db663eba8",
+  "scope": [
+    "recover product loading failure without falsely requesting sign-in",
+    "show overdue unconfirmed forecasts from already received flow payload"
+  ],
+  "financial_sources_unchanged": true,
+  "new_rpc_calls": false,
+  "p05_presentation_refresh_included": false
+}
