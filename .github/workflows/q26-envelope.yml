@@ -1,0 +1,69 @@
+name: Q26 complete synthetic envelope
+on:
+  pull_request:
+    paths: ['tests/q26_envelope/**', '.github/workflows/q26-envelope.yml']
+permissions:
+  contents: read
+jobs:
+  postgres17:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      functional:
+        image: postgres:17
+        env:
+          POSTGRES_DB: q26_synthetic_nominal_20261016
+          POSTGRES_PASSWORD: q26_local_disposable_only
+        ports: ['5432:5432']
+        options: --health-cmd "pg_isready -U postgres" --health-interval 5s --health-timeout 5s --health-retries 10
+      locks:
+        image: postgres:17
+        env:
+          POSTGRES_DB: q26_synthetic_nominal_20261016
+          POSTGRES_PASSWORD: q26_local_disposable_only
+        ports: ['55432:5432']
+        options: --health-cmd "pg_isready -U postgres" --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      PGHOST: 127.0.0.1
+      PGPORT: 5432
+      PGUSER: postgres
+      PGDATABASE: q26_synthetic_nominal_20261016
+      PGPASSWORD: q26_local_disposable_only
+      Q26_DISPOSABLE_FIXTURE: I_CREATED_AN_EMPTY_LOCAL_PG17
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Verify frozen sources
+        run: |
+          echo '47521fb744854b0bf072dd9878556d1a7aac7615f32962284e9b6360443355c5  tests/q26_envelope/pg17_envelope_synthetic.sql' | sha256sum -c -
+          echo '90bce1b58944b544f88957a7496e0bb274f496d907906d0cbdeadae45b3b8552  tests/q26_envelope/pg17_envelope_lock_setup.sql' | sha256sum -c -
+          echo '4b138024bf8ac5ad933b80e202dff53b62f615a8cc1f287ea73709f3e46cf6ce  tests/q26_envelope/run_two_session_lock.py' | sha256sum -c -
+      - name: Functional envelope and compensation
+        run: |
+          mkdir -p qa
+          psql -X -v ON_ERROR_STOP=1 -At -f tests/q26_envelope/pg17_envelope_synthetic.sql > qa/functional.log 2> qa/functional.stderr
+          python3 - <<'CHECK'
+          import json,pathlib
+          p=pathlib.Path('qa')
+          rows=[json.loads(s) for s in (p/'functional.log').read_text().splitlines() if s.startswith('{') and 'synthetic_envelope_checks_passed' in s]
+          assert len(rows)==1,rows
+          r=rows[0];assert r['synthetic_envelope_checks_passed']==46 and len(r['labels'])==len(set(r['labels']))==46,r
+          (p/'functional-result.json').write_text(json.dumps(r,indent=2))
+          CHECK
+          test "$(psql -X -Atc "select count(*) from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname='public' and c.relkind in ('r','v','m','p','f')")" = 0
+          test "$(psql -X -Atc "select count(*) from pg_roles where rolname in ('q26_fixture_owner','service_role','anon','authenticated')")" = 0
+          psql -X -Atc 'select version()' > qa/postgres-version.txt
+      - name: Independent instance two-session locks
+        run: |
+          python3 tests/q26_envelope/run_two_session_lock.py --coordinator-approved-synthetic-sql --port 55432 > qa/locks-result.json 2> qa/locks.stderr
+          python3 - <<'CHECK'
+          import json,pathlib
+          r=json.loads(pathlib.Path('qa/locks-result.json').read_text());assert r['two_session_checks_passed']==2 and all(x['lock_timeout_observed'] and x['atomic_state_preserved'] for x in r['results']),r
+          CHECK
+          sha256sum tests/q26_envelope/* > qa/source.sha256
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: q26-envelope-evidence
+          path: qa/
