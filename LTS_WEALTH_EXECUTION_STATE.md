@@ -1,3 +1,31 @@
+# Estado vigente — V285 publicada em 17/10/2026
+
+Aplicativo: https://lthomesilveira-ui.github.io/lts-wealth-/releases/v285/app.html
+PR da versão: https://github.com/lthomesilveira-ui/lts-wealth-/pull/165
+Head validado: e3bf99a52441af1df46c974444a9b4538382017d
+Commit publicado: c6f092806d2996b64c80b4417fb8769a2df4ffe5
+Pages: execução 39078821370 concluída com sucesso.
+
+A V285 altera quatro expressões em um único arquivo de apresentação. Grupos genéricos deixam de implicar um beneficiário. Chaves internas, pessoas explicitamente informadas, cálculos, detalhamento, edição, exportação e a proteção de cobertura diária da V284 permanecem preservados. A raiz e as versões anteriores não foram promovidas ou reescritas.
+
+As 17 verificações finais da PR passaram. A matriz própria da V285 verificou Lançamentos, contexto, pagamentos, projeção, navegação e recuperação de sessão em dimensões de desktop e celular, com fontes sintéticas isoladas. O teste legado V173 teve uma falha inicial de inicialização móvel com null.flow e passou na reexecução do mesmo código, sem relaxar os critérios. Os registros das duas execuções permanecem disponíveis.
+
+A publicação conferiu o release e as versões anteriores. Uma conferência independente também validou por SHA256 todos os 67 arquivos efetivamente servidos da V285. A abertura pública mostrou a identificação V285 e a tela de entrada. A sessão real da V284 verificada anteriormente não foi convertida em prova de sessão real da V285. Aceite pessoal e aparelho físico continuam separados dos testes controlados.
+
+Uma correção delimitada de agrupamento explícito foi aplicada no backend e verificada antes/depois. Ela preserva decisões, categorias, pessoas, valores, demais campos, permissões e todos os outros registros. Os recibos e as fontes particulares ficam no registro privado, sem dados financeiros publicados neste repositório.
+
+O pós-teste complementar da conciliação nominal foi registrado sem reescrever o recibo inicial. As correções já aplicadas não devem ser reaplicadas com validações antigas. O trabalho documental das séries futuras e das condições dos awards continua separado de comprovação aritmética e de publicação.
+
+Permanecem abertos os limites históricos e vínculos individuais, premissas futuras, vigência de novos vencimentos, conciliação residual de ativos/contratos, proveniência semântica restante, desempenho real, casos de relatórios/edição/upload, proteção administrativa e isolamento HTTP, restauração completa isolada e aceite pessoal. Conservar P01–P16, FB244-01–14 e os lotes anteriores. Não inferir renovações, novos grants, pagamentos, estornos ou uma data de Closing.
+
+A autorização de execução já dada permanece válida. Avançar nas tarefas independentes sem novo Permitir/Continue rotineiro. Health fica fora desta frente e Continuity Watch permanece desligado.
+
+Retomada privada: LTS_CONTINUAR.md, checkpoint LTS-CONTINUAR-V285-20261017. Este topo prevalece sobre os estados antigos preservados integralmente abaixo.
+
+---
+
+## Histórico anterior preservado integralmente
+
 # Estado vigente — V268 publicada em 13/10/2026
 
 Homologação: https://lthomesilveira-ui.github.io/lts-wealth-/releases/v268/app.html

@@ -1,3 +1,34 @@
+# Estado vigente do backlog — V285, 17/10/2026
+
+Aplicativo: https://lthomesilveira-ui.github.io/lts-wealth-/releases/v285/app.html
+PR da versão: https://github.com/lthomesilveira-ui/lts-wealth-/pull/165
+Head validado: e3bf99a52441af1df46c974444a9b4538382017d
+Commit publicado: c6f092806d2996b64c80b4417fb8769a2df4ffe5
+Pages: execução 39078821370 concluída com sucesso.
+
+A versão fecha somente o ajuste de contexto sem atribuição automática de beneficiário e sua publicação verificada. A execução de backend e os dados particulares têm recibos privados; nenhuma aprovação global do projeto é inferida desta entrega.
+
+| Frente | Resultado confirmado nesta rodada | Estado restante |
+| --- | --- | --- |
+| Contexto de pessoas | Quatro textos corrigidos, sem mudar chaves, decisões explícitas, cálculos ou detalhes; correção delimitada de prefixo repetido verificada no leitor | Proveniência semântica completa, Farmácia conforme as fontes e exclusão integral de itens corporativos continuam em auditoria |
+| Conciliação nominal | Pós-teste complementar registrado e persistência das correções já aplicadas reconferida | Demais casos de P16 exigem identidade e fonte; valor ou idade não bastam |
+| Publicação e regressão | V285 publicada; 17 verificações finais aprovadas, matriz completa própria e 67 arquivos servidos conferidos | Sessão real da V285, aparelho e operações reais de upload permanecem separados |
+| Vencimentos e Prime | Fontes recebidas, estimativas futuras e pagamentos de ciclos distintos foram examinados separadamente | A primeira fatura que comprove cada nova vigência e a integração temporal seguem abertas; não alterar ciclos antigos |
+| Projeções e awards | Calendário vigente confrontado com a fonte original; condições documentais novas mantidas separadas de caixa | Correspondência por concessão e condições até 2031 não são certificadas só pela aritmética; não inventar grant, renovação ou Closing |
+| Histórico, ativos e contratos | Limites aceitos e correções anteriores preservados | Manter P01/P02 e conciliações residuais abertas por evidência individual |
+| Segurança, desempenho e recuperação | Correção delimitada preservou identidade, configuração e ACL da função; observações de segurança sem novas categorias | Proteção administrativa, isolamento HTTP, carga fria/dispositivo e restauração completa PostgreSQL/Storage continuam abertos |
+| UX e relatórios | Controles existentes e fontes sintéticas preservados | Concluir os casos individuais de P10/P13/P15 e FB244, com aceite real separado |
+
+A falha inicial do teste legado V173 (null.flow em inicialização móvel) foi preservada e passou na reexecução do mesmo código. Nenhum assert, fonte ou teste foi retirado para conseguir aprovação.
+
+O registro privado mantém os números, IDs de fonte, provas de aplicação/reversão e a matriz integral P01–P16, FB244-01–14, V182/V183, lote de 30/09 e IDs V167. Não reabrir decisões já respondidas nem substituir desconhecidos por zero.
+
+Prosseguir dentro da autorização existente, sem nova confirmação rotineira. Health fica fora desta frente e Continuity Watch permanece desligado. O histórico anterior abaixo não representa a versão publicada atual.
+
+---
+
+## Histórico anterior preservado integralmente
+
 # Estado vigente — V268 publicada em 13/10/2026
 
 Homologação: https://lthomesilveira-ui.github.io/lts-wealth-/releases/v268/app.html
