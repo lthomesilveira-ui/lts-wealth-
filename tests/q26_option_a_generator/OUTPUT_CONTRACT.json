@@ -1,0 +1,63 @@
+{
+  "expected_sql_sha256": "67e7b99236fce6f3892e4b69b713d3716105e523d11587ef6e5a57771ec9bac8",
+  "expected_results": 339,
+  "files": {
+    "ACL_TEST_SCOPE.json": {
+      "bytes": 1607,
+      "sha256": "30cc00448acc69297e3a9ee9db02ffe0789acaa6bc7c8804d5ef02f52a60b39a"
+    },
+    "ALLOWED_TRANSFORMATIONS.json": {
+      "bytes": 1653,
+      "sha256": "857b200cc376f9054876d7949ac97f080f1a3043c3c2ad561a9315f5afb49634"
+    },
+    "DEPENDENCY_STUBS.json": {
+      "bytes": 22965,
+      "sha256": "3e49b42c77ecfac9de589c75add4f10e7d91fce99c0301c4bdd65f6de6a13787"
+    },
+    "EXPECTED_RESULTS.json": {
+      "bytes": 17037,
+      "sha256": "b1d9f9280bbf34e8e7c9a61888d4bdded2b24b06d16a2bbb43f2a0394661a1de"
+    },
+    "PREPARATION_CHECKS.json": {
+      "bytes": 754,
+      "sha256": "3929959585000b2c08dc0b698611ac0863f248e7c7e7b9e2159dc08f9431a72f"
+    },
+    "PUBLIC_MANIFEST.json": {
+      "bytes": 2716,
+      "sha256": "e0ab59202f6434686d8db86d9e52d4f45d4f550e70fe457ee1835b287c780a0f"
+    },
+    "README.md": {
+      "bytes": 5341,
+      "sha256": "b23a712d78b7de9a0a9626c04326a3fd29287888e082cc30b19289c0d43e5291"
+    },
+    "card_detail_candidate.sql": {
+      "bytes": 40168,
+      "sha256": "00e03602ae61579428e0c457528984a5e2170f03eba5ad758b4859b52dbb4161"
+    },
+    "card_detail_original.sql": {
+      "bytes": 8708,
+      "sha256": "1c9cf438cd246a1a8bd18d45aa04673070188e5663c7d00081a18ef7750946cc"
+    },
+    "expense_rows_candidate.sql": {
+      "bytes": 38800,
+      "sha256": "ca14be9189a6628cb25595bba16e7891953bc7de733d360f63b0828d97471881"
+    },
+    "expense_rows_original.sql": {
+      "bytes": 10099,
+      "sha256": "f3b93095db9d7a2b7fd57ca0bcb77eb0b2a802d402f4aa6121d60c4226635982"
+    },
+    "option_a_full_consumers.sql": {
+      "bytes": 1009058,
+      "sha256": "67e7b99236fce6f3892e4b69b713d3716105e523d11587ef6e5a57771ec9bac8"
+    },
+    "run_disposable.sh": {
+      "bytes": 1603,
+      "sha256": "865a20c36db9c00232241feb863971597151b35bdd4906b87f96cdd5bb94c7ed"
+    },
+    "verify_results.py": {
+      "bytes": 3983,
+      "sha256": "6e670827cfb1633c7b8752ab4cf2e05ab616f2e54a8a95c7f1c1e318c5cae461"
+    }
+  },
+  "frozen_output_manifest_included": true
+}

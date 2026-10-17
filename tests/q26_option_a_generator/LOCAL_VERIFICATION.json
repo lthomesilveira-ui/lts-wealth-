@@ -1,0 +1,12 @@
+{
+  "status": "local reconstruction verified; PostgreSQL not executed",
+  "isolated_reconstructions": 2,
+  "all_14_output_files_byte_identical": true,
+  "expected_sql_sha256": "67e7b99236fce6f3892e4b69b713d3716105e523d11587ef6e5a57771ec9bac8",
+  "expected_unique_results": 339,
+  "local_checks_passed": 53,
+  "source_tamper_rejected": true,
+  "semantic_tamper_rejected_by_output_hash": true,
+  "privacy_scan_clean": true,
+  "network_or_upload": false
+}

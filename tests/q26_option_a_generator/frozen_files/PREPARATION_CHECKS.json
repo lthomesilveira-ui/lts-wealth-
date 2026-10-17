@@ -1,0 +1,16 @@
+{
+  "checks_passed": 18,
+  "all_passed": true,
+  "postgres_executed": false,
+  "parser_limit": "Lexical checks only; PostgreSQL grammar/runtime deferred to reviewed CI.",
+  "roundtrip_four_bodies_exact": true,
+  "privacy_scan_passed": true,
+  "synthetic_case_results_expected": 339,
+  "body_files": {
+    "card_detail_original.sql": "1c9cf438cd246a1a8bd18d45aa04673070188e5663c7d00081a18ef7750946cc",
+    "expense_rows_original.sql": "f3b93095db9d7a2b7fd57ca0bcb77eb0b2a802d402f4aa6121d60c4226635982",
+    "expense_rows_candidate.sql": "ca14be9189a6628cb25595bba16e7891953bc7de733d360f63b0828d97471881",
+    "card_detail_candidate.sql": "00e03602ae61579428e0c457528984a5e2170f03eba5ad758b4859b52dbb4161"
+  },
+  "runner_invalid_target_tests_passed": 13
+}
