@@ -1,5 +1,5 @@
 {
-  "frozen_atomic_manifest_sha256": "956b3fe4b04a20c1e557a8329bfd07ad848bd44cc101c28babf4fe1410476aaa",
+  "frozen_atomic_manifest_sha256": "634580ac2c81286ade94b8e16300f9bac19981fc209fce0b991ac27d0e93a34c",
   "expected_functional_results": 175,
   "expected_concurrency_results": 10,
   "expected_empty_instance_guards": 4,
@@ -17,8 +17,8 @@
       "sha256": "dc555ea66e04dbd009f0842f7966b64850e116e6b73e6070583aa711dbe5a175"
     },
     "PUBLIC_MANIFEST.json": {
-      "bytes": 1999,
-      "sha256": "956b3fe4b04a20c1e557a8329bfd07ad848bd44cc101c28babf4fe1410476aaa"
+      "bytes": 1986,
+      "sha256": "634580ac2c81286ade94b8e16300f9bac19981fc209fce0b991ac27d0e93a34c"
     },
     "README.md": {
       "bytes": 6816,
@@ -33,8 +33,8 @@
       "sha256": "cc764157c75f2a2a7f7fb652778e5a91013eff78c4fc3af260a88b514c0d84e6"
     },
     "atomic_setup.sql": {
-      "bytes": 581326,
-      "sha256": "75801daec098b5f54c1555919e3d13cb0d47d540944ea0c33a61d103703e0059"
+      "bytes": 581334,
+      "sha256": "204d3e5b936be00797af049fabfd8a3efeaaf7ace18507dac6d185c0cdeee2db"
     },
     "empty_instance_guard.sql": {
       "bytes": 967,

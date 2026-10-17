@@ -1,5 +1,5 @@
 {
-  "version": "readable-atomic-generator-0509-subtraction-diagnostics",
+  "version": "readable-atomic-generator-0528-qualified-fixture-columns",
   "files": [
     {
       "name": "CONSUMER_DEPENDENCY.json",
@@ -9,17 +9,17 @@
     {
       "name": "OUTPUT_CONTRACT.json",
       "bytes": 1810,
-      "sha256": "23fd4eb628901a9bec36f272eef96d594ace4617817412c0f15ab9deed88f039"
+      "sha256": "7a8ccdedd36e8cd7fbd306d3deb8722d8be404e250517f0fa4c546a18cd66be7"
     },
     {
       "name": "README_GENERATOR.md",
-      "bytes": 4152,
-      "sha256": "ed0e259d0af0c637b694d4d78fd1e0527680964dea5e6c070802ad24499a3d49"
+      "bytes": 4781,
+      "sha256": "f20d01e2b3619a9da82a012e54a5f7f51844e8c641e242e9b99a7dd55ba0e711"
     },
     {
       "name": "atomic_suffix.template.sql",
-      "bytes": 21464,
-      "sha256": "7134094ca81717297ad0c539d721f5d29c5aa5fcd09ff3e0c1b9fa2c5423c911"
+      "bytes": 21472,
+      "sha256": "b2983466a95b356e9d635f2504649ecb24742bcd2c7b412bc6e9bfee436a8643"
     },
     {
       "name": "frozen_files/ALLOWED_TRANSFORMATIONS.json",
@@ -38,8 +38,8 @@
     },
     {
       "name": "frozen_files/PUBLIC_MANIFEST.json",
-      "bytes": 1999,
-      "sha256": "956b3fe4b04a20c1e557a8329bfd07ad848bd44cc101c28babf4fe1410476aaa"
+      "bytes": 1986,
+      "sha256": "634580ac2c81286ade94b8e16300f9bac19981fc209fce0b991ac27d0e93a34c"
     },
     {
       "name": "frozen_files/README.md",

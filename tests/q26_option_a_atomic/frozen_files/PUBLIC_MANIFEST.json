@@ -1,5 +1,5 @@
 {
-  "version": "atomic-gate-0509-subtraction-precedence-and-diagnostics",
+  "version": "atomic-gate-0528-qualified-fixture-columns",
   "status": "frozen for independent review only",
   "sql_executed": false,
   "expected_functional": 175,
@@ -37,8 +37,8 @@
     },
     {
       "name": "atomic_setup.sql",
-      "bytes": 581326,
-      "sha256": "75801daec098b5f54c1555919e3d13cb0d47d540944ea0c33a61d103703e0059"
+      "bytes": 581334,
+      "sha256": "204d3e5b936be00797af049fabfd8a3efeaaf7ace18507dac6d185c0cdeee2db"
     },
     {
       "name": "empty_instance_guard.sql",

@@ -1,6 +1,6 @@
 # Readable reconstruction of the frozen atomic gate
 
-This package reconstructs exactly the eleven public files of atomic gate0509. Its output PUBLIC_MANIFEST.json must retain SHA256 956b3fe4b04a20c1e557a8329bfd07ad848bd44cc101c28babf4fe1410476aaa. The expected results remain 175 functional, 10 concurrent and four empty-instance guard tests. Reconstruction is not a PostgreSQL pass.
+This package reconstructs exactly the eleven public files of atomic gate0528. Its output PUBLIC_MANIFEST.json must retain SHA256 634580ac2c81286ade94b8e16300f9bac19981fc209fce0b991ac27d0e93a34c. The expected results remain 175 functional, 10 concurrent and four empty-instance guard tests. Reconstruction is not a PostgreSQL pass.
 
 ## Explicit public dependency
 
@@ -26,3 +26,7 @@ Revision0448 followed the four explicitly parenthesized JSONB containment right 
 ## Subtraction grouping and error diagnostics
 
 Eight JSONB extractions in the atomic controls now have explicit operand parentheses before subtraction: three apply and five rollback sites. The fixture-only expected-error helper additionally reports SQLSTATE, message, detail, hint and context when the exact expected pattern fails. Both original assertions and all 175 + 10 + 4 labels, mutations, patterns, concurrency orderings, runner and cleanup are unchanged. The previous PG run hid the inner error behind the epoch-stale assertion, so this static correction does not prove its complete root cause or a passing gate. No corrected atomic PostgreSQL result is claimed.
+
+## Fixture column qualification
+
+The previous atomic PG run reached the complete-lease fixture and failed because its parameter kind conflicted with an unqualified table column. This version qualifies only the three column references in that subquery and adds its explicit table alias. Production HELD controls, synthetic controls, consumer339 dependency, diagnostics, case labels, patterns, runner and cleanup remain byte-identical to0509. The exact 175 + 10 + 4 gate still requires a new PostgreSQL run; no successful result is inferred from local reconstruction. No variable_conflict setting or guard changes are introduced.
