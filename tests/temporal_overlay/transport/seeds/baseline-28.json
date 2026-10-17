@@ -1,0 +1,1628 @@
+{
+  "today": "2035-11-05",
+  "protected_through": "2035-10-01",
+  "cases": [
+    "future_revision",
+    "past_due_revision",
+    "cross_month",
+    "cross_year",
+    "protected_october",
+    "paid",
+    "closed",
+    "null_status",
+    "linked_payment",
+    "newer_estimate_asof",
+    "document_conflict",
+    "unknown_source_time",
+    "old_source_late_receipt",
+    "equal_revision_conflict",
+    "identical_duplicates",
+    "null_due",
+    "amount_change",
+    "no_binding",
+    "newer_snapshot",
+    "deleted_source",
+    "same_timestamp_snapshot",
+    "newer_tombstone",
+    "same_version_tombstone_conflict",
+    "older_tombstone",
+    "naive_source_time",
+    "naive_snapshot_time",
+    "two_bill_ids_same_account_same_due_month",
+    "two_bill_ids_claim_one_obligation"
+  ],
+  "obligations": [
+    {
+      "event_id": "event-future_revision",
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-future_revision",
+      "family": "family-A",
+      "cycle_id": "cycle-2035-11",
+      "reference_month": "2035-11-01",
+      "due": "2035-11-12",
+      "amount": "100.00",
+      "status": "projected",
+      "provenance": "estimate",
+      "source_updated": null,
+      "document_as_of": null,
+      "payment_ids": [],
+      "purchase_ids": [
+        "purchase-1"
+      ],
+      "bill_key": null,
+      "due_basis": "provisional"
+    },
+    {
+      "event_id": "event-past_due_revision",
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-past_due_revision",
+      "family": "family-A",
+      "cycle_id": "cycle-2035-11",
+      "reference_month": "2035-11-01",
+      "due": "2035-11-12",
+      "amount": "100.00",
+      "status": "projected",
+      "provenance": "estimate",
+      "source_updated": null,
+      "document_as_of": null,
+      "payment_ids": [],
+      "purchase_ids": [
+        "purchase-1"
+      ],
+      "bill_key": null,
+      "due_basis": "provisional"
+    },
+    {
+      "event_id": "event-cross_month",
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-cross_month",
+      "family": "family-A",
+      "cycle_id": "cycle-2035-11",
+      "reference_month": "2035-11-01",
+      "due": "2035-11-12",
+      "amount": "100.00",
+      "status": "projected",
+      "provenance": "estimate",
+      "source_updated": null,
+      "document_as_of": null,
+      "payment_ids": [],
+      "purchase_ids": [
+        "purchase-1"
+      ],
+      "bill_key": null,
+      "due_basis": "provisional"
+    },
+    {
+      "event_id": "event-cross_year",
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-cross_year",
+      "family": "family-A",
+      "cycle_id": "cycle-2035-11",
+      "reference_month": "2035-11-01",
+      "due": "2035-11-12",
+      "amount": "100.00",
+      "status": "projected",
+      "provenance": "estimate",
+      "source_updated": null,
+      "document_as_of": null,
+      "payment_ids": [],
+      "purchase_ids": [
+        "purchase-1"
+      ],
+      "bill_key": null,
+      "due_basis": "provisional"
+    },
+    {
+      "event_id": "event-protected_october",
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-protected_october",
+      "family": "family-A",
+      "cycle_id": "october",
+      "reference_month": "2035-10-01",
+      "due": "2035-11-12",
+      "amount": "100.00",
+      "status": "projected",
+      "provenance": "estimate",
+      "source_updated": null,
+      "document_as_of": null,
+      "payment_ids": [],
+      "purchase_ids": [
+        "purchase-1"
+      ],
+      "bill_key": null,
+      "due_basis": "provisional"
+    },
+    {
+      "event_id": "event-paid",
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-paid",
+      "family": "family-A",
+      "cycle_id": "cycle-2035-11",
+      "reference_month": "2035-11-01",
+      "due": "2035-11-12",
+      "amount": "100.00",
+      "status": "paid",
+      "provenance": "estimate",
+      "source_updated": null,
+      "document_as_of": null,
+      "payment_ids": [],
+      "purchase_ids": [
+        "purchase-1"
+      ],
+      "bill_key": null,
+      "due_basis": "provisional"
+    },
+    {
+      "event_id": "event-closed",
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-closed",
+      "family": "family-A",
+      "cycle_id": "cycle-2035-11",
+      "reference_month": "2035-11-01",
+      "due": "2035-11-12",
+      "amount": "100.00",
+      "status": "closed",
+      "provenance": "estimate",
+      "source_updated": null,
+      "document_as_of": null,
+      "payment_ids": [],
+      "purchase_ids": [
+        "purchase-1"
+      ],
+      "bill_key": null,
+      "due_basis": "provisional"
+    },
+    {
+      "event_id": "event-null_status",
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-null_status",
+      "family": "family-A",
+      "cycle_id": "cycle-2035-11",
+      "reference_month": "2035-11-01",
+      "due": "2035-11-12",
+      "amount": "100.00",
+      "status": null,
+      "provenance": "estimate",
+      "source_updated": null,
+      "document_as_of": null,
+      "payment_ids": [],
+      "purchase_ids": [
+        "purchase-1"
+      ],
+      "bill_key": null,
+      "due_basis": "provisional"
+    },
+    {
+      "event_id": "event-linked_payment",
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-linked_payment",
+      "family": "family-A",
+      "cycle_id": "cycle-2035-11",
+      "reference_month": "2035-11-01",
+      "due": "2035-11-12",
+      "amount": "100.00",
+      "status": "projected",
+      "provenance": "estimate",
+      "source_updated": null,
+      "document_as_of": null,
+      "payment_ids": [
+        "payment-kept"
+      ],
+      "purchase_ids": [
+        "purchase-1"
+      ],
+      "bill_key": null,
+      "due_basis": "provisional"
+    },
+    {
+      "event_id": "event-newer_estimate_asof",
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-newer_estimate_asof",
+      "family": "family-A",
+      "cycle_id": "cycle-2035-11",
+      "reference_month": "2035-11-01",
+      "due": "2035-11-12",
+      "amount": "100.00",
+      "status": "projected",
+      "provenance": "estimate",
+      "source_updated": null,
+      "document_as_of": "2035-11-30",
+      "payment_ids": [],
+      "purchase_ids": [
+        "purchase-1"
+      ],
+      "bill_key": null,
+      "due_basis": "provisional"
+    },
+    {
+      "event_id": "event-document_conflict",
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-document_conflict",
+      "family": "family-A",
+      "cycle_id": "cycle-2035-11",
+      "reference_month": "2035-11-01",
+      "due": "2035-11-12",
+      "amount": "100.00",
+      "status": "projected",
+      "provenance": "document",
+      "source_updated": null,
+      "document_as_of": "2035-11-02",
+      "payment_ids": [],
+      "purchase_ids": [
+        "purchase-1"
+      ],
+      "bill_key": null,
+      "due_basis": "provisional"
+    },
+    {
+      "event_id": "event-unknown_source_time",
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-unknown_source_time",
+      "family": "family-A",
+      "cycle_id": "cycle-2035-11",
+      "reference_month": "2035-11-01",
+      "due": "2035-11-12",
+      "amount": "100.00",
+      "status": "projected",
+      "provenance": "estimate",
+      "source_updated": null,
+      "document_as_of": null,
+      "payment_ids": [],
+      "purchase_ids": [
+        "purchase-1"
+      ],
+      "bill_key": null,
+      "due_basis": "provisional"
+    },
+    {
+      "event_id": "event-old_source_late_receipt",
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-old_source_late_receipt",
+      "family": "family-A",
+      "cycle_id": "cycle-2035-11",
+      "reference_month": "2035-11-01",
+      "due": "2035-11-12",
+      "amount": "100.00",
+      "status": "projected",
+      "provenance": "estimate",
+      "source_updated": null,
+      "document_as_of": null,
+      "payment_ids": [],
+      "purchase_ids": [
+        "purchase-1"
+      ],
+      "bill_key": null,
+      "due_basis": "provisional"
+    },
+    {
+      "event_id": "event-equal_revision_conflict",
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-equal_revision_conflict",
+      "family": "family-A",
+      "cycle_id": "cycle-2035-11",
+      "reference_month": "2035-11-01",
+      "due": "2035-11-12",
+      "amount": "100.00",
+      "status": "projected",
+      "provenance": "estimate",
+      "source_updated": null,
+      "document_as_of": null,
+      "payment_ids": [],
+      "purchase_ids": [
+        "purchase-1"
+      ],
+      "bill_key": null,
+      "due_basis": "provisional"
+    },
+    {
+      "event_id": "event-identical_duplicates",
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-identical_duplicates",
+      "family": "family-A",
+      "cycle_id": "cycle-2035-11",
+      "reference_month": "2035-11-01",
+      "due": "2035-11-12",
+      "amount": "100.00",
+      "status": "projected",
+      "provenance": "estimate",
+      "source_updated": null,
+      "document_as_of": null,
+      "payment_ids": [],
+      "purchase_ids": [
+        "purchase-1"
+      ],
+      "bill_key": null,
+      "due_basis": "provisional"
+    },
+    {
+      "event_id": "event-null_due",
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-null_due",
+      "family": "family-A",
+      "cycle_id": "cycle-2035-11",
+      "reference_month": "2035-11-01",
+      "due": "2035-11-12",
+      "amount": "100.00",
+      "status": "projected",
+      "provenance": "estimate",
+      "source_updated": null,
+      "document_as_of": null,
+      "payment_ids": [],
+      "purchase_ids": [
+        "purchase-1"
+      ],
+      "bill_key": null,
+      "due_basis": "provisional"
+    },
+    {
+      "event_id": "event-amount_change",
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-amount_change",
+      "family": "family-A",
+      "cycle_id": "cycle-2035-11",
+      "reference_month": "2035-11-01",
+      "due": "2035-11-12",
+      "amount": "100.00",
+      "status": "projected",
+      "provenance": "estimate",
+      "source_updated": null,
+      "document_as_of": null,
+      "payment_ids": [],
+      "purchase_ids": [
+        "purchase-1"
+      ],
+      "bill_key": null,
+      "due_basis": "provisional"
+    },
+    {
+      "event_id": "event-no_binding",
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-no_binding",
+      "family": "family-A",
+      "cycle_id": "cycle-2035-11",
+      "reference_month": "2035-11-01",
+      "due": "2035-11-12",
+      "amount": "100.00",
+      "status": "projected",
+      "provenance": "estimate",
+      "source_updated": null,
+      "document_as_of": null,
+      "payment_ids": [],
+      "purchase_ids": [
+        "purchase-1"
+      ],
+      "bill_key": null,
+      "due_basis": "provisional"
+    },
+    {
+      "event_id": "event-newer_snapshot",
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-newer_snapshot",
+      "family": "family-A",
+      "cycle_id": "cycle-2035-11",
+      "reference_month": "2035-11-01",
+      "due": "2035-11-12",
+      "amount": "100.00",
+      "status": "projected",
+      "provenance": "issuer_invoice",
+      "source_updated": "2035-11-03 12:00:00+00:00",
+      "document_as_of": null,
+      "payment_ids": [],
+      "purchase_ids": [
+        "purchase-1"
+      ],
+      "bill_key": {
+        "owner": "owner-1",
+        "institution": "bank-A",
+        "account": "account-newer_snapshot",
+        "bill_id": "bill-newer_snapshot"
+      },
+      "due_basis": "provisional"
+    },
+    {
+      "event_id": "event-deleted_source",
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-deleted_source",
+      "family": "family-A",
+      "cycle_id": "cycle-2035-11",
+      "reference_month": "2035-11-01",
+      "due": "2035-11-12",
+      "amount": "100.00",
+      "status": "projected",
+      "provenance": "estimate",
+      "source_updated": null,
+      "document_as_of": null,
+      "payment_ids": [],
+      "purchase_ids": [
+        "purchase-1"
+      ],
+      "bill_key": null,
+      "due_basis": "provisional"
+    },
+    {
+      "event_id": "event-same_timestamp_snapshot",
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-same_timestamp_snapshot",
+      "family": "family-A",
+      "cycle_id": "cycle-2035-11",
+      "reference_month": "2035-11-01",
+      "due": "2035-11-12",
+      "amount": "100.00",
+      "status": "projected",
+      "provenance": "issuer_invoice",
+      "source_updated": "2035-11-02 12:00:00+00:00",
+      "document_as_of": null,
+      "payment_ids": [],
+      "purchase_ids": [
+        "purchase-1"
+      ],
+      "bill_key": {
+        "owner": "owner-1",
+        "institution": "bank-A",
+        "account": "account-same_timestamp_snapshot",
+        "bill_id": "bill-same_timestamp_snapshot"
+      },
+      "due_basis": "provisional"
+    },
+    {
+      "event_id": "event-newer_tombstone",
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-newer_tombstone",
+      "family": "family-A",
+      "cycle_id": "cycle-2035-11",
+      "reference_month": "2035-11-01",
+      "due": "2035-11-12",
+      "amount": "100.00",
+      "status": "projected",
+      "provenance": "estimate",
+      "source_updated": null,
+      "document_as_of": null,
+      "payment_ids": [],
+      "purchase_ids": [
+        "purchase-1"
+      ],
+      "bill_key": null,
+      "due_basis": "provisional"
+    },
+    {
+      "event_id": "event-same_version_tombstone_conflict",
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-same_version_tombstone_conflict",
+      "family": "family-A",
+      "cycle_id": "cycle-2035-11",
+      "reference_month": "2035-11-01",
+      "due": "2035-11-12",
+      "amount": "100.00",
+      "status": "projected",
+      "provenance": "estimate",
+      "source_updated": null,
+      "document_as_of": null,
+      "payment_ids": [],
+      "purchase_ids": [
+        "purchase-1"
+      ],
+      "bill_key": null,
+      "due_basis": "provisional"
+    },
+    {
+      "event_id": "event-older_tombstone",
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-older_tombstone",
+      "family": "family-A",
+      "cycle_id": "cycle-2035-11",
+      "reference_month": "2035-11-01",
+      "due": "2035-11-12",
+      "amount": "100.00",
+      "status": "projected",
+      "provenance": "estimate",
+      "source_updated": null,
+      "document_as_of": null,
+      "payment_ids": [],
+      "purchase_ids": [
+        "purchase-1"
+      ],
+      "bill_key": null,
+      "due_basis": "provisional"
+    },
+    {
+      "event_id": "event-naive_source_time",
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-naive_source_time",
+      "family": "family-A",
+      "cycle_id": "cycle-2035-11",
+      "reference_month": "2035-11-01",
+      "due": "2035-11-12",
+      "amount": "100.00",
+      "status": "projected",
+      "provenance": "estimate",
+      "source_updated": null,
+      "document_as_of": null,
+      "payment_ids": [],
+      "purchase_ids": [
+        "purchase-1"
+      ],
+      "bill_key": null,
+      "due_basis": "provisional"
+    },
+    {
+      "event_id": "event-naive_snapshot_time",
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-naive_snapshot_time",
+      "family": "family-A",
+      "cycle_id": "cycle-2035-11",
+      "reference_month": "2035-11-01",
+      "due": "2035-11-12",
+      "amount": "100.00",
+      "status": "projected",
+      "provenance": "issuer_invoice",
+      "source_updated": "2035-11-01 12:00:00",
+      "document_as_of": null,
+      "payment_ids": [],
+      "purchase_ids": [
+        "purchase-1"
+      ],
+      "bill_key": null,
+      "due_basis": "provisional"
+    },
+    {
+      "event_id": "same-month-event-1",
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "shared-account",
+      "family": "family-A",
+      "cycle_id": "cycle-1",
+      "reference_month": "2035-11-01",
+      "due": "2035-11-12",
+      "amount": "100.00",
+      "status": "projected",
+      "provenance": "estimate",
+      "source_updated": null,
+      "document_as_of": null,
+      "payment_ids": [],
+      "purchase_ids": [
+        "purchase-1"
+      ],
+      "bill_key": null,
+      "due_basis": "provisional"
+    },
+    {
+      "event_id": "same-month-event-2",
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "shared-account",
+      "family": "family-A",
+      "cycle_id": "cycle-2",
+      "reference_month": "2035-11-01",
+      "due": "2035-11-12",
+      "amount": "100.00",
+      "status": "projected",
+      "provenance": "estimate",
+      "source_updated": null,
+      "document_as_of": null,
+      "payment_ids": [],
+      "purchase_ids": [
+        "purchase-1"
+      ],
+      "bill_key": null,
+      "due_basis": "provisional"
+    },
+    {
+      "event_id": "double-claim",
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "double-claim-account",
+      "family": "family-A",
+      "cycle_id": "cycle-2035-11",
+      "reference_month": "2035-11-01",
+      "due": "2035-11-12",
+      "amount": "100.00",
+      "status": "projected",
+      "provenance": "estimate",
+      "source_updated": null,
+      "document_as_of": null,
+      "payment_ids": [],
+      "purchase_ids": [
+        "purchase-1"
+      ],
+      "bill_key": null,
+      "due_basis": "provisional"
+    }
+  ],
+  "bills": [
+    {
+      "family": "family-A",
+      "due": "2035-11-18",
+      "amount": "100.00",
+      "source_updated": "2035-11-02 12:00:00+00:00",
+      "received_at": "2035-11-03 12:00:00+00:00",
+      "closing_date": "2035-11-04",
+      "deleted": false,
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-future_revision",
+      "bill_id": "bill-future_revision"
+    },
+    {
+      "family": "family-A",
+      "due": "2035-11-03",
+      "amount": "100.00",
+      "source_updated": "2035-11-02 12:00:00+00:00",
+      "received_at": "2035-11-03 12:00:00+00:00",
+      "closing_date": "2035-11-04",
+      "deleted": false,
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-past_due_revision",
+      "bill_id": "bill-past_due_revision"
+    },
+    {
+      "family": "family-A",
+      "due": "2035-12-03",
+      "amount": "100.00",
+      "source_updated": "2035-11-02 12:00:00+00:00",
+      "received_at": "2035-11-03 12:00:00+00:00",
+      "closing_date": "2035-11-04",
+      "deleted": false,
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-cross_month",
+      "bill_id": "bill-cross_month"
+    },
+    {
+      "family": "family-A",
+      "due": "2036-01-03",
+      "amount": "100.00",
+      "source_updated": "2035-11-02 12:00:00+00:00",
+      "received_at": "2035-11-03 12:00:00+00:00",
+      "closing_date": "2035-11-04",
+      "deleted": false,
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-cross_year",
+      "bill_id": "bill-cross_year"
+    },
+    {
+      "family": "family-A",
+      "due": "2035-11-18",
+      "amount": "100.00",
+      "source_updated": "2035-11-02 12:00:00+00:00",
+      "received_at": "2035-11-03 12:00:00+00:00",
+      "closing_date": "2035-11-04",
+      "deleted": false,
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-protected_october",
+      "bill_id": "bill-protected_october"
+    },
+    {
+      "family": "family-A",
+      "due": "2035-11-18",
+      "amount": "100.00",
+      "source_updated": "2035-11-02 12:00:00+00:00",
+      "received_at": "2035-11-03 12:00:00+00:00",
+      "closing_date": "2035-11-04",
+      "deleted": false,
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-paid",
+      "bill_id": "bill-paid"
+    },
+    {
+      "family": "family-A",
+      "due": "2035-11-18",
+      "amount": "100.00",
+      "source_updated": "2035-11-02 12:00:00+00:00",
+      "received_at": "2035-11-03 12:00:00+00:00",
+      "closing_date": "2035-11-04",
+      "deleted": false,
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-closed",
+      "bill_id": "bill-closed"
+    },
+    {
+      "family": "family-A",
+      "due": "2035-11-18",
+      "amount": "100.00",
+      "source_updated": "2035-11-02 12:00:00+00:00",
+      "received_at": "2035-11-03 12:00:00+00:00",
+      "closing_date": "2035-11-04",
+      "deleted": false,
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-null_status",
+      "bill_id": "bill-null_status"
+    },
+    {
+      "family": "family-A",
+      "due": "2035-11-18",
+      "amount": "100.00",
+      "source_updated": "2035-11-02 12:00:00+00:00",
+      "received_at": "2035-11-03 12:00:00+00:00",
+      "closing_date": "2035-11-04",
+      "deleted": false,
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-linked_payment",
+      "bill_id": "bill-linked_payment"
+    },
+    {
+      "family": "family-A",
+      "due": "2035-11-18",
+      "amount": "100.00",
+      "source_updated": "2035-11-02 12:00:00+00:00",
+      "received_at": "2035-11-03 12:00:00+00:00",
+      "closing_date": "2035-11-04",
+      "deleted": false,
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-newer_estimate_asof",
+      "bill_id": "bill-newer_estimate_asof"
+    },
+    {
+      "family": "family-A",
+      "due": "2035-11-18",
+      "amount": "100.00",
+      "source_updated": "2035-11-02 12:00:00+00:00",
+      "received_at": "2035-11-03 12:00:00+00:00",
+      "closing_date": "2035-11-04",
+      "deleted": false,
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-document_conflict",
+      "bill_id": "bill-document_conflict"
+    },
+    {
+      "family": "family-A",
+      "due": "2035-11-18",
+      "amount": "100.00",
+      "source_updated": null,
+      "received_at": "2035-11-03 12:00:00+00:00",
+      "closing_date": "2035-11-04",
+      "deleted": false,
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-unknown_source_time",
+      "bill_id": "bill-unknown_source_time"
+    },
+    {
+      "family": "family-A",
+      "due": "2035-11-18",
+      "amount": "100.00",
+      "source_updated": "2035-11-02 12:00:00+00:00",
+      "received_at": "2035-11-03 12:00:00+00:00",
+      "closing_date": "2035-11-04",
+      "deleted": false,
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-old_source_late_receipt",
+      "bill_id": "bill-old_source_late_receipt"
+    },
+    {
+      "family": "family-A",
+      "due": "2035-11-20",
+      "amount": "100.00",
+      "source_updated": "2035-11-01 12:00:00+00:00",
+      "received_at": "2035-11-30 12:00:00+00:00",
+      "closing_date": "2035-11-04",
+      "deleted": false,
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-old_source_late_receipt",
+      "bill_id": "bill-old_source_late_receipt"
+    },
+    {
+      "family": "family-A",
+      "due": "2035-11-18",
+      "amount": "100.00",
+      "source_updated": "2035-11-02 12:00:00+00:00",
+      "received_at": "2035-11-03 12:00:00+00:00",
+      "closing_date": "2035-11-04",
+      "deleted": false,
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-equal_revision_conflict",
+      "bill_id": "bill-equal_revision_conflict"
+    },
+    {
+      "family": "family-A",
+      "due": "2035-11-20",
+      "amount": "100.00",
+      "source_updated": "2035-11-02 12:00:00+00:00",
+      "received_at": "2035-11-03 12:00:00+00:00",
+      "closing_date": "2035-11-04",
+      "deleted": false,
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-equal_revision_conflict",
+      "bill_id": "bill-equal_revision_conflict"
+    },
+    {
+      "family": "family-A",
+      "due": "2035-11-18",
+      "amount": "100.00",
+      "source_updated": "2035-11-02 12:00:00+00:00",
+      "received_at": "2035-11-03 12:00:00+00:00",
+      "closing_date": "2035-11-04",
+      "deleted": false,
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-identical_duplicates",
+      "bill_id": "bill-identical_duplicates"
+    },
+    {
+      "family": "family-A",
+      "due": "2035-11-18",
+      "amount": "100.00",
+      "source_updated": "2035-11-02 12:00:00+00:00",
+      "received_at": "2035-11-30 12:00:00+00:00",
+      "closing_date": "2035-11-04",
+      "deleted": false,
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-identical_duplicates",
+      "bill_id": "bill-identical_duplicates"
+    },
+    {
+      "family": "family-A",
+      "due": null,
+      "amount": "100.00",
+      "source_updated": "2035-11-02 12:00:00+00:00",
+      "received_at": "2035-11-03 12:00:00+00:00",
+      "closing_date": "2035-11-04",
+      "deleted": false,
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-null_due",
+      "bill_id": "bill-null_due"
+    },
+    {
+      "family": "family-A",
+      "due": "2035-11-18",
+      "amount": "101.00",
+      "source_updated": "2035-11-02 12:00:00+00:00",
+      "received_at": "2035-11-03 12:00:00+00:00",
+      "closing_date": "2035-11-04",
+      "deleted": false,
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-amount_change",
+      "bill_id": "bill-amount_change"
+    },
+    {
+      "family": "family-A",
+      "due": "2035-11-18",
+      "amount": "100.00",
+      "source_updated": "2035-11-02 12:00:00+00:00",
+      "received_at": "2035-11-03 12:00:00+00:00",
+      "closing_date": "2035-11-04",
+      "deleted": false,
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-no_binding",
+      "bill_id": "bill-no_binding"
+    },
+    {
+      "family": "family-A",
+      "due": "2035-11-18",
+      "amount": "100.00",
+      "source_updated": "2035-11-02 12:00:00+00:00",
+      "received_at": "2035-11-03 12:00:00+00:00",
+      "closing_date": "2035-11-04",
+      "deleted": false,
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-newer_snapshot",
+      "bill_id": "bill-newer_snapshot"
+    },
+    {
+      "family": "family-A",
+      "due": "2035-11-18",
+      "amount": "100.00",
+      "source_updated": "2035-11-02 12:00:00+00:00",
+      "received_at": "2035-11-03 12:00:00+00:00",
+      "closing_date": "2035-11-04",
+      "deleted": true,
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-deleted_source",
+      "bill_id": "bill-deleted_source"
+    },
+    {
+      "family": "family-A",
+      "due": "2035-11-18",
+      "amount": "100.00",
+      "source_updated": "2035-11-02 12:00:00+00:00",
+      "received_at": "2035-11-03 12:00:00+00:00",
+      "closing_date": "2035-11-04",
+      "deleted": false,
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-same_timestamp_snapshot",
+      "bill_id": "bill-same_timestamp_snapshot"
+    },
+    {
+      "family": "family-A",
+      "due": "2035-11-18",
+      "amount": "100.00",
+      "source_updated": "2035-11-02 12:00:00+00:00",
+      "received_at": "2035-11-03 12:00:00+00:00",
+      "closing_date": "2035-11-04",
+      "deleted": false,
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-newer_tombstone",
+      "bill_id": "bill-newer_tombstone"
+    },
+    {
+      "family": "family-A",
+      "due": "2035-11-18",
+      "amount": "100.00",
+      "source_updated": "2035-11-03 12:00:00+00:00",
+      "received_at": "2035-11-03 12:00:00+00:00",
+      "closing_date": "2035-11-04",
+      "deleted": true,
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-newer_tombstone",
+      "bill_id": "bill-newer_tombstone"
+    },
+    {
+      "family": "family-A",
+      "due": "2035-11-18",
+      "amount": "100.00",
+      "source_updated": "2035-11-02 12:00:00+00:00",
+      "received_at": "2035-11-03 12:00:00+00:00",
+      "closing_date": "2035-11-04",
+      "deleted": false,
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-same_version_tombstone_conflict",
+      "bill_id": "bill-same_version_tombstone_conflict"
+    },
+    {
+      "family": "family-A",
+      "due": "2035-11-18",
+      "amount": "100.00",
+      "source_updated": "2035-11-02 12:00:00+00:00",
+      "received_at": "2035-11-03 12:00:00+00:00",
+      "closing_date": "2035-11-04",
+      "deleted": true,
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-same_version_tombstone_conflict",
+      "bill_id": "bill-same_version_tombstone_conflict"
+    },
+    {
+      "family": "family-A",
+      "due": "2035-11-18",
+      "amount": "100.00",
+      "source_updated": "2035-11-02 12:00:00+00:00",
+      "received_at": "2035-11-03 12:00:00+00:00",
+      "closing_date": "2035-11-04",
+      "deleted": false,
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-older_tombstone",
+      "bill_id": "bill-older_tombstone"
+    },
+    {
+      "family": "family-A",
+      "due": "2035-11-18",
+      "amount": "100.00",
+      "source_updated": "2035-11-01 12:00:00+00:00",
+      "received_at": "2035-11-03 12:00:00+00:00",
+      "closing_date": "2035-11-04",
+      "deleted": true,
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-older_tombstone",
+      "bill_id": "bill-older_tombstone"
+    },
+    {
+      "family": "family-A",
+      "due": "2035-11-18",
+      "amount": "100.00",
+      "source_updated": "2035-11-02 12:00:00+00:00",
+      "received_at": "2035-11-03 12:00:00+00:00",
+      "closing_date": "2035-11-04",
+      "deleted": false,
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-naive_source_time",
+      "bill_id": "bill-naive_source_time"
+    },
+    {
+      "family": "family-A",
+      "due": "2035-11-18",
+      "amount": "100.00",
+      "source_updated": "2035-11-03 12:00:00",
+      "received_at": "2035-11-03 12:00:00+00:00",
+      "closing_date": "2035-11-04",
+      "deleted": false,
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-naive_source_time",
+      "bill_id": "bill-naive_source_time"
+    },
+    {
+      "family": "family-A",
+      "due": "2035-11-18",
+      "amount": "100.00",
+      "source_updated": "2035-11-02 12:00:00+00:00",
+      "received_at": "2035-11-03 12:00:00+00:00",
+      "closing_date": "2035-11-04",
+      "deleted": false,
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-naive_snapshot_time",
+      "bill_id": "bill-naive_snapshot_time"
+    },
+    {
+      "family": "family-A",
+      "due": "2035-11-19",
+      "amount": "100.00",
+      "source_updated": "2035-11-02 12:00:00+00:00",
+      "received_at": "2035-11-03 12:00:00+00:00",
+      "closing_date": "2035-11-04",
+      "deleted": false,
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "shared-account",
+      "bill_id": "same-month-bill-1"
+    },
+    {
+      "family": "family-A",
+      "due": "2035-11-20",
+      "amount": "100.00",
+      "source_updated": "2035-11-02 12:00:00+00:00",
+      "received_at": "2035-11-03 12:00:00+00:00",
+      "closing_date": "2035-11-04",
+      "deleted": false,
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "shared-account",
+      "bill_id": "same-month-bill-2"
+    },
+    {
+      "family": "family-A",
+      "due": "2035-11-18",
+      "amount": "100.00",
+      "source_updated": "2035-11-02 12:00:00+00:00",
+      "received_at": "2035-11-03 12:00:00+00:00",
+      "closing_date": "2035-11-04",
+      "deleted": false,
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "double-claim-account",
+      "bill_id": "claim-1"
+    },
+    {
+      "family": "family-A",
+      "due": "2035-11-18",
+      "amount": "100.00",
+      "source_updated": "2035-11-02 12:00:00+00:00",
+      "received_at": "2035-11-03 12:00:00+00:00",
+      "closing_date": "2035-11-04",
+      "deleted": false,
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "double-claim-account",
+      "bill_id": "claim-2"
+    }
+  ],
+  "bindings": [
+    {
+      "event_id": "event-future_revision",
+      "cycle_id": "cycle-2035-11",
+      "reference_month": "2035-11-01",
+      "method": "explicit_issuer_cycle",
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-future_revision",
+      "bill_id": "bill-future_revision"
+    },
+    {
+      "event_id": "event-past_due_revision",
+      "cycle_id": "cycle-2035-11",
+      "reference_month": "2035-11-01",
+      "method": "explicit_issuer_cycle",
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-past_due_revision",
+      "bill_id": "bill-past_due_revision"
+    },
+    {
+      "event_id": "event-cross_month",
+      "cycle_id": "cycle-2035-11",
+      "reference_month": "2035-11-01",
+      "method": "explicit_issuer_cycle",
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-cross_month",
+      "bill_id": "bill-cross_month"
+    },
+    {
+      "event_id": "event-cross_year",
+      "cycle_id": "cycle-2035-11",
+      "reference_month": "2035-11-01",
+      "method": "explicit_issuer_cycle",
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-cross_year",
+      "bill_id": "bill-cross_year"
+    },
+    {
+      "event_id": "event-protected_october",
+      "cycle_id": "october",
+      "reference_month": "2035-10-01",
+      "method": "explicit_issuer_cycle",
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-protected_october",
+      "bill_id": "bill-protected_october"
+    },
+    {
+      "event_id": "event-paid",
+      "cycle_id": "cycle-2035-11",
+      "reference_month": "2035-11-01",
+      "method": "explicit_issuer_cycle",
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-paid",
+      "bill_id": "bill-paid"
+    },
+    {
+      "event_id": "event-closed",
+      "cycle_id": "cycle-2035-11",
+      "reference_month": "2035-11-01",
+      "method": "explicit_issuer_cycle",
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-closed",
+      "bill_id": "bill-closed"
+    },
+    {
+      "event_id": "event-null_status",
+      "cycle_id": "cycle-2035-11",
+      "reference_month": "2035-11-01",
+      "method": "explicit_issuer_cycle",
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-null_status",
+      "bill_id": "bill-null_status"
+    },
+    {
+      "event_id": "event-linked_payment",
+      "cycle_id": "cycle-2035-11",
+      "reference_month": "2035-11-01",
+      "method": "explicit_issuer_cycle",
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-linked_payment",
+      "bill_id": "bill-linked_payment"
+    },
+    {
+      "event_id": "event-newer_estimate_asof",
+      "cycle_id": "cycle-2035-11",
+      "reference_month": "2035-11-01",
+      "method": "explicit_issuer_cycle",
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-newer_estimate_asof",
+      "bill_id": "bill-newer_estimate_asof"
+    },
+    {
+      "event_id": "event-document_conflict",
+      "cycle_id": "cycle-2035-11",
+      "reference_month": "2035-11-01",
+      "method": "explicit_issuer_cycle",
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-document_conflict",
+      "bill_id": "bill-document_conflict"
+    },
+    {
+      "event_id": "event-unknown_source_time",
+      "cycle_id": "cycle-2035-11",
+      "reference_month": "2035-11-01",
+      "method": "explicit_issuer_cycle",
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-unknown_source_time",
+      "bill_id": "bill-unknown_source_time"
+    },
+    {
+      "event_id": "event-old_source_late_receipt",
+      "cycle_id": "cycle-2035-11",
+      "reference_month": "2035-11-01",
+      "method": "explicit_issuer_cycle",
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-old_source_late_receipt",
+      "bill_id": "bill-old_source_late_receipt"
+    },
+    {
+      "event_id": "event-equal_revision_conflict",
+      "cycle_id": "cycle-2035-11",
+      "reference_month": "2035-11-01",
+      "method": "explicit_issuer_cycle",
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-equal_revision_conflict",
+      "bill_id": "bill-equal_revision_conflict"
+    },
+    {
+      "event_id": "event-identical_duplicates",
+      "cycle_id": "cycle-2035-11",
+      "reference_month": "2035-11-01",
+      "method": "explicit_issuer_cycle",
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-identical_duplicates",
+      "bill_id": "bill-identical_duplicates"
+    },
+    {
+      "event_id": "event-null_due",
+      "cycle_id": "cycle-2035-11",
+      "reference_month": "2035-11-01",
+      "method": "explicit_issuer_cycle",
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-null_due",
+      "bill_id": "bill-null_due"
+    },
+    {
+      "event_id": "event-amount_change",
+      "cycle_id": "cycle-2035-11",
+      "reference_month": "2035-11-01",
+      "method": "explicit_issuer_cycle",
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-amount_change",
+      "bill_id": "bill-amount_change"
+    },
+    {
+      "event_id": "event-newer_snapshot",
+      "cycle_id": "cycle-2035-11",
+      "reference_month": "2035-11-01",
+      "method": "explicit_issuer_cycle",
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-newer_snapshot",
+      "bill_id": "bill-newer_snapshot"
+    },
+    {
+      "event_id": "event-deleted_source",
+      "cycle_id": "cycle-2035-11",
+      "reference_month": "2035-11-01",
+      "method": "explicit_issuer_cycle",
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-deleted_source",
+      "bill_id": "bill-deleted_source"
+    },
+    {
+      "event_id": "event-same_timestamp_snapshot",
+      "cycle_id": "cycle-2035-11",
+      "reference_month": "2035-11-01",
+      "method": "explicit_issuer_cycle",
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-same_timestamp_snapshot",
+      "bill_id": "bill-same_timestamp_snapshot"
+    },
+    {
+      "event_id": "event-newer_tombstone",
+      "cycle_id": "cycle-2035-11",
+      "reference_month": "2035-11-01",
+      "method": "explicit_issuer_cycle",
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-newer_tombstone",
+      "bill_id": "bill-newer_tombstone"
+    },
+    {
+      "event_id": "event-same_version_tombstone_conflict",
+      "cycle_id": "cycle-2035-11",
+      "reference_month": "2035-11-01",
+      "method": "explicit_issuer_cycle",
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-same_version_tombstone_conflict",
+      "bill_id": "bill-same_version_tombstone_conflict"
+    },
+    {
+      "event_id": "event-older_tombstone",
+      "cycle_id": "cycle-2035-11",
+      "reference_month": "2035-11-01",
+      "method": "explicit_issuer_cycle",
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-older_tombstone",
+      "bill_id": "bill-older_tombstone"
+    },
+    {
+      "event_id": "event-naive_source_time",
+      "cycle_id": "cycle-2035-11",
+      "reference_month": "2035-11-01",
+      "method": "explicit_issuer_cycle",
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-naive_source_time",
+      "bill_id": "bill-naive_source_time"
+    },
+    {
+      "event_id": "event-naive_snapshot_time",
+      "cycle_id": "cycle-2035-11",
+      "reference_month": "2035-11-01",
+      "method": "explicit_issuer_cycle",
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "account-naive_snapshot_time",
+      "bill_id": "bill-naive_snapshot_time"
+    },
+    {
+      "event_id": "same-month-event-1",
+      "cycle_id": "cycle-1",
+      "reference_month": "2035-11-01",
+      "method": "explicit_issuer_cycle",
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "shared-account",
+      "bill_id": "same-month-bill-1"
+    },
+    {
+      "event_id": "same-month-event-2",
+      "cycle_id": "cycle-2",
+      "reference_month": "2035-11-01",
+      "method": "explicit_issuer_cycle",
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "shared-account",
+      "bill_id": "same-month-bill-2"
+    },
+    {
+      "event_id": "double-claim",
+      "cycle_id": "cycle-2035-11",
+      "reference_month": "2035-11-01",
+      "method": "explicit_issuer_cycle",
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "double-claim-account",
+      "bill_id": "claim-1"
+    },
+    {
+      "event_id": "double-claim",
+      "cycle_id": "cycle-2035-11",
+      "reference_month": "2035-11-01",
+      "method": "explicit_issuer_cycle",
+      "owner": "owner-1",
+      "institution": "bank-A",
+      "account": "double-claim-account",
+      "bill_id": "claim-2"
+    }
+  ],
+  "expected": [
+    {
+      "event_id": "event-future_revision",
+      "due": "2035-11-18"
+    },
+    {
+      "event_id": "event-past_due_revision",
+      "due": "2035-11-03"
+    },
+    {
+      "event_id": "event-cross_month",
+      "due": "2035-12-03"
+    },
+    {
+      "event_id": "event-cross_year",
+      "due": "2036-01-03"
+    },
+    {
+      "event_id": "event-protected_october",
+      "due": "2035-11-12"
+    },
+    {
+      "event_id": "event-paid",
+      "due": "2035-11-12"
+    },
+    {
+      "event_id": "event-closed",
+      "due": "2035-11-12"
+    },
+    {
+      "event_id": "event-null_status",
+      "due": "2035-11-12"
+    },
+    {
+      "event_id": "event-linked_payment",
+      "due": "2035-11-12"
+    },
+    {
+      "event_id": "event-newer_estimate_asof",
+      "due": "2035-11-18"
+    },
+    {
+      "event_id": "event-document_conflict",
+      "due": "2035-11-12"
+    },
+    {
+      "event_id": "event-unknown_source_time",
+      "due": "2035-11-12"
+    },
+    {
+      "event_id": "event-old_source_late_receipt",
+      "due": "2035-11-18"
+    },
+    {
+      "event_id": "event-equal_revision_conflict",
+      "due": "2035-11-12"
+    },
+    {
+      "event_id": "event-identical_duplicates",
+      "due": "2035-11-18"
+    },
+    {
+      "event_id": "event-null_due",
+      "due": "2035-11-12"
+    },
+    {
+      "event_id": "event-amount_change",
+      "due": "2035-11-12"
+    },
+    {
+      "event_id": "event-no_binding",
+      "due": "2035-11-12"
+    },
+    {
+      "event_id": "event-newer_snapshot",
+      "due": "2035-11-12"
+    },
+    {
+      "event_id": "event-deleted_source",
+      "due": "2035-11-12"
+    },
+    {
+      "event_id": "event-same_timestamp_snapshot",
+      "due": "2035-11-12"
+    },
+    {
+      "event_id": "event-newer_tombstone",
+      "due": "2035-11-12"
+    },
+    {
+      "event_id": "event-same_version_tombstone_conflict",
+      "due": "2035-11-12"
+    },
+    {
+      "event_id": "event-older_tombstone",
+      "due": "2035-11-18"
+    },
+    {
+      "event_id": "event-naive_source_time",
+      "due": "2035-11-12"
+    },
+    {
+      "event_id": "event-naive_snapshot_time",
+      "due": "2035-11-12"
+    },
+    {
+      "event_id": "same-month-event-1",
+      "due": "2035-11-19"
+    },
+    {
+      "event_id": "same-month-event-2",
+      "due": "2035-11-20"
+    },
+    {
+      "event_id": "double-claim",
+      "due": "2035-11-12"
+    }
+  ],
+  "expected_findings": [
+    {
+      "code": "unknown_source_recency",
+      "identity": "BillKey(owner='owner-1', institution='bank-A', account='account-unknown_source_time', bill_id='bill-unknown_source_time')"
+    },
+    {
+      "code": "conflicting_latest_revision",
+      "identity": "BillKey(owner='owner-1', institution='bank-A', account='account-equal_revision_conflict', bill_id='bill-equal_revision_conflict')"
+    },
+    {
+      "code": "latest_source_deleted_preserved",
+      "identity": "BillKey(owner='owner-1', institution='bank-A', account='account-deleted_source', bill_id='bill-deleted_source')"
+    },
+    {
+      "code": "latest_source_deleted_preserved",
+      "identity": "BillKey(owner='owner-1', institution='bank-A', account='account-newer_tombstone', bill_id='bill-newer_tombstone')"
+    },
+    {
+      "code": "conflicting_latest_revision",
+      "identity": "BillKey(owner='owner-1', institution='bank-A', account='account-same_version_tombstone_conflict', bill_id='bill-same_version_tombstone_conflict')"
+    },
+    {
+      "code": "unknown_source_recency",
+      "identity": "BillKey(owner='owner-1', institution='bank-A', account='account-naive_source_time', bill_id='bill-naive_source_time')"
+    },
+    {
+      "code": "missing_or_ambiguous_cycle_binding",
+      "identity": "BillKey(owner='owner-1', institution='bank-A', account='account-no_binding', bill_id='bill-no_binding')"
+    },
+    {
+      "code": "protected_cycle_preserved",
+      "identity": "event-protected_october"
+    },
+    {
+      "code": "fulfilled_or_unknown_status_preserved",
+      "identity": "event-paid"
+    },
+    {
+      "code": "fulfilled_or_unknown_status_preserved",
+      "identity": "event-closed"
+    },
+    {
+      "code": "fulfilled_or_unknown_status_preserved",
+      "identity": "event-null_status"
+    },
+    {
+      "code": "fulfilled_or_unknown_status_preserved",
+      "identity": "event-linked_payment"
+    },
+    {
+      "code": "documentary_conflict_requires_reconciliation",
+      "identity": "event-document_conflict"
+    },
+    {
+      "code": "missing_invoice_due",
+      "identity": "event-null_due"
+    },
+    {
+      "code": "amount_change_outside_date_only_scope",
+      "identity": "event-amount_change"
+    },
+    {
+      "code": "older_issuer_revision_preserved",
+      "identity": "event-newer_snapshot"
+    },
+    {
+      "code": "equal_revision_conflict",
+      "identity": "event-same_timestamp_snapshot"
+    },
+    {
+      "code": "unknown_snapshot_recency",
+      "identity": "event-naive_snapshot_time"
+    },
+    {
+      "code": "multiple_bills_for_one_obligation",
+      "identity": "double-claim"
+    }
+  ]
+}
