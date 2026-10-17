@@ -38,9 +38,9 @@ jobs:
       - name: Reconstruct and run isolated atomic gate
         run: |
           set -euo pipefail
-          echo '303ae99674df66c542ea87227106c057355d740ed8eb088e648cc77f7fda11bf  tests/q26_option_a_atomic/SOURCE_MANIFEST.json' | sha256sum -c -
+          echo 'c945e24f5c7bdfed04b829eccb5c2f070be6a1c0fd91d4bf51e10d71981e4433  tests/q26_option_a_atomic/SOURCE_MANIFEST.json' | sha256sum -c -
           python3 tests/q26_option_a_atomic/generate.py --consumer-dir "$RUNNER_TEMP/q26-option-a-reconstructed" --output "$RUNNER_TEMP/q26-option-a-atomic" > qa/atomic-generation.log 2> qa/atomic-generation.stderr
-          echo "634580ac2c81286ade94b8e16300f9bac19981fc209fce0b991ac27d0e93a34c  $RUNNER_TEMP/q26-option-a-atomic/PUBLIC_MANIFEST.json" | sha256sum -c -
+          echo "4be2f306e23d2347d8aba83085dbf771b546aa18c3f0a16fd32c9f8e8ac2c173  $RUNNER_TEMP/q26-option-a-atomic/PUBLIC_MANIFEST.json" | sha256sum -c -
           psql -X -Atc 'select version()' > qa/server-version.txt
           python3 "$RUNNER_TEMP/q26-option-a-atomic/run_disposable.py" > qa/atomic-runner.log 2> qa/atomic-runner.stderr
           python3 - <<'CHECK'

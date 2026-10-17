@@ -1,5 +1,5 @@
 {
-  "version": "readable-atomic-generator-0528-qualified-fixture-columns",
+  "version": "readable-atomic-generator-0539-deterministic-label-collation",
   "files": [
     {
       "name": "CONSUMER_DEPENDENCY.json",
@@ -9,12 +9,12 @@
     {
       "name": "OUTPUT_CONTRACT.json",
       "bytes": 1810,
-      "sha256": "7a8ccdedd36e8cd7fbd306d3deb8722d8be404e250517f0fa4c546a18cd66be7"
+      "sha256": "8fd9daf79d9520cd8a39c2c8d0a491d7b805c47be4b0f0e6b6cbb8d4ace2ad30"
     },
     {
       "name": "README_GENERATOR.md",
-      "bytes": 4781,
-      "sha256": "f20d01e2b3619a9da82a012e54a5f7f51844e8c641e242e9b99a7dd55ba0e711"
+      "bytes": 5360,
+      "sha256": "a538c667c3c55a3fd9175821f44f7dae44d57cd14fd8de4c1c60793bc48d92e1"
     },
     {
       "name": "atomic_suffix.template.sql",
@@ -38,8 +38,8 @@
     },
     {
       "name": "frozen_files/PUBLIC_MANIFEST.json",
-      "bytes": 1986,
-      "sha256": "634580ac2c81286ade94b8e16300f9bac19981fc209fce0b991ac27d0e93a34c"
+      "bytes": 1990,
+      "sha256": "4be2f306e23d2347d8aba83085dbf771b546aa18c3f0a16fd32c9f8e8ac2c173"
     },
     {
       "name": "frozen_files/README.md",
@@ -53,8 +53,8 @@
     },
     {
       "name": "frozen_files/atomic_functional.sql",
-      "bytes": 31917,
-      "sha256": "cc764157c75f2a2a7f7fb652778e5a91013eff78c4fc3af260a88b514c0d84e6"
+      "bytes": 31929,
+      "sha256": "0a7fb2f60afc56b3e48bded95c02a7ee73fdd128bf55611df4e526725c6cd611"
     },
     {
       "name": "frozen_files/empty_instance_guard.sql",

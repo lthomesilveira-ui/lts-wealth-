@@ -518,6 +518,6 @@ SELECT public.fixture_atomic_expect_fail('apply',public.fixture_atomic_lease('ap
 DO $idem$ DECLARE l jsonb;BEGIN l:=public.fixture_atomic_complete_lease('rollback');PERFORM public.fixture_atomic_expect_fail('rollback',jsonb_set(l,'{expected_compensated_state,compensation_receipt_sha256}',to_jsonb(repeat('0',64))),'lifecycle/compensation receipt anchor cannot change','anchors');END $idem$;
 SELECT public.fixture_assert((SELECT bool_and(NOT rolsuper) FROM pg_roles WHERE rolname IN('fixture_owner','service_role')),$t$roles/non superuser execution$t$);
 SELECT public.fixture_assert((SELECT bool_and(rolbypassrls) FROM pg_roles WHERE rolname IN('fixture_owner','service_role')),$t$roles/bypass RLS explicitly modeled$t$);
-SELECT jsonb_build_object('kind','atomic_functional_results','count',count(*),'labels',jsonb_agg(label ORDER BY label)) FROM public.fixture_test_log;
+SELECT jsonb_build_object('kind','atomic_functional_results','count',count(*),'labels',jsonb_agg(label ORDER BY label COLLATE "C")) FROM public.fixture_test_log;
 SELECT jsonb_build_object('kind','compiled_definitions','definitions',jsonb_agg(to_jsonb(b) ORDER BY kind,signature)) FROM public.fixture_atomic_bodies b;
 ROLLBACK;
