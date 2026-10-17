@@ -1,0 +1,80 @@
+name: V284 projection coverage release
+on:
+  pull_request:
+    paths:
+      - 'releases/v284/**'
+      - '.github/fixtures/projection-v284/**'
+      - '.github/scripts/lts_v284*'
+      - '.github/scripts/lts_projection_*'
+      - '.github/workflows/v284.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  synthetic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      LTS_RELEASE: v284
+      LTS_LEDGER_QA_DIR: qa/v284-ledger
+      LTS_BOOT_QA_DIR: qa/v284-boot
+      LTS_PROJECTION_BASE_ROOT: releases/v283
+      LTS_PROJECTION_CANDIDATE_ROOT: releases/v284
+      LTS_PROJECTION_V282_ROOT: releases/v282
+      LTS_PROJECTION_OUTPUT: qa/v284-static/coverage-runtime.json
+      LTS_PROJECTION_INHERITED_OUTPUT: qa/v284-static/inherited-p12.json
+      LTS_PROJECTION_FIXTURE_OUTPUT: qa/v284-static/fullstack-fixtures.json
+      LTS_PROJECTION_OUTPUT_DIR: qa/v284-coverage-focal
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify V284 release scope and every protected historical byte
+        run: |
+          mkdir -p qa/v284-static
+          node .github/scripts/lts_v283_release_contract.cjs
+          node .github/scripts/lts_v284_release_contract.cjs
+          node .github/scripts/lts_v284_release_assets.cjs > qa/v284-static/assets.json
+          node .github/scripts/lts_v284_label_scenarios.cjs > qa/v284-static/scenarios.json
+          node .github/scripts/lts_v284_ledger_fullstack.cjs --static-check > qa/v284-static/ledger.json
+      - name: Preserve labels, frozen V283 contract and observer behavior
+        run: |
+          node .github/fixtures/projection-v284/run.cjs
+          node .github/scripts/lts_v283_p12_contract.cjs
+          node .github/scripts/lts_v284_observer_contract.cjs
+      - name: Daily coverage, lifecycle, year boundary and exact fixture contracts
+        run: |
+          node .github/scripts/lts_projection_coverage_runtime_v1.cjs
+          node .github/scripts/lts_projection_inherited_p12_contract_v1.cjs
+          node .github/scripts/lts_projection_fullstack_fixture_contract_v1.cjs
+      - run: npm install --no-save --package-lock=false playwright@1.58.2
+      - run: npx playwright install --with-deps chromium
+      - name: Serve only local immutable repository assets
+        run: python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/v284-http.log 2>&1 &
+      - name: Focused coverage message and retry at 320, 390, 768 and 1440px
+        run: node .github/scripts/lts_projection_coverage_browser_v1.cjs
+      - name: Preserve V282 versus V284 natural-input counterproof
+        env:
+          LTS_LEDGER_QA_DIR: qa/v284-natural-geometry
+        run: node .github/scripts/lts_v284_ledger_fullstack.cjs --natural-geometry-probe
+      - name: Full ledger and label matrix on real V284
+        run: node .github/scripts/lts_v284_ledger_fullstack.cjs
+      - name: Complete real-stack payment and projection transition matrix
+        if: success() || failure()
+        run: node .github/scripts/lts_v284_payment_fullstack.js
+      - name: Complete inherited boot matrix on real V284
+        if: success() || failure()
+        run: node .github/scripts/lts_v284_boot_browser.js
+      - name: Collect synthetic unit receipts
+        if: always()
+        run: |
+          mkdir -p qa/v284-unit
+          find .github/fixtures/projection-v284 -maxdepth 1 -type f -name '*results.json' -exec cp {} qa/v284-unit/ \;
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v284-projection-coverage-evidence
+          path: qa/

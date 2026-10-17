@@ -1,0 +1,20 @@
+{
+  "release": "v284",
+  "base_release": "v283",
+  "base_commit": "999a2861af3b139392045b23f849b64213efcd39",
+  "scope": [
+    "Require every civil date and finite D0/RSU/FGTS layer before certifying forecast coverage",
+    "Reject missing or duplicate dates and unknown resource balances before merging forecast rows",
+    "Clear prior planning coverage while refreshing and after failure; preserve explicit retry recovery",
+    "Preserve the three V283 label expressions and all underlying financial amounts, dates, source identities and API calls"
+  ],
+  "financial_sources_unchanged": true,
+  "backend_changed": false,
+  "reviewed_candidate_sha256": "84058df7226e22a2277e5ab68898ff073f02b285a99fb4cba4c3c249f75874aa",
+  "local_runtime_assertions": 528,
+  "local_fixture_assertions": 70,
+  "verification_limits": [
+    "Synthetic browser integration gates are required before publication",
+    "This guard does not independently validate documentary grant pricing or financial assumptions"
+  ]
+}
