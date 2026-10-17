@@ -1,6 +1,11 @@
 name: V165 executive UX and RSU controls
 
 on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/scripts/lts_v165_executive_ux_gate.js'
+      - '.github/workflows/v165-executive-ux-rsu.yml'
   push:
     branches: [work/v165-executive-ux-rsu-20260916, main]
     paths:

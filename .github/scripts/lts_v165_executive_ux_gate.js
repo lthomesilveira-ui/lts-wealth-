@@ -20,6 +20,7 @@ const cockpit={
 };
 
 const planning={
+  version:'planning-executive-v2-current-anchors',
   period:{from:'2030-06-15',to:'2031-03-31'},
   summary:{first_real_gap_date:'2030-12-20',worst_balance:-18000,gap_episode_count:3,fgts_amount:25000,fgts_request_by:'2030-11-20',first_negative_even_with_fgts:'2031-01-25',fgts_covers_horizon:false},
   fgts_access:{amount_brl:25000,request_by_date:'2030-11-20',first_negative_even_with_fgts:'2031-01-25'},
