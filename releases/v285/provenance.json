@@ -1,0 +1,18 @@
+{
+  "release": "v285",
+  "base_release": "v284",
+  "base_commit": "99f06d0e54011e4613ededb13f754657511aa5a8",
+  "scope": [
+    "Display the residual context bucket as Demais grupos without inferring a person",
+    "Explain that summary group names alone do not establish transaction beneficiary",
+    "Preserve raw grouping keys, explicit people, amounts, selectors, detail, export and all V284 daily coverage guards"
+  ],
+  "financial_sources_unchanged": true,
+  "backend_changed_by_this_release": false,
+  "reviewed_candidate_sha256": "75942324eae28e090e05617c2c1efbfc85950272d082705f7754278f9a02faa5",
+  "prepared_copy_assertions": 323,
+  "verification_limits": [
+    "Display wording does not complete beneficiary provenance unification",
+    "Synthetic frontend gates do not certify documentary assumptions or all historical balances"
+  ]
+}

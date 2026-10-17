@@ -1,0 +1,97 @@
+{
+  "contract": "wealth-person-context-copy-public-allowlist-v1",
+  "scope": "Exact public synthetic gate inputs. Export only this file and the listed files. Never export parent reports or generated results.",
+  "file_count_including_allowlist": 19,
+  "files": [
+    {
+      "path": "README.md",
+      "sha256": "edff19ba7ec151c0ca0b0044097cca66f814819f1f5e7dddca586a91016443ed",
+      "bytes": 3029
+    },
+    {
+      "path": "baseline-v283.json",
+      "sha256": "319c7273334e9b7225fcfa7924f9bd9ea3160ee5f39c4644c18f6a056230fc46",
+      "bytes": 9594
+    },
+    {
+      "path": "legacy/canonical-harness.cjs",
+      "sha256": "9930023fe7d960e9ffacd10b4238b2e4131d4a93cbe3e86c2c2348a8e4920a08",
+      "bytes": 4605
+    },
+    {
+      "path": "legacy/manifest.json",
+      "sha256": "b4b29ec47fa86a50228aba69a31f22a2fdeb5470dbdad75f49f625a4f6b85f76",
+      "bytes": 2436
+    },
+    {
+      "path": "legacy/playwright-label-assertions.cjs",
+      "sha256": "eee3a566611fae2a93d6218ff8d3e0c2ff7f0a487ee1b69dc10c91423b9ae818",
+      "bytes": 3560
+    },
+    {
+      "path": "legacy/public-v282-baseline-hashes.json",
+      "sha256": "1b2fb8cf3249e8d632e4a6d8a27a133eed9e0fcf92497706156d8be59847d60e",
+      "bytes": 12572
+    },
+    {
+      "path": "legacy/run.cjs",
+      "sha256": "193902650283a312b5e9b92b57fc4271eb778c28c8e30032fbaefce88de23071",
+      "bytes": 1029
+    },
+    {
+      "path": "legacy/test-canonical.cjs",
+      "sha256": "69a1d526a631e7b302a1c8b65c384e0645a65db5cbebc7dd7d92601de015bc16",
+      "bytes": 16944
+    },
+    {
+      "path": "legacy/test_labels.cjs",
+      "sha256": "235e8a9c9ecb0a7aa293c75145c0aab099c8bdc4e290f04b61f683aee3bd5896",
+      "bytes": 10511
+    },
+    {
+      "path": "legacy/test_legacy_drilldown.cjs",
+      "sha256": "98d29be2e513411af0bbff98b08642a9eb2dfaf554c6b0147f9fb7839600b589",
+      "bytes": 2450
+    },
+    {
+      "path": "legacy/test_monthly_collision.cjs",
+      "sha256": "4d3dc64509f9bea22dfaf6b5a55699d699ed9f59aca44d6b6c6cd4967b56aac6",
+      "bytes": 3506
+    },
+    {
+      "path": "legacy/test_natural_input.cjs",
+      "sha256": "846a2ae891b947576d8235fa6a7dfd23bc6a2aba991fee486fc5cafac583d67d",
+      "bytes": 6786
+    },
+    {
+      "path": "legacy/test_v282_roundtrip.cjs",
+      "sha256": "07564c896ee6693bb006c7417c5af34cd2f83df1d805852c943e0181be0977ed",
+      "bytes": 8264
+    },
+    {
+      "path": "overlay/edits.json",
+      "sha256": "7fcfc3592e7a0c28fc509544d1f9e1465ec134c0694f38c1544b30d64d2623cb",
+      "bytes": 1195
+    },
+    {
+      "path": "overlay-manifest.json",
+      "sha256": "d8cd3620e715cf0449c5b4ba0bb366c72a0b8b7ed6798cb4e4a00ad061dd6b09",
+      "bytes": 605
+    },
+    {
+      "path": "run.cjs",
+      "sha256": "e8c15d8cf06090a6f512e288a78570551f4dff29e6feb58ccc6bd8ca8e54a5e6",
+      "bytes": 7028
+    },
+    {
+      "path": "tests/test-copy-only.cjs",
+      "sha256": "a315e7778cd7291e86fb779f932673516b93e6f09d64c1159ebd7c45f50a69d2",
+      "bytes": 11472
+    },
+    {
+      "path": "tests/test-detail-export.cjs",
+      "sha256": "857aa0a0b48fb621c7d23f34e149da7fd82d6229f51ce54736c99769f6efeab9",
+      "bytes": 4178
+    }
+  ]
+}
