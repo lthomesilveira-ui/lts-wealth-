@@ -127,29 +127,32 @@ async function run(browser,viewport,label){
   // Synthetic freshness checks: account-resource date, receipt and Item remain separate.
   const bankKpi=kpi('Contas correntes · posição recebida');
   const freshnessPanel=()=>frame.locator('.v225-balance-freshness');
-  async function waitFreshnessDashboardReady(){
-    // cash + forecast become ready before the sequential wealth/awards/report readers finish.
+  async function waitFreshnessDashboardReady(forecastStatus='ready'){
+    // A terminal forecast (ready/error/incomplete) precedes the remaining sequential readers.
+    // Wait for their completion before locating or scrolling DOM that they can replace.
     // Await the application's current orchestration promise, then bootstrap/collection work
     // that may have queued a forced refresh behind that flight. Never retry a detached node.
     await frame.evaluate(()=>window.__LTS_V178_REVIEW.ready());
-    await frame.waitForFunction(()=>{
+    await frame.waitForFunction(forecastStatus=>{
       const state=window.__LTS_V178_STATE,collection=window.__LTS_V225;
       return V==='Dashboard'&&collection?.started&&!collection.syncing&&!collection.loading&&!collection.statusRead
-        &&['cash','forecast','wealth','awards','dashboardReport'].every(key=>state?.[key]?.status==='ready')
+        &&state?.forecast?.status===forecastStatus
+        &&['cash','wealth','awards','dashboardReport'].every(key=>state?.[key]?.status==='ready')
         &&!window.__LTS_V226?.loading;
-    });
+    },forecastStatus);
     // A forced refresh can have been queued after the first promise. Await that exact
     // current flight too, then cross rendering frames so queued render microtasks finish.
     await frame.evaluate(async()=>{
       await window.__LTS_V178_REVIEW.ready();
       await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
     });
-    await frame.waitForFunction(()=>{
+    await frame.waitForFunction(forecastStatus=>{
       const state=window.__LTS_V178_STATE,collection=window.__LTS_V225;
       return V==='Dashboard'&&collection?.started&&!collection.syncing&&!collection.loading&&!collection.statusRead
-        &&['cash','forecast','wealth','awards','dashboardReport'].every(key=>state?.[key]?.status==='ready')
+        &&state?.forecast?.status===forecastStatus
+        &&['cash','wealth','awards','dashboardReport'].every(key=>state?.[key]?.status==='ready')
         &&!window.__LTS_V226?.loading;
-    });
+    },forecastStatus);
   }
   await waitFreshnessDashboardReady();
   // P12 coverage integration: unmodified full release, real refresh control and transport.
@@ -183,12 +186,14 @@ async function run(browser,viewport,label){
   const forecastDeadline=Date.now()+20000;while(!forecastPending.length&&Date.now()<forecastDeadline)await page.waitForTimeout(20);assert(forecastPending.length,'Controlled forecast request reached the synthetic route');
   flags.forecastHold=false;flags.forecastFail=true;forecastPending.splice(0).forEach(resolve=>resolve());
   await frame.waitForFunction(()=>__LTS_V178_STATE.forecast.status==='error'&&__LTS_V178_STATE.planningUI.status==='error');
+  await waitFreshnessDashboardReady('error');
   p12=await projectionSnapshot();assert.equal(p12.data,null);assert.equal(p12.attached,null);assert(p12.text.includes('Projeção indisponível'));assert(!p12.text.includes('Com FGTS, sem ruptura até 31/12/2027'));
   const failedProjection=await captureProjectionTarget('failed-refresh','Projeção indisponível.');
   projectionCoverage.push({scenario:'ready to held refresh to failure removes stale coverage',pass:true,...failedProjection});
   flags.forecastFail=false;flags.forecastTruncated=true;
   await projectionCard().getByRole('button',{name:'Atualizar projeção',exact:true}).click();
   await frame.waitForFunction(()=>__LTS_V178_STATE.forecast.status==='incomplete'&&__LTS_V178_STATE.planningUI.status==='incomplete');
+  await waitFreshnessDashboardReady('incomplete');
   p12=await projectionSnapshot();assert.equal(p12.data,null);assert.equal(p12.attached,null);assert.equal(p12.coverage.complete,false);assert.equal(p12.coverage.reason,'missing_dates');assert(p12.text.includes('Projeção incompleta. Atualize para conferir todo o período.'));assert(!p12.text.includes('Com FGTS, sem ruptura até 31/12/2027'));
   const truncatedProjection=await captureProjectionTarget('truncated','Projeção incompleta. Atualize para conferir todo o período.');
   projectionCoverage.push({scenario:'truncated calendar blocks full-horizon claim',pass:true,...truncatedProjection});
