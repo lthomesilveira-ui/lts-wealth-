@@ -1,0 +1,24 @@
+{
+  "release": "v283",
+  "base_release": "v282",
+  "base_commit": "d1e972d69390112714a0d676bfd966f8477f14b0",
+  "scope": [
+    "Presentation-only labels from the reviewed eight-asset candidate",
+    "Keep canonical ledger raw identity, signed amounts, periods, paging and session ownership unchanged",
+    "Use raw monthly partition keys when distinct categories share a displayed label",
+    "Keep natural input option values and financial writers unchanged"
+  ],
+  "financial_sources_unchanged": true,
+  "backend_changed": false,
+  "validated_candidate_ci": {
+    "head": "3a8bc14c55bf08cca11cb224535c29ef2b60d3be",
+    "run": 38980389847,
+    "unit_assertions": 198,
+    "ledger_delayed_response_scenarios": 24,
+    "viewports": [
+      320,
+      390,
+      1440
+    ]
+  }
+}

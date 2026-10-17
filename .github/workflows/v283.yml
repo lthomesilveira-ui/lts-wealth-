@@ -1,0 +1,65 @@
+name: V283 label presentation release
+on:
+  pull_request:
+    paths:
+      - 'releases/v283/**'
+      - '.github/fixtures/labels-v283/**'
+      - '.github/scripts/lts_v283*'
+      - '.github/workflows/v283.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  synthetic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      LTS_RELEASE: v283
+      LTS_LEDGER_QA_DIR: qa/v283-ledger
+      LTS_BOOT_QA_DIR: qa/v283-boot
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify real release scope and all protected history
+        run: |
+          mkdir -p qa/v283-static
+          node .github/scripts/lts_v283_release_contract.cjs
+          node .github/scripts/lts_v283_release_assets.cjs > qa/v283-static/assets.json
+          node .github/scripts/lts_v283_label_scenarios.cjs > qa/v283-static/scenarios.json
+          node .github/scripts/lts_v283_ledger_fullstack.cjs --static-check > qa/v283-static/ledger.json
+      - name: Preserve 198 unit assertions against real V283 assets
+        run: node .github/fixtures/labels-v283/run.cjs
+      - name: Preserve projection and observer contracts on V283
+        run: |
+          node .github/scripts/lts_v283_p12_contract.cjs
+          node .github/scripts/lts_v283_observer_contract.cjs
+      - run: npm install --no-save --package-lock=false playwright@1.58.2
+      - run: npx playwright install --with-deps chromium
+      - name: Serve only local immutable repository assets
+        run: python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/v283-http.log 2>&1 &
+      - name: Preserve V282 versus V283 natural-input counterproof
+        env:
+          LTS_LEDGER_QA_DIR: qa/v283-natural-geometry
+        run: node .github/scripts/lts_v283_ledger_fullstack.cjs --natural-geometry-probe
+      - name: Full ledger and label matrix on real V283
+        run: node .github/scripts/lts_v283_ledger_fullstack.cjs
+      - name: Complete inherited functional matrix on real V283
+        if: success() || failure()
+        run: node .github/scripts/lts_v283_payment_fullstack.js
+      - name: Complete inherited boot matrix on real V283
+        if: success() || failure()
+        run: node .github/scripts/lts_v283_boot_browser.js
+      - name: Collect synthetic unit receipts
+        if: always()
+        run: |
+          mkdir -p qa/v283-unit
+          find .github/fixtures/labels-v283 -maxdepth 1 -type f -name '*results.json' -exec cp {} qa/v283-unit/ \;
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v283-label-presentation-evidence
+          path: qa/
