@@ -1,0 +1,21 @@
+{
+  "asset": "lts-v181-regression-closure.js",
+  "operations": [
+    {
+      "from": "  function categorySections(data){\n   const dimensions=categoryDimensions(data),key=state.categoryView==='nature'?'nature':'beneficiary',groups=groupDimension(dimensions.rows,key);",
+      "to": "  function categorySections(data){\n   const dimensions=categoryDimensions(data),key=state.categoryView==='nature'?'nature':'beneficiary',groups=groupDimension(dimensions.rows,key);\n   const contextLabel=label=>label==='Minhas despesas (sem prefixo)'?'Demais grupos':label;"
+    },
+    {
+      "from": "window.LTSCategoryDisplay.category(group.label):group.label)",
+      "to": "window.LTSCategoryDisplay.category(group.label):contextLabel(group.label))"
+    },
+    {
+      "from": "key==='nature'?row.beneficiary:window.LTSCategoryDisplay.category(row.nature)",
+      "to": "key==='nature'?contextLabel(row.beneficiary):window.LTSCategoryDisplay.category(row.nature)"
+    },
+    {
+      "from": "Categorias sem nome de pessoa são suas e aparecem sem prefixo pessoal.",
+      "to": "A organização usa os nomes dos grupos do resumo; eles não confirmam, por si só, a pessoa de cada lançamento."
+    }
+  ]
+}
