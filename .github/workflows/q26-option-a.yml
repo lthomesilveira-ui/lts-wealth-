@@ -1,0 +1,61 @@
+name: Q26 option A generated complete consumers
+on:
+  pull_request:
+    paths: ['tests/q26_option_a_generator/**', '.github/workflows/q26-option-a.yml']
+permissions:
+  contents: read
+jobs:
+  postgres17:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: fixture_option_a_ci
+          POSTGRES_PASSWORD: synthetic-ci-only
+        ports: ['5432:5432']
+        options: --health-cmd "pg_isready -U postgres" --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      PGHOST: 127.0.0.1
+      PGPORT: 5432
+      PGUSER: postgres
+      PGDATABASE: fixture_option_a_ci
+      PGPASSWORD: synthetic-ci-only
+      OPTION_A_SYNTHETIC_DISPOSABLE: "YES"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Reconstruct exact reviewed outputs
+        run: |
+          set -euo pipefail
+          echo '9fef9dea0df0a2ad50fa6f36a1d038aa1fb9fa19d10321707f0c333827c4e7ea  tests/q26_option_a_generator/SOURCE_MANIFEST.json' | sha256sum -c -
+          mkdir -p qa
+          python3 tests/q26_option_a_generator/generate.py --output "$RUNNER_TEMP/q26-option-a-reconstructed" > qa/generation.log 2> qa/generation.stderr
+          echo "67a947fea0facbc39cdc3e00198d63afb563662f14331ea111b9c90a60e31752  $RUNNER_TEMP/q26-option-a-reconstructed/PUBLIC_MANIFEST.json" | sha256sum -c -
+          echo "3317e1c1001e04a9c7aaf1f6496e5b322d4754e395f1ebe868323f1a616eaba7  $RUNNER_TEMP/q26-option-a-reconstructed/option_a_full_consumers.sql" | sha256sum -c -
+      - name: Test frozen complete consumers
+        run: |
+          set -euo pipefail
+          psql --version > qa/client-version.txt
+          psql -X -Atc 'select version()' > qa/server-version.txt
+          bash "$RUNNER_TEMP/q26-option-a-reconstructed/run_disposable.sh" qa
+          test "$(psql -X -Atc "select count(*) from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname='public' and c.relkind in ('r','v','m','p','f')")" = 0
+          test "$(psql -X -Atc "select count(*) from pg_roles where rolname in ('fixture_owner','service_role','anon','authenticated')")" = 0
+          echo cleanup_verified > qa/cleanup.txt
+      - name: Preserve sources
+        if: always()
+        run: |
+          mkdir -p qa/sources
+          cp -R tests/q26_option_a_generator/. qa/sources/
+          if test -d "$RUNNER_TEMP/q26-option-a-reconstructed"; then
+            cp -R "$RUNNER_TEMP/q26-option-a-reconstructed" qa/reconstructed
+            sha256sum "$RUNNER_TEMP/q26-option-a-reconstructed"/* > qa/reconstructed.sha256
+          fi
+          find tests/q26_option_a_generator -type f -print0 | sort -z | xargs -0 sha256sum > qa/source.sha256
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: q26-option-a-evidence
+          path: qa/

@@ -1,0 +1,22 @@
+{
+  "tables": [
+    "accounts",
+    "financial_events",
+    "lts_access_audit",
+    "lts_flow_event_operation",
+    "lts_open_finance_staging",
+    "lts_read_cache_epoch_v242",
+    "lts_reconciliation_link",
+    "lts_v178_review_decision",
+    "lts_v229_read_cache"
+  ],
+  "functions": [
+    "public.lts_bank_known_classification_v231(uuid,uuid)",
+    "public.lts_expense_rows_v230_baseline(uuid,date,date)",
+    "public.lts_v229_expense_rows(uuid,date,date)",
+    "public.lts_corrected_cashflow_fix86_v1(uuid,date,date)",
+    "public.lts_flow_current_effective_v1(uuid,date,date)",
+    "public.lts_corrected_cashflow_fix86_v1_engine_v247(uuid,date,date)",
+    "public.lts_v246_invalidate_finance_cache()"
+  ]
+}

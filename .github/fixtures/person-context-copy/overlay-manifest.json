@@ -1,0 +1,17 @@
+{
+  "asset": "lts-v181-regression-closure.js",
+  "base_sha256": "8a7247e7d5b41d4fe511d27edb95037924b97d4b7368d7a67ff4c36e5e833023",
+  "candidate_sha256": "75942324eae28e090e05617c2c1efbfc85950272d082705f7754278f9a02faa5",
+  "contract": "wealth-person-context-copy-overlay-v1",
+  "base_release": "v283",
+  "changed_assets": 1,
+  "local_only": true,
+  "published": false,
+  "expected_assertions": {
+    "copy_only": 108,
+    "detail_export": 17,
+    "legacy_v283": 198,
+    "total": 323
+  },
+  "scope": "Copy-only mitigation. Does not change dimensions, identifiers, amounts, pending markers or writers."
+}

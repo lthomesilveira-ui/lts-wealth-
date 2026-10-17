@@ -1,0 +1,27 @@
+{
+  "checks": [
+    "Python AST",
+    "SQL quote/delimiter balance",
+    "five synthetic target identities",
+    "real envelope invariant ordering and lease placeholders",
+    "synthetic UUID allowlist",
+    "no production URLs/credentials",
+    "marker export provenance",
+    "runner rejects absent opt-in"
+  ],
+  "marker_source_verification": {
+    "candidate_baseline_sha256": "5dea9970c52b42e33781ec2dab000a51ac807ddd405c2522da78ef1b90b225f2",
+    "exported_projection_diff_exact": true,
+    "identity_expression_byte_exact": true,
+    "original_baseline_sha256": "3cba3ce6b36644627c74d2a32b9a44cd1df612c4118db4527e4d797f57b0a0f2",
+    "p05_block_sha256": "08a382ea4b245ff5c06c3dcc8628847a24a73fae7ff11feecd398ed3f0248055",
+    "p05_exported_block_byte_identical": true,
+    "private_baseline_diff_verified_at_authoring": true,
+    "private_source_read_by_public_runner": false,
+    "public_artifact_hashes_verified": true
+  },
+  "postgresql_parser_used": false,
+  "public_files": 24,
+  "sql_execution": false,
+  "status": "static-passed"
+}

@@ -1,0 +1,20 @@
+{
+  "purpose": "Synthetic review allowlist; excludes private extractor and all private inputs",
+  "files": [
+    "README.md",
+    "PUBLIC_FILES.json",
+    "run_postgres17.py",
+    "validate_static.py",
+    "postgres17.proposed.yml",
+    "generated/apply-synthetic.sql",
+    "generated/baseline-candidate-synthetic.sql",
+    "generated/baseline-original-synthetic.sql",
+    "generated/bootstrap-synthetic.sql",
+    "generated/contracts-synthetic.json",
+    "generated/manifest.json",
+    "generated/measure-lease-synthetic.sql",
+    "generated/reset-synthetic.sql",
+    "generated/rollback-synthetic.sql",
+    "STATIC_VALIDATION.json"
+  ]
+}
