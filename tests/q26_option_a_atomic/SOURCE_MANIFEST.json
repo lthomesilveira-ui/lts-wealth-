@@ -1,0 +1,82 @@
+{
+  "version": "readable-atomic-generator-0448-precedence-fix",
+  "files": [
+    {
+      "name": "CONSUMER_DEPENDENCY.json",
+      "bytes": 2626,
+      "sha256": "d03a59a70024647e6d5f8dabc6fdef7f6b5db064e04b372fe7a66bda2ad36f1d"
+    },
+    {
+      "name": "OUTPUT_CONTRACT.json",
+      "bytes": 1810,
+      "sha256": "8207d69c4d9ce4f9c60211ae6ad760b1db4245ceeb2a1d5bfb0518436bc5d69a"
+    },
+    {
+      "name": "README_GENERATOR.md",
+      "bytes": 3415,
+      "sha256": "0dbe472f9ea732fbf491559ceeb906fdf3f01519e4e8f3f5ffbfebcd72eb46be"
+    },
+    {
+      "name": "atomic_suffix.template.sql",
+      "bytes": 20948,
+      "sha256": "8c93e091bc3687a5c14ac430dc4e5f0a42ad15a0b41baa85a7ffd04078bcde21"
+    },
+    {
+      "name": "frozen_files/ALLOWED_TRANSFORMATIONS.json",
+      "bytes": 1638,
+      "sha256": "1ce54b63857a9d556bdb893066f13932d180fa10c30f0d3cc1d7afbfcd1d89d7"
+    },
+    {
+      "name": "frozen_files/EXPECTED_RESULTS.json",
+      "bytes": 9200,
+      "sha256": "e6008cade23d83bf5ec93da87e4fe476e7608ceac215a2d9d3f3375691931bd4"
+    },
+    {
+      "name": "frozen_files/PREPARATION_CHECKS.json",
+      "bytes": 3741,
+      "sha256": "dc555ea66e04dbd009f0842f7966b64850e116e6b73e6070583aa711dbe5a175"
+    },
+    {
+      "name": "frozen_files/PUBLIC_MANIFEST.json",
+      "bytes": 1984,
+      "sha256": "03d85202df6497331dac0e77b35ab7346e518cfe4b0be7a592c891faf80e8035"
+    },
+    {
+      "name": "frozen_files/README.md",
+      "bytes": 6816,
+      "sha256": "40636ab9c1173574d8fe64b4ad374987274994f524d5fcbb09758c7e879f974a"
+    },
+    {
+      "name": "frozen_files/apply_control_synthetic.sql",
+      "bytes": 24558,
+      "sha256": "e84c642685bd15dfe710ae0971227f4fc5f0a08c0d9e19a6d6e2c35f2814b469"
+    },
+    {
+      "name": "frozen_files/atomic_functional.sql",
+      "bytes": 31917,
+      "sha256": "cc764157c75f2a2a7f7fb652778e5a91013eff78c4fc3af260a88b514c0d84e6"
+    },
+    {
+      "name": "frozen_files/empty_instance_guard.sql",
+      "bytes": 967,
+      "sha256": "d10cf1fab7c79623c24eb8162c05e0d209ef1ff0e438bcaaffd5b3f446aa2f53"
+    },
+    {
+      "name": "frozen_files/rollback_control_synthetic.sql",
+      "bytes": 23974,
+      "sha256": "eb07ab32da7854227d5b02909198d45908c16223342b7a800b3062c98be71f8c"
+    },
+    {
+      "name": "frozen_files/run_disposable.py",
+      "bytes": 14168,
+      "sha256": "116e10db937a3f67740c4f52070110130b020949f43cf688265dd04f3303a552"
+    },
+    {
+      "name": "generate.py",
+      "bytes": 4082,
+      "sha256": "cd94505bdc7e8106d7a9a7a132c51573d629067937ce2b01880d2e9bd06f26e7"
+    }
+  ],
+  "sql_executed": false,
+  "upload_authorized_by_this_file": false
+}
