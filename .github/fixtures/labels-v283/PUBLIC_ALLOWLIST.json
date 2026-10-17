@@ -1,0 +1,53 @@
+{
+  "scope": "Exact public V283 unit source inputs; product assets are read directly from releases/v283. Exclude generated receipts and all parent audit files.",
+  "files": [
+    {
+      "path": "README.md",
+      "sha256": "d38c46c99a1e32678d524f210e4864b875ca2148551a2c356e9740e02d75aa81"
+    },
+    {
+      "path": "canonical-harness.cjs",
+      "sha256": "9930023fe7d960e9ffacd10b4238b2e4131d4a93cbe3e86c2c2348a8e4920a08"
+    },
+    {
+      "path": "manifest.json",
+      "sha256": "b4b29ec47fa86a50228aba69a31f22a2fdeb5470dbdad75f49f625a4f6b85f76"
+    },
+    {
+      "path": "playwright-label-assertions.cjs",
+      "sha256": "eee3a566611fae2a93d6218ff8d3e0c2ff7f0a487ee1b69dc10c91423b9ae818"
+    },
+    {
+      "path": "public-v282-baseline-hashes.json",
+      "sha256": "1b2fb8cf3249e8d632e4a6d8a27a133eed9e0fcf92497706156d8be59847d60e"
+    },
+    {
+      "path": "run.cjs",
+      "sha256": "193902650283a312b5e9b92b57fc4271eb778c28c8e30032fbaefce88de23071"
+    },
+    {
+      "path": "test-canonical.cjs",
+      "sha256": "69a1d526a631e7b302a1c8b65c384e0645a65db5cbebc7dd7d92601de015bc16"
+    },
+    {
+      "path": "test_labels.cjs",
+      "sha256": "235e8a9c9ecb0a7aa293c75145c0aab099c8bdc4e290f04b61f683aee3bd5896"
+    },
+    {
+      "path": "test_legacy_drilldown.cjs",
+      "sha256": "98d29be2e513411af0bbff98b08642a9eb2dfaf554c6b0147f9fb7839600b589"
+    },
+    {
+      "path": "test_monthly_collision.cjs",
+      "sha256": "4d3dc64509f9bea22dfaf6b5a55699d699ed9f59aca44d6b6c6cd4967b56aac6"
+    },
+    {
+      "path": "test_natural_input.cjs",
+      "sha256": "846a2ae891b947576d8235fa6a7dfd23bc6a2aba991fee486fc5cafac583d67d"
+    },
+    {
+      "path": "test_v282_roundtrip.cjs",
+      "sha256": "07564c896ee6693bb006c7417c5af34cd2f83df1d805852c943e0181be0977ed"
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "local_only": true,
+  "base_release": "V282",
+  "base_commit": "d1e972d69390112714a0d676bfd966f8477f14b0",
+  "sql_executed": false,
+  "published": false,
+  "assets": [
+    {
+      "asset": "lts-category-display.js",
+      "base_sha256": "75c7a0a48811811f632d0e666ad6687c9e112cd86a76da7e95737c773534472c",
+      "candidate_sha256": "38b3e6c9755d8e59a4c1cf81082103505302727ada6a8d72377bdfdf691b56cd",
+      "changed_lines": 13
+    },
+    {
+      "asset": "lts-v178-review-actions.js",
+      "base_sha256": "372651fa4d1913856c35bc646dd46d3751ad17ba7793eec2ae62f6b44e6af58e",
+      "candidate_sha256": "f3daa35f928dc021a28aad2360c7c49db3a576de46ee7192784a6dec3f3daafa",
+      "changed_lines": 2
+    },
+    {
+      "asset": "lts-v179-cash-recovery.js",
+      "base_sha256": "8294c4cd80932efaff06b47f73851aa5479d2e61ab3dbed81ed55ee70c175f5a",
+      "candidate_sha256": "28c14bfca31162b2346d725abac4a1719220e8c0a98c1a432cc3636af90afd41",
+      "changed_lines": 6
+    },
+    {
+      "asset": "lts-v181-regression-closure.js",
+      "base_sha256": "7d50f9ddce190a680e4d532057723a8cc8931e9630b1a66b8ed8b49ccca735fe",
+      "candidate_sha256": "8a7247e7d5b41d4fe511d27edb95037924b97d4b7368d7a67ff4c36e5e833023",
+      "changed_lines": 16
+    },
+    {
+      "asset": "lts-v183-expense-history-candidate.js",
+      "base_sha256": "ff0b6997cf319cb3a7069292c847caf539155c8e279e865e2348d32742f30e32",
+      "candidate_sha256": "ebf1d9a46d46765be69df81e20638189221e5e2b41ad8374732b5b972f66ffaf",
+      "changed_lines": 6
+    },
+    {
+      "asset": "lts-v183-v168-feedback-safe.js",
+      "base_sha256": "dc0db5e2083c0d2d1085013dffb06ab623d4875853bd43b658b2ac51aabba34e",
+      "candidate_sha256": "86c34f63b964447e87b5fb37dd5c75fb2beda66de69120c2f91193bda2ab58ba",
+      "changed_lines": 16
+    },
+    {
+      "asset": "lts-v183-v173-feedback-safe.js",
+      "base_sha256": "dd75d9e5b5583c44e809586531f5fa07fa20ccb47942017a5d381359e0f2ca35",
+      "candidate_sha256": "87ca338c95f96f793055fbda04b51158ee0ab37d07e3f6e5343eb9ceaf7cdc55",
+      "changed_lines": 2
+    },
+    {
+      "asset": "lts-v183-v182-feedback-safe.js",
+      "base_sha256": "d23bda5f94d21913eec0b841fe97a3f7ab90e009bc0c557a87935bbd77666351",
+      "candidate_sha256": "6f4d10f8013d892fb083a3fc9f812e883fbf84dde82d84155fbe089b93b9278d",
+      "changed_lines": 4
+    }
+  ],
+  "target_release": "V283",
+  "candidate_source": "releases/v283",
+  "product_assets_in_fixture": false
+}
