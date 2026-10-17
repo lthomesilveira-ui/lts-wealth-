@@ -13,6 +13,13 @@ const components=['Aquisição do imóvel','Obra e reforma','Custos de moradia',
 const sum=xs=>xs.reduce((a,b)=>a+b,0);
 const money=x=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(x).replace(/\s+/g,' ');
 const semantic=x=>String(x||'').replace(/\s+/g,' ').trim();
+function assertProjectionTargetGeometry(g,label){
+ assert(g.connected&&g.visible,label+' must be connected and visible');
+ assert(g.width>0&&g.height>0,label+' must have positive rendered width and height');
+ assert(g.left>=-1&&g.right<=g.viewportWidth+1&&g.top>=-1&&g.bottom<=g.usableBottom+1,label+' must be fully inside the unobscured viewport');
+ assert(g.unoccluded,label+' center must not be covered by navigation or another element');
+ assert(g.scroll<=g.client+3,label+' must not cause horizontal page overflow');
+}
 function records(group){const spec=groups.find(g=>g[0]===group);if(!spec)return[];return Array.from({length:spec[1]},(_,i)=>({key:group+':'+i,date:'2026-09-01',period:'2026-09-01',date_kind:i%13===0?'month':'day',description:'Registro sintético '+String(i+1).padStart(4,'0'),account_source:i%2?'Cartão de teste':'Conta de teste',beneficiary:group.includes('Benjamin')?'Benjamin':group.includes('Larissa')?'Larissa':group.includes('Lucas')?'Lucas':null,amount:spec[2],category:group,component:group===groups[0][0]?components[i%4]:null,subgroup:group===groups[0][0]?components[i%4]:group,status:group.includes('confirmar')?'pending':'identified'}))}
 function details(args){const all=records(args.p_group).filter(r=>!args.p_subgroup||r.subgroup===args.p_subgroup),offset=args.p_offset||0,limit=args.p_limit||500;return{version:'expense-detail-v178',from:args.p_from,to:args.p_to,group:args.p_group,subgroup:args.p_subgroup,total:sum(all.map(r=>r.amount)),row_count:all.length,matched_count:all.length,offset,next_offset:offset+limit<all.length?offset+limit:null,revision:'stable-'+args.p_group+args.p_subgroup,rows:all.slice(offset,offset+limit),components:args.p_group===groups[0][0]?components.map(n=>({name:n,total:2010,rows:201})):[]}}
 function report(from,to){const total=sum(groups.map(g=>g[1]*g[2]));return{version:'expense-executive-v20-v178-review',as_of:to,period:{from,to,last_available:to,months_in_selection:9},summary:{selected_total:total,card_total:total/2,account_total:total/2,monthly_average:total/9,rows:sum(groups.map(g=>g[1])),pending_identification:1},management_groups:groups.map(([name,n,value])=>({name,total:n*value,rows:n,subgroups:name===groups[0][0]?components.map(n=>({name:n,total:2010,rows:201})):[]})),monthly_detail:[{month:to.slice(0,7)+'-01',total}],coverage_disclosure:{total:0,rows:0}}}
@@ -148,6 +155,26 @@ async function run(browser,viewport,label){
   // P12 coverage integration: unmodified full release, real refresh control and transport.
   // Forecast responses alone are synthetic; no release asset is intercepted or replaced.
   const projectionSnapshot=()=>frame.evaluate(()=>({forecast:__LTS_V178_STATE.forecast.status,planning:__LTS_V178_STATE.planningUI.status,data:__LTS_V178_STATE.planningUI.data,coverage:__LTS_V178_STATE.forecast.data?.coverage,attached:__LTS_V168_STATE.dashboard.data?.planningUI||null,text:document.body.innerText}));
+  const projectionCard=()=>frame.locator('.v227-liquidity > article.v168-card').filter({has:frame.getByRole('heading',{name:'Evolução projetada',exact:true})});
+  const projectionDiagnostic=()=>frame.evaluate(()=>Array.from(document.querySelectorAll('.v178-empty')).map(node=>({text:node.textContent,connected:node.isConnected,rect:node.getBoundingClientRect().toJSON(),ancestors:Array.from((function*(n){for(;n;n=n.parentElement)yield n})(node)).map(e=>({tag:e.tagName,id:e.id,class:e.className,hidden:e.hidden,display:getComputedStyle(e).display,visibility:getComputedStyle(e).visibility,rect:e.getBoundingClientRect().toJSON()}))})));
+  const captureProjectionTarget=async(stage,message)=>{
+   try{
+    const card=projectionCard();await card.waitFor({state:'visible'});assert.equal(await card.count(),1,'One real liquidity evolution card');
+    const target=message?card.locator('.v178-empty[role="status"]:visible').filter({hasText:message}):card.locator('.v168-chart svg:visible');
+    await target.waitFor({state:'visible'});assert.equal(await target.count(),1,'One visible projection target');
+    await card.scrollIntoViewIfNeeded();
+    await frame.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+    const measure=locator=>locator.evaluate(node=>{const r=node.getBoundingClientRect(),style=getComputedStyle(node),nav=document.getElementById('dx1MobileNav'),n=nav?.getBoundingClientRect(),navVisible=!!n&&n.width>0&&n.height>0&&getComputedStyle(nav).display!=='none',hit=document.elementFromPoint(r.left+r.width/2,r.top+r.height/2);return{connected:node.isConnected,visible:style.display!=='none'&&style.visibility==='visible',left:r.left,right:r.right,top:r.top,bottom:r.bottom,width:r.width,height:r.height,viewportWidth:innerWidth,viewportHeight:innerHeight,usableBottom:navVisible?n.top:innerHeight,unoccluded:!!hit&&(node===hit||node.contains(hit)),scroll:document.documentElement.scrollWidth,client:document.documentElement.clientWidth};});
+    const geometry=await measure(target);assertProjectionTargetGeometry(geometry,'Projection '+stage);
+    let retry=null;if(message){const button=card.getByRole('button',{name:'Atualizar projeção',exact:true});assert(await button.isVisible(),'Projection retry is visible');retry=await measure(button);assertProjectionTargetGeometry(retry,'Projection retry '+stage);}
+    const diagnostic=await projectionDiagnostic();
+    fs.writeFileSync('qa/v284-'+label+'-projection-'+stage+'-geometry.json',JSON.stringify({geometry,retry,diagnostic},null,2));
+    // Screenshot the normal, scrolled iframe viewport and the real card, never a synthetic overlay.
+    await page.screenshot({path:'qa/v284-'+label+'-projection-'+stage+'.png',fullPage:false});
+    await card.screenshot({path:'qa/v284-'+label+'-projection-'+stage+'-target.png'});
+    return{geometry,retry};
+   }catch(error){fs.writeFileSync('qa/v284-'+label+'-projection-'+stage+'-diagnostic.json',JSON.stringify(await projectionDiagnostic(),null,2));throw error;}
+  };
   let p12=await projectionSnapshot();assert.equal(p12.forecast,'ready');assert.equal(p12.planning,'ready');assert.equal(p12.coverage.complete,true);assert.equal(p12.data.fgts_covers_horizon,true);
   flags.forecastHold=true;
   await frame.evaluate(()=>{window.__LTS_V178_REVIEW.refresh();});
@@ -157,22 +184,20 @@ async function run(browser,viewport,label){
   flags.forecastHold=false;flags.forecastFail=true;forecastPending.splice(0).forEach(resolve=>resolve());
   await frame.waitForFunction(()=>__LTS_V178_STATE.forecast.status==='error'&&__LTS_V178_STATE.planningUI.status==='error');
   p12=await projectionSnapshot();assert.equal(p12.data,null);assert.equal(p12.attached,null);assert(p12.text.includes('Projeção indisponível'));assert(!p12.text.includes('Com FGTS, sem ruptura até 31/12/2027'));
-  await page.screenshot({path:'qa/v284-'+label+'-projection-failed-refresh.png',fullPage:true});
-  projectionCoverage.push({scenario:'ready to held refresh to failure removes stale coverage',pass:true});
+  const failedProjection=await captureProjectionTarget('failed-refresh','Projeção indisponível.');
+  projectionCoverage.push({scenario:'ready to held refresh to failure removes stale coverage',pass:true,...failedProjection});
   flags.forecastFail=false;flags.forecastTruncated=true;
-  await frame.locator('.v178-refresh').first().click();
+  await projectionCard().getByRole('button',{name:'Atualizar projeção',exact:true}).click();
   await frame.waitForFunction(()=>__LTS_V178_STATE.forecast.status==='incomplete'&&__LTS_V178_STATE.planningUI.status==='incomplete');
   p12=await projectionSnapshot();assert.equal(p12.data,null);assert.equal(p12.attached,null);assert.equal(p12.coverage.complete,false);assert.equal(p12.coverage.reason,'missing_dates');assert(p12.text.includes('Projeção incompleta. Atualize para conferir todo o período.'));assert(!p12.text.includes('Com FGTS, sem ruptura até 31/12/2027'));
-  const projectionGeometry=await frame.locator('.v178-empty').filter({hasText:'Projeção incompleta.'}).first().evaluate(e=>{const r=e.getBoundingClientRect();return{left:r.left,right:r.right,width:innerWidth,scroll:document.documentElement.scrollWidth,client:document.documentElement.clientWidth};});
-  assert(projectionGeometry.left>=-1&&projectionGeometry.right<=projectionGeometry.width+1&&projectionGeometry.scroll<=projectionGeometry.client+3,'Incomplete projection message fits the real dashboard');
-  await page.screenshot({path:'qa/v284-'+label+'-projection-truncated.png',fullPage:true});
-  projectionCoverage.push({scenario:'truncated calendar blocks full-horizon claim',pass:true,geometry:projectionGeometry});
+  const truncatedProjection=await captureProjectionTarget('truncated','Projeção incompleta. Atualize para conferir todo o período.');
+  projectionCoverage.push({scenario:'truncated calendar blocks full-horizon claim',pass:true,...truncatedProjection});
   flags.forecastTruncated=false;
-  await frame.locator('.v178-refresh').first().click();
+  await projectionCard().getByRole('button',{name:'Atualizar projeção',exact:true}).click();
   await waitFreshnessDashboardReady();
   p12=await projectionSnapshot();assert.equal(p12.planning,'ready');assert.equal(p12.coverage.complete,true);assert.equal(p12.data.fgts_covers_horizon,true);assert(!p12.text.includes('Projeção incompleta.'));assert(!p12.text.includes('Projeção indisponível'));
-  await page.screenshot({path:'qa/v284-'+label+'-projection-recovered.png',fullPage:true});
-  projectionCoverage.push({scenario:'explicit retry restores only complete current coverage',pass:true,received_days:p12.coverage.received_days});
+  const recoveredProjection=await captureProjectionTarget('recovered');
+  projectionCoverage.push({scenario:'explicit retry restores only complete current coverage',pass:true,received_days:p12.coverage.received_days,...recoveredProjection});
   await freshnessPanel().waitFor({state:'visible'});
   assert.equal(await bankKpi.locator('.v225-balance-freshness').count(),0,'metadata does not stretch the numeric KPI');
   assert(await freshnessPanel().evaluate(panel=>panel.parentElement.matches('.v168-kpis')&&panel.previousElementSibling?.querySelector('span')?.textContent==='Contas correntes · posição recebida'),'provenance is the grid sibling immediately after checking-account balance');
