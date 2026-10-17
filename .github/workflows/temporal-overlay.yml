@@ -51,7 +51,7 @@ jobs:
           }
           trap cleanup EXIT
           docker run -d --name "$container" --network none \
-            -e POSTGRES_DB=overlay_pg17_ci -e POSTGRES_HOST_AUTH_METHOD=trust \
+            -e POSTGRES_DB=overlay_pg17_ci -e POSTGRES_HOST_AUTH_METHOD=trust -e PGHOST=/tmp/pgsocket \
             -v "$socket:/tmp/pgsocket" postgres:17 \
             -c listen_addresses='' -c unix_socket_directories=/tmp/pgsocket -c port=55432
           ready=false
