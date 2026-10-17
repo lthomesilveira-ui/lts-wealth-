@@ -1,5 +1,5 @@
 {
-  "version": "atomic-gate-0448-consumer-precedence-fix",
+  "version": "atomic-gate-0509-subtraction-precedence-and-diagnostics",
   "status": "frozen for independent review only",
   "sql_executed": false,
   "expected_functional": 175,
@@ -27,8 +27,8 @@
     },
     {
       "name": "apply_control_synthetic.sql",
-      "bytes": 24558,
-      "sha256": "e84c642685bd15dfe710ae0971227f4fc5f0a08c0d9e19a6d6e2c35f2814b469"
+      "bytes": 24564,
+      "sha256": "4f83f0919429e0bf5cb608971d3a9442497a7815c9eb40d379574d9340d659f8"
     },
     {
       "name": "atomic_functional.sql",
@@ -37,8 +37,8 @@
     },
     {
       "name": "atomic_setup.sql",
-      "bytes": 580794,
-      "sha256": "ca2287f828025daa323da13746c11e92cc3f95713e408571a8e8755f673c3ee0"
+      "bytes": 581326,
+      "sha256": "75801daec098b5f54c1555919e3d13cb0d47d540944ea0c33a61d103703e0059"
     },
     {
       "name": "empty_instance_guard.sql",
@@ -47,8 +47,8 @@
     },
     {
       "name": "rollback_control_synthetic.sql",
-      "bytes": 23974,
-      "sha256": "eb07ab32da7854227d5b02909198d45908c16223342b7a800b3062c98be71f8c"
+      "bytes": 23984,
+      "sha256": "a3cc7f70252be5e7cb8324cb83fe6bbac734122555d50795cc278f38622e6ad3"
     },
     {
       "name": "run_disposable.py",

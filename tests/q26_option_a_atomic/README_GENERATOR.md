@@ -1,6 +1,6 @@
 # Readable reconstruction of the frozen atomic gate
 
-This package reconstructs exactly the eleven public files of atomic gate0448. Its output PUBLIC_MANIFEST.json must retain SHA256 03d85202df6497331dac0e77b35ab7346e518cfe4b0be7a592c891faf80e8035. The expected results remain 175 functional, 10 concurrent and four empty-instance guard tests. Reconstruction is not a PostgreSQL pass.
+This package reconstructs exactly the eleven public files of atomic gate0509. Its output PUBLIC_MANIFEST.json must retain SHA256 956b3fe4b04a20c1e557a8329bfd07ad848bd44cc101c28babf4fe1410476aaa. The expected results remain 175 functional, 10 concurrent and four empty-instance guard tests. Reconstruction is not a PostgreSQL pass.
 
 ## Explicit public dependency
 
@@ -19,6 +19,10 @@ This exposes every SQL statement and control plainly. No compression, base64, bi
 
 SOURCE_MANIFEST.json is this smaller transport allowlist. OUTPUT_CONTRACT.json describes reconstructed atomic outputs, while frozen_files/PUBLIC_MANIFEST.json is copied into that output unchanged. The later workflow must run the original atomic runner in a fresh, separate disposable PG17 instance, never the consumer suite's instance. CI must validate the current run's exit code, manifest and cleanup receipt and discard its container on failure. File existence alone is not success. This package grants no upload, CI, migration or production permission.
 
-## Corrected consumer dependency
+## Consumer dependency retained from revision0448
 
-This revision follows the four explicitly parenthesized JSONB containment right operands in the corrected consumer bodies. The atomic controls, suffix, runner, strict empty-instance guard and all 175 + 10 + 4 expected tests remain byte-identical. Only the consumer-derived setup prefix and dependent hashes/references change. The previous consumer run failed compilation before its 339 checks; neither this reconstruction nor the earlier static review supplies a PostgreSQL pass for the corrected bodies.
+Revision0448 followed the four explicitly parenthesized JSONB containment right operands in the corrected consumer bodies. At that step the atomic controls, suffix, runner, strict empty-instance guard and all 175 + 10 + 4 expected tests remained byte-identical; only the consumer-derived prefix and hashes changed. The separate0509 control corrections are described below. The previous consumer run failed compilation before its 339 checks; neither this reconstruction nor the earlier static review supplies a PostgreSQL pass for the corrected bodies.
+
+## Subtraction grouping and error diagnostics
+
+Eight JSONB extractions in the atomic controls now have explicit operand parentheses before subtraction: three apply and five rollback sites. The fixture-only expected-error helper additionally reports SQLSTATE, message, detail, hint and context when the exact expected pattern fails. Both original assertions and all 175 + 10 + 4 labels, mutations, patterns, concurrency orderings, runner and cleanup are unchanged. The previous PG run hid the inner error behind the epoch-stale assertion, so this static correction does not prove its complete root cause or a passing gate. No corrected atomic PostgreSQL result is claimed.

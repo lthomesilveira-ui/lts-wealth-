@@ -1,5 +1,5 @@
 {
-  "frozen_atomic_manifest_sha256": "03d85202df6497331dac0e77b35ab7346e518cfe4b0be7a592c891faf80e8035",
+  "frozen_atomic_manifest_sha256": "956b3fe4b04a20c1e557a8329bfd07ad848bd44cc101c28babf4fe1410476aaa",
   "expected_functional_results": 175,
   "expected_concurrency_results": 10,
   "expected_empty_instance_guards": 4,
@@ -17,32 +17,32 @@
       "sha256": "dc555ea66e04dbd009f0842f7966b64850e116e6b73e6070583aa711dbe5a175"
     },
     "PUBLIC_MANIFEST.json": {
-      "bytes": 1984,
-      "sha256": "03d85202df6497331dac0e77b35ab7346e518cfe4b0be7a592c891faf80e8035"
+      "bytes": 1999,
+      "sha256": "956b3fe4b04a20c1e557a8329bfd07ad848bd44cc101c28babf4fe1410476aaa"
     },
     "README.md": {
       "bytes": 6816,
       "sha256": "40636ab9c1173574d8fe64b4ad374987274994f524d5fcbb09758c7e879f974a"
     },
     "apply_control_synthetic.sql": {
-      "bytes": 24558,
-      "sha256": "e84c642685bd15dfe710ae0971227f4fc5f0a08c0d9e19a6d6e2c35f2814b469"
+      "bytes": 24564,
+      "sha256": "4f83f0919429e0bf5cb608971d3a9442497a7815c9eb40d379574d9340d659f8"
     },
     "atomic_functional.sql": {
       "bytes": 31917,
       "sha256": "cc764157c75f2a2a7f7fb652778e5a91013eff78c4fc3af260a88b514c0d84e6"
     },
     "atomic_setup.sql": {
-      "bytes": 580794,
-      "sha256": "ca2287f828025daa323da13746c11e92cc3f95713e408571a8e8755f673c3ee0"
+      "bytes": 581326,
+      "sha256": "75801daec098b5f54c1555919e3d13cb0d47d540944ea0c33a61d103703e0059"
     },
     "empty_instance_guard.sql": {
       "bytes": 967,
       "sha256": "d10cf1fab7c79623c24eb8162c05e0d209ef1ff0e438bcaaffd5b3f446aa2f53"
     },
     "rollback_control_synthetic.sql": {
-      "bytes": 23974,
-      "sha256": "eb07ab32da7854227d5b02909198d45908c16223342b7a800b3062c98be71f8c"
+      "bytes": 23984,
+      "sha256": "a3cc7f70252be5e7cb8324cb83fe6bbac734122555d50795cc278f38622e6ad3"
     },
     "run_disposable.py": {
       "bytes": 14168,

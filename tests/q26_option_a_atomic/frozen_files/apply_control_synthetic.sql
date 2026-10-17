@@ -135,7 +135,7 @@ BEGIN
  OR l#>>'{evidence_insert,metadata,contract,prior_id}' IS DISTINCT FROM prior::text
  OR l#>>'{evidence_insert,metadata,contract,invoice_anchor_id}' IS DISTINCT FROM inv::text
  OR l#>'{evidence_insert,metadata,contract}' IS DISTINCT FROM fixed->'identity_contract'
- OR (l->'evidence_insert'-ARRAY['metadata','created_at']) IS DISTINCT FROM fixed->'evidence_external_projection'
+ OR ((l->'evidence_insert')-ARRAY['metadata','created_at']) IS DISTINCT FROM fixed->'evidence_external_projection'
  OR l#>'{evidence_insert,metadata,state}' IS DISTINCT FROM '{"active":true,"revoked_at":null,"revocation_operation_id":null}'::jsonb
  OR l#>>'{representative_decision_insert,user_id}' IS DISTINCT FROM u::text
  OR l#>>'{representative_decision_insert,source_table}' IS DISTINCT FROM 'lts_open_finance_staging'
@@ -167,7 +167,7 @@ BEGIN
    OR encode(sha256(convert_to(item->>'definition','UTF8')),'hex') IS DISTINCT FROM item->>'reviewed_definition_sha256'
    OR item->'before_contract' IS DISTINCT FROM (SELECT v FROM jsonb_array_elements(l#>'{catalog_contracts,functions}')v WHERE v->>'signature'=item->>'signature')
    OR jsonb_typeof(item->'after_contract') IS DISTINCT FROM 'object'
-   OR (item->'before_contract'-ARRAY['definition_md5','prosrc_sha256']) IS DISTINCT FROM (item->'after_contract'-ARRAY['definition_md5','prosrc_sha256'])
+   OR ((item->'before_contract')-ARRAY['definition_md5','prosrc_sha256']) IS DISTINCT FROM ((item->'after_contract')-ARRAY['definition_md5','prosrc_sha256'])
    THEN RAISE EXCEPTION 'replacement payload/contract not exact'; END IF;
  END LOOP;
  -- The global epoch is acquired last. No historical/core/browser consumer runs below.

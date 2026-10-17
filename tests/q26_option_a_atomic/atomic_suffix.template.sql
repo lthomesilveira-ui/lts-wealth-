@@ -181,9 +181,17 @@ DECLARE x text;v jsonb;r jsonb:='{}';BEGIN
 END $snap_atomic$;
 CREATE FUNCTION public.fixture_atomic_exec(kind text,l jsonb) RETURNS void LANGUAGE plpgsql AS $exec_atomic$ BEGIN EXECUTE public.fixture_atomic_sql(kind,l); END $exec_atomic$;
 CREATE FUNCTION public.fixture_atomic_expect_fail(kind text,l jsonb,label text,pattern text DEFAULT '.',inject_final boolean DEFAULT false) RETURNS void LANGUAGE plpgsql AS $fail_atomic$
-DECLARE before_image jsonb;err text;BEGIN
+DECLARE before_image jsonb;err text;err_state text;err_detail text;err_hint text;err_context text;BEGIN
  before_image:=public.fixture_atomic_snapshot();
- BEGIN EXECUTE public.fixture_atomic_sql(kind,l,inject_final); EXCEPTION WHEN OTHERS THEN err:=SQLERRM; END;
+ BEGIN EXECUTE public.fixture_atomic_sql(kind,l,inject_final);
+ EXCEPTION WHEN OTHERS THEN
+  GET STACKED DIAGNOSTICS err=MESSAGE_TEXT,err_state=RETURNED_SQLSTATE,
+   err_detail=PG_EXCEPTION_DETAIL,err_hint=PG_EXCEPTION_HINT,err_context=PG_EXCEPTION_CONTEXT;
+ END;
+ IF (err IS NOT NULL AND err~pattern) IS DISTINCT FROM true THEN
+  RAISE NOTICE 'fixture expected-error diagnostic: %',jsonb_build_object('label',label,'kind',kind,
+   'expected_pattern',pattern,'sqlstate',err_state,'message',err,'detail',err_detail,'hint',err_hint,'context',err_context);
+ END IF;
  PERFORM public.fixture_assert(err IS NOT NULL AND err~pattern,label||'/rejected');
  PERFORM public.fixture_assert(public.fixture_atomic_snapshot()=before_image,label||'/atomic unchanged');
 END $fail_atomic$;

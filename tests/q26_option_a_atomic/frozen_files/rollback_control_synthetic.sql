@@ -137,8 +137,8 @@ BEGIN
  OR encode(sha256(convert_to(decision::text,'UTF8')),'hex') IS DISTINCT FROM receipts#>>'{0,meta,representative_decision_sha256}'
  OR evidence_rows#>'{0,metadata,state,active}' IS DISTINCT FROM 'true'::jsonb THEN RAISE EXCEPTION 'applied rows no longer exact'; END IF;
  IF jsonb_typeof(l->'expected_revoked_evidence') IS DISTINCT FROM 'object'
- OR (l->'expected_revoked_evidence'-'metadata') IS DISTINCT FROM ((evidence_rows->0)-'metadata')
- OR (l#>'{expected_revoked_evidence,metadata}'-'state') IS DISTINCT FROM (evidence_rows#>'{0,metadata}'-'state')
+ OR ((l->'expected_revoked_evidence')-'metadata') IS DISTINCT FROM ((evidence_rows->0)-'metadata')
+ OR ((l#>'{expected_revoked_evidence,metadata}')-'state') IS DISTINCT FROM ((evidence_rows#>'{0,metadata}')-'state')
  OR jsonb_typeof(l#>'{expected_revoked_evidence,metadata,state}') IS DISTINCT FROM 'object'
  OR (SELECT jsonb_agg(k ORDER BY k) FROM jsonb_object_keys(l#>'{expected_revoked_evidence,metadata,state}')k) IS DISTINCT FROM '["active","revocation_operation_id","revoked_at"]'::jsonb
  OR l#>'{expected_revoked_evidence,metadata,state,active}' IS DISTINCT FROM 'false'::jsonb
@@ -160,7 +160,7 @@ BEGIN
    OR jsonb_typeof(item->'after_contract') IS DISTINCT FROM 'object'
    OR item#>>'{before_contract,definition_md5}' IS DISTINCT FROM (receipts#>'{0,meta,function_after_md5}')->> (item->>'signature')
    OR item#>>'{after_contract,definition_md5}' IS DISTINCT FROM (receipts#>'{0,meta,function_before_md5}')->> (item->>'signature')
-   OR (item->'before_contract'-ARRAY['definition_md5','prosrc_sha256']) IS DISTINCT FROM (item->'after_contract'-ARRAY['definition_md5','prosrc_sha256'])
+   OR ((item->'before_contract')-ARRAY['definition_md5','prosrc_sha256']) IS DISTINCT FROM ((item->'after_contract')-ARRAY['definition_md5','prosrc_sha256'])
    THEN RAISE EXCEPTION 'restore definition or public contract drift'; END IF;
  END LOOP;
  PERFORM 1 FROM public.lts_read_cache_epoch_v242 WHERE singleton FOR UPDATE;
