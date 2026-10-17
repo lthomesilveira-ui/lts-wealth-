@@ -1,6 +1,6 @@
 {
-  "version": 2,
-  "status": "frozen_for_independent_review_not_executed",
+  "version": 3,
+  "status": "frozen_for_independent_review_precedence_fix_not_executed",
   "expected_unique_results": 339,
   "compiled_forms": 6,
   "exportable_files": [
@@ -42,8 +42,8 @@
     },
     {
       "file": "PREPARATION_CHECKS.json",
-      "bytes": 754,
-      "sha256": "3929959585000b2c08dc0b698611ac0863f248e7c7e7b9e2159dc08f9431a72f"
+      "bytes": 846,
+      "sha256": "18e990c61feb38dd0d4620b5103fdde356de616e34ece9a115ec76fb724fe3c6"
     },
     {
       "file": "README.md",
@@ -52,8 +52,8 @@
     },
     {
       "file": "card_detail_candidate.sql",
-      "bytes": 40168,
-      "sha256": "00e03602ae61579428e0c457528984a5e2170f03eba5ad758b4859b52dbb4161"
+      "bytes": 40172,
+      "sha256": "2c5ca1b074e5592d3428ce3cef84af5daac6520f54c9ad84155f44d046dbe02f"
     },
     {
       "file": "card_detail_original.sql",
@@ -62,8 +62,8 @@
     },
     {
       "file": "expense_rows_candidate.sql",
-      "bytes": 38800,
-      "sha256": "ca14be9189a6628cb25595bba16e7891953bc7de733d360f63b0828d97471881"
+      "bytes": 38804,
+      "sha256": "c74f3c0554da635f9ed22b2147a2086331aa23d25d4cfad209e88bc70f8a5c37"
     },
     {
       "file": "expense_rows_original.sql",
@@ -72,8 +72,8 @@
     },
     {
       "file": "option_a_full_consumers.sql",
-      "bytes": 1009058,
-      "sha256": "67e7b99236fce6f3892e4b69b713d3716105e523d11587ef6e5a57771ec9bac8"
+      "bytes": 1009066,
+      "sha256": "3317e1c1001e04a9c7aaf1f6496e5b322d4754e395f1ebe868323f1a616eaba7"
     },
     {
       "file": "run_disposable.sh",

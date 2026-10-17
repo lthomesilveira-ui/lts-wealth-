@@ -1,20 +1,20 @@
 {
-  "version": "readable-generator-0413",
+  "version": "readable-generator-0441-precedence-fix",
   "files": [
     {
       "name": "LOCAL_VERIFICATION.json",
-      "bytes": 453,
-      "sha256": "5d64bb1468dc02f02b4d53d39628132ceda5840c37baee2368a97ad96c37adab"
+      "bytes": 555,
+      "sha256": "a1d803099dac7810ef11c1ca0fd95929aa9bbf1cd303d8edb4b9daa74c1d2a32"
     },
     {
       "name": "OUTPUT_CONTRACT.json",
       "bytes": 2186,
-      "sha256": "e6b022f92b38b5d0abe63b75a630e44e8071e27d076613ffb92ecc68a38c4336"
+      "sha256": "a5f463b5abaa58251e8b866d708705a186327f830be430ca4d64ce206173bac1"
     },
     {
       "name": "README_GENERATOR.md",
-      "bytes": 2486,
-      "sha256": "9a2f6c472d9c804b444aeb49321918ee4df9a2a15cd21bb8cfdd8ad4564b122e"
+      "bytes": 3016,
+      "sha256": "c6be249f77b0570e1a1e99cf53ac43eb7a4ffcc20ce5664eccebcd6ed46d480c"
     },
     {
       "name": "consumer_suite.template.sql",
@@ -53,13 +53,13 @@
     },
     {
       "name": "frozen_files/PREPARATION_CHECKS.json",
-      "bytes": 754,
-      "sha256": "3929959585000b2c08dc0b698611ac0863f248e7c7e7b9e2159dc08f9431a72f"
+      "bytes": 846,
+      "sha256": "18e990c61feb38dd0d4620b5103fdde356de616e34ece9a115ec76fb724fe3c6"
     },
     {
       "name": "frozen_files/PUBLIC_MANIFEST.json",
-      "bytes": 2716,
-      "sha256": "e0ab59202f6434686d8db86d9e52d4f45d4f550e70fe457ee1835b287c780a0f"
+      "bytes": 2731,
+      "sha256": "67a947fea0facbc39cdc3e00198d63afb563662f14331ea111b9c90a60e31752"
     },
     {
       "name": "frozen_files/README.md",
@@ -68,8 +68,8 @@
     },
     {
       "name": "frozen_files/card_detail_candidate.sql",
-      "bytes": 40168,
-      "sha256": "00e03602ae61579428e0c457528984a5e2170f03eba5ad758b4859b52dbb4161"
+      "bytes": 40172,
+      "sha256": "2c5ca1b074e5592d3428ce3cef84af5daac6520f54c9ad84155f44d046dbe02f"
     },
     {
       "name": "frozen_files/card_detail_original.sql",
@@ -78,8 +78,8 @@
     },
     {
       "name": "frozen_files/expense_rows_candidate.sql",
-      "bytes": 38800,
-      "sha256": "ca14be9189a6628cb25595bba16e7891953bc7de733d360f63b0828d97471881"
+      "bytes": 38804,
+      "sha256": "c74f3c0554da635f9ed22b2147a2086331aa23d25d4cfad209e88bc70f8a5c37"
     },
     {
       "name": "frozen_files/expense_rows_original.sql",

@@ -1,5 +1,5 @@
 {
-  "expected_sql_sha256": "67e7b99236fce6f3892e4b69b713d3716105e523d11587ef6e5a57771ec9bac8",
+  "expected_sql_sha256": "3317e1c1001e04a9c7aaf1f6496e5b322d4754e395f1ebe868323f1a616eaba7",
   "expected_results": 339,
   "files": {
     "ACL_TEST_SCOPE.json": {
@@ -19,36 +19,36 @@
       "sha256": "b1d9f9280bbf34e8e7c9a61888d4bdded2b24b06d16a2bbb43f2a0394661a1de"
     },
     "PREPARATION_CHECKS.json": {
-      "bytes": 754,
-      "sha256": "3929959585000b2c08dc0b698611ac0863f248e7c7e7b9e2159dc08f9431a72f"
+      "bytes": 846,
+      "sha256": "18e990c61feb38dd0d4620b5103fdde356de616e34ece9a115ec76fb724fe3c6"
     },
     "PUBLIC_MANIFEST.json": {
-      "bytes": 2716,
-      "sha256": "e0ab59202f6434686d8db86d9e52d4f45d4f550e70fe457ee1835b287c780a0f"
+      "bytes": 2731,
+      "sha256": "67a947fea0facbc39cdc3e00198d63afb563662f14331ea111b9c90a60e31752"
     },
     "README.md": {
       "bytes": 5341,
       "sha256": "b23a712d78b7de9a0a9626c04326a3fd29287888e082cc30b19289c0d43e5291"
     },
     "card_detail_candidate.sql": {
-      "bytes": 40168,
-      "sha256": "00e03602ae61579428e0c457528984a5e2170f03eba5ad758b4859b52dbb4161"
+      "bytes": 40172,
+      "sha256": "2c5ca1b074e5592d3428ce3cef84af5daac6520f54c9ad84155f44d046dbe02f"
     },
     "card_detail_original.sql": {
       "bytes": 8708,
       "sha256": "1c9cf438cd246a1a8bd18d45aa04673070188e5663c7d00081a18ef7750946cc"
     },
     "expense_rows_candidate.sql": {
-      "bytes": 38800,
-      "sha256": "ca14be9189a6628cb25595bba16e7891953bc7de733d360f63b0828d97471881"
+      "bytes": 38804,
+      "sha256": "c74f3c0554da635f9ed22b2147a2086331aa23d25d4cfad209e88bc70f8a5c37"
     },
     "expense_rows_original.sql": {
       "bytes": 10099,
       "sha256": "f3b93095db9d7a2b7fd57ca0bcb77eb0b2a802d402f4aa6121d60c4226635982"
     },
     "option_a_full_consumers.sql": {
-      "bytes": 1009058,
-      "sha256": "67e7b99236fce6f3892e4b69b713d3716105e523d11587ef6e5a57771ec9bac8"
+      "bytes": 1009066,
+      "sha256": "3317e1c1001e04a9c7aaf1f6496e5b322d4754e395f1ebe868323f1a616eaba7"
     },
     "run_disposable.sh": {
       "bytes": 1603,

@@ -30,11 +30,11 @@ jobs:
       - name: Reconstruct exact reviewed outputs
         run: |
           set -euo pipefail
-          echo 'eaf4eac578dae71029fad391c1163c10b1e752676beccc5d7dd68840918f4399  tests/q26_option_a_generator/SOURCE_MANIFEST.json' | sha256sum -c -
+          echo '9fef9dea0df0a2ad50fa6f36a1d038aa1fb9fa19d10321707f0c333827c4e7ea  tests/q26_option_a_generator/SOURCE_MANIFEST.json' | sha256sum -c -
           mkdir -p qa
           python3 tests/q26_option_a_generator/generate.py --output "$RUNNER_TEMP/q26-option-a-reconstructed" > qa/generation.log 2> qa/generation.stderr
-          echo "e0ab59202f6434686d8db86d9e52d4f45d4f550e70fe457ee1835b287c780a0f  $RUNNER_TEMP/q26-option-a-reconstructed/PUBLIC_MANIFEST.json" | sha256sum -c -
-          echo "67e7b99236fce6f3892e4b69b713d3716105e523d11587ef6e5a57771ec9bac8  $RUNNER_TEMP/q26-option-a-reconstructed/option_a_full_consumers.sql" | sha256sum -c -
+          echo "67a947fea0facbc39cdc3e00198d63afb563662f14331ea111b9c90a60e31752  $RUNNER_TEMP/q26-option-a-reconstructed/PUBLIC_MANIFEST.json" | sha256sum -c -
+          echo "3317e1c1001e04a9c7aaf1f6496e5b322d4754e395f1ebe868323f1a616eaba7  $RUNNER_TEMP/q26-option-a-reconstructed/option_a_full_consumers.sql" | sha256sum -c -
       - name: Test frozen complete consumers
         run: |
           set -euo pipefail

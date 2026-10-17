@@ -346,8 +346,8 @@ FROM documented_legacy_properties p
  -- Count every UUID/competence occurrence BEFORE any economic-mask matching.
  WHERE (SELECT count(*) FROM q26_original x WHERE x.source_ref=p.c->>'representative_id' AND to_jsonb(x.competence_month)=p.c->'competence_month')=1
  AND (SELECT count(*) FROM q26_original x WHERE x.source_ref=p.c->>'prior_id' AND to_jsonb(x.competence_month)=p.c->'competence_month')=1
- AND EXISTS(SELECT 1 FROM q26_original x WHERE x.source_ref=p.c->>'representative_id' AND to_jsonb(x.competence_month)=p.c->'competence_month' AND to_jsonb(x) @> p.c->'representative_expense_identity')
- AND EXISTS(SELECT 1 FROM q26_original x WHERE x.source_ref=p.c->>'prior_id' AND to_jsonb(x.competence_month)=p.c->'competence_month' AND to_jsonb(x) @> p.c->'prior_expense_identity')
+ AND EXISTS(SELECT 1 FROM q26_original x WHERE x.source_ref=p.c->>'representative_id' AND to_jsonb(x.competence_month)=p.c->'competence_month' AND to_jsonb(x) @> (p.c->'representative_expense_identity'))
+ AND EXISTS(SELECT 1 FROM q26_original x WHERE x.source_ref=p.c->>'prior_id' AND to_jsonb(x.competence_month)=p.c->'competence_month' AND to_jsonb(x) @> (p.c->'prior_expense_identity'))
 )
 SELECT x.* FROM q26_original x
 WHERE NOT EXISTS(SELECT 1 FROM q26_resolvable p WHERE x.source_ref=p.c->>'prior_id' AND to_jsonb(x.competence_month)=p.c->'competence_month')

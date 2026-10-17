@@ -318,7 +318,7 @@ begin
    AND NOT EXISTS(SELECT 1 FROM jsonb_array_elements(CASE WHEN jsonb_typeof(result->'items')='array' THEN result->'items' ELSE '[]'::jsonb END) x WHERE jsonb_typeof(x) IS DISTINCT FROM 'object' OR jsonb_typeof(x->'amount') IS DISTINCT FROM 'number') THEN
     SELECT x INTO q26_r FROM jsonb_array_elements(result->'items') x WHERE x->>'source_id'=q26_p.c->>'representative_id';
     SELECT x INTO q26_o FROM jsonb_array_elements(result->'items') x WHERE x->>'source_id'=q26_p.c->>'prior_id';
-    IF q26_r @> q26_p.c->'representative_card_identity' AND q26_o @> q26_p.c->'prior_card_identity' THEN
+    IF q26_r @> (q26_p.c->'representative_card_identity') AND q26_o @> (q26_p.c->'prior_card_identity') THEN
      SELECT count(*),sum(CASE WHEN jsonb_typeof(x->'amount')='number' THEN (x->>'amount')::numeric END) INTO q26_n,q26_before FROM jsonb_array_elements(result->'items') x;
      IF result->'item_count'=to_jsonb(q26_n) AND result->'amount'=to_jsonb(q26_before)
       AND (NOT (result ? 'detail_total') OR result->'detail_total'=to_jsonb(q26_before))
