@@ -7,6 +7,7 @@ on:
       - '.github/fixtures/person-context-copy/**'
       - '.github/fixtures/projection-v284/**'
       - '.github/scripts/lts_v285*'
+      - '.github/scripts/lts_v165_executive_ux_gate.js'
       - '.github/scripts/lts_projection_*'
       - '.github/workflows/v285.yml'
   workflow_dispatch:

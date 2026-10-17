@@ -1,6 +1,11 @@
 name: V167 complete review
 
 on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/scripts/lts_v165_executive_ux_gate.js'
+      - '.github/workflows/v167-complete-review.yml'
   workflow_dispatch:
   push:
     branches:
