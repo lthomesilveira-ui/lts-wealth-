@@ -1,7 +1,7 @@
 -- Pure input validation. This helper never reads or writes financial relations.
 CREATE OR REPLACE FUNCTION public.lts_bill_source_fields_v286(p_normalized jsonb,p_raw jsonb,p_fallback_due date)
 RETURNS TABLE(header_valid boolean,due_date date,closing_date date,source_updated_at timestamptz,payments_valid boolean,reason text)
-LANGUAGE plpgsql STABLE SECURITY INVOKER
+LANGUAGE plpgsql STABLE SECURITY INVOKER ROWS 1
 SET search_path TO ''
 SET "TimeZone" TO 'UTC'
 SET "DateStyle" TO 'ISO, YMD'

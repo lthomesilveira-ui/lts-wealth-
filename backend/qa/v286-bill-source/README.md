@@ -13,6 +13,7 @@ The helper is unavailable to `PUBLIC`, `anon` and `authenticated`; no financial
 relation or user decision is written. `OTHER_PAYMENT`, observed in provider
 payloads, is recognized alongside the existing values under the same guards.
 The receipt timestamp and source update timestamp remain distinct.
+The helper declares its actual one-row cardinality to the planner.
 
 CI uses PostgreSQL 17.6 in a disposable database. Its 41 field-validation cases
 and 32 received-reader cases cover invalid calendars, malformed JSON, missing or
