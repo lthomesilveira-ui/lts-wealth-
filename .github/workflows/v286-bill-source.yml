@@ -1,0 +1,68 @@
+name: Bill source validation and received-cycle guards
+on:
+  pull_request:
+    paths:
+      - 'backend/patches/v286/**'
+      - 'backend/qa/v286-bill-source/**'
+      - '.github/workflows/v286-bill-source.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'backend/patches/v286/**'
+      - 'backend/qa/v286-bill-source/**'
+      - '.github/workflows/v286-bill-source.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  postgres:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    services:
+      postgres:
+        image: postgres:17.6
+        env:
+          POSTGRES_USER: qa
+          POSTGRES_PASSWORD: synthetic-local-qa
+          POSTGRES_DB: lts_bill_source_qa
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Ensure PostgreSQL client
+        run: |
+          if ! command -v psql; then
+            sudo apt-get update
+            sudo apt-get install -y postgresql-client
+          fi
+      - name: Validate source fields and the actual received-bill reader
+        env:
+          PGPASSWORD: synthetic-local-qa
+        run: |
+          set -euo pipefail
+          psql -X -v ON_ERROR_STOP=1 -h 127.0.0.1 -p 5432 -U qa -d lts_bill_source_qa <<'SQL' | tee bill-source-v286-result.log
+          BEGIN;
+          SET LOCAL statement_timeout='90s';
+          SET LOCAL TimeZone='UTC';
+          \i backend/qa/v286-bill-source/fixture_schema.sql
+          \i backend/qa/v286-bill-source/received_bills_baseline.sql
+          REVOKE ALL ON FUNCTION public.lts_current_received_card_bills_v263(uuid) FROM PUBLIC,anon,authenticated;
+          GRANT EXECUTE ON FUNCTION public.lts_current_received_card_bills_v263(uuid) TO service_role;
+          \i backend/patches/v286/bill_source_fields.sql
+          \i backend/patches/v286/received_bill_reader.sql
+          \i backend/qa/v286-bill-source/source_fields_cases.sql
+          \i backend/qa/v286-bill-source/received_reader_cases.sql
+          ROLLBACK;
+          SQL
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: bill-source-v286-postgres-evidence
+          path: bill-source-v286-result.log
+          if-no-files-found: error
