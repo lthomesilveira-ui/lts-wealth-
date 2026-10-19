@@ -1,0 +1,28 @@
+name: Typed observation recovery
+on:
+  push:
+    branches: [main, work/v287-observation-restore]
+    paths:
+      - 'backend/tools/observation_restore_v287/**'
+      - '.github/workflows/v287-observation-restore.yml'
+  pull_request:
+    paths:
+      - 'backend/tools/observation_restore_v287/**'
+      - '.github/workflows/v287-observation-restore.yml'
+permissions:
+  contents: read
+jobs:
+  synthetic-postgres-restore:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: backend/tools/observation_restore_v287/package-lock.json
+      - name: Install pinned PostgreSQL WebAssembly engine
+        run: npm ci --ignore-scripts --no-audit --no-fund --prefix backend/tools/observation_restore_v287
+      - name: Verify only synthetic recovery and failure cases
+        run: node --test backend/tools/observation_restore_v287/typed_restore.test.mjs backend/tools/observation_restore_v287/rls_role_probe.test.mjs backend/tools/observation_restore_v287/pending_helpers.test.mjs
