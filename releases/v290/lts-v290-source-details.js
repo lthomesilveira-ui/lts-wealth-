@@ -3,7 +3,7 @@
  'use strict';const shell=document.getElementById('shell');
  function runtime(){
   if(window.__LTS_V290_SOURCES)return;
-  const previous=render,st={quotes:null,quoteError:false,quoteLoading:false,quoteReadAt:0,future:null,futureError:false,futureLoading:false,futureReadAt:0};
+  const previous=render,st={quotes:null,quoteError:false,quoteLoading:false,quoteReadAt:0,quoteDetailsOpen:false,future:null,futureError:false,futureLoading:false,futureReadAt:0};
   const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const money=x=>Number.isFinite(Number(x))?new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(x)):'—';
   const stamp=x=>{const d=new Date(x);return x&&Number.isFinite(d.getTime())?new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Sao_Paulo',dateStyle:'short',timeStyle:'short'}).format(d):'não informado';};
@@ -12,7 +12,7 @@
   const active=()=>D&&!N.classList.contains('hidden');
   const generation=()=>typeof BOOT==='object'?BOOT.generation:D;
   let owner=generation(),epoch=0;
-  function reset(){if(owner===generation())return;owner=generation();epoch++;Object.assign(st,{quotes:null,quoteError:false,quoteLoading:false,quoteReadAt:0,future:null,futureError:false,futureLoading:false,futureReadAt:0});}
+  function reset(){if(owner===generation())return;owner=generation();epoch++;Object.assign(st,{quotes:null,quoteError:false,quoteLoading:false,quoteReadAt:0,quoteDetailsOpen:false,future:null,futureError:false,futureLoading:false,futureReadAt:0});}
   function safeLink(url,label){try{if(new URL(url).protocol==='https:')return '<a href="'+esc(url)+'" target="_blank" rel="noopener noreferrer">'+esc(label)+'</a>';}catch{}return esc(label);}
   async function quotes(force=false){
    reset();if(!active()||st.quoteLoading||(!force&&Date.now()-st.quoteReadAt<300000))return;
@@ -25,6 +25,7 @@
    finally{if(current===epoch){st.quoteLoading=false;paintQuotes();}}
   }
   async function mode(value,button){
+   st.quoteDetailsOpen=button.closest('details')?.open===true;
    button.disabled=true;
    try{
     const r=await S.rpc('lts_browser_market_mode_v290',{p_mode:value});if(r.error||r.data?.ok!==true)throw Error();
@@ -53,7 +54,8 @@
    reset();if(!active())return;
    const host=document.querySelector(V==='Patrimônio'?'.v168-wealth':V==='Dashboard'?'.v168-dashboard':'#never');
    if(host){let panel=document.getElementById('ltsMarketQuotes');if(!panel){panel=document.createElement('article');panel.id='ltsMarketQuotes';panel.className='v168-card lts-market-panel';host.appendChild(panel);}
-    const open=panel.querySelector('details')?.open===true,html=quoteMarkup();if(panel.innerHTML!==html){panel.innerHTML=html;panel.querySelector('details').open=open;}
+    const html=quoteMarkup();if(panel.innerHTML!==html){panel.innerHTML=html;panel.querySelector('details').open=st.quoteDetailsOpen;}
+    const details=panel.querySelector('details');details.ontoggle=()=>{if(details.isConnected&&document.getElementById('ltsMarketQuotes')===panel)st.quoteDetailsOpen=details.open;};
     panel.querySelector('[data-market-read]').onclick=()=>quotes(true);
     panel.querySelector('[data-market-mode]').onclick=e=>mode(e.currentTarget.dataset.marketMode,e.currentTarget);
    }

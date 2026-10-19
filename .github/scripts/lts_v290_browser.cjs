@@ -66,7 +66,7 @@ async function run(browser,viewport,label){
   const quoteDetails=frame.locator('#ltsMarketQuotes details');assert.equal(await quoteDetails.getAttribute('open'),null);
   await quoteDetails.locator('summary').click();assert.match(await quoteDetails.innerText(),/Data da cotação/);assert.match(await quoteDetails.innerText(),/Recebida no Wealth/);
   await frame.locator('[data-market-mode]').click();await frame.waitForFunction(()=>window.__LTS_V290_SOURCES.state.quotes?.mode==='manual');assert.match(await frame.locator('#ltsMarketQuotes').innerText(),/Simulação manual ativa/);
-  await frame.locator('#ltsMarketQuotes summary').click();if(!await frame.locator('[data-market-mode]').isVisible())await frame.locator('#ltsMarketQuotes summary').click();
+  assert.equal(await frame.locator('#ltsMarketQuotes details').getAttribute('open'),'','The chosen update detail stays open after a mode change');
   await frame.locator('[data-market-mode]').click();await frame.waitForFunction(()=>window.__LTS_V290_SOURCES.state.quotes?.mode==='automatic');
   const navigate=async view=>{await frame.evaluate(view=>{V=view;renderNav();render();},view);await page.waitForTimeout(150);};
   await navigate('Atualizações');await frame.locator('[data-v181-category]').waitFor();
