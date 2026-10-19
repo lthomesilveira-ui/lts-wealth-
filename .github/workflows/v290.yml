@@ -1,0 +1,41 @@
+name: V290 homologation
+on:
+  pull_request:
+    paths:
+      - 'releases/v290/**'
+      - 'backend/patches/v290/**'
+      - 'backend/qa/lts_v290*'
+      - '.github/scripts/lts_v290*'
+      - '.github/workflows/v290.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  desktop-and-mobile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Protect previous releases and verify candidate assets
+        run: node .github/scripts/lts_v290_release_contract.cjs
+      - name: Verify the deployed provider normalization and future pagination
+        run: |
+          node backend/qa/lts_v249_card_normalization.test.mjs
+          node backend/qa/lts_v290_future_import.test.mjs
+          node .github/scripts/lts_v272_payment_contract.cjs releases/v290/lts-v226-card-composition.js
+      - run: npm install --no-save --package-lock=false playwright@1.58.2
+      - run: npx playwright install --with-deps chromium
+      - name: Serve local candidate
+        run: python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/lts-v290-http.log 2>&1 &
+      - name: Actual release stack on desktop and two mobile viewports
+        run: node .github/scripts/lts_v290_browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v290-homologation-evidence
+          path: qa/v290/

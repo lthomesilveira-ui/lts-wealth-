@@ -1,0 +1,27 @@
+import assert from 'node:assert/strict';
+import {Pluggy,normalize} from '../open_finance/v249/core.mjs';
+const account={id:'synthetic-account',subtype:'CHECKING_ACCOUNT',number:'0001',currencyCode:'BRL'};
+const raw={id:'synthetic-future-1',accountId:account.id,date:'2026-11-16T03:00:00.000Z',status:'PENDING',amount:42,type:'DEBIT',currencyCode:'BRL',description:'Synthetic scheduled payment'};
+const calls=[];
+const reader=new Pluggy('fixture-client','fixture-secret',async url=>{
+ const u=new URL(url);calls.push(u.pathname+u.search);
+ if(u.pathname==='/auth')return new Response(JSON.stringify({apiKey:'synthetic-only'}));
+ assert.equal(u.pathname,'/v2/transactions');assert.equal(u.searchParams.get('accountId'),account.id);
+ assert.equal(u.searchParams.has('dateTo'),false,'No present-day cutoff may remove future bank transactions');
+ return new Response(JSON.stringify(u.searchParams.has('after')?{results:[{...raw,id:'synthetic-future-2',date:'2027-01-10T03:00:00Z'}],next:null}:{results:[raw],next:'?accountId=synthetic-account&after=opaque%2Bcursor%3D'}));
+});
+const rows=await reader.list('/v2/transactions',{accountId:account.id},'cursor');
+assert.equal(rows.length,2);assert(calls.at(-1).endsWith('after=opaque%2Bcursor%3D'),'Opaque cursor preserved');
+const ctx={account,item:{id:'fixture-item',lastUpdatedAt:'2026-10-19T15:00:00Z'},institutionCode:'341',institutionName:'Itaú'};
+const received=await normalize('transaction',rows[0],ctx);
+assert.equal(received.normalized_payload.date,'2026-11-16');assert.equal(received.normalized_payload.status,'PENDING');
+assert.equal(received.normalized_payload.amount,-42);assert.equal(received.normalized_payload.official_effect,false);
+const card=await normalize('card_transaction',{...raw,accountId:'synthetic-card',operationType:'PAGAMENTO',creditCardMetadata:{cardNumber:'1234',installmentNumber:2,totalInstallments:6}}, {...ctx,account:{...account,id:'synthetic-card',subtype:'CREDIT_CARD',number:'9999'}});
+assert.equal(card.normalized_payload.layer,'card_consumption');assert.equal(card.normalized_payload.last4,'1234');
+assert.equal(card.normalized_payload.installment_number,2);assert.equal(card.normalized_payload.total_installments,6);
+const payment=await normalize('card_transaction',{...raw,accountId:'synthetic-card',amount:-42,type:'CREDIT',operationType:'PAGAMENTO_FATURA'}, {...ctx,account:{...account,id:'synthetic-card',subtype:'CREDIT_CARD'}});
+assert.equal(payment.normalized_payload.layer,'card_payment_evidence');
+const boundary=await normalize('transaction',{...raw,date:'2026-11-16T01:00:00Z'},ctx);
+assert.equal(boundary.normalized_payload.date,'2026-11-15');assert.equal(boundary.normalized_payload.provider_civil_date,'2026-11-16');
+assert(boundary.normalized_payload.warnings.includes('utc_date_differs_from_brazil_day'));
+console.log(JSON.stringify({pass:true,checks:['two cursor pages retain future rows','opaque cursor unchanged','no current-date filter','scheduled is not realized','purchase/payment distinguished','installment identity preserved','Brazil timezone boundary disclosed']}));

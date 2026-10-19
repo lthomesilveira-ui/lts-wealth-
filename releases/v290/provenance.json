@@ -1,0 +1,19 @@
+{
+  "release": "v290",
+  "base_release": "v285",
+  "base_commit": "ac05849f0ac506c5be972a53d7b08e96d637db6e",
+  "frontend_only": false,
+  "backend_changed": true,
+  "raw_financial_sources_preserved": true,
+  "scope": [
+    "shared classification registry and immediate creation",
+    "stable classification controls",
+    "clean source and update details",
+    "verified card-payment deduplication",
+    "current card composition and dated billing rule",
+    "automatic hourly quote references with immutable history",
+    "future bank-source visibility"
+  ],
+  "validation_contract": "v290 homologation CI plus authenticated live review",
+  "physical_mobile_validated": false
+}
