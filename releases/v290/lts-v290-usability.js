@@ -4,7 +4,7 @@
  function runtime(){
   if(window.__LTS_V290_USABILITY)return;
   const previous=render;let deferred=false,route=null;
-  const categoryFocused=()=>{const el=document.activeElement;return el?.matches('input,select,textarea')||!!el?.closest('.lts-new-category');};
+  const categoryFocused=()=>{const el=document.activeElement;return window.LTSCategoryRegistry?.busy||el?.matches('input,select,textarea')||!!el?.closest('.lts-new-category');};
   const ready=()=>D&&!N.classList.contains('hidden')&&(typeof BOOT==='undefined'||document.body.dataset.ltsBootState==='ready');
   function after(){
    if(V==='Fluxo Diário'&&typeof mergedFlowDays==='function'){

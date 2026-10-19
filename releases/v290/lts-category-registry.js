@@ -4,7 +4,7 @@
  const shell=document.getElementById('shell');
  function runtime(){
   if(window.LTSCategoryRegistry)return;
-  let data=null,reading=null,readAt=0,epoch=0;
+  let data=null,reading=null,readAt=0,epoch=0,creating=0;
   const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const generation=()=>typeof BOOT==='object'?BOOT.generation:D;
   let owner=generation();
@@ -12,9 +12,9 @@
    if(owner!==generation()){owner=generation();data=null;reading=null;readAt=0;epoch++;}
   }
   const canonical=value=>{session();return data?.aliases?.[value]||value;};
-  function populate(select,selected){
+  function populate(select,selected,force=false){
    if(!select?.isConnected||!data)return;
-   if(document.activeElement===select){
+   if(document.activeElement===select&&!force){
     select.addEventListener('blur',()=>populate(select,select.value),{once:true});return;
    }
    const empty=select.options[0]?.value===''?select.options[0].textContent:'Selecione…';
@@ -54,22 +54,28 @@
    button.onclick=async()=>{
     const name=input.value.trim();if(button.disabled)return;
     if(name.length<2||name.length>80){status.textContent='Informe um nome entre 2 e 80 caracteres.';return;}
-    button.disabled=true;status.textContent='Criando…';const current=epoch;
+    button.disabled=true;status.textContent='Criando…';const current=epoch,reviewKey=select.closest('[data-v181-review-key]')?.dataset.v181ReviewKey,cardKey=select.closest('[data-v226-classify]')?.dataset.v226Classify,dialogId=select.closest('dialog')?.id;creating++;
     try{
      const saved=await S.rpc('lts_browser_category_create_v1',{p_category:name});
      if(saved.error||saved.data?.ok!==true)throw Error(saved.error?.message||'Tente novamente.');
-     const result=await get(true);
-     if(current!==epoch||!select.isConnected)return;
-     changed(result);populate(select,saved.data.category);select.value=saved.data.category;
-     select.dispatchEvent(new Event('change',{bubbles:true}));
-     details.open=false;input.value='';status.textContent='Classificação criada e disponível no fluxo e nos cartões.';select.focus();
+     if(current!==epoch||owner!==generation())return;
+     // The creation response is authoritative. Do not let an older in-flight
+     // options request or an asynchronous row refresh discard this choice.
+     if(Array.isArray(saved.data.categories)){data={...(data||{}),categories:saved.data.categories,revision:saved.data.revision};readAt=Date.now();}
+     else await get(true);
+     const review=window.__LTS_V181_STATE?.review;
+     if(reviewKey&&review?.drafts)review.drafts.set(reviewKey,{...(review.drafts.get(reviewKey)||{}),category:saved.data.category});
+     changed(data);
+     const target=select.isConnected?select:reviewKey?[...document.querySelectorAll('[data-v181-review-key]')].find(row=>row.dataset.v181ReviewKey===reviewKey)?.querySelector('[data-v181-category]'):cardKey?[...document.querySelectorAll('[data-v226-classify]')].find(form=>form.dataset.v226Classify===cardKey)?.querySelector('[name=category]'):document.getElementById(dialogId||'')?.querySelector('[name=category]');
+     if(target){populate(target,saved.data.category,true);target.value=saved.data.category;target.dispatchEvent(new Event('change',{bubbles:true}));target.focus();}
+     details.open=false;input.value='';status.textContent='Classificação criada e disponível no fluxo e nos cartões.';
     }catch{if(details.isConnected)status.textContent='Não foi possível criar a classificação. Confira a conexão e tente novamente.';}
-    finally{button.disabled=false;}
+    finally{creating=Math.max(0,creating-1);button.disabled=false;}
    };
    if(data)populate(select);
    else get().then(()=>populate(select)).catch(()=>{status.textContent='Não foi possível carregar a lista. Reabra para tentar novamente.';});
   }
-  window.LTSCategoryRegistry={get,attach,canonical,reset(){epoch++;data=null;reading=null;readAt=0;}};
+  window.LTSCategoryRegistry={get,attach,canonical,get busy(){return creating>0;},reset(){epoch++;data=null;reading=null;readAt=0;}};
  }
  function install(){try{const w=shell?.contentWindow,d=shell?.contentDocument;if(!w?.__LTS_V178_REVIEW_ACTIONS?.installed)return false;if(!w.LTSCategoryRegistry){const s=d.createElement('script');s.textContent='('+runtime.toString()+')();';d.head.appendChild(s);}return !!w.LTSCategoryRegistry;}catch{return false;}}
  let tries=0;function start(){if(!install()&&++tries<400)setTimeout(start,100);}shell?.addEventListener('load',()=>{tries=0;start();});start();
