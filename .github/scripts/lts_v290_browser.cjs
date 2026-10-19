@@ -97,7 +97,12 @@ async function run(browser,viewport,label){
   await flowForm.locator('[name=category]').selectOption('Nova classificação de teste');await flowForm.getByRole('button',{name:'Salvar classificação',exact:true}).click();
   await flowForm.waitFor({state:'detached'});assert.equal(writes.findLast(x=>x.name==='lts_browser_flow_classification_v290').args.p_beneficiary,null);
   for(const view of ['Dashboard','Fluxo Diário','Cartões','Despesas','Patrimônio','Atualizações']){
-   await navigate(view);await page.waitForTimeout(150);
+   await navigate(view==='Cartões'?'Despesas':view);
+   if(view==='Cartões'){
+    const tab=frame.getByRole('tab',{name:'Cartões e faturas',exact:true});await tab.click();
+    assert.equal(await tab.getAttribute('aria-selected'),'true');await frame.locator('.v226-upcoming').waitFor();
+   }else if(view==='Despesas')await frame.getByRole('tab',{name:'Visão geral',exact:true}).click();
+   await page.waitForTimeout(150);
    const dimensions=await frame.locator('html').evaluate(e=>({client:e.clientWidth,scroll:e.scrollWidth}));assert(dimensions.scroll<=dimensions.client+2,view+' has page overflow '+JSON.stringify(dimensions));
    const file=label+'-'+view.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replaceAll(' ','_')+'.png';await page.screenshot({path:path.join(qa,file)});screenshots.push(file);
   }
