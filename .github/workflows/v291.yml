@@ -1,7 +1,7 @@
 name: V291 professional update language
 on:
   pull_request:
-    paths: ['releases/v291/**', '.github/scripts/lts_v291*', '.github/workflows/v291.yml']
+    paths: ['releases/v291/**', 'backend/patches/v291/**', 'backend/qa/lts_v291*', '.github/scripts/lts_v291*', '.github/workflows/v291.yml']
   workflow_dispatch:
 permissions:
   contents: read

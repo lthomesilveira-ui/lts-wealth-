@@ -92,6 +92,7 @@ async function run(browser,viewport,label){
   await frame.locator('#v226-detail [data-v226-close]').click();
   await navigate('Fluxo Diário');await frame.evaluate(()=>loadFlowRange('2026-10-19','2026-10-19'));await frame.locator('#d-2026-10-19').waitFor();
   assert.equal(await frame.locator('.v274-ending-label').count(),0);assert.doesNotMatch(await frame.locator('#d-2026-10-19').innerText(),/encerramento do fluxo/i);
+  await frame.locator('#ltsFlowOverdueProjections').getByText('Nenhuma previsão vencida nesta lista recebida',{exact:false}).waitFor();
   for(const account of ['Consolidado','Itaú','Bradesco']){await frame.evaluate(account=>{ACC=account;render();},account);assert.doesNotMatch(await frame.locator('#d-2026-10-19').innerText(),/encerramento do fluxo/i);}
   await frame.evaluate(()=>{ACC='Itaú';render();});await frame.locator('#d-2026-10-19 .exp').click();await frame.locator('[data-flow-classify]').first().click();
   const flowForm=frame.locator('#ltsFlowClassification');await flowForm.locator('select[name=category]').waitFor();
