@@ -1,0 +1,38 @@
+name: PostgreSQL 17 synthetic Q26
+on:
+  pull_request:
+    paths: ['tests/q26/**', '.github/workflows/q26-synthetic-pg17.yml']
+permissions:
+  contents: read
+jobs:
+  synthetic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: wealth_synthetic_q26
+          POSTGRES_USER: wealth_synthetic_q26
+          POSTGRES_PASSWORD: synthetic-ci-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U wealth_synthetic_q26 -d wealth_synthetic_q26"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: sudo apt-get update && sudo apt-get install -y postgresql-client
+      - run: python3 run_postgres17.py --allow-fresh-synthetic-postgres17 --port 5432
+        working-directory: tests/q26
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: synthetic-q26-postgres17
+          path: tests/q26/results/

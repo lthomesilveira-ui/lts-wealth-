@@ -1,0 +1,71 @@
+{
+  "format": "overlay_pg85_exact_output_pins_v1",
+  "target_manifest_sha256": "b96a934778a7cbe8d38f71b0067c074a30d85918b94f4fb513165ca2bc8cc831",
+  "outputs": [
+    {
+      "name": "PACKAGE_MANIFEST.json",
+      "bytes": 1652,
+      "sha256": "b96a934778a7cbe8d38f71b0067c074a30d85918b94f4fb513165ca2bc8cc831"
+    },
+    {
+      "name": "README.md",
+      "bytes": 7931,
+      "sha256": "89daa3c65587ad299d8e34060b0dcd73d745c0c228bf542d4d2ff91ffd6577d4"
+    },
+    {
+      "name": "baseline-28.json",
+      "bytes": 46558,
+      "sha256": "ddc0ea6a7c794f99839377e8f8637fca57c2de3fe0460b31e9779f845233fa8b"
+    },
+    {
+      "name": "build_cases.py",
+      "bytes": 12958,
+      "sha256": "901c3352e4b97c5df65f8e0b12374c127b5f5250d9f9f3d2e11210ed05171254"
+    },
+    {
+      "name": "build_sql.py",
+      "bytes": 11745,
+      "sha256": "3fea246126138146ae565e72215dddf1a3fec414c5be3ce1dbbaabf262d46de9"
+    },
+    {
+      "name": "case-catalog.json",
+      "bytes": 15782,
+      "sha256": "71f9603174348798a0b0628dc837d6101affb5f4cb2473cfad3c0d78ba2a8b99"
+    },
+    {
+      "name": "expected.json",
+      "bytes": 134158,
+      "sha256": "02ac72a4cb4fd232dc2786d14854e80ed156835492bdc6267aab9dee875e4434"
+    },
+    {
+      "name": "inputs.json",
+      "bytes": 204791,
+      "sha256": "5289d119a26f91eb7ca279af7c59673a996e522b325ddb21e7a5d9c73013b7a1"
+    },
+    {
+      "name": "overlay_contract.sql",
+      "bytes": 220412,
+      "sha256": "75540e4f8e13530041dec03b1e592f25424b86fc115f6e7ce8c4a6676902b526"
+    },
+    {
+      "name": "overlay_reference.py",
+      "bytes": 9480,
+      "sha256": "e2a3ce80e7cf7b3d851558886cd998e95bb4bbf2003b62da08d766659becb409"
+    },
+    {
+      "name": "run_pg17.py",
+      "bytes": 7863,
+      "sha256": "cf113bea10e9df804fa16d983915ceb76d6aef5409515e4ef471aad85b6b9045"
+    },
+    {
+      "name": "test_package.py",
+      "bytes": 9892,
+      "sha256": "6a7c9bfc7e844a0812de7f48b2796ab7d5ada6f22f41b113da1a3d8b3ec06e95"
+    },
+    {
+      "name": "verify_results.py",
+      "bytes": 5845,
+      "sha256": "08d4327a9933a11ff49d56e2a35a85770dd5949bdd189dc267213ad7d4cd07b8"
+    }
+  ]
+}

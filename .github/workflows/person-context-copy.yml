@@ -1,0 +1,70 @@
+name: Person context copy synthetic gate
+on:
+  pull_request:
+    paths:
+      - '.github/fixtures/person-context-copy/**'
+      - '.github/workflows/person-context-copy.yml'
+permissions:
+  contents: read
+jobs:
+  synthetic-copy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout proposed test inputs
+        uses: actions/checkout@v4
+        with:
+          path: proposed
+          persist-credentials: false
+          sparse-checkout: .github/fixtures/person-context-copy
+      - name: Checkout immutable published V283 baseline
+        uses: actions/checkout@v4
+        with:
+          ref: 999a2861af3b139392045b23f849b64213efcd39
+          path: baseline
+          persist-credentials: false
+          sparse-checkout: |
+            releases/v282
+            releases/v283
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify and stage reviewed synthetic inputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C baseline rev-parse HEAD)" = 999a2861af3b139392045b23f849b64213efcd39
+          echo '07af05db1851b5a789c3a46199197948f0d2d8a29c38e23f74748ebdaf8e2791  proposed/.github/fixtures/person-context-copy/PUBLIC_ALLOWLIST.json' | sha256sum -c -
+          mkdir -p baseline/.github/fixtures qa
+          cp -R proposed/.github/fixtures/person-context-copy baseline/.github/fixtures/
+          node --version > qa/node-version.txt
+          git -C baseline rev-parse HEAD > qa/base-commit.txt
+      - name: Run 323 copy-only assertions
+        working-directory: baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+          node .github/fixtures/person-context-copy/run.cjs > ../qa/stdout.log 2> ../qa/stderr.log
+          node - <<'CHECK'
+          const fs=require('node:fs'),assert=require('node:assert/strict');
+          const rows=fs.readFileSync('../qa/stdout.log','utf8').trim().split('\n').filter(x=>/^\{"pass":.*"scope":"synthetic copy-only gate"/.test(x)).map(x=>JSON.parse(x));
+          const found=rows.filter(x=>x.scope==='synthetic copy-only gate');
+          assert.equal(found.length,1);
+          const r=found[0];assert.equal(r.pass,true);assert.equal(r.assertions,323);assert.equal(r.baseFilesVerified,67);assert.equal(r.overlayAssets,1);assert.equal(r.sourceInputsUnchanged,true);assert.equal(r.browser,false);assert.equal(r.sql,false);assert.equal(r.network,false);assert.equal(r.published,false);
+          fs.writeFileSync('../qa/result.json',JSON.stringify(r,null,2)+'\n');
+          CHECK
+      - name: Preserve reviewed hashes
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p qa
+          if test -d proposed/.github/fixtures/person-context-copy; then
+            find proposed/.github/fixtures/person-context-copy -type f -print0 | sort -z | xargs -0 sha256sum > qa/source.sha256
+            cp proposed/.github/fixtures/person-context-copy/PUBLIC_ALLOWLIST.json qa/
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: person-context-copy-evidence
+          path: qa/
+          if-no-files-found: error

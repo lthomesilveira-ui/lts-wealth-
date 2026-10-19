@@ -1,0 +1,29 @@
+{
+  "scope": "static_export_and_runner_contract_only",
+  "postgresql_execution": "not_run_no_local_postgresql_client_or_server",
+  "source_verification": {
+    "public_artifact_hashes_verified": true,
+    "exported_projection_diff_exact": true,
+    "identity_expression_byte_exact": true,
+    "p05_exported_block_byte_identical": true,
+    "private_baseline_diff_verified_at_authoring": true,
+    "original_baseline_sha256": "3cba3ce6b36644627c74d2a32b9a44cd1df612c4118db4527e4d797f57b0a0f2",
+    "candidate_baseline_sha256": "5dea9970c52b42e33781ec2dab000a51ac807ddd405c2522da78ef1b90b225f2",
+    "p05_block_sha256": "08a382ea4b245ff5c06c3dcc8628847a24a73fae7ff11feecd398ed3f0248055",
+    "private_source_read_by_public_runner": false
+  },
+  "standalone_public_only_directory": true,
+  "rendered_sql_bytes": 19348,
+  "rendered_sql_sha256": "436b81372fab8d1d87f57cd353720a69daa53c6fcfcbab1eb041a16996346bde",
+  "python_compilation": "passed",
+  "invalid_output_cases_rejected": [
+    "empty",
+    "unrelated_json",
+    "bad_version"
+  ],
+  "public_source_tampering_rejected": true,
+  "expected_matrix_rows": 38880,
+  "expected_named_rows": 13,
+  "expected_sql_assertions": 13,
+  "private_sources_modified": false
+}
