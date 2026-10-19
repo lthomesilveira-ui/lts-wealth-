@@ -36,7 +36,8 @@ async function run(browser,viewport,label){
   if(name==='lts_browser_market_mode_v290'){writes.push({name,args});mode=args.p_mode;return send({ok:true,mode});}
   if(/_decision_|_update_|_save_|_apply_|_delete_|_refresh_|_confirm_|_upload_|_mutate_|_classify_|_classification_|_create_/.test(name)){blocked.push(name);return route.abort();}
   if(name==='lts_browser_market_quotes_v290')return send({...quote,mode});
-  if(name==='lts_browser_future_bank_v290')return send({rows:[{source_id:'synthetic-scheduled',date:'2026-11-02',bank:'Itaú',description:'Agendamento fictício',amount:-42,status:'scheduled',included_in_realized:false,included_in_flow_totals:false}],card_future_received:2});
+  if(name==='lts_browser_future_bank_v290')return send({rows:[{source_id:'synthetic-scheduled',date:'2026-11-02',bank:'Itaú',description:'Agendamento fictício',amount:-42,status:'scheduled',included_in_realized:false,included_in_flow_totals:false},{source_id:'synthetic-own',date:'2026-11-04',bank:'Itaú',description:'Transferência própria fictícia',amount:-80,status:'scheduled',identity:{own_identity_proven:true},included_in_realized:false,included_in_flow_totals:false}],card_future_received:2});
+  if(/^lts_browser_invoice_flow_reconciliation_/.test(name))return send({rows:[{card_name:'Mastercard fictício',reference_month:'2026-11-01',due_date:'2026-11-16',documented_amount:90,flow_amount:90,difference:0,invoice_status:'projected',reconciliation_status:'reconciled'}],row_count:1,issue_count:0,reconciled_count:1});
   if(name==='lts_browser_card_category_options_v226')return send({categories,aliases:{Assinatura:'Assinaturas'},registry:'shared-v290'});
   if(name==='lts_browser_product_v1')return send({ok:true,mvp:shift(fixture.product())});
   if(/^lts_browser_expense_review_queue_/.test(name))return send({row_count:1,matched_count:1,offset:0,next_offset:null,category_options:categories,pending_projections:[],beneficiary_options:[{value:'Lucas',label:'Minha / sem prefixo'},'Larissa','Benjamin','Rafiki'],rows:[{key:'synthetic-bank-review',source_table:'lts_open_finance_staging',source_ref:BANK,date:'2026-10-19',amount:100,description:'Pix fictício',account_source:'Itaú',category:bankCategory,question_kind:'classification',suggestion:{},beneficiary:null}]});
@@ -63,6 +64,7 @@ async function run(browser,viewport,label){
   await frame.locator('#ltsMarketQuotes').waitFor();
   await frame.locator('.v226-upcoming').waitFor();assert.doesNotMatch(await frame.locator('.v226-upcoming').innerText(),/12\/10\/2026/,'Verified paid cycle cannot remain the next bill');
   assert.match(await frame.locator('#ltsMarketQuotes').innerText(),/13,75/);assert.match(await frame.locator('#ltsMarketQuotes').innerText(),/5,0564/);
+  await frame.getByText('Elas ainda não alteram a projeção por conta.',{exact:false}).waitFor();
   const quoteDetails=frame.locator('#ltsMarketQuotes details');assert.equal(await quoteDetails.getAttribute('open'),null);
   await quoteDetails.locator('summary').click();assert.match(await quoteDetails.innerText(),/Data da cotação/);assert.match(await quoteDetails.innerText(),/Recebida no Wealth/);
   await frame.locator('[data-market-mode]').click();await frame.waitForFunction(()=>window.__LTS_V290_SOURCES.state.quotes?.mode==='manual');assert.match(await frame.locator('#ltsMarketQuotes').innerText(),/Simulação manual ativa/);
@@ -101,6 +103,7 @@ async function run(browser,viewport,label){
    if(view==='Cartões'){
     const tab=frame.getByRole('tab',{name:'Cartões e faturas',exact:true});await tab.click();
     assert.equal(await tab.getAttribute('aria-selected'),'true');await frame.locator('.v226-upcoming').waitFor();
+    await frame.getByText('Previsão · compras e parcelas conhecidas',{exact:true}).waitFor();
    }else if(view==='Despesas')await frame.getByRole('tab',{name:'Visão geral',exact:true}).click();
    await page.waitForTimeout(150);
    const dimensions=await frame.locator('html').evaluate(e=>({client:e.clientWidth,scroll:e.scrollWidth}));assert(dimensions.scroll<=dimensions.client+2,view+' has page overflow '+JSON.stringify(dimensions));
