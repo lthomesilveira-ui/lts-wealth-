@@ -39,6 +39,7 @@ function documentaryPaymentNote(cycle, esc, formatDate, mode = 'note', sourcePre
     const cycleTotal=xs=>st.cycles?.complete===false||xs.some(x=>x.complete===false||x.amount==null)?null:sum(xs.map(x=>x.amount));
     const totalLabel=x=>x==null?'Total incompleto':money(x);
     const names={aeternum:'Visa Aeternum',bradesco_prime:'Visa Infinite Prime',itau_mastercard:'Mastercard Black',itau_visa:'Visa Infinite',c6:'C6 Carbon'};
+    const openCycles=card=>(card.cycles||[]).filter(cycle=>cycle.settlement_confirmed!==true);
     const category=x=>window.LTSCategoryDisplay.category(x||'A classificar');
     const source=x=>({incomplete_cycle_identity:'Total incompleto · ciclo em conferência',received_and_projected_installments:'Compras recebidas + parcelas previstas',open_finance_invoice_v263:'Fatura recebida do banco',user_confirmed_recurring_estimate:'Assinatura prevista · fatura ainda não recebida',open_finance_composition:'Em aberto · compras recebidas',bank_document_composition:'Em aberto · banco e fatura parcial',provider_installments:'Parcelas futuras informadas pelo banco',derived_current_installments:'Parcelas restantes das compras recebidas',documented_floor_partial_detail:'Piso documentado · composição parcial',contracted_installments:'Parcelas já contratadas',documented_snapshot:'Última posição documentada'}[x]||'Última posição documentada');
     const active=()=>typeof D!=='undefined'&&D&&!N.classList.contains('hidden');
@@ -95,16 +96,16 @@ function documentaryPaymentNote(cycle, esc, formatDate, mode = 'note', sourcePre
       const cards=st.cycles?.cards||[];
       const head='<div class="v168-cardhead"><div><span>Por banco e cartão</span><h2>Próximas faturas</h2></div><button type="button" class="v168-btn" data-v226-retry>Atualizar faturas</button></div>';
       if(!st.cycles)return head+'<p role="status">'+esc(st.error||'Consultando os próximos ciclos…')+'</p>';
-      const next=cards.flatMap(c=>c.cycles?.length?[{card:c,cycle:c.cycles[0]}]:[]),nextTotal=cycleTotal(next.map(x=>x.cycle));
-      const future=cards.flatMap(c=>(c.cycles||[]).slice(1)),futureTotal=cycleTotal(future);
+      const next=cards.flatMap(c=>openCycles(c).length?[{card:c,cycle:openCycles(c)[0]}]:[]),nextTotal=cycleTotal(next.map(x=>x.cycle));
+      const future=cards.flatMap(c=>openCycles(c).slice(1)),futureTotal=cycleTotal(future);
       const bankNames=[...new Set(cards.map(c=>c.bank))];
       return head+(st.cycles.complete===false?'<p class="v226-warning" role="status">O C6 tem compras cujo ciclo ou parcela precisa ser conciliado. O total conjunto está incompleto; os demais cartões continuam disponíveis.</p>':'')+(st.loading?'<p role="status">Atualizando faturas…</p>':st.error?'<p role="alert">'+esc(st.error)+' A leitura anterior está indicada abaixo.</p>':'')+'<div class="v226-totals"><div><span>Próximas faturas e valores previstos</span><strong><button class="v226-link" data-v226-overview="next">'+totalLabel(nextTotal)+'</button></strong></div><div><span>Ciclos seguintes conhecidos</span><strong><button class="v226-link" data-v226-overview="future">'+totalLabel(futureTotal)+'</button></strong><small>Valores documentados e parcelas; sem novas compras estimadas</small></div></div>'+
         '<div class="v226-banks">'+bankNames.map(bank=>'<section><h3>'+esc(bank)+'</h3>'+cards.filter(c=>c.bank===bank).map(c=>{
-          const cycle=c.cycles?.[0],label=esc(names[c.family]||c.name);
+          const cycle=openCycles(c)[0],label=esc(names[c.family]||c.name);
           return '<div class="v226-card-line"><div>'+(cycle?openButton(c,cycle,label):'<b>'+label+'</b>')+'<small>Conta final '+esc(c.last4)+(c.family==='c6'?' · inclui 8304':'')+'</small></div><div>'+(cycle?openButton(c,cycle,totalLabel(cycle.amount),'v226-amount'):'<span>Sem fatura aberta informada</span>')+(cycle?'<small>'+esc(month(cycle.month))+' · '+esc(date(cycle.due_date))+'</small><small>'+esc(documentaryPaymentNote(cycle,null,null,'label',source(cycle.basis)))+'</small>'+sourceStamp(c,cycle)+documentaryPaymentNote(cycle,esc,date):'')+'</div></div>'+unresolvedPanel(c);
         }).join('')+'</section>').join('')+'</div>'+
         '<p class="v226-note">'+st.cycles.active_billing_accounts+' contas de cartão ativas. Cartões adicionais compartilham a fatura; clique no nome ou no valor para abrir as compras.</p>'+
-        '<details class="v226-future"><summary>Faturas e parcelas dos próximos meses · '+totalLabel(futureTotal)+'</summary><div class="v226-scroll"><table><thead><tr><th>Banco / cartão</th><th>Ciclo</th><th>Valor</th><th>Origem</th></tr></thead><tbody>'+cards.flatMap(c=>(c.cycles||[]).slice(1).map(x=>'<tr><td>'+esc(c.bank+' · '+(names[c.family]||c.name))+'</td><td>'+openButton(c,x,esc(month(x.month)))+'</td><td>'+openButton(c,x,money(x.amount))+'</td><td>'+esc(source(x.basis))+'</td></tr>')).join('')+'</tbody></table></div></details>';
+        '<details class="v226-future"><summary>Faturas e parcelas dos próximos meses · '+totalLabel(futureTotal)+'</summary><div class="v226-scroll"><table><thead><tr><th>Banco / cartão</th><th>Ciclo</th><th>Valor</th><th>Origem</th></tr></thead><tbody>'+cards.flatMap(c=>openCycles(c).slice(1).map(x=>'<tr><td>'+esc(c.bank+' · '+(names[c.family]||c.name))+'</td><td>'+openButton(c,x,esc(month(x.month)))+'</td><td>'+openButton(c,x,money(x.amount))+'</td><td>'+esc(source(x.basis))+'</td></tr>')).join('')+'</tbody></table></div></details>';
     }
     function unresolvedPanel(card){
       const rows=card.unresolved_items||[],ambiguous=card.ambiguous_document_candidates||[];
@@ -204,7 +205,7 @@ function documentaryPaymentNote(cycle, esc, formatDate, mode = 'note', sourcePre
     }
     function openOverview(kind){
       document.getElementById('v226-detail')?.close();
-      const rows=(st.cycles?.cards||[]).flatMap(c=>(kind==='next'?(c.cycles||[]).slice(0,1):(c.cycles||[]).slice(1)).map(cycle=>({card:c,cycle})));
+      const rows=(st.cycles?.cards||[]).flatMap(c=>(kind==='next'?openCycles(c).slice(0,1):openCycles(c).slice(1)).map(cycle=>({card:c,cycle})));
       const dialog=document.createElement('dialog');dialog.id='v226-detail';dialog.className='v226-dialog';
       dialog.innerHTML='<header><h2>'+ (kind==='next'?'Próximas faturas conhecidas':'Ciclos seguintes conhecidos')+'</h2><button class="v168-btn" data-v226-close>Fechar</button></header><div class="v226-scroll"><table><thead><tr><th>Banco / cartão</th><th>Ciclo</th><th>Vencimento</th><th>Valor</th></tr></thead><tbody>'+rows.map(({card:c,cycle:x})=>'<tr data-v226-overview-row><td>'+openButton(c,x,esc(c.bank+' · '+(names[c.family]||c.name)))+'</td><td>'+esc(month(x.month))+'</td><td>'+esc(date(x.due_date))+'</td><td>'+openButton(c,x,money(x.amount))+'</td></tr>').join('')+'</tbody><tfoot><tr><th colspan="3">Total</th><td>'+totalLabel(cycleTotal(rows.map(x=>x.cycle)))+'</td></tr></tfoot></table></div><p class="v226-note">Clique no cartão ou no valor para ver as compras e parcelas. Inclui valores recebidos, parcelas documentadas e estimativas identificadas.</p>';
       document.body.appendChild(dialog);dialog.querySelector('[data-v226-close]').onclick=()=>dialog.close();dialog.addEventListener('close',()=>dialog.remove());bind(dialog);dialog.showModal();

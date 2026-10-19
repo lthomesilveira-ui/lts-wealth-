@@ -40,7 +40,7 @@ async function run(browser,viewport,label){
   if(name==='lts_browser_card_category_options_v226')return send({categories,aliases:{Assinatura:'Assinaturas'},registry:'shared-v290'});
   if(name==='lts_browser_product_v1')return send({ok:true,mvp:shift(fixture.product())});
   if(/^lts_browser_expense_review_queue_/.test(name))return send({row_count:1,matched_count:1,offset:0,next_offset:null,category_options:categories,pending_projections:[],beneficiary_options:[{value:'Lucas',label:'Minha / sem prefixo'},'Larissa','Benjamin','Rafiki'],rows:[{key:'synthetic-bank-review',source_table:'lts_open_finance_staging',source_ref:BANK,date:'2026-10-19',amount:100,description:'Pix fictício',account_source:'Itaú',category:bankCategory,question_kind:'classification',suggestion:{},beneficiary:null}]});
-  if(/^lts_browser_card_cycles_/.test(name))return send({as_of:'2026-10-19',active_billing_accounts:1,cards:[{bank:'Itaú',family:'itau_mastercard',name:'Mastercard fictício',last4:'1234',status:'ACTIVE',cycles:[{month:'2026-11-01',due_date:'2026-11-16',due_date_basis:'owner_confirmed_cycle_rule',amount:90,basis:'open_finance_composition',items:[]}]}]});
+  if(/^lts_browser_card_cycles_/.test(name))return send({as_of:'2026-10-19',active_billing_accounts:1,cards:[{bank:'Itaú',family:'itau_mastercard',name:'Mastercard fictício',last4:'1234',status:'ACTIVE',cycles:[{month:'2026-10-01',due_date:'2026-10-12',amount:120,basis:'open_finance_invoice_v263',payment_status:'paid',settlement_confirmed:true,items:[]},{month:'2026-11-01',due_date:'2026-11-16',due_date_basis:'owner_confirmed_cycle_rule',amount:90,basis:'open_finance_composition',items:[]}]}]});
   if(/^lts_browser_card_detail_/.test(name))return send({basis:'open_finance_composition',complete:true,detail_total:90,items:[{source_id:CARD,purchase_date:'2026-10-13',description:'Compra fictícia',last4:'1234',amount:100,provider_status:'PENDING',category:cardCategory,category_basis:cardCategory==='A classificar'?'unresolved':'user_decision'},{source_id:'synthetic-credit',purchase_date:'2026-10-15',description:'Crédito fictício',last4:'1234',amount:-10,category:'Créditos / Estornos',category_basis:'user_decision'}]});
   const data=shift(fixture.response(name,args));
   if(/^lts_browser_flow_v/.test(name)){
@@ -61,6 +61,7 @@ async function run(browser,viewport,label){
   let frame;for(let n=0;n<200;n++){frame=page.frames().find(f=>f.url().includes('/releases/v290/index.html'));if(frame)break;await page.waitForTimeout(50);}assert(frame);
   await frame.waitForFunction(()=>document.body.dataset.ltsBootState==='ready'&&window.__LTS_V290_SOURCES?.installed);
   await frame.locator('#ltsMarketQuotes').waitFor();
+  await frame.locator('.v226-upcoming').waitFor();assert.doesNotMatch(await frame.locator('.v226-upcoming').innerText(),/12\/10\/2026/,'Verified paid cycle cannot remain the next bill');
   assert.match(await frame.locator('#ltsMarketQuotes').innerText(),/13,75/);assert.match(await frame.locator('#ltsMarketQuotes').innerText(),/5,0564/);
   const quoteDetails=frame.locator('#ltsMarketQuotes details');assert.equal(await quoteDetails.getAttribute('open'),null);
   await quoteDetails.locator('summary').click();assert.match(await quoteDetails.innerText(),/Data da cotação/);assert.match(await quoteDetails.innerText(),/Recebida no Wealth/);
@@ -90,7 +91,7 @@ async function run(browser,viewport,label){
   await navigate('Fluxo Diário');await frame.evaluate(()=>loadFlowRange('2026-10-19','2026-10-19'));await frame.locator('#d-2026-10-19').waitFor();
   assert.equal(await frame.locator('.v274-ending-label').count(),0);assert.doesNotMatch(await frame.locator('#d-2026-10-19').innerText(),/encerramento do fluxo/i);
   for(const account of ['Consolidado','Itaú','Bradesco']){await frame.evaluate(account=>{ACC=account;render();},account);assert.doesNotMatch(await frame.locator('#d-2026-10-19').innerText(),/encerramento do fluxo/i);}
-  await frame.evaluate(()=>{ACC='Itaú';EXP.add('2026-10-19');render();});await frame.locator('[data-flow-classify]').first().click();
+  await frame.evaluate(()=>{ACC='Itaú';render();});await frame.locator('#d-2026-10-19 .exp').click();await frame.locator('[data-flow-classify]').first().click();
   const flowForm=frame.locator('#ltsFlowClassification');await flowForm.locator('select[name=category]').waitFor();
   assert.equal(await flowForm.locator('option',{hasText:'Nova classificação de teste'}).count(),1);
   await flowForm.locator('[name=category]').selectOption('Nova classificação de teste');await flowForm.getByRole('button',{name:'Salvar classificação',exact:true}).click();

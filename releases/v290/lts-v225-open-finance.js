@@ -188,12 +188,13 @@
       if (host) {
         let control = host.querySelector('.v225-sync');
         if (!control) { control = document.createElement('div'); control.className = 'v225-sync'; host.appendChild(control); }
-        control.innerHTML = '<button type="button" class="v168-btn blue" data-v225-refresh '+(state.syncing?'disabled':'')+'>'+(state.syncing?'Coletando dados…':'Coletar dados disponíveis')+'</button><span role="status">'+esc(state.error || state.message || 'Coleta automática de dados disponíveis')+'</span>';
+        control.innerHTML = '<button type="button" class="v168-btn blue" data-v225-refresh '+(state.syncing?'disabled':'')+'>'+(state.syncing?'Atualizando…':'Atualizar contas')+'</button><span role="status">'+esc(state.error || state.message || 'Atualização automática ativa')+'</span>';
         control.querySelector('button').onclick = () => refresh(true);
       }
       if (V === 'Atualizações') {
         const host = document.querySelector('.v168-openfinance');
-        if (host) host.innerHTML = '<div class="v225-banklist" style="grid-column:1/-1">'+bankRows()+'</div>';
+        if(host){const expanded=host.querySelector('details')?.open===true,failed=freshnessRows().filter(row=>row.failed).map(row=>row.name);
+         host.innerHTML=(failed.length?'<p class="lts-freshness-alert" role="status">Não foi possível atualizar '+esc(failed.join(', '))+'. Tente atualizar as contas novamente.</p>':'')+'<details class="lts-update-details"><summary>Atualização</summary><div class="v225-banklist">'+bankRows()+'</div></details>';host.querySelector('details').open=expanded;}
       } else if (V === 'Dashboard') {
         let line = document.querySelector('.v225-bankstatus');
         if (!line && host) { line = document.createElement('details'); line.className='v225-bankstatus'; host.appendChild(line); }
