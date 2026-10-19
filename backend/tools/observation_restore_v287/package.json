@@ -1,0 +1,9 @@
+{
+  "name": "lts-typed-observation-recovery",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@electric-sql/pglite": "0.3.16"
+  }
+}
