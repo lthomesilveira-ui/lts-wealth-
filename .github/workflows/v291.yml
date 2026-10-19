@@ -1,0 +1,33 @@
+name: V291 professional update language
+on:
+  pull_request:
+    paths: ['releases/v291/**', '.github/scripts/lts_v291*', '.github/workflows/v291.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  desktop-and-mobile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify immutable releases and candidate assets
+        run: node .github/scripts/lts_v291_release_contract.cjs
+      - name: Verify financial source presentation remains intact
+        run: node .github/scripts/lts_v272_payment_contract.cjs releases/v291/lts-v226-card-composition.js
+      - run: npm install --no-save --package-lock=false playwright@1.58.2
+      - run: npx playwright install --with-deps chromium
+      - name: Serve candidate
+        run: python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/lts-v291-http.log 2>&1 &
+      - name: Complete editor and six-screen review on three viewports
+        run: node .github/scripts/lts_v291_browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v291-homologation-evidence
+          path: qa/v291/

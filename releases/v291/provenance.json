@@ -1,0 +1,12 @@
+{
+  "release": "v291",
+  "base_release": "v290",
+  "base_commit": "292ee82a393cdff3a669a4079a2b2e70a0836121",
+  "frontend_only": true,
+  "backend_changed": false,
+  "scope": [
+    "Plain-language bank update status, keeping dates and source checks accessible"
+  ],
+  "validation_contract": "V291 immutable assets and complete V290 workflow reused on V291 assets",
+  "physical_mobile_validated": false
+}
