@@ -1,0 +1,154 @@
+{
+  "hashes": {
+    "candidate_definition_md5": "11111111111111111111111111111111",
+    "functions": {
+      "lts_card_settlement_evidence_valid_v273(uuid,uuid,jsonb,jsonb,jsonb,jsonb,date,jsonb,jsonb)": {
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "definition_md5": "55555555555555555555555555555555",
+        "oid": 900000005,
+        "owner": "postgres"
+      },
+      "lts_card_settlement_expense_excluded_v273(uuid,uuid,jsonb)": {
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "definition_md5": "33333333333333333333333333333333",
+        "oid": 900000003,
+        "owner": "postgres"
+      },
+      "lts_expense_effective_rows_pre_v268(uuid,date,date)": {
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "definition_md5": "77777777777777777777777777777777",
+        "oid": 900000007,
+        "owner": "postgres"
+      },
+      "lts_expense_effective_rows_v176(uuid,date,date)": {
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "definition_md5": "66666666666666666666666666666666",
+        "oid": 900000006,
+        "owner": "postgres"
+      },
+      "lts_open_finance_pilot_owner_v1()": {
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "definition_md5": "22222222222222222222222222222222",
+        "oid": 900000002,
+        "owner": "postgres"
+      },
+      "lts_v229_expense_rows(uuid,date,date)": {
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "definition_md5": "44444444444444444444444444444444",
+        "oid": 900000004,
+        "owner": "postgres"
+      }
+    },
+    "original_definition_md5": "00000000000000000000000000000000",
+    "table": {
+      "acl": "SYNTHETIC_TABLE_ACL",
+      "force_rls": false,
+      "oid": 900000099,
+      "owner": "postgres",
+      "rls": true
+    }
+  },
+  "new": {
+    "active": true,
+    "payload": {
+      "consumption_manifest": [
+        {
+          "id": "11111111-1111-4111-8111-000000000001",
+          "raw_hash": "synthetic-1",
+          "signed_amount": -10
+        },
+        {
+          "id": "11111111-1111-4111-8111-000000000002",
+          "raw_hash": "synthetic-2",
+          "signed_amount": -20
+        },
+        {
+          "id": "11111111-1111-4111-8111-000000000003",
+          "raw_hash": "synthetic-3",
+          "signed_amount": -30
+        }
+      ],
+      "invoice_evidence_policy": "raw_except_updatedAt_v1",
+      "invoice_id": "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
+      "link_contract": {
+        "active": true,
+        "evidence": "SYNTHETIC-EVIDENCE-NOT-A-REAL-DOCUMENT",
+        "id": "dddddddd-dddd-4ddd-8ddd-dddddddddddd",
+        "payment_source_id": "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+        "user_id": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+      },
+      "manifest": [
+        {
+          "id": "11111111-1111-4111-8111-000000000001",
+          "raw_hash": "synthetic-1",
+          "signed_amount": -10
+        },
+        {
+          "id": "11111111-1111-4111-8111-000000000002",
+          "raw_hash": "synthetic-2",
+          "signed_amount": -20
+        },
+        {
+          "id": "11111111-1111-4111-8111-000000000003",
+          "raw_hash": "synthetic-3",
+          "signed_amount": -30
+        }
+      ],
+      "synthetic_only": true
+    },
+    "payment_source_id": "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+    "revision": "synthetic-candidate",
+    "user_id": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+  },
+  "old": {
+    "active": true,
+    "payload": {
+      "consumption_manifest": [
+        {
+          "id": "11111111-1111-4111-8111-000000000001",
+          "raw_hash": "synthetic-1",
+          "signed_amount": -10
+        },
+        {
+          "id": "11111111-1111-4111-8111-000000000002",
+          "raw_hash": "synthetic-2",
+          "signed_amount": -20
+        },
+        {
+          "id": "11111111-1111-4111-8111-000000000003",
+          "raw_hash": "synthetic-3",
+          "signed_amount": -30
+        }
+      ],
+      "invoice_id": "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
+      "link_contract": {
+        "active": true,
+        "evidence": "SYNTHETIC-EVIDENCE-NOT-A-REAL-DOCUMENT",
+        "id": "dddddddd-dddd-4ddd-8ddd-dddddddddddd",
+        "payment_source_id": "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+        "user_id": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+      },
+      "manifest": [
+        {
+          "id": "11111111-1111-4111-8111-000000000001",
+          "raw_hash": "synthetic-1",
+          "signed_amount": -10
+        },
+        {
+          "id": "11111111-1111-4111-8111-000000000002",
+          "raw_hash": "synthetic-2",
+          "signed_amount": -20
+        },
+        {
+          "id": "11111111-1111-4111-8111-000000000003",
+          "raw_hash": "synthetic-3",
+          "signed_amount": -30
+        }
+      ],
+      "synthetic_only": true
+    },
+    "payment_source_id": "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+    "revision": "synthetic-original",
+    "user_id": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+  }
+}
