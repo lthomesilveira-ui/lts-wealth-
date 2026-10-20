@@ -18,23 +18,14 @@
   }
   dashboard=function(){
    const html=previousDashboard();
-   const statement=window.__LTS_V178_STATE?.wealth?.data?.morgan_statement;
-   const future=statement?.future_components||{};
-   const regular=finite(future.regular_rsu_gross_brl);
-   const cashGross=finite(future.cash_rsu_gross_brl);
-   const cashNet=finite(future.cash_rsu_after_reserve_brl);
-   const other=finite(future.unallocated_statement_brl);
-   const totalNet=finite(future.future_after_reserve_brl);
-   const unavailable=finite(statement?.unavailable_gross_brl);
-   const asOf=statement?.as_of;
-   if([regular,cashGross,cashNet,other,totalNet,unavailable].some(value=>value==null)||!asOf)return html;
-   if(Math.abs(regular+cashGross+other-unavailable)>=0.02)return html;
-   if(Math.abs(regular+cashNet+other-totalNet)>=0.02)return html;
+   const summary=window.__LTS_V168_STATE?.dashboard?.data?.wealth?.rsu_summary||window.__LTS_V168_STATE?.wealth?.data?.rsu_summary||window.__LTS_V178_STATE?.wealth?.data?.rsu_summary;
+   const regular=finite(summary?.future_regular_brl),cashNet=finite(summary?.future_cash_net_brl),totalNet=finite(summary?.future_considered_total_brl);
+   if([regular,cashNet,totalNet].some(value=>value==null)||Math.abs(regular+cashNet-totalNet)>=0.02)return html;
    const template=document.createElement('template');template.innerHTML=html;
    const root=template.content.querySelector('.v168-dashboard');if(!root)return html;
-   patchKpi(root,'RSUs futuras',regular,'Valor bruto do extrato · '+dateLabel(asOf));
-   patchKpi(root,'Cash RSUs futuras',cashNet,'70% após reserva de 30% · extrato '+dateLabel(asOf));
-   patchKpi(root,'Total de posições futuras',totalNet,other>0?'Inclui '+money(other)+' não alocados no extrato; sem natureza presumida':'RSU + Cash RSU; ainda fora do caixa atual');
+   patchKpi(root,'RSUs futuras',regular,'Projeção da agenda · valor bruto');
+   patchKpi(root,'Cash RSUs futuras',cashNet,'Projeção da agenda · reserva de 30%');
+   patchKpi(root,'Total de posições futuras',totalNet,'RSU + Cash RSU; referências atuais em Cotações');
    return template.innerHTML;
   };
   window.__LTS_V180_DOCUMENTARY_REFRESH={installed:true,version:'v180-documentary-refresh',baseline:'v179-cash-recovery'};

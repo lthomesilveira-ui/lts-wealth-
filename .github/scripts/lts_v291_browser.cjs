@@ -44,6 +44,11 @@ async function run(browser,viewport,label){
   if(/^lts_browser_card_cycles_/.test(name))return send({version:'card-cycles-v226',as_of:'2026-10-19',active_billing_accounts:1,cards:[{bank:'Itaú',family:'itau_mastercard',name:'Mastercard fictício',last4:'1234',status:'ACTIVE',cycles:[{month:'2026-10-01',due_date:'2026-10-12',amount:120,basis:'open_finance_invoice_v263',payment_status:'paid',settlement_confirmed:true,items:[]},{month:'2026-11-01',due_date:'2026-11-16',due_date_basis:'owner_confirmed_cycle_rule',amount:90,basis:'open_finance_composition',items:[]}]}]});
   if(/^lts_browser_card_detail_/.test(name))return send({basis:'open_finance_composition',complete:true,detail_total:90,items:[{source_id:CARD,purchase_date:'2026-10-13',description:'Compra fictícia',last4:'1234',amount:100,provider_status:'PENDING',category:cardCategory,category_basis:cardCategory==='A classificar'?'unresolved':'user_decision'},{source_id:'synthetic-credit',purchase_date:'2026-10-15',description:'Crédito fictício',last4:'1234',amount:-10,category:'Créditos / Estornos',category_basis:'user_decision'}]});
   const data=shift(fixture.response(name,args));
+  if(/^lts_browser_wealth_detail_/.test(name)){
+   data.rsu_summary={as_of:'2026-10-06',available_total_brl:300,vested_shares_brl:300,brokerage_cash_brl:0,future_regular_brl:695.26,future_cash_net_brl:243.34,future_considered_total_brl:938.60};
+   data.morgan_statement={as_of:'2026-10-06',gross_total_brl:728.14,available_total_brl:300,available_components:{vested_shares_brl:300,brokerage_cash_brl:0},future_components:{regular_rsu_gross_brl:111,cash_rsu_gross_brl:317.14,cash_rsu_after_reserve_brl:222,future_after_reserve_brl:333},quantities:{future_regular_rsu:1,future_cash_rsu:2}};
+   data.rsu.future_schedule=[{group_key:'synthetic-regular',asset_type:'RSU',eligibility_date:'2026-11-05',available_date:'2026-11-08',quantity:10,unit_price_usd:13.75,fx_rate:5.0564,gross_value_brl:695.26,net_value_brl:695.26},{group_key:'synthetic-cash',asset_type:'Cash RSU',eligibility_date:'2026-11-05',available_date:'2026-11-08',quantity:5,unit_price_usd:13.75,fx_rate:5.0564,gross_value_brl:347.63,net_value_brl:243.34}];
+  }
   if(/^lts_browser_flow_v/.test(name)){
    data.flow.observed_bank_movements={pending_projections:[],documentary_gaps:{}};
    data.flow.current_future.current_anchor_date='2026-10-19';
@@ -106,11 +111,20 @@ async function run(browser,viewport,label){
     assert.equal(await tab.getAttribute('aria-selected'),'true');await frame.locator('.v226-upcoming').waitFor();
     await frame.getByText('Previsão · compras e parcelas conhecidas',{exact:true}).waitFor();
    }else if(view==='Despesas')await frame.getByRole('tab',{name:'Visão geral',exact:true}).click();
+   if(view==='Patrimônio'){
+    await frame.locator('.v172-future').waitFor();assert.match(await frame.locator('.v172-future').innerText(),/938,60/);
+    await frame.getByRole('tab',{name:'RSUs e awards',exact:true}).click();await frame.locator('.v172-morgan').waitFor();
+    assert.match(await frame.locator('.v172-morgan .v168-kpi').filter({hasText:'A receber líquido projetado'}).innerText(),/938,60/);
+    assert.match(await frame.locator('.v172-morgan .v168-kpi').filter({hasText:'Total bruto do extrato'}).innerText(),/728,14/);
+    const archive=frame.locator('.v183-statement-remainders + details');await archive.locator('summary').click();assert.match(await archive.innerText(),/333,00/);
+    await frame.getByRole('tab',{name:'Visão geral',exact:true}).click();
+   }
    await page.waitForTimeout(150);
    const dimensions=await frame.locator('html').evaluate(e=>({client:e.clientWidth,scroll:e.scrollWidth}));assert(dimensions.scroll<=dimensions.client+2,view+' has page overflow '+JSON.stringify(dimensions));
    const file=label+'-'+view.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replaceAll(' ','_')+'.png';await page.screenshot({path:path.join(qa,file)});screenshots.push(file);
   }
   await Promise.all(assetReads);assert.deepEqual(assetErrors,[]);assert.deepEqual(errors,[]);assert.deepEqual(blocked,[]);
+  await navigate('Dashboard');await frame.waitForFunction(()=>[...document.querySelectorAll('.v168-dashboard .v168-kpi')].some(e=>e.textContent.includes('Total de posições futuras')&&e.textContent.includes('938,60')));
   const required=[...new Set([...fs.readFileSync(path.join(root,'app.html'),'utf8').matchAll(/<script\b[^>]*\bsrc="([^"]+)"/g)].map(x=>x[1].split('?')[0]))];for(const name of required)assert(assets.has(name),'Missing real script '+name);
   return{pass:true,viewport,label,real_assets_checked:assets.size,network_substitutions:'synthetic API only',screenshots,checks:['source price/date/receipt separated','manual and automatic modes','one shared option','first native-picker interaction stable','create without implicit assignment','immediate reuse in Cards and Flow','no inferred beneficiary','clean cash rows across three views','all six screens fit viewport']};
  }catch(error){console.error(JSON.stringify({label,writes,errors,blocked}));await page.screenshot({path:path.join(qa,label+'-failure.png')});throw error;}finally{await context.close();}

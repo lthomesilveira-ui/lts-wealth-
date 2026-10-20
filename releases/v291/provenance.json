@@ -6,7 +6,8 @@
   "backend_changed": true,
   "scope": [
     "Plain-language bank update status, keeping dates and source checks accessible",
-    "Flow overdue obligations use the same documentary payment evidence as the review queue"
+    "Flow overdue obligations use the same documentary payment evidence as the review queue",
+    "Current award projections share the canonical summary across screens; the original statement remains dated and accessible"
   ],
   "validation_contract": "V291 immutable assets and complete V290 workflow reused on V291 assets",
   "physical_mobile_validated": false
