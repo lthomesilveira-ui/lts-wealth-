@@ -19,7 +19,7 @@ The new V293 source endpoint is owner-asserted and exposes only dates, descripti
 
 The separate administrator-operated SQL requires explicit owner, event reference, bank source, expected schedule/actual amounts and current source hash. It requires one unique bank debit and obligation for the same month, the exact mortgage contract reference, registered account/bank and bank-position coverage. Prior verified mapping establishes property/purpose; a person's identity is never copied from that mapping.
 
-The transaction records the original full event and expected schedule, applies the actual posted debit, links source and event, and requires one realized expense, unchanged unrelated canonical expenses and removal from pending projections. Repeating the exact request creates no second link or audit. An unexplained variance is retained without attributing it to interest, fees or indexation.
+The transaction records the original full event and expected schedule, applies the actual posted debit with confirmed status, links source and event, and requires one realized expense, one bank-confirmed Flow debit, unchanged unrelated canonical expenses and removal from pending projections. The confirmed intermediate event must not re-enter the scheduled/active forecast engine on top of the bank debit. Repeating the exact request creates no second link or audit. An unexplained variance is retained without attributing it to interest, fees or indexation.
 
 ## Verification
 

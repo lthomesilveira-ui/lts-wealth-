@@ -8,13 +8,13 @@ DECLARE
  expected_hash text:=current_setting('lts.reconcile.expected_source_hash');
  f public.financial_events%rowtype;s public.lts_open_finance_staging%rowtype;
  mapping record; contract text; bank text; before_unrelated jsonb;after_unrelated jsonb;
- before_event jsonb;actual_rows jsonb; receipt jsonb; n integer;
+ before_event jsonb;actual_rows jsonb; receipt jsonb; flow jsonb;flow_events jsonb;n integer;
 BEGIN
  SELECT * INTO STRICT f FROM public.financial_events WHERE user_id=u AND legacy_id=ref FOR UPDATE;
  SELECT * INTO STRICT s FROM public.lts_open_finance_staging WHERE user_id=u AND id=sid FOR SHARE;
  IF EXISTS(SELECT 1 FROM public.lts_realized_bank_event_v238 r WHERE r.user_id=u AND r.financial_event_id=f.id
   AND r.staging_id=s.id AND r.expected_date=s.posting_date AND r.expected_amount=s.signed_amount
-  AND NOT f.is_projection AND f.amount=s.signed_amount) THEN
+  AND NOT f.is_projection AND f.amount=s.signed_amount AND f.status='confirmed') THEN
   IF (s.raw_hash=expected_hash AND s.signed_amount=actual AND s.provider_deleted_at IS NULL
    AND s.currency='BRL' AND s.normalized_payload->>'status'='POSTED'
    AND f.metadata->>'documentary_schedule_amount'=abs(expected_plan)::text) IS DISTINCT FROM true
@@ -71,7 +71,7 @@ BEGIN
  'variance_components_status','not_provided_by_bank','beneficiary_basis','not_inferred',
  'cash_rule','actual_bank_debit_replaces_schedule_not_a_second_expense');
  UPDATE public.financial_events SET amount=s.signed_amount,event_date=s.posting_date,
- is_projection=false,status='active',metadata=metadata||jsonb_build_object(
+ is_projection=false,status='confirmed',metadata=metadata||jsonb_build_object(
  'documentary_schedule_amount',abs(f.amount),'documentary_schedule_due_date',f.event_date,
  'actual_debit_amount',abs(s.signed_amount),'actual_debit_date',s.posting_date,
  'variance_vs_schedule',abs(s.signed_amount)-abs(f.amount),'variance_components_status','not_provided_by_bank',
@@ -96,10 +96,19 @@ BEGIN
  THEN RAISE EXCEPTION 'Realized expense is missing, duplicated or has an inferred person: %',actual_rows;END IF;
  IF EXISTS(SELECT 1 FROM jsonb_array_elements(public.lts_pending_projections_v233(u))x
  WHERE x->>'source_ref'=ref) THEN RAISE EXCEPTION 'Realized contract remains pending';END IF;
+ PERFORM set_config('request.jwt.claims',(SELECT jsonb_build_object('sub',id,'email',email,'role','authenticated')::text FROM auth.users WHERE id=u),true);
+ flow:=public.lts_browser_flow_v242(f.event_date,f.event_date);
+ SELECT coalesce(jsonb_agg(x),'[]') INTO flow_events FROM(
+  SELECT x FROM jsonb_array_elements(coalesce(flow#>'{flow,historical,events}','[]'))x
+  UNION ALL SELECT x FROM jsonb_array_elements(coalesce(flow#>'{flow,current_future,events}','[]'))x)q
+ WHERE x->>'source_ref' IN(f.id::text,f.legacy_id,s.id::text);
+ IF jsonb_array_length(flow_events)<>1 OR(flow_events->0->>'signed_amount')::numeric<>s.signed_amount
+ OR flow_events->0->>'bank_confirmed' IS DISTINCT FROM 'true'
+ THEN RAISE EXCEPTION 'Realized debit is missing or duplicated in Flow';END IF;
  IF NOT EXISTS(SELECT 1 FROM public.lts_open_finance_staging WHERE user_id=u AND id=s.id AND raw_hash=expected_hash
  AND signed_amount=actual AND posting_date=f.event_date) THEN RAISE EXCEPTION 'Raw bank source changed';END IF;
  INSERT INTO public.audit_log(user_id,action,entity_type,entity_id,details)
  VALUES(u,'reconcile_posted_contract_debit','financial_events',f.id::text,receipt||jsonb_build_object(
- 'staging_id',s.id,'after_amount',s.signed_amount,'after_is_projection',false,'after_status','active',
- 'unrelated_expense_parity',true,'realized_expense_count',1));
+ 'staging_id',s.id,'after_amount',s.signed_amount,'after_is_projection',false,'after_status','confirmed',
+ 'unrelated_expense_parity',true,'realized_expense_count',1,'realized_flow_debit_count',1));
 END $reconcile$;
