@@ -9,7 +9,7 @@ V293 preserves every published release. The interface is copied from V291; only 
 - Add two virtual projection legs only while the source is pending and the date is today or later.
 - Exclude duplicates or partial overlaps with existing transfer legs. Ambiguous same-date/account/amount schedules are not projected.
 - Keep the historical/realized transfer reader unchanged. A pending source does not become realized merely because its date passes.
-- Preserve previously confirmed pending sources in the disclosure after their date passes. The UI reports no proof of realization and does not create a payment.
+- Preserve all previously confirmed pending sources in the disclosure after their date passes, without a lookback cutoff. Only future rows use the requested date range. The UI reports no proof of realization and does not create a payment.
 - Source-key and outer Flow-cache fingerprints include the current confirmation evidence, so source changes or a new confirmation cannot reuse an older forecast cache.
 - Transfer legs are internal, projected and explicitly not realized. They alter the two account forecasts equally and oppositely, not consolidated cash or economic expenses.
 
