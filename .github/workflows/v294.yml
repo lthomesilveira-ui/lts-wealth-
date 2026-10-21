@@ -1,0 +1,36 @@
+name: V294 explicit person policy and historical source checks
+on:
+  pull_request:
+    paths: ['backend/operations/supersede_implicit_owner_beneficiaries_v294.sql', 'backend/qa/lts_v294*', 'backend/patches/v294/**', '.github/workflows/v294.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-and-ui-regression:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Original cached values and missing-data guards
+        run: python3 backend/qa/lts_v294_historical_test.py
+      - name: Preserve published interface and classification contracts
+        run: |
+          node .github/scripts/lts_v293_release_contract.cjs
+          python3 backend/qa/lts_v269_classification_contract.py
+          node backend/qa/lts_v290_future_import.test.mjs
+      - run: npm install --no-save --package-lock=false playwright@1.58.2
+      - run: npx playwright install --with-deps chromium
+      - name: Serve unchanged V293
+        run: python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/lts-v294-http.log 2>&1 &
+      - name: Six screens across desktop and two mobile viewports
+        run: node .github/scripts/lts_v293_browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v294-historical-and-interface-evidence
+          path: qa/v293/
