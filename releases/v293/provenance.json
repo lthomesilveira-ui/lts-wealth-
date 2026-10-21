@@ -1,0 +1,14 @@
+{
+  "release": "v293",
+  "base_release": "v291",
+  "base_commit": "0e56088541446f8aa1b0928c0fa36164c734f4ea",
+  "frontend_only": false,
+  "backend_changed": true,
+  "scope": [
+    "Confirmed bank transfers enter per-account forecasts with zero consolidated/expense effect and no realized-payment assumption",
+    "Incoming schedules visible in destination account; confirmed overdue pending sources stay visible",
+    "Exact posted contract debit replaces its forecast; original schedule and unexplained variance remain in audited evidence"
+  ],
+  "validation_contract": "Full expense/history parity, per-bank future deltas, real RPC checks and synthetic desktop/mobile regression",
+  "physical_mobile_validated": false
+}
