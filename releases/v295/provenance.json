@@ -1,0 +1,15 @@
+{
+  "release": "v295",
+  "base_release": "v293",
+  "base_commit": "61d8213fb1edacc55e30b8f02dc11a33e04a4713",
+  "frontend_only": false,
+  "backend_changed": true,
+  "scope": [
+    "Compact scheduled movements and source details under Atualização",
+    "Remove processing narratives and healthy empty overdue banners from the main Flow",
+    "Keep actionable uncertainty visible in concise human language",
+    "Explicit owner confirmation uses the existing exact posted-transfer pairing mechanism"
+  ],
+  "validation_contract": "Immutable releases preserved; original bank sources and unrelated expenses unchanged; rendered desktop/mobile Flow and Dashboard",
+  "physical_mobile_validated": false
+}

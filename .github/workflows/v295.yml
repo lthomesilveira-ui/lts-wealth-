@@ -1,0 +1,37 @@
+name: V295 financial interface and confirmed transfer
+on:
+  pull_request:
+    paths: ['AGENTS.md', 'releases/v295/**', 'backend/operations/confirm_exact_posted_own_transfer_v295.sql', 'backend/qa/lts_v295*', '.github/scripts/lts_v295*', '.github/workflows/v295.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  desktop-and-mobile:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Preserve published versions and financial contracts
+        run: |
+          node .github/scripts/lts_v295_release_contract.cjs
+          node backend/qa/lts_v295_overdue_visibility.test.cjs
+          node .github/scripts/lts_v272_payment_contract.cjs releases/v295/lts-v226-card-composition.js
+          python3 backend/qa/lts_v269_classification_contract.py
+          node backend/qa/lts_v290_future_import.test.mjs
+          node backend/qa/lts_v249_card_normalization.test.mjs
+      - run: npm install --no-save --package-lock=false playwright@1.58.2
+      - run: npx playwright install --with-deps chromium
+      - name: Serve application
+        run: python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/lts-v295-http.log 2>&1 &
+      - name: Review financial wording, collapsed notices, and six screens
+        run: node .github/scripts/lts_v295_browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v295-homologation-evidence
+          path: qa/v295/
