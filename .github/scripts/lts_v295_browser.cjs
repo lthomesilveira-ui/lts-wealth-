@@ -116,7 +116,7 @@ async function run(browser,viewport,label){
   for(const account of ['Consolidado','Itaú','Bradesco']){await frame.evaluate(account=>{ACC=account;render();},account);assert.doesNotMatch(await frame.locator('#d-2026-10-19').innerText(),/encerramento do fluxo/i);}
   for(const [account,total]of [['Itaú',5],['Bradesco',2],['C6',1]]){
    await frame.evaluate(account=>{ACC=account;render();},account);
-   await frame.locator('#ltsFutureBank > details > summary').click();
+   await frame.locator('#ltsFutureBank > .lts-future-list > summary').click();
    assert.equal(await frame.locator('#ltsFutureBank .lts-future-row').count(),total,'Include incoming schedules in destination '+account);
    const ownRow=frame.locator('#ltsFutureBank .lts-future-row').filter({has:frame.locator('[data-future-day="2026-11-04"]')}).first();
    assert.match(await ownRow.innerText(),/Previsto/);
@@ -146,6 +146,7 @@ async function run(browser,viewport,label){
     await frame.getByRole('tab',{name:'Visão geral',exact:true}).click();
    }
    await page.waitForTimeout(150);
+   assert.doesNotMatch(await frame.locator('body').innerText(),/\bbackend\b|\bRPC\b|source_ref|\bsnapshot\b|posição do provedor|encerramento do fluxo/i,view+' cannot expose implementation language');
    const dimensions=await frame.locator('html').evaluate(e=>({client:e.clientWidth,scroll:e.scrollWidth}));assert(dimensions.scroll<=dimensions.client+2,view+' has page overflow '+JSON.stringify(dimensions));
    const file=label+'-'+view.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replaceAll(' ','_')+'.png';await page.screenshot({path:path.join(qa,file)});screenshots.push(file);
   }
