@@ -78,6 +78,7 @@
    });
   }
   function reportDetails(){
+   if(V==='Despesas'&&window.__LTS_V168_STATE?.expense?.tab==='monthly'&&window.__LTS_V175_STATE?.monthly?.error){const error=document.querySelector('.v168-expenses .v168-error');if(error){error.textContent='Não foi possível conferir o relatório deste período. Tente atualizar antes de usar os totais.';error.setAttribute('role','alert');}}
    const report=document.querySelector('.v175-monthly');if(!report)return;
    const notes=[report.querySelector('.v175-yearbar>small'),report.querySelector('.v175-sale-strip small')].filter(Boolean);
    if(notes.length){let details=report.querySelector('.lts-report-update');if(!details){details=document.createElement('details');details.className='lts-report-update';details.innerHTML='<summary>Atualização</summary>';report.appendChild(details);}for(const note of notes){const p=document.createElement('p');p.textContent=note.textContent;details.appendChild(p);note.remove();}}
