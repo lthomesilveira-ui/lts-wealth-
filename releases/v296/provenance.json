@@ -1,0 +1,15 @@
+{
+  "release": "v296",
+  "base_release": "v295",
+  "base_commit": "aa31f615ea362567f37aa1d855bada3b5f07450e",
+  "frontend_only": false,
+  "backend_changed": true,
+  "scope": [
+    "Reuse confirmed healthcare reimbursement classifications for the exact bank sender",
+    "Incoming classification queue across historical and posted checking sources",
+    "Visible pending badge and shared category creation for receipts",
+    "Responsive populated Actions and monthly projection coverage"
+  ],
+  "validation_contract": "Immutable releases preserved; financial sources unchanged; source-specific category edits; populated desktop and mobile rendering",
+  "physical_mobile_validated": false
+}

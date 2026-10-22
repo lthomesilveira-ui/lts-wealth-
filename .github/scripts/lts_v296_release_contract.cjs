@@ -1,0 +1,22 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),assert=require('node:assert/strict'),cp=require('node:child_process');
+const root=path.resolve('releases/v296'),base=path.resolve('releases/v295'),m=JSON.parse(fs.readFileSync(path.join(root,'manifest.json'))),sha=b=>crypto.createHash('sha256').update(b).digest('hex');
+assert.equal(m.release,'v296');assert.equal(m.version,'v296');assert.equal(m.base_release,'v295');
+assert.deepEqual(fs.readdirSync(root).sort(),[...Object.keys(m.files),'manifest.json'].sort());
+for(const [name,hash]of Object.entries(m.files)){assert.equal(path.basename(name),name);assert.equal(sha(fs.readFileSync(path.join(root,name))),hash,name);}
+for(const [name,hash]of Object.entries(m.protected))assert.equal(sha(fs.readFileSync(name)),hash,'Protected '+name);
+const changed=fs.readdirSync(root).filter(n=>!fs.existsSync(path.join(base,n))||sha(fs.readFileSync(path.join(root,n)))!==sha(fs.readFileSync(path.join(base,n)))).sort();
+assert.deepEqual(changed,['app.html','lts-v181-regression-closure.js','lts-v183-income-review.js','lts-v183-v168-feedback-safe.js','lts-v296-classifications.js','manifest.json','provenance.json'].sort());
+assert.equal(sha(fs.readFileSync(path.join(root,'index.html'))),sha(fs.readFileSync(path.join(base,'index.html'))));
+const source=fs.readFileSync(path.join(root,'lts-v296-classifications.js'),'utf8'),income=fs.readFileSync(path.join(root,'lts-v183-income-review.js'),'utf8');
+assert(source.includes('lts_browser_income_review_queue_v296'));
+assert(source.includes('Promise.allSettled'));
+assert(source.includes('#v237CoverageAudit .v168-action{grid-template-columns:minmax(0,1fr) auto'));
+assert(source.includes('lts-classification-badge'));
+assert(income.includes('window.LTSCategoryRegistry?.attach(select)'));
+assert(income.includes("if(V==='Fluxo Diário')await loadFlowRange"));
+assert(!income.includes('preview.options.includes(select.value)'));
+assert(!income.includes('textContent=String(err'));
+for(const n of fs.readdirSync(root).filter(n=>n.endsWith('.js')))cp.execFileSync(process.execPath,['--check',path.join(root,n)],{stdio:'pipe'});
+cp.execFileSync(process.execPath,['.github/scripts/lts_v295_release_contract.cjs'],{stdio:'pipe'});
+console.log(JSON.stringify({pass:true,release:'v296',changed,files:fs.readdirSync(root).length,protected_bytes:true,financial_source_writes:false}));
