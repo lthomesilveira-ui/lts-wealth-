@@ -46,6 +46,8 @@ BEGIN
   'expenses',(SELECT jsonb_agg(to_jsonb(x) ORDER BY to_jsonb(x)::text) FROM public.lts_v229_expense_rows(u,'2013-10-10',current_date)x))::text) INTO after_sources;
  IF before_sources IS DISTINCT FROM after_sources THEN RAISE EXCEPTION 'Financial sources or expenses changed';END IF;
  IF has_function_privilege('anon','public.lts_browser_income_review_queue_v296(date,date,integer,integer,text)','EXECUTE')
+ OR has_function_privilege('anon','lts_income_private.queue_v296(date,date,integer,integer,text)','EXECUTE')
+ OR(SELECT prosecdef FROM pg_proc WHERE oid='public.lts_browser_income_review_queue_v296(date,date,integer,integer,text)'::regprocedure)
  OR has_function_privilege('authenticated','lts_income_private.rows_v296(uuid,date,date)','EXECUTE')
  OR NOT has_function_privilege('authenticated','public.lts_browser_income_review_queue_v296(date,date,integer,integer,text)','EXECUTE')
  THEN RAISE EXCEPTION 'Income reader ACL mismatch';END IF;

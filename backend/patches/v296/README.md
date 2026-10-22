@@ -1,9 +1,10 @@
 # Incoming classifications and Actions
 
-Apply `income_review.sql`, then `bank_income_reader.sql` in the same release window.
+Apply `income_review.sql`, `bank_income_reader.sql`, then `api_boundary.sql` in the same release window.
 The latter is the final source-only reader: it intentionally avoids rendering
 cash balances, card invoices and their projections while listing receipts.
 Existing releases and public write signatures are preserved.
+The public queue is an invoker-only wrapper around a private, owner-checked reader.
 
 The checking source cutover uses each bank's documentary opening and received
 position. Existing documentary identity and confirmed own-transfer decisions are
