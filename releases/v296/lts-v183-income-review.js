@@ -37,7 +37,7 @@
      try{
       const result=await S.rpc('lts_browser_income_category_v183',{...request(e),p_category:select.value,p_expected:preview.token});
       if(result.error||!result.data?.saved)throw Error(result.error?.message||result.data?.reason||'A categoria não foi salva.');
-      invalidateMonthly();status.textContent='Classificação salva.';save.remove();
+      window.__LTS_V227_TRANSPORT?.invalidate();invalidateMonthly();status.textContent='Classificação salva.';save.remove();
       window.dispatchEvent(new CustomEvent('lts:income-classified',{detail:{event:e,category:select.value}}));
       // Preserve Actions; only reload a visible Flow range.
       if(V==='Fluxo Diário')await loadFlowRange(FLOWFROM||e.event_date,FLOWTO||e.event_date);

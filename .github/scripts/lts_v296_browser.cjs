@@ -48,6 +48,7 @@ async function run(browser,viewport,label){
    return send({ok:true,editable:e.category==='A classificar',options:categories,token:'synthetic-token',event:e});
   }
   if(/recurring_future_gap/.test(name))return send(fixture.recurring());
+  if(/^lts_browser_monthly_/.test(name))return send(fixture.monthly(args.p_from,args.p_to));
   if(name==='lts_browser_market_quotes_v290')return send({...quote,mode});
   if(name==='lts_browser_future_bank_v293')return send({"rows":[{"source_id":"synthetic-scheduled","date":"2026-11-02","bank":"Itaú","description":"Agendamento fictício","amount":-42,"status":"scheduled","included_in_realized":false,"included_in_flow_totals":false},{"source_id":"synthetic-own","date":"2026-11-04","bank":"Itaú","description":"Transferência própria fictícia","amount":-80,"status":"scheduled","identity":{"own_identity_proven":true,"destination_confirmed":true,"represented_in_flow":true,"origin_bank":"Itaú","destination_bank":"Bradesco","projection_description":"Transferência entre contas · Itaú → Bradesco"},"included_in_realized":false,"included_in_flow_totals":true},{"source_id":"synthetic-own-c6","date":"2026-11-04","bank":"Itaú","description":"Transferência própria C6 fictícia","amount":-50,"status":"scheduled","identity":{"own_identity_proven":true,"destination_confirmed":true,"represented_in_flow":true,"origin_bank":"Itaú","destination_bank":"C6","projection_description":"Transferência entre contas · Itaú → C6"},"included_in_realized":false,"included_in_flow_totals":true},{"source_id":"synthetic-review","date":"2026-11-05","bank":"Itaú","description":"Transferência em conferência fictícia","amount":-60,"status":"scheduled","identity":{"own_identity_proven":true,"represented_in_flow":false},"included_in_realized":false,"included_in_flow_totals":false},{"source_id":"synthetic-overdue","date":"2025-10-17","bank":"Itaú","description":"Agendamento vencido fictício","amount":-30,"status":"overdue_unconfirmed","identity":{"own_identity_proven":true,"destination_confirmed":true,"represented_in_flow":false,"origin_bank":"Itaú","destination_bank":"Bradesco","projection_description":"Transferência entre contas · Itaú → Bradesco"},"included_in_realized":false,"included_in_flow_totals":false}],"card_future_received":2});
   if(/^lts_browser_invoice_flow_reconciliation_/.test(name))return send({rows:[{card_name:'Cartão fictício sem fatura',reference_month:'2026-10-01',due_date:'2026-10-05',documented_amount:90,flow_amount:90,difference:0,invoice_status:'projected',reconciliation_status:'reconciled'}],row_count:1,issue_count:0,reconciled_count:1});
@@ -204,6 +205,12 @@ async function run(browser,viewport,label){
    const file=label+'-'+view.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replaceAll(' ','_')+'.png';await page.screenshot({path:path.join(qa,file)});screenshots.push(file);
   }
   await Promise.all(assetReads);assert.deepEqual(assetErrors,[]);assert.deepEqual(errors,[]);assert.deepEqual(blocked,[]);
+  await navigate('Despesas');await frame.evaluate(()=>{window.__LTS_V168_STATE.expense.tab='monthly';render();});
+  await frame.locator('.v175-monthly [data-lts-category-key="Reembolsos e restituições"]').waitFor();
+  assert.match(await frame.locator('.v175-monthly [data-lts-category-key="Reembolsos e restituições"]').innerText(),/150,00/);
+  assert.equal(await frame.locator('.lts-report-update').getAttribute('open'),null);
+  assert.doesNotMatch(await frame.locator('.v175-monthly').innerText(),/workbook|leitura integral concluída|carregamento anual de contingência|backend|source_ref|RPC/i);
+  await page.screenshot({path:path.join(qa,label+'-Monthly-report.png')});
   expenseZero=true;
   await frame.evaluate(()=>{const r=window.__LTS_V181_STATE.review;r.status='ready';r.data={row_count:0,rows:[]};return window.__LTS_V296_CLASSIFICATIONS.refresh();});
   assert.match(await frame.locator('[data-v="Atualizações"]').first().getAttribute('aria-label'),/29 classificações/,'Income-only pending is visible even when expense queue is zero');

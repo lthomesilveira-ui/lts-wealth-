@@ -77,7 +77,13 @@
     else{V='Fluxo Diário';ACC=row.account;renderNav();loadFlowRange(row.event_date,row.event_date);}
    });
   }
-  render=function(){const r=oldRender();session();bind();badges();if(D&&!N.classList.contains('hidden'))queueMicrotask(()=>load(false));return r;};
+  function reportDetails(){
+   const report=document.querySelector('.v175-monthly');if(!report)return;
+   const notes=[report.querySelector('.v175-yearbar>small'),report.querySelector('.v175-sale-strip small')].filter(Boolean);
+   if(notes.length){let details=report.querySelector('.lts-report-update');if(!details){details=document.createElement('details');details.className='lts-report-update';details.innerHTML='<summary>Atualização</summary>';report.appendChild(details);}for(const note of notes){const p=document.createElement('p');p.textContent=note.textContent;details.appendChild(p);note.remove();}}
+   const coverage=report.querySelector('.v175-coverage span');if(coverage)coverage.textContent=coverage.textContent.replace('Categorias recuperadas do workbook só entram quando o total do mês fecha exatamente.','Os detalhes identificados são conferidos com o total da fatura.');
+  }
+  render=function(){const r=oldRender();session();bind();badges();reportDetails();if(D&&!N.classList.contains('hidden'))queueMicrotask(()=>load(false));return r;};
   renderNav=function(){const r=oldNav();badges();return r;};
   window.addEventListener('lts:income-classified',()=>{state.offset=0;state.readAt=0;load(true);});
   const style=document.createElement('style');style.textContent=`

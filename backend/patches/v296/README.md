@@ -1,10 +1,17 @@
 # Incoming classifications and Actions
 
-Apply `income_review.sql`, `bank_income_reader.sql`, then `api_boundary.sql` in the same release window.
+Apply `income_review.sql`, `bank_income_reader.sql`, `api_boundary.sql`, then
+`monthly_income_sources.sql` in the same release window.
 The latter is the final source-only reader: it intentionally avoids rendering
 cash balances, card invoices and their projections while listing receipts.
 Existing releases and public write signatures are preserved.
 The public queue is an invoker-only wrapper around a private, owner-checked reader.
+The monthly V229 report reuses the same realized receipt identities. Historical
+excluded rows remain excluded and the existing extraordinary/expense criteria
+are preserved. Private compatibility layers omit the redundant older expense
+passes; V229 computes canonical expenses once, including the coverage counters.
+Older report APIs remain unchanged. The internal worker remains service-only and
+also checks the owner; API queue/writer callers assert the owner before invoking it.
 
 The checking source cutover uses each bank's documentary opening and received
 position. Existing documentary identity and confirmed own-transfer decisions are

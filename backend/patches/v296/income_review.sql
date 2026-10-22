@@ -222,6 +222,7 @@ BEGIN
  INSERT INTO public.lts_access_audit(user_id,email,action,meta) VALUES(u,lower(coalesce(auth.jwt()->>'email','')),
  'income_category_v296',jsonb_build_object('source_table',r->>'source_table','source_ref',r->>'decision_ref',
  'before',before_value,'category',cat,'date',p_event_date,'amount',p_amount,'cash_changed',false,'person_inferred',false));
+ UPDATE public.lts_read_cache_epoch_v242 SET epoch=epoch+1 WHERE singleton=true;
  RETURN jsonb_build_object('ok',true,'saved',true,'category',cat,'cash_changed',false);
 END $fn$;
 
