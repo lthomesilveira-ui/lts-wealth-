@@ -108,6 +108,10 @@ async function run(browser,viewport,label){
   await navigate('Atualizações');await frame.locator('[data-v181-category]').waitFor();
   await frame.locator('#v296IncomeQueue [data-income-review]').first().waitFor();
   assert.match(await frame.locator('[data-v="Atualizações"]').first().getAttribute('aria-label'),/31 classificações/);
+  const actionsNav=frame.locator(viewport.width<820?'[data-mobile-route="Atualizações"]':'[data-v="Atualizações"]').first();
+  await actionsNav.locator('.lts-classification-badge').waitFor({state:'visible'});
+  assert.equal(await actionsNav.locator('.lts-classification-badge').innerText(),'31');
+  assert(await actionsNav.locator('.lts-classification-badge').evaluate(el=>{const r=el.getBoundingClientRect(),b=el.parentElement.getBoundingClientRect();return r.width>0&&r.height>0&&r.left>=b.left&&r.right<=b.right&&r.top>=b.top&&r.bottom<=b.bottom;}),'The mobile badge must be visible and inside the action button');
   assert.equal(await frame.locator('#v296IncomeQueue .lts-income-row').count(),25);
   await frame.locator('[data-income-next]').click();await frame.waitForFunction(()=>window.__LTS_V296_CLASSIFICATIONS.state.data.offset===25);
   assert.equal(await frame.locator('#v296IncomeQueue .lts-income-row').count(),5);
@@ -147,6 +151,9 @@ async function run(browser,viewport,label){
   assert.deepEqual(writes.slice(before).map(x=>x.name),['lts_browser_category_create_v1'],'Creating does not silently classify a transaction');
   assert.equal(await frame.locator('[data-v181-beneficiary]').inputValue(),'','No Lucas/Larissa inferred');
   await select.blur();
+  await frame.locator('[data-income-next]').click();await frame.waitForFunction(()=>window.__LTS_V296_CLASSIFICATIONS.state.data.offset===25);
+  assert.equal(await frame.locator('#v296IncomeQueue .lts-income-row').count(),4,'A deferred render must not duplicate pagination handlers');
+  await frame.locator('[data-income-prev]').click();await frame.waitForFunction(()=>window.__LTS_V296_CLASSIFICATIONS.state.data.offset===0);
   await frame.evaluate(()=>window.__LTS_V226.openDetail('itau_mastercard','2026-11-01'));
   await frame.locator('#v226-detail [data-v226-classify]').waitFor({state:'attached'});
   const cardForm=frame.locator('#v226-detail [data-v226-classify]').first();

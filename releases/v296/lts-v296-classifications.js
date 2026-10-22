@@ -24,7 +24,7 @@
    session();
    document.querySelectorAll('.lts-classification-badge').forEach(el=>el.remove());
    const c=counts(),text=c.n?(c.complete?'':'+')+c.n:(c.complete?'':'•');
-   document.querySelectorAll('[data-v="Atualizações"]').forEach(button=>{
+   document.querySelectorAll('[data-v="Atualizações"],[data-mobile-route="Atualizações"]').forEach(button=>{
     button.classList.add('lts-actions-nav');
     if(text){const badge=document.createElement('span');badge.className='lts-classification-badge';badge.textContent=text;button.appendChild(badge);}
     button.setAttribute('aria-label',c.n?'Ações · '+(c.complete?'':'pelo menos ')+c.n+' classificações pendentes':c.complete?'Ações':'Ações · classificações a conferir');
@@ -66,10 +66,11 @@
   }
   atualizacoes=function(){session();const t=document.createElement('template');t.innerHTML=oldUpdates();const head=t.content.querySelector('.v168-updates .v168-head');head?.insertAdjacentHTML('afterend',panel());return t.innerHTML;};
   function bind(){
-   document.querySelector('[data-income-retry]')?.addEventListener('click',()=>load(true));
-   document.querySelector('.lts-income-search')?.addEventListener('submit',e=>{e.preventDefault();state.query=e.target.elements['income-query'].value.trim();state.offset=0;load(true);});
-   document.querySelector('[data-income-prev]')?.addEventListener('click',()=>{state.offset=Math.max(0,state.offset-25);load(true);});
-   document.querySelector('[data-income-next]')?.addEventListener('click',()=>{state.offset=Number(state.data?.next_offset||0);load(true);});
+   const retry=document.querySelector('[data-income-retry]'),search=document.querySelector('.lts-income-search'),prev=document.querySelector('[data-income-prev]'),next=document.querySelector('[data-income-next]');
+   if(retry)retry.onclick=()=>load(true);
+   if(search)search.onsubmit=e=>{e.preventDefault();state.query=e.target.elements['income-query'].value.trim();state.offset=0;load(true);};
+   if(prev)prev.onclick=()=>{state.offset=Math.max(0,state.offset-25);load(true);};
+   if(next)next.onclick=()=>{state.offset=Number(state.data?.next_offset||0);load(true);};
    document.querySelectorAll('[data-income-review]').forEach(button=>button.onclick=()=>{
     const row=state.data?.rows?.[Number(button.dataset.incomeReview)];if(!row)return;
     if(row.editable)window.__LTS_V183_INCOME_REVIEW.openReceipt(row,button);
