@@ -15,6 +15,22 @@ patch = patch.replace('public.', 'v303_fixture.')
 patch = patch.replace('md5(d)', "md5(replace(d,'v303_fixture.','public.'))")
 print(base)
 print("""
+-- The older V303 fixture predates production's rolling annual-density rule.
+-- Reproduce that existing rule before taking the V306 baseline; keep the
+-- production definition hash check intact rather than accepting an old body.
+DO $current_fixture$
+DECLARE d text:=pg_get_functiondef('v303_fixture.lts_recurring_future_gap_audit_v6(uuid,date,date)'::regprocedure);
+ old_density text:=$old$SELECT 1 FROM future f WHERE f.series_key=v303_fixture.lts_forecast_series_key_v1(x->>'description') GROUP BY f.series_key HAVING count(DISTINCT date_trunc('month',event_date))>=6$old$;
+ new_density text:=$new$SELECT 1 FROM (
+   SELECT count(*) OVER (ORDER BY event_month RANGE BETWEEN CURRENT ROW AND interval '11 months' FOLLOWING) AS months_in_year
+   FROM (SELECT DISTINCT date_trunc('month',f.event_date) AS event_month FROM future f
+         WHERE f.series_key=v303_fixture.lts_forecast_series_key_v1(x->>'description')) AS months
+  ) AS density WHERE density.months_in_year>=6$new$;
+BEGIN
+ IF (length(d)-length(replace(d,old_density,'')))/length(old_density)<>1
+ THEN RAISE EXCEPTION 'Older synthetic density contract changed';END IF;
+ EXECUTE replace(d,old_density,new_density);
+END $current_fixture$;
 CREATE TEMP TABLE v306_cases(as_of date,horizon date,payload jsonb);
 INSERT INTO v306_cases(as_of,horizon) VALUES
  ('2020-04-11','2020-06-30'),('2020-04-12','2020-06-30'),
