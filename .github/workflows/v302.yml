@@ -1,0 +1,32 @@
+name: V302 partial-obligation evidence
+on:
+  push:
+    paths: ['backend/patches/v302/**', 'backend/operations/reconcile_partial_obligation_v302.sql', 'backend/qa/lts_v302*', '.github/workflows/v302.yml']
+  pull_request:
+    paths: ['backend/patches/v302/**', 'backend/operations/reconcile_partial_obligation_v302.sql', 'backend/qa/lts_v302*', '.github/workflows/v302.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  synthetic-evidence:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: synthetic-test-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: synthetic-test-only
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate all synthetic evidence and rejection cases
+        run: python3 backend/qa/lts_v302_ci_sql.py | psql -v ON_ERROR_STOP=1
