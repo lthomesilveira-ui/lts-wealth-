@@ -1,0 +1,34 @@
+name: V306 audit coverage parity
+on:
+  push:
+    paths: ['backend/patches/v305/**', 'backend/patches/v306/**', 'backend/operations/confirm_health_reimbursement_v305.sql', 'backend/qa/lts_v305*', 'backend/qa/lts_v306*', '.github/workflows/v306.yml']
+  pull_request:
+    paths: ['backend/patches/v305/**', 'backend/patches/v306/**', 'backend/operations/confirm_health_reimbursement_v305.sql', 'backend/qa/lts_v305*', 'backend/qa/lts_v306*', '.github/workflows/v306.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  synthetic-parity:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: synthetic-test-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: synthetic-test-only
+    steps:
+      - uses: actions/checkout@v4
+      - name: Define synthetic roles
+        run: psql -v ON_ERROR_STOP=1 -c 'CREATE ROLE anon; CREATE ROLE authenticated; CREATE ROLE service_role;'
+      - name: Compare complete audit JSON and original attributes
+        run: python3 backend/qa/lts_v306_ci_sql.py | psql -v ON_ERROR_STOP=1
