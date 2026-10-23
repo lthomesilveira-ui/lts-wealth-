@@ -3,6 +3,7 @@
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const {VERSION, validateReports} = require('./lts_v299_browser_environment.cjs');
+const {VERSION: NODE_VERSION, IMAGE, validateChromiumReport} = require('./lts_v299_chromium_environment.cjs');
 const fixture = () => ({package_version: VERSION, browsers: ['chromium', 'webkit'].map(name =>
   ({name, executable: `/ms-playwright/${name}-fixture/browser`, version: 'fixture-1', smoke_pass: true}))});
 let cases = 0;
@@ -36,15 +37,39 @@ for (const gate of ['lts_v177_expense_ux_gate.js', 'lts_v176_flow_expense_audit_
   'lts_invoice_reading_order_gate.py', 'lts_flow_documentary_rollforward_gate.py']) {
   assert.ok(workflow.includes(gate), `Keep protected gate ${gate}`);
 }
-for (const [file, version, image] of [
-  ['v174-v173-review.yml', VERSION, `mcr.microsoft.com/playwright/python:v${VERSION}-noble`],
-  ['v260.yml', '1.58.2', 'mcr.microsoft.com/playwright:v1.58.2-noble']
+const chromiumFixture = () => ({package_version: NODE_VERSION, image: IMAGE,
+  name: 'chromium', smoke_pass: true, browser: 'fixture-1', executable: '/ms-playwright/chromium-fixture/browser'});
+validateChromiumReport(chromiumFixture()); cases++;
+for (const mutate of [
+  r => {r.package_version = '1.58.1';}, r => {r.image += '-wrong';},
+  r => {r.name = 'webkit';}, r => {r.smoke_pass = false;},
+  r => {r.browser = '';}, r => {r.browser = 123;},
+  r => {r.executable = '/tmp/browser';}, r => {delete r.executable;}
 ]) {
+  const report = chromiumFixture(); mutate(report);
+  assert.throws(() => validateChromiumReport(report)); cases++;
+}
+const legacy = ['v170-v169-review.yml', 'v171-v170-review.yml', 'v172-v171-review.yml',
+  'v173-v172-feedback.yml', 'v174-v173-review.yml', 'v175-expense-financial-audit.yml',
+  'v176-flow-expense-audit.yml', 'v177-expense-ux.yml'];
+const modern = ['v242.yml', 'v257.yml', 'v258.yml', 'v259.yml', 'v260.yml', 'v261.yml', 'v262.yml'];
+for (const file of [...legacy, ...modern]) {
+  const isLegacy = legacy.includes(file);
+  const version = isLegacy ? VERSION : NODE_VERSION;
+  const image = isLegacy ? `mcr.microsoft.com/playwright/python:v${VERSION}-noble` : IMAGE;
   const source = fs.readFileSync('.github/workflows/' + file, 'utf8');
   assert.ok(source.includes('image: ' + image));
   assert.ok(source.includes('playwright@' + version));
   assert.ok(source.includes('PLAYWRIGHT_BROWSERS_PATH: /ms-playwright'));
+  if (isLegacy) {
+    assert.ok(source.includes('playwright==' + version));
+    assert.ok(source.includes('run: node .github/scripts/lts_v299_browser_environment.cjs'));
+    assert.ok(source.includes('v299-browser-environment-result.json'));
+  } else {
+    assert.ok(source.includes('actions/setup-python@v5'));
+    assert.ok(source.includes('run: node .github/scripts/lts_v299_chromium_environment.cjs'));
+  }
   assert.ok(!source.includes('playwright install'), `${file}: no dependency download`);
   assert.ok(!source.includes('continue-on-error'), `${file}: do not hide failures`);
 }
-console.log(JSON.stringify({pass: true, cases, workflows: 3, scope: 'environment-contract-only'}));
+console.log(JSON.stringify({pass: true, cases, workflows: legacy.length + modern.length, scope: 'environment-contract-only'}));
