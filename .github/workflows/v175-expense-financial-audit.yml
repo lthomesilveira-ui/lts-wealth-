@@ -24,6 +24,15 @@ jobs:
   contract-and-browser:
     runs-on: ubuntu-24.04
     timeout-minutes: 30
+    container:
+      image: mcr.microsoft.com/playwright/python:v1.55.0-noble
+      options: --init --ipc=host
+    env:
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+    defaults:
+      run:
+        shell: bash
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -37,9 +46,11 @@ jobs:
           node .github/scripts/lts_v175_expense_financial_audit_contract.js
       - name: Install browser dependencies
         run: |
-          npm install --no-save playwright@1.55.0
-          python -m pip install playwright==1.55.0
-          python -m playwright install --with-deps chromium webkit
+          npm install --no-save --package-lock=false playwright@1.55.0
+          python -m pip install --disable-pip-version-check playwright==1.55.0
+      - name: Verify Node and Python Chromium and WebKit
+        timeout-minutes: 2
+        run: node .github/scripts/lts_v299_browser_environment.cjs
       - name: Validate V175 desktop and mobile
         run: |
           python3 -m http.server 8785 >/tmp/lts-v175-http.log 2>&1 &
@@ -65,6 +76,7 @@ jobs:
           name: v175-financial-expense-audit
           path: |
             v175-expense-financial-audit-result.json
+            v299-browser-environment-result.json
             v175-*.png
             integrated-flow-result.json
             integrated-*.png

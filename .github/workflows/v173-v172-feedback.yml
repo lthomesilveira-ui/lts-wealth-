@@ -24,6 +24,15 @@ jobs:
   contract-and-browser:
     runs-on: ubuntu-24.04
     timeout-minutes: 25
+    container:
+      image: mcr.microsoft.com/playwright/python:v1.55.0-noble
+      options: --init --ipc=host
+    env:
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+    defaults:
+      run:
+        shell: bash
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -37,9 +46,11 @@ jobs:
           node .github/scripts/lts_v173_v172_feedback_contract.js
       - name: Install isolated browser dependency
         run: |
-          npm install --no-save playwright@1.55.0
-          python -m pip install playwright==1.55.0
-          python -m playwright install --with-deps chromium webkit
+          npm install --no-save --package-lock=false playwright@1.55.0
+          python -m pip install --disable-pip-version-check playwright==1.55.0
+      - name: Verify Node and Python Chromium and WebKit
+        timeout-minutes: 2
+        run: node .github/scripts/lts_v299_browser_environment.cjs
       - name: Validate V173 category and composition feedback
         run: |
           python3 -m http.server 8783 >/tmp/lts-v173-http.log 2>&1 &
@@ -62,6 +73,7 @@ jobs:
           name: v173-v172-feedback
           path: |
             v173-v172-feedback-result.json
+            v299-browser-environment-result.json
             v173-*.png
             integrated-flow-result.json
             integrated-*.png
