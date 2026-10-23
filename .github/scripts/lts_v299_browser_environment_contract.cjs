@@ -36,4 +36,15 @@ for (const gate of ['lts_v177_expense_ux_gate.js', 'lts_v176_flow_expense_audit_
   'lts_invoice_reading_order_gate.py', 'lts_flow_documentary_rollforward_gate.py']) {
   assert.ok(workflow.includes(gate), `Keep protected gate ${gate}`);
 }
-console.log(JSON.stringify({pass: true, cases, scope: 'environment-contract-only'}));
+for (const [file, version, image] of [
+  ['v174-v173-review.yml', VERSION, `mcr.microsoft.com/playwright/python:v${VERSION}-noble`],
+  ['v260.yml', '1.58.2', 'mcr.microsoft.com/playwright:v1.58.2-noble']
+]) {
+  const source = fs.readFileSync('.github/workflows/' + file, 'utf8');
+  assert.ok(source.includes('image: ' + image));
+  assert.ok(source.includes('playwright@' + version));
+  assert.ok(source.includes('PLAYWRIGHT_BROWSERS_PATH: /ms-playwright'));
+  assert.ok(!source.includes('playwright install'), `${file}: no dependency download`);
+  assert.ok(!source.includes('continue-on-error'), `${file}: do not hide failures`);
+}
+console.log(JSON.stringify({pass: true, cases, workflows: 3, scope: 'environment-contract-only'}));

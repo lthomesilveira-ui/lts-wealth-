@@ -25,6 +25,15 @@ jobs:
   contract-and-browser:
     runs-on: ubuntu-24.04
     timeout-minutes: 30
+    container:
+      image: mcr.microsoft.com/playwright/python:v1.55.0-noble
+      options: --init --ipc=host
+    env:
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+    defaults:
+      run:
+        shell: bash
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -36,11 +45,13 @@ jobs:
           node --check .github/scripts/lts_v174_v173_review_contract.js
           node --check .github/scripts/lts_v174_v173_review_gate.js
           node .github/scripts/lts_v174_v173_review_contract.js
-      - name: Install browser dependencies
+      - name: Install matching browser clients
         run: |
-          npm install --no-save playwright@1.55.0
-          python -m pip install playwright==1.55.0
-          python -m playwright install --with-deps chromium webkit
+          npm install --no-save --package-lock=false playwright@1.55.0
+          python -m pip install --disable-pip-version-check playwright==1.55.0
+      - name: Verify Node and Python Chromium and WebKit
+        timeout-minutes: 2
+        run: node .github/scripts/lts_v299_browser_environment.cjs
       - name: Validate V174 desktop and mobile
         run: |
           python3 -m http.server 8784 >/tmp/lts-v174-http.log 2>&1 &
@@ -65,6 +76,7 @@ jobs:
           name: v174-v173-deep-expense-audit
           path: |
             v174-v173-review-result.json
+            v299-browser-environment-result.json
             v174-*.png
             integrated-flow-result.json
             integrated-*.png
