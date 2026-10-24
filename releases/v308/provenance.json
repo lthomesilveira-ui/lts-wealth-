@@ -1,0 +1,16 @@
+{
+  "release": "v308",
+  "base_release": "v296",
+  "base_commit": "7d46ab1d4a2abd0f72c54753d4b66d928c79518c",
+  "frontend_only": true,
+  "backend_changed": false,
+  "scope": [
+    "Compact monthly projection review with per-series disclosure",
+    "Filter by missing forecast or unconfirmed payment without hiding counts",
+    "Keep expanded periods and selected filter during background renders",
+    "Preserve compact schedule density at 360px without shrinking touch targets"
+  ],
+  "financial_data_changed": false,
+  "physical_mobile_validated": false,
+  "private_http_validated": false
+}
