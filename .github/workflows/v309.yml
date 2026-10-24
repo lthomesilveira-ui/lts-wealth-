@@ -41,7 +41,7 @@ jobs:
       - name: Serve application
         run: |
           python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/lts-v309-http.log 2>&1 &
-          python3 -c 'import urllib.request,time;exec("for n in range(100):\n try:\n  urllib.request.urlopen(\"http://127.0.0.1:8788/releases/v309/app.html\",timeout=2);break\n except OSError:\n  time.sleep(0.1)\nelse: raise SystemExit(\"Local application was not ready\")")'
+          node .github/scripts/lts_v309_wait_http.cjs
       - run: node .github/scripts/lts_v309_browser.cjs
       - uses: actions/upload-artifact@v4
         if: always()

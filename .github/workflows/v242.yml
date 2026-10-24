@@ -34,7 +34,10 @@ jobs:
       - name: Verify baked Chromium without downloading dependencies
         timeout-minutes: 2
         run: node .github/scripts/lts_v299_chromium_environment.cjs
-      - run: python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/lts-v242-http.log 2>&1 &
+      - name: Serve application and wait for readiness
+        run: |
+          python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/lts-v242-http.log 2>&1 &
+          node .github/scripts/lts_v309_wait_http.cjs
       - name: Cash flow loader, edits and daily chart
         run: node .github/scripts/lts_v242_flow_ux_gate.js
       - name: Startup recovery, failures and bank refresh
