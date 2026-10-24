@@ -27,21 +27,25 @@ It creates no table and writes no financial/source/classification rows.
 
 ## Validation
 
-- Real owner, SQL authenticated, cold private memos: the full 365-day 2019
-  response completed in **7,110.489 ms** with an **8s** statement timeout.
-  Complete response JSON matched the original baseline exactly.
-- Original whole-reader diagnostic baseline was about 11.6 seconds.
+- Real owner, SQL authenticated, both sides with cold private memos in the
+  same repeatable-read transaction: the full 365-day 2019 response improved
+  from **12,346.417 ms** to **5,907.684 ms**, under an **8s** candidate timeout.
+  Complete response JSON checksums matched exactly.
+- Five complete native-response comparisons passed: annual 2019, early 2013,
+  first C6 activity, July anchors and recent October. All twenty source-table
+  hashes and all existing function security/identity attributes stayed exact.
 - The exact migration compiled and replayed transactionally with all twelve
   functions present and existing attributes preserved.
-- `python3 backend/qa/lts_v307_live_rollback.py` emits optional complete native
-  comparisons for early history, the first C6 period, July anchors and October.
-  It includes source-table hashes and always rolls back. Run cases separately
-  when the connected SQL transport cannot return a longer batch.
+- `python3 backend/qa/lts_v307_live_rollback.py --case year` emits a complete
+  native comparison with cold memos, authenticated role, the real 8s candidate
+  timeout, checksums, source hashes and attribute checks. The other choices are
+  `early`, `c6`, `anchor` and `recent`. Each transaction always rolls back.
 - CI uses the actual source-epoch invalidation body and actual new memo/helper
   bodies, with an explicit card-cycle dependency double. It checks changes in
   other banks, receipt-only refreshes, settlement contracts without epoch
   triggers, owner partitions, malformed cache entries, null owners,
   insert/delete/truncate invalidation, private access and read-only fallback.
+  Seventeen integrity assertions and two true read-only assertions passed.
 
 The SQL timing is a database check; it does not certify private HTTP sessions,
 other-owner HTTP isolation, physical devices or completion of historical source
