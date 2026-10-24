@@ -1,0 +1,16 @@
+{
+  "release": "v309",
+  "base_release": "v308",
+  "base_commit": "3318bf638c824fa170cf9e4ee5962dc18a739997",
+  "frontend_only": false,
+  "backend_changed": true,
+  "scope": [
+    "Dated future contract schedules with separately validated payments",
+    "Canonical and compatibility contract summaries agree",
+    "Past due dates do not imply payment",
+    "Dated debt stock remains separate from scheduled outflow"
+  ],
+  "financial_source_data_changed": false,
+  "physical_mobile_validated": false,
+  "private_http_validated": false
+}
