@@ -68,8 +68,9 @@ async function run(browser,viewport,label){
   assert.equal(await learned.count(),1);await learned.getByRole('button',{name:'Revisar',exact:true}).click();
   dialog=frame.locator('#v312CardDialog');assert.equal(await dialog.locator('[name=category]').inputValue(),'Farmácia');
   assert.equal(await dialog.locator('details[open]').count(),0);
-  await dialog.locator('summary').click();assert.match(await dialog.locator('details').innerText(),/Mesmo estabelecimento e valor no histórico/);
-  await dialog.locator('summary').click();
+  const rationale=dialog.locator('details').filter({hasText:'Por que sugerimos'});
+  await rationale.locator('summary').click();assert.match(await rationale.innerText(),/Mesmo estabelecimento e valor no histórico/);
+  await rationale.locator('summary').click();
   await dialog.locator('[data-v312-close]').click();
   await page.screenshot({path:path.join(qa,label+'-card-review.png')});
   for(const view of ['Dashboard','Fluxo Diário','Despesas','Patrimônio','Atualizações']){
