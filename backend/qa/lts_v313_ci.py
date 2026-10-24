@@ -35,7 +35,7 @@ CREATE FUNCTION public.lts_card_invoice_settled_v290(uuid,text,date,date,numeric
 """
 prior=(ROOT/'backend/qa/v313_prior_pending.sql').read_text();patch=(ROOT/'backend/patches/v313/pending_operational_once.sql').read_text()
 assert hashlib.md5(prior.encode()).hexdigest()=='ec25065ddf4749c747127a41c3eb8764'
-run(schema+prior+prior.replace('FUNCTION public.lts_pending_projections_v233(', 'FUNCTION public.lts_pending_projections_pre_v313(',1))
+run(schema+prior+';'+prior.replace('FUNCTION public.lts_pending_projections_v233(', 'FUNCTION public.lts_pending_projections_pre_v313(',1)+';')
 run("REVOKE ALL ON FUNCTION public.lts_pending_projections_v233(uuid) FROM PUBLIC,anon,authenticated;GRANT EXECUTE ON FUNCTION public.lts_pending_projections_v233(uuid) TO service_role;")
 attrs=run("SELECT (to_jsonb(p)-'prosrc')::text FROM pg_proc p WHERE oid='public.lts_pending_projections_v233(uuid)'::regprocedure;")
 run(patch);assert attrs==run("SELECT (to_jsonb(p)-'prosrc')::text FROM pg_proc p WHERE oid='public.lts_pending_projections_v233(uuid)'::regprocedure;")
@@ -79,7 +79,7 @@ results.append(compare('missing_fgts_proof',"DELETE FROM public.v313_fgts;",expe
 results.append(compare('changed_document_source',"UPDATE public.lts_v229_documentary_match SET evidence=jsonb_set(evidence,'{raw_hash}',to_jsonb(repeat('b',64)));",expected_refs=['unsettled-a','unsettled-b','plain-unposted','fgts-principal','fgts-jam','matched-document']))
 results.append(compare('single_anchor',"UPDATE public.accounts SET is_active=false WHERE institution<>'Itaú';"))
 results.append(compare('no_anchors',"UPDATE public.accounts SET is_active=false;",expect_calls=0,expected_refs=[]))
-run('BEGIN;'+prior.replace('WITH anchors AS','WITH /* drift */ anchors AS',1)+patch+'ROLLBACK;',False)
+run('BEGIN;'+prior.replace('WITH anchors AS','WITH /* drift */ anchors AS',1)+';'+patch+'ROLLBACK;',False)
 assert attrs==run("SELECT (to_jsonb(p)-'prosrc')::text FROM pg_proc p WHERE oid='public.lts_pending_projections_v233(uuid)'::regprocedure;")
 assert run("SELECT md5(pg_get_functiondef('public.lts_pending_projections_v233(uuid)'::regprocedure));")=='36e3321d535eb10a5e04a376d635a2a6'
 assert json.loads(run(f"SELECT public.lts_pending_projections_v233('{OTHER}');"))==[]
