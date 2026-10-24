@@ -1,0 +1,48 @@
+name: V307 private card memo integrity
+on:
+  push:
+    paths: ['backend/patches/v307/**', 'backend/qa/lts_v307*', 'backend/qa/v307_memo_previous.sql', '.github/workflows/v307.yml']
+  pull_request:
+    paths: ['backend/patches/v307/**', 'backend/qa/lts_v307*', 'backend/qa/v307_memo_previous.sql', '.github/workflows/v307.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  private-memo:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: synthetic-test-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: synthetic-test-only
+    steps:
+      - uses: actions/checkout@v4
+      - name: Define isolated roles
+        run: psql -v ON_ERROR_STOP=1 -c 'CREATE ROLE anon; CREATE ROLE authenticated; CREATE ROLE service_role;'
+      - name: Source invalidation, owner partition and private helper
+        run: python3 backend/qa/lts_v307_memo_ci_sql.py | psql -v ON_ERROR_STOP=1
+      - name: Native fallback in a genuinely read-only transaction
+        run: |
+          psql -v ON_ERROR_STOP=1 <<'SQL'
+          BEGIN READ ONLY;
+          SELECT v307_fixture.assert_true(
+           v307_fixture.lts_prepared_card_cycles_v307('00000000-0000-4000-8000-000000000001')
+           =v307_fixture.lts_card_cycles_v226('00000000-0000-4000-8000-000000000001'),'read-only native parity');
+          SELECT v307_fixture.assert_true(
+           (SELECT hash FROM v307_fixture.readonly_before)
+           =(SELECT md5(string_agg(to_jsonb(c)::text,'|' ORDER BY user_id,kind)) FROM v307_fixture.lts_v229_read_cache c),
+           'read-only leaves memo unchanged');
+          ROLLBACK;
+          SQL
+
