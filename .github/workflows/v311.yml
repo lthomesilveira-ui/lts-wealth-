@@ -1,0 +1,45 @@
+name: V311 complete Aeternum installment forecasts
+on:
+  pull_request:
+    paths: ['backend/patches/v311/**', 'backend/qa/*v311*', 'backend/tools/build_card_forecast_patch_v311.py', '.github/scripts/card_forecast_v311_browser.cjs', '.github/workflows/v311.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  future-invoices:
+    runs-on: ubuntu-24.04
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: synthetic-test-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: synthetic-test-only
+      LTS_V311_FIXTURE_ENGINE: postgresql17
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: python3 backend/qa/lts_v311_ci.py
+      - run: npm install --no-save --package-lock=false playwright@1.58.2
+      - run: npx playwright install --with-deps chromium
+      - name: Serve unchanged interface
+        run: |
+          python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/lts-v311-http.log 2>&1 &
+          node .github/scripts/lts_v309_wait_http.cjs
+      - run: node .github/scripts/card_forecast_v311_browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v311-native-forecast-and-browser-evidence
+          path: qa/v311/
