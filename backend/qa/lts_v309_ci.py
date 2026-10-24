@@ -33,4 +33,4 @@ run("BEGIN;CREATE OR REPLACE FUNCTION public.lts_commitments_summary_v1(p_user_i
 assert before==run(digest_sql),'Rejected drift escaped rollback'
 run("BEGIN;CREATE OR REPLACE FUNCTION public.lts_commitment_read_state_v309(p_user_id uuid,p_as_of date) RETURNS jsonb LANGUAGE sql STABLE SET search_path='' AS $$SELECT '{}'::jsonb$$;"+patch,success=False)
 assert before==run(digest_sql),'Rejected helper drift escaped rollback'
-print(json.dumps({'pass':True,'base_assertions':14,'rejected_financial_evidence':len(CASES),'definition_drift_rejected':2,'replay_exact':True,'original_oid_acl_owner_config_exact':True,'private_helper_grants':True,'production_data_used':False}))
+print(json.dumps({'pass':True,'base_assertions':15,'rejected_financial_evidence':len(CASES),'definition_drift_rejected':2,'replay_exact':True,'original_oid_acl_owner_config_exact':True,'private_helper_grants':True,'production_data_used':False}))

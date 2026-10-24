@@ -24,7 +24,7 @@ python3 backend/tools/build_contract_patch_v309.py < private-definitions.json
 
 The PostgreSQL 17 workflow uses a synthetic schema and the actual bank validator;
 the unrelated partial-obligation validator is explicitly doubled false. It
-checks dated positions, owner partitioning, four contract schedules, 21 rejected
+checks dated positions, owner partitioning, four contract schedules, source-document versus future outflows, 21 rejected
 payment proofs, unchanged reader attributes, exact replay, and drift rollback.
 The browser workflow loads the immutable release stack with synthetic API data
 at desktop, 390 px and 360 px sizes. These checks do not certify a production

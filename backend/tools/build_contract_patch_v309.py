@@ -31,7 +31,7 @@ for signature, (kind, expression) in targets.items():
         overlay = """ -- v309-dated-contract-state: compatibility fields share the current canonical contract view.
  j:=jsonb_set(j,'{commitments}',coalesce(j#>'{financing,summary}','null'::jsonb));
  j:=jsonb_set(j,'{documentary_commitments}',coalesce(j#>'{financing,documentary}','null'::jsonb));
- j:=jsonb_set(j,'{cipo_detail,documentary_contractual_outflow_brl}',coalesce(j#>'{cipo_detail,contractual_outflow_current_terms_brl}','null'::jsonb));
+ j:=jsonb_set(j,'{cipo_detail,documentary_contractual_outflow_brl}',coalesce((SELECT c->'documentary_remaining_scheduled_outflow' FROM jsonb_array_elements(CASE WHEN jsonb_typeof(j#>'{financing,summary,commitments}')='array' THEN j#>'{financing,summary,commitments}' ELSE '[]'::jsonb END) c WHERE c->>'id'='cipo_396'),'null'::jsonb));
  j:=jsonb_set(j,'{cipo_detail,contractual_outflow_current_terms_brl}',coalesce((SELECT c->'remaining_scheduled_outflow_current_terms' FROM jsonb_array_elements(CASE WHEN jsonb_typeof(j#>'{financing,summary,commitments}')='array' THEN j#>'{financing,summary,commitments}' ELSE '[]'::jsonb END) c WHERE c->>'id'='cipo_396'),'null'::jsonb));
  j:=j||jsonb_build_object('contract_schedule_revision','v309-dated-contract-state');
 """
@@ -66,7 +66,7 @@ print("ELSIF r.kind='documentary' THEN n:=E'\\n-- v309-dated-contract-state\\nWI
 wealth_overlay = """ -- v309-dated-contract-state: compatibility fields share the current canonical contract view.
  j:=jsonb_set(j,'{commitments}',coalesce(j#>'{financing,summary}','null'::jsonb));
  j:=jsonb_set(j,'{documentary_commitments}',coalesce(j#>'{financing,documentary}','null'::jsonb));
- j:=jsonb_set(j,'{cipo_detail,documentary_contractual_outflow_brl}',coalesce(j#>'{cipo_detail,contractual_outflow_current_terms_brl}','null'::jsonb));
+ j:=jsonb_set(j,'{cipo_detail,documentary_contractual_outflow_brl}',coalesce((SELECT c->'documentary_remaining_scheduled_outflow' FROM jsonb_array_elements(CASE WHEN jsonb_typeof(j#>'{financing,summary,commitments}')='array' THEN j#>'{financing,summary,commitments}' ELSE '[]'::jsonb END) c WHERE c->>'id'='cipo_396'),'null'::jsonb));
  j:=jsonb_set(j,'{cipo_detail,contractual_outflow_current_terms_brl}',coalesce((SELECT c->'remaining_scheduled_outflow_current_terms' FROM jsonb_array_elements(CASE WHEN jsonb_typeof(j#>'{financing,summary,commitments}')='array' THEN j#>'{financing,summary,commitments}' ELSE '[]'::jsonb END) c WHERE c->>'id'='cipo_396'),'null'::jsonb));
  j:=j||jsonb_build_object('contract_schedule_revision','v309-dated-contract-state');
 """
