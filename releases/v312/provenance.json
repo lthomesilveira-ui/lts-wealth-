@@ -1,0 +1,16 @@
+{
+  "release": "v312",
+  "base_release": "v309",
+  "base_commit": "5b532eaf056de4402de6b62fac430cb873f27a74",
+  "frontend_only": false,
+  "backend_changed": true,
+  "scope": [
+    "All received card observations included in classification review",
+    "History and merchant activity suggestions remain proposed until confirmed",
+    "Source confirmation and corrections inform later suggestions",
+    "Hash-protected owner-bound saves preserve financial source records"
+  ],
+  "financial_source_data_changed": false,
+  "physical_mobile_validated": false,
+  "private_http_validated": false
+}
