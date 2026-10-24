@@ -55,7 +55,7 @@ events=[event('unsettled-a','Itaú',-100,4),event('unsettled-b','Bradesco',-220,
 rows=[]
 for e in events:
  days=e.pop('days');raw=json.dumps(e,ensure_ascii=False).replace("'","''")
- rows.append(f"jsonb_build_object('event_date',(current_date-{days})::text)||'{raw}'::jsonb")
+ rows.append(f"jsonb_build_object('event_date',(current_date-({days}))::text)||'{raw}'::jsonb")
 run(f"INSERT INTO public.v313_operational VALUES('{U}',jsonb_build_array("+','.join(rows)+f"));INSERT INTO public.v313_operational VALUES('{OTHER}','[]');")
 run(f"""INSERT INTO public.financial_events VALUES('{U}','{uid(201)}','unsettled-a',current_date-4,-100,true,false),('{U}','{uid(202)}','plain-unposted',current_date-3,-80,true,false);
 INSERT INTO public.v313_payroll VALUES('{U}','payroll-forecast');INSERT INTO public.v313_legacy VALUES('{U}','mastercard|legacy-settled');
