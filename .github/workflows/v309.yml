@@ -1,0 +1,50 @@
+name: V309 dated contract schedules and proved payments
+on:
+  pull_request:
+    paths: ['backend/patches/v309/**', 'backend/qa/*v309*', 'backend/qa/v309_*', 'backend/tools/build_contract_patch_v309.py', 'releases/v309/**', '.github/scripts/lts_v309*', '.github/workflows/v309.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  contract-state:
+    runs-on: ubuntu-24.04
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: synthetic-test-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: synthetic-test-only
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 backend/qa/lts_v309_ci.py
+  desktop-and-mobile:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node .github/scripts/lts_v309_release_contract.cjs
+      - run: npm install --no-save --package-lock=false playwright@1.58.2
+      - run: npx playwright install --with-deps chromium
+      - name: Serve application
+        run: |
+          python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/lts-v309-http.log 2>&1 &
+          python3 -c 'import urllib.request,time;exec("for n in range(100):\n try:\n  urllib.request.urlopen(\"http://127.0.0.1:8788/releases/v309/app.html\",timeout=2);break\n except OSError:\n  time.sleep(0.1)\nelse: raise SystemExit(\"Local application was not ready\")")'
+      - run: node .github/scripts/lts_v309_browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v309-interface-evidence
+          path: qa/v309/
