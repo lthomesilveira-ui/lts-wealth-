@@ -5,6 +5,8 @@ ROOT=Path(__file__).resolve().parents[2]
 base=runpy.run_path(str(ROOT/'backend/qa/lts_v318_ci.py'))
 run,seed,U,OTHER,init=(base[k] for k in ['run','seed','U','OTHER','init'])
 patch=(ROOT/'backend/patches/v319/correction_precedence.sql').read_text()
+# pg_get_functiondef fixtures omit ACLs; reproduce the observed production grants.
+run("REVOKE ALL ON FUNCTION public.lts_review_suggestions_v231(uuid,jsonb) FROM PUBLIC,anon,authenticated;GRANT EXECUTE ON FUNCTION public.lts_review_suggestions_v231(uuid,jsonb) TO service_role;")
 qa=ROOT/'qa/v319';qa.mkdir(parents=True,exist_ok=True)
 cases=[(151,'PETZ APRENDIZADO',20,1),(152,'PETZ APRENDIZADO',20.02,2),(153,'PETZ APRENDIZADO',20.02,3),
  (161,'PETZ CORRECAO',30,None),(162,'PETZ CORRECAO',30,None),(163,'PETZ CORRECAO',30,None),
@@ -65,6 +67,8 @@ drift="CREATE OR REPLACE FUNCTION public.lts_review_suggestions_v231(p_user_id u
 run('BEGIN;'+drift+patch+'ROLLBACK;',False)
 assert run(finger)==source_before
 assert run("SELECT NOT prosecdef AND NOT has_function_privilege('anon',oid,'EXECUTE') AND NOT has_function_privilege('authenticated',oid,'EXECUTE') FROM pg_proc WHERE oid='public.lts_review_suggestions_v231(uuid,jsonb)'::regprocedure;")=='t'
+run(f"SET ROLE anon;SELECT * FROM public.lts_review_suggestions_v231('{U}','[]');",False)
+run(f"SET ROLE authenticated;SELECT * FROM public.lts_review_suggestions_v231('{U}','[]');",False)
 for name,data in [('native-before.json',before),('native-legacy-bug.json',legacy),('native-after.json',after),('plan-before.json',plan_before),('plan-after.json',plan_after)]:
  (qa/name).write_text(json.dumps(data,ensure_ascii=False))
 result=dict(passed=True,engine='postgresql17',learns_owner_correction_over_automatic_nature=True,
