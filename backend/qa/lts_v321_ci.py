@@ -62,7 +62,7 @@ for a,b in zip(before,after):
   assert sum(float(i['amount']) for i in b['metadata']['items'])==float(b['amount'])
 assert len(after)==len(before)
 assert len(future(after)[0]['metadata']['items'])==2 and len(future(after)[1]['metadata']['items'])==1
-assert json.loads(run(query.replace(U,OTHER))) is None
+assert run(query.replace(U,OTHER))==''
 mutation_cases=[
  "jsonb_set(payload,'{cards,0,cycles,0,amount}','101')",
  "jsonb_set(payload,'{cards,0,cycles,0,complete}','false')",
