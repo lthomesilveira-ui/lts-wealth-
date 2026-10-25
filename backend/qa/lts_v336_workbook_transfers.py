@@ -17,6 +17,14 @@ def normalized(value):
     return re.sub(r"\s+", " ", str(value).strip().casefold())
 
 
+def cents(value):
+    original = Decimal(str(value))
+    rounded = original.quantize(Decimal('0.01'))
+    if abs(original-rounded) > Decimal('0.000000001'):
+        raise ValueError('Document has a substantive sub-cent amount')
+    return rounded
+
+
 def resolve(workbook, source, effective):
     indexed = defaultdict(list)
     for row in workbook['ledger_rows']:
@@ -26,7 +34,7 @@ def resolve(workbook, source, effective):
             continue
         try:
             day = (date(1899, 12, 30) + timedelta(days=int(Decimal(c['C'+i])))).isoformat()
-            amount = Decimal(c['B'+i])
+            amount = cents(c['B'+i])
             description = c['A'+i]
         except (KeyError, ValueError, ArithmeticError, TypeError):
             continue
@@ -39,7 +47,7 @@ def resolve(workbook, source, effective):
     for raw in source:
         payload, idx = raw['dados'], raw['idx']
         desc, day = payload.get('desc', ''), payload.get('dia', '')
-        amount = Decimal(str(payload['valor']))
+        amount = cents(payload['valor'])
         candidates = indexed.get((normalized(desc), day, abs(amount)), [])
         reason = None
         if day > '2026-07-31' or len(candidates) != 1:

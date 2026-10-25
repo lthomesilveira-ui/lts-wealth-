@@ -21,6 +21,8 @@ or duplicate rows and ambiguous identities stay unresolved. The importer does
 not edit the workbook or source tables. Its positive source amounts are
 magnitudes; explicit source descriptions, endpoints and imported direction
 must agree. It does not certify that every counter-leg is present or settled.
+Binary Excel residue within one billionth of a real is compared at cents;
+original cell text is retained and substantive sub-cent differences are rejected.
 
 The existing history function OID, owner, ACL, configuration and all attributes
 except its body are preserved under a definition lease. The internal table has

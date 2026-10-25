@@ -58,6 +58,15 @@ class OriginalTransferIdentity(unittest.TestCase):
         self.effective.clear()
         self.assertEqual(len(self.result()['matched']), 0)
 
+    def test_binary_excel_fraction_is_only_currency_representation(self):
+        self.workbook['ledger_rows'][0]['cells']['B10'] = '25.000000000000006'
+        self.assertEqual(len(self.result()['matched']), 1)
+        self.assertEqual(self.result()['matched'][0]['workbook']['cells']['B10'], '25.000000000000006')
+
+    def test_real_subcent_disagreement_is_unresolved(self):
+        self.workbook['ledger_rows'][0]['cells']['B10'] = '25.001'
+        self.assertEqual(len(self.result()['matched']), 0)
+
 
 if __name__ == '__main__':
     unittest.main()
