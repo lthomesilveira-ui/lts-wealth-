@@ -10,6 +10,7 @@
 
 ## Accounting and evidence
 
+- For history through July 2026, consult the owner's original Excel before merchant research or classification suggestions. Its source-specific categories take priority over inferred merchant activity and MCC. Preserve any later explicit owner correction. Recover a beneficiary or property only when the source explicitly identifies it; keep unmatched context unresolved.
 - A transfer between the owner's accounts is neither income nor an expense. Preserve both original bank legs and their per-account cash effects; consolidated effect is zero.
 - Record a source-specific explicit owner confirmation and reuse it. Do not ask the same purpose or destination again. Keep conflicting raw provider data intact in private audit evidence; do not keep an explicitly answered item pending solely because a provider field disagrees.
 - Do not generalize one confirmed transfer to unrelated transfers. Matching amount, date or name alone is not enough for automatic pairing.

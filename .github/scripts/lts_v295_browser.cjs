@@ -73,7 +73,8 @@ async function run(browser,viewport,label){
   const compact=frame.locator('#ltsFutureBank');
   assert.match(await compact.innerText(),/3 agendamentos a conferir/,'Material omissions and overdue payments remain visible');
   assert.doesNotMatch(await compact.innerText(),/vínculo|confirmações pendentes|incluídas nas previsões|somado duas vezes|recebidas dos cartões|Nenhum foi tratado|sem realização comprovada|backend|provedor|RPC|source_ref/i);
-  assert((await compact.boundingBox()).height<175,'Collapsed schedules cannot occupy the screen');
+  const scheduleHeight=await (await frame.waitForFunction(()=>{const el=document.querySelector('#ltsFutureBank');if(!el)return false;const r=el.getBoundingClientRect();return r.height>0?r.height:false;})).jsonValue();
+  assert(scheduleHeight<175,'Collapsed schedules cannot occupy the screen');
   assert.equal(await compact.locator('.lts-future-list').getAttribute('open'),null);
   assert.equal(await compact.locator('.lts-schedule-update').getAttribute('open'),null);
   await compact.getByRole('button',{name:'Ver agendamentos',exact:true}).click();
