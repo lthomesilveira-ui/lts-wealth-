@@ -109,7 +109,7 @@
     async function ensureWealth(force){const s=st.wealth;if(s.loading||(!force&&(s.data||s.error)))return;const token=(s.token||0)+1;s.token=token;s.loading=true;s.error=null;try{const data=await rpcRead('lts_browser_wealth_detail_v3');if(s.token===token)s.data=data}catch(x){if(s.token===token)s.error=String(x?.message||x)}finally{if(s.token===token){s.loading=false;refresh('Patrimônio')}}}
     async function ensureUpdates(force){
       syncActionsOwner();const s=st.updates;if(!s.recurring&&st.dashboard.data?.recurring)s.recurring=st.dashboard.data.recurring;
-      if(s.loading||(!force&&s.recurring&&s.openFinance))return;
+      if(s.loading||(!force&&(s.error||(s.recurring&&s.openFinance))))return;
       const token=(s.token||0)+1,owner=expenseDraftGeneration();s.token=token;s.loading=true;s.error=null;
       const current=()=>s.token===token&&owner===expenseDraftGeneration()&&!!D;
       try{

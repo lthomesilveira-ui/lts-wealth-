@@ -8,6 +8,7 @@ const old={title:'Old card cycle · R$ 10,00',maintenance_kind:'card_cycle',deta
 const other={title:'Conferir fonte fictícia',detail:'Conferir informação disponível.'};
 const cockpit=()=>({...fixture.response('lts_browser_dashboard_cockpit_v1',{}),work:{top_actions:[old,other]}});
 const recurring=()=>({...fixture.recurring(),horizon_review_count:17,items:[{description:'Transferência fictícia A',review_kind:'reconciliation_review'},{description:'Transferência fictícia B',review_kind:'reconciliation_review'}]});
+async function frameDebug(page){const f=page.frames().find(x=>x.url().includes('/releases/v333/index.html'));return f?.evaluate(()=>({loading:window.__LTS_V168_STATE?.updates.loading,error:!!window.__LTS_V168_STATE?.updates.error,hasAudit:!!window.__LTS_V168_STATE?.updates.recurring,priorityRows:document.querySelectorAll('#v333PriorityActions .v168-action').length,buttons:[...document.querySelectorAll('[data-v333-actions-refresh]')].map(x=>({text:x.textContent,visible:!!x.getBoundingClientRect().height}))})).catch(()=>null);}
 async function run(browser,viewport,label){
  const context=await browser.newContext({viewport,isMobile:viewport.width<600,hasTouch:viewport.width<600,serviceWorkers:'block',permissions:['clipboard-read','clipboard-write']});
  await context.addInitScript(session=>{const NativeDate=Date;window.Date=class extends NativeDate{constructor(...args){super(...(args.length?args:['2026-10-19T22:00:00Z']));}static now(){return NativeDate.parse('2026-10-19T22:00:00Z');}};localStorage.setItem('lts_supabase_session_v1',JSON.stringify(session));sessionStorage.setItem('lts_of_open_refresh_at',String(Date.now()));},session);
@@ -86,6 +87,6 @@ async function run(browser,viewport,label){
   const size=await frame.locator('html').evaluate(el=>({width:el.clientWidth,scroll:el.scrollWidth}));assert(size.scroll<=size.width+2,'No global page overflow');
   await Promise.all(reads);assert.deepEqual(errors,[]);assert.deepEqual(blocked,[]);assert.deepEqual(writes,[]);
   return {pass:true,label,viewport,real_assets_verified:assets.size,synthetic_http:true,production_session:false,physical_device:false,actions:21,clipboard_rows:365,clipboard_cash_arithmetic:true};
- }catch(e){await page.screenshot({path:path.join(qa,label+'-failure.png')});console.error({label,errors,blocked,writes});throw e;}finally{releaseAudit();await context.close();}
+ }catch(e){await page.screenshot({path:path.join(qa,label+'-failure.png')});console.error({label,errors,blocked,writes,actions:await frameDebug(page)});throw e;}finally{releaseAudit();await context.close();}
 }
 (async()=>{const browser=await chromium.launch({headless:true});try{const results=[];for(const [viewport,label]of [[{width:1440,height:1000},'desktop'],[{width:390,height:844},'mobile-390'],[{width:360,height:800},'mobile-360']])results.push(await run(browser,viewport,label));fs.writeFileSync(path.join(qa,'browser-results.json'),JSON.stringify({pass:true,results},null,2));console.log(JSON.stringify({pass:true,results}));}finally{await browser.close();}})().catch(e=>{console.error(e);process.exitCode=1;});
