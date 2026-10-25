@@ -1,22 +1,23 @@
 'use strict';
 // Actual immutable release assets; isolated synthetic HTTP responses only.
 const {chromium}=require('playwright'),fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),assert=require('node:assert/strict');
-const fixture=require('./lts_v309_fixtures.cjs'),BASE='http://127.0.0.1:8788',qa=path.resolve('qa/v333'),root=path.resolve('releases/v333'),manifest=JSON.parse(fs.readFileSync(path.join(root,'manifest.json'))),sha=x=>crypto.createHash('sha256').update(x).digest('hex');
+const RELEASE=process.env.LTS_RELEASE||'v333';assert(['v333','v335'].includes(RELEASE));
+const fixture=require('./lts_v309_fixtures.cjs'),BASE='http://127.0.0.1:8788',qa=path.resolve('qa/'+RELEASE),root=path.resolve('releases/'+RELEASE),manifest=JSON.parse(fs.readFileSync(path.join(root,'manifest.json'))),sha=x=>crypto.createHash('sha256').update(x).digest('hex');
 fs.mkdirSync(qa,{recursive:true});
 const session={access_token:'synthetic-only-access',refresh_token:'synthetic-only-refresh',expires_at:4102444800,user:{id:'00000000-0000-4000-8000-000000000001',email:'viewer@example.invalid'}};
 const old={title:'Old card cycle · R$ 10,00',maintenance_kind:'card_cycle',detail:'Old due 12/11/2026',amount:10};
 const other={title:'Conferir fonte fictícia',detail:'Conferir informação disponível.'};
 const cockpit=()=>({...fixture.response('lts_browser_dashboard_cockpit_v1',{}),work:{top_actions:[old,other]}});
 const recurring=()=>({...fixture.recurring(),horizon_review_count:17,items:[{description:'Transferência fictícia A',review_kind:'reconciliation_review'},{description:'Transferência fictícia B',review_kind:'reconciliation_review'}]});
-async function frameDebug(page){const f=page.frames().find(x=>x.url().includes('/releases/v333/index.html'));return f?.evaluate(()=>({loading:window.__LTS_V168_STATE?.updates.loading,error:!!window.__LTS_V168_STATE?.updates.error,hasAudit:!!window.__LTS_V168_STATE?.updates.recurring,priorityRows:document.querySelectorAll('#v333PriorityActions .v168-action').length,buttons:[...document.querySelectorAll('[data-v333-actions-refresh]')].map(x=>({text:x.textContent,visible:!!x.getBoundingClientRect().height}))})).catch(()=>null);}
+async function frameDebug(page){const f=page.frames().find(x=>x.url().includes('/releases/'+RELEASE+'/index.html'));return f?.evaluate(()=>({loading:window.__LTS_V168_STATE?.updates.loading,error:!!window.__LTS_V168_STATE?.updates.error,hasAudit:!!window.__LTS_V168_STATE?.updates.recurring,priorityRows:document.querySelectorAll('#v333PriorityActions .v168-action').length,buttons:[...document.querySelectorAll('[data-v333-actions-refresh]')].map(x=>({text:x.textContent,visible:!!x.getBoundingClientRect().height}))})).catch(()=>null);}
 async function run(browser,viewport,label){
  const context=await browser.newContext({viewport,isMobile:viewport.width<600,hasTouch:viewport.width<600,serviceWorkers:'block',permissions:['clipboard-read','clipboard-write']});
- await context.addInitScript(session=>{const NativeDate=Date;window.Date=class extends NativeDate{constructor(...args){super(...(args.length?args:['2026-10-19T22:00:00Z']));}static now(){return NativeDate.parse('2026-10-19T22:00:00Z');}};localStorage.setItem('lts_supabase_session_v1',JSON.stringify(session));sessionStorage.setItem('lts_of_open_refresh_at',String(Date.now()));},session);
+ await context.addInitScript(session=>{const NativeDate=Date;window.Date=class extends NativeDate{constructor(...args){super(...(args.length?args:['2026-10-16T22:00:00Z']));}static now(){return NativeDate.parse('2026-10-16T22:00:00Z');}};localStorage.setItem('lts_supabase_session_v1',JSON.stringify(session));sessionStorage.setItem('lts_of_open_refresh_at',String(Date.now()));},session);
  const page=await context.newPage();page.setDefaultTimeout(30000);
  const errors=[],blocked=[],writes=[],assets=new Set(),reads=[];let releaseAudit,auditReleased=false,failAudit=false,cardAmount=1234.56,cardDue='2026-11-16';
  const auditGate=new Promise(resolve=>releaseAudit=()=>{auditReleased=true;resolve();});
  page.on('pageerror',e=>errors.push(String(e)));
- page.on('response',r=>{const u=new URL(r.url()),name=path.basename(u.pathname);if(u.origin===BASE&&u.pathname.startsWith('/releases/v333/')&&manifest.files[name])reads.push(r.body().then(bytes=>{assert.equal(r.status(),200);assert.equal(sha(bytes),manifest.files[name]);assets.add(name);}));});
+ page.on('response',r=>{const u=new URL(r.url()),name=path.basename(u.pathname);if(u.origin===BASE&&u.pathname.startsWith('/releases/'+RELEASE+'/')&&manifest.files[name])reads.push(r.body().then(bytes=>{assert.equal(r.status(),200);assert.equal(sha(bytes),manifest.files[name]);assets.add(name);}));});
  await context.route('**/*',async route=>{
   const req=route.request(),u=new URL(req.url());if(u.origin===BASE)return route.continue();
   if(u.origin!=='https://tadhkamnwtsbdozwkyut.supabase.co'){blocked.push(u.origin+u.pathname);return route.abort();}
@@ -25,8 +26,8 @@ async function run(browser,viewport,label){
   if(name==='lts_browser_product_v1'){const p=fixture.product();p.dashboard_cockpit=cockpit();return send({ok:true,mvp:p});}
   if(name==='lts_browser_dashboard_cockpit_v1')return send(cockpit());
   if(/recurring_future_gap/.test(name)){if(!auditReleased)await auditGate;if(failAudit)return route.fulfill({status:500,contentType:'application/json',body:JSON.stringify({message:'private SQL source_ref must not appear'})});return send(recurring());}
-  if(/^lts_browser_card_cycles_/.test(name))return send({version:'card-cycles-v226',as_of:'2026-10-19',active_billing_accounts:1,cards:[{family:'itau_mastercard',bank:'Itaú',name:'Mastercard Black',last4:'0000',cycles:[{month:'2026-10-01',due_date:'2026-10-12',amount:100,basis:'open_finance_invoice_v263',settlement_confirmed:true},{month:'2026-11-01',due_date:cardDue,amount:cardAmount,basis:'open_finance_composition',items:[]}]}]});
-  if(/^lts_browser_card_detail_/.test(name)){assert.equal(args.p_family,'itau_mastercard');assert.equal(args.p_month,'2026-11-01');return send({family:'itau_mastercard',month:'2026-11-01',basis:'open_finance_composition',invoice_amount:cardAmount,detail_total:cardAmount,items:[{description:'Compra fictícia atual',amount:cardAmount,category:'Farmácia',purchase_date:'2026-10-19'}]});}
+  if(/^lts_browser_card_cycles_/.test(name))return send({version:'card-cycles-v226',as_of:'2026-10-16',active_billing_accounts:1,cards:[{family:'itau_mastercard',bank:'Itaú',name:'Mastercard Black',last4:'0000',cycles:[{month:'2026-10-01',due_date:'2026-10-12',amount:100,basis:'open_finance_invoice_v263',settlement_confirmed:true},{month:'2026-11-01',due_date:cardDue,amount:cardAmount,basis:'open_finance_composition',items:[]}]}]});
+  if(/^lts_browser_card_detail_/.test(name)){assert.equal(args.p_family,'itau_mastercard');assert.equal(args.p_month,'2026-11-01');return send({family:'itau_mastercard',month:'2026-11-01',basis:'open_finance_composition',invoice_amount:cardAmount,detail_total:cardAmount,items:[{description:'Compra fictícia atual',amount:cardAmount,category:'Farmácia',purchase_date:'2026-10-16'}]});}
   if(name==='lts_browser_open_finance_status_v1')return send({connections:[],last_syncs:[]});
   if(name==='lts_browser_future_bank_v293')return send({rows:[],card_future_received:0});
   if(name==='lts_browser_income_review_queue_v296'||name==='lts_browser_card_review_queue_v312'||name==='lts_browser_expense_review_queue_v229')return send({ok:true,row_count:0,matched_count:0,additional_count:0,offset:0,next_offset:null,rows:[],category_options:['Farmácia']});
@@ -39,14 +40,23 @@ async function run(browser,viewport,label){
   return send(fixture.response(name,args));
  });
  try{
-  await page.goto(BASE+'/releases/v333/app.html',{waitUntil:'domcontentloaded'});
-  let frame;for(let i=0;i<200;i++){frame=page.frames().find(f=>f.url().includes('/releases/v333/index.html'));if(frame)break;await page.waitForTimeout(50);}assert(frame);
+  await page.goto(BASE+'/releases/'+RELEASE+'/app.html',{waitUntil:'domcontentloaded'});
+  let frame;for(let i=0;i<200;i++){frame=page.frames().find(f=>f.url().includes('/releases/'+RELEASE+'/index.html'));if(frame)break;await page.waitForTimeout(50);}assert(frame);
   await frame.waitForFunction(()=>document.body.dataset.ltsBootState==='ready'&&window.__LTS_V226?.installed);
   await frame.getByRole('button',{name:'Ver ações',exact:true}).waitFor();
   assert.equal(await frame.getByRole('button',{name:'Ver todas (0)',exact:true}).count(),0,'Unloaded audit must not imply no pending actions');
   releaseAudit();
   await frame.getByRole('button',{name:'Ver todas (21)',exact:true}).waitFor();
-  const currentKpis=()=>frame.locator('.v168-dashboard .v168-kpi').allInnerTexts();const before=await currentKpis();
+  const settled=()=>frame.waitForFunction(()=>{
+   const s=window.__LTS_V178_STATE;
+   return s&&['cash','forecast','wealth','awards','dashboardReport'].every(k=>s[k]?.status==='ready')&&
+    document.querySelector('.v168-dashboard .v168-kpi strong')?.textContent.includes('1.000,00');
+  });
+  const currentKpis=()=>frame.locator('.v168-dashboard .v168-kpi').evaluateAll(nodes=>nodes.map(n=>({label:n.querySelector('span')?.textContent.trim(),value:n.querySelector('strong')?.textContent.trim()})));
+  await settled();const before=await currentKpis();
+  assert.match(before.find(x=>x.label==='Contas correntes').value,/1\.000,00/);
+  assert.match(before.find(x=>x.label==='Total disponível hoje').value,/1\.500,00/);
+  assert.match(before.find(x=>x.label==='Total de despesas do período').value,/100,00/);
   const schedule=frame.locator('#ltsFutureBank');await schedule.waitFor();await frame.waitForFunction(()=>{const e=document.querySelector('#ltsFutureBank');return e&&e.getBoundingClientRect().height>0;});assert((await schedule.boundingBox()).height<175);
   const dashSize=await frame.locator('html').evaluate(el=>({w:el.clientWidth,s:el.scrollWidth}));assert(dashSize.s<=dashSize.w+2);
   await page.screenshot({path:path.join(qa,label+'-dashboard.png')});
@@ -63,7 +73,7 @@ async function run(browser,viewport,label){
   card=frame.locator('#v333PriorityActions .v168-action').filter({hasText:'Mastercard Black · 11/2026'});assert.match(await card.innerText(),/18\/11\/2026/);
   await page.screenshot({path:path.join(qa,label+'-actions.png')});
   await frame.evaluate(()=>{V='Dashboard';renderNav();render();});await frame.getByRole('button',{name:'Ver todas (21)',exact:true}).waitFor();
-  assert.deepEqual(await currentKpis(),before,'Action-only refresh preserves displayed financial positions');
+  await settled();assert.deepEqual(await currentKpis(),before,'Action-only refresh preserves populated financial positions');
   failAudit=true;await frame.evaluate(()=>{window.__LTS_V168_STATE.updates.recurring=null;window.__LTS_V168_STATE.dashboard.data.recurring=null;window.__LTS_V168_STATE.updates.openFinance=null;window.__LTS_V227_TRANSPORT.invalidate();V='Atualizações';renderNav();render();});
   await frame.getByRole('button',{name:'Atualizar ações',exact:true}).waitFor();assert.doesNotMatch(await frame.locator('.v168-updates').innerText(),/private SQL|source_ref|Nenhuma ação aberta/);
   failAudit=false;await frame.getByRole('button',{name:'Atualizar ações',exact:true}).click();await frame.locator('#v333PriorityActions .v168-action').nth(20).waitFor();
