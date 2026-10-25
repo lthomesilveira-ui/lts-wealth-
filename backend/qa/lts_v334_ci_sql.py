@@ -75,9 +75,9 @@ BEGIN
   EXCEPTION WHEN SQLSTATE 'V3340' THEN NULL;
   END;
  END LOOP;
- IF (SELECT j FROM v334_attributes) IS DISTINCT FROM(SELECT to_jsonb(p)-'prosrc' FROM pg_proc p WHERE oid='v303_fixture.lts_recurring_future_gap_audit_v6(uuid,date,date)'::regprocedure)
+ IF (SELECT a.j FROM v334_attributes a) IS DISTINCT FROM(SELECT to_jsonb(p)-'prosrc' FROM pg_proc p WHERE oid='v303_fixture.lts_recurring_future_gap_audit_v6(uuid,date,date)'::regprocedure)
  THEN RAISE EXCEPTION 'Function attributes changed';END IF;
- IF (SELECT j FROM v334_sources) IS DISTINCT FROM(SELECT jsonb_build_object(
+ IF (SELECT a.j FROM v334_sources a) IS DISTINCT FROM(SELECT jsonb_build_object(
  'staging',(SELECT jsonb_agg(to_jsonb(t) ORDER BY id) FROM v303_fixture.lts_open_finance_staging t),
  'projections',(SELECT jsonb_agg(to_jsonb(t) ORDER BY idx) FROM v303_fixture.evento_base t)))
  THEN RAISE EXCEPTION 'Source records changed';END IF;
