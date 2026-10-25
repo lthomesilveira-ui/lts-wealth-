@@ -1,6 +1,7 @@
 'use strict';
 const vm=require('node:vm'),fs=require('node:fs'),assert=require('node:assert/strict');
 async function main(){
+ const RELEASE=process.env.LTS_RELEASE||'v335';assert(['v335','v341'].includes(RELEASE));
  const calls=[],telemetry=[],heavy=/product_|dashboard_cockpit_|wealth_detail_|awards_|income_review_queue_|card_review_queue_|expense_review_queue_|flow_v|card_cycles_/;
  let active=0,maxActive=0,holdName=null,holdResolve,holdStarted,mode='normal',lightDuringHeavy=false;
  const native=async(input,init)=>{
@@ -13,12 +14,12 @@ async function main(){
    return new Response('{"ok":true}',{status:200});
   }finally{if(isHeavy)active--;}
  };
- const win={fetch:native,location:{pathname:'/releases/v335/index.html'},dispatchEvent(){}};
+ const win={fetch:native,location:{pathname:'/releases/'+RELEASE+'/index.html'},dispatchEvent(){}};
  let inner;const doc={head:{appendChild(s){vm.runInContext(s.textContent,inner);}},createElement:()=>({}),documentElement:{setAttribute(k,v){telemetry.push(v);}}};
  const timer=(fn,ms)=>setTimeout(fn,ms===25000?150:ms===48000?180:ms===60000?3000:ms===30?1:ms);
  inner=vm.createContext({window:win,document:doc,Headers,Response,AbortController,DOMException,Event,performance,setTimeout:timer,clearTimeout,Map});
  const shell={contentWindow:win,contentDocument:doc,addEventListener(){}};
- vm.runInContext(fs.readFileSync('releases/v335/lts-v227-read-transport.js','utf8'),vm.createContext({document:{getElementById:()=>shell},setTimeout,clearTimeout}));
+ vm.runInContext(fs.readFileSync('releases/'+RELEASE+'/lts-v227-read-transport.js','utf8'),vm.createContext({document:{getElementById:()=>shell},setTimeout,clearTimeout}));
  const url=name=>'https://example.invalid/rest/v1/rpc/'+name;
  const req=(body='{}',token='synthetic-a',signal)=>({method:'POST',headers:{Authorization:'Bearer '+token},body,signal});
  const names=['lts_browser_product_v1','lts_browser_dashboard_cockpit_v1','lts_browser_income_review_queue_v296','lts_browser_card_review_queue_v312','lts_browser_wealth_detail_v242','lts_browser_awards_v178','lts_browser_expense_review_queue_v229','lts_browser_flow_v242','lts_browser_card_cycles_v229'];

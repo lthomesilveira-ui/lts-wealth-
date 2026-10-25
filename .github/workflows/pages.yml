@@ -92,6 +92,7 @@ jobs:
           node .github/scripts/lts_v335_release_contract.cjs
           node .github/scripts/lts_v337_release_contract.cjs
           node .github/scripts/lts_v339_release_contract.cjs
+          node .github/scripts/lts_v341_release_contract.cjs
       - name: Configure Pages
         uses: actions/configure-pages@v5
         with:
@@ -103,14 +104,14 @@ jobs:
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v4
-      - name: Verify published V339 and preserved releases
+      - name: Verify published V341 and preserved releases
         run: |
           node --input-type=module <<'JS'
           import fs from 'node:fs';
           import crypto from 'node:crypto';
           import assert from 'node:assert/strict';
           const results=[];
-          const releases=['v339','v337','v335','v333','v312','v309','v308','v296','v295','v242','v244','v245','v257','v258','v259','v260','v261','v262','v264','v268','v269','v270','v271','v272','v273','v274','v275','v276','v277','v278','v279','v280','v281','v282','v283','v284','v285','v290','v291','v293'];
+          const releases=['v341','v339','v337','v335','v333','v312','v309','v308','v296','v295','v242','v244','v245','v257','v258','v259','v260','v261','v262','v264','v268','v269','v270','v271','v272','v273','v274','v275','v276','v277','v278','v279','v280','v281','v282','v283','v284','v285','v290','v291','v293'];
           for(const release of releases){
           const rawManifest=fs.readFileSync('releases/'+release+'/manifest.json');
           const manifest=JSON.parse(rawManifest);
@@ -150,12 +151,13 @@ jobs:
           assert.equal(results.filter(result=>result.release==='v312').length,73,'V312 must verify all 73 assets');
           assert.equal(results.filter(result=>result.release==='v337').length,76,'V337 must verify all 76 assets');
           assert.equal(results.filter(result=>result.release==='v339').length,77,'V339 must verify all 77 assets');
-          fs.writeFileSync('v339-published-verification.json',JSON.stringify({pass:true,head:process.env.GITHUB_SHA,url:'https://lthomesilveira-ui.github.io/lts-wealth-/releases/v339/app.html',releases,count:results.length,assets:results},null,2));
-          console.log('Published V339 and preserved earlier release assets verified:',results.length);
+          assert.equal(results.filter(result=>result.release==='v341').length,77,'V341 must verify all 77 assets');
+          fs.writeFileSync('v341-published-verification.json',JSON.stringify({pass:true,head:process.env.GITHUB_SHA,url:'https://lthomesilveira-ui.github.io/lts-wealth-/releases/v341/app.html',releases,count:results.length,assets:results},null,2));
+          console.log('Published V341 and preserved earlier release assets verified:',results.length);
           JS
       - uses: actions/upload-artifact@v4
         with:
-          name: v339-published-verification
-          path: v339-published-verification.json
+          name: v341-published-verification
+          path: v341-published-verification.json
 
 

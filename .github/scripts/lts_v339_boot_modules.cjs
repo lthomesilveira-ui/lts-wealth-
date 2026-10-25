@@ -2,8 +2,8 @@
 // Isolated fault injection into an actual immutable release. No production calls.
 const {chromium}=require('playwright'),fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
 const fixture=require('./lts_v309_fixtures.cjs'),release=process.env.LTS_RELEASE||'v337',complete=process.env.LTS_EXPECT_COMPLETE==='true',delay=45000;
-assert(['v337','v339'].includes(release));
-const base='http://127.0.0.1:8788',out=path.resolve('qa/v339');fs.mkdirSync(out,{recursive:true});
+assert(['v337','v339','v341'].includes(release));
+const base='http://127.0.0.1:8788',out=path.resolve('qa/'+(release==='v341'?'v341':'v339'));fs.mkdirSync(out,{recursive:true});
 const session={access_token:'synthetic-only-access',refresh_token:'synthetic-only-refresh',expires_at:4102444800,user:{id:'00000000-0000-4000-8000-000000000001',email:'viewer@example.invalid'}};
 const flags=['__LTS_V178_REVIEW','__LTS_V178_REVIEW_ACTIONS','__LTS_V181_REGRESSION_CLOSURE','__LTS_V182_FEEDBACK','__LTS_V183_INCOME_REVIEW','__LTS_V183_SEARCH_COMPLETE','__LTS_V183_EXACT_FLOW_NAVIGATION','__LTS_V183_FLOW_PERIOD_STATE','__LTS_V183_WEALTH_INTEGRITY','__LTS_V225','__LTS_V226','__LTS_V257_UI_STATE','__LTS_V290_SOURCES','__LTS_V296_CLASSIFICATIONS','__LTS_V308_REVIEW_LAYOUT','__LTS_V312_CARD_REVIEW','__LTS_V337_MONTH'];
 async function run(browser,viewport,label){
