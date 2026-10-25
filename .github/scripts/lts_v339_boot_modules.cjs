@@ -11,12 +11,11 @@ async function run(browser,viewport,label){
  await context.addInitScript(({session,delay})=>{
   const NativeDate=Date;window.Date=class extends NativeDate{constructor(...args){super(...(args.length?args:['2026-10-16T22:00:00Z']));}static now(){return NativeDate.parse('2026-10-16T22:00:00Z');}};
   localStorage.setItem('lts_supabase_session_v1',JSON.stringify(session));sessionStorage.setItem('lts_of_open_refresh_at',String(Date.now()));
-  if(!location.pathname.endsWith('/index.html'))return;
   const append=Node.prototype.appendChild;let held=false;
   Node.prototype.appendChild=function(node){
    if(!held&&node.tagName==='SCRIPT'&&node.id==='v178-runtime'){
-    held=true;window.__v339DelayHeld=true;const host=this,placeholder=document.createElement('script');placeholder.id=node.id;placeholder.type='application/x-lts-synthetic-delay';append.call(host,placeholder);
-    setTimeout(()=>{placeholder.remove();append.call(host,node);window.__v339DelayReleased=true;},delay);
+    held=true;const host=this,doc=host.ownerDocument,view=doc.defaultView;view.__v339DelayHeld=true;const placeholder=doc.createElement('script');placeholder.id=node.id;placeholder.type='application/x-lts-synthetic-delay';append.call(host,placeholder);
+    setTimeout(()=>{placeholder.remove();append.call(host,node);view.__v339DelayReleased=true;},delay);
     return node;
    }
    return append.call(this,node);
@@ -29,6 +28,7 @@ async function run(browser,viewport,label){
   if(url.origin!=='https://tadhkamnwtsbdozwkyut.supabase.co'){blocked.push(url.origin);return route.abort();}
   const name=url.pathname.split('/').pop(),args=JSON.parse(req.postData()||'{}'),send=data=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(data)});calls.push(name);
   if(url.pathname==='/auth/v1/token')return send(session);
+  if(name==='lts_browser_product_v1')return send({ok:true,mvp:fixture.product()});
   if(/_decision_|_save_|_apply_|_delete_|_refresh_|_confirm_|_upload_|_mutate_|_classify_|_classification_|_create_|_update_/.test(name)){writes.push(name);return route.abort();}
   if(name==='lts_browser_monthly_v229')return send(fixture.monthly(args.p_from,args.p_to));
   if(name==='lts_browser_cash_today_v242')return send({...fixture.response(name,args),bank_positions:[{institution_code:'341',balance:600},{institution_code:'237',balance:400},{institution_code:'336',balance:0}]});
