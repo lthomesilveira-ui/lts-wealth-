@@ -52,7 +52,9 @@ BEGIN
  (SELECT to_jsonb(t) FROM public.lts_historical_effective_cash_v3('00000000-0000-4000-8000-000000000001','2020-01-01','2020-12-31')t WHERE source='other')
  THEN RAISE EXCEPTION 'Unrelated record changed';END IF;
 END $test$;
-CREATE TEMP TABLE v338_cases AS SELECT name,replace(replace(replace(mutation,'idx=2','idx=4'),'evento_base:2','evento_base:4'),$old$'2'$old$,$new$'4'$new$) mutation
+CREATE TEMP TABLE v338_cases AS SELECT name,CASE WHEN name='raw direction' THEN
+ $mutation$UPDATE public.evento_base SET dados=jsonb_set(dados,'{efeito}','"entrada"') WHERE idx=4$mutation$
+ ELSE replace(replace(replace(mutation,'idx=2','idx=4'),'evento_base:2','evento_base:4'),$old$'2'$old$,$new$'4'$new$) END mutation
  FROM v336_cases WHERE name NOT LIKE 'document %' AND name<>'other evidence owner';
 INSERT INTO v338_cases VALUES
  ('other evidence owner',$q$UPDATE public.lts_workbook_transfer_reversal_v338 SET user_id='00000000-0000-4000-8000-000000000099' WHERE legacy_index=4$q$),
