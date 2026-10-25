@@ -1,0 +1,16 @@
+{
+  "release": "v333",
+  "base_release": "v312",
+  "base_commit": "67746e33e10ada99268cb1e819d7619f5610935e",
+  "frontend_only": true,
+  "backend_changed": false,
+  "scope": [
+    "Shared current action count between Dashboard and Actions",
+    "Invoice review references use canonical card cycles and open exact composition",
+    "Loading and failed action reads never report zero",
+    "Session ownership for action audit reads"
+  ],
+  "financial_source_data_changed": false,
+  "physical_mobile_validated": false,
+  "private_http_validated": false
+}

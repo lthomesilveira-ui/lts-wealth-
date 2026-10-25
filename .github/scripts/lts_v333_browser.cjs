@@ -1,0 +1,74 @@
+'use strict';
+// Actual immutable release assets; isolated synthetic HTTP responses only.
+const {chromium}=require('playwright'),fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),assert=require('node:assert/strict');
+const fixture=require('./lts_v309_fixtures.cjs'),BASE='http://127.0.0.1:8788',qa=path.resolve('qa/v333'),root=path.resolve('releases/v333'),manifest=JSON.parse(fs.readFileSync(path.join(root,'manifest.json'))),sha=x=>crypto.createHash('sha256').update(x).digest('hex');
+fs.mkdirSync(qa,{recursive:true});
+const session={access_token:'synthetic-only-access',refresh_token:'synthetic-only-refresh',expires_at:4102444800,user:{id:'00000000-0000-4000-8000-000000000001',email:'viewer@example.invalid'}};
+const old={title:'Old card cycle · R$ 10,00',maintenance_kind:'card_cycle',detail:'Old due 12/11/2026',amount:10};
+const other={title:'Conferir fonte fictícia',detail:'Conferir informação disponível.'};
+const cockpit=()=>({...fixture.response('lts_browser_dashboard_cockpit_v1',{}),work:{top_actions:[old,other]}});
+const recurring=()=>({...fixture.recurring(),horizon_review_count:17,items:[{description:'Transferência fictícia A',review_kind:'reconciliation_review'},{description:'Transferência fictícia B',review_kind:'reconciliation_review'}]});
+async function run(browser,viewport,label){
+ const context=await browser.newContext({viewport,isMobile:viewport.width<600,hasTouch:viewport.width<600,serviceWorkers:'block'});
+ await context.addInitScript(session=>{const NativeDate=Date;window.Date=class extends NativeDate{constructor(...args){super(...(args.length?args:['2026-10-19T22:00:00Z']));}static now(){return NativeDate.parse('2026-10-19T22:00:00Z');}};localStorage.setItem('lts_supabase_session_v1',JSON.stringify(session));sessionStorage.setItem('lts_of_open_refresh_at',String(Date.now()));},session);
+ const page=await context.newPage();page.setDefaultTimeout(30000);
+ const errors=[],blocked=[],writes=[],assets=new Set(),reads=[];let releaseAudit,auditReleased=false,failAudit=false,cardAmount=1234.56,cardDue='2026-11-16';
+ const auditGate=new Promise(resolve=>releaseAudit=()=>{auditReleased=true;resolve();});
+ page.on('pageerror',e=>errors.push(String(e)));
+ page.on('response',r=>{const u=new URL(r.url()),name=path.basename(u.pathname);if(u.origin===BASE&&u.pathname.startsWith('/releases/v333/')&&manifest.files[name])reads.push(r.body().then(bytes=>{assert.equal(r.status(),200);assert.equal(sha(bytes),manifest.files[name]);assets.add(name);}));});
+ await context.route('**/*',async route=>{
+  const req=route.request(),u=new URL(req.url());if(u.origin===BASE)return route.continue();
+  if(u.origin!=='https://tadhkamnwtsbdozwkyut.supabase.co'){blocked.push(u.origin+u.pathname);return route.abort();}
+  const name=u.pathname.split('/').pop(),args=JSON.parse(req.postData()||'{}'),send=data=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(data)});
+  if(u.pathname==='/auth/v1/token')return send(session);
+  if(name==='lts_browser_product_v1'){const p=fixture.product();p.dashboard_cockpit=cockpit();return send({ok:true,mvp:p});}
+  if(name==='lts_browser_dashboard_cockpit_v1')return send(cockpit());
+  if(/recurring_future_gap/.test(name)){if(!auditReleased)await auditGate;if(failAudit)return route.fulfill({status:500,contentType:'application/json',body:JSON.stringify({message:'private SQL source_ref must not appear'})});return send(recurring());}
+  if(/^lts_browser_card_cycles_/.test(name))return send({version:'card-cycles-v226',as_of:'2026-10-19',active_billing_accounts:1,cards:[{family:'itau_mastercard',bank:'Itaú',name:'Mastercard Black',last4:'0000',cycles:[{month:'2026-10-01',due_date:'2026-10-12',amount:100,basis:'open_finance_invoice_v263',settlement_confirmed:true},{month:'2026-11-01',due_date:cardDue,amount:cardAmount,basis:'open_finance_composition',items:[]}]}]});
+  if(/^lts_browser_card_detail_/.test(name)){assert.equal(args.p_family,'itau_mastercard');assert.equal(args.p_month,'2026-11-01');return send({family:'itau_mastercard',month:'2026-11-01',basis:'open_finance_composition',invoice_amount:cardAmount,detail_total:cardAmount,items:[{description:'Compra fictícia atual',amount:cardAmount,category:'Farmácia',purchase_date:'2026-10-19'}]});}
+  if(name==='lts_browser_open_finance_status_v1')return send({connections:[],last_syncs:[]});
+  if(name==='lts_browser_future_bank_v293')return send({rows:[],card_future_received:0});
+  if(name==='lts_browser_income_review_queue_v296'||name==='lts_browser_card_review_queue_v312'||name==='lts_browser_expense_review_queue_v229')return send({ok:true,row_count:0,matched_count:0,additional_count:0,offset:0,next_offset:null,rows:[],category_options:['Farmácia']});
+  if(/_decision_|_update_|_save_|_apply_|_delete_|_refresh_|_confirm_|_upload_|_mutate_|_classify_|_classification_|_create_/.test(name)){writes.push(name);return route.abort();}
+  return send(fixture.response(name,args));
+ });
+ try{
+  await page.goto(BASE+'/releases/v333/app.html',{waitUntil:'domcontentloaded'});
+  let frame;for(let i=0;i<200;i++){frame=page.frames().find(f=>f.url().includes('/releases/v333/index.html'));if(frame)break;await page.waitForTimeout(50);}assert(frame);
+  await frame.waitForFunction(()=>document.body.dataset.ltsBootState==='ready'&&window.__LTS_V226?.installed);
+  await frame.getByRole('button',{name:'Ver ações',exact:true}).waitFor();
+  assert.equal(await frame.getByRole('button',{name:'Ver todas (0)',exact:true}).count(),0,'Unloaded audit must not imply no pending actions');
+  releaseAudit();
+  await frame.getByRole('button',{name:'Ver todas (21)',exact:true}).waitFor();
+  const currentKpis=()=>frame.locator('.v168-dashboard .v168-kpi').allInnerTexts();const before=await currentKpis();
+  await page.screenshot({path:path.join(qa,label+'-dashboard.png')});
+  await frame.getByRole('button',{name:'Ver todas (21)',exact:true}).click();
+  await frame.locator('.v168-actions .v168-action').nth(20).waitFor();assert.equal(await frame.locator('.v168-actions .v168-action').count(),21);
+  let card=frame.locator('.v168-action').filter({hasText:'Mastercard Black · 11/2026'});
+  assert.match(await card.innerText(),/1\.234,56/);assert.match(await card.innerText(),/16\/11\/2026/);assert.match(await card.innerText(),/oficial.*ainda não foi recebido/);
+  assert.doesNotMatch(await frame.locator('.v168-actions').innerText(),/Old card|12\/11\/2026/);
+  await card.getByRole('button',{name:'Abrir',exact:true}).click();
+  await frame.locator('#v226-detail').getByText('Compra fictícia atual',{exact:true}).waitFor();assert.match(await frame.locator('#v226-detail').innerText(),/1\.234,56/);
+  await frame.locator('#v226-detail [data-v226-close]').click();
+  cardAmount=1500;cardDue='2026-11-18';await frame.evaluate(()=>window.__LTS_V226.refresh());
+  await frame.waitForFunction(()=>document.querySelector('.v168-actions')?.innerText.includes('1.500,00'));
+  card=frame.locator('.v168-action').filter({hasText:'Mastercard Black · 11/2026'});assert.match(await card.innerText(),/18\/11\/2026/);
+  await page.screenshot({path:path.join(qa,label+'-actions.png')});
+  await frame.evaluate(()=>{V='Dashboard';renderNav();render();});await frame.getByRole('button',{name:'Ver todas (21)',exact:true}).waitFor();
+  assert.deepEqual(await currentKpis(),before,'Action-only refresh preserves displayed financial positions');
+  failAudit=true;await frame.evaluate(()=>{window.__LTS_V168_STATE.updates.recurring=null;window.__LTS_V168_STATE.dashboard.data.recurring=null;window.__LTS_V168_STATE.updates.openFinance=null;window.__LTS_V227_TRANSPORT.invalidate();V='Atualizações';renderNav();render();});
+  await frame.getByRole('button',{name:'Atualizar ações',exact:true}).waitFor();assert.doesNotMatch(await frame.locator('.v168-updates').innerText(),/private SQL|source_ref|Nenhuma ação aberta/);
+  failAudit=false;await frame.getByRole('button',{name:'Atualizar ações',exact:true}).click();await frame.locator('.v168-actions .v168-action').nth(20).waitFor();
+  await frame.evaluate(()=>{V='Dashboard';renderNav();render();});await frame.getByRole('button',{name:'Ver todas (21)',exact:true}).waitFor();
+  await frame.evaluate(()=>{V='Fluxo Diário';renderNav();render();});
+  await frame.locator('.fx87-row[id^="d-"]').first().waitFor();
+  const flowBefore=await frame.locator('.fx87-row[id^="d-"]').first().innerText();
+  await frame.locator('.fx87-row[id^="d-"]').first().click();await frame.locator('#flowCloseDetails').click();
+  assert.equal(await frame.locator('.fx87-row[id^="d-"]').first().innerText(),flowBefore);
+  await page.screenshot({path:path.join(qa,label+'-flow.png')});
+  const size=await frame.locator('html').evaluate(el=>({width:el.clientWidth,scroll:el.scrollWidth}));assert(size.scroll<=size.width+2,'No global page overflow');
+  await Promise.all(reads);assert.deepEqual(errors,[]);assert.deepEqual(blocked,[]);assert.deepEqual(writes,[]);
+  return {pass:true,label,viewport,real_assets_verified:assets.size,synthetic_http:true,production_session:false,physical_device:false,actions:21};
+ }catch(e){await page.screenshot({path:path.join(qa,label+'-failure.png')});console.error({label,errors,blocked,writes});throw e;}finally{releaseAudit();await context.close();}
+}
+(async()=>{const browser=await chromium.launch({headless:true});try{const results=[];for(const [viewport,label]of [[{width:1440,height:1000},'desktop'],[{width:390,height:844},'mobile-390'],[{width:360,height:800},'mobile-360']])results.push(await run(browser,viewport,label));fs.writeFileSync(path.join(qa,'browser-results.json'),JSON.stringify({pass:true,results},null,2));console.log(JSON.stringify({pass:true,results}));}finally{await browser.close();}})().catch(e=>{console.error(e);process.exitCode=1;});
