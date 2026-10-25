@@ -1,0 +1,86 @@
+-- Keep the C6 compatibility detail consistent with its canonical known cycle.
+DO $lease$
+DECLARE target oid:='public.lts_card_invoices_effective_v226(uuid)'::regprocedure;
+ before_attrs jsonb;before_data jsonb;after_data jsonb;
+BEGIN
+ IF md5(pg_get_functiondef(target)) NOT IN('41019409fd6791c9cc53d79c66ee2a39','bd90da3d76acd12888579a34aaf99d65') THEN RAISE EXCEPTION 'Effective invoice definition changed';END IF;
+ SELECT to_jsonb(p)-'prosrc' INTO before_attrs FROM pg_proc p WHERE p.oid=target;
+ SELECT jsonb_build_object(
+'sources',(SELECT md5(jsonb_agg(to_jsonb(s) ORDER BY id)::text) FROM public.lts_open_finance_staging s),
+'events',(SELECT md5(jsonb_agg(to_jsonb(s) ORDER BY id)::text) FROM public.financial_events s),
+'invoices',(SELECT md5(jsonb_agg(to_jsonb(s) ORDER BY to_jsonb(s)::text)::text) FROM public.card_invoices s),
+'details',(SELECT md5(jsonb_agg(to_jsonb(s) ORDER BY to_jsonb(s)::text)::text) FROM public.lts_card_purchase_detail s),
+'decisions',(SELECT md5(jsonb_agg(to_jsonb(s) ORDER BY user_id,source_table,source_ref)::text) FROM public.lts_v178_review_decision s),
+'categories',(SELECT md5(jsonb_agg(to_jsonb(s) ORDER BY to_jsonb(s)::text)::text) FROM public.lts_category_catalog s),
+'rules',(SELECT md5(jsonb_agg(to_jsonb(s) ORDER BY to_jsonb(s)::text)::text) FROM public.lts_semantic_rule s),
+'documents',(SELECT md5(jsonb_agg(to_jsonb(s) ORDER BY id)::text) FROM public.source_documents s)) INTO before_data;
+ EXECUTE $replacement$CREATE OR REPLACE FUNCTION public.lts_card_invoices_effective_v226(p_user_id uuid)
+ RETURNS SETOF card_invoices
+ LANGUAGE sql
+ STABLE
+ SET search_path TO ''
+ SET "TimeZone" TO 'America/Sao_Paulo'
+AS $function$
+with c6_cycles AS MATERIALIZED (
+ SELECT cy,count(*) OVER(PARTITION BY cy->>'month') cycle_count
+ FROM jsonb_array_elements(public.lts_prepared_card_cycles_v307(p_user_id)->'cards') ca
+ CROSS JOIN LATERAL jsonb_array_elements(coalesce(ca->'cycles','[]')) cy
+ WHERE ca->>'family'='c6' AND (cy->>'month')::date>date_trunc('month',current_date)::date
+), rows as materialized (
+ select * from public.lts_card_source_rows_v226(p_user_id) where not is_payment and provider_status='PENDING' and reference_month>=date_trunc('month',current_date)::date
+), composition as materialized (
+ select family,reference_month,round(sum(amount),2) amount,max(observed_at) observed_at,
+ jsonb_agg(to_jsonb(r)||jsonb_build_object('source_line',source_id,'card_final',last4) order by posting_date,description,source_id) items
+ from rows r group by family,reference_month
+), effective as materialized (
+ select to_jsonb(i)||case when c.items is not null and i.status IN('open','projected') and i.due_date>=current_date then
+ jsonb_build_object('amount',c.amount,'source','open_finance_composition_v226','metadata',coalesce(i.metadata,'{}'::jsonb)||jsonb_build_object(
+ 'items',c.items,'open_finance_observed_at',c.observed_at,'documentary_snapshot',jsonb_build_object('amount',i.amount,'source',i.source,'as_of',i.metadata->'as_of')))
+ else '{}'::jsonb end value
+ from public.card_invoices i left join composition c on c.reference_month=i.reference_month
+ and c.family=public.lts_card_family_v226(i.card_name,case when i.card_name ~* 'c6' then 'C6' when i.card_name ~* 'aeternum|bradesco|prime' then 'Bradesco' else 'Itaú' end)
+ where i.user_id=p_user_id
+)
+select r.* from effective e
+ LEFT JOIN public.lts_card_invoice_amounts_v230(p_user_id) a ON public.lts_card_family_v226(e.value->>'card_name',e.value->>'card_name')=public.lts_card_family_v226(a.card_name,a.card_name)
+ AND (e.value->>'reference_month')::date=a.reference_month
+ AND e.value->>'status' IN('open','projected')
+ LEFT JOIN public.lts_aeternum_forecast_cycles_v311(p_user_id)forecast ON public.lts_card_family_v226(e.value->>'card_name',e.value->>'card_name')='aeternum' AND forecast.reference_month=(e.value->>'reference_month')::date
+ LEFT JOIN c6_cycles c6 ON public.lts_card_family_v226(e.value->>'card_name',e.value->>'card_name')='c6'
+ AND (c6.cy->>'month')::date=(e.value->>'reference_month')::date AND c6.cycle_count=1
+ AND e.value->>'status' IN('open','projected') AND coalesce(a.status,e.value->>'status') IN('open','projected')
+ AND coalesce(c6.cy->>'complete','true')='true' AND c6.cy->>'basis' IS DISTINCT FROM 'incomplete_cycle_identity'
+ AND (c6.cy->>'amount')::numeric=CASE WHEN a.reference_month IS NOT NULL THEN a.amount ELSE(e.value->>'amount')::numeric END
+ AND (c6.cy->>'due_date')::date IS NOT DISTINCT FROM CASE WHEN a.reference_month IS NOT NULL THEN a.due_date ELSE(e.value->>'due_date')::date END
+ AND jsonb_typeof(c6.cy->'items')='array'
+ AND (SELECT count(*)>0 AND sum((i->>'amount')::numeric)=(c6.cy->>'amount')::numeric
+ FROM jsonb_array_elements(CASE WHEN jsonb_typeof(c6.cy->'items')='array' THEN c6.cy->'items' ELSE '[]'::jsonb END)i)
+ cross join lateral jsonb_populate_record(null::public.card_invoices,e.value||CASE WHEN a.reference_month IS NOT NULL THEN
+ jsonb_build_object('amount',a.amount,'source',a.source,'due_date',a.due_date,'status',a.status)
+ ||CASE WHEN forecast.reference_month IS NOT NULL THEN jsonb_build_object('metadata',
+ coalesce(e.value->'metadata','{}')||jsonb_build_object('items',forecast.items,'projection_only',true,'official_invoice_received',false,
+ 'received_amount',forecast.received_amount,'projected_amount',forecast.projected_amount)) ELSE '{}'::jsonb END
+ ELSE '{}'::jsonb END||CASE WHEN c6.cy IS NOT NULL THEN jsonb_build_object('metadata',
+ coalesce(e.value->'metadata','{}')||jsonb_build_object('items',c6.cy->'items',
+ 'composition_basis',c6.cy->>'basis','composition_observed_at',c6.cy->'observed_at',
+ 'known_items_sum_matches_amount',true,'items_contain_projections',EXISTS(
+  SELECT 1 FROM jsonb_array_elements(c6.cy->'items')i WHERE i->>'provider_status'='PROJECTED'),
+ 'replaced_detail_snapshot',jsonb_build_object('items',coalesce(e.value#>'{metadata,items}','[]'),
+  'basis',e.value->>'source')))
+ ELSE '{}'::jsonb END)r
+UNION ALL SELECT * FROM public.lts_card_projected_invoice_records_v290(p_user_id)
+$function$
+$replacement$;
+ IF md5(pg_get_functiondef(target))<>'bd90da3d76acd12888579a34aaf99d65' THEN RAISE EXCEPTION 'Unexpected effective invoice definition';END IF;
+ IF before_attrs IS DISTINCT FROM(SELECT to_jsonb(p)-'prosrc' FROM pg_proc p WHERE p.oid=target) THEN RAISE EXCEPTION 'Effective invoice attributes changed';END IF;
+ SELECT jsonb_build_object(
+'sources',(SELECT md5(jsonb_agg(to_jsonb(s) ORDER BY id)::text) FROM public.lts_open_finance_staging s),
+'events',(SELECT md5(jsonb_agg(to_jsonb(s) ORDER BY id)::text) FROM public.financial_events s),
+'invoices',(SELECT md5(jsonb_agg(to_jsonb(s) ORDER BY to_jsonb(s)::text)::text) FROM public.card_invoices s),
+'details',(SELECT md5(jsonb_agg(to_jsonb(s) ORDER BY to_jsonb(s)::text)::text) FROM public.lts_card_purchase_detail s),
+'decisions',(SELECT md5(jsonb_agg(to_jsonb(s) ORDER BY user_id,source_table,source_ref)::text) FROM public.lts_v178_review_decision s),
+'categories',(SELECT md5(jsonb_agg(to_jsonb(s) ORDER BY to_jsonb(s)::text)::text) FROM public.lts_category_catalog s),
+'rules',(SELECT md5(jsonb_agg(to_jsonb(s) ORDER BY to_jsonb(s)::text)::text) FROM public.lts_semantic_rule s),
+'documents',(SELECT md5(jsonb_agg(to_jsonb(s) ORDER BY id)::text) FROM public.source_documents s)) INTO after_data;
+ IF before_data IS DISTINCT FROM after_data THEN RAISE EXCEPTION 'Source or financial data changed';END IF;
+END $lease$;
