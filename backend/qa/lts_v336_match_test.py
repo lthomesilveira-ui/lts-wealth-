@@ -1,6 +1,7 @@
 """Original identity must establish a transfer before any SQL evidence is built."""
 from copy import deepcopy
 from datetime import date
+from decimal import Decimal
 import unittest
 
 from lts_v336_workbook_transfers import resolve
@@ -23,7 +24,7 @@ class OriginalTransferIdentity(unittest.TestCase):
     def test_explicit_magnitude_and_existing_outgoing_leg(self):
         result = self.result()
         self.assertEqual(len(result['matched']), 1)
-        self.assertEqual(result['matched'][0]['signed_amount'], '-25')
+        self.assertEqual(Decimal(result['matched'][0]['signed_amount']), Decimal('-25'))
         self.assertEqual(self.source[0]['dados']['valor'], 25)
 
     def test_duplicate_original_identity_is_unresolved(self):
