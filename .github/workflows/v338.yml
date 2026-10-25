@@ -1,0 +1,43 @@
+name: V338 original workbook transfer reversals
+on:
+  pull_request:
+    paths: ['backend/patches/v338/**','backend/qa/*v338*','.github/workflows/v338.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native-reversals:
+    runs-on: ubuntu-24.04
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: synthetic-test-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: synthetic-test-only
+    steps:
+      - uses: actions/checkout@v4
+      - run: psql -v ON_ERROR_STOP=1 -c 'CREATE ROLE anon; CREATE ROLE authenticated; CREATE ROLE service_role;'
+      - run: python3 backend/qa/lts_v338_ci_sql.py > /tmp/lts-v338.sql
+      - run: psql -v ON_ERROR_STOP=1 -At -f /tmp/lts-v338.sql > /tmp/lts-v338-result.log
+      - run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          receipts=[json.loads(s) for s in Path('/tmp/lts-v338-result.log').read_text().splitlines() if s.startswith('{')]
+          assert len(receipts)==2, 'Native receipts missing'
+          assert receipts[0]['pass'] and receipts[0]['rejection_cases']==17
+          result=receipts[1]
+          assert result['pass'] and result['version']==338 and result['rejection_cases']==22
+          assert all(value is True for key,value in result.items() if key not in ['version','rejection_cases'])
+          print(json.dumps(result))
+          PY
