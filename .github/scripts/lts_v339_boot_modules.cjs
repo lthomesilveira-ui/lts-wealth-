@@ -13,8 +13,8 @@ async function run(browser,viewport,label){
   localStorage.setItem('lts_supabase_session_v1',JSON.stringify(session));sessionStorage.setItem('lts_of_open_refresh_at',String(Date.now()));
   const append=Node.prototype.appendChild;let held=false;
   Node.prototype.appendChild=function(node){
-   if(!held&&node.tagName==='SCRIPT'&&node.id==='v178-runtime'){
-    held=true;const host=this,doc=host.ownerDocument,view=doc.defaultView;view.__v339DelayHeld=true;const placeholder=doc.createElement('script');placeholder.id=node.id;placeholder.type='application/x-lts-synthetic-delay';append.call(host,placeholder);
+   if(!held&&node.tagName==='SCRIPT'&&node.id==='v178-runtime'&&!this.ownerDocument.defaultView.sessionStorage.getItem('synthetic-late-runtime-held')){
+    held=true;const host=this,doc=host.ownerDocument,view=doc.defaultView;view.sessionStorage.setItem('synthetic-late-runtime-held','yes');view.__v339DelayHeld=true;const placeholder=doc.createElement('script');placeholder.id=node.id;placeholder.type='application/x-lts-synthetic-delay';append.call(host,placeholder);
     setTimeout(()=>{placeholder.remove();append.call(host,node);view.__v339DelayReleased=true;},delay);
     return node;
    }
@@ -60,8 +60,17 @@ async function run(browser,viewport,label){
    assert.equal(await frame.locator('#v337Overview').count(),0);
   }
   await page.screenshot({path:path.join(out,label+'-'+release+'-late-component.png')});
+  let replaced=false;
+  if(complete){
+   const before=await page.evaluate(()=>window.LTSV339Boot.snapshot());assert.equal(before.components.length,32);assert(before.components.every(x=>x.ready));assert.equal(before.observer_active,false);
+   await frame.goto(frame.url(),{waitUntil:'domcontentloaded'});
+   await frame.waitForFunction(flags=>document.body.dataset.ltsBootState==='ready'&&flags.every(k=>window[k]?.installed),flags);
+   await frame.waitForFunction(()=>window.__LTS_V337_MONTH.state.status==='ready');
+   const after=await page.evaluate(()=>window.LTSV339Boot.snapshot());assert.equal(after.epoch,before.epoch+1);assert(after.components.every(x=>x.ready));assert.equal(after.observer_active,false);replaced=true;
+   await page.screenshot({path:path.join(out,label+'-'+release+'-document-replaced.png')});
+  }
   assert.deepEqual(errors,[]);assert.deepEqual(writes,[]);assert.deepEqual(blocked,[]);
-  return{pass:true,release,label,viewport,synthetic_delay_ms:delay,real_release_modules:true,missing,production_session:false,physical_device:false,reload_count:0,financial_writes:0,product_reads:calls.filter(x=>x==='lts_browser_product_v1').length};
+  return{pass:true,release,label,viewport,synthetic_delay_ms:delay,real_release_modules:true,missing,production_session:false,physical_device:false,recovery_reload_count:0,subsequent_document_replacement:replaced,financial_writes:0,product_reads:calls.filter(x=>x==='lts_browser_product_v1').length};
  }catch(error){console.error({label,release,errors,writes,blocked,state:await frame?.evaluate(()=>({boot:document.body.dataset.ltsBootState,held:!!window.__v339DelayHeld,released:!!window.__v339DelayReleased,scripts:[...document.querySelectorAll('script[id]')].map(x=>x.id)})).catch(()=>null)});await page.screenshot({path:path.join(out,label+'-'+release+'-failure.png')});throw error;}finally{await context.close();}
 }
-(async()=>{const browser=await chromium.launch({headless:true});try{const result=await run(browser,{width:1440,height:1000},'desktop');fs.writeFileSync(path.join(out,release+'-late-component.json'),JSON.stringify(result,null,2));console.log(JSON.stringify(result));}finally{await browser.close();}})().catch(e=>{console.error(e);process.exitCode=1;});
+(async()=>{const browser=await chromium.launch({headless:true});try{const results=[];for(const [viewport,label]of [[{width:1440,height:1000},'desktop'],...(complete?[[{width:390,height:844},'mobile-390']]:[])])results.push(await run(browser,viewport,label));fs.writeFileSync(path.join(out,release+'-late-component.json'),JSON.stringify({pass:true,results},null,2));console.log(JSON.stringify({pass:true,results}));}finally{await browser.close();}})().catch(e=>{console.error(e);process.exitCode=1;});
