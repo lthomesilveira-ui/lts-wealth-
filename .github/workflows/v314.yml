@@ -1,0 +1,29 @@
+name: V314 archived card review source precedence
+on:
+  pull_request:
+    paths: ['backend/patches/v314/**','backend/qa/*v314*','.github/workflows/v314.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-precedence:
+    runs-on: ubuntu-24.04
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: synthetic-test-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: synthetic-test-only
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 backend/qa/lts_v314_ci.py
