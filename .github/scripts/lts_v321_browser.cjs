@@ -32,11 +32,11 @@ async function run(browser,viewport,label){
   await frame.getByRole('tab',{name:'Cartões e faturas',exact:true}).click();
   await frame.locator('[data-v226-overview="next"]').waitFor();
   await frame.locator('[data-v226-overview="next"]').click();
-  let dialog=frame.locator('#v226-detail');
+  let dialog=frame.locator('#v226-detail[open]');
   assert.equal(await dialog.locator('[data-v226-overview-row]').count(),1);
   assert.match(await dialog.locator('tfoot').innerText(),/100,00/);
   await dialog.locator('[data-v226-family="c6"]').first().click();
-  dialog=frame.locator('#v226-detail');await dialog.locator('[data-v226-item]').first().waitFor();
+  dialog=frame.locator('#v226-detail[open]');await dialog.locator('[data-v226-item]').first().waitFor();
   assert.equal(await dialog.locator('[data-v226-item]').count(),2);
   assert.equal(await dialog.locator('.v226-projected-origin').count(),1);
   assert.match(await dialog.locator('tfoot').innerText(),/100,00/);
@@ -44,12 +44,12 @@ async function run(browser,viewport,label){
   assert.doesNotMatch(await dialog.innerText(),/Total conferido|known_items_sum_matches_amount|replaced_detail_snapshot|source_ref/);
   await page.screenshot({path:path.join(qa,label+'-c6-composition.png')});
   await dialog.locator('[data-v226-close]').click();
-  await frame.locator('[data-v226-overview="future"]').click();dialog=frame.locator('#v226-detail');
+  await frame.locator('[data-v226-overview="future"]').click();dialog=frame.locator('#v226-detail[open]');
   assert.equal(await dialog.locator('[data-v226-overview-row]').count(),2);
   assert.match(await dialog.locator('tfoot').innerText(),/82,00/);
   const month=native.cards[0].cycles[1].month;
   await dialog.locator('[data-v226-family="c6"][data-v226-month="'+month+'"]').first().click();
-  dialog=frame.locator('#v226-detail');await dialog.locator('[data-v226-item]').first().waitFor();
+  dialog=frame.locator('#v226-detail[open]');await dialog.locator('[data-v226-item]').first().waitFor();
   assert.equal(await dialog.locator('[data-v226-item]').count(),1);
   assert.equal(await dialog.locator('.v226-projected-origin').count(),1);
   assert.match(await dialog.locator('tfoot').innerText(),/70,00/);
