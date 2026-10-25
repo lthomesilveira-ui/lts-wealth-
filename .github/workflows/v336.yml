@@ -1,0 +1,44 @@
+name: V336 original workbook transfer identity
+on:
+  pull_request:
+    paths: ['backend/patches/v336/**','backend/qa/*v336*','backend/qa/fixtures/v336*','.github/workflows/v336.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native-history:
+    runs-on: ubuntu-24.04
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: synthetic-test-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: synthetic-test-only
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 backend/qa/lts_v336_match_test.py
+      - run: psql -v ON_ERROR_STOP=1 -c 'CREATE ROLE anon; CREATE ROLE authenticated; CREATE ROLE service_role;'
+      - run: python3 backend/qa/lts_v336_ci_sql.py > /tmp/lts-v336.sql
+      - run: psql -v ON_ERROR_STOP=1 -At -f /tmp/lts-v336.sql > /tmp/lts-v336-result.log
+      - run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          lines=Path('/tmp/lts-v336-result.log').read_text().splitlines()
+          receipts=[json.loads(s) for s in lines if s.startswith('{')]
+          assert len(receipts)==1, 'Native receipt missing'
+          result=receipts[0]
+          assert result['pass'] and result['rejection_cases']==17
+          assert all(value is True for key,value in result.items() if key!='rejection_cases')
+          print(json.dumps(result))
+          PY
