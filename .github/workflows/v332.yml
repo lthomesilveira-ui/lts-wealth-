@@ -1,0 +1,51 @@
+name: V332 concurrent reads and preserved interface
+on:
+  pull_request:
+    paths: ['backend/patches/v332/**','backend/qa/lts_v332*','backend/qa/v332_*','.github/workflows/v332.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native-concurrency-and-interface:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: synthetic-test-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: synthetic-test-only
+      LTS_RELEASE: v312
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: python3 backend/qa/lts_v332_concurrency.py
+      - run: node .github/scripts/lts_v312_release_contract.cjs
+      - run: python3 backend/qa/lts_v327_ci.py
+      - run: npm install --no-save --package-lock=false playwright@1.58.2
+      - run: npx playwright install --with-deps chromium
+        timeout-minutes: 5
+      - name: Serve preserved application
+        run: |
+          python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/lts-v332-http.log 2>&1 &
+          node .github/scripts/lts_v309_wait_http.cjs
+      - run: node .github/scripts/lts_v327_browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v332-concurrency-and-preserved-interface
+          path: |
+            qa/v332/
+            qa/v327/
