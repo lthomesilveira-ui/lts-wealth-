@@ -72,7 +72,7 @@ mutation_cases=[
  "jsonb_set(payload,'{cards,0,cycles,0,items}','null')",
  "jsonb_set(payload,'{cards,0,cycles,0,items}','{}')",
  "jsonb_set(payload,'{cards,0,cycles,0,items}','[]')",
- "jsonb_set(payload,'{cards,0,cycles}',(payload#>'{cards,0,cycles}')||jsonb_build_array(payload#>'{cards,0,cycles,0}),'false')",
+ "jsonb_set(payload,'{cards,0,cycles}',(payload#>'{cards,0,cycles}')||jsonb_build_array(payload#>'{cards,0,cycles,0}'),false)",
 ]
 for mutation in mutation_cases:
  result=json.loads(run('BEGIN;'+f"UPDATE public.v321_payload SET payload={mutation} WHERE user_id='{U}';"+query+'ROLLBACK;'))
