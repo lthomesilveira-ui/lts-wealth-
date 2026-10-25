@@ -1,0 +1,31 @@
+name: V333 shared current actions
+on:
+  pull_request:
+    paths: ['releases/v333/**','.github/scripts/*v333*','.github/workflows/v333.yml','docs/V333_SHARED_ACTIONS.md']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  desktop-and-mobile:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node .github/scripts/lts_v333_release_contract.cjs
+      - run: node .github/scripts/lts_v333_actions_contract.cjs
+      - run: node .github/scripts/lts_v333_export_contract.cjs
+      - run: npm install --no-save --package-lock=false playwright@1.58.2
+      - run: npx playwright install --with-deps chromium
+      - name: Serve application
+        run: |
+          python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/lts-v333-http.log 2>&1 &
+          node .github/scripts/lts_v309_wait_http.cjs
+      - run: node .github/scripts/lts_v333_browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v333-action-and-browser-evidence
+          path: qa/v333/
