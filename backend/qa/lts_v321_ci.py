@@ -1,6 +1,6 @@
 """C6 compatibility detail agrees with the canonical known forecast, without new money."""
 from pathlib import Path
-import json,runpy
+import json,runpy,subprocess
 ROOT=Path(__file__).resolve().parents[2]
 base=runpy.run_path(str(ROOT/'backend/qa/lts_v311_ci.py'))
 run,U=base['run'],base['U']
@@ -82,7 +82,8 @@ for mutation in mutation_cases:
 assert run(finger)==frozen
 run(patch);assert json.loads(run(query))==after and run(attrs)==attributes
 drift=old.replace('AS $function$','AS $function$\n-- drift\n',1)
-run('BEGIN;'+drift+patch+'ROLLBACK;',False)
+rejected=subprocess.run(['psql','-X','-qAt','-v','ON_ERROR_STOP=1'],input='BEGIN;'+drift+';\n'+patch+'ROLLBACK;',text=True,capture_output=True)
+assert rejected.returncode and 'Effective invoice definition changed' in rejected.stderr,rejected.stderr
 assert run(finger)==frozen
 assert run("SELECT NOT prosecdef AND NOT has_function_privilege('anon',oid,'EXECUTE') AND NOT has_function_privilege('authenticated',oid,'EXECUTE') FROM pg_proc WHERE oid='public.lts_card_invoices_effective_v226(uuid)'::regprocedure;")=='t'
 run(f"SET ROLE anon;SELECT * FROM public.lts_card_invoices_effective_v226('{U}');",False)
