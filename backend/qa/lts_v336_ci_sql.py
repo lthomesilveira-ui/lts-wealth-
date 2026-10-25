@@ -28,8 +28,8 @@ INSERT INTO public.v336_history VALUES
  ('2020-01-03','Itaú','Food',-9,'other','expense:3','source','assigned',NULL,'2020-01-03',false,false,'Food','Merchant','Não atribuído',false);
 """
 )
-print((ROOT/'backend/qa/fixtures/v336_invalidate.sql').read_text())
-print((ROOT/'backend/qa/fixtures/v336_history_v3.sql').read_text())
+print((ROOT/'backend/qa/fixtures/v336_invalidate.sql').read_text().rstrip().rstrip(';')+';')
+print((ROOT/'backend/qa/fixtures/v336_history_v3.sql').read_text().rstrip().rstrip(';')+';')
 print(r"""
 CREATE TEMP TABLE v336_before AS SELECT * FROM public.lts_historical_effective_cash_v3('00000000-0000-4000-8000-000000000001','2020-01-01','2020-12-31');
 CREATE TEMP TABLE v336_attributes AS SELECT to_jsonb(p)-'prosrc' j FROM pg_proc p WHERE oid='public.lts_historical_effective_cash_v3(uuid,date,date)'::regprocedure;
