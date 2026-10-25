@@ -1,7 +1,7 @@
 'use strict';
 // Actual immutable release assets; isolated synthetic HTTP responses only.
 const {chromium}=require('playwright'),fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),assert=require('node:assert/strict');
-const RELEASE=process.env.LTS_RELEASE||'v333';assert(['v333','v335'].includes(RELEASE));
+const RELEASE=process.env.LTS_RELEASE||'v333';assert(['v333','v335','v337'].includes(RELEASE));
 const fixture=require('./lts_v309_fixtures.cjs'),BASE='http://127.0.0.1:8788',qa=path.resolve('qa/'+RELEASE),root=path.resolve('releases/'+RELEASE),manifest=JSON.parse(fs.readFileSync(path.join(root,'manifest.json'))),sha=x=>crypto.createHash('sha256').update(x).digest('hex');
 fs.mkdirSync(qa,{recursive:true});
 const session={access_token:'synthetic-only-access',refresh_token:'synthetic-only-refresh',expires_at:4102444800,user:{id:'00000000-0000-4000-8000-000000000001',email:'viewer@example.invalid'}};
@@ -15,6 +15,8 @@ async function run(browser,viewport,label){
  await context.addInitScript(session=>{const NativeDate=Date;window.Date=class extends NativeDate{constructor(...args){super(...(args.length?args:['2026-10-16T22:00:00Z']));}static now(){return NativeDate.parse('2026-10-16T22:00:00Z');}};localStorage.setItem('lts_supabase_session_v1',JSON.stringify(session));sessionStorage.setItem('lts_of_open_refresh_at',String(Date.now()));},session);
  const page=await context.newPage();page.setDefaultTimeout(30000);
  const errors=[],blocked=[],writes=[],assets=new Set(),reads=[];let releaseAudit,auditReleased=false,failAudit=false,cardAmount=1234.56,cardDue='2026-11-16';
+ let failMonthly=false,holdMonthly=true,releaseMonthly,monthlyHeld,monthlyRequests=[];
+ const monthGate=new Promise(resolve=>releaseMonthly=resolve),monthStarted=new Promise(resolve=>monthlyHeld=resolve);
  const auditGate=new Promise(resolve=>releaseAudit=()=>{auditReleased=true;resolve();});
  page.on('pageerror',e=>errors.push(String(e)));
  page.on('response',r=>{const u=new URL(r.url()),name=path.basename(u.pathname);if(u.origin===BASE&&u.pathname.startsWith('/releases/'+RELEASE+'/')&&manifest.files[name])reads.push(r.body().then(bytes=>{assert.equal(r.status(),200);assert.equal(sha(bytes),manifest.files[name]);assets.add(name);}));});
@@ -23,6 +25,14 @@ async function run(browser,viewport,label){
   if(u.origin!=='https://tadhkamnwtsbdozwkyut.supabase.co'){blocked.push(u.origin+u.pathname);return route.abort();}
   const name=u.pathname.split('/').pop(),args=JSON.parse(req.postData()||'{}'),send=data=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(data)});
   if(u.pathname==='/auth/v1/token')return send(session);
+  if(RELEASE==='v337'&&name==='lts_browser_cash_today_v242')return send({...fixture.response(name,args),bank_positions:[{institution_code:'341',balance:600},{institution_code:'237',balance:400},{institution_code:'336',balance:0}]});
+  if(RELEASE==='v337'&&name==='lts_browser_monthly_v229'){
+   monthlyRequests.push({...args});
+   if(failMonthly&&args.p_from==='2026-08-01')return route.fulfill({status:500,contentType:'application/json',body:JSON.stringify({message:'private SQL monthly source_ref must not appear'})});
+   const data=fixture.monthly(args.p_from,args.p_to);
+   if(holdMonthly&&args.p_from==='2026-09-01'){holdMonthly=false;monthlyHeld();await monthGate;data.monthly_totals[0].revenue=data.monthly_totals[0].cash_after_extraordinary=data.totals.revenue=data.totals.cash_after_extraordinary=777;}
+   return send(data);
+  }
   if(name==='lts_browser_product_v1'){const p=fixture.product();p.dashboard_cockpit=cockpit();return send({ok:true,mvp:p});}
   if(name==='lts_browser_dashboard_cockpit_v1')return send(cockpit());
   if(/recurring_future_gap/.test(name)){if(!auditReleased)await auditGate;if(failAudit)return route.fulfill({status:500,contentType:'application/json',body:JSON.stringify({message:'private SQL source_ref must not appear'})});return send(recurring());}
@@ -59,6 +69,37 @@ async function run(browser,viewport,label){
   assert.match(before.find(x=>x.label==='Total de despesas do período').value,/100,00/);
   const schedule=frame.locator('#ltsFutureBank');await schedule.waitFor();await frame.waitForFunction(()=>{const e=document.querySelector('#ltsFutureBank');return e&&e.getBoundingClientRect().height>0;});assert((await schedule.boundingBox()).height<175);
   const dashSize=await frame.locator('html').evaluate(el=>({w:el.clientWidth,s:el.scrollWidth}));assert(dashSize.s<=dashSize.w+2);
+  let monthChecks=null;
+  if(RELEASE==='v337'){
+   await frame.waitForFunction(()=>window.__LTS_V337_MONTH?.state.status==='ready');
+   const overview=frame.locator('#v337Overview'),values=()=>overview.locator('.v337-metric > strong').allTextContents(),month=overview.getByLabel('Mês do resumo');
+   assert.deepEqual((await values()).map(x=>x.replace(/[^0-9,-]/g,'')),['150,00','100,00','50,00']);
+   assert.equal(await overview.locator('.v337-bank:not(.total)').count(),3);
+   assert.deepEqual((await overview.locator('.v337-bank strong').allTextContents()).map(x=>x.replace(/[^0-9,-]/g,'')),['600,00','400,00','0,00','1000,00']);
+   for(const detail of await overview.locator('details').all()){assert.equal(await detail.getAttribute('open'),null);assert((await detail.boundingBox()).height<=42,'Source disclosure is closed and compact');}
+   assert.match(await overview.locator('.v337-period').innerText(),/01\/10\/2026 a 16\/10\/2026/);
+   assert.doesNotMatch(await overview.innerText(),/source_ref|RPC|backend|private SQL|%/i);
+   await frame.evaluate(()=>{window.__v337StaleVisible=false;new MutationObserver(()=>{if(document.querySelector('#v337Overview .v337-metrics')?.textContent.includes('777,00'))window.__v337StaleVisible=true;}).observe(document.body,{subtree:true,childList:true,characterData:true});});
+   await month.fill('2026-09');await monthStarted;
+   await overview.getByLabel('Mês do resumo').fill('2026-07');releaseMonthly();
+   await frame.waitForFunction(()=>window.__LTS_V337_MONTH.state.status==='ready'&&window.__LTS_V337_MONTH.state.data?.month==='2026-07');
+   assert.deepEqual((await values()).map(x=>x.replace(/[^0-9,-]/g,'')),['0,00','0,00','0,00']);
+   assert.equal(await frame.evaluate(()=>window.__v337StaleVisible),false,'Superseded monthly response never paints');
+   assert(monthlyRequests.some(x=>x.p_from==='2026-07-01'&&x.p_to==='2026-07-31'));
+   failMonthly=true;await overview.getByLabel('Mês do resumo').fill('2026-08');
+   await overview.getByRole('button',{name:'Tentar novamente',exact:true}).waitFor();
+   assert.match(await overview.innerText(),/Não foi possível conferir este mês/);assert.doesNotMatch(await overview.innerText(),/private SQL|source_ref/);
+   assert.equal(await overview.locator('.v337-metric').count(),0,'Unavailable amount is never shown as zero');
+   failMonthly=false;await overview.getByRole('button',{name:'Tentar novamente',exact:true}).click();
+   await frame.waitForFunction(()=>window.__LTS_V337_MONTH.state.status==='ready'&&window.__LTS_V337_MONTH.state.data?.month==='2026-08');
+   assert.equal(monthlyRequests.filter(x=>x.p_from==='2026-08-01').length,2,'Explicit retry sends a new read');
+   await overview.getByLabel('Mês do resumo').fill('2026-10');
+   await frame.waitForFunction(()=>window.__LTS_V337_MONTH.state.status==='ready'&&window.__LTS_V337_MONTH.state.data?.month==='2026-10');
+   assert.deepEqual((await values()).map(x=>x.replace(/[^0-9,-]/g,'')),['150,00','100,00','50,00']);
+   await settled();assert.deepEqual(await currentKpis(),before,'Monthly navigation preserves current financial positions');
+   const fit=await overview.evaluate(el=>({width:el.clientWidth,scroll:el.scrollWidth,metrics:[...el.querySelectorAll('.v337-metric')].map(x=>({w:x.clientWidth,s:x.scrollWidth}))}));assert(fit.scroll<=fit.width+2&&fit.metrics.every(x=>x.s<=x.w+2),'New overview fits desktop and mobile');
+   monthChecks={source_backed_contract:true,bank_rows:3,month_switch:true,actual_zero:true,stale_response_rejected:true,failed_read_not_zero:true,explicit_retry:true,closed_source_disclosures:true};
+  }
   await page.screenshot({path:path.join(qa,label+'-dashboard.png')});
   await frame.getByRole('button',{name:'Ver todas (21)',exact:true}).click();
   await frame.locator('#v333PriorityActions .v168-action').nth(20).waitFor();assert.equal(await frame.locator('#v333PriorityActions .v168-action').count(),21);
@@ -96,7 +137,7 @@ async function run(browser,viewport,label){
   for(const row of lines.slice(1))assert(Math.abs(amount(row[1])+amount(row[2])-amount(row[3])-amount(row[4]))<.021,'Export cash arithmetic '+row[0]);
   const size=await frame.locator('html').evaluate(el=>({width:el.clientWidth,scroll:el.scrollWidth}));assert(size.scroll<=size.width+2,'No global page overflow');
   await Promise.all(reads);assert.deepEqual(errors,[]);assert.deepEqual(blocked,[]);assert.deepEqual(writes,[]);
-  return {pass:true,label,viewport,real_assets_verified:assets.size,synthetic_http:true,production_session:false,physical_device:false,actions:21,clipboard_rows:365,clipboard_cash_arithmetic:true};
- }catch(e){await page.screenshot({path:path.join(qa,label+'-failure.png')});console.error({label,errors,blocked,writes,actions:await frameDebug(page)});throw e;}finally{releaseAudit();await context.close();}
+  return {pass:true,label,viewport,real_assets_verified:assets.size,synthetic_http:true,production_session:false,physical_device:false,actions:21,monthly_overview:monthChecks,clipboard_rows:365,clipboard_cash_arithmetic:true};
+ }catch(e){await page.screenshot({path:path.join(qa,label+'-failure.png')});console.error({label,errors,blocked,writes,actions:await frameDebug(page)});throw e;}finally{releaseAudit();releaseMonthly();await context.close();}
 }
 (async()=>{const browser=await chromium.launch({headless:true});try{const results=[];for(const [viewport,label]of [[{width:1440,height:1000},'desktop'],[{width:390,height:844},'mobile-390'],[{width:360,height:800},'mobile-360']])results.push(await run(browser,viewport,label));fs.writeFileSync(path.join(qa,'browser-results.json'),JSON.stringify({pass:true,results},null,2));console.log(JSON.stringify({pass:true,results}));}finally{await browser.close();}})().catch(e=>{console.error(e);process.exitCode=1;});

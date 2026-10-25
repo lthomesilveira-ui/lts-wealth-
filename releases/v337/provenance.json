@@ -1,0 +1,15 @@
+{
+  "release": "v337",
+  "base_release": "v335",
+  "base_commit": "9892b6b4fceee2042155ccbe1f4e58749479c15f",
+  "frontend_only": true,
+  "backend_changed": false,
+  "scope": [
+    "Selectable source-backed monthly income, expense competence and result",
+    "Current reconciled balances across three connected banks",
+    "Reject missing, inconsistent or superseded monthly responses"
+  ],
+  "financial_source_data_changed": false,
+  "physical_mobile_validated": false,
+  "private_http_validated": false
+}
