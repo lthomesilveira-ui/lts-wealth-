@@ -26,7 +26,7 @@ INSERT INTO public.v336_history VALUES
  ('2020-01-02','Itaú','Transferência Itaú para Bradesco',-25,'legacy_fix86','evento_base:1','source','assigned',1,'2020-01-02',false,false,'A classificar','Não identificado','Não atribuído',true),
  ('2020-01-02','Bradesco','Recebimento Itaú para Bradesco',25,'legacy_fix86','evento_base:2','source','assigned',2,'2020-01-02',false,false,'A classificar','Não identificado','Não atribuído',false),
  ('2020-01-03','Itaú','Food',-9,'other','expense:3','source','assigned',NULL,'2020-01-03',false,false,'Food','Merchant','Não atribuído',false);
-""
+"""
 )
 print((ROOT/'backend/qa/fixtures/v336_invalidate.sql').read_text())
 print((ROOT/'backend/qa/fixtures/v336_history_v3.sql').read_text())
@@ -37,7 +37,7 @@ CREATE TEMP TABLE v336_sources AS SELECT jsonb_build_object(
  'raw',(SELECT jsonb_agg(to_jsonb(t) ORDER BY idx) FROM public.evento_base t),
  'history',(SELECT jsonb_agg(to_jsonb(t) ORDER BY source_ref) FROM public.v336_history t),
  'decisions',(SELECT jsonb_agg(to_jsonb(t)) FROM public.lts_v178_review_decision t)) j;
-""
+"""
 )
 patch = (ROOT/'backend/patches/v336/workbook_transfer_identity.sql').read_text()
 print(patch)
@@ -125,7 +125,7 @@ BEGIN
  EXECUTE 'RESET ROLE';
 END $test$;
 CREATE TEMP TABLE v336_replay AS SELECT pg_get_functiondef('public.lts_historical_effective_cash_v3(uuid,date,date)'::regprocedure) definition;
-""
+"""
 )
 print(patch)
 print(r"""
@@ -147,5 +147,5 @@ SELECT jsonb_build_object('pass',true,'rejection_cases',(SELECT count(*) FROM v3
  'authenticated_internal_access_denied',true,'cache_invalidation',true,'replay_noop',true,
  'dependency_fixture_not_production_certificate',true) receipt;
 ROLLBACK;
-""
+"""
 )
