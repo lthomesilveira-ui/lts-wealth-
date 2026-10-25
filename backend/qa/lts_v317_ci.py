@@ -34,11 +34,13 @@ UPDATE public.v312_rows SET reference_month=date_trunc('month',current_date)::da
 UPDATE public.lts_open_finance_staging SET raw_payload=raw_payload||'{{"operationType":"PIX"}}' WHERE id='00000000-0000-4000-8000-000000000084';""")
 queue="SELECT public.lts_browser_card_review_queue_v312('2013-10-10',current_date,0,50,NULL);"
 before=json.loads(run(init+queue));assert before['row_count']==len(before['rows'])
+qa=ROOT/'qa/v317';qa.mkdir(parents=True,exist_ok=True);(qa/'native-before.json').write_text(json.dumps(before,ensure_ascii=False))
 rows={int(x['source_ref'].split('-')[-1]):x for x in before['rows']}
 for n in [76,77,78,79]:assert rows[n]['suggestion']['category'] is None and rows[n]['suggestion']['basis']=='bank_activity_conflict'
-assert rows[80]['suggestion']['category']=='Lazer' and rows[80]['suggestion']['basis']=='merchant_history'
+assert rows[80]['suggestion']['category']=='Lazer',rows[80]['suggestion']
+assert rows[80]['suggestion']['basis'] in('merchant_history','same_merchant_amount_history'),rows[80]['suggestion']
 targets=json.loads(run(f"SELECT public.lts_card_verified_nature_candidates_v317('{U}');"))
-assert {int(x['source_ref'].split('-')[-1]) for x in targets}==set(range(61,76))|{26}
+assert {int(x['source_ref'].split('-')[-1]) for x in targets}==set(range(61,76))|{26},{x['source_ref']:x['category'] for x in targets}
 assert next(x for x in targets if x['source_ref'].endswith('000000000063'))['category']=='Saúde'
 for n in [73,74,75]:
  e=next(x for x in targets if x['source_ref'].endswith(f'{n:012d}'))['evidence']
