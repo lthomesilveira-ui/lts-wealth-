@@ -1,0 +1,29 @@
+name: V339 late component initialization
+on:
+  pull_request:
+    paths: ['releases/v339/**','.github/scripts/*v339*','.github/workflows/v339.yml','docs/V339_COMPONENT_INITIALIZATION.md']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  late-components:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-save --package-lock=false playwright@1.58.2
+      - run: npx playwright install --with-deps chromium
+      - name: Serve immutable release
+        run: |
+          python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/lts-v339-http.log 2>&1 &
+          node .github/scripts/lts_v309_wait_http.cjs
+      - name: Reproduce baseline after installer expiry
+        run: LTS_RELEASE=v337 LTS_EXPECT_COMPLETE=false node .github/scripts/lts_v339_boot_modules.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v339-late-component-evidence
+          path: qa/v339/
