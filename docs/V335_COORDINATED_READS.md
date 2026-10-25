@@ -24,3 +24,9 @@ This controls requests within one browser runtime. It is not global admission
 across sessions, a server-capacity guarantee, a physical-device certificate or
 proof that every source is complete. Production private-session observations
 and remaining limits are recorded separately.
+
+The shared browser fixture aligns all received dates with its frozen business
+date, waits for the actual financial sections after invalidation, and compares
+label/value pairs with populated cash, total liquidity and expenses. Whitespace
+and intermediate loading renders are not financial values. Missing positions
+cannot satisfy the preservation check.

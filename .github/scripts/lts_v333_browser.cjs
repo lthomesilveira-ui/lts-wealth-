@@ -21,7 +21,7 @@ async function run(browser,viewport,label){
  await context.route('**/*',async route=>{
   const req=route.request(),u=new URL(req.url());if(u.origin===BASE)return route.continue();
   if(u.origin!=='https://tadhkamnwtsbdozwkyut.supabase.co'){blocked.push(u.origin+u.pathname);return route.abort();}
-  const name=u.pathname.split('/').pop(),args=JSON.parse(req.postData()||'{}'),send=data=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(data)});
+  const name=u.pathname.split('/').pop(),args=JSON.parse(req.postData()||'{}'),send=data=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(data).replaceAll('2026-10-16','2026-10-19')});
   if(u.pathname==='/auth/v1/token')return send(session);
   if(name==='lts_browser_product_v1'){const p=fixture.product();p.dashboard_cockpit=cockpit();return send({ok:true,mvp:p});}
   if(name==='lts_browser_dashboard_cockpit_v1')return send(cockpit());
@@ -47,7 +47,16 @@ async function run(browser,viewport,label){
   assert.equal(await frame.getByRole('button',{name:'Ver todas (0)',exact:true}).count(),0,'Unloaded audit must not imply no pending actions');
   releaseAudit();
   await frame.getByRole('button',{name:'Ver todas (21)',exact:true}).waitFor();
-  const currentKpis=()=>frame.locator('.v168-dashboard .v168-kpi').allInnerTexts();const before=await currentKpis();
+  const settled=()=>frame.waitForFunction(()=>{
+   const s=window.__LTS_V178_STATE;
+   return s&&['cash','forecast','wealth','awards','dashboardReport'].every(k=>s[k]?.status==='ready')&&
+    document.querySelector('.v168-dashboard .v168-kpi strong')?.textContent.includes('1.000,00');
+  });
+  const currentKpis=()=>frame.locator('.v168-dashboard .v168-kpi').evaluateAll(nodes=>nodes.map(n=>({label:n.querySelector('span')?.textContent.trim(),value:n.querySelector('strong')?.textContent.trim()})));
+  await settled();const before=await currentKpis();
+  assert.match(before.find(x=>x.label==='Contas correntes').value,/1\.000,00/);
+  assert.match(before.find(x=>x.label==='Total disponível hoje').value,/1\.500,00/);
+  assert.match(before.find(x=>x.label==='Total de despesas do período').value,/100,00/);
   const schedule=frame.locator('#ltsFutureBank');await schedule.waitFor();await frame.waitForFunction(()=>{const e=document.querySelector('#ltsFutureBank');return e&&e.getBoundingClientRect().height>0;});assert((await schedule.boundingBox()).height<175);
   const dashSize=await frame.locator('html').evaluate(el=>({w:el.clientWidth,s:el.scrollWidth}));assert(dashSize.s<=dashSize.w+2);
   await page.screenshot({path:path.join(qa,label+'-dashboard.png')});
@@ -64,7 +73,7 @@ async function run(browser,viewport,label){
   card=frame.locator('#v333PriorityActions .v168-action').filter({hasText:'Mastercard Black · 11/2026'});assert.match(await card.innerText(),/18\/11\/2026/);
   await page.screenshot({path:path.join(qa,label+'-actions.png')});
   await frame.evaluate(()=>{V='Dashboard';renderNav();render();});await frame.getByRole('button',{name:'Ver todas (21)',exact:true}).waitFor();
-  assert.deepEqual(await currentKpis(),before,'Action-only refresh preserves displayed financial positions');
+  await settled();assert.deepEqual(await currentKpis(),before,'Action-only refresh preserves populated financial positions');
   failAudit=true;await frame.evaluate(()=>{window.__LTS_V168_STATE.updates.recurring=null;window.__LTS_V168_STATE.dashboard.data.recurring=null;window.__LTS_V168_STATE.updates.openFinance=null;window.__LTS_V227_TRANSPORT.invalidate();V='Atualizações';renderNav();render();});
   await frame.getByRole('button',{name:'Atualizar ações',exact:true}).waitFor();assert.doesNotMatch(await frame.locator('.v168-updates').innerText(),/private SQL|source_ref|Nenhuma ação aberta/);
   failAudit=false;await frame.getByRole('button',{name:'Atualizar ações',exact:true}).click();await frame.locator('#v333PriorityActions .v168-action').nth(20).waitFor();
