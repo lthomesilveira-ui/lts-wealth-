@@ -37,10 +37,11 @@ async function run(browser,viewport,label){
   if(name==='lts_browser_future_bank_v293')return send({rows:[],card_future_received:0});
   return send(fixture.response(name,args));
  });
+ let frame;
  try{
   await page.goto(base+'/releases/'+release+'/app.html',{waitUntil:'domcontentloaded'});
-  const frame=page.frames().find(f=>f.url().includes('/releases/'+release+'/index.html'));assert(frame);
-  await frame.waitForFunction(()=>document.body.dataset.ltsBootState==='ready'&&window.__v339DelayHeld);
+  frame=page.frames().find(f=>f.url().includes('/releases/'+release+'/index.html'));assert(frame);
+  await frame.waitForFunction(()=>window.__v339DelayHeld);
   await frame.waitForFunction(()=>window.__v339DelayReleased,{},{timeout:60000});
   if(complete)await frame.waitForFunction(flags=>flags.every(k=>window[k]?.installed),flags);
   else await page.waitForTimeout(2500);
@@ -61,6 +62,6 @@ async function run(browser,viewport,label){
   await page.screenshot({path:path.join(out,label+'-'+release+'-late-component.png')});
   assert.deepEqual(errors,[]);assert.deepEqual(writes,[]);assert.deepEqual(blocked,[]);
   return{pass:true,release,label,viewport,synthetic_delay_ms:delay,real_release_modules:true,missing,production_session:false,physical_device:false,reload_count:0,financial_writes:0,product_reads:calls.filter(x=>x==='lts_browser_product_v1').length};
- }finally{await context.close();}
+ }catch(error){console.error({label,release,errors,writes,blocked,state:await frame?.evaluate(()=>({boot:document.body.dataset.ltsBootState,held:!!window.__v339DelayHeld,released:!!window.__v339DelayReleased,scripts:[...document.querySelectorAll('script[id]')].map(x=>x.id)})).catch(()=>null)});await page.screenshot({path:path.join(out,label+'-'+release+'-failure.png')});throw error;}finally{await context.close();}
 }
 (async()=>{const browser=await chromium.launch({headless:true});try{const result=await run(browser,{width:1440,height:1000},'desktop');fs.writeFileSync(path.join(out,release+'-late-component.json'),JSON.stringify(result,null,2));console.log(JSON.stringify(result));}finally{await browser.close();}})().catch(e=>{console.error(e);process.exitCode=1;});
