@@ -9,7 +9,7 @@ const other={title:'Conferir fonte fictícia',detail:'Conferir informação disp
 const cockpit=()=>({...fixture.response('lts_browser_dashboard_cockpit_v1',{}),work:{top_actions:[old,other]}});
 const recurring=()=>({...fixture.recurring(),horizon_review_count:17,items:[{description:'Transferência fictícia A',review_kind:'reconciliation_review'},{description:'Transferência fictícia B',review_kind:'reconciliation_review'}]});
 async function run(browser,viewport,label){
- const context=await browser.newContext({viewport,isMobile:viewport.width<600,hasTouch:viewport.width<600,serviceWorkers:'block'});
+ const context=await browser.newContext({viewport,isMobile:viewport.width<600,hasTouch:viewport.width<600,serviceWorkers:'block',permissions:['clipboard-read','clipboard-write']});
  await context.addInitScript(session=>{const NativeDate=Date;window.Date=class extends NativeDate{constructor(...args){super(...(args.length?args:['2026-10-19T22:00:00Z']));}static now(){return NativeDate.parse('2026-10-19T22:00:00Z');}};localStorage.setItem('lts_supabase_session_v1',JSON.stringify(session));sessionStorage.setItem('lts_of_open_refresh_at',String(Date.now()));},session);
  const page=await context.newPage();page.setDefaultTimeout(30000);
  const errors=[],blocked=[],writes=[],assets=new Set(),reads=[];let releaseAudit,auditReleased=false,failAudit=false,cardAmount=1234.56,cardDue='2026-11-16';
@@ -30,6 +30,11 @@ async function run(browser,viewport,label){
   if(name==='lts_browser_future_bank_v293')return send({rows:[],card_future_received:0});
   if(name==='lts_browser_income_review_queue_v296'||name==='lts_browser_card_review_queue_v312'||name==='lts_browser_expense_review_queue_v229')return send({ok:true,row_count:0,matched_count:0,additional_count:0,offset:0,next_offset:null,rows:[],category_options:['Farmácia']});
   if(/_decision_|_update_|_save_|_apply_|_delete_|_refresh_|_confirm_|_upload_|_mutate_|_classify_|_classification_|_create_/.test(name)){writes.push(name);return route.abort();}
+  if(/^lts_browser_flow_v/.test(name)){
+   const data=fixture.response(name,args);
+   if(args.p_from<='2027-02-21'&&args.p_to>='2027-02-21')data.flow.current_future.events.push({event_date:'2027-02-21',account:'Corretora',source:'future_rsu_available',signed_amount:900,category:'RSU',asset_movement:true});
+   return send(data);
+  }
   return send(fixture.response(name,args));
  });
  try{
@@ -68,9 +73,19 @@ async function run(browser,viewport,label){
   await frame.locator('.fx87-row[id^="d-"]').first().click();await frame.locator('#flowCloseDetails').click();
   assert.equal(await frame.locator('.fx87-row[id^="d-"]').first().innerText(),flowBefore);
   await page.screenshot({path:path.join(qa,label+'-flow.png')});
+  await frame.locator('#flowYear').selectOption('2027');
+  await frame.waitForFunction(()=>!FLOWLOADING&&FLOWFROM==='2027-01-01'&&FLOWTO==='2027-12-31');
+  await frame.locator('#flowCopyConsolidated').click();
+  await frame.waitForFunction(()=>document.querySelector('#flowCopyStatus')?.textContent.includes('365 dia(s)'));
+  const copied=await frame.evaluate(()=>navigator.clipboard.readText()),lines=copied.split('\n').map(x=>x.split('\t'));
+  assert.equal(lines.length,366);assert(lines.every(x=>x.length===12));assert.equal(lines[1][0],'2027-01-01');assert.equal(lines.at(-1)[0],'2027-12-31');
+  assert.equal(lines.find(x=>x[0]==='2027-02-21')[2],'0,00','RSU resource availability is not a bank inflow');
+  assert.equal(new Set(lines.slice(1).map(x=>x[0])).size,365);
+  const amount=x=>Number(x.replace(',','.'));
+  for(const row of lines.slice(1))assert(Math.abs(amount(row[1])+amount(row[2])-amount(row[3])-amount(row[4]))<.021,'Export cash arithmetic '+row[0]);
   const size=await frame.locator('html').evaluate(el=>({width:el.clientWidth,scroll:el.scrollWidth}));assert(size.scroll<=size.width+2,'No global page overflow');
   await Promise.all(reads);assert.deepEqual(errors,[]);assert.deepEqual(blocked,[]);assert.deepEqual(writes,[]);
-  return {pass:true,label,viewport,real_assets_verified:assets.size,synthetic_http:true,production_session:false,physical_device:false,actions:21};
+  return {pass:true,label,viewport,real_assets_verified:assets.size,synthetic_http:true,production_session:false,physical_device:false,actions:21,clipboard_rows:365,clipboard_cash_arithmetic:true};
  }catch(e){await page.screenshot({path:path.join(qa,label+'-failure.png')});console.error({label,errors,blocked,writes});throw e;}finally{releaseAudit();await context.close();}
 }
 (async()=>{const browser=await chromium.launch({headless:true});try{const results=[];for(const [viewport,label]of [[{width:1440,height:1000},'desktop'],[{width:390,height:844},'mobile-390'],[{width:360,height:800},'mobile-360']])results.push(await run(browser,viewport,label));fs.writeFileSync(path.join(qa,'browser-results.json'),JSON.stringify({pass:true,results},null,2));console.log(JSON.stringify({pass:true,results}));}finally{await browser.close();}})().catch(e=>{console.error(e);process.exitCode=1;});

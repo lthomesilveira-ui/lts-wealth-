@@ -67,6 +67,10 @@
  const number=v=>v===null||v===undefined||v===''||!Number.isFinite(Number(v))?null:Number(v);
  function validDate(v){if(!/^\d{4}-\d{2}-\d{2}$/.test(v||''))return false;const d=new Date(v+'T12:00:00Z');return Number.isFinite(d.getTime())&&d.toISOString().slice(0,10)===v;}
  const cell=v=>v==null?'Não comprovado':Number(v).toFixed(2).replace('.',',');
+ function isNonCashAwardEvent(e){
+  const src=String(e?.source||'').toLowerCase(),cat=String(e?.category||'').toLowerCase(),acct=String(e?.account||'').toLowerCase();
+  return /^future_(rsu|cash_rsu)_available$/.test(src)||src==='future_award_vesting_marker'||(src.startsWith('future_')&&acct==='corretora'&&/(rsu|cash rsu)/.test(cat));
+ }
  function consolidatedTsv(input){
   const {from,to,days,events,contract,policy}=input;
   if(input.loading)return {ok:false,message:'Aguarde o carregamento completo do período.'};
@@ -76,11 +80,12 @@
   const expected=Math.round((Date.parse(to+'T12:00:00Z')-Date.parse(from+'T12:00:00Z'))/86400000)+1;
   if(!rows.length||rows.length!==expected||new Set(rows.map(x=>x.date)).size!==expected||rows.some(x=>!validDate(x.date)))return {ok:false,message:'Há dias ausentes no período. Recarregue antes de copiar.'};
   const cash=new Map();
-  for(const e of events){if(e.internal_transfer||e.source==='economic_withholding')continue;const date=e.event_date||e.date,n=number(e.signed_amount),tot=cash.get(date)||{entries:0,exits:0,valid:true};if(n==null)tot.valid=false;else if(n>0)tot.entries+=n;else tot.exits-=n;cash.set(date,tot);}
+  for(const e of events){if(e.internal_transfer||e.source==='economic_withholding'||isNonCashAwardEvent(e))continue;const date=e.event_date||e.date,n=number(e.signed_amount),tot=cash.get(date)||{entries:0,exits:0,valid:true};if(n==null)tot.valid=false;else if(n>0)tot.entries+=n;else tot.exits-=n;cash.set(date,tot);}
   const text=['Data\tSaldo anterior\tEntradas\tSaídas\tSaldo final\tD+0/1\tSaldo após D+0/1\tRSU vested\tSaldo após RSU\tFGTS\tSaldo após FGTS\tBase do saldo'];
+  let invalidArithmetic=false;
   rows.forEach((row,i)=>{
    const c=row.fix86_columns||{},z=row.Consolidado||{},tot=cash.get(row.date)||{entries:0,exits:0,valid:true};
-   let opening=number(c.saldo_anterior_operacional??c.saldo_anterior),closing=number(c.saldo_final_operacional??c.saldo_final??z.bank_balance),entries=number(c.entradas_operacionais),exits=number(c.saidas_operacionais);
+   let opening=number(c.saldo_anterior_operacional??c.saldo_anterior),closing=number(c.saldo_final_operacional??c.saldo_final??z.bank_balance),entries=number(c.entradas??c.entradas_operacionais),exits=number(c.saidas??c.saidas_operacionais);
    let documented=true,basis='Operacional';
    if(row.historical){
     const arithmetic=row.v170_cash_arithmetic?.balanced===true;
@@ -93,10 +98,12 @@
    }
    if(entries==null)entries=tot.valid?tot.entries:null;if(exits==null)exits=tot.valid?tot.exits:null;
    if(!documented){opening=null;closing=null;}
+   if([opening,entries,exits,closing].every(x=>x!==null)&&Math.abs(opening+entries-exits-closing)>0.021)invalidArithmetic=true;
    const values=[opening,entries,exits,closing,number(c.liq_d0_1_recurso),documented?number(c.saldo_apos_d0_1):null,number(c.rsus_vested),documented?number(c.saldo_apos_rsu):null,number(c.fgts),documented?number(c.saldo_apos_fgts):null];
    text.push(row.date+'\t'+values.map(cell).join('\t')+'\t'+basis);
   });
+  if(invalidArithmetic)return {ok:false,message:'As entradas e saídas não fecham com os saldos do período. Recarregue o Fluxo antes de copiar.'};
   return {ok:true,text:text.join('\n'),rows:rows.length,from,to};
  }
- return Object.freeze({periodState,consolidatedTsv});
+ return Object.freeze({periodState,consolidatedTsv,isNonCashAwardEvent});
 });

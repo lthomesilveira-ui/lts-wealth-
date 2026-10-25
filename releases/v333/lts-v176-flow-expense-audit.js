@@ -27,12 +27,7 @@
     }
     window.fetch=function(input,init){return nativeFetch(remapRpcUrl(input),init)};
 
-    const isNonCashAwardEvent=e=>{
-      const src=String(e?.source||'').toLowerCase(),cat=String(e?.category||'').toLowerCase(),acct=String(e?.account||'').toLowerCase();
-      return /^future_(rsu|cash_rsu)_available$/.test(src)
-        || src==='future_award_vesting_marker'
-        || (src.startsWith('future_')&&acct==='corretora'&&/(rsu|cash rsu)/.test(cat));
-    };
+    const isNonCashAwardEvent=window.parent.LTSV268ReadTools.isNonCashAwardEvent;
 
     const baseDayEvents=dayEvents;
     dayEvents=function(day){return baseDayEvents(day).filter(e=>!isNonCashAwardEvent(e))};

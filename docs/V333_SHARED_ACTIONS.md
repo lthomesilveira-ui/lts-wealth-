@@ -22,3 +22,11 @@ release stack at desktop, 390px and 360px. Browser fixtures exercise delayed aud
 cross-route count consistency, refreshed card values/due dates, exact detail
 navigation, unavailable reads and recovery, Flow interaction and page width.
 Synthetic browser checks are not a physical iPhone or private-session certificate.
+
+The real Consolidated clipboard export exposed four 2027 dates where noncash RSU
+resource events appeared as bank inflows. The exporter now uses the same cash
+columns and shared noncash-award predicate as the visible Flow. Bank asset
+movements remain cash when they actually affect a bank account. Copying refuses
+a documented row whose opening balance plus inflows minus outflows does not
+match its closing balance; it never adjusts a source amount to make it balance.
+Unknown historical positions remain explicitly unknown.

@@ -8,7 +8,8 @@
     "Shared current action count between Dashboard and Actions",
     "Invoice review references use canonical card cycles and open exact composition",
     "Loading and failed action reads never report zero",
-    "Session ownership for action audit reads"
+    "Session ownership for action audit reads",
+    "Consolidated copy shares cash-event rules with Flow and validates arithmetic"
   ],
   "financial_source_data_changed": false,
   "physical_mobile_validated": false,
