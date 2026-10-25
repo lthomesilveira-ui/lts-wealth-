@@ -93,7 +93,7 @@ BEGIN
   'editable',source_hash IS NOT NULL,'token',md5(jsonb_build_object(
    'source',source_table,'ref',source_ref,'date',x->>'event_date','account',x->>'account',
    'amount',x->>'signed_amount','category',category,'source_hash',source_hash,'decision',decision)::text)) FROM unique_rows;
-END $function$
+END $function$;
 
 CREATE OR REPLACE FUNCTION lts_income_private.queue_v296(p_from date, p_to date, p_offset integer DEFAULT 0, p_limit integer DEFAULT 25, p_query text DEFAULT NULL::text)
  RETURNS jsonb
@@ -118,7 +118,7 @@ BEGIN
   'next_offset',CASE WHEN p_offset+p_limit<(SELECT count(*) FROM filtered) THEN p_offset+p_limit END,
   'rows',coalesce((SELECT jsonb_agg(x ORDER BY x->>'event_date' DESC,(x->>'signed_amount')::numeric DESC,x->>'review_key') FROM page),'[]')) INTO result;
  RETURN result;
-END $function$
+END $function$;
 
 CREATE OR REPLACE FUNCTION public.lts_browser_income_review_queue_v296(p_from date, p_to date, p_offset integer DEFAULT 0, p_limit integer DEFAULT 25, p_query text DEFAULT NULL::text)
  RETURNS jsonb
@@ -126,11 +126,11 @@ CREATE OR REPLACE FUNCTION public.lts_browser_income_review_queue_v296(p_from da
  SET search_path TO ''
 AS $function$
  SELECT lts_income_private.queue_v296(p_from,p_to,p_offset,p_limit,p_query);
-$function$
+$function$;
 
 CREATE OR REPLACE FUNCTION public.lts_v178_norm(v text)
  RETURNS text
  LANGUAGE sql
  IMMUTABLE
-AS $function$ select pg_catalog.regexp_replace(pg_catalog.lower(pg_catalog.translate(coalesce(v,''),'áàâãäéèêëíìîïóòôõöúùûüçÁÀÂÃÄÉÈÊËÍÌÎÏÓÒÔÕÖÚÙÛÜÇ','aaaaaeeeeiiiiooooouuuucAAAAAEEEEIIIIOOOOOUUUUC')),'\s+',' ','g') $function$
+AS $function$ select pg_catalog.regexp_replace(pg_catalog.lower(pg_catalog.translate(coalesce(v,''),'áàâãäéèêëíìîïóòôõöúùûüçÁÀÂÃÄÉÈÊËÍÌÎÏÓÒÔÕÖÚÙÛÜÇ','aaaaaeeeeiiiiooooouuuucAAAAAEEEEIIIIOOOOOUUUUC')),'\s+',' ','g') $function$;
 
