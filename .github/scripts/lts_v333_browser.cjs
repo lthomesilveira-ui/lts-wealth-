@@ -1,14 +1,15 @@
 'use strict';
 // Actual immutable release assets; isolated synthetic HTTP responses only.
 const {chromium}=require('playwright'),fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),assert=require('node:assert/strict');
-const fixture=require('./lts_v309_fixtures.cjs'),BASE='http://127.0.0.1:8788',qa=path.resolve('qa/v333'),root=path.resolve('releases/v333'),manifest=JSON.parse(fs.readFileSync(path.join(root,'manifest.json'))),sha=x=>crypto.createHash('sha256').update(x).digest('hex');
+const RELEASE=process.env.LTS_RELEASE||'v333';assert(['v333','v335'].includes(RELEASE));
+const fixture=require('./lts_v309_fixtures.cjs'),BASE='http://127.0.0.1:8788',qa=path.resolve('qa/'+RELEASE),root=path.resolve('releases/'+RELEASE),manifest=JSON.parse(fs.readFileSync(path.join(root,'manifest.json'))),sha=x=>crypto.createHash('sha256').update(x).digest('hex');
 fs.mkdirSync(qa,{recursive:true});
 const session={access_token:'synthetic-only-access',refresh_token:'synthetic-only-refresh',expires_at:4102444800,user:{id:'00000000-0000-4000-8000-000000000001',email:'viewer@example.invalid'}};
 const old={title:'Old card cycle · R$ 10,00',maintenance_kind:'card_cycle',detail:'Old due 12/11/2026',amount:10};
 const other={title:'Conferir fonte fictícia',detail:'Conferir informação disponível.'};
 const cockpit=()=>({...fixture.response('lts_browser_dashboard_cockpit_v1',{}),work:{top_actions:[old,other]}});
 const recurring=()=>({...fixture.recurring(),horizon_review_count:17,items:[{description:'Transferência fictícia A',review_kind:'reconciliation_review'},{description:'Transferência fictícia B',review_kind:'reconciliation_review'}]});
-async function frameDebug(page){const f=page.frames().find(x=>x.url().includes('/releases/v333/index.html'));return f?.evaluate(()=>({loading:window.__LTS_V168_STATE?.updates.loading,error:!!window.__LTS_V168_STATE?.updates.error,hasAudit:!!window.__LTS_V168_STATE?.updates.recurring,priorityRows:document.querySelectorAll('#v333PriorityActions .v168-action').length,buttons:[...document.querySelectorAll('[data-v333-actions-refresh]')].map(x=>({text:x.textContent,visible:!!x.getBoundingClientRect().height}))})).catch(()=>null);}
+async function frameDebug(page){const f=page.frames().find(x=>x.url().includes('/releases/'+RELEASE+'/index.html'));return f?.evaluate(()=>({loading:window.__LTS_V168_STATE?.updates.loading,error:!!window.__LTS_V168_STATE?.updates.error,hasAudit:!!window.__LTS_V168_STATE?.updates.recurring,priorityRows:document.querySelectorAll('#v333PriorityActions .v168-action').length,buttons:[...document.querySelectorAll('[data-v333-actions-refresh]')].map(x=>({text:x.textContent,visible:!!x.getBoundingClientRect().height}))})).catch(()=>null);}
 async function run(browser,viewport,label){
  const context=await browser.newContext({viewport,isMobile:viewport.width<600,hasTouch:viewport.width<600,serviceWorkers:'block',permissions:['clipboard-read','clipboard-write']});
  await context.addInitScript(session=>{const NativeDate=Date;window.Date=class extends NativeDate{constructor(...args){super(...(args.length?args:['2026-10-19T22:00:00Z']));}static now(){return NativeDate.parse('2026-10-19T22:00:00Z');}};localStorage.setItem('lts_supabase_session_v1',JSON.stringify(session));sessionStorage.setItem('lts_of_open_refresh_at',String(Date.now()));},session);
@@ -16,7 +17,7 @@ async function run(browser,viewport,label){
  const errors=[],blocked=[],writes=[],assets=new Set(),reads=[];let releaseAudit,auditReleased=false,failAudit=false,cardAmount=1234.56,cardDue='2026-11-16';
  const auditGate=new Promise(resolve=>releaseAudit=()=>{auditReleased=true;resolve();});
  page.on('pageerror',e=>errors.push(String(e)));
- page.on('response',r=>{const u=new URL(r.url()),name=path.basename(u.pathname);if(u.origin===BASE&&u.pathname.startsWith('/releases/v333/')&&manifest.files[name])reads.push(r.body().then(bytes=>{assert.equal(r.status(),200);assert.equal(sha(bytes),manifest.files[name]);assets.add(name);}));});
+ page.on('response',r=>{const u=new URL(r.url()),name=path.basename(u.pathname);if(u.origin===BASE&&u.pathname.startsWith('/releases/'+RELEASE+'/')&&manifest.files[name])reads.push(r.body().then(bytes=>{assert.equal(r.status(),200);assert.equal(sha(bytes),manifest.files[name]);assets.add(name);}));});
  await context.route('**/*',async route=>{
   const req=route.request(),u=new URL(req.url());if(u.origin===BASE)return route.continue();
   if(u.origin!=='https://tadhkamnwtsbdozwkyut.supabase.co'){blocked.push(u.origin+u.pathname);return route.abort();}
@@ -39,8 +40,8 @@ async function run(browser,viewport,label){
   return send(fixture.response(name,args));
  });
  try{
-  await page.goto(BASE+'/releases/v333/app.html',{waitUntil:'domcontentloaded'});
-  let frame;for(let i=0;i<200;i++){frame=page.frames().find(f=>f.url().includes('/releases/v333/index.html'));if(frame)break;await page.waitForTimeout(50);}assert(frame);
+  await page.goto(BASE+'/releases/'+RELEASE+'/app.html',{waitUntil:'domcontentloaded'});
+  let frame;for(let i=0;i<200;i++){frame=page.frames().find(f=>f.url().includes('/releases/'+RELEASE+'/index.html'));if(frame)break;await page.waitForTimeout(50);}assert(frame);
   await frame.waitForFunction(()=>document.body.dataset.ltsBootState==='ready'&&window.__LTS_V226?.installed);
   await frame.getByRole('button',{name:'Ver ações',exact:true}).waitFor();
   assert.equal(await frame.getByRole('button',{name:'Ver todas (0)',exact:true}).count(),0,'Unloaded audit must not imply no pending actions');

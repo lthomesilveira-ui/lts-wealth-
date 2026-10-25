@@ -1,0 +1,15 @@
+{
+  "release": "v335",
+  "base_release": "v333",
+  "base_commit": "20e31568d4754ff6a8468a299bfdc2c0c9736ae8",
+  "frontend_only": true,
+  "backend_changed": false,
+  "scope": [
+    "Coordinate classification, wealth, award and dashboard reads with existing expensive-reader admission",
+    "Keep lightweight cash and connection status independent",
+    "Preserve existing budgets, authentication keys, deduplication and mutation passthrough"
+  ],
+  "financial_source_data_changed": false,
+  "physical_mobile_validated": false,
+  "private_http_validated": false
+}
