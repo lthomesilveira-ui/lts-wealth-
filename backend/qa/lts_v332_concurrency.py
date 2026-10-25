@@ -34,7 +34,7 @@ END$$;
 """)
 old=(ROOT/'backend/qa/v332_operational_key_previous.sql').read_text()
 patch=(ROOT/'backend/patches/v332/opportunistic_operational_memo.sql').read_text()
-sql(old+"REVOKE ALL ON FUNCTION public.lts_operational_source_key_v238(uuid) FROM PUBLIC,anon,authenticated;GRANT EXECUTE ON FUNCTION public.lts_operational_source_key_v238(uuid) TO service_role;")
+sql(old+";\nREVOKE ALL ON FUNCTION public.lts_operational_source_key_v238(uuid) FROM PUBLIC,anon,authenticated;GRANT EXECUTE ON FUNCTION public.lts_operational_source_key_v238(uuid) TO service_role;")
 attributes="SELECT to_jsonb(p)-'prosrc' FROM pg_proc p WHERE oid='public.lts_operational_source_key_v238(uuid)'::regprocedure;"
 before_attrs=sql(attributes)
 finger="SELECT jsonb_build_object('events',(SELECT md5(jsonb_agg(t ORDER BY id)::text) FROM public.financial_events t),'documents',(SELECT md5(jsonb_agg(t ORDER BY id)::text) FROM public.source_documents t));"
@@ -108,7 +108,7 @@ assert sql("SELECT pg_get_functiondef('public.lts_operational_source_key_v238(uu
 assert sql(attributes)==before_attrs
 assert sql("SELECT has_function_privilege('anon','public.lts_operational_source_key_v238(uuid)','EXECUTE'),has_function_privilege('authenticated','public.lts_operational_source_key_v238(uuid)','EXECUTE');")=='f|f'
 assert sql(finger)==before_data
-sql(definition.replace('\n RETURN result;','\n -- fixture definition drift\n RETURN result;',1))
+sql(definition.replace('\n RETURN result;','\n -- fixture definition drift\n RETURN result;',1)+';')
 assert 'Operational key definition changed' in sql(patch,False)
 result={'passed':True,'engine':'PostgreSQL native','previous_timeout_reproduced':True,'contended_read_returns_computed_key':True,'caller_timeouts_preserved':True,'read_only_supported':True,'source_drift_rejected':True,'unrelated_errors_propagate':True,'replay_exact':True,'attributes_grants_and_financial_fixtures_exact':True,'measurements':measurements,'production_session':False,'source_worker':'bounded deterministic fixture'}
 qa=ROOT/'qa/v332';qa.mkdir(parents=True,exist_ok=True)
