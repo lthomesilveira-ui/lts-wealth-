@@ -1,0 +1,45 @@
+name: V348 remaining workbook signs and salary adjustment
+on:
+  pull_request:
+    paths: ['backend/patches/v348/**','backend/qa/*v348*','.github/workflows/v348.yml','docs/V348_WORKBOOK_RESIDUALS.md']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native-contract:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: synthetic-test-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: synthetic-test-only
+    steps:
+      - uses: actions/checkout@v4
+      - run: psql -v ON_ERROR_STOP=1 -c 'CREATE ROLE anon; CREATE ROLE authenticated; CREATE ROLE service_role;'
+      - run: python3 backend/qa/lts_v348_ci_sql.py > /tmp/lts-v348.sql
+      - run: psql -v ON_ERROR_STOP=1 -At -f /tmp/lts-v348.sql > /tmp/lts-v348-result.log
+      - if: failure()
+        run: tail -c 40000 /tmp/lts-v348-result.log || true
+      - run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          rows=[json.loads(s)for s in Path('/tmp/lts-v348-result.log').read_text().splitlines()if s.startswith('{')]
+          tests=[r for r in rows if r.get('version')==348]
+          assert len(tests)==2 and all(r['pass']for r in tests)
+          assert {r['part']for r in tests}=={'signs','income'}
+          assert sum(r['rejection_cases']for r in tests)==23
+          print(json.dumps(tests))
+          PY
