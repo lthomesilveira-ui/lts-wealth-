@@ -61,7 +61,7 @@ ROLLBACK;
 # Also rerun all existing V343 defenses, then add the salary-specific contract.
 base=generated('lts_v343_ci_sql.py')
 print(base[:base.rfind('ROLLBACK;')])
-print("SELECT pg_get_viewdef('public.lts_workbook_nonspend_source_v343'::regclass,true);")
+print("GRANT ALL ON public.lts_workbook_nonspend_source_v343 TO service_role;")
 print(salary)
 print(r'''
 ALTER TABLE public.lts_reconciliation_evidence ALTER COLUMN id SET DEFAULT gen_random_uuid();
