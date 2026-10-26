@@ -1,0 +1,45 @@
+name: Missing-session financial access checks
+on:
+  pull_request:
+    paths: ['backend/qa/lts_missing_session*','docs/MISSING_SESSION_ACCESS_CHECKS.md','.github/workflows/missing-session-access.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native-access-boundary:
+    runs-on: ubuntu-24.04
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: synthetic-test-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: synthetic-test-only
+    steps:
+      - uses: actions/checkout@v4
+      - run: psql -v ON_ERROR_STOP=1 -c 'CREATE ROLE anon; CREATE ROLE authenticated; CREATE ROLE service_role;'
+      - run: python3 backend/qa/lts_missing_session_ci_sql.py > /tmp/lts-access.sql
+      - run: psql -v ON_ERROR_STOP=1 -At -f /tmp/lts-access.sql > /tmp/lts-access-result.log
+      - run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          result=[json.loads(s) for s in Path('/tmp/lts-access-result.log').read_text().splitlines() if s.startswith('{')]
+          assert len(result)==1
+          r=result[0]
+          assert r['pass'] and r['positive_read_rpc_cases']==6 and r['positive_relation_role_cases']==12
+          assert r['injected_failure_cases']==7
+          for key in ['claims_modified','financial_writers_called','signed_http_identity_test']:
+              assert r[key] is False
+          assert all(value is True for key,value in r.items() if key not in ['positive_read_rpc_cases','positive_relation_role_cases','injected_failure_cases','claims_modified','financial_writers_called','signed_http_identity_test'])
+          print(json.dumps(r))
+          PY
