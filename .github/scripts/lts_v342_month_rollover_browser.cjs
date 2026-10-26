@@ -1,8 +1,8 @@
 'use strict';
 // Real immutable release, browser controls and a synthetic clock/data source.
 const {chromium}=require('playwright'),fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
-const release=process.env.LTS_RELEASE||'v342',expectStale=process.env.LTS_EXPECT_STALE_MONTH==='true';assert(['v341','v342'].includes(release));
-const fixture=require('./lts_v309_fixtures.cjs'),base='http://127.0.0.1:8788',out=path.resolve('qa/v342');fs.mkdirSync(out,{recursive:true});
+const release=process.env.LTS_RELEASE||'v342',expectStale=process.env.LTS_EXPECT_STALE_MONTH==='true';assert(['v341','v342','v344'].includes(release));
+const fixture=require('./lts_v309_fixtures.cjs'),base='http://127.0.0.1:8788',out=path.resolve(release==='v344'?'qa/v344':'qa/v342');fs.mkdirSync(out,{recursive:true});
 const session={access_token:'synthetic-only-access',refresh_token:'synthetic-only-refresh',expires_at:4102444800,user:{id:'00000000-0000-4000-8000-000000000001',email:'viewer@example.invalid'}};
 async function run(browser,viewport,label){
  const context=await browser.newContext({viewport,isMobile:viewport.width<600,hasTouch:viewport.width<600,serviceWorkers:'block'});
