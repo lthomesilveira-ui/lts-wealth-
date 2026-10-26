@@ -1,0 +1,31 @@
+name: V347 documented historical expense signs
+on:
+  pull_request:
+    paths: ['backend/patches/v347/**','backend/qa/*v347*','backend/qa/fixtures/v347*','.github/workflows/v347.yml','docs/V347_DOCUMENTED_SIGNS.md']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native-contract:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: synthetic-test-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: synthetic-test-only
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 backend/qa/lts_v347_ci_sql.py > /tmp/lts-v347.sql
+      - run: psql -v ON_ERROR_STOP=1 -At -f /tmp/lts-v347.sql
