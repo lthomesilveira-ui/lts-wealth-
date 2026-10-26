@@ -53,7 +53,7 @@ async function run(browser,viewport,label){
   await page.screenshot({path:path.join(out,label+'-acquisition-return.png')});
   await drawer.locator('.v344-back').click();await ready();assert.equal(await input.inputValue(),'Obra');assert.equal(await drawer.locator('tbody tr').count(),30);assert.equal(await drawer.locator('.v178-detail-scroll').evaluate(e=>e.scrollTop),scroll);
   assert.equal(await drawer.locator('.v178-detail-scroll').isVisible(),true);assert.match(await drawer.locator('header').innerText(),/01\/04\/2024 a 31\/08\/2024/);
-  await drawer.locator('.v178-archive').click();await ready();assert.equal(await drawer.locator('h2').innerText(),'Histórico de investimentos');
+  await drawer.locator('.v178-archive').click();await ready();assert.equal(await drawer.locator('h2').innerText(),'Histórico completo de investimentos');
   await drawer.locator('[data-archive-component="Obra"]').click();await ready();assert.equal(await drawer.locator('tbody tr').count(),1);
   await drawer.locator('.v344-back').click();await ready();assert.equal(await drawer.locator('tbody tr').count(),2);
   await drawer.locator('.v344-back').click();await ready();assert.equal(await drawer.locator('h2').innerText(),group);assert.equal(await input.inputValue(),'Obra');
