@@ -1,0 +1,39 @@
+name: V344 expense detail return navigation
+on:
+  pull_request:
+    paths: ['releases/v344/**','.github/scripts/*v344*','.github/scripts/lts_v333_browser.cjs','.github/scripts/lts_v335_transport_contract.cjs','.github/scripts/lts_v342_month_rollover*','.github/workflows/v344.yml','docs/V344_EXPENSE_RETURN.md']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  return-and-interface:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node .github/scripts/lts_v344_release_contract.cjs
+      - run: LTS_RELEASE=v344 node .github/scripts/lts_v335_transport_contract.cjs
+      - run: LTS_RELEASE=v344 node .github/scripts/lts_v341_refresh_contract.cjs
+      - run: LTS_RELEASE=v344 node .github/scripts/lts_v342_month_rollover_contract.cjs
+      - run: npm install --no-save --package-lock=false playwright@1.58.2
+      - run: npx playwright install --with-deps chromium
+      - name: Serve immutable releases
+        run: |
+          python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/lts-v344-http.log 2>&1 &
+          node .github/scripts/lts_v309_wait_http.cjs
+      - name: Reproduce the missing return in V342
+        run: LTS_RELEASE=v342 LTS_EXPECT_MISSING_RETURN=true node .github/scripts/lts_v344_expense_return_browser.cjs
+      - name: Desktop and mobile parent return, context and stale response guards
+        run: node .github/scripts/lts_v344_expense_return_browser.cjs
+      - name: Preserve month selection and the wider financial interface
+        run: |
+          LTS_RELEASE=v344 node .github/scripts/lts_v342_month_rollover_browser.cjs
+          LTS_RELEASE=v344 node .github/scripts/lts_v333_browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v344-expense-return-and-interface-evidence
+          path: qa/v344/

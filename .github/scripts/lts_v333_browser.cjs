@@ -1,7 +1,7 @@
 'use strict';
 // Actual immutable release assets; isolated synthetic HTTP responses only.
 const {chromium}=require('playwright'),fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),assert=require('node:assert/strict');
-const RELEASE=process.env.LTS_RELEASE||'v333';assert(['v333','v335','v337','v339','v341','v342'].includes(RELEASE));
+const RELEASE=process.env.LTS_RELEASE||'v333';assert(['v333','v335','v337','v339','v341','v342','v344'].includes(RELEASE));
 const fixture=require('./lts_v309_fixtures.cjs'),BASE='http://127.0.0.1:8788',qa=path.resolve('qa/'+RELEASE),root=path.resolve('releases/'+RELEASE),manifest=JSON.parse(fs.readFileSync(path.join(root,'manifest.json'))),sha=x=>crypto.createHash('sha256').update(x).digest('hex');
 fs.mkdirSync(qa,{recursive:true});
 const session={access_token:'synthetic-only-access',refresh_token:'synthetic-only-refresh',expires_at:4102444800,user:{id:'00000000-0000-4000-8000-000000000001',email:'viewer@example.invalid'}};
@@ -25,8 +25,8 @@ async function run(browser,viewport,label){
   if(u.origin!=='https://tadhkamnwtsbdozwkyut.supabase.co'){blocked.push(u.origin+u.pathname);return route.abort();}
   const name=u.pathname.split('/').pop(),args=JSON.parse(req.postData()||'{}'),send=data=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(data)});
   if(u.pathname==='/auth/v1/token')return send(session);
-  if(['v337','v339','v341','v342'].includes(RELEASE)&&name==='lts_browser_cash_today_v242')return send({...fixture.response(name,args),bank_positions:[{institution_code:'341',balance:600},{institution_code:'237',balance:400},{institution_code:'336',balance:0}]});
-  if(['v337','v339','v341','v342'].includes(RELEASE)&&name==='lts_browser_monthly_v229'){
+  if(['v337','v339','v341','v342','v344'].includes(RELEASE)&&name==='lts_browser_cash_today_v242')return send({...fixture.response(name,args),bank_positions:[{institution_code:'341',balance:600},{institution_code:'237',balance:400},{institution_code:'336',balance:0}]});
+  if(['v337','v339','v341','v342','v344'].includes(RELEASE)&&name==='lts_browser_monthly_v229'){
    monthlyRequests.push({...args});
    if(failMonthly&&args.p_from==='2026-08-01')return route.fulfill({status:500,contentType:'application/json',body:JSON.stringify({message:'private SQL monthly source_ref must not appear'})});
    const data=fixture.monthly(args.p_from,args.p_to);
@@ -70,7 +70,7 @@ async function run(browser,viewport,label){
   const schedule=frame.locator('#ltsFutureBank');await schedule.waitFor();await frame.waitForFunction(()=>{const e=document.querySelector('#ltsFutureBank');return e&&e.getBoundingClientRect().height>0;});assert((await schedule.boundingBox()).height<175);
   const dashSize=await frame.locator('html').evaluate(el=>({w:el.clientWidth,s:el.scrollWidth}));assert(dashSize.s<=dashSize.w+2);
   let monthChecks=null;
-  if(['v337','v339','v341','v342'].includes(RELEASE)){
+  if(['v337','v339','v341','v342','v344'].includes(RELEASE)){
    await frame.waitForFunction(()=>window.__LTS_V337_MONTH?.state.status==='ready');
    const overview=frame.locator('#v337Overview'),values=()=>overview.locator('.v337-metric > strong').allTextContents(),month=overview.getByLabel('Mês do resumo');
    assert.deepEqual((await values()).map(x=>x.replace(/[^0-9,-]/g,'')),['150,00','100,00','50,00']);
@@ -98,7 +98,7 @@ async function run(browser,viewport,label){
    assert.deepEqual((await values()).map(x=>x.replace(/[^0-9,-]/g,'')),['150,00','100,00','50,00']);
    await settled();assert.deepEqual(await currentKpis(),before,'Monthly navigation preserves current financial positions');
    const fit=await overview.evaluate(el=>({width:el.clientWidth,scroll:el.scrollWidth,metrics:[...el.querySelectorAll('.v337-metric')].map(x=>({w:x.clientWidth,s:x.scrollWidth}))}));assert(fit.scroll<=fit.width+2&&fit.metrics.every(x=>x.s<=x.w+2),'New overview fits desktop and mobile');
-   if(['v339','v341','v342'].includes(RELEASE)){const boot=await frame.parentFrame().evaluate(()=>window.LTSV339Boot.snapshot());assert.equal(boot.components.length,32);assert(boot.components.every(x=>x.ready),'All shared component registrations complete');assert.equal(boot.observer_active,false);}
+   if(['v339','v341','v342','v344'].includes(RELEASE)){const boot=await frame.parentFrame().evaluate(()=>window.LTSV339Boot.snapshot());assert.equal(boot.components.length,32);assert(boot.components.every(x=>x.ready),'All shared component registrations complete');assert.equal(boot.observer_active,false);}
    monthChecks={source_backed_contract:true,bank_rows:3,month_switch:true,actual_zero:true,stale_response_rejected:true,failed_read_not_zero:true,explicit_retry:true,closed_source_disclosures:true};
   }
   await page.screenshot({path:path.join(qa,label+'-dashboard.png')});
