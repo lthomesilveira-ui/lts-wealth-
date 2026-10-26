@@ -49,6 +49,8 @@ async function run(browser,viewport,label){
   const scroll=await drawer.locator('.v178-detail-scroll').evaluate(e=>e.scrollTop);
   await drawer.locator('[data-component="Aquisição do imóvel"]').click();await ready();assert.equal(await drawer.locator('tbody tr').count(),40);
   assert.match(await drawer.locator('.v344-back').getAttribute('aria-label'),/Apartamento/);
+  assert.equal(await drawer.locator('.v344-context').innerText(),group);
+  assert.equal((await drawer.locator('header').innerText()).match(/01\/04\/2024/g).length,1,'One visible period; parent context stays visible');
   const backBox=await drawer.locator('.v344-back').boundingBox();assert(backBox&&backBox.y>=0&&backBox.y+backBox.height<=viewport.height);
   await page.screenshot({path:path.join(out,label+'-acquisition-return.png')});
   await drawer.locator('.v344-back').click();await ready();assert.equal(await input.inputValue(),'Obra');assert.equal(await drawer.locator('tbody tr').count(),30);assert.equal(await drawer.locator('.v178-detail-scroll').evaluate(e=>e.scrollTop),scroll);
