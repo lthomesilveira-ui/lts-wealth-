@@ -18,7 +18,7 @@ CREATE FUNCTION public.lts_v178_norm(text)RETURNS text LANGUAGE sql IMMUTABLE AS
 ''')
 print('CREATE FUNCTION public.lts_expense_rows_v230_baseline(p_uid uuid,p_from date,p_to date)RETURNS TABLE('+cols+r''')LANGUAGE sql AS $$
 SELECT source_table||':'||source_ref||':'||competence_month||':'||category,event_date,transaction_date,competence_month,amount,category,NULL::text,counterparty,origin_name,source_table,source_ref,coverage_mode,category,NULL::text,NULL::date,'pending'::text,'Moradia — imóvel a confirmar'::text,category,NULL::text,NULL::text FROM public.lts_expense_effective_read_cache WHERE user_id=p_uid AND event_date BETWEEN p_from AND p_to$$;''')
-print(fixture)
+print(fixture+';')
 print('CREATE FUNCTION public.lts_v229_expense_rows(p_uid uuid,p_from date,p_to date)RETURNS TABLE('+cols+r''')LANGUAGE sql AS $$SELECT * FROM public.lts_v229_expense_rows_pre_v238(p_uid,p_from,p_to)$$;''')
 print(r'''
 INSERT INTO public.evento_base SELECT '00000000-0000-4000-8000-000000000001',i,jsonb_build_object('dia','2024-01-01','desc','Synthetic '||i,'valor',i*10,'efeito','saida','conta','Itaú')FROM generate_series(1,3)i;
