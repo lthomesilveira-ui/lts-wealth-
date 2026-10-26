@@ -67,7 +67,7 @@ async function run(browser,viewport,label){
   assert.match(before.find(x=>x.label==='Contas correntes').value,/1\.000,00/);
   assert.match(before.find(x=>x.label==='Total disponível hoje').value,/1\.500,00/);
   assert.match(before.find(x=>x.label==='Total de despesas do período').value,/100,00/);
-  const schedule=frame.locator('#ltsFutureBank');await schedule.waitFor();await frame.waitForFunction(()=>{const e=document.querySelector('#ltsFutureBank');return e&&e.getBoundingClientRect().height>0;});assert((await schedule.boundingBox()).height<175);
+  const schedule=frame.locator('#ltsFutureBank');await schedule.waitFor();await frame.waitForFunction(()=>{const e=document.querySelector('#ltsFutureBank'),height=e?.getBoundingClientRect().height;return height>0&&height<175;});
   const dashSize=await frame.locator('html').evaluate(el=>({w:el.clientWidth,s:el.scrollWidth}));assert(dashSize.s<=dashSize.w+2);
   let monthChecks=null;
   if(['v337','v339','v341','v342','v344','v346'].includes(RELEASE)){
