@@ -1,0 +1,17 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),assert=require('node:assert/strict'),cp=require('node:child_process');
+const root='releases/v346',base='releases/v344',read=(r,n)=>fs.readFileSync(path.join(r,n),'utf8'),sha=p=>crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex');
+const m=JSON.parse(read(root,'manifest.json')),p=JSON.parse(read(root,'provenance.json'));
+assert.equal(m.release,'v346');assert.equal(m.base_release,'v344');assert.equal(m.version,'v346');assert.equal(fs.readdirSync(root).length,77);
+for(const[n,h]of Object.entries(m.files))assert.equal(sha(path.join(root,n)),h,n);
+for(const[n,h]of Object.entries(m.protected))assert.equal(sha(n),h,n);
+for(const[n,h]of Object.entries(p.protected_base_files))assert.equal(sha(path.join(base,n)),h,'Immutable V344 '+n);
+const changed=fs.readdirSync(root).filter(n=>read(root,n)!==read(base,n)).sort();assert.deepEqual(changed,['app.html','lts-v179-cash-recovery.js','lts-v178-integrated-review.css','lts-v227-read-transport.js','lts-v181-regression-closure.js','manifest.json','provenance.json'].sort());
+const old=read(base,'lts-v179-cash-recovery.js'),next=read(root,'lts-v179-cash-recovery.js'),a=s=>s.indexOf('  let sequence=0,lastFocus=null;'),b=s=>s.indexOf('  function decorateFlow(){');assert(a(next)>0&&b(next)>a(next));
+assert.equal(next.slice(0,a(next)),old.slice(0,a(old)));assert.equal(next.slice(b(next)),old.slice(b(old)),'All financial runtime outside detail is exact');
+for(const text of ['Ver composição','Data da planilha','Composição parcial','Sem composição','Origem','lts_browser_expense_detail_v346','lts_browser_expense_composition_v346','if(token!==sequence)return'])assert(next.includes(text),text);
+assert.equal(p.financial_source_data_changed,false);assert.equal(p.private_http_validated,false);assert.equal(p.physical_mobile_validated,false);
+for(const f of ['lts-v179-cash-recovery.js','lts-v227-read-transport.js'])cp.execFileSync(process.execPath,['--check',path.join(root,f)]);
+const sql=fs.readFileSync('backend/patches/v346/history_composition.sql','utf8');assert(!/INSERT INTO|UPDATE public\.(?:evento|historico|lts_expense|card_invoice)|DELETE FROM/i.test(sql),'DDL cannot post financial events');
+assert(sql.includes('PRIMARY KEY(user_id,source_hash,source_sheet,source_row)'));assert(sql.includes('ENABLE ROW LEVEL SECURITY'));
+console.log(JSON.stringify({pass:true,release:'v346',files:77,immutable_base_files:77,only_detail_and_transport_changed:true,financial_events_inserted:0}));

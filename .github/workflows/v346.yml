@@ -1,0 +1,60 @@
+name: V346 historical card composition
+on:
+  pull_request:
+    paths: ['releases/v346/**','backend/patches/v346/**','backend/qa/*v346*','.github/scripts/*v346*','.github/workflows/v346.yml','docs/V346_HISTORY_COMPOSITION.md']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  postgres-contract:
+    runs-on: ubuntu-24.04
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: synthetic-test-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: synthetic-test-only
+    steps:
+      - uses: actions/checkout@v4
+      - run: psql -v ON_ERROR_STOP=1 -c 'CREATE ROLE anon; CREATE ROLE authenticated; CREATE ROLE service_role;'
+      - run: python3 backend/qa/lts_v346_ci_sql.py > /tmp/lts-v346.sql
+      - run: psql -v ON_ERROR_STOP=1 -At -f /tmp/lts-v346.sql
+  browser-contract:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    container: mcr.microsoft.com/playwright:v1.58.2-noble
+    env:
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node .github/scripts/lts_v346_release_contract.cjs
+      - run: LTS_RELEASE=v346 node .github/scripts/lts_v335_transport_contract.cjs
+      - run: LTS_RELEASE=v346 node .github/scripts/lts_v341_refresh_contract.cjs
+      - run: LTS_RELEASE=v346 node .github/scripts/lts_v342_month_rollover_contract.cjs
+      - run: npm install --no-save --package-lock=false playwright@1.58.2
+      - run: |
+          python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/lts-v346-http.log 2>&1 &
+          node .github/scripts/lts_v309_wait_http.cjs
+      - run: node .github/scripts/lts_v346_composition_browser.cjs
+      - run: LTS_RELEASE=v346 node .github/scripts/lts_v344_expense_return_browser.cjs
+      - run: LTS_RELEASE=v346 node .github/scripts/lts_v342_month_rollover_browser.cjs
+      - run: LTS_RELEASE=v346 node .github/scripts/lts_v333_browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v346-browser-composition
+          path: qa/v346/
