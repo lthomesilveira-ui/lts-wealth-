@@ -1,0 +1,40 @@
+name: V342 current month across calendar boundaries
+on:
+  pull_request:
+    paths: ['releases/v342/**','.github/scripts/*v342*','.github/scripts/lts_v333_browser.cjs','.github/scripts/lts_v335_transport_contract.cjs','.github/workflows/v342.yml','docs/V342_MONTH_ROLLOVER.md']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  month-and-interface:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node .github/scripts/lts_v342_release_contract.cjs
+      - name: Reproduce the previous month remaining selected
+        run: LTS_RELEASE=v341 LTS_EXPECT_STALE_MONTH=true node .github/scripts/lts_v342_month_rollover_contract.cjs
+      - run: LTS_RELEASE=v342 node .github/scripts/lts_v342_month_rollover_contract.cjs
+      - run: node .github/scripts/lts_v337_month_contract.cjs
+      - run: LTS_RELEASE=v342 node .github/scripts/lts_v335_transport_contract.cjs
+      - run: LTS_RELEASE=v342 node .github/scripts/lts_v341_refresh_contract.cjs
+      - run: npm install --no-save --package-lock=false playwright@1.58.2
+      - run: npx playwright install --with-deps chromium
+      - name: Serve immutable releases
+        run: |
+          python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/lts-v342-http.log 2>&1 &
+          node .github/scripts/lts_v309_wait_http.cjs
+      - name: Reproduce the issue in the actual prior interface
+        run: LTS_RELEASE=v341 LTS_EXPECT_STALE_MONTH=true node .github/scripts/lts_v342_month_rollover_browser.cjs
+      - name: Verify month changes in desktop and mobile
+        run: LTS_RELEASE=v342 node .github/scripts/lts_v342_month_rollover_browser.cjs
+      - name: Preserve the financial interface and export
+        run: LTS_RELEASE=v342 node .github/scripts/lts_v333_browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v342-month-and-interface-evidence
+          path: qa/v342/
