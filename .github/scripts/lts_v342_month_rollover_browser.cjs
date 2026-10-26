@@ -35,7 +35,7 @@ async function run(browser,viewport,label){
   for(let i=0;i<200;i++){frame=page.frames().find(f=>f.url().includes('/releases/'+release+'/index.html'));if(frame)break;await page.waitForTimeout(50);}assert(frame);
   const ready=month=>frame.waitForFunction(month=>window.__LTS_V337_MONTH?.state.status==='ready'&&window.__LTS_V337_MONTH.state.data?.month===month,month);
   const overview=frame.locator('#v337Overview'),choice=()=>overview.getByLabel('Mês do resumo');
-  const changeDay=async date=>{const time=Date.parse(date);for(const f of page.frames())await f.evaluate(time=>window.__syntheticMonthClock=time,time);await frame.evaluate(()=>window.dispatchEvent(new Event('lts:data-invalidated')));};
+  const changeDay=async date=>{const time=Date.parse(date);for(const f of page.frames())await f.evaluate(time=>window.__syntheticMonthClock=time,time);await frame.evaluate(()=>window.__LTS_V227_TRANSPORT.invalidate());};
   await ready('2026-10');assert.equal(await choice().inputValue(),'2026-10');
   await changeDay('2026-11-01T00:01:00Z');await ready('2026-10');assert.match(await overview.locator('.v337-period').innerText(),/31\/10\/2026/);
   await changeDay('2026-11-01T03:01:00Z');await ready(expectStale?'2026-10':'2026-11');
@@ -49,7 +49,8 @@ async function run(browser,viewport,label){
   await choice().fill('2026-09');await ready('2026-09');await changeDay('2026-12-01T03:01:00Z');await ready('2026-09');assert.equal(await choice().inputValue(),'2026-09');assert.match(await overview.locator('.v337-period').innerText(),/30\/09\/2026/);
   await choice().fill('2026-12');await ready('2026-12');await changeDay('2027-01-01T03:01:00Z');await ready('2027-01');assert.equal(await choice().inputValue(),'2027-01');
   await frame.evaluate(()=>{window.__syntheticStaleMonthPainted=false;new MutationObserver(()=>{if(document.querySelector('#v337Overview .v337-metrics')?.textContent.includes('777,00'))window.__syntheticStaleMonthPainted=true;}).observe(document.body,{subtree:true,childList:true,characterData:true});});
-  held=true;await frame.evaluate(()=>window.dispatchEvent(new Event('lts:data-invalidated')));await started;
+  held=true;await frame.evaluate(()=>window.__LTS_V227_TRANSPORT.invalidate());
+  let startTimer;try{await Promise.race([started,new Promise((_,reject)=>{startTimer=setTimeout(()=>reject(Error('Held monthly request was not observed')),10000);})]);}finally{clearTimeout(startTimer);}
   await changeDay('2027-02-01T03:01:00Z');await choice().waitFor();assert.equal(await choice().inputValue(),'2027-02');releaseHeld();await ready('2027-02');
   assert.equal(await frame.evaluate(()=>window.__syntheticStaleMonthPainted),false);assert.doesNotMatch(await overview.innerText(),/777,00/);
   const size=await overview.evaluate(e=>({width:e.clientWidth,scroll:e.scrollWidth}));assert(size.scroll<=size.width+2);
