@@ -336,6 +336,12 @@
    if(parent.archive)return openArchive(parent.range,parent.archiveComponent,parent);
    return openDetail(parent.group,parent.subgroup,parent.range,parent.expected,parent);
   }
+  // The existing lightweight auth client does not expose auth subscriptions.
+  // Preserve its methods and promises while clearing private detail context.
+  for(const name of ['signOut','signInWithPassword']){
+   const original=S.auth[name];
+   if(typeof original==='function')S.auth[name]=function(...args){closeDetail();return original.apply(this,args)};
+  }
   function shellDetail(){
    document.getElementById('v178Drawer')?.remove();
    const d=state.detail,host=document.createElement('div');host.id='v178Drawer';
