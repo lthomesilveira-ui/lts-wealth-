@@ -4,7 +4,7 @@ DO $lease$BEGIN
  IF md5(pg_get_viewdef('public.lts_workbook_nonspend_source_v343'::regclass,true))<>'af5e6a71f1d1a36b8a739b573fce0dfb'
  OR(SELECT relacl::text FROM pg_class WHERE oid='public.lts_workbook_nonspend_source_v343'::regclass)<>'{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}'
  OR(SELECT reloptions FROM pg_class WHERE oid='public.lts_workbook_nonspend_source_v343'::regclass)IS DISTINCT FROM ARRAY['security_invoker=true']::text[]
- THEN RAISE EXCEPTION 'V348_NONSPEND_SOURCE_LEASE_CHANGED';END IF;
+ THEN RAISE EXCEPTION 'V348_NONSPEND_SOURCE_LEASE_CHANGED: % / % / %',md5(pg_get_viewdef('public.lts_workbook_nonspend_source_v343'::regclass,true)),(SELECT relacl::text FROM pg_class WHERE oid='public.lts_workbook_nonspend_source_v343'::regclass),(SELECT reloptions FROM pg_class WHERE oid='public.lts_workbook_nonspend_source_v343'::regclass);END IF;
 END $lease$;
 CREATE OR REPLACE VIEW public.lts_workbook_nonspend_source_v343
 WITH (security_invoker=true) AS

@@ -30,6 +30,8 @@ jobs:
       - run: psql -v ON_ERROR_STOP=1 -c 'CREATE ROLE anon; CREATE ROLE authenticated; CREATE ROLE service_role;'
       - run: python3 backend/qa/lts_v348_ci_sql.py > /tmp/lts-v348.sql
       - run: psql -v ON_ERROR_STOP=1 -At -f /tmp/lts-v348.sql > /tmp/lts-v348-result.log
+      - if: failure()
+        run: tail -c 40000 /tmp/lts-v348-result.log || true
       - run: |
           python3 - <<'PY'
           import json
