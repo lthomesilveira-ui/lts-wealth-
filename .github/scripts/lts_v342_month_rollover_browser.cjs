@@ -41,11 +41,11 @@ async function run(browser,viewport,label){
   await changeDay('2026-11-01T03:01:00Z');await ready(expectStale?'2026-10':'2026-11');
   if(expectStale){
    assert.equal(await choice().inputValue(),'2026-10');assert(monthly.some(x=>x.p_from==='2026-10-01'&&x.p_to==='2026-10-31'));assert(!monthly.some(x=>x.p_from==='2026-11-01'));
-   await overview.scrollIntoViewIfNeeded();await page.screenshot({path:path.join(out,'v341-month-rollover-reproduced.png')});
+   await overview.evaluate(el=>el.scrollIntoView({block:'center'}));await page.screenshot({path:path.join(out,'v341-month-rollover-reproduced.png')});
    return {pass:true,release,label,old_month_reproduced:true,expected_default_month:'2026-11',observed_month:'2026-10',business_timezone:'America/Sao_Paulo'};
   }
   assert.equal(await choice().inputValue(),'2026-11');assert.match(await overview.locator('.v337-period').innerText(),/01\/11\/2026 a 01\/11\/2026/);assert.match(await overview.locator('.v337-metric').first().innerText(),/211,00/);
-  await overview.scrollIntoViewIfNeeded();await page.screenshot({path:path.join(out,label+'-new-month.png')});
+  await overview.evaluate(el=>el.scrollIntoView({block:'center'}));await page.screenshot({path:path.join(out,label+'-new-month.png')});
   await choice().fill('2026-09');await ready('2026-09');await changeDay('2026-12-01T03:01:00Z');await ready('2026-09');assert.equal(await choice().inputValue(),'2026-09');assert.match(await overview.locator('.v337-period').innerText(),/30\/09\/2026/);
   await choice().fill('2026-12');await ready('2026-12');await changeDay('2027-01-01T03:01:00Z');await ready('2027-01');assert.equal(await choice().inputValue(),'2027-01');
   await frame.evaluate(()=>{window.__syntheticStaleMonthPainted=false;new MutationObserver(()=>{if(document.querySelector('#v337Overview .v337-metrics')?.textContent.includes('777,00'))window.__syntheticStaleMonthPainted=true;}).observe(document.body,{subtree:true,childList:true,characterData:true});});
