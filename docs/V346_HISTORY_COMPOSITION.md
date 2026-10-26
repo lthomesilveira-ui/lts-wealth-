@@ -1,0 +1,11 @@
+# V346 — Historical card composition
+
+In Despesas, a category could terminate in an aggregate despite having source rows in the original workbook. V346 adds an explicit composition action and a source disclosure for each recovered workbook record. The existing total remains the financial record; its children are read-only supporting records, never new expenses or invoice payments.
+
+The new authenticated readers preserve the established detail reader's period, category, pagination and totals. Composition is bound to the current parent's financial identity. Source rows have an owner-scoped unique workbook hash, worksheet and row. Current classification comes from the existing reader; original classification, description, dates, amount, formula and existing documentary corrections remain inspectable. Workbook dates are labelled as such unless a document establishes the purchase date. Partial composition, missing composition, a changed parent and differences remain explicit. Source disclosures are closed by default. Parent navigation preserves the filter and period.
+
+The private source review and actual database validation cover all 983 aggregates: 789 have 3,046 distinct workbook source records (2,787 nonzero). Their sum matches to BRL cents, including 19 preserved documentary associations explaining four category-cent differences. The remaining 194 invoice totals have no located purchase/source lines in the available original, compacted and legacy HTML sources. Some source records contain manual sums; they are not split into invented purchases. Private data and source images are not included in this repository.
+
+The two internal composition tables have RLS, no public or authenticated table access, and service-only policies. Browser readers intentionally use the existing authenticated owner assertion and owner-scoped reads. Their authenticated SECURITY DEFINER advisor notices are expected; anonymous and missing-identity execution are denied. No service credential enters the client.
+
+Validation separates actual database routine checks, optional browser replay of owner data, synthetic browser/SQL contracts, published asset hashes, a live signed-in user session and a physical device. Only completed evidence may be claimed. The work does not change the separate pending classification-reorganization, signs, card/Itaú or wealth proposals.
