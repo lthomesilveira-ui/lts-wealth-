@@ -65,6 +65,8 @@ proof = old[old.index("SELECT set_config('lts.v348_owner'", old.index('# Also re
             old.index('CREATE TEMP TABLE v348_income_cases')]
 print(proof.replace('lts.v348_', 'lts.v354_'))
 print(r'''
+SELECT set_config('lts.v354_income_proof',jsonb_set(current_setting('lts.v354_income_proof')::jsonb,
+'{user_id}',to_jsonb('00000000-0000-4000-8000-000000000001'::uuid))::text,true);
 CREATE TEMP TABLE v354_sql(kind text,sql text);
 CREATE TEMP TABLE v354_cases(name text,mutation text);
 ''')

@@ -7,9 +7,10 @@ DECLARE
  p jsonb:=current_setting('lts.v354_income_proof')::jsonb;
  before_rows jsonb;after_rows jsonb;before_cache jsonb;after_cache jsonb;
  before_proofs jsonb;after_proofs jsonb;before_raw text;after_raw text;
- n integer;v numeric;new_id uuid;
+ v numeric;new_id uuid;
 BEGIN
- IF owner_id IS NULL OR p->>'source_table' IS DISTINCT FROM 'historico_analitico'
+ IF owner_id IS NULL OR p->>'user_id' IS DISTINCT FROM owner_id::text
+ OR p->>'source_table' IS DISTINCT FROM 'historico_analitico'
  OR p->>'source_ref' IS NULL OR p->>'row_key' IS NULL
  THEN RAISE EXCEPTION 'V354_INCOME_INVALID_PROOF';END IF;
  v:=(p->>'imported_amount')::numeric;
