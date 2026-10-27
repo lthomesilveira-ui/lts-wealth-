@@ -19,7 +19,7 @@ CREATE FUNCTION public.lts_browser_assert_user_v1()RETURNS uuid LANGUAGE sql AS 
 CREATE FUNCTION public.lts_card_read_start_v269(uuid)RETURNS text LANGUAGE sql AS $$SELECT'qa-revision'::text$$;
 CREATE FUNCTION public.lts_card_read_finish_v269(uuid,text,jsonb)RETURNS jsonb LANGUAGE sql AS $$SELECT $3$$;
 CREATE FUNCTION public.lts_prepared_card_cycles_v307(uuid)RETURNS jsonb LANGUAGE sql STABLE AS $$SELECT cards FROM public.qa_card_sources WHERE user_id=$1$$;
-CREATE FUNCTION public.lts_card_cycles_v226(uuid)RETURNS jsonb LANGUAGE sql STABLE AS $$SELECT cards FROM public.qa_card_sources WHERE user_id=$1$$;
+CREATE FUNCTION public.lts_card_cycles_v226(uuid)RETURNS jsonb LANGUAGE sql VOLATILE AS $$SELECT cards||jsonb_build_object('computed_at',clock_timestamp())FROM public.qa_card_sources WHERE user_id=$1$$;
 CREATE FUNCTION public.lts_card_family_v226(text,text)RETURNS text LANGUAGE sql IMMUTABLE AS $$SELECT $1$$;
 CREATE FUNCTION public.lts_card_documentary_payment_presentation_v272(uuid,jsonb)RETURNS jsonb LANGUAGE sql AS $$SELECT $2$$;
 CREATE FUNCTION public.lts_c6_completeness_state_v269(uuid)RETURNS jsonb LANGUAGE sql STABLE AS $$SELECT jsonb_build_object('complete',cards->'complete','incomplete_families','["c6"]'::jsonb)FROM public.qa_card_sources WHERE user_id=$1$$;
@@ -79,7 +79,7 @@ OR((b->'dashboard_cockpit')-'cards')IS DISTINCT FROM((a->'dashboard_cockpit')-'c
 IF a#>>'{card_operating,next_due,family}'<>'aeternum'OR a#>>'{dashboard_cockpit,cards,next_due,family}'<>'aeternum'
 OR(SELECT j#>>'{cards,next_due,family}'FROM v355_after WHERE kind='cockpit')<>'aeternum'
 OR(SELECT j#>>'{next_due,family}'FROM v355_after WHERE kind='operating')<>'aeternum'THEN RAISE EXCEPTION 'Consumers disagree or keep paid cycle';END IF;
-IF(SELECT j FROM v355_before WHERE kind='final_cycles')IS DISTINCT FROM(SELECT j FROM v355_after WHERE kind='final_cycles')THEN RAISE EXCEPTION 'Final cycle presentation changed';END IF;
+IF(SELECT j-'computed_at'FROM v355_before WHERE kind='final_cycles')IS DISTINCT FROM(SELECT j-'computed_at'FROM v355_after WHERE kind='final_cycles')THEN RAISE EXCEPTION 'Final cycle presentation changed';END IF;
 IF(SELECT j FROM v355_before WHERE kind='source')IS DISTINCT FROM(SELECT jsonb_agg(to_jsonb(x)ORDER BY user_id)FROM public.qa_card_sources x)
 THEN RAISE EXCEPTION 'Source changed';END IF;
 FOR v IN SELECT public.lts_card_obligations_v355(cards,dt)FROM public.qa_card_sources CROSS JOIN(VALUES(date'2026-10-26'),(date'2026-11-01'))t(dt)WHERE user_id='00000000-0000-4000-8000-000000000001'LOOP
