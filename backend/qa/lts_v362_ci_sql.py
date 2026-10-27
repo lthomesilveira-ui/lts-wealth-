@@ -55,8 +55,8 @@ DO $test$DECLARE j jsonb;k jsonb;BEGIN
  k:=v362_fixture.lts_browser_card_review_queue_v312(current_date-5,current_date,0,10,null);
  IF k->>'row_count'<>'1'OR k->>'additional_count'<>'1' THEN RAISE EXCEPTION 'Other owner source identity leaked';END IF;
  PERFORM set_config('test.v362_owner','00000000-0000-4000-8000-000000000001',true);
- IF(SELECT j FROM v362_attrs)IS DISTINCT FROM(SELECT to_jsonb(p)-'prosrc'FROM pg_proc p WHERE oid='v362_fixture.lts_browser_card_review_queue_v312(date,date,integer,integer,text)'::regprocedure)THEN RAISE EXCEPTION 'Function ACL/security attributes changed';END IF;
- IF(SELECT j FROM v362_raw)IS DISTINCT FROM jsonb_build_object('pending',(SELECT jsonb_agg(to_jsonb(x)ORDER BY user_id,item->>'source_ref')FROM v362_fixture.pending x),'review',(SELECT jsonb_agg(to_jsonb(x)ORDER BY source_ref)FROM v362_fixture.review x))THEN RAISE EXCEPTION 'Raw sources changed';END IF;
+ IF(SELECT a.j FROM v362_attrs a)IS DISTINCT FROM(SELECT to_jsonb(p)-'prosrc'FROM pg_proc p WHERE oid='v362_fixture.lts_browser_card_review_queue_v312(date,date,integer,integer,text)'::regprocedure)THEN RAISE EXCEPTION 'Function ACL/security attributes changed';END IF;
+ IF(SELECT a.j FROM v362_raw a)IS DISTINCT FROM jsonb_build_object('pending',(SELECT jsonb_agg(to_jsonb(x)ORDER BY user_id,item->>'source_ref')FROM v362_fixture.pending x),'review',(SELECT jsonb_agg(to_jsonb(x)ORDER BY source_ref)FROM v362_fixture.review x))THEN RAISE EXCEPTION 'Raw sources changed';END IF;
 END $test$;
 CREATE TEMP TABLE v362_replay AS SELECT pg_get_functiondef('v362_fixture.lts_browser_card_review_queue_v312(date,date,integer,integer,text)'::regprocedure)definition;
 ''')
