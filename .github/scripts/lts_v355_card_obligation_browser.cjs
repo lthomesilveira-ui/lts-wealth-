@@ -40,12 +40,12 @@ async function run(browser,viewport,label){
   assert(await frame.locator('.v226-upcoming [data-v226-family="c6"][data-v226-month="2026-11-01"]').count()>0);
   await page.screenshot({path:path.join(out,label+'-dashboard-obligations.png')});
   await route('Despesas','cards');await target().first().waitFor({state:'visible'});await target().first().click();
-  await frame.locator('#v226-detail [data-v226-close]').waitFor({state:'visible'});assert(detailCalls.some(x=>x.p_family==='aeternum'&&x.p_month==='2026-10-01'));
+  await frame.locator('#v226-detail').getByText('Compra sintética do ciclo',{exact:false}).waitFor({state:'visible'});assert(detailCalls.some(x=>x.p_family==='aeternum'&&x.p_month==='2026-10-01'));
   assert.match(await frame.locator('#v226-detail').innerText(),/Compra sintética do ciclo/);await frame.locator('#v226-detail [data-v226-close]').click();
   await page.screenshot({path:path.join(out,label+'-invoice-obligations.png')});
   await route('Fluxo Diário');await frame.waitForFunction(()=>!FLOWLOADING);
   await frame.evaluate(()=>openCardSettlement({source:'card_invoice',source_ref:'Visa Aeternum|2026-10',account:'Bradesco',event_date:'2026-10-25',signed_amount:-100}));
-  await frame.locator('#v226-detail [data-v226-close]').waitFor({state:'visible'});assert.match(await frame.locator('#v226-detail').innerText(),/Compra sintética do ciclo/);await frame.locator('#v226-detail [data-v226-close]').click();
+  await frame.locator('#v226-detail').getByText('Compra sintética do ciclo',{exact:false}).waitFor({state:'visible'});assert.match(await frame.locator('#v226-detail').innerText(),/Compra sintética do ciclo/);await frame.locator('#v226-detail [data-v226-close]').click();
   await page.screenshot({path:path.join(out,label+'-flow.png')});
   mode='november';for(const f of page.frames())await f.evaluate(()=>{window.__qaCardNow='2026-11-01T15:00:00Z';});
   await route('Despesas','cards');await frame.locator('.v226-upcoming [data-v226-retry]').click();await target().first().waitFor({state:'visible'});
