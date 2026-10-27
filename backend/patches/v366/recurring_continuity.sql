@@ -33,9 +33,9 @@ BEGIN
  SELECT coalesce(jsonb_agg(to_jsonb(x)),'[]') INTO base_rows FROM public.lts_corrected_cashflow_operational_v1(p_user_id,p_as_of+1,horizon)x;
  SELECT coalesce(max(b.idx),0) INTO idx FROM public.evento_base b WHERE b.usuario_id=p_user_id;
  FOR p IN SELECT * FROM public.lts_recurring_plan_v366 WHERE user_id=p_user_id AND active AND value_kind='fixed' AND(ends_on IS NULL OR ends_on>p_as_of) ORDER BY series_key,direction LOOP
-  FOR g IN SELECT m::date month FROM generate_series(date_trunc('month',greatest(p.starts_on,p_as_of+1)),date_trunc('month',least(coalesce(p.ends_on,horizon),horizon)),interval '1 month')m LOOP
-   IF p.cadence_months=12 AND extract(month FROM g.month)<>extract(month FROM p.starts_on)THEN CONTINUE;END IF;
-   d:=g.month+least(p.due_day,extract(day FROM g.month+interval '1 month'-interval '1 day')::integer)-1;
+  FOR g IN SELECT m::date month_start FROM generate_series(date_trunc('month',greatest(p.starts_on,p_as_of+1)),date_trunc('month',least(coalesce(p.ends_on,horizon),horizon)),interval '1 month')m LOOP
+   IF p.cadence_months=12 AND extract(month FROM g.month_start)<>extract(month FROM p.starts_on)THEN CONTINUE;END IF;
+   d:=g.month_start+least(p.due_day,extract(day FROM g.month_start+interval '1 month'-interval '1 day')::integer)-1;
    IF d<=p_as_of OR d<p.starts_on OR d>coalesce(p.ends_on,horizon) OR d>horizon THEN CONTINUE;END IF;
    IF EXISTS(SELECT 1 FROM public.lts_recurring_occurrence_v366 o WHERE o.plan_id=p.id AND o.revision=p.revision AND o.event_date=d)
     OR EXISTS(SELECT 1 FROM jsonb_array_elements(base_rows)x WHERE public.lts_forecast_series_key_v1(x->>'description')=p.series_key AND ((x->>'signed_amount')::numeric>0)=(p.direction='entrada') AND date_trunc('month',(x->>'event_date')::date)=date_trunc('month',d))
