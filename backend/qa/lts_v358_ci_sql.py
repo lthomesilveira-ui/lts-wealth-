@@ -5,6 +5,7 @@ R=Path(__file__).resolve().parents[2]
 def sql(p):return (R/p).read_text()
 print(r'''
 BEGIN;
+SET LOCAL TIME ZONE 'America/Sao_Paulo';
 CREATE TABLE public.evento_base(id int PRIMARY KEY,idx int,usuario_id uuid,dados jsonb);
 CREATE TABLE public.lts_v178_review_decision(user_id uuid,source_table text,source_ref text);
 CREATE TABLE public.lts_expense_documentary_amount_override(
@@ -60,13 +61,18 @@ DO $tests$DECLARE r record;b jsonb;v jsonb;err text;BEGIN
   err:=NULL;
   BEGIN PERFORM public.lts_apply_cipo_consortium_source_v358('00000000-0000-4000-8000-000000000001',jsonb_set(b,r.path,r.value));
   EXCEPTION WHEN OTHERS THEN err:=SQLERRM;END;
-  IF err IS NULL OR err NOT LIKE'V358_%'THEN RAISE EXCEPTION 'Invalid manifest accepted or unexpected error: % / %',r.name,err;END IF;
+  IF err IS DISTINCT FROM CASE
+   WHEN r.name IN('owner','same identity')THEN'V358_INVALID_OWNER_OR_IDENTITY'
+   WHEN r.name='lease'THEN'V358_REPLACEMENT_LEASE_CHANGED'
+   WHEN r.name IN('missing proof','wrong row','missing sha')THEN'V358_INCOMPLETE_WORKBOOK_EVIDENCE'
+   ELSE'V358_WORKBOOK_IDENTITY_OR_SIGN_MISMATCH'END
+  THEN RAISE EXCEPTION 'Invalid manifest accepted or wrong guard reached: % / %',r.name,err;END IF;
   IF EXISTS(SELECT 1 FROM public.lts_expense_documentary_amount_override WHERE source_ref='103')OR(SELECT status FROM public.lts_expense_documentary_amount_override WHERE id=7)<>'documented'
   THEN RAISE EXCEPTION 'Partial mutation survived invalid manifest: %',r.name;END IF;
  END LOOP;
  INSERT INTO public.lts_v178_review_decision VALUES('00000000-0000-4000-8000-000000000001','evento_base','103');err:=NULL;
  BEGIN PERFORM public.lts_apply_cipo_consortium_source_v358('00000000-0000-4000-8000-000000000001',b);EXCEPTION WHEN OTHERS THEN err:=SQLERRM;END;
- IF err IS DISTINCT FROM'V358_OWNER_DECISION_REQUIRES_REVIEW'THEN RAISE EXCEPTION 'Owner decision ignored';END IF;
+ IF err IS DISTINCT FROM'V358_OWNER_DECISION_REQUIRES_REVIEW'THEN RAISE EXCEPTION 'Owner decision ignored or wrong guard reached: %',err;END IF;
  DELETE FROM public.lts_v178_review_decision;
 END $tests$;
 SELECT public.lts_apply_cipo_consortium_source_v358('00000000-0000-4000-8000-000000000001',(SELECT j FROM v358_manifest));
