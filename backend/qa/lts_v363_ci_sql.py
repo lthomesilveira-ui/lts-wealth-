@@ -95,7 +95,9 @@ DO $test$DECLARE j jsonb;r record;n integer:=0;expression text;basis text;BEGIN
  SELECT i.j INTO STRICT j FROM v363_inputs i;
  IF NOT v363_fixture.test_valid(j)THEN RAISE EXCEPTION 'Valid documentary continuity rejected';END IF;
  IF(SELECT count(*)FROM v363_fixture.lts_owner_confirmed_transfer_pairs_v263('00000000-0000-4000-8000-000000000001'))<>1 THEN RAISE EXCEPTION 'Shared pair reader did not use proof';END IF;
- expression:=split_part(split_part(pg_get_functiondef('v363_fixture.lts_browser_flow_pre_v238(date,date)'::regprocedure),'''classification_basis'',',2),E',\n ''own_transfer_counterparty_id''',1);
+ expression:=pg_get_functiondef('v363_fixture.lts_browser_flow_pre_v238(date,date)'::regprocedure);
+ expression:=split_part(substring(expression from strpos(expression,'''classification_basis'',CASE WHEN EXISTS')),E',\n ''own_transfer_counterparty_id''',1);
+ expression:=substring(expression from length('''classification_basis'',')+1);
  EXECUTE 'SELECT '||expression||' FROM(SELECT $1::uuid u,$2::uuid id)p' INTO basis USING '00000000-0000-4000-8000-000000000001'::uuid,'00000000-0000-4000-8000-000000000006'::uuid;
  IF basis<>'prior_documented_pair_with_owner_destination_v363'THEN RAISE EXCEPTION 'Flow mislabeled a destination-only confirmation';END IF;
  FOR r IN SELECT * FROM(VALUES
