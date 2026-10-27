@@ -1,0 +1,13 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),assert=require('node:assert/strict'),cp=require('node:child_process');
+const root='releases/v352',base='releases/v346',read=(r,n)=>fs.readFileSync(path.join(r,n),'utf8'),sha=p=>crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex');
+const m=JSON.parse(read(root,'manifest.json')),p=JSON.parse(read(root,'provenance.json'));
+assert.equal(m.release,'v352');assert.equal(m.base_release,'v346');assert.equal(m.version,'v352');assert.equal(fs.readdirSync(root).length,77);
+for(const[n,h]of Object.entries(m.files))assert.equal(sha(path.join(root,n)),h,n);
+for(const[n,h]of Object.entries(m.protected))assert.equal(sha(n),h,n);
+for(const[n,h]of Object.entries(p.protected_base_files))assert.equal(sha(path.join(base,n)),h,n);
+const changed=fs.readdirSync(root).filter(n=>read(root,n)!==read(base,n)).sort();assert.deepEqual(changed,['app.html','lts-v183-wealth-debt-integrity.js','manifest.json','provenance.json'].sort());
+assert.equal(p.financial_source_data_changed,false);assert.equal(p.private_http_validated,false);assert.equal(p.physical_mobile_validated,false);
+cp.execFileSync(process.execPath,['--check',path.join(root,'lts-v183-wealth-debt-integrity.js')]);
+const migration=fs.readFileSync('backend/patches/v352/brokerage_reference.sql','utf8');assert(migration.includes('ENABLE ROW LEVEL SECURITY'));assert(!/INSERT INTO public\.(?:financial_events|lts_expense|asset_positions|lts_brokerage_position_snapshots)/i.test(migration));
+console.log(JSON.stringify({pass:true,release:'v352',files:77,immutable_base_files:77,only_wealth_presentation_changed:true}));
