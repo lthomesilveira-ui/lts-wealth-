@@ -69,8 +69,8 @@ FOR r IN SELECT*FROM v360_cases LOOP
   RAISE EXCEPTION USING ERRCODE='V3600',MESSAGE='rollback fixture';
  EXCEPTION WHEN SQLSTATE'V3600'THEN NULL;END;
 END LOOP;
-IF(SELECT j FROM v360_attrs)IS DISTINCT FROM(SELECT to_jsonb(p)-'prosrc'FROM pg_proc p WHERE oid='v303_fixture.lts_recurring_future_gap_audit_v6(uuid,date,date)'::regprocedure)THEN RAISE EXCEPTION 'Attributes changed';END IF;
-IF(SELECT j FROM v360_raw)IS DISTINCT FROM(SELECT jsonb_build_object('raw',(SELECT jsonb_agg(to_jsonb(x)ORDER BY idx)FROM v303_fixture.evento_base x),
+IF(SELECT a.j FROM v360_attrs a)IS DISTINCT FROM(SELECT to_jsonb(p)-'prosrc'FROM pg_proc p WHERE oid='v303_fixture.lts_recurring_future_gap_audit_v6(uuid,date,date)'::regprocedure)THEN RAISE EXCEPTION 'Attributes changed';END IF;
+IF(SELECT a.j FROM v360_raw a)IS DISTINCT FROM(SELECT jsonb_build_object('raw',(SELECT jsonb_agg(to_jsonb(x)ORDER BY idx)FROM v303_fixture.evento_base x),
 'rules',(SELECT jsonb_agg(to_jsonb(x)ORDER BY id)FROM v303_fixture.lts_projection_replacement_rule x),
 'financial',(SELECT jsonb_agg(to_jsonb(x)ORDER BY id)FROM v303_fixture.financial_events x),
 'staging',(SELECT jsonb_agg(to_jsonb(x)ORDER BY id)FROM v303_fixture.lts_open_finance_staging x)))THEN RAISE EXCEPTION 'Sources mutated';END IF;
