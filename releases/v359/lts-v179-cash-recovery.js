@@ -351,6 +351,7 @@
   function cipoCurrent(c){return c===cipoModal&&c.host.isConnected&&c.route===V&&c.session===cashGeneration()&&c.epoch===cashAuthEpoch&&c.day===day()&&!!D&&!N.classList.contains('hidden')}
   async function openCipoReconciliation(wealth,force=false){
    closeCipo();closeDetail();
+   if(force){cache.clear();window.__LTS_V227_TRANSPORT?.invalidate(false);}
    const host=document.createElement('div');host.id='v359Cipo';host.className='v168-modal-bg';
    host.innerHTML='<section class="v168-modal v359-property" role="dialog" aria-modal="true" aria-labelledby="v359CipoTitle"><header><div><h2 id="v359CipoTitle">CIPÓ 396 · composição dos gastos</h2><p>Da aquisição às despesas do imóvel.</p></div><button type="button" class="v168-btn v359-close" aria-label="Fechar composição de Cipó">×</button></header><div class="v359-content" role="status">Carregando lançamentos…</div></section>';
    const c=cipoModal={host,focus:document.activeElement,wealth,route:V,session:cashGeneration(),epoch:cashAuthEpoch,day:day(),range:{from:'2013-10-10',to:day()}};
