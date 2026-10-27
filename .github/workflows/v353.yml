@@ -1,0 +1,71 @@
+name: V353 expense hierarchy and signed totals
+on:
+  pull_request:
+    paths: ['releases/v353/**','backend/patches/v353/**','backend/qa/*v353*','backend/qa/fixtures/v353*','.github/scripts/*v353*','.github/workflows/v353.yml','docs/V353_EXPENSE_PRESENTATION.md']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  postgres-contract:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: synthetic-test-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: synthetic-test-only
+    steps:
+      - uses: actions/checkout@v4
+      - run: psql -v ON_ERROR_STOP=1 -c 'CREATE ROLE anon; CREATE ROLE authenticated; CREATE ROLE service_role;'
+      - run: python3 backend/qa/lts_v353_ci_sql.py > /tmp/lts-v353.sql
+      - run: psql -v ON_ERROR_STOP=1 -At -f /tmp/lts-v353.sql > /tmp/lts-v353-result.log
+      - if: failure()
+        run: tail -c 8000 /tmp/lts-v353-result.log || true
+      - run: tail -2 /tmp/lts-v353-result.log
+  presentation-model:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - run: node .github/scripts/lts_v353_model_contract.cjs
+      - run: node .github/scripts/lts_v353_release_contract.cjs
+  browser-contract:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    container: mcr.microsoft.com/playwright:v1.58.2-noble
+    env:
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: LTS_RELEASE=v353 node .github/scripts/lts_v335_transport_contract.cjs
+      - run: LTS_RELEASE=v353 node .github/scripts/lts_v341_refresh_contract.cjs
+      - run: LTS_RELEASE=v353 node .github/scripts/lts_v342_month_rollover_contract.cjs
+      - run: npm install --no-save --package-lock=false playwright@1.58.2
+      - run: |
+          python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/lts-v353-http.log 2>&1 &
+          node .github/scripts/lts_v309_wait_http.cjs
+      - run: node .github/scripts/lts_v353_expense_browser.cjs
+      - run: LTS_RELEASE=v353 node .github/scripts/lts_v352_brokerage_browser.cjs
+      - run: LTS_RELEASE=v353 node .github/scripts/lts_v344_expense_return_browser.cjs
+      - run: LTS_RELEASE=v353 node .github/scripts/lts_v342_month_rollover_browser.cjs
+      - run: LTS_RELEASE=v353 node .github/scripts/lts_v333_browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v353-expense-presentation-browser
+          path: qa/v353/

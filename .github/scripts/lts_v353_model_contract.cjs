@@ -1,0 +1,14 @@
+'use strict';
+const assert=require('node:assert/strict'),M=require('../../releases/v353/lts-expense-presentation-model.js');
+const cell=(macrogroup,group_name,category,gross,compensations,rows,extra={})=>({macrogroup,group_name,category,gross,compensations,net:gross-compensations,rows,property:'__missing__',person:'__missing__',center_cost:'__missing__',is_tax:false,...extra});
+const cells=[cell('Saúde','Atendimento','Farmácia',150,50,2),cell('Mobilidade','Tributos','IPVA',200,0,1,{is_tax:true}),cell('Moradia','Obra','Materiais',300,0,1,{property:'cipo396',center_cost:'Centro fictício'}),cell('Alimentação','Refeições','Restaurantes',100,0,1,{person:'Pessoa fictícia'}),cell('Outras','Origem','Outros',0,0,1)];
+const payload={version:'expense-presentation-v353',period:{from:'2020-01-01',to:'2020-01-31'},summary:{gross:750,compensations:50,net:700,rows:6},cells,dimensions:{property:[{key:'__missing__',label:'Sem bem informado'},{key:'cipo396',label:'CIPÓ 396'}],person:[],center_cost:[]}};
+const before=JSON.stringify(payload),main=M.build(payload);assert.deepEqual(main.summary,{gross:750,compensations:50,net:700,rows:6});
+assert.equal(main.nodes.reduce((s,n)=>s+n.net,0),700);assert.equal(main.nodes.reduce((s,n)=>s+n.rows,0),6);
+const tax=M.build(payload,{view:'tax'});assert.equal(tax.summary.net,200);assert.equal(tax.nodes[0].name,'Mobilidade');assert.equal(tax.nodes[0].scope.property,undefined);
+const property=M.build(payload,{view:'property'});assert.equal(property.summary.net,700);assert.equal(property.nodes.length,2);assert.equal(property.nodes.find(n=>n.name==='CIPÓ 396').net,300);
+const person=M.build(payload,{person:'__missing__'});assert.equal(person.summary.rows,5);assert.equal(person.summary.net,600);
+assert.equal(M.build(payload,{center_cost:'Centro fictício'}).summary.net,300);assert.equal(M.build(payload,{property:'unknown'}).summary.rows,0);
+const bad=structuredClone(payload);bad.summary.net=701;assert.throws(()=>M.build(bad));const nullValue=structuredClone(payload);nullValue.cells[0].gross=null;assert.throws(()=>M.build(nullValue));
+assert.equal(JSON.stringify(payload),before,'Grouping cannot rewrite source cells');
+console.log(JSON.stringify({pass:true,release:'v353',same_records_across_perspectives:true,gross_compensation_net_reconciled:true,missing_context_preserved:true,tax_does_not_infer_property:true,bad_totals_rejected:true}));
