@@ -12,10 +12,16 @@ CREATE TABLE public.lts_product_read_cache(user_id uuid PRIMARY KEY,payload_vers
 CREATE TABLE public.lts_dashboard_cockpit_cache(user_id uuid PRIMARY KEY,as_of date,source_product_refreshed_at timestamptz,payload jsonb);
 CREATE TABLE public.lts_access_audit(user_id uuid,email text,action text,meta jsonb);
 CREATE TABLE public.qa_card_sources(user_id uuid PRIMARY KEY,cards jsonb);
+CREATE TABLE public.lts_open_finance_staging(user_id uuid,resource_type text,provider_deleted_at timestamptz,normalized_payload jsonb,institution_name text,raw_payload jsonb,last_seen_at timestamptz);
+CREATE TABLE public.lts_card_document_supplement_v234(user_id uuid,family text,reference_month date,source_as_of date,source_file_ref text);
+CREATE TABLE public.lts_v229_card_recurring_commitment(user_id uuid,active boolean,family text,amount numeric,description text,category text);
 CREATE FUNCTION public.lts_browser_assert_user_v1()RETURNS uuid LANGUAGE sql AS $$SELECT current_setting('lts.qa_owner')::uuid$$;
 CREATE FUNCTION public.lts_card_read_start_v269(uuid)RETURNS text LANGUAGE sql AS $$SELECT'qa-revision'::text$$;
 CREATE FUNCTION public.lts_card_read_finish_v269(uuid,text,jsonb)RETURNS jsonb LANGUAGE sql AS $$SELECT $3$$;
 CREATE FUNCTION public.lts_prepared_card_cycles_v307(uuid)RETURNS jsonb LANGUAGE sql STABLE AS $$SELECT cards FROM public.qa_card_sources WHERE user_id=$1$$;
+CREATE FUNCTION public.lts_card_cycles_v226(uuid)RETURNS jsonb LANGUAGE sql STABLE AS $$SELECT cards FROM public.qa_card_sources WHERE user_id=$1$$;
+CREATE FUNCTION public.lts_card_family_v226(text,text)RETURNS text LANGUAGE sql IMMUTABLE AS $$SELECT $1$$;
+CREATE FUNCTION public.lts_card_documentary_payment_presentation_v272(uuid,jsonb)RETURNS jsonb LANGUAGE sql AS $$SELECT $2$$;
 CREATE FUNCTION public.lts_c6_completeness_state_v269(uuid)RETURNS jsonb LANGUAGE sql STABLE AS $$SELECT jsonb_build_object('complete',cards->'complete','incomplete_families','["c6"]'::jsonb)FROM public.qa_card_sources WHERE user_id=$1$$;
 CREATE FUNCTION public.lts_product_card_completeness_v269(jsonb,jsonb)RETURNS jsonb LANGUAGE sql AS $$SELECT $1$$;
 CREATE FUNCTION public.lts_product_read_cached_v1(uuid)RETURNS jsonb LANGUAGE sql STABLE AS $$SELECT jsonb_build_object('payload_version',payload_version,'payload',payload,'refreshed_at',refreshed_at)FROM public.lts_product_read_cache WHERE user_id=$1$$;
@@ -28,7 +34,7 @@ CREATE FUNCTION public.lts_dashboard_cockpit_top_actions_v1(uuid)RETURNS jsonb L
 CREATE FUNCTION public.lts_card_operating_view_v2(uuid,date)RETURNS jsonb LANGUAGE sql AS $$SELECT payload->'card_operating'FROM public.lts_product_read_cache WHERE user_id=$1$$;
 CREATE FUNCTION public.lts_card_classification_review_v2(uuid,integer)RETURNS jsonb LANGUAGE sql AS $$SELECT'{"pending_groups":0,"pending_lines":0,"pending_value":0,"safe_suggestion_groups":0,"all_suggestion_groups":0}'::jsonb$$;
 ''')
-for name in ['lts_browser_product_v1','lts_browser_dashboard_cockpit_v1','lts_card_operating_view_v3']:
+for name in ['lts_browser_product_v1','lts_browser_dashboard_cockpit_v1','lts_card_operating_view_v3','lts_browser_card_cycles_v226','lts_browser_card_cycles_v229']:
     print(sql(f'backend/qa/fixtures/v355_{name}_original.sql')+';')
 
 def cycle(month,due,value,paid=False,**extra):
@@ -36,7 +42,7 @@ def cycle(month,due,value,paid=False,**extra):
 cards=dict(version='card-cycles-v226',complete=True,cards=[
     dict(family='c6',name='C6 Carbon',bank='C6',cycles=[cycle('2026-12-01','2026-12-07',30),cycle('2026-10-01','2026-10-05',7,True),cycle('2026-11-01','2026-11-05',40)]),
     dict(family='aeternum',name='Visa Aeternum',bank='Bradesco',cycles=[cycle('2026-10-01','2026-10-25',100,payment_status='payment_not_reported')]),
-    dict(family='bradesco_prime',name='Visa Infinite Prime',bank='Bradesco',cycles=[cycle('2026-11-01','2026-11-20',3)]),
+    dict(family='bradesco_prime',name='Visa Infinite Prime',bank='Bradesco',last_due='2026-10-20',cycles=[cycle('2026-11-01','2026-11-20',3)]),
     dict(family='itau_mastercard',name='Mastercard Black',bank='Itaú',cycles=[cycle('2026-11-01','2026-11-16',20)]),
     dict(family='itau_visa',name='Visa Infinite',bank='Itaú',cycles=[]),
 ])
@@ -55,14 +61,17 @@ INSERT INTO public.lts_dashboard_cockpit_cache SELECT user_id,current_date,refre
 SELECT set_config('lts.qa_owner','00000000-0000-4000-8000-000000000001',true);
 CREATE TEMP TABLE v355_before(kind text,j jsonb);
 INSERT INTO v355_before VALUES('product',public.lts_browser_product_v1()),('cockpit',public.lts_browser_dashboard_cockpit_v1()),('operating',public.lts_card_operating_view_v3('00000000-0000-4000-8000-000000000001',current_date)),('source',(SELECT jsonb_agg(to_jsonb(x)ORDER BY user_id)FROM public.qa_card_sources x));
+INSERT INTO v355_before VALUES('final_cycles',public.lts_browser_card_cycles_v229());
 ''')
 print(sql('backend/patches/v355/canonical_card_obligations.sql'))
 patch=sql('backend/patches/v355/readers.sql')
 print(patch)
+print(sql('backend/patches/v355/final_cycle_presentation.sql'))
 print("CREATE TEMP TABLE v355_patch(sql text);INSERT INTO v355_patch VALUES($patchfixture$"+patch+"$patchfixture$);")
 print(r'''
 CREATE TEMP TABLE v355_after(kind text,j jsonb);
 INSERT INTO v355_after VALUES('product',public.lts_browser_product_v1()),('cockpit',public.lts_browser_dashboard_cockpit_v1()),('operating',public.lts_card_operating_view_v3('00000000-0000-4000-8000-000000000001',current_date));
+INSERT INTO v355_after VALUES('final_cycles',public.lts_browser_card_cycles_v229());
 DO $test$DECLARE b jsonb;a jsonb;v jsonb;m text;BEGIN
 SELECT j->'mvp'INTO b FROM v355_before WHERE kind='product';SELECT j->'mvp'INTO a FROM v355_after WHERE kind='product';
 IF(b-ARRAY['card_operating','dashboard_cockpit'])IS DISTINCT FROM(a-ARRAY['card_operating','dashboard_cockpit'])
@@ -70,6 +79,7 @@ OR((b->'dashboard_cockpit')-'cards')IS DISTINCT FROM((a->'dashboard_cockpit')-'c
 IF a#>>'{card_operating,next_due,family}'<>'aeternum'OR a#>>'{dashboard_cockpit,cards,next_due,family}'<>'aeternum'
 OR(SELECT j#>>'{cards,next_due,family}'FROM v355_after WHERE kind='cockpit')<>'aeternum'
 OR(SELECT j#>>'{next_due,family}'FROM v355_after WHERE kind='operating')<>'aeternum'THEN RAISE EXCEPTION 'Consumers disagree or keep paid cycle';END IF;
+IF(SELECT j FROM v355_before WHERE kind='final_cycles')IS DISTINCT FROM(SELECT j FROM v355_after WHERE kind='final_cycles')THEN RAISE EXCEPTION 'Final cycle presentation changed';END IF;
 IF(SELECT j FROM v355_before WHERE kind='source')IS DISTINCT FROM(SELECT jsonb_agg(to_jsonb(x)ORDER BY user_id)FROM public.qa_card_sources x)
 THEN RAISE EXCEPTION 'Source changed';END IF;
 FOR v IN SELECT public.lts_card_obligations_v355(cards,dt)FROM public.qa_card_sources CROSS JOIN(VALUES(date'2026-10-26'),(date'2026-11-01'))t(dt)WHERE user_id='00000000-0000-4000-8000-000000000001'LOOP
@@ -109,6 +119,19 @@ IF v#>>'{next_due,due_date}'IS NOT NULL OR v#>>'{next_due,state}'<>'due_date_unc
 v:=public.lts_card_obligations_v355(jsonb_set(b,'{cards,1,cycles,0,amount}','0'),date'2026-11-01');
 IF v#>>'{next_due,family}'<>'c6'OR jsonb_array_length(v->'nonpayable_cycles')<>1 THEN RAISE EXCEPTION 'Zero cycle became payable';END IF;
 END$test$;
+DO $hint$DECLARE v jsonb;BEGIN
+BEGIN
+UPDATE public.qa_card_sources SET cards=jsonb_set(cards,'{cards,2,cycles}','[]')WHERE user_id='00000000-0000-4000-8000-000000000001';
+INSERT INTO public.lts_v229_card_recurring_commitment VALUES('00000000-0000-4000-8000-000000000001',true,'bradesco_prime',29.90,'Synthetic authorized subscription','Assinaturas');
+v:=public.lts_card_cycles_presentation_v355('00000000-0000-4000-8000-000000000001');
+IF NOT EXISTS(SELECT 1 FROM jsonb_array_elements(v->'cards')c CROSS JOIN LATERAL jsonb_array_elements(c->'cycles')x
+WHERE c->>'family'='bradesco_prime'AND x->>'basis'='user_confirmed_recurring_estimate'AND(x->>'amount')::numeric=29.90)
+THEN RAISE EXCEPTION 'Final recurring complement omitted';END IF;
+IF(public.lts_browser_product_v1()#>'{mvp,card_operating,targets}')IS DISTINCT FROM public.lts_card_obligations_v355(v,current_date)->'targets'
+THEN RAISE EXCEPTION 'Product excludes final recurring complement';END IF;
+RAISE EXCEPTION USING ERRCODE='V3550',MESSAGE='rollback recurring fixture';
+EXCEPTION WHEN SQLSTATE'V3550'THEN NULL;END;
+END$hint$;
 SELECT jsonb_build_object('pass',true,'version',355,'invalid_source_cases',(SELECT count(*)+2 FROM v355_cases),'same_canonical_targets',true,'unrelated_financial_payloads_preserved',true,'private_helpers',true,'owner_isolation',true,'past_partial_and_rollover_preserved',true,
 'synthetic_cards',cards,'synthetic_projection',public.lts_card_obligations_v355(cards,date'2026-10-26'),
 'synthetic_rollover_projection',public.lts_card_obligations_v355(cards,date'2026-11-01'),
