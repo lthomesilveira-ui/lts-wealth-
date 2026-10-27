@@ -66,7 +66,7 @@ INSERT INTO v355_after VALUES('product',public.lts_browser_product_v1()),('cockp
 DO $test$DECLARE b jsonb;a jsonb;v jsonb;m text;BEGIN
 SELECT j->'mvp'INTO b FROM v355_before WHERE kind='product';SELECT j->'mvp'INTO a FROM v355_after WHERE kind='product';
 IF(b-ARRAY['card_operating','dashboard_cockpit'])IS DISTINCT FROM(a-ARRAY['card_operating','dashboard_cockpit'])
-OR(b->'dashboard_cockpit'-'cards')IS DISTINCT FROM(a->'dashboard_cockpit'-'cards')THEN RAISE EXCEPTION 'Unrelated product finance changed';END IF;
+OR((b->'dashboard_cockpit')-'cards')IS DISTINCT FROM((a->'dashboard_cockpit')-'cards')THEN RAISE EXCEPTION 'Unrelated product finance changed';END IF;
 IF a#>>'{card_operating,next_due,family}'<>'aeternum'OR a#>>'{dashboard_cockpit,cards,next_due,family}'<>'aeternum'
 OR(SELECT j#>>'{cards,next_due,family}'FROM v355_after WHERE kind='cockpit')<>'aeternum'
 OR(SELECT j#>>'{next_due,family}'FROM v355_after WHERE kind='operating')<>'aeternum'THEN RAISE EXCEPTION 'Consumers disagree or keep paid cycle';END IF;
