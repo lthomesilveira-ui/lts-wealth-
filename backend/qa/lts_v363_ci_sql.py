@@ -54,8 +54,8 @@ CREATE FUNCTION v363_fixture.lts_v229_expense_rows(uuid,date,date)RETURNS TABLE(
 def sql(path): return (R/path).read_text().replace('public.','v363_fixture.')
 debit=sql('backend/patches/v304/posted_own_transfer.sql').split('CREATE OR REPLACE FUNCTION v363_fixture.lts_posted_own_transfer_out_v304')[0]
 print(debit)
-print(sql('backend/qa/fixtures/v363_bank_rows.sql'))
-print(sql('backend/qa/fixtures/v363_pair_reader.sql'))
+print(sql('backend/qa/fixtures/v363_bank_rows.sql').replace('RETURNS SETOF lts_open_finance_staging','RETURNS SETOF v363_fixture.lts_open_finance_staging')+';')
+print(sql('backend/qa/fixtures/v363_pair_reader.sql')+';')
 print(r'''
 REVOKE ALL ON FUNCTION v363_fixture.lts_owner_confirmed_transfer_pairs_v263(uuid)FROM PUBLIC,anon,authenticated;
 GRANT EXECUTE ON FUNCTION v363_fixture.lts_owner_confirmed_transfer_pairs_v263(uuid)TO service_role;
