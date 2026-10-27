@@ -1,5 +1,5 @@
 'use strict';
-// Real V353 UI with native-PostgreSQL-produced synthetic card projections.
+// Real V356 UI with native-PostgreSQL-produced synthetic card projections.
 const {chromium}=require('playwright'),fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
 const fixtures=require('./lts_v309_fixtures.cjs'),base=process.env.LTS_TEST_BASE||'http://127.0.0.1:8788',out=path.resolve('qa/v356');
 const packet=JSON.parse(fs.readFileSync(path.join(out,'native-card-projection.json')));assert(packet.pass&&packet.version===355);
@@ -35,6 +35,12 @@ async function run(browser,viewport,label){
   await frame.waitForFunction(()=>document.body.dataset.ltsBootState==='ready'&&window.__LTS_V226?.installed);
   const route=async(v,tab)=>{await frame.evaluate(({v,tab})=>{V=v;if(tab)window.__LTS_V168_STATE.expense.tab=tab;renderNav();render();},{v,tab});};
   const target=()=>frame.locator('.v226-upcoming [data-v226-family="aeternum"][data-v226-month="2026-10-01"]');
+  const focusObligation=async()=>{
+   // Background readers can replace this section after it first appears.
+   // Scroll synchronously on the current node, then verify the rendered target.
+   await frame.locator('[data-v356-next]').evaluate(el=>el.scrollIntoView({block:'center',behavior:'instant'}));
+   await frame.waitForFunction(()=>{const r=document.querySelector('[data-v356-next]')?.getBoundingClientRect();return r&&r.height>0&&r.top>=0&&r.bottom<=innerHeight;});
+  };
   const assertProjection=async()=>{
    const p=projection(),panel=frame.locator('.v226-upcoming');
    await panel.locator('[data-v356-next]').waitFor({state:'visible'});
@@ -46,14 +52,15 @@ async function run(browser,viewport,label){
   };
   await route('Dashboard');await target().first().waitFor({state:'visible'});await assertProjection();
   assert.deepEqual(await frame.evaluate(()=>window.__LTS_V226.cycles.cards[0].cycles),cards().cards[0].cycles,'Selection does not mutate received cycle order');
-  await frame.locator('[data-v356-next]').scrollIntoViewIfNeeded();
+  await frame.waitForFunction(()=>{const s=window.__LTS_V178_STATE;return s&&['cash','forecast','wealth','awards','dashboardReport'].every(k=>s[k]?.status==='ready');});
+  await focusObligation();
   assert.equal(await frame.locator('.v226-upcoming [data-v226-family="c6"][data-v226-month="2026-10-01"]').count(),0);
   assert(await frame.locator('.v226-upcoming [data-v226-family="c6"][data-v226-month="2026-11-01"]').count()>0);
   await page.screenshot({path:path.join(out,label+'-dashboard-obligations.png')});
   await route('Despesas','cards');await target().first().waitFor({state:'visible'});await target().first().click();
   await frame.locator('#v226-detail').getByText('Compra sintética do ciclo',{exact:false}).waitFor({state:'visible'});assert(detailCalls.some(x=>x.p_family==='aeternum'&&x.p_month==='2026-10-01'));
   assert.match(await frame.locator('#v226-detail').innerText(),/Compra sintética do ciclo/);await frame.locator('#v226-detail [data-v226-close]').click();
-  await assertProjection();await frame.locator('[data-v356-next]').scrollIntoViewIfNeeded();await page.screenshot({path:path.join(out,label+'-invoice-obligations.png')});
+  await assertProjection();await focusObligation();await page.screenshot({path:path.join(out,label+'-invoice-obligations.png')});
   await route('Fluxo Diário');await frame.waitForFunction(()=>!FLOWLOADING);
   await frame.evaluate(()=>openCardSettlement({source:'card_invoice',source_ref:'Visa Aeternum|2026-10',account:'Bradesco',event_date:'2026-10-25',signed_amount:-100}));
   await frame.locator('#v226-detail').getByText('Compra sintética do ciclo',{exact:false}).waitFor({state:'visible'});assert.match(await frame.locator('#v226-detail').innerText(),/Compra sintética do ciclo/);await frame.locator('#v226-detail [data-v226-close]').click();
@@ -65,7 +72,7 @@ async function run(browser,viewport,label){
   for(const current of ['zero','credit','partial']){
    mode=current;await frame.locator('.v226-upcoming [data-v226-retry]').click();await frame.waitForFunction(()=>!window.__LTS_V226.loading);await assertProjection();
    if(current!=='partial')assert.equal(await target().count(),0,'Zero and credit cycles are not payable targets');
-   else {assert(await target().count()>0);assert.match(await frame.locator('[data-v356-next]').innerText(),/Saldo restante a confirmar/);assert.match(await frame.locator('[data-v356-next]').innerText(),/100,00/);await frame.locator('[data-v356-next]').scrollIntoViewIfNeeded();await page.screenshot({path:path.join(out,label+'-partial-obligation.png')});}
+   else {assert(await target().count()>0);assert.match(await frame.locator('[data-v356-next]').innerText(),/Saldo restante a confirmar/);assert.match(await frame.locator('[data-v356-next]').innerText(),/100,00/);await focusObligation();await page.screenshot({path:path.join(out,label+'-partial-obligation.png')});}
   }
   mode='paid';await frame.locator('.v226-upcoming [data-v226-retry]').click();await frame.waitForFunction(()=>!window.__LTS_V226.loading&&window.__LTS_V226.cycles?.cards?.[1]?.cycles?.[0]?.settlement_confirmed===true);
   assert.equal(await target().count(),0,'Only documentary settlement removes the payable target');await assertProjection();assert.equal(writes.length,0);assert.deepEqual(errors,[]);
