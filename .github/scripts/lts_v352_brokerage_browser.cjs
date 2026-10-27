@@ -37,7 +37,8 @@ async function run(browser,viewport,label){
   const paint=async(tab,data=wealth())=>frame.evaluate(({tab,data})=>{window.__LTS_V168_STATE.wealth.data=data;window.__LTS_V168_STATE.wealth.tab=tab;V='Patrimônio';render();},{tab,data});
   await paint('rsu');const card=frame.locator('.v352-brokerage-reference');await card.waitFor({state:'visible'});assert.equal(await card.count(),1);
   const text=await card.innerText();for(const v of ['26/10/2026','não mostra a data','1.000,00','0,03','999,97','pendente'])assert(text.includes(v),v);
-  assert.equal(await card.locator('details[open]').count(),0);assert(!text.includes('SHA256'));assert((await card.boundingBox()).height<440,'Collapsed reference is compact');
+  assert.equal(await card.locator('details[open]').count(),0);assert(!text.includes('SHA256'));
+  const height=await card.evaluate(el=>el.getBoundingClientRect().height);assert(height>0&&height<440,'Collapsed reference is visible and compact');
   assert.match(await frame.locator('.v168-awards').innerText(),/disponibilidade estimada/);assert.match(await frame.locator('body').innerText(),/D\+3 e a reserva de 30% são premissas de planejamento/);
   await card.locator('summary').click();const detail=await card.innerText();for(const v of ['34','8','0,01','QUANTIDADE','SHA256','Synthetic <img'])assert(detail.includes(v),v);
   assert.equal(await card.locator('img').count(),0);assert.equal(await frame.evaluate(()=>typeof unsafe),'undefined');
