@@ -360,6 +360,9 @@
    host.addEventListener('keydown',e=>{if(e.key==='Escape')closeCipo();if(e.key==='Tab'){const els=[...host.querySelectorAll('button,summary,a[href],input')].filter(x=>x.getClientRects().length),first=els[0],last=els.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last?.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first?.focus()}}});
    host.querySelector('.v359-close').focus();
    try{
+    let currentWealth=null;
+    try{currentWealth=await request('lts_browser_wealth_detail_v242',{},22000,force,()=>cipoCurrent(c));}catch{}
+    if(!cipoCurrent(c))return;c.wealth=currentWealth||{};
     const rows=[],keys=new Set();let offset=0,revision=null,packet;
     do{
      packet=await request('lts_browser_expense_detail_v353',{p_from:c.range.from,p_to:c.range.to,p_scope:{property:'cipo396'},p_offset:offset,p_limit:10000,p_query:null},22000,force,()=>cipoCurrent(c));
@@ -368,7 +371,7 @@
      for(const r of packet.rows){if(!r.key||keys.has(r.key))throw Error('Duplicate property identity');keys.add(r.key);rows.push(r)}
      const next=packet.next_offset;if(next!==null&&(!Number.isInteger(next)||next<=offset))throw Error('Invalid property page');offset=next;
     }while(offset!==null);
-    const model=window.parent.LTSPropertyReconciliation.build(wealth,{...packet,rows},c.range);if(!cipoCurrent(c))return;
+    const model=window.parent.LTSPropertyReconciliation.build(c.wealth,{...packet,rows},c.range);if(!cipoCurrent(c))return;
     drawCipo(c,model);
    }catch{if(cipoCurrent(c)){const content=host.querySelector('.v359-content');content.innerHTML='<p>Não foi possível conferir os gastos do imóvel. Atualize a consulta.</p><button type="button" class="v168-btn v359-retry">Tentar novamente</button>';content.querySelector('button').onclick=()=>openCipoReconciliation(wealth,true)}}
   }
