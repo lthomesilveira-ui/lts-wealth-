@@ -76,7 +76,7 @@ DO $tests$DECLARE r record;b jsonb;v jsonb;err text;BEGIN
  DELETE FROM public.lts_v178_review_decision;
 END $tests$;
 SELECT public.lts_apply_cipo_consortium_source_v358('00000000-0000-4000-8000-000000000001',(SELECT j FROM v358_manifest));
-DO $tests$DECLARE b jsonb;v jsonb;err text;BEGIN
+DO $tests$DECLARE v jsonb;err text;BEGIN
  v:=public.lts_cipo_reconciliation_v4('00000000-0000-4000-8000-000000000001');
  IF v#>>'{consortium,itau_ledger}'<>'90'OR v#>>'{consortium,itau_delta}'<>'0'
  OR v#>>'{consortium,itau_resolution_status}'<>'original_signed_rows_verified'
