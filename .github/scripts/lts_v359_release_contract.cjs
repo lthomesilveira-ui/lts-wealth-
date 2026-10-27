@@ -1,0 +1,15 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),assert=require('node:assert/strict'),cp=require('node:child_process');
+const root='releases/v359',base='releases/v356',read=(r,n)=>fs.readFileSync(path.join(r,n),'utf8'),sha=p=>crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex');
+const m=JSON.parse(read(root,'manifest.json')),p=JSON.parse(read(root,'provenance.json')),b=JSON.parse(read(base,'manifest.json'));
+assert.equal(m.release,'v359');assert.equal(m.version,'v359');assert.equal(m.base_release,'v356');assert.equal(fs.readdirSync(root).length,79);
+for(const[n,h]of Object.entries(m.files))assert.equal(sha(path.join(root,n)),h,n);
+for(const[n,h]of Object.entries(m.protected))assert.equal(sha(n),h,n);
+for(const[n,h]of Object.entries(b.files))assert.equal(sha(path.join(base,n)),h,'immutable '+n);
+assert.deepEqual(p.protected_base_files,b.files);assert.equal(p.frontend_only,true);assert.equal(p.backend_changed,false);
+assert.equal(p.financial_source_data_changed,false);assert.equal(p.private_http_validated,false);assert.equal(p.physical_mobile_validated,false);
+const changed=fs.readdirSync(root).filter(n=>!fs.existsSync(path.join(base,n))||read(root,n)!==read(base,n)).sort();
+assert.deepEqual(changed,['app.html','lts-v179-cash-recovery.js','lts-v183-v168-feedback-safe.js','lts-v178-integrated-review.css','lts-property-reconciliation-model.js','manifest.json','provenance.json'].sort());
+for(const n of ['lts-v179-cash-recovery.js','lts-v183-v168-feedback-safe.js','lts-property-reconciliation-model.js'])cp.execFileSync(process.execPath,['--check',path.join(root,n)]);
+assert.match(read(root,'app.html'),/aria-label="V359"/);assert.equal(p.boot_registrations.length,32);
+console.log(JSON.stringify({pass:true,release:'v359',files:79,base_files_preserved:78,financial_sources_changed:false}));

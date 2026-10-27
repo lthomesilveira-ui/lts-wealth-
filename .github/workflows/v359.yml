@@ -1,0 +1,78 @@
+name: V359 property totals to classified source records
+on:
+  pull_request:
+    paths: ['releases/v359/**','backend/qa/*v359*','.github/scripts/*v359*','.github/workflows/v359.yml','docs/V359_PROPERTY_SOURCE_NAVIGATION.md']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native-contract:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: synthetic-test-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: synthetic-test-only
+    steps:
+      - uses: actions/checkout@v4
+      - run: psql -v ON_ERROR_STOP=1 -c 'CREATE ROLE anon; CREATE ROLE authenticated; CREATE ROLE service_role;'
+      - run: python3 backend/qa/lts_v359_ci_sql.py > /tmp/lts-v359.sql
+      - run: psql -v ON_ERROR_STOP=1 -At -f /tmp/lts-v359.sql > /tmp/lts-v359-result.log
+      - if: failure()
+        run: tail -c 5000 /tmp/lts-v359-result.log || true
+      - run: |
+          python3 - <<'PY'
+          import json,pathlib
+          rows=[json.loads(x)for x in pathlib.Path('/tmp/lts-v359-result.log').read_text().splitlines()if x.startswith('{')]
+          rows=[x for x in rows if x.get('version')==358]
+          assert len(rows)==1 and rows[0]['pass'] and rows[0]['invalid_manifests']==12
+          p=pathlib.Path('qa/v359/native-source-result.json');p.parent.mkdir(parents=True,exist_ok=True);p.write_text(json.dumps(rows[0]))
+          PY
+      - run: node .github/scripts/lts_v359_property_model_contract.cjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: v359-native-source-result
+          path: qa/v359/native-source-result.json
+  browser-contract:
+    needs: native-contract
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    container: mcr.microsoft.com/playwright:v1.58.2-noble
+    env:
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/download-artifact@v4
+        with:
+          name: v359-native-source-result
+          path: qa/v359/
+      - run: node .github/scripts/lts_v359_release_contract.cjs
+      - run: npm install --no-save --package-lock=false playwright@1.58.2
+      - run: |
+          python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/lts-v359-http.log 2>&1 &
+          node .github/scripts/lts_v309_wait_http.cjs
+      - run: node .github/scripts/lts_v359_property_browser.cjs
+      - run: LTS_RELEASE=v359 node .github/scripts/lts_v342_month_rollover_contract.cjs
+      - run: LTS_RELEASE=v359 node .github/scripts/lts_v342_month_rollover_browser.cjs
+      - run: LTS_RELEASE=v359 node .github/scripts/lts_v333_browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v359-property-browser
+          path: qa/v359/
