@@ -61,11 +61,11 @@ DO $tests$DECLARE r record;b jsonb;v jsonb;err text;BEGIN
   err:=NULL;
   BEGIN PERFORM public.lts_apply_cipo_consortium_source_v358('00000000-0000-4000-8000-000000000001',jsonb_set(b,r.path,r.value));
   EXCEPTION WHEN OTHERS THEN err:=SQLERRM;END;
-  IF err IS DISTINCT FROM CASE
+  IF err IS DISTINCT FROM (CASE
    WHEN r.name IN('owner','same identity')THEN'V358_INVALID_OWNER_OR_IDENTITY'
    WHEN r.name='lease'THEN'V358_REPLACEMENT_LEASE_CHANGED'
    WHEN r.name IN('missing proof','wrong row','missing sha')THEN'V358_INCOMPLETE_WORKBOOK_EVIDENCE'
-   ELSE'V358_WORKBOOK_IDENTITY_OR_SIGN_MISMATCH'END
+   ELSE'V358_WORKBOOK_IDENTITY_OR_SIGN_MISMATCH'END)
   THEN RAISE EXCEPTION 'Invalid manifest accepted or wrong guard reached: % / %',r.name,err;END IF;
   IF EXISTS(SELECT 1 FROM public.lts_expense_documentary_amount_override WHERE source_ref='103')OR(SELECT status FROM public.lts_expense_documentary_amount_override WHERE id=7)<>'documented'
   THEN RAISE EXCEPTION 'Partial mutation survived invalid manifest: %',r.name;END IF;
