@@ -1,0 +1,13 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),assert=require('node:assert/strict'),cp=require('node:child_process');
+const root='releases/v353',base='releases/v352',read=(r,n)=>fs.readFileSync(path.join(r,n),'utf8'),sha=p=>crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex');
+const m=JSON.parse(read(root,'manifest.json')),p=JSON.parse(read(root,'provenance.json'));
+assert.equal(m.release,'v353');assert.equal(m.base_release,'v352');assert.equal(m.version,'v353');assert.equal(fs.readdirSync(root).length,78);
+for(const[n,h]of Object.entries(m.files))assert.equal(sha(path.join(root,n)),h,n);
+for(const[n,h]of Object.entries(m.protected))assert.equal(sha(n),h,n);
+for(const[n,h]of Object.entries(p.protected_base_files))assert.equal(sha(path.join(base,n)),h,n);
+const changed=fs.readdirSync(root).filter(n=>!fs.existsSync(path.join(base,n))||read(root,n)!==read(base,n)).sort();assert.deepEqual(changed,['app.html','lts-expense-presentation-model.js','lts-v179-cash-recovery.js','lts-v178-integrated-review.css','lts-v183-wealth-debt-integrity.js','manifest.json','provenance.json'].sort());
+assert.equal(p.financial_source_data_changed,false);assert.equal(p.private_http_validated,false);assert.equal(p.physical_mobile_validated,false);
+for(const f of ['lts-v179-cash-recovery.js','lts-expense-presentation-model.js','lts-v183-wealth-debt-integrity.js'])cp.execFileSync(process.execPath,['--check',path.join(root,f)]);
+for(const n of ['expense_presentation.sql','expense_detail.sql','expense_report.sql'])assert(!/(?:INSERT INTO|UPDATE|DELETE FROM) public\.(?:historico_analitico|evento_base|financial_events|lts_expense_realized|lts_expense_effective_read_cache)/i.test(fs.readFileSync('backend/patches/v353/'+n,'utf8')));
+console.log(JSON.stringify({pass:true,release:'v353',files:78,immutable_base_files:77,financial_sources_unchanged:true}));
