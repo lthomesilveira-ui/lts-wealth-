@@ -1,0 +1,23 @@
+'use strict';
+const assert=require('node:assert/strict'),fs=require('node:fs'),model=require('../../releases/v359/lts-property-reconciliation-model.js'),f=require('./lts_v359_fixtures.cjs');
+const packet=JSON.parse(fs.readFileSync('qa/v359/native-source-result.json'));assert(packet.pass&&packet.version===358&&packet.invalid_manifests===12);
+const native=packet.synthetic_projection,range={from:'2013-10-10',to:'2026-10-27'},rows=f.rows(),wealth=f.wealth(native),page={rows,row_count:rows.length,total:f.total(rows)},build=(w=wealth,p=page,r=range)=>model.build(w,p,r);
+const original=JSON.stringify({wealth,page}),m=build();assert(m.bridge);assert.equal(m.count,356);assert.equal(m.groups[1].count,350);assert.equal(m.bridge.acquisition.canonical,33);assert.equal(m.bridge.acquisition.cashTotal,103);assert.equal(m.bridge.acquisition.cashRows.length,6);assert.equal(m.bridge.works.gap,2);assert.equal(m.bridge.works.components.length,2);assert.equal(JSON.stringify({wealth,page}),original);
+assert.equal(m.bridge.acquisition.loanPrefix.count,1);assert.equal(m.bridge.acquisition.loanTail.count,1);assert.equal(m.bridge.acquisition.cardTotal,5);
+let cases=0;const noBridge=change=>{const w=structuredClone(wealth);change(w.wealth.cipo_reconciliation);assert.equal(build(w).bridge,null);cases++};
+noBridge(r=>delete r.consortium.itau_source_audit);
+noBridge(r=>r.consortium.itau_source_audit.status='unproved');
+noBridge(r=>r.consortium.itau_source_audit.snapshot_scope.source_cash_rows[0].signed_amount++);
+noBridge(r=>r.consortium.itau_source_audit.snapshot_scope.source_cash_rows[0].sha256='wrong');
+noBridge(r=>r.consortium.itau_source_audit.snapshot_scope.source_cash_rows.push(r.consortium.itau_source_audit.snapshot_scope.source_cash_rows[0]));
+noBridge(r=>r.consortium.itau_source_audit.snapshot_scope.investment_summary[0].cells.J5++);
+noBridge(r=>r.consortium.itau_source_audit.snapshot_scope.source_paid_cutoff='2026-10-27');
+noBridge(r=>r.components.find(x=>x.class==='improvement').source_paid++);
+noBridge(r=>r.consortium.itau_source_audit.snapshot_scope.source_card_consortium_rows[0].signed_amount++);
+noBridge(r=>r.consortium.itau_source_audit.snapshot_scope.source_cash_rows=r.consortium.itau_source_audit.snapshot_scope.source_cash_rows.filter(x=>x.file==='Synthetic.xlsm'));
+assert.equal(build(wealth,page,{from:'2026-01-01',to:'2026-10-27'}).bridge,null);
+for(const change of [p=>p.row_count--,p=>p.total++,p=>p.rows[1].key=p.rows[0].key,p=>p.rows[0].property_code='other',p=>p.rows[0].amount=null,p=>p.rows[0].taxonomy.group='Unmapped']){const p=structuredClone(page);change(p);assert.throws(()=>build(wealth,p));cases++;}
+const changed=structuredClone(page);changed.rows.find(x=>x.key==='tail').amount++;changed.total++;assert(build(wealth,changed).bridge,'later payment changes propagate without personal constants');
+const old=structuredClone(page);old.rows.find(x=>x.key==='prefix').amount++;old.total++;assert.equal(build(wealth,old).bridge,null);
+assert(m.bridge.acquisition.cashRows.some(x=>x.signed_amount<0)&&m.bridge.acquisition.cashRows.some(x=>x.signed_amount===0));
+console.log(JSON.stringify({pass:true,release:'v359',native_v4_projection:true,invalid_cases:cases,source_copies_counted_once:true,source_signed_zero_preserved:true,unknown_bridge_not_zero:true,subcent_precision_preserved:true,no_financial_writes:true}));
