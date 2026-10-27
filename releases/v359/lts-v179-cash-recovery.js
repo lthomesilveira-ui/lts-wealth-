@@ -347,7 +347,7 @@
   const detailHistory=[];
   const apartment='Apartamento · CIPÓ 396';
   function closeDetail(){sequence++;detailHistory.length=0;state.detail=null;cipoReturn=null;document.getElementById('v178Drawer')?.remove();if(lastFocus?.isConnected)lastFocus.focus();lastFocus=null}
-  function closeCipo(){const current=cipoModal;cipoModal=null;current?.host.remove();if(current?.focus?.isConnected)current.focus.focus()}
+  function closeCipo(){const current=cipoModal;cipoModal=null;current?.host.remove();if(current?.badge)current.badge.hidden=current.badgeHidden;if(current?.focus?.isConnected)current.focus.focus()}
   function cipoCurrent(c){return c===cipoModal&&c.host.isConnected&&c.route===V&&c.session===cashGeneration()&&c.epoch===cashAuthEpoch&&c.day===day()&&!!D&&!N.classList.contains('hidden')}
   async function openCipoReconciliation(wealth,force=false){
    closeCipo();closeDetail();
@@ -355,6 +355,7 @@
    const host=document.createElement('div');host.id='v359Cipo';host.className='v168-modal-bg';
    host.innerHTML='<section class="v168-modal v359-property" role="dialog" aria-modal="true" aria-labelledby="v359CipoTitle"><header><div><h2 id="v359CipoTitle">CIPÓ 396 · composição dos gastos</h2><p>Da aquisição às despesas do imóvel.</p></div><button type="button" class="v168-btn v359-close" aria-label="Fechar composição de Cipó">×</button></header><div class="v359-content" role="status">Carregando lançamentos…</div></section>';
    const c=cipoModal={host,focus:document.activeElement,wealth,route:V,session:cashGeneration(),epoch:cashAuthEpoch,day:day(),range:{from:'2013-10-10',to:day()}};
+   c.badge=window.parent.document.getElementById('release-badge-v183');c.badgeHidden=c.badge?.hidden;if(c.badge)c.badge.hidden=true;
    document.body.appendChild(host);host.querySelector('.v359-close').onclick=closeCipo;
    host.onclick=e=>{if(e.target===host)closeCipo()};
    host.addEventListener('keydown',e=>{if(e.key==='Escape')closeCipo();if(e.key==='Tab'){const els=[...host.querySelectorAll('button,summary,a[href],input')].filter(x=>x.getClientRects().length),first=els[0],last=els.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last?.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first?.focus()}}});
