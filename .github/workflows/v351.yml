@@ -1,4 +1,4 @@
-name: V351 reviewed card settlements and posted cash
+name: V351 reviewed C6 settlement and final flow schedule
 on:
   pull_request:
     paths: ['backend/patches/v351/**','backend/qa/*v351*','backend/qa/fixtures/v351*','.github/workflows/v351.yml','docs/V351_REVIEWED_SETTLEMENTS.md']
@@ -41,6 +41,6 @@ jobs:
           assert len(old)==1 and old[0]['passed']
           rows=[r for r in rows if r.get('version')==351]
           assert len(rows)==1 and rows[0]['pass'] and rows[0]['version']==351
-          assert rows[0]['rejection_cases']==9
+          assert rows[0]['rejection_cases']==10
           print(json.dumps(rows[0]))
           PY

@@ -1,19 +1,18 @@
 -- Private manifest, service execution. Recognize existing posted payments;
--- never execute a payment or add card consumption a second time.
+-- preserve the final application cash ledger; create only the reviewed C6 association.
 DO $apply$
 DECLARE u uuid:=current_setting('lts.v351_owner')::uuid;p jsonb:=current_setting('lts.v351_manifest')::jsonb;
  bill public.lts_open_finance_staging%ROWTYPE;pay public.lts_open_finance_staging%ROWTYPE;
  l jsonb;c jsonb;items jsonb;manifest jsonb;consumption jsonb;coverage jsonb;selected jsonb;canon jsonb;
- before_cash jsonb;after_cash jsonb;before_spend jsonb;after_spend jsonb;
- before_future jsonb;after_future jsonb;before_links jsonb;before_contracts jsonb;
- b jsonb;ev_id uuid;new_evidence jsonb:='[]';new_link_id uuid;new_refs text[];
- f date:=(p->>'window_from')::date;t date:=(p->>'window_to')::date;delta numeric;n integer;
+ before_flow jsonb;after_flow jsonb;before_cash jsonb;after_cash jsonb;before_spend jsonb;after_spend jsonb;
+ before_links jsonb;before_contracts jsonb;
+ b jsonb;new_link_id uuid;before_raw jsonb;after_raw jsonb;
+ f date:=(p->>'window_from')::date;t date:=(p->>'window_to')::date;
 BEGIN
  IF u IS NULL OR f IS NULL OR t IS NULL OR f>t OR t-f>120 OR jsonb_array_length(p->'bank_payments')<>3
  THEN RAISE EXCEPTION 'V351_INVALID_MANIFEST';END IF;
  IF EXISTS(SELECT 1 FROM public.lts_card_documentary_payment_link_v272 WHERE user_id=u AND(invoice_source_id=(p#>>'{c6,invoice_id}')::uuid OR payment_source_id=(p#>>'{c6,payment_id}')::uuid))
- OR EXISTS(SELECT 1 FROM public.lts_reconciliation_evidence e JOIN jsonb_array_elements(p->'bank_payments')x ON e.source_ref='card_posted_payment_v351:'||(x->>'source_id')WHERE e.user_id=u)
- OR EXISTS(SELECT 1 FROM public.lts_projection_replacement_rule r WHERE r.user_id=u AND r.id=p#>>'{legacy_replacement,id}')
+
  THEN RAISE EXCEPTION 'V351_ALREADY_APPLIED_REVIEW_REQUIRED';END IF;
  FOR b IN SELECT x FROM jsonb_array_elements(p->'bank_payments')x LOOP
   IF (SELECT count(*)FROM public.lts_open_finance_staging s WHERE s.user_id=u AND s.id=(b->>'source_id')::uuid
@@ -34,15 +33,12 @@ BEGIN
  OR(SELECT count(DISTINCT provider_account_ref)FROM public.lts_open_finance_staging WHERE user_id=u AND institution_code='336'AND resource_type='credit_card'AND provider_deleted_at IS NULL)<>1
  OR NOT EXISTS(SELECT 1 FROM public.lts_open_finance_staging WHERE user_id=u AND institution_code='336'AND resource_type='credit_card'AND provider_deleted_at IS NULL AND provider_account_ref=bill.provider_account_ref)
  THEN RAISE EXCEPTION 'V351_C6_INVOICE_OR_ACCOUNT_CHANGED';END IF;
- IF(SELECT count(*)FROM public.evento_base eb WHERE eb.usuario_id=u AND eb.idx::text=p#>>'{legacy_replacement,source_ref}'AND eb.dados=p#>'{legacy_replacement,source_payload}')<>1
- THEN RAISE EXCEPTION 'V351_LEGACY_SOURCE_CHANGED';END IF;
- SELECT coalesce(jsonb_agg(e),'[]')INTO before_cash FROM jsonb_array_elements(public.lts_daily_flow_fix86_v12(u,f,t)->'events')e;
+ UPDATE public.lts_read_cache_epoch_v242 SET epoch=epoch+1 WHERE singleton=true;
+ before_flow:=public.lts_browser_flow_v242(f,t)->'flow';
  SELECT jsonb_agg(to_jsonb(r)ORDER BY row_key)INTO before_spend FROM public.lts_v229_expense_rows(u,date '2013-10-10',current_date)r;
- before_future:=public.lts_flow_future_read_slice_v9(u,current_date+1,current_date+40);
  SELECT coalesce(jsonb_agg(to_jsonb(x)ORDER BY id),'[]')INTO before_links FROM public.lts_card_documentary_payment_link_v272 x WHERE user_id=u;
  SELECT coalesce(jsonb_agg(to_jsonb(x)ORDER BY payment_source_id),'[]')INTO before_contracts FROM public.lts_card_settlement_expense_contract_v273 x WHERE user_id=u;
- IF EXISTS(SELECT 1 FROM jsonb_array_elements(p->'old_events')x WHERE NOT EXISTS(SELECT 1 FROM jsonb_array_elements(before_cash)e WHERE e=x))
- OR jsonb_array_length(p->'old_events')<>2 THEN RAISE EXCEPTION 'V351_EFFECTIVE_CASH_SOURCE_CHANGED';END IF;
+ SELECT jsonb_agg(to_jsonb(x)ORDER BY id)INTO before_raw FROM public.lts_open_finance_staging x WHERE user_id=u AND institution_code IN('336','341','237');
  INSERT INTO public.lts_card_documentary_payment_link_v272(user_id,institution_code,provider_item_id,invoice_source_id,payment_source_id,invoice_account_ref,payment_account_ref,expected_amount,expected_due_date,expected_closing_date,expected_payment_date,invoice_raw_hash,payment_raw_hash,documentary_sources,active)
  VALUES(u,'336',split_part(bill.provider_record_id,':',1),bill.id,pay.id,bill.provider_account_ref,pay.provider_account_ref,bill.signed_amount,(bill.normalized_payload->>'due_date')::date,(bill.normalized_payload->>'closing_date')::date,pay.posting_date,bill.raw_hash,pay.raw_hash,
  jsonb_build_array(jsonb_build_object('basis','issuer_invoice_and_other_payment','source_ref',bill.id,'raw_hash',bill.raw_hash),jsonb_build_object('basis','exact_posted_c6_checking_debit','source_ref',pay.id,'raw_hash',pay.raw_hash),jsonb_build_object('basis','single_c6_billing_account_and_exact_cycle_review','invoice_account_ref',bill.provider_account_ref)),true)RETURNING id INTO new_link_id;
@@ -61,32 +57,26 @@ BEGIN
  INSERT INTO public.lts_card_settlement_expense_contract_v273(user_id,payment_source_id,payload,revision,active)VALUES(u,pay.id,c,'reviewed-c6-settlement-v351',true);
  FOR b IN SELECT x FROM jsonb_array_elements(p->'bank_payments')x LOOP
   IF(SELECT count(*)FROM public.lts_card_documentary_payment_link_v272 x JOIN public.lts_card_settlement_expense_contract_v273 sc ON sc.user_id=x.user_id AND sc.payment_source_id=x.payment_source_id AND sc.active JOIN public.lts_open_finance_staging inv ON inv.user_id=x.user_id AND inv.id=x.invoice_source_id JOIN public.lts_open_finance_staging tx ON tx.user_id=x.user_id AND tx.id=x.payment_source_id WHERE x.user_id=u AND x.payment_source_id=(b->>'source_id')::uuid AND x.active AND public.lts_card_payment_refresh_annotation_v273(u,to_jsonb(x),to_jsonb(inv),to_jsonb(tx),sc.payload,current_date)IS NOT NULL)<>1 THEN RAISE EXCEPTION 'V351_REVIEWED_SETTLEMENT_MISSING';END IF;
-  INSERT INTO public.lts_reconciliation_evidence(user_id,evidence_date,account,amount,description,evidence_type,source_ref,status,metadata)
-  VALUES(u,(b->>'date')::date,b->>'bank',(b->>'amount')::numeric,b->>'description','bank_statement','card_posted_payment_v351:'||(b->>'source_id'),'documented',jsonb_build_object('schema','documented-card-settlement-cash-v351','source_table','lts_open_finance_staging','source_ref',b->>'source_id','raw_hash',b->>'raw_hash','source_status','POSTED','cash_effect','statement_fact_not_new_projection','tipo','fatura-pgto','natureza','liquidacao_fatura','exclude_from_spend',true,'not_new_consumption',true))RETURNING id INTO ev_id;
-  new_evidence:=new_evidence||jsonb_build_array(jsonb_build_object('id',ev_id,'source_id',b->>'source_id','date',b->>'date','bank',b->>'bank','amount',b->'amount','description',b->>'description'));
  END LOOP;
- INSERT INTO public.lts_projection_replacement_rule(id,user_id,source_table,description_exact,account_exact,date_from,date_to,action,replacement_source,replacement_ref,reason,evidence,active)
- VALUES(p#>>'{legacy_replacement,id}',u,'evento_base',p#>>'{legacy_replacement,source_payload,desc}',p#>>'{legacy_replacement,source_payload,conta}',(p#>>'{legacy_replacement,source_payload,dia}')::date,(p#>>'{legacy_replacement,source_payload,dia}')::date,'replace_legacy','lts_open_finance_staging',p#>>'{legacy_replacement,payment_source_id}','Quitação documentada substitui somente a previsão antiga; preservar débito bancário uma vez.',jsonb_build_object('schema','documented-card-settlement-cash-v351','legacy_ref',p#>>'{legacy_replacement,source_ref}','payment_source_id',p#>>'{legacy_replacement,payment_source_id}'),true);
- SELECT coalesce(jsonb_agg(e),'[]')INTO after_cash FROM jsonb_array_elements(public.lts_daily_flow_fix86_v12(u,f,t)->'events')e;
+ UPDATE public.lts_read_cache_epoch_v242 SET epoch=epoch+1 WHERE singleton=true;
+ after_flow:=public.lts_browser_flow_v242(f,t)->'flow';
  SELECT jsonb_agg(to_jsonb(r)ORDER BY row_key)INTO after_spend FROM public.lts_v229_expense_rows(u,date '2013-10-10',current_date)r;
  IF before_spend IS DISTINCT FROM after_spend THEN RAISE EXCEPTION 'V351_CONSUMPTION_CHANGED';END IF;
- SELECT array_agg(x->>'id')INTO new_refs FROM jsonb_array_elements(new_evidence)x;
- IF jsonb_array_length(after_cash)<>jsonb_array_length(before_cash)-2+3
- OR(SELECT count(*)FROM jsonb_array_elements(after_cash)e JOIN jsonb_array_elements(new_evidence)x ON e->>'source_ref'=x->>'id'WHERE e->>'source'='reconciliation_evidence'AND e->>'event_date'=x->>'date'AND e->>'account'=x->>'bank'AND(e->>'signed_amount')::numeric=(x->>'amount')::numeric)<>3
- THEN RAISE EXCEPTION 'V351_POSTED_CASH_NOT_REPRESENTED_ONCE';END IF;
- IF EXISTS((SELECT e FROM jsonb_array_elements(before_cash)e WHERE NOT EXISTS(SELECT 1 FROM jsonb_array_elements(p->'old_events')x WHERE x=e)EXCEPT ALL SELECT e FROM jsonb_array_elements(after_cash)e WHERE NOT(e->>'source_ref'=ANY(new_refs)))
- UNION ALL(SELECT e FROM jsonb_array_elements(after_cash)e WHERE NOT(e->>'source_ref'=ANY(new_refs))EXCEPT ALL SELECT e FROM jsonb_array_elements(before_cash)e WHERE NOT EXISTS(SELECT 1 FROM jsonb_array_elements(p->'old_events')x WHERE x=e)))
- THEN RAISE EXCEPTION 'V351_UNRELATED_CASH_EVENTS_CHANGED';END IF;
- IF EXISTS(SELECT 1 FROM public.lts_expense_realized e WHERE e.user_id=u AND e.source_table IN('lts_reconciliation_evidence','reconciliation_evidence')AND e.source_ref=ANY(new_refs)AND NOT e.exclude_from_spend)
- THEN RAISE EXCEPTION 'V351_PAYMENT_MISCLASSIFIED_AS_CONSUMPTION';END IF;
- IF EXISTS(SELECT 1 FROM jsonb_array_elements(p->'bank_payments')x JOIN public.lts_open_finance_staging s ON s.id=(x->>'source_id')::uuid AND s.user_id=u WHERE s.raw_hash IS DISTINCT FROM x->>'raw_hash'OR s.normalized_payload->>'status'<>'POSTED')THEN RAISE EXCEPTION 'V351_RAW_PAYMENT_CHANGED_DURING_ACTIVATION';END IF;
- after_future:=public.lts_flow_future_read_slice_v9(u,current_date+1,current_date+40);
- IF before_future->'events'IS DISTINCT FROM after_future->'events'THEN RAISE EXCEPTION 'V351_UNRELATED_FUTURE_EVENTS_CHANGED';END IF;
+ SELECT jsonb_agg(to_jsonb(x)ORDER BY id)INTO after_raw FROM public.lts_open_finance_staging x WHERE user_id=u AND institution_code IN('336','341','237');
+ IF before_raw IS DISTINCT FROM after_raw THEN RAISE EXCEPTION 'V351_RAW_SOURCE_CHANGED';END IF;
+ IF before_flow#>'{historical,days}'IS DISTINCT FROM after_flow#>'{historical,days}'
+ OR before_flow#>'{current_future,days}'IS DISTINCT FROM after_flow#>'{current_future,days}'
+ OR before_flow#>'{current_future,events}'IS DISTINCT FROM after_flow#>'{current_future,events}'
+ THEN RAISE EXCEPTION 'V351_APPLICATION_CASH_OR_FUTURE_CHANGED';END IF;
+ SELECT jsonb_agg(to_jsonb(q)ORDER BY d,a)INTO before_cash FROM(
+  SELECT e->>'event_date' d,e->>'account'a,sum((e->>'signed_amount')::numeric)amount,count(*)n
+  FROM jsonb_array_elements(coalesce(before_flow#>'{historical,events}','[]'))e GROUP BY 1,2)q;
+ SELECT jsonb_agg(to_jsonb(q)ORDER BY d,a)INTO after_cash FROM(
+  SELECT e->>'event_date' d,e->>'account'a,sum((e->>'signed_amount')::numeric)amount,count(*)n
+  FROM jsonb_array_elements(coalesce(after_flow#>'{historical,events}','[]'))e GROUP BY 1,2)q;
+ IF before_cash IS DISTINCT FROM after_cash THEN RAISE EXCEPTION 'V351_APPLICATION_BANK_DAY_CASH_CHANGED';END IF;
  IF before_links IS DISTINCT FROM(SELECT coalesce(jsonb_agg(to_jsonb(x)ORDER BY id),'[]')FROM public.lts_card_documentary_payment_link_v272 x WHERE user_id=u AND id<>new_link_id)
  OR before_contracts IS DISTINCT FROM(SELECT coalesce(jsonb_agg(to_jsonb(x)ORDER BY payment_source_id),'[]')FROM public.lts_card_settlement_expense_contract_v273 x WHERE user_id=u AND payment_source_id<>pay.id)
  THEN RAISE EXCEPTION 'V351_EXISTING_SETTLEMENTS_CHANGED';END IF;
- SELECT sum((x->>'signed_amount')::numeric)INTO delta FROM jsonb_array_elements(after_cash)x;
- delta:=delta-(SELECT sum((x->>'signed_amount')::numeric)FROM jsonb_array_elements(before_cash)x);
- IF delta<>(SELECT sum((x->>'amount')::numeric)FROM jsonb_array_elements(new_evidence)x)-(SELECT sum((x->>'signed_amount')::numeric)FROM jsonb_array_elements(p->'old_events')x)THEN RAISE EXCEPTION 'V351_CASH_DELTA_CHANGED';END IF;
- PERFORM set_config('lts.v351_receipt',jsonb_build_object('pass',true,'new_posted_cash_facts',3,'old_projection_rows_replaced',2,'cash_delta',delta,'consumption_unchanged',true,'future_events_unchanged',true,'existing_settlements_unchanged',true,'c6_issuer_type_preserved','OTHER_PAYMENT','c6_purchase_count',jsonb_array_length(consumption),'c6_raw_items',jsonb_array_length(items))::text,true);
+ PERFORM set_config('lts.v351_receipt',jsonb_build_object('pass',true,'new_payment_links',1,'new_posted_cash_facts',0,'cash_delta',0,'consumption_unchanged',true,'application_bank_days_unchanged',true,'future_events_unchanged',true,'existing_settlements_unchanged',true,'raw_sources_unchanged',true,'c6_issuer_type_preserved','OTHER_PAYMENT','c6_purchase_count',jsonb_array_length(consumption),'c6_raw_items',jsonb_array_length(items))::text,true);
 END $apply$;
