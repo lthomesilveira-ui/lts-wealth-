@@ -24,7 +24,7 @@ BEGIN
  OR before_j->'rsu_summary'IS DISTINCT FROM after_j->'rsu_summary'
  OR before_j#>'{wealth,summary}'IS DISTINCT FROM after_j#>'{wealth,summary}'
  OR before_j->'rsu'IS DISTINCT FROM after_j->'rsu'
- OR(before_j->'current_liquidity'-'computed_at')IS DISTINCT FROM(after_j->'current_liquidity'-'computed_at')
+ OR((before_j->'current_liquidity')-'computed_at')IS DISTINCT FROM((after_j->'current_liquidity')-'computed_at')
  THEN RAISE EXCEPTION 'V352_EXISTING_VALUATION_OR_CASH_CHANGED';END IF;
  IF after_j#>>'{brokerage_reference,source_sha256}'IS DISTINCT FROM m->>'source_sha256'
  OR after_j#>'{brokerage_reference,position_as_of}'IS DISTINCT FROM 'null'::jsonb

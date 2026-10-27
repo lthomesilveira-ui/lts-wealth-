@@ -7,7 +7,8 @@
   "scope": [
     "Received brokerage reference with explicit unknown position date and uncomposed values",
     "Preserve existing dated position, liquidity, quantities and projection assumptions",
-    "Clarify historical acquisition payments and documentary mortgage date"
+    "Clarify historical acquisition payments and documentary mortgage date",
+    "Label D+3 settlement dates and 30% reserve as planning assumptions"
   ],
   "financial_source_data_changed": false,
   "physical_mobile_validated": false,

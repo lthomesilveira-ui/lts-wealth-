@@ -10,6 +10,7 @@ function wealth(){
  j.current_awards={as_of:'2020-10-01',vested_shares:0,brokerage_cash:3};j.current_liquidity.brokerage_available=3;
  j.rsu_summary={as_of:'2020-10-01',available_total_brl:3,future_regular_brl:60,future_cash_net_brl:28,future_considered_total_brl:88};
  j.wealth.assets={cipo_396:{market_central:2000,documentary_debt:900,equity_central:1100},volvo_xc40:{market_central:500,documented_financed_balance:100}};
+ j.rsu.future_schedule=[{asset_type:'RSU',eligibility_date:'2026-11-05',available_date:'2026-11-10',quantity:34,unit_price_usd:1.01,fx_rate:5.123456,gross_value_brl:175.92,net_value_brl:175.92}];
  j.brokerage_reference=reference;return j;
 }
 async function run(browser,viewport,label){
@@ -37,6 +38,7 @@ async function run(browser,viewport,label){
   await paint('rsu');const card=frame.locator('.v352-brokerage-reference');assert.equal(await card.count(),1);
   const text=await card.innerText();for(const v of ['26/10/2026','não mostra a data','1.000,00','0,03','999,97','pendente'])assert(text.includes(v),v);
   assert.equal(await card.locator('details[open]').count(),0);assert(!text.includes('SHA256'));assert((await card.boundingBox()).height<440,'Collapsed reference is compact');
+  assert.match(await frame.locator('.v168-awards').innerText(),/disponibilidade estimada/);assert.match(await frame.locator('body').innerText(),/D\+3 e a reserva de 30% são premissas de planejamento/);
   await card.locator('summary').click();const detail=await card.innerText();for(const v of ['34','8','0,01','QUANTIDADE','SHA256','Synthetic <img'])assert(detail.includes(v),v);
   assert.equal(await card.locator('img').count(),0);assert.equal(await frame.evaluate(()=>typeof unsafe),'undefined');
   const finance=await frame.evaluate(()=>({available:window.__LTS_V168_STATE.wealth.data.current_liquidity.brokerage_available,dated:window.__LTS_V168_STATE.wealth.data.morgan_statement.as_of}));assert.deepEqual(finance,{available:3,dated:'2020-10-01'});

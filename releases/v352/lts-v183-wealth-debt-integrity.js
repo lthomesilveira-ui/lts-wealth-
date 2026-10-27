@@ -56,6 +56,11 @@
               card.appendChild(note('Composição monetária de RSUs e Cash RSUs pendente. Confira a aba VALOR ou o extrato da corretora.'));
               const tabs=root.querySelector('.v168-tabs');if(tabs)tabs.after(card);else root.prepend(card);
             }
+            const awards=root.querySelector('.v168-awards');
+            if(awards){
+              awards.before(note('A liquidação em D+3 e a reserva de 30% são premissas de planejamento. A corretora e os documentos fiscais confirmam datas e retenções efetivas.'));
+              for(const small of awards.querySelectorAll('small'))if(/ disponível$/.test(small.textContent))small.textContent=small.textContent.replace(/ disponível$/,' · disponibilidade estimada');
+            }
             const m=j.morgan_statement||{},a=m.available_components||{},f=m.future_components||{},r=j.rsu_summary||{};
             const available=componentRemainder(j.current_liquidity?.brokerage_available??m.available_total_brl??r.available_total_brl,[j.current_awards?.vested_shares??a.vested_shares_brl??r.vested_shares_brl,j.current_awards?.brokerage_cash??a.brokerage_cash_brl??r.brokerage_cash_brl]);
             const future=componentRemainder(r.future_considered_total_brl,[r.future_regular_brl,r.future_cash_net_brl]);
