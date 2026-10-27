@@ -84,7 +84,7 @@ RETURNS TABLE(debit_id uuid,credit_id uuid)LANGUAGE sql STABLE SET search_path='
 WITH proofs AS MATERIALIZED(
  SELECT e.* FROM public.lts_reconciliation_evidence e
  WHERE e.user_id=p_user_id AND e.evidence_type='previously_proved_transfer_refresh_v363' AND e.status='documented'
- AND e.metadata->>'prior_credit_observation_id'~'^[0-9a-f-]{36}$'
+ AND e.metadata->>'prior_credit_observation_id'~'^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$'
  AND e.metadata->>'confirmation_audit_id'~'^[0-9]+$'
 ), posted AS MATERIALIZED(
  SELECT * FROM public.lts_bank_posted_rows_v231(p_user_id)
@@ -132,3 +132,22 @@ BEGIN
  EXECUTE replace(definition,E';\n$function$',suffix||E';\n$function$');
  IF attributes IS DISTINCT FROM(SELECT to_jsonb(p)-'prosrc'FROM pg_proc p WHERE oid=target)THEN RAISE EXCEPTION 'V363_PAIR_READER_ATTRIBUTES_CHANGED';END IF;
 END $patch$;
+
+-- Keep the displayed/private provenance truthful about the original owner's scope.
+DO $label$
+DECLARE target regprocedure:='public.lts_browser_flow_pre_v238(date,date)'::regprocedure;
+ definition text;attributes jsonb;original text;
+ old_part text:=$old$'classification_basis',CASE WHEN EXISTS(SELECT 1 FROM public.lts_owner_confirmed_transfer_pairs_v263(u) q WHERE q.debit_id=p.id OR q.credit_id=p.id) THEN 'owner_confirmed_exact_posted_pair' ELSE 'posted_pair_same_owner_cpf_and_bank_routing' END$old$;
+ new_part text:=$new$'classification_basis',CASE WHEN EXISTS(SELECT 1 FROM public.lts_previously_proved_transfer_pairs_v363(u) q WHERE q.debit_id=p.id OR q.credit_id=p.id) THEN 'prior_documented_pair_with_owner_destination_v363' WHEN EXISTS(SELECT 1 FROM public.lts_owner_confirmed_transfer_pairs_v263(u) q WHERE q.debit_id=p.id OR q.credit_id=p.id) THEN 'owner_confirmed_exact_posted_pair' ELSE 'posted_pair_same_owner_cpf_and_bank_routing' END$new$;
+BEGIN
+ SELECT pg_get_functiondef(target),to_jsonb(p)-'prosrc'INTO definition,attributes FROM pg_proc p WHERE p.oid=target;
+ IF strpos(definition,new_part)>0 THEN
+  original:=replace(definition,new_part,old_part);
+  IF md5(original)<>'a529f1b10855f2ac497b5631c13de492'THEN RAISE EXCEPTION 'V363_FLOW_REPLAY_SOURCE_CHANGED';END IF;
+  RETURN;
+ END IF;
+ IF md5(definition)<>'a529f1b10855f2ac497b5631c13de492'OR(length(definition)-length(replace(definition,old_part,'')))/length(old_part)<>1
+ THEN RAISE EXCEPTION 'V363_FLOW_BASIS_SOURCE_CHANGED';END IF;
+ EXECUTE replace(definition,old_part,new_part);
+ IF attributes IS DISTINCT FROM(SELECT to_jsonb(p)-'prosrc'FROM pg_proc p WHERE oid=target)THEN RAISE EXCEPTION 'V363_FLOW_ATTRIBUTES_CHANGED';END IF;
+END $label$;

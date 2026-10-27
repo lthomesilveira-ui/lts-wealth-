@@ -56,10 +56,12 @@ debit=sql('backend/patches/v304/posted_own_transfer.sql').split('CREATE OR REPLA
 print(debit)
 print(sql('backend/qa/fixtures/v363_bank_rows.sql').replace('RETURNS SETOF lts_open_finance_staging','RETURNS SETOF v363_fixture.lts_open_finance_staging')+';')
 print(sql('backend/qa/fixtures/v363_pair_reader.sql')+';')
+print(sql('backend/qa/fixtures/v363_flow_reader.sql')+';')
 print(r'''
 REVOKE ALL ON FUNCTION v363_fixture.lts_owner_confirmed_transfer_pairs_v263(uuid)FROM PUBLIC,anon,authenticated;
 GRANT EXECUTE ON FUNCTION v363_fixture.lts_owner_confirmed_transfer_pairs_v263(uuid)TO service_role;
 CREATE TEMP TABLE v363_attributes AS SELECT to_jsonb(p)-'prosrc'j FROM pg_proc p WHERE oid='v363_fixture.lts_owner_confirmed_transfer_pairs_v263(uuid)'::regprocedure;
+CREATE TEMP TABLE v363_flow_attributes AS SELECT to_jsonb(p)-'prosrc'j FROM pg_proc p WHERE oid='v363_fixture.lts_browser_flow_pre_v238(date,date)'::regprocedure;
 CREATE TEMP TABLE v363_raw AS SELECT jsonb_build_object('bank',(SELECT jsonb_agg(to_jsonb(x)ORDER BY id)FROM v363_fixture.lts_open_finance_staging x),'audit',(SELECT jsonb_agg(to_jsonb(x)ORDER BY id)FROM v363_fixture.audit_log x))j;
 ''')
 patch=sql('backend/patches/v363/previously_proved_transfer.sql')
@@ -89,10 +91,13 @@ WHERE d.id='00000000-0000-4000-8000-000000000005'AND c.id='00000000-0000-4000-80
 AND o.institution='Itaú'AND t.institution='Bradesco'AND ob.resource_type='balance'AND ob.institution_code='341'AND tb.resource_type='balance'AND tb.institution_code='237';
 CREATE FUNCTION v363_fixture.test_valid(j jsonb)RETURNS boolean LANGUAGE sql AS $$SELECT v363_fixture.lts_transfer_refresh_valid_v363(
  '00000000-0000-4000-8000-000000000001',j->'debit',j->'credit',j->'prior',j->'confirmation',j->'origin',j->'destination',j->'origin_balance',j->'destination_balance',j->'evidence')$$;
-DO $test$DECLARE j jsonb;r record;n integer:=0;BEGIN
+DO $test$DECLARE j jsonb;r record;n integer:=0;expression text;basis text;BEGIN
  SELECT i.j INTO STRICT j FROM v363_inputs i;
  IF NOT v363_fixture.test_valid(j)THEN RAISE EXCEPTION 'Valid documentary continuity rejected';END IF;
  IF(SELECT count(*)FROM v363_fixture.lts_owner_confirmed_transfer_pairs_v263('00000000-0000-4000-8000-000000000001'))<>1 THEN RAISE EXCEPTION 'Shared pair reader did not use proof';END IF;
+ expression:=split_part(split_part(pg_get_functiondef('v363_fixture.lts_browser_flow_pre_v238(date,date)'::regprocedure),'''classification_basis'',',2),E',\n ''own_transfer_counterparty_id''',1);
+ EXECUTE 'SELECT '||expression||' FROM(SELECT $1::uuid u,$2::uuid id)p' INTO basis USING '00000000-0000-4000-8000-000000000001'::uuid,'00000000-0000-4000-8000-000000000006'::uuid;
+ IF basis<>'prior_documented_pair_with_owner_destination_v363'THEN RAISE EXCEPTION 'Flow mislabeled a destination-only confirmation';END IF;
  FOR r IN SELECT * FROM(VALUES
  ('credit owner',ARRAY['credit','user_id'],'"00000000-0000-4000-8000-000000000002"'::jsonb),
  ('prior owner',ARRAY['prior','user_id'],'"00000000-0000-4000-8000-000000000002"'::jsonb),
@@ -129,6 +134,7 @@ DO $test$DECLARE j jsonb;r record;n integer:=0;BEGIN
  END LOOP;
  IF EXISTS(SELECT 1 FROM v363_fixture.lts_previously_proved_transfer_pairs_v363('00000000-0000-4000-8000-000000000002'))THEN RAISE EXCEPTION 'Owner isolation failed';END IF;
  IF(SELECT a.j FROM v363_attributes a)IS DISTINCT FROM(SELECT to_jsonb(p)-'prosrc'FROM pg_proc p WHERE oid='v363_fixture.lts_owner_confirmed_transfer_pairs_v263(uuid)'::regprocedure)THEN RAISE EXCEPTION 'Existing ACL/security attributes changed';END IF;
+ IF(SELECT a.j FROM v363_flow_attributes a)IS DISTINCT FROM(SELECT to_jsonb(p)-'prosrc'FROM pg_proc p WHERE oid='v363_fixture.lts_browser_flow_pre_v238(date,date)'::regprocedure)THEN RAISE EXCEPTION 'Flow ACL/security attributes changed';END IF;
  IF has_function_privilege('authenticated','v363_fixture.lts_previously_proved_transfer_pairs_v363(uuid)','EXECUTE')OR has_function_privilege('anon','v363_fixture.lts_previously_proved_transfer_pairs_v363(uuid)','EXECUTE')THEN RAISE EXCEPTION 'Private helper exposed';END IF;
  IF(SELECT a.j FROM v363_raw a)IS DISTINCT FROM jsonb_build_object('bank',(SELECT jsonb_agg(to_jsonb(x)ORDER BY id)FROM v363_fixture.lts_open_finance_staging x),'audit',(SELECT jsonb_agg(to_jsonb(x)ORDER BY id)FROM v363_fixture.audit_log x))THEN RAISE EXCEPTION 'Sources or owner confirmation rewritten';END IF;
  RAISE NOTICE 'Rejected % invalid documentary transfer cases',n;
