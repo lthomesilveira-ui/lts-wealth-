@@ -34,11 +34,13 @@ async function run(browser,viewport,label){
   await page.goto(base+'/releases/v352/app.html',{waitUntil:'domcontentloaded'});
   const frame=page.frames().find(f=>f.url().includes('/releases/v352/index.html'))||await page.waitForEvent('framenavigated',{predicate:f=>f.url().includes('/releases/v352/index.html')});assert(frame);
   await frame.waitForFunction(()=>document.body.dataset.ltsBootState==='ready'&&window.__LTS_V183_WEALTH_INTEGRITY?.installed&&typeof D!=='undefined'&&D&&typeof N!=='undefined'&&!N.classList.contains('hidden'));
+  await page.waitForLoadState('networkidle');
   const paint=async(tab,data=wealth())=>frame.evaluate(({tab,data})=>{window.__LTS_V168_STATE.wealth.data=data;window.__LTS_V168_STATE.wealth.tab=tab;V='Patrimônio';render();},{tab,data});
   await paint('rsu');const card=frame.locator('.v352-brokerage-reference');await card.waitFor({state:'visible'});assert.equal(await card.count(),1);
   const text=await card.innerText();for(const v of ['26/10/2026','não mostra a data','1.000,00','0,03','999,97','pendente'])assert(text.includes(v),v);
   assert.equal(await card.locator('details[open]').count(),0);assert(!text.includes('SHA256'));
-  const height=await card.evaluate(el=>el.getBoundingClientRect().height);assert(height>0&&height<440,'Collapsed reference is visible and compact');
+  const layout=await frame.waitForFunction(()=>{const el=document.querySelector('.v352-brokerage-reference'),height=el?.getBoundingClientRect().height;return height>0?{height,open:!!el.querySelector('details[open]')}:false;});
+  const measured=await layout.jsonValue();assert(!measured.open&&measured.height<440,label+' collapsed reference height: '+measured.height);
   assert.match(await frame.locator('.v168-awards').innerText(),/disponibilidade (?:estimada|projetada)/);assert.match(await frame.locator('body').innerText(),/D\+3 e a reserva de 30% são premissas de planejamento/);
   await card.locator('summary').click();const detail=await card.innerText();for(const v of ['34','8','0,01','QUANTIDADE','SHA256','Synthetic <img'])assert(detail.includes(v),v);
   assert.equal(await card.locator('img').count(),0);assert.equal(await frame.evaluate(()=>typeof unsafe),'undefined');
@@ -55,6 +57,6 @@ async function run(browser,viewport,label){
   }
   assert.deepEqual(errors,[]);assert.deepEqual(writes,[]);
   return{pass:true,label,viewport,unknown_position_date_visible:true,origin_collapsed:true,prior_dated_available_preserved:true,acquisition_label_correct:true,no_financial_writes:true,synthetic_session:true,private_http:false,physical_device:false};
- }catch(e){await page.screenshot({path:path.join(out,label+'-failure.png')});console.error({errors,writes});throw e;}finally{await ctx.close();}
+ }catch(e){await page.screenshot({path:path.join(out,label+'-failure.png')});console.error({label,errors,writes});throw e;}finally{await ctx.close();}
 }
 (async()=>{const b=await chromium.launch({headless:true});try{const r=[];for(const[v,l]of[[{width:1440,height:1000},'desktop'],[{width:390,height:844},'mobile-390'],[{width:360,height:800},'mobile-360']])r.push(await run(b,v,l));fs.writeFileSync(path.join(out,'brokerage-browser-results.json'),JSON.stringify(r,null,2));console.log(JSON.stringify(r));}finally{await b.close();}})().catch(e=>{console.error(e);process.exitCode=1;});
