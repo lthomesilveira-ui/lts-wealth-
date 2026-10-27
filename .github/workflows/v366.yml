@@ -1,0 +1,45 @@
+name: V366 rolling recurrence continuity
+on:
+  pull_request:
+    paths: ['backend/patches/v366/**','backend/qa/*v366*','backend/qa/fixtures/v366*','.github/workflows/v366.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native-recurring-contract:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: synthetic-test-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: synthetic-test-only
+    steps:
+      - uses: actions/checkout@v4
+      - run: psql -v ON_ERROR_STOP=1 -c 'CREATE ROLE anon; CREATE ROLE authenticated; CREATE ROLE service_role;'
+      - run: python3 backend/qa/lts_v366_ci_sql.py > /tmp/lts-v366.sql
+      - run: psql -v ON_ERROR_STOP=1 -At -f /tmp/lts-v366.sql > /tmp/lts-v366-result.log
+      - if: failure()
+        run: tail -c 6000 /tmp/lts-v366-result.log || true
+      - run: |
+          python3 - <<'PY'
+          import json,pathlib
+          rows=[json.loads(x)for x in pathlib.Path('/tmp/lts-v366-result.log').read_text().splitlines()if x.startswith('{')]
+          assert any(x.get('version')==366 and x.get('pass') for x in rows)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v366-native-recurrence
+          path: /tmp/lts-v366-result.log
