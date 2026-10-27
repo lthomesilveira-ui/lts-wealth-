@@ -1,0 +1,66 @@
+name: V357 dated debt evidence in current readers
+on:
+  pull_request:
+    paths: ['backend/patches/v357/**','backend/qa/*v357*','backend/qa/fixtures/v357*','.github/scripts/*v357*','.github/workflows/v357.yml','docs/V357_DATED_DEBT_READERS.md']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native-contract:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: synthetic-test-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: synthetic-test-only
+    steps:
+      - uses: actions/checkout@v4
+      - run: psql -v ON_ERROR_STOP=1 -c 'CREATE ROLE anon; CREATE ROLE authenticated; CREATE ROLE service_role;'
+      - run: python3 backend/qa/lts_v357_ci_sql.py > /tmp/lts-v357.sql
+      - run: psql -v ON_ERROR_STOP=1 -At -f /tmp/lts-v357.sql > /tmp/lts-v357-result.log
+      - if: failure()
+        run: tail -c 6000 /tmp/lts-v357-result.log || true
+      - run: python3 backend/qa/lts_v357_native_contract.py /tmp/lts-v357-result.log
+      - uses: actions/upload-artifact@v4
+        with:
+          name: v357-native-debt-projection
+          path: qa/v357/native-debt-projection.json
+  browser-contract:
+    needs: native-contract
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    container: mcr.microsoft.com/playwright:v1.58.2-noble
+    env:
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/download-artifact@v4
+        with:
+          name: v357-native-debt-projection
+          path: qa/v357/
+      - run: npm install --no-save --package-lock=false playwright@1.58.2
+      - run: |
+          python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/lts-v357-http.log 2>&1 &
+          node .github/scripts/lts_v309_wait_http.cjs
+      - run: node .github/scripts/lts_v357_debt_browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v357-debt-browser
+          path: qa/v357/
