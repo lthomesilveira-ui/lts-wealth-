@@ -33,9 +33,9 @@ async function run(browser,viewport,label){
  try{
   await page.goto(base+'/releases/v352/app.html',{waitUntil:'domcontentloaded'});
   const frame=page.frames().find(f=>f.url().includes('/releases/v352/index.html'))||await page.waitForEvent('framenavigated',{predicate:f=>f.url().includes('/releases/v352/index.html')});assert(frame);
-  await frame.waitForFunction(()=>document.body.dataset.ltsBootState==='ready'&&window.__LTS_V183_WEALTH_INTEGRITY?.installed);
+  await frame.waitForFunction(()=>document.body.dataset.ltsBootState==='ready'&&window.__LTS_V183_WEALTH_INTEGRITY?.installed&&typeof D!=='undefined'&&D&&typeof N!=='undefined'&&!N.classList.contains('hidden'));
   const paint=async(tab,data=wealth())=>frame.evaluate(({tab,data})=>{window.__LTS_V168_STATE.wealth.data=data;window.__LTS_V168_STATE.wealth.tab=tab;V='Patrimônio';render();},{tab,data});
-  await paint('rsu');const card=frame.locator('.v352-brokerage-reference');assert.equal(await card.count(),1);
+  await paint('rsu');const card=frame.locator('.v352-brokerage-reference');await card.waitFor({state:'visible'});assert.equal(await card.count(),1);
   const text=await card.innerText();for(const v of ['26/10/2026','não mostra a data','1.000,00','0,03','999,97','pendente'])assert(text.includes(v),v);
   assert.equal(await card.locator('details[open]').count(),0);assert(!text.includes('SHA256'));assert((await card.boundingBox()).height<440,'Collapsed reference is compact');
   assert.match(await frame.locator('.v168-awards').innerText(),/disponibilidade estimada/);assert.match(await frame.locator('body').innerText(),/D\+3 e a reserva de 30% são premissas de planejamento/);
