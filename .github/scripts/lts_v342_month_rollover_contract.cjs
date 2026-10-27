@@ -3,7 +3,7 @@
 // Browser layout and the financial interface are checked separately in CI.
 const vm=require('node:vm'),fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
 const release=process.env.LTS_RELEASE||'v342',expectStale=process.env.LTS_EXPECT_STALE_MONTH==='true';
-assert(['v341','v342','v344','v346','v352','v353'].includes(release));
+assert(['v341','v342','v344','v346','v352','v353','v356'].includes(release));
 const model=require('../../releases/'+release+'/lts-v337-month-model.js');
 const source=fs.readFileSync(path.join('releases',release,'lts-v337-month-overview.js'),'utf8');
 const turn=()=>new Promise(resolve=>setImmediate(resolve));
