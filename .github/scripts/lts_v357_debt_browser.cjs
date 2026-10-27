@@ -55,6 +55,8 @@ async function run(browser,viewport,label){
   assert.match(await vehicle.innerText(),/não é o saldo devedor de hoje/);
   const pos=await frame.evaluate(()=>window.__LTS_V168_STATE.wealth.data.wealth.assets.volvo_xc40);
   assert.equal(pos.equity_central,null);assert.equal(pos.documented_financed_balance,100);assert.equal(pos.future_schedule_total,580);
+  await initial.evaluate(el=>el.scrollIntoView({block:'center',behavior:'instant'}));
+  await frame.waitForFunction(()=>{const e=[...document.querySelectorAll('.v168-asset .v168-fact')].find(x=>x.textContent.includes('Financiamento na contratação')),r=e?.getBoundingClientRect();return r&&r.top>=0&&r.bottom<=innerHeight;});
   await page.screenshot({path:path.join(out,label+'-vehicle-initial-reference.png')});
   for(const route of ['Dashboard','Fluxo Diário']){
    await frame.evaluate(v=>{V=v;renderNav();render();},route);
