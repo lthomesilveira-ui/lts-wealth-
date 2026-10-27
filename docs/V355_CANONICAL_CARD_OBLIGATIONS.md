@@ -1,0 +1,7 @@
+# The same unsettled obligation in every current reader
+
+The legacy Dashboard/product cache can select a statement already settled in the canonical cycle reader. Read the same cycles as the composition screen and overlay the operating summary on the current product, Dashboard and current-date operating readers. Historical operating requests keep their previous behavior.
+
+For each card, choose the oldest unsettled cycle, then order those targets by the known due date or the explicitly undated reference month. Only a boolean `settlement_confirmed=true` closes a cycle. An overdue or partially paid cycle stays visible; a calendar rollover does not settle it. Its amount remains the received cycle total, rather than an inferred outstanding balance. Zero/credit cycles remain separate from payable targets. Missing or conflicting source data keeps totals and the global target unavailable; other identified evidence remains inspectable.
+
+This changes the read model, not invoices, payment links, bank facts, expense classifications or projections. Private pure helpers have no browser execution grant. Three exact source leases preserve all prior reader attributes. The canonical cycles do not depend on the operating readers, avoiding recursion. Live validation must compare all other returned finance and the source tables, and confirm the same target in product, cockpit, operating, composition and Flow. Frontend V353 remains immutable.
