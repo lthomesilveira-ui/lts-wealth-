@@ -1,0 +1,46 @@
+name: V364 direct lookup for documented transfers
+on:
+  pull_request:
+    paths: ['backend/patches/v364/**','backend/qa/*v364*','.github/workflows/v364.yml','docs/V364_TRANSFER_LOOKUP.md']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native-transfer-lookup:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: synthetic-test-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: synthetic-test-only
+    steps:
+      - uses: actions/checkout@v4
+      - run: psql -v ON_ERROR_STOP=1 -c 'CREATE ROLE anon; CREATE ROLE authenticated; CREATE ROLE service_role;'
+      - run: python3 backend/qa/lts_v364_ci_sql.py > /tmp/lts-v364.sql
+      - run: psql -v ON_ERROR_STOP=1 -At -f /tmp/lts-v364.sql > /tmp/lts-v364-result.log
+      - if: failure()
+        run: tail -c 5000 /tmp/lts-v364-result.log || true
+      - run: |
+          python3 - <<'PY'
+          import json,pathlib
+          rows=[json.loads(x)for x in pathlib.Path('/tmp/lts-v364-result.log').read_text().splitlines()if x.startswith('{')]
+          rows=[x for x in rows if x.get('version')==364]
+          assert len(rows)==1 and rows[0]['pass'] and rows[0]['v363_contracts_reexecuted']
+          p=pathlib.Path('qa/v364/native-result.json');p.parent.mkdir(parents=True,exist_ok=True);p.write_text(json.dumps(rows[0]))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: v364-native-transfer-lookup
+          path: qa/v364/native-result.json
