@@ -367,7 +367,7 @@
   // Preserve its methods and promises while clearing private detail context.
   for(const name of ['signOut','signInWithPassword']){
    const original=S.auth[name];
-   if(typeof original==='function')S.auth[name]=function(...args){closeDetail();return original.apply(this,args)};
+   if(typeof original==='function')S.auth[name]=function(...args){closeDetail();state.hierarchyScope={};state.hierarchyExpanded=new Set();state.hierarchyFiltersOpen=false;return original.apply(this,args)};
   }
   function shellDetail(){
    document.getElementById('v178Drawer')?.remove();
@@ -385,8 +385,8 @@
   function drawRows(){
    const d=state.detail,host=document.getElementById('v178Drawer');if(!d||!host)return;
    if(d.composition)return drawComposition();
-   const q=normalize(d.query),matched=d.rows.filter(r=>!q||normalize([r.description,r.account_source,r.beneficiary,r.component,r.current_category,r.property_code,r.center_cost].join(' ')).includes(q)),rows=d.scope?matched.slice(0,d.visibleRows||300):matched,tbody=host.querySelector('tbody');
-   tbody.innerHTML=rows.map(r=>'<tr data-row-key="'+escape(r.key)+'"><td>'+escape(r.date_kind==='day'?dateLabel(r.date):r.date_kind==='historical'?'Histórico':monthLabel(r.period))+(r.date_kind==='day'&&r.period&&r.date?.slice(0,7)!==r.period.slice(0,7)?'<small>Fatura '+escape(monthLabel(r.period))+'</small>':'')+'</td><td><b>'+escape(r.description)+'</b>'+(d.group===apartment&&!d.subgroup?'<small>'+escape(r.component||'')+'</small>':'')+(d.scope?'<small>'+escape(r.taxonomy?.category||r.current_category||'')+'</small><details class="v353-row-origin"><summary>Origem</summary><p>Classificação original: '+escape(r.original_category||r.current_category||'—')+'<br>'+escape(r.source_audit?.file||r.source_identity?.sheet||r.source_table||'Fonte registrada')+'<br>'+escape(r.source_audit?.sheet||'')+(r.source_audit?.rows?' · linhas '+escape(r.source_audit.rows):'')+'<br>Referência: '+escape(r.source_ref||'—')+'</p></details>':'')+(r.composition?'<button type="button" class="v168-btn v346-open-composition" data-composition-key="'+escape(r.key)+'">Ver composição</button>':'')+'</td><td>'+escape(r.account_source||'—')+'</td><td>'+escape(r.beneficiary||'—')+'</td>'+ (d.scope?'<td>'+escape(r.property_code==='cipo396'?'CIPÓ 396':r.property_code==='other_property'?'Outro imóvel':'—')+'</td><td>'+escape(r.center_cost||'—')+'</td>':'')+'<td>'+money(r.amount)+'</td></tr>').join('')||'<tr><td colspan="'+(d.scope?7:5)+'">'+(d.loading?'Carregando…':'Nenhum lançamento neste filtro.')+'</td></tr>';
+   const q=normalize(d.query),matched=d.rows.filter(r=>!q||normalize([r.description,r.account_source,r.beneficiary,r.component,r.category,r.current_category,r.property_code,r.property_code==='cipo396'?'CIPÓ 396':'',r.center_cost].join(' ')).includes(q)),rows=d.scope?matched.slice(0,d.visibleRows||300):matched,tbody=host.querySelector('tbody');
+   tbody.innerHTML=rows.map(r=>'<tr data-row-key="'+escape(r.key)+'"><td>'+escape(r.date_kind==='day'?dateLabel(r.date):r.date_kind==='historical'?'Histórico':monthLabel(r.period))+(r.date_kind==='day'&&r.period&&r.date?.slice(0,7)!==r.period.slice(0,7)?'<small>Fatura '+escape(monthLabel(r.period))+'</small>':'')+'</td><td><b>'+escape(r.description)+'</b>'+(d.group===apartment&&!d.subgroup?'<small>'+escape(r.component||'')+'</small>':'')+(d.scope?'<small>'+escape(r.taxonomy?.category||r.current_category||'')+'</small><details class="v353-row-origin"><summary>Origem</summary><p>Classificação original: '+escape(r.original_category||r.current_category||'—')+'<br>'+escape(r.source_audit?.file||r.source_identity?.sheet||r.source_table||'Fonte registrada')+'<br>'+escape(r.source_audit?.sheet||r.source_identity?.sheet||'')+((r.source_audit?.rows||r.source_identity?.rows)?' · linhas '+escape(r.source_audit?.rows||r.source_identity?.rows):'')+'<br>Referência: '+escape(r.source_ref||'—')+'</p></details>':'')+(r.composition?'<button type="button" class="v168-btn v346-open-composition" data-composition-key="'+escape(r.key)+'">Ver composição</button>':'')+'</td><td>'+escape(r.account_source||'—')+'</td><td>'+escape(r.beneficiary||'—')+'</td>'+ (d.scope?'<td>'+escape(r.property_code==='cipo396'?'CIPÓ 396':r.property_code==='other_property'?'Outro imóvel':'—')+'</td><td>'+escape(r.center_cost||'—')+'</td>':'')+'<td>'+money(r.amount)+'</td></tr>').join('')||'<tr><td colspan="'+(d.scope?7:5)+'">'+(d.loading?'Carregando…':'Nenhum lançamento neste filtro.')+'</td></tr>';
    tbody.querySelectorAll('[data-composition-key]').forEach(b=>b.onclick=()=>openComposition(d.rows.find(r=>r.key===b.dataset.compositionKey),d.range));
    host.querySelector('footer span').textContent=d.error||((q?rows.length+' exibidos · ':'')+d.rows.length+' de '+(d.count??'…')+' itens'+(d.loading?' · carregando':' · lista completa'));
    host.querySelector('.v353-more')?.remove();
@@ -427,7 +427,7 @@
     }while(offset!=null);
     if(d.rows.length!==d.count||Math.abs(total(d.rows.map(x=>x.amount))-d.total)>0.02)throw Error('A lista não fechou com o total. Atualize antes de conferir.');
     if(finite(expected)!=null&&Math.abs(d.total-expected)>0.02)throw Error('O total mudou desde a leitura do relatório. Atualize o relatório.');
-   }catch(e){if(token===sequence)d.error=String(e.message||e)}
+   }catch(e){if(token===sequence)d.error=d.scope?'Não foi possível conferir esta lista. Atualize o relatório antes de usar este total.':String(e.message||e)}
    finally{if(token===sequence){d.loading=false;drawRows()}}
   }
   function compositionOrigin(r){
@@ -465,7 +465,7 @@
     const cs=new Map();for(const row of d.rows)cs.set(row.component,(cs.get(row.component)||0)+row.amount);
     const box=document.querySelector('#v178Drawer .v178-components');box.innerHTML=[...cs].map(([name,value])=>'<button data-archive-component="'+escape(name)+'"><span>'+escape(name)+'</span><b>'+money(value)+'</b></button>').join('');
     box.querySelectorAll('[data-archive-component]').forEach(b=>b.onclick=()=>openArchive(range,b.dataset.archiveComponent));
-   }catch(e){if(token===sequence)d.error=String(e.message||e)}finally{if(token===sequence){d.loading=false;drawRows()}}
+   }catch(e){if(token===sequence)d.error=d.scope?'Não foi possível conferir esta lista. Atualize o relatório antes de usar este total.':String(e.message||e)}finally{if(token===sequence){d.loading=false;drawRows()}}
   }
   function decorateFlow(){
    if(V!=='Fluxo Diário')return;

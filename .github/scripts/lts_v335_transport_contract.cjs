@@ -1,7 +1,7 @@
 'use strict';
 const vm=require('node:vm'),fs=require('node:fs'),assert=require('node:assert/strict');
 async function main(){
- const RELEASE=process.env.LTS_RELEASE||'v335';assert(['v335','v337','v339','v341','v342','v344','v346','v352'].includes(RELEASE));
+ const RELEASE=process.env.LTS_RELEASE||'v335';assert(['v335','v337','v339','v341','v342','v344','v346','v352','v353'].includes(RELEASE));
  const calls=[],telemetry=[],heavy=/product_|dashboard_cockpit_|wealth_detail_|awards_|income_review_queue_|card_review_queue_|expense_review_queue_|flow_v|card_cycles_/;
  let active=0,maxActive=0,holdName=null,holdResolve,holdStarted,mode='normal',lightDuringHeavy=false;
  const native=async(input,init)=>{

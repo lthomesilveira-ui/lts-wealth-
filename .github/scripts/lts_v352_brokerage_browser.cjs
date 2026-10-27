@@ -1,7 +1,8 @@
 'use strict';
 // Local fixture app only; this does not certify an owner's HTTP session.
 const {chromium}=require('playwright'),fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
-const fixture=require('./lts_v309_fixtures.cjs'),base='http://127.0.0.1:8788',out=path.resolve('qa/v352');fs.mkdirSync(out,{recursive:true});
+const release=process.env.LTS_RELEASE||'v352';
+const fixture=require('./lts_v309_fixtures.cjs'),base='http://127.0.0.1:8788',out=path.resolve('qa/'+release);fs.mkdirSync(out,{recursive:true});
 const session={access_token:'synthetic-only-access',refresh_token:'synthetic-only-refresh',expires_at:4102444800,user:{id:'00000000-0000-4000-8000-000000000001',email:'viewer@example.invalid'}};
 const reference={institution:'Morgan Stanley',received_on:'2026-10-26',position_as_of:null,status:'documentary_reference_pending_reconciliation',total_gross_brl:1000,available_total_brl:.03,unavailable_total_brl:999.97,source_file:'Synthetic <img src=x onerror=unsafe()>.png',source_sha256:'a'.repeat(64),metadata:{quantities:{regular_rsu_total:34,regular_rsu_available:0,cash_rsu_total:8,cash_rsu_available:0},available_components:{long_share_holdings_brl:.02},unavailable_components:{regular_rsu_brl:null,cash_rsu_brl:null},quote:{share_price_usd:1.01,usd_brl:5.123456}},included_in_current_liquidity:false};
 function wealth(){
@@ -31,8 +32,8 @@ async function run(browser,viewport,label){
   return send(fixture.response(n,args));
  });
  try{
-  await page.goto(base+'/releases/v352/app.html',{waitUntil:'domcontentloaded'});
-  const frame=page.frames().find(f=>f.url().includes('/releases/v352/index.html'))||await page.waitForEvent('framenavigated',{predicate:f=>f.url().includes('/releases/v352/index.html')});assert(frame);
+  await page.goto(base+'/releases/'+release+'/app.html',{waitUntil:'domcontentloaded'});
+  const frame=page.frames().find(f=>f.url().includes('/releases/'+release+'/index.html'))||await page.waitForEvent('framenavigated',{predicate:f=>f.url().includes('/releases/'+release+'/index.html')});assert(frame);
   await frame.waitForFunction(()=>document.body.dataset.ltsBootState==='ready'&&window.__LTS_V183_WEALTH_INTEGRITY?.installed&&typeof D!=='undefined'&&D&&typeof N!=='undefined'&&!N.classList.contains('hidden'));
   await page.waitForLoadState('networkidle');
   const paint=async(tab,data=wealth())=>frame.evaluate(({tab,data})=>{window.__LTS_V168_STATE.wealth.data=data;window.__LTS_V168_STATE.wealth.tab=tab;V='Patrimônio';render();},{tab,data});
@@ -43,6 +44,7 @@ async function run(browser,viewport,label){
   const measured=await layout.jsonValue();assert(!measured.open&&measured.height<440,label+' collapsed reference height: '+measured.height);
   assert.match(await frame.locator('.v168-awards').innerText(),/disponibilidade (?:estimada|projetada)/);assert.match(await frame.locator('body').innerText(),/D\+3 e a reserva de 30% são premissas de planejamento/);
   await card.locator('summary').click();const detail=await card.innerText();for(const v of ['34','8','0,01','QUANTIDADE','SHA256','Synthetic <img'])assert(detail.includes(v),v);
+  if(release==='v353'){const geometry=await card.locator('details>div').evaluateAll(es=>es.map(e=>{const label=e.querySelector('span'),value=e.querySelector('b');return label&&value?{label:label.getBoundingClientRect().right,value:value.getBoundingClientRect().left}:null}).filter(Boolean));assert(geometry.length>=2&&geometry.every(g=>g.value-g.label>=10),'Source label/value spacing');}
   assert.equal(await card.locator('img').count(),0);assert.equal(await frame.evaluate(()=>typeof unsafe),'undefined');
   const finance=await frame.evaluate(()=>({available:window.__LTS_V168_STATE.wealth.data.current_liquidity.brokerage_available,dated:window.__LTS_V168_STATE.wealth.data.morgan_statement.as_of}));assert.deepEqual(finance,{available:3,dated:'2020-10-01'});
   assert(await frame.locator('.v172-morgan').innerText().then(t=>t.includes('3,00')));

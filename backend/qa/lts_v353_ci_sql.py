@@ -60,7 +60,7 @@ DO $test$DECLARE j jsonb;d jsonb;m text;BEGIN
  IF(j#>>'{summary,net}')::numeric<>600 OR(j#>>'{summary,rows}')::int<>5 THEN RAISE EXCEPTION 'Missing person rows disappeared';END IF;
  BEGIN PERFORM public.lts_browser_expense_hierarchy_v353('2020-01-01','2020-01-31','{"user_id":"other"}');EXCEPTION WHEN raise_exception THEN m:=SQLERRM;END;
  IF m IS NULL THEN RAISE EXCEPTION 'Arbitrary owner filter accepted';END IF;
- IF EXISTS((SELECT j FROM v353_before_source EXCEPT ALL SELECT to_jsonb(x)FROM public.v353_source x)UNION ALL(SELECT to_jsonb(x)FROM public.v353_source x EXCEPT ALL SELECT j FROM v353_before_source))THEN RAISE EXCEPTION 'Source rows changed';END IF;
+ IF EXISTS((SELECT b.j FROM v353_before_source b EXCEPT ALL SELECT to_jsonb(x)FROM public.v353_source x)UNION ALL(SELECT to_jsonb(x)FROM public.v353_source x EXCEPT ALL SELECT b.j FROM v353_before_source b))THEN RAISE EXCEPTION 'Source rows changed';END IF;
  IF has_function_privilege('anon','public.lts_browser_expense_detail_v353(date,date,jsonb,integer,integer,text)','EXECUTE')OR has_function_privilege('authenticated','public.lts_expense_view_rows_v353(uuid,date,date)','EXECUTE')THEN RAISE EXCEPTION 'Private helper privilege leak';END IF;
 END$test$;
 SELECT set_config('request.jwt.claim.sub','00000000-0000-4000-8000-000000000002',true);

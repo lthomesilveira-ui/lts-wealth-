@@ -1,6 +1,6 @@
 'use strict';
 const {chromium}=require('playwright'),fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
-const release=process.env.LTS_RELEASE||'v344',expectMissing=process.env.LTS_EXPECT_MISSING_RETURN==='true';assert(['v342','v344','v346','v352'].includes(release));
+const release=process.env.LTS_RELEASE||'v344',expectMissing=process.env.LTS_EXPECT_MISSING_RETURN==='true';assert(['v342','v344','v346','v352','v353'].includes(release));
 const fixture=require('./lts_v309_fixtures.cjs'),base='http://127.0.0.1:8788',out=path.resolve('qa/'+release);fs.mkdirSync(out,{recursive:true});
 const session={access_token:'synthetic-only-access',refresh_token:'synthetic-only-refresh',expires_at:4102444800,user:{id:'00000000-0000-4000-8000-000000000001',email:'viewer@example.invalid'}};
 const group='Apartamento · CIPÓ 396',range={from:'2024-04-01',to:'2024-08-31'};
@@ -20,7 +20,7 @@ async function run(browser,viewport,label){
   if(u.pathname==='/auth/v1/token')return send(session);
   if(u.pathname==='/auth/v1/logout')return send({});
   if(name==='lts_browser_product_v1')return send({ok:true,mvp:fixture.product()});
-  if(name===(['v346','v352'].includes(release)?'lts_browser_expense_detail_v346':'lts_browser_expense_detail_v229')){
+  if(name===(['v346','v352','v353'].includes(release)?'lts_browser_expense_detail_v346':'lts_browser_expense_detail_v229')){
    requests.push(args);let rows=args.p_subgroup==='Aquisição do imóvel'?acquisitions:args.p_subgroup==='Obra e reforma'?works:[...acquisitions,...works];
    if(hold&&args.p_subgroup==='Obra e reforma'){hold=false;held();await gate;}
    return send({revision:'synthetic-navigation-v1',offset:0,next_offset:null,row_count:rows.length,total:rows.reduce((n,r)=>n+r.amount,0),rows,components});

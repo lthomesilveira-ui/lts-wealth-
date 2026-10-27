@@ -40,3 +40,32 @@ jobs:
       - uses: actions/checkout@v4
       - run: node .github/scripts/lts_v353_model_contract.cjs
       - run: node .github/scripts/lts_v353_release_contract.cjs
+  browser-contract:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    container: mcr.microsoft.com/playwright:v1.58.2-noble
+    env:
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: LTS_RELEASE=v353 node .github/scripts/lts_v335_transport_contract.cjs
+      - run: LTS_RELEASE=v353 node .github/scripts/lts_v341_refresh_contract.cjs
+      - run: LTS_RELEASE=v353 node .github/scripts/lts_v342_month_rollover_contract.cjs
+      - run: npm install --no-save --package-lock=false playwright@1.58.2
+      - run: |
+          python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/lts-v353-http.log 2>&1 &
+          node .github/scripts/lts_v309_wait_http.cjs
+      - run: node .github/scripts/lts_v353_expense_browser.cjs
+      - run: LTS_RELEASE=v353 node .github/scripts/lts_v352_brokerage_browser.cjs
+      - run: LTS_RELEASE=v353 node .github/scripts/lts_v344_expense_return_browser.cjs
+      - run: LTS_RELEASE=v353 node .github/scripts/lts_v342_month_rollover_browser.cjs
+      - run: LTS_RELEASE=v353 node .github/scripts/lts_v333_browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v353-expense-presentation-browser
+          path: qa/v353/
