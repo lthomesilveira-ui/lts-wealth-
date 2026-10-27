@@ -124,6 +124,11 @@ jobs:
           const manifest=JSON.parse(rawManifest);
           const base='https://lthomesilveira-ui.github.io/lts-wealth-/releases/'+release+'/';
           const entries=Object.entries(manifest.files).concat([['manifest.json',crypto.createHash('sha256').update(rawManifest).digest('hex')]]);
+          const provenancePath='releases/'+release+'/provenance.json';
+          if(fs.existsSync(provenancePath)&&!entries.some(([name])=>name==='provenance.json')){
+            entries.push(['provenance.json',crypto.createHash('sha256').update(fs.readFileSync(provenancePath)).digest('hex')]);
+          }
+          if(release==='v359')assert.deepEqual(entries.map(([name])=>name).sort(),fs.readdirSync('releases/'+release).sort(),'V359 must verify every published file');
           if(release==='v285'){
             assert.equal(manifest.release,'v285','Published target release identity');
             assert.equal(manifest.version,'v285','Published target version identity');
