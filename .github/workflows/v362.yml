@@ -1,0 +1,46 @@
+name: V362 unique classification counts across invoice months
+on:
+  pull_request:
+    paths: ['backend/patches/v362/**','backend/qa/*v362*','.github/workflows/v362.yml','docs/V362_UNIQUE_CLASSIFICATION_COUNT.md']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native-review-count:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: synthetic-test-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: synthetic-test-only
+    steps:
+      - uses: actions/checkout@v4
+      - run: psql -v ON_ERROR_STOP=1 -c 'CREATE ROLE anon; CREATE ROLE authenticated; CREATE ROLE service_role;'
+      - run: python3 backend/qa/lts_v362_ci_sql.py > /tmp/lts-v362.sql
+      - run: psql -v ON_ERROR_STOP=1 -At -f /tmp/lts-v362.sql > /tmp/lts-v362-result.log
+      - if: failure()
+        run: tail -c 5000 /tmp/lts-v362-result.log || true
+      - run: |
+          python3 - <<'PY'
+          import json,pathlib
+          rows=[json.loads(x)for x in pathlib.Path('/tmp/lts-v362-result.log').read_text().splitlines()if x.startswith('{')]
+          rows=[x for x in rows if x.get('version')==362]
+          assert len(rows)==1 and rows[0]['pass'] and rows[0]['future_invoice_overlap_removed']
+          p=pathlib.Path('qa/v362/native-owner-exception-result.json');p.parent.mkdir(parents=True,exist_ok=True);p.write_text(json.dumps(rows[0]))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: v362-native-owner-exception
+          path: qa/v362/native-owner-exception-result.json
