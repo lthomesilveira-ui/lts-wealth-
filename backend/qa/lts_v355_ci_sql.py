@@ -135,6 +135,9 @@ END$hint$;
 SELECT jsonb_build_object('pass',true,'version',355,'invalid_source_cases',(SELECT count(*)+2 FROM v355_cases),'same_canonical_targets',true,'unrelated_financial_payloads_preserved',true,'private_helpers',true,'owner_isolation',true,'past_partial_and_rollover_preserved',true,
 'synthetic_cards',cards,'synthetic_projection',public.lts_card_obligations_v355(cards,date'2026-10-26'),
 'synthetic_rollover_projection',public.lts_card_obligations_v355(cards,date'2026-11-01'),
+'synthetic_zero_projection',public.lts_card_obligations_v355(jsonb_set(cards,'{cards,1,cycles,0,amount}','0'),date'2026-11-01'),
+'synthetic_credit_projection',public.lts_card_obligations_v355(jsonb_set(cards,'{cards,1,cycles,0,amount}','-25'),date'2026-11-01'),
+'synthetic_partial_projection',public.lts_card_obligations_v355(jsonb_set(cards,'{cards,1,cycles,0,payment_status}','"partial"'),date'2026-11-01'),
 'synthetic_after_payment_projection',public.lts_card_obligations_v355(jsonb_set(cards,'{cards,1,cycles,0,settlement_confirmed}','true'),date'2026-11-01'))
 FROM public.qa_card_sources WHERE user_id='00000000-0000-4000-8000-000000000001';
 ROLLBACK;

@@ -1,0 +1,15 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),assert=require('node:assert/strict'),cp=require('node:child_process');
+const root='releases/v356',base='releases/v353',read=(r,n)=>fs.readFileSync(path.join(r,n),'utf8'),sha=p=>crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex');
+const m=JSON.parse(read(root,'manifest.json')),p=JSON.parse(read(root,'provenance.json')),b=JSON.parse(read(base,'manifest.json'));
+assert.equal(m.release,'v356');assert.equal(m.version,'v356');assert.equal(m.base_release,'v353');assert.equal(fs.readdirSync(root).length,78);
+for(const[n,h]of Object.entries(m.files))assert.equal(sha(path.join(root,n)),h,n);
+for(const[n,h]of Object.entries(m.protected))assert.equal(sha(n),h,n);
+for(const[n,h]of Object.entries(b.files))assert.equal(sha(path.join(base,n)),h,'immutable '+n);
+assert.deepEqual(p.protected_base_files,b.files);assert.equal(p.frontend_only,true);assert.equal(p.backend_changed,false);
+assert.equal(p.financial_source_data_changed,false);assert.equal(p.private_http_validated,false);assert.equal(p.physical_mobile_validated,false);
+const changed=fs.readdirSync(root).filter(n=>read(root,n)!==read(base,n)).sort();
+assert.deepEqual(changed,['app.html','lts-v226-card-composition.js','lts-v226-card-composition.css','manifest.json','provenance.json'].sort());
+cp.execFileSync(process.execPath,['--check',path.join(root,'lts-v226-card-composition.js')]);
+assert.match(read(root,'app.html'),/aria-label="V356"/);
+console.log(JSON.stringify({pass:true,release:'v356',files:78,base_files_preserved:78,financial_sources_changed:false}));
