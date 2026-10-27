@@ -16,6 +16,7 @@ CREATE TABLE public.lts_expense_realized(user_id uuid,source_table text,source_r
 CREATE FUNCTION public.lts_v178_norm(text)RETURNS text LANGUAGE sql IMMUTABLE AS $$SELECT lower(translate($1,'ú','u'))$$;
 ''')
 for name in ['v351_cycle_v301.sql','v351_lts_card_payment_refresh_annotation_v273.sql','v351_lts_card_settlement_evidence_valid_v273.sql','v351_lts_card_settlement_overlay_v290.sql']:print((R/'backend/qa/fixtures'/name).read_text()+';')
+print("SELECT pg_get_functiondef('public.lts_card_settlement_overlay_v290(uuid,jsonb)'::regprocedure);")
 print(policy)
 u='00000000-0000-4000-8000-000000000001'
 def uid(n):return f'10000000-0000-4000-8000-{n:012d}'

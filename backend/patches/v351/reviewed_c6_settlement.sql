@@ -69,7 +69,7 @@ BEGIN FOR sp IN SELECT s FROM jsonb_array_elements($specs$[{"target": "public.lt
   prior:=d;FOR e IN SELECT x FROM jsonb_array_elements(sp->'edits')x LOOP prior:=replace(prior,e->>'new',e->>'old');END LOOP;
   IF md5(prior)<>sp->>'lease'THEN RAISE EXCEPTION 'V351_REPLAY_SOURCE_CHANGED: %',sp->>'target';END IF;CONTINUE;
  END IF;
- IF md5(d)<>sp->>'lease'THEN RAISE EXCEPTION 'V351_SOURCE_LEASE_CHANGED: %',sp->>'target';END IF;
+ IF md5(d)<>sp->>'lease'THEN RAISE EXCEPTION 'V351_SOURCE_LEASE_CHANGED: % / %',sp->>'target',md5(d);END IF;
  next_d:=d;FOR e IN SELECT x FROM jsonb_array_elements(sp->'edits')x LOOP
  IF position(e->>'old'IN next_d)=0 THEN RAISE EXCEPTION 'V351_PATCH_SLOT_MISSING';END IF;
  next_d:=replace(next_d,e->>'old',e->>'new');END LOOP;
