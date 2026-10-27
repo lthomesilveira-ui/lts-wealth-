@@ -1,7 +1,7 @@
 """Run the deployed debit validator, documentary contract, writer and pair reader."""
 from pathlib import Path
 R=Path(__file__).resolve().parents[2]
-print(r'''
+print(r"""
 BEGIN;
 CREATE SCHEMA v363_fixture;
 CREATE TABLE v363_fixture.accounts(id uuid,user_id uuid,institution text,is_active boolean,account_type text,currency text);
@@ -50,24 +50,24 @@ SELECT 17,user_id,'confirm_scheduled_transfer_destination','open_finance_schedul
 FROM v363_fixture.lts_open_finance_staging WHERE id='00000000-0000-4000-8000-000000000005';
 INSERT INTO v363_fixture.expenses VALUES('00000000-0000-4000-8000-000000000001','untouched-expense',42);
 CREATE FUNCTION v363_fixture.lts_v229_expense_rows(uuid,date,date)RETURNS TABLE(source_ref text,amount numeric)LANGUAGE sql AS $$SELECT source_ref,amount FROM v363_fixture.expenses WHERE user_id=$1$$;
-''')
+""")
 def sql(path): return (R/path).read_text().replace('public.','v363_fixture.')
 debit=sql('backend/patches/v304/posted_own_transfer.sql').split('CREATE OR REPLACE FUNCTION v363_fixture.lts_posted_own_transfer_out_v304')[0]
 print(debit)
 print(sql('backend/qa/fixtures/v363_bank_rows.sql').replace('RETURNS SETOF lts_open_finance_staging','RETURNS SETOF v363_fixture.lts_open_finance_staging')+';')
 print(sql('backend/qa/fixtures/v363_pair_reader.sql')+';')
 print(sql('backend/qa/fixtures/v363_flow_reader.sql')+';')
-print(r'''
+print(r"""
 REVOKE ALL ON FUNCTION v363_fixture.lts_owner_confirmed_transfer_pairs_v263(uuid)FROM PUBLIC,anon,authenticated;
 GRANT EXECUTE ON FUNCTION v363_fixture.lts_owner_confirmed_transfer_pairs_v263(uuid)TO service_role;
 CREATE TEMP TABLE v363_attributes AS SELECT to_jsonb(p)-'prosrc'j FROM pg_proc p WHERE oid='v363_fixture.lts_owner_confirmed_transfer_pairs_v263(uuid)'::regprocedure;
 CREATE TEMP TABLE v363_flow_attributes AS SELECT to_jsonb(p)-'prosrc'j FROM pg_proc p WHERE oid='v363_fixture.lts_browser_flow_pre_v238(date,date)'::regprocedure;
 CREATE TEMP TABLE v363_raw AS SELECT jsonb_build_object('bank',(SELECT jsonb_agg(to_jsonb(x)ORDER BY id)FROM v363_fixture.lts_open_finance_staging x),'audit',(SELECT jsonb_agg(to_jsonb(x)ORDER BY id)FROM v363_fixture.audit_log x))j;
-''')
+""")
 patch=sql('backend/patches/v363/previously_proved_transfer.sql')
 patch=patch.replace('md5(definition)',"md5(replace(definition,'v363_fixture.','public.'))").replace('md5(original)',"md5(replace(original,'v363_fixture.','public.'))")
 print(patch)
-print(r'''
+print(r"""
 SELECT set_config('lts.transfer_refresh.owner_id','00000000-0000-4000-8000-000000000001',true),
  set_config('lts.transfer_refresh.debit_id','00000000-0000-4000-8000-000000000005',true),
  set_config('lts.transfer_refresh.credit_id','00000000-0000-4000-8000-000000000006',true),
@@ -77,10 +77,10 @@ SELECT set_config('lts.transfer_refresh.owner_id','00000000-0000-4000-8000-00000
  set_config('lts.transfer_refresh.credit_raw_hash',repeat('c',64),true),
  set_config('lts.transfer_refresh.prior_credit_raw_hash',repeat('b',64),true);
 DO $test$BEGIN IF EXISTS(SELECT 1 FROM v363_fixture.lts_previously_proved_transfer_pairs_v363('00000000-0000-4000-8000-000000000001'))THEN RAISE EXCEPTION 'Unreviewed conflict automatically paired';END IF;END $test$;
-''')
+""")
 operation=sql('backend/operations/record_proved_transfer_refresh_v363.sql')
 print(operation)
-print(r'''
+print(r"""
 CREATE TEMP TABLE v363_inputs AS
 SELECT jsonb_build_object('debit',to_jsonb(d),'credit',to_jsonb(c),'prior',to_jsonb(p),'confirmation',to_jsonb(a),
  'origin',to_jsonb(o),'destination',to_jsonb(t),'origin_balance',to_jsonb(ob),'destination_balance',to_jsonb(tb),'evidence',to_jsonb(e))j
@@ -142,10 +142,10 @@ DO $test$DECLARE j jsonb;r record;n integer:=0;expression text;basis text;BEGIN
  RAISE NOTICE 'Rejected % invalid documentary transfer cases',n;
 END $test$;
 CREATE TEMP TABLE v363_replay AS SELECT pg_get_functiondef('v363_fixture.lts_owner_confirmed_transfer_pairs_v263(uuid)'::regprocedure)definition;
-''')
+""")
 print(patch)
 print(operation)
-print(r'''
+print(r"""
 DO $test$BEGIN
  IF(SELECT count(*)FROM v363_fixture.lts_reconciliation_evidence)<>1 OR(SELECT epoch FROM v363_fixture.lts_read_cache_epoch_v242)<>2 THEN RAISE EXCEPTION 'Writer replay was not a no-op';END IF;
  IF(SELECT definition FROM v363_replay)IS DISTINCT FROM pg_get_functiondef('v363_fixture.lts_owner_confirmed_transfer_pairs_v263(uuid)'::regprocedure)THEN RAISE EXCEPTION 'Schema replay changed reader';END IF;
@@ -154,4 +154,4 @@ DO $test$BEGIN
 END $test$;
 SELECT jsonb_build_object('version',363,'pass',true,'invalid_cases_rejected',30,'real_debit_validator',true,'shared_reader',true,'owner_isolation',true,'private_acl',true,'sources_preserved',true,'replay_noop',true,'revocation_respected',true);
 ROLLBACK;
-''')
+""")
