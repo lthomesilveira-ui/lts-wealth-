@@ -2,6 +2,7 @@
 // Synthetic session and HTTP; optional owner-data replay is explicitly labelled.
 const {chromium}=require('playwright'),fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
 const fixtures=require('./lts_v309_fixtures.cjs'),base=process.env.LTS_TEST_BASE||'http://127.0.0.1:8788',out=path.resolve(process.env.LTS_QA_DIR||'qa/v346');fs.mkdirSync(out,{recursive:true});
+const release=process.env.LTS_RELEASE||'v346';
 const actual=process.env.LTS_ACTUAL_COMPOSITION_SNAPSHOT?JSON.parse(fs.readFileSync(process.env.LTS_ACTUAL_COMPOSITION_SNAPSHOT)):null;
 const period={from:'2022-04-01',to:'2022-04-30'},key='synthetic-parent',group=actual?'Bebidas':'Categoria fictícia';
 const mk=(key,amount,description,extra={})=>({key,amount,description,period:'2022-04-01',date:'2022-04-01',source_date:'2022-04-01',date_kind:'source',category:group,original_category:group,original_amount:amount,account_source:'Cartão fictício',last4:'1234',source:{file:'Planilha fictícia.xlsx',sheet:'Cartão fictício',row:1,description,date:'2022-04-01',amount,date_cell:'C1',amount_cell:'D1'},...extra});
@@ -22,7 +23,7 @@ async function run(browser,viewport,label){
   const name=url.pathname.split('/').pop(),args=JSON.parse(req.postData()||'{}'),send=x=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(x)});
   if(url.pathname==='/auth/v1/token')return send(session);if(url.pathname==='/auth/v1/logout')return send({});
   if(name==='lts_browser_expense_detail_v346'){requests.push({name,args});return send(data.detail);}
-  if(name==='lts_browser_expense_composition_v346'){
+  if(/^lts_browser_expense_composition_v(?:346|373)$/.test(name)){
    requests.push({name,args});if(mode==='hold'){heldStarted();await heldGate;}
    if(mode==='error')return route.fulfill({status:500,contentType:'application/json',body:'{"message":"private SQL raw failure must stay hidden"}'});
    let p=structuredClone(data.composition);
@@ -40,8 +41,8 @@ async function run(browser,viewport,label){
  });
  let frame;
  try{
-  await page.goto(base+'/releases/v346/app.html',{waitUntil:'domcontentloaded'});
-  for(let i=0;i<200;i++){frame=page.frames().find(f=>f.url().includes('/releases/v346/index.html'));if(frame)break;await page.waitForTimeout(50);}assert(frame);
+  await page.goto(base+'/releases/'+release+'/app.html',{waitUntil:'domcontentloaded'});
+  for(let i=0;i<200;i++){frame=page.frames().find(f=>f.url().includes('/releases/'+release+'/index.html'));if(frame)break;await page.waitForTimeout(50);}assert(frame);
   await frame.waitForFunction(()=>document.body.dataset.ltsBootState==='ready'&&window.__LTS_V178_REVIEW?.installed);
   const open=async()=>{await frame.evaluate(({group,period,total})=>{V='Despesas';render();window.__LTS_V178_REVIEW.openDetail(group,null,period,total);},{group,period,total:data.detail.total});await frame.waitForFunction(()=>window.__LTS_V178_STATE.detail&&!window.__LTS_V178_STATE.detail.loading);};
   const drawer=frame.locator('#v178Drawer'),ready=()=>frame.waitForFunction(()=>window.__LTS_V178_STATE.detail&&!window.__LTS_V178_STATE.detail.loading),invalidate=()=>frame.evaluate(()=>window.__LTS_V227_TRANSPORT.invalidate(false));
