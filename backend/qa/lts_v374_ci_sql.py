@@ -15,6 +15,9 @@ FROM public.v346_financial CROSS JOIN(VALUES('cycle-parent-a',100,'101','card_in
 CREATE TEMP TABLE v374_before AS SELECT jsonb_agg(to_jsonb(x)ORDER BY user_id,row_key)j FROM public.v346_financial x;
 CREATE TEMP TABLE v374_old AS SELECT public.lts_browser_expense_composition_v373('2022-04-01','2022-04-30','parent')j;
 CREATE TEMP TABLE v374_old_attrs AS SELECT oid,to_jsonb(p)j FROM pg_proc p WHERE pronamespace='public'::regnamespace;
+-- Keep the separate dates recorded for two entries of one invoice cycle.
+UPDATE public.v346_financial SET event_date='2022-04-02',transaction_date='2022-04-02'WHERE row_key='cycle-parent-b';
+UPDATE v374_before SET j=(SELECT jsonb_agg(to_jsonb(x)ORDER BY user_id,row_key)FROM public.v346_financial x);
 ''')
 print((R/'backend/patches/v374/documentary_cycles.sql').read_text())
 print(r'''
@@ -22,7 +25,7 @@ INSERT INTO lts_history_private_v374.cycle(user_id,cycle_key,booked_on,competenc
 SELECT '00000000-0000-4000-8000-000000000001','synthetic-cycle','2022-04-01','2022-04-01',
 '{"file":"Original fictício.xlsx","sheet":"Pagamentos","parent_rows":[11,12],"adjustment_rows":[13]}',
 jsonb_agg(jsonb_build_object('key',row_key,'signature',public.lts_card_history_signature_v346(to_jsonb(r)),'workbook_rows',jsonb_build_array(source_ref::integer))ORDER BY row_key),
-'{"accounts":["Synthetic card"],"source_tables":["synthetic_card"]}'
+'{"accounts":["Synthetic card"],"source_tables":["synthetic_card"],"event_dates":["2022-04-01","2022-04-02"]}'
 FROM public.v346_financial r WHERE user_id='00000000-0000-4000-8000-000000000001'AND row_key LIKE'cycle-%';
 INSERT INTO lts_history_private_v374.binding SELECT user_id,row_key,'synthetic-cycle',public.lts_card_history_signature_v346(to_jsonb(r))FROM public.v346_financial r
 WHERE user_id='00000000-0000-4000-8000-000000000001'AND row_key IN('cycle-parent-a','cycle-parent-b');
@@ -37,6 +40,8 @@ DECLARE j jsonb;k jsonb;before_detail jsonb;after_detail jsonb;cleaned jsonb;
 BEGIN
  j:=public.lts_browser_expense_composition_v374('2022-04-01','2022-04-30','cycle-parent-a');
  k:=public.lts_browser_expense_composition_v374('2022-04-01','2022-04-30','cycle-parent-b');
+ IF public.lts_browser_expense_composition_v374('2022-04-02','2022-04-02','cycle-parent-b')->'rows'IS DISTINCT FROM j->'rows'
+ THEN RAISE EXCEPTION 'Documented companion date lost with a one-day filter';END IF;
  IF j->>'status'<>'complete'OR(j->>'total')::numeric<>100 OR(k->>'total')::numeric<>25
  OR j->'rows'IS DISTINCT FROM k->'rows'OR(j->>'count')::int<>4 OR(j->>'nonzero_count')::int<>3
  OR(j->>'identified_total')::numeric<>115 OR(j->>'unexplained_total')::numeric<>0

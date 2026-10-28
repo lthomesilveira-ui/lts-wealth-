@@ -57,9 +57,12 @@ BEGIN
  SELECT * INTO STRICT c FROM lts_history_private_v374.cycle WHERE user_id=p_user AND cycle_key=p_cycle;
  IF jsonb_typeof(c.validation->'accounts')IS DISTINCT FROM'array'
  OR jsonb_typeof(c.validation->'source_tables')IS DISTINCT FROM'array'
+ OR jsonb_typeof(c.validation->'event_dates')IS DISTINCT FROM'array'
  OR jsonb_array_length(c.validation->'accounts')=0 OR jsonb_array_length(c.validation->'source_tables')=0
+ OR c.booked_on IS DISTINCT FROM(SELECT min((m->'signature'->>'event_date')::date)FROM jsonb_array_elements(c.members)m)
+ OR c.validation->'event_dates'IS DISTINCT FROM(SELECT jsonb_agg(d ORDER BY d)FROM(SELECT DISTINCT m->'signature'->>'event_date'd FROM jsonb_array_elements(c.members)m)dates)
  OR EXISTS(SELECT 1 FROM jsonb_array_elements(p_current)x
-  WHERE x->>'event_date'=c.booked_on::text AND x->>'competence_month'=c.competence_month::text
+  WHERE(c.validation->'event_dates')?(x->>'event_date')AND x->>'competence_month'=c.competence_month::text
   AND(c.validation->'accounts')?(x->>'account_source')AND(c.validation->'source_tables')?(x->>'source_table')
   AND x->>'coverage_mode'IN('card_invoice_aggregate_fallback','card_workbook_signed_adjustment_v235')
   AND NOT EXISTS(SELECT 1 FROM jsonb_array_elements(c.members)m WHERE m->>'key'=x->>'row_key'))THEN RETURN stale;END IF;
@@ -67,7 +70,7 @@ BEGIN
  canonical AS(SELECT x FROM jsonb_array_elements(p_current)x)
  SELECT count(*),count(*)FILTER(WHERE r.x IS NULL
   OR m.x->'signature'IS DISTINCT FROM public.lts_card_history_signature_v346(r.x)
-  OR r.x->>'event_date'IS DISTINCT FROM c.booked_on::text
+  OR NOT((c.validation->'event_dates')?(r.x->>'event_date'))
   OR r.x->>'competence_month'IS DISTINCT FROM c.competence_month::text
   OR NOT((c.validation->'accounts')?(r.x->>'account_source'))
   OR NOT((c.validation->'source_tables')?(r.x->>'source_table'))
@@ -160,7 +163,8 @@ BEGIN
  SELECT * INTO b FROM lts_history_private_v374.binding WHERE user_id=u AND parent_key=p_row_key;
  IF NOT FOUND THEN RETURN base;END IF;
  SELECT * INTO STRICT c FROM lts_history_private_v374.cycle WHERE user_id=u AND cycle_key=b.cycle_key;
- SELECT coalesce(jsonb_agg(to_jsonb(r)),'[]'::jsonb)INTO canonical FROM public.lts_v229_expense_rows(u,c.booked_on,c.booked_on)r;
+ SELECT coalesce(jsonb_agg(to_jsonb(r)),'[]'::jsonb)INTO canonical FROM public.lts_v229_expense_rows(u,c.booked_on,
+  (SELECT max((m->'signature'->>'event_date')::date)FROM jsonb_array_elements(c.members)m))r;
  SELECT x INTO STRICT parent FROM jsonb_array_elements(canonical)x WHERE x->>'row_key'=p_row_key;
  IF b.signature IS DISTINCT FROM public.lts_card_history_signature_v346(parent)THEN
   RETURN base||jsonb_build_object('status','stale','rows','[]'::jsonb,'count',0,'identified_total',0);
@@ -182,8 +186,9 @@ RETURNS jsonb LANGUAGE plpgsql SECURITY INVOKER SET search_path='' AS $$
 DECLARE u uuid:=public.lts_browser_assert_user_v1();current_rows jsonb;row_out jsonb;result_rows jsonb:='[]';
  r jsonb;parent jsonb;payload jsonb;b lts_history_private_v374.binding%rowtype;min_date date;max_date date;rev text;
 BEGIN
- SELECT min(cycle_row.booked_on),max(cycle_row.booked_on)INTO min_date,max_date
+ SELECT min(cycle_row.booked_on),max((member_row->'signature'->>'event_date')::date)INTO min_date,max_date
  FROM lts_history_private_v374.binding bind_row JOIN lts_history_private_v374.cycle cycle_row USING(user_id,cycle_key)
+ CROSS JOIN LATERAL jsonb_array_elements(cycle_row.members)member_row
  WHERE bind_row.user_id=u AND bind_row.parent_key IN(SELECT x->>'key'FROM jsonb_array_elements(p_base->'rows')x);
  IF min_date IS NOT NULL THEN
   SELECT coalesce(jsonb_agg(to_jsonb(x)),'[]'::jsonb)INTO current_rows FROM public.lts_v229_expense_rows(u,min_date,max_date)x;
