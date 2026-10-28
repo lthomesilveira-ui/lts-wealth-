@@ -50,7 +50,7 @@ DO $test$DECLARE j jsonb;k jsonb;BEGIN
  PERFORM set_config('test.v362_owner','00000000-0000-4000-8000-000000000002',true);
  k:=v362_fixture.lts_browser_card_review_queue_v312(current_date-5,current_date,0,10,null);
  IF jsonb_array_length(k->'review_source_refs')<>1 OR k->'review_source_refs'<>jsonb_build_array('shared-a')THEN RAISE EXCEPTION 'Other owner identities leaked';END IF;
- IF(SELECT j FROM attrs_before)IS DISTINCT FROM(SELECT to_jsonb(p)-'prosrc'FROM pg_proc p WHERE oid='v362_fixture.lts_browser_card_review_queue_v312(date,date,integer,integer,text)'::regprocedure)THEN RAISE EXCEPTION 'ACL attributes changed';END IF;
+ IF(SELECT a.j FROM attrs_before a)IS DISTINCT FROM(SELECT to_jsonb(p)-'prosrc'FROM pg_proc p WHERE oid='v362_fixture.lts_browser_card_review_queue_v312(date,date,integer,integer,text)'::regprocedure)THEN RAISE EXCEPTION 'ACL attributes changed';END IF;
 END $test$;
 ''')
 print(patch)

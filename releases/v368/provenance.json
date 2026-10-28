@@ -136,6 +136,7 @@
     "app.html",
     "lts-category-display.js",
     "lts-category-registry.js",
+    "lts-v172-v171-review.js",
     "lts-v181-regression-closure.js",
     "lts-v183-personal-image-labels.js",
     "lts-v183-v168-feedback-safe.js",

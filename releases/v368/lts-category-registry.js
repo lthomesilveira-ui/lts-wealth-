@@ -68,7 +68,7 @@
      if(current!==epoch||owner!==generation())return;
      // The creation response is authoritative. Do not let an older in-flight
      // options request or an asynchronous row refresh discard this choice.
-     if(Array.isArray(saved.data.categories)){data={...(data||{}),categories:saved.data.categories,revision:saved.data.revision};readAt=Date.now();}
+     if(Array.isArray(saved.data.categories)){data=availableOptions({...(data||{}),categories:saved.data.categories,revision:saved.data.revision});readAt=Date.now();}
      else await get(true);
      const review=window.__LTS_V181_STATE?.review;
      if(reviewKey&&review?.drafts)review.drafts.set(reviewKey,{...(review.drafts.get(reviewKey)||{}),category:saved.data.category});
