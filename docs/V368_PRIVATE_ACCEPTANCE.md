@@ -7,3 +7,5 @@ Card sources appear in one classification surface by exact source identity, incl
 Bank connection and recurrence reads update independently. A pending query never claims that connected accounts are disconnected. An unrequested Flow query does not produce a failed overdue-payment warning. Actual source errors and payment uncertainty remain visible.
 
 Tests include real rendered notebook/mobile interactions, saved category reload, delayed recurrence response, complete source identity scope, exact-source deduplication, ordinary record preservation, owner isolation and byte-preserved financial sources. Fixture persistence is separate from private HTTP acceptance and physical-device coverage.
+
+Private inspection also corrected debt dates without a balance, the dated Morgan availability label, property equity and mixed gross/after-reserve future awards. Agenda reconciliation remains available in a closed disclosure, with projected availability visibly identified. No amounts or contractual dates were changed.

@@ -140,7 +140,7 @@
                   if(label?.textContent==='Disponível agora')value.textContent=money(available);
                   if(label?.textContent==='Vestings futuros'){
                     const future=amount(j.rsu_summary?.future_considered_total_brl);
-                    label.textContent='Futuro líquido projetado';value.textContent=future===null?'—':money(future);
+                    label.textContent='Futuro considerado na agenda';value.textContent=future===null?'—':money(future);
                   }
                 }
                 rsu.appendChild(note('O valor em destaque é o disponível agora. Vestings futuros permanecem separados e não são patrimônio disponível hoje.'));

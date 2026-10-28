@@ -8,7 +8,8 @@
     "Preserve clothing category semantics and consolidate equivalent mortgage options",
     "Show each card source in one review surface across search and pagination",
     "Load recurrence and bank status independently without false disconnection",
-    "Preserve Flow, wealth, monthly totals and classification writers"
+    "Preserve Flow, wealth, monthly totals and classification writers",
+    "Distinguish dated debt and brokerage balances, current property equity and future award assumptions; collapse agenda provenance"
   ],
   "financial_source_data_changed": false,
   "physical_mobile_validated": false,
@@ -140,6 +141,8 @@
     "lts-v181-regression-closure.js",
     "lts-v183-personal-image-labels.js",
     "lts-v183-v168-feedback-safe.js",
-    "lts-v275-overdue-visibility.js"
+    "lts-v183-wealth-debt-integrity.js",
+    "lts-v275-overdue-visibility.js",
+    "lts-v365-homologation.js"
   ]
 }
