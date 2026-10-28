@@ -28,6 +28,7 @@ CREATE FUNCTION public.lts_card_invoice_amounts_v230_engine_v243(uuid) RETURNS S
 CREATE FUNCTION public.lts_card_invoice_settled_v290(uuid,text,date,date,numeric) RETURNS boolean LANGUAGE sql AS $$SELECT false$$;
 CREATE TABLE public.lts_read_cache_epoch_v242(singleton boolean,epoch bigint);
 INSERT INTO public.lts_read_cache_epoch_v242 VALUES(true,1);
+CREATE FUNCTION public.lts_card_due_rule_changed_v290()RETURNS trigger LANGUAGE plpgsql AS $$BEGIN UPDATE public.lts_read_cache_epoch_v242 SET epoch=epoch+1 WHERE singleton;RETURN NULL;END$$;
 CREATE TABLE public.lts_v229_read_cache(user_id uuid,kind text,as_of date,from_date date,to_date date,payload jsonb,source_fingerprint text,refreshed_at timestamptz,UNIQUE(user_id,kind,as_of,from_date,to_date));
 CREATE TABLE public.v370_flow_rows(user_id uuid,event_date date,account text,description text,signed_amount numeric,source text,source_ref text,confidence text,account_assignment text,legacy_index int,original_date date,displaced boolean);
 CREATE FUNCTION public.lts_corrected_cashflow_fix86_v4(uuid,date,date)RETURNS TABLE(event_date date,account text,description text,signed_amount numeric,source text,source_ref text,confidence text,account_assignment text,legacy_index int,original_date date,displaced boolean)LANGUAGE sql AS $$SELECT event_date,account,description,signed_amount,source,source_ref,confidence,account_assignment,legacy_index,original_date,displaced FROM public.v370_flow_rows WHERE user_id=$1 AND event_date BETWEEN $2 AND $3$$;
@@ -59,6 +60,7 @@ print(patch)
 print(r"""
 INSERT INTO public.lts_card_due_transition_v370(user_id,family,last_old_due,first_new_due,decision_source)VALUES('00000000-0000-4000-8000-000000000001','aeternum','2026-10-25','2026-12-03','synthetic-confirmed');
 DO $test$DECLARE u uuid:='00000000-0000-4000-8000-000000000001';d date;a jsonb;b jsonb;j jsonb;BEGIN
+ IF(SELECT epoch FROM public.lts_read_cache_epoch_v242 WHERE singleton)<>2 THEN RAISE EXCEPTION 'Transition did not invalidate reads';END IF;
  IF public.lts_card_projection_date_v370(u,'aeternum','2026-11-01','2026-11-25','2026-10-25')<>'2026-12-03'OR public.lts_card_projection_date_v370(u,'aeternum','2026-12-01','2026-12-25','2026-10-25')<>'2027-01-03'THEN RAISE EXCEPTION 'Cycle was not advanced';END IF;
  IF public.lts_card_projection_date_v370(u,'aeternum','2027-01-01','2027-01-25','2026-12-03')<>'2027-01-03'T HEN RAISE EXCEPTION 'New bank calendar shifted twice';END IF;
  IF(SELECT count(*)FROM public.lts_aeternum_forecast_cycles_v311(u)WHERE reference_month='2026-11-01'AND due_date='2026-12-03'AND amount=350 AND item_count=3)<>1 THEN RAISE EXCEPTION 'November composition was lost or duplicated';END IF;

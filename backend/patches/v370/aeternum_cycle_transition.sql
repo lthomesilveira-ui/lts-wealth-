@@ -11,6 +11,8 @@ REVOKE ALL ON public.lts_card_due_transition_v370 FROM PUBLIC,anon,authenticated
 CREATE POLICY owner_read ON public.lts_card_due_transition_v370 FOR SELECT TO authenticated USING(user_id=(SELECT auth.uid()));
 GRANT SELECT ON public.lts_card_due_transition_v370 TO authenticated;
 GRANT ALL ON public.lts_card_due_transition_v370 TO service_role;
+CREATE TRIGGER transition_changed_v370 AFTER INSERT OR UPDATE OR DELETE ON public.lts_card_due_transition_v370
+ FOR EACH STATEMENT EXECUTE FUNCTION public.lts_card_due_rule_changed_v290();
 
 CREATE FUNCTION public.lts_card_projection_date_v370(p_user_id uuid,p_family text,p_month date,p_fallback date,p_bank_anchor date DEFAULT NULL)
 RETURNS date LANGUAGE sql STABLE SECURITY INVOKER SET search_path='' AS $$
