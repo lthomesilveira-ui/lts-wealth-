@@ -1,7 +1,7 @@
 name: V366 rolling recurrence continuity
 on:
   pull_request:
-    paths: ['backend/patches/v366/**','backend/qa/*v366*','backend/qa/fixtures/v366*','.github/workflows/v366.yml']
+    paths: ['backend/patches/v366/**','backend/patches/v367/**','backend/qa/*v367*','backend/qa/*v366*','backend/qa/fixtures/v366*','.github/workflows/v366.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -38,6 +38,8 @@ jobs:
           rows=[json.loads(x)for x in pathlib.Path('/tmp/lts-v366-result.log').read_text().splitlines()if x.startswith('{')]
           assert any(x.get('version')==366 and x.get('pass') for x in rows)
           PY
+      - run: python3 backend/qa/lts_v367_ci_sql.py > /tmp/lts-v367.sql
+      - run: psql -v ON_ERROR_STOP=1 -At -f /tmp/lts-v367.sql > /tmp/lts-v367-result.log
       - uses: actions/upload-artifact@v4
         if: always()
         with:

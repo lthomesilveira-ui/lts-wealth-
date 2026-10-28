@@ -19,7 +19,9 @@
    }
    const empty=select.options[0]?.value===''?select.options[0].textContent:'Selecione…';
    const value=canonical(selected??select.value);
+   const previousValue=select.value;
    select.innerHTML='<option value="">'+esc(empty)+'</option>'+data.categories.map(c=>'<option value="'+esc(c)+'"'+(c===value?' selected':'')+'>'+esc(window.LTSCategoryDisplay.category(c))+'</option>').join('');
+   if(select.value!==previousValue)select.dispatchEvent(new Event('change',{bubbles:true}));
   }
   async function get(force=false){
    session();if(!force&&data&&Date.now()-readAt<60000)return data;

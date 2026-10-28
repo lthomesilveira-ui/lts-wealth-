@@ -46,7 +46,8 @@
     "lts-v308-review-layout.js",
     "lts-v312-card-review.js",
     "lts-v337-month-overview.js",
-    "lts-v365-homologation.js"
+    "lts-v365-homologation.js",
+    "lts-v366-recurring.js"
   ],
   "protected_base_files": {
     "app.html": "154ab5f1a6bf6d8daadf844a9922db18246580ddc6303df65d9e0972b3f0d7b0",
@@ -131,6 +132,7 @@
   },
   "runtime_changes": [
     "app.html",
+    "lts-category-registry.js",
     "lts-v170-v169-review.js",
     "lts-v172-v171-review.js",
     "lts-v183-v168-feedback-safe.js",
@@ -140,6 +142,7 @@
     "lts-v308-review-layout.js",
     "lts-v312-card-review.js",
     "lts-v333-actions-model.js",
-    "lts-v365-homologation.js"
+    "lts-v365-homologation.js",
+    "lts-v366-recurring.js"
   ]
 }

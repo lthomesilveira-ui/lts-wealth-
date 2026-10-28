@@ -54,6 +54,8 @@ BEGIN
  r:=v366_fixture.lts_browser_recurring_plan_save_v366(1,j||'{"active":false}');IF(r->>'created')::int<>0 THEN RAISE EXCEPTION 'Cancel created';END IF;
  IF EXISTS(SELECT 1 FROM v366_fixture.lts_corrected_cashflow_operational_v1(u,current_date+1,(next_year+interval '5 years')::date)WHERE description='Mensalidade sintética')THEN RAISE EXCEPTION 'Cancelled rule left effective future';END IF;
  IF has_function_privilege('authenticated','v366_fixture.lts_recurring_materialize_v366(uuid,date)','EXECUTE') OR has_function_privilege('anon','v366_fixture.lts_browser_recurring_plan_save_v366(integer,jsonb)','EXECUTE')THEN RAISE EXCEPTION 'Helper privileges exposed';END IF;
+ IF EXISTS(SELECT 1 FROM pg_proc p JOIN pg_namespace ns ON ns.oid=p.pronamespace WHERE ns.nspname='v366_fixture' AND p.proname IN('lts_browser_recurring_plan_save_v366','lts_browser_recurring_plans_v366')AND p.prosecdef)THEN RAISE EXCEPTION 'Public RPC exposes a definer';END IF;
+ IF has_schema_privilege('anon','lts_recurring_private_v366','USAGE')OR has_function_privilege('anon','lts_recurring_private_v366.save_plan(integer,jsonb)','EXECUTE')THEN RAISE EXCEPTION 'Private writer exposed to anonymous';END IF;
  r:=v366_fixture.lts_browser_recurring_plan_save_v366(0,j||jsonb_build_object('description','Série com fim','ends_on',(j->>'starts_on')::date+interval '2 months'));IF(r->>'created')::int NOT BETWEEN 1 AND 3 THEN RAISE EXCEPTION 'End date ignored';END IF;
  IF EXISTS(SELECT 1 FROM v366_fixture.evento_base WHERE dados->>'desc'='Série com fim'AND(dados->>'dia')::date>((j->>'starts_on')::date+interval '2 months')::date)THEN RAISE EXCEPTION 'Past explicit end';END IF;
 END $test$;
@@ -64,6 +66,10 @@ SELECT set_config('request.jwt.claim.sub','00000000-0000-4000-8000-000000000002'
 SET LOCAL ROLE authenticated;
 DO $test$BEGIN IF(SELECT count(*) FROM v366_fixture.lts_recurring_plan_v366)<>0 THEN RAISE EXCEPTION 'Other owner read rules';END IF;IF(v366_fixture.lts_browser_recurring_plans_v366()->'rules')<>'[]'::jsonb THEN RAISE EXCEPTION 'Other owner RPC read rules';END IF;END$test$;
 RESET ROLE;
+SELECT set_config('request.jwt.claim.sub','',true);
+DO $test$BEGIN
+ BEGIN PERFORM v366_fixture.lts_browser_recurring_plans_v366();RAISE EXCEPTION 'Missing identity accepted';EXCEPTION WHEN raise_exception THEN IF SQLERRM='Missing identity accepted'THEN RAISE;END IF;END;
+END$test$;
 SELECT jsonb_build_object('version',366,'pass',true,'empty_rule_no_effect',true,'rolling_five_years',true,'retry_idempotence',true,'month_end_clipping',true,'explicit_end',true,'cancel_preserves_source',true,'variable_no_amount_inferred',true,'fixed_salary_rejected',true,'own_transfer_rejected',true,'stale_revision_rejected',true,'owner_isolation',true,'helper_acl_private',true,'synthetic_native',true);
 ROLLBACK;
 ''')

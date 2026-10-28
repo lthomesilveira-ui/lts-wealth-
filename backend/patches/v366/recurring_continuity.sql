@@ -1,4 +1,7 @@
 -- Only explicitly confirmed planning rules generate future occurrences.
+CREATE SCHEMA lts_recurring_private_v366;
+REVOKE ALL ON SCHEMA lts_recurring_private_v366 FROM PUBLIC,anon,authenticated;
+GRANT USAGE ON SCHEMA lts_recurring_private_v366 TO authenticated;
 CREATE TABLE public.lts_recurring_plan_v366 (
  id uuid PRIMARY KEY DEFAULT gen_random_uuid(), user_id uuid NOT NULL REFERENCES auth.users(id),
  series_key text NOT NULL, description text NOT NULL, direction text NOT NULL CHECK(direction IN('entrada','saida')),
@@ -58,7 +61,7 @@ BEGIN
 END $$;
 REVOKE ALL ON FUNCTION public.lts_recurring_materialize_v366(uuid,date) FROM PUBLIC,anon,authenticated;
 
-CREATE FUNCTION public.lts_browser_recurring_plan_save_v366(p_expected_revision integer,p_input jsonb)
+CREATE FUNCTION lts_recurring_private_v366.save_plan(p_expected_revision integer,p_input jsonb)
 RETURNS jsonb LANGUAGE plpgsql SECURITY DEFINER SET search_path='' SET "TimeZone"='America/Sao_Paulo' AS $$
 #variable_conflict use_column
 <<args>>
@@ -95,11 +98,22 @@ BEGIN
  DELETE FROM public.lts_flow_future_read_cache WHERE user_id=u;DELETE FROM public.lts_flow_future_read_cache_v2 WHERE user_id=u;
  RETURN result||jsonb_build_object('ok',true,'revision',p.revision,'plan_id',p.id);
 END $$;
+REVOKE ALL ON FUNCTION lts_recurring_private_v366.save_plan(integer,jsonb) FROM PUBLIC,anon,authenticated;
+GRANT EXECUTE ON FUNCTION lts_recurring_private_v366.save_plan(integer,jsonb) TO authenticated;
+CREATE FUNCTION public.lts_browser_recurring_plan_save_v366(p_expected_revision integer,p_input jsonb)
+RETURNS jsonb LANGUAGE sql SECURITY INVOKER SET search_path='' AS $$
+ SELECT lts_recurring_private_v366.save_plan(p_expected_revision,p_input);
+$$;
 REVOKE ALL ON FUNCTION public.lts_browser_recurring_plan_save_v366(integer,jsonb) FROM PUBLIC,anon;
 GRANT EXECUTE ON FUNCTION public.lts_browser_recurring_plan_save_v366(integer,jsonb) TO authenticated;
 
-CREATE FUNCTION public.lts_browser_recurring_plans_v366() RETURNS jsonb LANGUAGE plpgsql SECURITY DEFINER SET search_path='' AS $$
+CREATE FUNCTION lts_recurring_private_v366.read_plans() RETURNS jsonb LANGUAGE plpgsql SECURITY DEFINER SET search_path='' AS $$
 DECLARE u uuid:=public.lts_browser_assert_user_v1();BEGIN RETURN jsonb_build_object('ok',true,'rules',coalesce((SELECT jsonb_agg(to_jsonb(p) ORDER BY description)FROM public.lts_recurring_plan_v366 p WHERE user_id=u),'[]'));END $$;
+REVOKE ALL ON FUNCTION lts_recurring_private_v366.read_plans() FROM PUBLIC,anon,authenticated;
+GRANT EXECUTE ON FUNCTION lts_recurring_private_v366.read_plans() TO authenticated;
+CREATE FUNCTION public.lts_browser_recurring_plans_v366() RETURNS jsonb LANGUAGE sql SECURITY INVOKER SET search_path='' AS $$
+ SELECT lts_recurring_private_v366.read_plans();
+$$;
 REVOKE ALL ON FUNCTION public.lts_browser_recurring_plans_v366() FROM PUBLIC,anon;
 GRANT EXECUTE ON FUNCTION public.lts_browser_recurring_plans_v366() TO authenticated;
 

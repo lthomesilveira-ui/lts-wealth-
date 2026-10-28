@@ -3,10 +3,10 @@
   "version": "v365",
   "base_release": "v359",
   "files": {
-    "app.html": "bd75d22dda38050dff9ed2c5bb15cb42e00527dd8b84f077d388aa058819c631",
+    "app.html": "86b18a226091bbb05e15816c17cc18d2ad633b31c7e5621f16bd0a62c324486e",
     "index.html": "0ccf1a5b03bd550a470fa3443fe6227e3ae74d8a8f10268f2f59a349d4781ed6",
     "lts-category-display.js": "38b3e6c9755d8e59a4c1cf81082103505302727ada6a8d72377bdfdf691b56cd",
-    "lts-category-registry.js": "7c1c9ac5052798bea2f6b8e2e3a054303cded19799244cae87a9d4b6dc2ea8af",
+    "lts-category-registry.js": "a454ddd434a8c70a21117fcaf7b95960546def6340b8f99542567ec706f2c345",
     "lts-dashboard-executive-v1.js": "527f93e991abf083d109a495603d664db7a3b1b48aea7f6b9713f84f12615121",
     "lts-dashboard-read-model.js": "ec2b3615c65fe194b6a6f5589190184c58c4da5aa5c0da044848d3807640d420",
     "lts-executive-visual-system-v2.css": "08fd5215bb212720ee98ad72b6122ab9c4ac8f8d7ffbff24ef2ab792dd6ce77d",
@@ -79,8 +79,9 @@
     "lts-v337-month-model.js": "86d08af70e1840794849fa6f1c807c9f988159795530ada42607f7d3aa0e44bf",
     "lts-v337-month-overview.js": "757fdbe231f6ee164bcd15a956732244d2082f04dbf56f1459d914007ec40312",
     "lts-v339-component-boot.js": "8be935939c2049aa0baf5ce8b75ece0ffeee40f8d66273dfdaff09a44b08ac92",
-    "lts-v365-homologation.js": "2d73e4b2614736616bce4e53888cc861606bc3e6ce89011f7dbea1a5b9fa6694",
-    "provenance.json": "8ea720c4b0024aaf3f79d26099eb60ee7536ebf66d111cd0e158e90398208250",
+    "lts-v365-homologation.js": "8cfe002f1cf843329e7f78ee59afab7d0d25cde0613a7d6b09ff575dd0f427ce",
+    "lts-v366-recurring.js": "98e8bca1c57bc012271716374dd04795a1d83ac55bd73655128e83edb2f0db96",
+    "provenance.json": "8a6a792dbb447ab4db237a42782e93fc0950251783dc5cf9de6675086ebce6cd",
     "wip35-v162-flow-recovery.js": "9a519b23052c2f807aeb5a2f20582710bc0466d6f5931db4edd70606ea4a9350"
   },
   "protected": {
