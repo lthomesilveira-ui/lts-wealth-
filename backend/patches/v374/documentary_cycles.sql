@@ -17,13 +17,13 @@ CREATE TABLE lts_history_private_v374.document (
  user_id uuid NOT NULL,source_sha256 text NOT NULL CHECK(source_sha256~'^[0-9a-f]{64}$'),
  semantic_sha256 text NOT NULL CHECK(semantic_sha256~'^[0-9a-f]{64}$'),cycle_key text NOT NULL,
  source_file text NOT NULL,library_file_id text NOT NULL,source_message_ref text,
- issuer text NOT NULL,family text NOT NULL,billing_last4 text CHECK(billing_last4~'^[0-9]{4}$'),
+ issuer text NOT NULL,family text NOT NULL,billing_last4 text NOT NULL CHECK(billing_last4~'^[0-9]{4}$'),
  document_date date NOT NULL,due_date date NOT NULL,
  reported_total numeric NOT NULL CHECK(reported_total=round(reported_total,2)),
  source_rows integer NOT NULL CHECK(source_rows BETWEEN 1 AND 10000),
  items jsonb NOT NULL CHECK(jsonb_typeof(items)='array'AND jsonb_array_length(items)=source_rows),
  validation jsonb NOT NULL CHECK(jsonb_typeof(validation)='object'),
- PRIMARY KEY(user_id,source_sha256),UNIQUE(user_id,semantic_sha256),
+ PRIMARY KEY(user_id,source_sha256),UNIQUE(user_id,semantic_sha256),UNIQUE(user_id,family,billing_last4,due_date),
  FOREIGN KEY(user_id,cycle_key)REFERENCES lts_history_private_v374.cycle(user_id,cycle_key),
  CHECK(document_date<=due_date)
 );

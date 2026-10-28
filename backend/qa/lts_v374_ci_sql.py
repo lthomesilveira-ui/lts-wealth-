@@ -83,8 +83,12 @@ BEGIN
  IF public.lts_browser_expense_composition_v374('2022-04-01','2022-04-30','cycle-parent-a')->>'status'<>'stale'THEN RAISE EXCEPTION 'New unmatched original row ignored';END IF;
  DELETE FROM public.v346_financial WHERE row_key='unbound-new-positive';
  BEGIN
-  INSERT INTO lts_history_private_v374.document SELECT user_id,repeat('2',64),semantic_sha256,cycle_key,source_file,library_file_id,source_message_ref,issuer,family,billing_last4,document_date,due_date,reported_total,source_rows,items,validation FROM lts_history_private_v374.document WHERE source_sha256=repeat('d',64);
+  INSERT INTO lts_history_private_v374.document SELECT user_id,repeat('2',64),semantic_sha256,cycle_key,source_file,library_file_id,source_message_ref,issuer,family,'0099',document_date,due_date,reported_total,source_rows,items,validation FROM lts_history_private_v374.document WHERE source_sha256=repeat('d',64);
   RAISE EXCEPTION 'Semantic duplicate accepted';
+ EXCEPTION WHEN unique_violation THEN NULL;END;
+ BEGIN
+  INSERT INTO lts_history_private_v374.document SELECT user_id,repeat('2',64),repeat('3',64),cycle_key,source_file,library_file_id,source_message_ref,issuer,family,billing_last4,document_date,due_date,reported_total,source_rows,items,validation FROM lts_history_private_v374.document WHERE source_sha256=repeat('d',64);
+  RAISE EXCEPTION 'Two different variants of one card invoice accepted together';
  EXCEPTION WHEN unique_violation THEN NULL;END;
  IF public.lts_browser_expense_composition_v373('2022-04-01','2022-04-30','parent')IS DISTINCT FROM(SELECT j FROM v374_old)
  OR public.lts_browser_expense_composition_v374('2022-04-01','2022-04-30','parent')IS DISTINCT FROM(SELECT j FROM v374_old)
