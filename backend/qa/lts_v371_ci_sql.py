@@ -23,6 +23,7 @@ RETURNS TABLE(event_date date,description text,source text,source_ref text,confi
 LANGUAGE sql AS $$SELECT event_date,description,source,source_ref,confidence,signed_amount,account
 FROM v303_fixture.v371_flow WHERE user_id=$1 AND event_date BETWEEN $2 AND $3$$;
 ''')
+print((R/'backend/qa/fixtures/v366_series_key.sql').read_text().replace('public.','v303_fixture.'))
 print((R/'backend/qa/fixtures/v371/lts_recurring_future_gap_audit_v6.sql').read_text().replace('public.','v303_fixture.')+';')
 print(r'''
 CREATE TEMP TABLE v371_before AS SELECT v303_fixture.lts_recurring_future_gap_audit_v6('00000000-0000-4000-8000-000000000001','2026-10-27','2027-03-31')j;
