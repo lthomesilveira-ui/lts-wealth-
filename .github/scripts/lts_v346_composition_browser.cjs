@@ -22,8 +22,8 @@ async function run(browser,viewport,label){
   if(url.origin!=='https://tadhkamnwtsbdozwkyut.supabase.co')return route.abort();
   const name=url.pathname.split('/').pop(),args=JSON.parse(req.postData()||'{}'),send=x=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(x)});
   if(url.pathname==='/auth/v1/token')return send(session);if(url.pathname==='/auth/v1/logout')return send({});
-  if(name==='lts_browser_expense_detail_v346'){requests.push({name,args});return send(data.detail);}
-  if(/^lts_browser_expense_composition_v(?:346|373)$/.test(name)){
+  if(/^lts_browser_expense_detail_v(?:346|374)$/.test(name)){requests.push({name,args});return send(data.detail);}
+  if(/^lts_browser_expense_composition_v(?:346|373|374)$/.test(name)){
    requests.push({name,args});if(mode==='hold'){heldStarted();await heldGate;}
    if(mode==='error')return route.fulfill({status:500,contentType:'application/json',body:'{"message":"private SQL raw failure must stay hidden"}'});
    let p=structuredClone(data.composition);
