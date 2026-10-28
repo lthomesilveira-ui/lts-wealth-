@@ -106,12 +106,12 @@ BEGIN
    FROM jsonb_array_elements(d.items)i
   )a WHERE d.user_id=p_user AND d.cycle_key=p_cycle
  )
- SELECT count(*),coalesce(sum(n),0),coalesce(sum(nonzero),0),coalesce(sum(reported_total),0),
- count(*)FILTER(WHERE n<>source_rows OR amount<>reported_total OR bad>0 OR date_trunc('month',due_date)::date<>c.competence_month),
- coalesce(jsonb_agg(jsonb_build_object('sha256',source_sha256,'file',source_file,'library_file_id',library_file_id,
-  'issuer',issuer,'family',family,'billing_last4',billing_last4,'document_date',document_date,
-  'due_date',due_date,'total',reported_total,'rows',source_rows)ORDER BY source_sha256),'[]'::jsonb)
- INTO n_docs,n_items,nonzero,document_total,bad_docs,docs FROM detail;
+ SELECT count(*),coalesce(sum(q.n),0),coalesce(sum(q.nonzero),0),coalesce(sum(q.reported_total),0),
+ count(*)FILTER(WHERE q.n<>q.source_rows OR q.amount<>q.reported_total OR q.bad>0 OR date_trunc('month',q.due_date)::date<>c.competence_month),
+ coalesce(jsonb_agg(jsonb_build_object('sha256',q.source_sha256,'file',q.source_file,'library_file_id',q.library_file_id,
+  'issuer',q.issuer,'family',q.family,'billing_last4',q.billing_last4,'document_date',q.document_date,
+  'due_date',q.due_date,'total',q.reported_total,'rows',q.source_rows)ORDER BY q.source_sha256),'[]'::jsonb)
+ INTO n_docs,n_items,nonzero,document_total,bad_docs,docs FROM detail q;
  IF n_docs=0 OR bad_docs>0 OR round(net_total,2)<>document_total THEN RETURN stale;END IF;
  IF p_items THEN
   SELECT coalesce(jsonb_agg(jsonb_build_object(
@@ -182,9 +182,9 @@ RETURNS jsonb LANGUAGE plpgsql SECURITY INVOKER SET search_path='' AS $$
 DECLARE u uuid:=public.lts_browser_assert_user_v1();current_rows jsonb;row_out jsonb;result_rows jsonb:='[]';
  r jsonb;parent jsonb;payload jsonb;b lts_history_private_v374.binding%rowtype;min_date date;max_date date;rev text;
 BEGIN
- SELECT min(c.booked_on),max(c.booked_on)INTO min_date,max_date
- FROM lts_history_private_v374.binding b JOIN lts_history_private_v374.cycle c USING(user_id,cycle_key)
- WHERE b.user_id=u AND b.parent_key IN(SELECT x->>'key'FROM jsonb_array_elements(p_base->'rows')x);
+ SELECT min(cycle_row.booked_on),max(cycle_row.booked_on)INTO min_date,max_date
+ FROM lts_history_private_v374.binding bind_row JOIN lts_history_private_v374.cycle cycle_row USING(user_id,cycle_key)
+ WHERE bind_row.user_id=u AND bind_row.parent_key IN(SELECT x->>'key'FROM jsonb_array_elements(p_base->'rows')x);
  IF min_date IS NOT NULL THEN
   SELECT coalesce(jsonb_agg(to_jsonb(x)),'[]'::jsonb)INTO current_rows FROM public.lts_v229_expense_rows(u,min_date,max_date)x;
  END IF;
