@@ -1,0 +1,15 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),assert=require('node:assert/strict'),cp=require('node:child_process');
+const root='releases/v365',base='releases/v359',sha=p=>crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex'),read=n=>fs.readFileSync(path.join(root,n),'utf8');
+const manifest=JSON.parse(read('manifest.json')),provenance=JSON.parse(read('provenance.json'));
+assert.equal(manifest.release,'v365');assert.equal(manifest.base_release,'v359');
+for(const[n,h]of Object.entries(manifest.files))assert.equal(sha(path.join(root,n)),h,n);
+for(const[n,h]of Object.entries(manifest.protected))assert.equal(sha(n),h,n);
+for(const[n,h]of Object.entries(provenance.protected_base_files))assert.equal(sha(path.join(base,n)),h,n);
+for(const n of fs.readdirSync(root).filter(n=>n.endsWith('.js')))cp.execFileSync(process.execPath,['--check',path.join(root,n)]);
+assert(read('app.html').includes('lts-v365-homologation.js'));
+assert(read('lts-v183-v168-feedback-safe.js').includes("p_horizon_end:(Number(today().slice(0,4))+4)+'-12-31'"));
+assert(!read('lts-v183-v168-feedback-safe.js').includes("p_horizon_end:'2031-12-31'"));
+assert.equal(provenance.financial_source_data_changed,false);assert.equal(provenance.private_http_validated,false);assert.equal(provenance.physical_mobile_validated,false);
+const source=read('lts-v333-actions-model.js');assert(!source.includes('até 2031'));
+console.log(JSON.stringify({pass:true,release:'v365',files:Object.keys(manifest.files).length,immutable_base_files:Object.keys(provenance.protected_base_files).length,financial_sources_unchanged:true}));
