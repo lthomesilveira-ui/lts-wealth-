@@ -7,7 +7,8 @@
   "scope": [
     "Read documentary PDF composition under existing historical totals",
     "Keep unreported purchase years unknown and PDF references distinct from workbook cells",
-    "Preserve all ledger values, earlier clients and source categories"
+    "Preserve all ledger values, earlier clients and source categories",
+    "Reconcile only original workbook invoice adjustments when a unique consolidated row and the document net match"
   ],
   "financial_source_data_changed": false,
   "physical_mobile_validated": false,

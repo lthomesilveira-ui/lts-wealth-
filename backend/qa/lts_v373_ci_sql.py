@@ -11,6 +11,7 @@ print(r'''
 CREATE SCHEMA auth;
 CREATE TABLE auth.users(id uuid PRIMARY KEY);
 INSERT INTO auth.users VALUES('00000000-0000-4000-8000-000000000001'),('00000000-0000-4000-8000-000000000002');
+ALTER TABLE public.v346_financial ADD COLUMN description text DEFAULT 'Synthetic card';
 SELECT set_config('app.synthetic_uid','00000000-0000-4000-8000-000000000001',true);
 CREATE TEMP TABLE v373_old AS SELECT public.lts_browser_expense_composition_v346('2022-04-01','2022-04-30','parent')j;
 CREATE TEMP TABLE v373_attrs AS SELECT proname,to_jsonb(p)-'prosrc' j FROM pg_proc p WHERE pronamespace='public'::regnamespace;
@@ -41,6 +42,31 @@ BEGIN
  OR has_table_privilege('authenticated','lts_history_private_v373.pdf_parent','INSERT')THEN RAISE EXCEPTION 'Private tables exposed';END IF;
 END $test$;
 RESET ROLE;
+DO $bridge$
+DECLARE j jsonb;
+BEGIN
+ UPDATE public.v346_financial SET coverage_mode='card_invoice_aggregate_fallback'
+ WHERE user_id='00000000-0000-4000-8000-000000000001'AND row_key='parent';
+ INSERT INTO public.v346_financial(user_id,row_key,event_date,transaction_date,competence_month,amount,category,account_source,source_table,source_ref,coverage_mode,management_group,management_subgroup,description)
+ SELECT user_id,'original-adjustment',event_date,transaction_date,competence_month,-25,'Original adjustment',account_source,source_table,'2','card_workbook_signed_adjustment_v235','Original adjustment','Original adjustment',description
+ FROM public.v346_financial WHERE user_id='00000000-0000-4000-8000-000000000001'AND row_key='parent';
+ j:=public.lts_browser_expense_composition_v373('2022-04-01','2022-04-30','parent');
+ IF j->>'status'<>'complete'OR(j->>'unexplained_total')::numeric<>0
+ OR(j->>'residual_total')::numeric<>25 OR(j#>>'{reconciliation,adjustments_total}')::numeric<>-25
+ OR(j#>>'{reconciliation,net_total}')::numeric<>75 THEN RAISE EXCEPTION 'Original signed adjustment not reconciled';END IF;
+ UPDATE public.v346_financial SET coverage_mode='unrelated_refund'WHERE row_key='original-adjustment';
+ j:=public.lts_browser_expense_composition_v373('2022-04-01','2022-04-30','parent');
+ IF j->>'status'<>'partial'OR j->>'reconciliation'IS NOT NULL THEN RAISE EXCEPTION 'Unrelated refund used as balancing item';END IF;
+ UPDATE public.v346_financial SET coverage_mode='card_workbook_signed_adjustment_v235'WHERE row_key='original-adjustment';
+ INSERT INTO public.v346_financial(user_id,row_key,event_date,transaction_date,competence_month,amount,category,account_source,source_table,source_ref,coverage_mode,management_group,management_subgroup,description)
+ SELECT user_id,'another-positive',event_date,transaction_date,competence_month,10,category,account_source,source_table,'3',coverage_mode,management_group,management_subgroup,description
+ FROM public.v346_financial WHERE user_id='00000000-0000-4000-8000-000000000001'AND row_key='parent';
+ j:=public.lts_browser_expense_composition_v373('2022-04-01','2022-04-30','parent');
+ IF j->>'status'<>'partial'OR j->>'reconciliation'IS NOT NULL THEN RAISE EXCEPTION 'Ambiguous consolidated rows auto-linked';END IF;
+ DELETE FROM public.v346_financial WHERE row_key IN('original-adjustment','another-positive');
+ UPDATE public.v346_financial SET coverage_mode='card_category_allocated_history'
+ WHERE user_id='00000000-0000-4000-8000-000000000001'AND row_key='parent';
+END $bridge$;
 DO $$BEGIN
  IF public.lts_browser_expense_composition_v346('2022-04-01','2022-04-30','parent')IS DISTINCT FROM(SELECT j FROM v373_old)THEN RAISE EXCEPTION 'Published reader changed';END IF;
  IF EXISTS(SELECT 1 FROM v373_attrs a JOIN pg_proc p ON p.proname=a.proname AND p.pronamespace='public'::regnamespace WHERE a.j IS DISTINCT FROM to_jsonb(p)-'prosrc')THEN RAISE EXCEPTION 'Existing function attributes changed';END IF;

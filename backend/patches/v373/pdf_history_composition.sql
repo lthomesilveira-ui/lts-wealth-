@@ -46,7 +46,8 @@ CREATE POLICY service_only ON lts_history_private_v373.pdf_item TO service_role 
 CREATE FUNCTION lts_history_private_v373.read_composition(p_from date,p_to date,p_row_key text)
 RETURNS jsonb LANGUAGE plpgsql SECURITY DEFINER SET search_path='' SET "TimeZone"='America/Sao_Paulo' AS $$
 DECLARE u uuid:=public.lts_browser_assert_user_v1();base jsonb;parent record;doc lts_history_private_v373.pdf_parent%rowtype;
- n bigint;nonzero bigint;identified numeric;items jsonb;
+ n bigint;nonzero bigint;identified numeric;items jsonb;day_rows jsonb;bridge jsonb;
+ positive_count bigint;adjustment_count bigint;adjustment_total numeric;adjustment_rows jsonb;
 BEGIN
  -- The existing reader validates the requested identity, period and row kind.
  base:=public.lts_browser_expense_composition_v346(p_from,p_to,p_row_key);
@@ -62,6 +63,30 @@ BEGIN
  IF n<>doc.source_rows OR identified IS DISTINCT FROM doc.reported_total THEN
   RETURN base||jsonb_build_object('status','stale','document_status','incomplete_source',
    'rows','[]'::jsonb,'count',0,'nonzero_count',0,'identified_total',0,'residual_total',round(parent.amount,2));
+ END IF;
+ -- A documented invoice can also reconcile an original provision plus its
+ -- already recorded workbook adjustment. Never manufacture a balancing item.
+ IF parent.coverage_mode='card_invoice_aggregate_fallback' THEN
+  SELECT coalesce(jsonb_agg(to_jsonb(r)),'[]'::jsonb)INTO day_rows
+  FROM public.lts_v229_expense_rows(u,parent.event_date,parent.event_date)r;
+  WITH same_cycle AS(
+   SELECT x FROM jsonb_array_elements(day_rows)x
+   WHERE x->>'account_source'=parent.account_source AND x->>'source_table'=parent.source_table
+   AND x->>'competence_month'=parent.competence_month::text
+   AND lower(trim(x->>'description'))=lower(trim(parent.description))
+  )
+  SELECT count(*)FILTER(WHERE(x->>'amount')::numeric>0 AND x->>'coverage_mode'='card_invoice_aggregate_fallback'),
+   count(*)FILTER(WHERE(x->>'amount')::numeric<0 AND x->>'coverage_mode'='card_workbook_signed_adjustment_v235'),
+   coalesce(sum((x->>'amount')::numeric)FILTER(WHERE(x->>'amount')::numeric<0 AND x->>'coverage_mode'='card_workbook_signed_adjustment_v235'),0),
+   coalesce(jsonb_agg(jsonb_build_object('key',x->>'row_key','amount',x->'amount','date',x->>'event_date',
+    'source_table',x->>'source_table','source_ref',x->>'source_ref')ORDER BY x->>'row_key')
+    FILTER(WHERE(x->>'amount')::numeric<0 AND x->>'coverage_mode'='card_workbook_signed_adjustment_v235'),'[]'::jsonb)
+  INTO positive_count,adjustment_count,adjustment_total,adjustment_rows FROM same_cycle;
+  IF positive_count=1 AND adjustment_count>0 AND round(parent.amount+adjustment_total,2)=doc.reported_total THEN
+   bridge:=jsonb_build_object('status','documented_net_match','original_total',parent.amount,
+    'adjustments_total',adjustment_total,'net_total',round(parent.amount+adjustment_total,2),
+    'document_total',doc.reported_total,'adjustments',adjustment_rows,'workbook',doc.validation->'original_workbook');
+  END IF;
  END IF;
  SELECT coalesce(jsonb_agg(jsonb_build_object(
   'key',doc.source_sha256||':'||c.ordinal,'description',c.description,'category',parent.category,
@@ -80,8 +105,10 @@ BEGIN
  )ORDER BY c.ordinal),'[]'::jsonb)INTO items
  FROM lts_history_private_v373.pdf_item c WHERE c.user_id=u AND c.parent_key=p_row_key;
  RETURN base||jsonb_build_object('version','expense-pdf-composition-v373','rows',items,'count',n,'nonzero_count',nonzero,
-  'status',public.lts_card_history_status_v346(true,true,parent.amount,identified,n),
+  'status',CASE WHEN bridge IS NOT NULL THEN 'complete'ELSE public.lts_card_history_status_v346(true,true,parent.amount,identified,n)END,
   'identified_total',round(identified,2),'residual_total',round(parent.amount-identified,2),
+  'unexplained_total',CASE WHEN bridge IS NOT NULL THEN 0 ELSE round(parent.amount-identified,2)END,
+  'reconciliation',bridge,
   'source_document_total',doc.reported_total,'source_document_due_date',doc.due_date,'financial_effect','none');
 END;
 $$;

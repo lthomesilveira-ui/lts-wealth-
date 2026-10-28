@@ -27,6 +27,7 @@ async function run(browser,viewport,label){
    requests.push({name,args});if(mode==='hold'){heldStarted();await heldGate;}
    if(mode==='error')return route.fulfill({status:500,contentType:'application/json',body:'{"message":"private SQL raw failure must stay hidden"}'});
    let p=structuredClone(data.composition);
+   if(mode==='bridge')p={...p,status:'complete',count:3,nonzero_count:2,rows:[mk('b1',80,'Compra sintética',1),mk('b2',-5,'Crédito sintético',2),mk('b3',0,'Registro zero',3)],identified_total:75,residual_total:25,unexplained_total:0,source_document_total:75,reconciliation:{status:'documented_net_match',original_total:100,adjustments_total:-25,net_total:75,adjustments:[{date:'2022-04-01',amount:-25}],workbook:{file:'Original.xlsx',sheet:'Registros',parent_rows:[1],adjustment_rows:[2]}}};
    if(mode==='missing')p=actual?data.missing:{...p,status:'missing',count:0,nonzero_count:0,rows:[],identified_total:0,residual_total:100};
    if(mode==='partial')p={...p,status:'partial',count:1,nonzero_count:1,rows:[p.rows[0]],identified_total:p.rows[0].amount,residual_total:p.total-p.rows[0].amount};
    if(mode==='stale')p={...p,status:'stale',count:0,nonzero_count:0,rows:[],identified_total:0,residual_total:p.total};
@@ -55,10 +56,11 @@ async function run(browser,viewport,label){
   await page.screenshot({path:path.join(out,label+'-composition-origin.png')});
   await drawer.locator('.v344-back').click();await ready();assert.equal(await filter.inputValue(),query);assert.match(await drawer.locator('header small').innerText(),/01\/04\/2022 a 30\/04\/2022/);
   // Responses from each mode are intentionally uncached.
-  for(const status of ['partial','missing','stale','error']){
+  for(const status of ['bridge','partial','missing','stale','error']){
    if(actual)break;
    mode=status;await invalidate();await drawer.locator('[data-composition-key]').click();await ready();
-   const text=await drawer.innerText();assert(!text.includes('private SQL'));assert(status==='error'?text.includes('Não foi possível abrir'):status==='partial'?text.includes('Composição parcial'):status==='missing'?text.includes('Ainda falta localizar'):text.includes('mudou desde'));
+   const text=await drawer.innerText();assert(!text.includes('private SQL'));assert(status==='bridge'?text.includes('com ajuste de')&&text.includes('Sem explicação'):status==='error'?text.includes('Não foi possível abrir'):status==='partial'?text.includes('Composição parcial'):status==='missing'?text.includes('Ainda falta localizar'):text.includes('mudou desde'));
+   if(status==='bridge'){assert.equal(await drawer.locator('.v346-origin[open]').count(),0);assert(!text.includes('Composição parcial'));await page.screenshot({path:path.join(out,label+'-documentary-adjustment.png')});}
    if(status==='missing')await page.screenshot({path:path.join(out,label+'-missing-composition.png')});
    await drawer.locator('.v344-back').click();await ready();
   }
