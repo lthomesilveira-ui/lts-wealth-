@@ -90,10 +90,10 @@ BEGIN
   INSERT INTO lts_history_private_v374.document SELECT user_id,repeat('2',64),repeat('3',64),cycle_key,source_file,library_file_id,source_message_ref,issuer,family,billing_last4,document_date,due_date,reported_total,source_rows,items,validation FROM lts_history_private_v374.document WHERE source_sha256=repeat('d',64);
   RAISE EXCEPTION 'Two different variants of one card invoice accepted together';
  EXCEPTION WHEN unique_violation THEN NULL;END;
- IF public.lts_browser_expense_composition_v373('2022-04-01','2022-04-30','parent')IS DISTINCT FROM(SELECT j FROM v374_old)
- OR public.lts_browser_expense_composition_v374('2022-04-01','2022-04-30','parent')IS DISTINCT FROM(SELECT j FROM v374_old)
+ IF public.lts_browser_expense_composition_v373('2022-04-01','2022-04-30','parent')IS DISTINCT FROM(SELECT prior.j FROM v374_old prior)
+ OR public.lts_browser_expense_composition_v374('2022-04-01','2022-04-30','parent')IS DISTINCT FROM(SELECT prior.j FROM v374_old prior)
  THEN RAISE EXCEPTION 'Earlier source or reader replaced';END IF;
- IF(SELECT jsonb_agg(to_jsonb(x)ORDER BY user_id,row_key)FROM public.v346_financial x)IS DISTINCT FROM(SELECT j FROM v374_before)THEN RAISE EXCEPTION 'Financial rows changed';END IF;
+ IF(SELECT jsonb_agg(to_jsonb(x)ORDER BY user_id,row_key)FROM public.v346_financial x)IS DISTINCT FROM(SELECT prior.j FROM v374_before prior)THEN RAISE EXCEPTION 'Financial rows changed';END IF;
  IF EXISTS(SELECT 1 FROM v374_old_attrs a JOIN pg_proc p USING(oid)WHERE a.j IS DISTINCT FROM to_jsonb(p))THEN RAISE EXCEPTION 'Earlier functions changed';END IF;
  IF EXISTS(SELECT 1 FROM pg_proc WHERE pronamespace='public'::regnamespace AND proname LIKE'%v374'AND prosecdef)
  OR has_function_privilege('anon','public.lts_browser_expense_composition_v374(date,date,text)','EXECUTE')THEN RAISE EXCEPTION 'Public elevation or anonymous access';END IF;
