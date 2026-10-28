@@ -11,8 +11,8 @@ INSERT INTO auth.users VALUES('00000000-0000-4000-8000-000000000001'),('00000000
 CREATE FUNCTION auth.uid() RETURNS uuid LANGUAGE sql AS $$SELECT nullif(current_setting('test.owner',true),'')::uuid$$;
 GRANT USAGE ON SCHEMA auth TO authenticated;
 GRANT EXECUTE ON FUNCTION auth.uid() TO authenticated;
-CREATE TABLE public.lts_card_due_rule_v290(user_id uuid,family text,effective_from date,due_day int,PRIMARY KEY(user_id,family,effective_from));
-INSERT INTO public.lts_card_due_rule_v290 VALUES
+CREATE TABLE public.lts_card_due_rule_v290(user_id uuid,family text,effective_from date,due_day int,confirmed_at timestamptz DEFAULT now(),PRIMARY KEY(user_id,family,effective_from));
+INSERT INTO public.lts_card_due_rule_v290(user_id,family,effective_from,due_day) VALUES
 ('00000000-0000-4000-8000-000000000001','aeternum','2026-12-01',3),
 ('00000000-0000-4000-8000-000000000001','itau_mastercard','2026-11-01',16);
 CREATE TABLE public.lts_open_finance_staging(id uuid,user_id uuid,resource_type text,provider_deleted_at timestamptz,currency text,institution_code text,provider_account_ref text,raw_payload jsonb,normalized_payload jsonb);
