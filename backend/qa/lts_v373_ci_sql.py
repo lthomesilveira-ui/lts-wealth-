@@ -45,6 +45,24 @@ DO $$BEGIN
  IF public.lts_browser_expense_composition_v346('2022-04-01','2022-04-30','parent')IS DISTINCT FROM(SELECT j FROM v373_old)THEN RAISE EXCEPTION 'Published reader changed';END IF;
  IF EXISTS(SELECT 1 FROM v373_attrs a JOIN pg_proc p ON p.proname=a.proname AND p.pronamespace='public'::regnamespace WHERE a.j IS DISTINCT FROM to_jsonb(p)-'prosrc')THEN RAISE EXCEPTION 'Existing function attributes changed';END IF;
 END$$;
+DO $test$
+DECLARE j jsonb;
+BEGIN
+ UPDATE lts_history_private_v373.pdf_item SET purchase_date='2022-02-18'WHERE ordinal=1;
+ j:=public.lts_browser_expense_composition_v373('2022-04-01','2022-04-30','parent');
+ IF j#>>'{rows,0,date_kind}'<>'purchase'OR j#>>'{rows,0,date}'<>'2022-02-18'THEN RAISE EXCEPTION 'Documented full date lost';END IF;
+ UPDATE lts_history_private_v373.pdf_item SET purchase_date=NULL WHERE ordinal=1;
+ BEGIN
+  UPDATE lts_history_private_v373.pdf_item SET purchase_date='2022-01-01'WHERE ordinal=1;
+  RAISE EXCEPTION 'Contradictory date accepted';
+ EXCEPTION WHEN check_violation THEN NULL;END;
+ INSERT INTO public.lts_card_history_parent_v346 SELECT user_id,row_key,public.lts_card_history_signature_v346(to_jsonb(r)),'{}',now()
+ FROM public.v346_financial r WHERE user_id='00000000-0000-4000-8000-000000000001';
+ INSERT INTO public.lts_card_history_item_v346 VALUES('00000000-0000-4000-8000-000000000001','parent',repeat('c',64),'Original.xlsx','Original',1,'2022-04-01','2022-04-01',100,100,'Original item','Original category','Synthetic card',NULL,NULL,NULL);
+ IF public.lts_browser_expense_composition_v373('2022-04-01','2022-04-30','parent')IS DISTINCT FROM public.lts_browser_expense_composition_v346('2022-04-01','2022-04-30','parent')THEN RAISE EXCEPTION 'Existing workbook composition was replaced or duplicated';END IF;
+ DELETE FROM public.lts_card_history_item_v346 WHERE source_hash=repeat('c',64);
+ DELETE FROM public.lts_card_history_parent_v346;
+END $test$;
 SELECT set_config('app.synthetic_uid','00000000-0000-4000-8000-000000000002',true);
 SET LOCAL ROLE authenticated;
 DO $$DECLARE j jsonb;BEGIN
@@ -63,7 +81,7 @@ BEGIN
  DELETE FROM lts_history_private_v373.pdf_item WHERE ordinal=2;
  j:=public.lts_browser_expense_composition_v373('2022-04-01','2022-04-30','parent');
  IF j->>'status'<>'stale'OR j->>'document_status'<>'incomplete_source'OR jsonb_array_length(j->'rows')<>0 THEN RAISE EXCEPTION 'Incomplete source presented as checked';END IF;
- IF(SELECT jsonb_agg(to_jsonb(x)ORDER BY user_id)FROM public.v346_financial x)IS DISTINCT FROM(SELECT j FROM v373_financial)THEN RAISE EXCEPTION 'Financial rows changed';END IF;
+ IF(SELECT jsonb_agg(to_jsonb(x)ORDER BY user_id)FROM public.v346_financial x)IS DISTINCT FROM(SELECT saved.j FROM v373_financial saved)THEN RAISE EXCEPTION 'Financial rows changed';END IF;
  IF EXISTS(SELECT 1 FROM pg_proc WHERE proname='lts_browser_expense_composition_v373'AND prosecdef)
  OR has_function_privilege('anon','public.lts_browser_expense_composition_v373(date,date,text)','EXECUTE')THEN RAISE EXCEPTION 'Public elevation or anonymous access';END IF;
 END $test$;

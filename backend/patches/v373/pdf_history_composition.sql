@@ -31,6 +31,7 @@ CREATE TABLE lts_history_private_v373.pdf_item (
  CHECK(last4 IS NULL OR last4~'^[0-9]{4}$'),
  CHECK(purchase_day_month IS NULL OR (purchase_day_month~'^[0-9]{2}/[0-9]{2}$'
  AND to_char(to_date(purchase_day_month||'/2000','DD/MM/YYYY'),'DD/MM')=purchase_day_month)),
+ CHECK(purchase_date IS NULL OR purchase_day_month IS NULL OR to_char(purchase_date,'DD/MM')=purchase_day_month),
  CHECK((installment_number IS NULL AND installments IS NULL)OR
  (installment_number IS NOT NULL AND installments IS NOT NULL
  AND installment_number>0 AND installments>=installment_number))
