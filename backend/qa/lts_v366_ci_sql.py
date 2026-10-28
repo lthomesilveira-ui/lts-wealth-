@@ -5,6 +5,7 @@ patch=(R/'backend/patches/v366/recurring_continuity.sql').read_text().replace('p
 key=(R/'backend/qa/fixtures/v366_series_key.sql').read_text().replace('public.','v366_fixture.')
 print(r'''
 BEGIN;
+SET LOCAL TIME ZONE 'America/Sao_Paulo';
 CREATE SCHEMA v366_fixture;GRANT USAGE ON SCHEMA v366_fixture TO authenticated;
 CREATE SCHEMA auth;CREATE SCHEMA cron;
 CREATE TABLE auth.users(id uuid PRIMARY KEY);
