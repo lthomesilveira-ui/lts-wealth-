@@ -1,0 +1,20 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),assert=require('node:assert/strict'),cp=require('node:child_process');
+const root='releases/v373',base='releases/v371',sha=p=>crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex'),read=n=>fs.readFileSync(path.join(root,n),'utf8');
+const manifest=JSON.parse(read('manifest.json')),provenance=JSON.parse(read('provenance.json'));
+assert.equal(manifest.release,'v373');assert.equal(manifest.base_release,'v371');
+for(const[n,h]of Object.entries(manifest.files))assert.equal(sha(path.join(root,n)),h,n);
+for(const[n,h]of Object.entries(manifest.protected))assert.equal(sha(n),h,n);
+for(const[n,h]of Object.entries(provenance.protected_base_files))assert.equal(sha(path.join(base,n)),h,n);
+for(const n of fs.readdirSync(root).filter(n=>n.endsWith('.js')))cp.execFileSync(process.execPath,['--check',path.join(root,n)]);
+assert(read('app.html').includes('lts-v365-homologation.js'));
+assert(read('lts-v183-v168-feedback-safe.js').includes("p_horizon_end:(Number(today().slice(0,4))+4)+'-12-31'"));
+assert(!read('lts-v183-v168-feedback-safe.js').includes("p_horizon_end:'2031-12-31'"));
+assert.equal(provenance.financial_source_data_changed,false);assert.equal(provenance.private_http_validated,false);assert.equal(provenance.physical_mobile_validated,false);
+const source=read('lts-v333-actions-model.js');assert(!source.includes('até 2031'));
+assert(!read('lts-category-display.js').includes("?'Imagem e cuidados pessoais'"));
+console.log(JSON.stringify({pass:true,release:'v373',files:Object.keys(manifest.files).length,immutable_base_files:Object.keys(provenance.protected_base_files).length,financial_sources_unchanged:true}));
+
+const tools=require('../../releases/v373/lts-v268-read-tools.js');assert.equal(tools.periodState({status:'no_payment_due',actual_events:0,future_events:0}),'no_payment');assert.equal(tools.periodState({status:'no_payment_due',actual_events:1,future_events:0}),'actual');
+
+assert(read('lts-v179-cash-recovery.js').includes("request('lts_browser_expense_composition_v373'"));

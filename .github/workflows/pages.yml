@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: ['releases/v371/**', 'releases/v368/**', 'releases/v365/**', 'releases/v359/**', 'releases/v356/**', 'releases/v353/**', 'releases/v352/**', 'releases/v225/**', 'releases/v225-1/**', 'releases/v226/**', 'releases/v226-1/**', 'releases/v226-2/**', 'releases/v227/**', 'releases/v227-1/**', 'releases/v227-2/**', 'releases/v228/**', 'releases/v229/**', 'releases/v229-1/**', 'releases/v230/**', 'releases/v233/**', 'releases/v234/**', 'releases/v235/**', 'releases/v236/**', 'releases/v237/**', 'releases/v238/**', 'releases/v239/**', 'releases/v240/**', 'releases/v241/**', 'releases/v242/**', 'releases/v244/**', 'releases/v245/**', 'releases/v257/**', 'releases/v258/**', 'releases/v259/**', 'releases/v260/**', 'releases/v261/**', 'releases/v262/**', 'releases/v264/**', 'releases/v268/**', 'releases/v269/**', 'releases/v270/**', 'releases/v271/**', 'releases/v272/**', 'releases/v273/**', 'releases/v274/**', 'releases/v275/**', 'releases/v276/**', 'releases/v277/**', 'releases/v278/**', 'releases/v279/**', 'releases/v280/**', 'releases/v281/**', 'releases/v282/**', 'releases/v283/**', 'releases/v284/**', 'releases/v285/**', 'releases/v290/**', 'releases/v291/**', 'releases/v293/**', 'releases/v295/**', 'releases/v296/**', 'releases/v308/**', 'releases/v309/**', 'releases/v312/**', 'releases/v333/**', 'releases/v335/**', 'releases/v337/**', 'releases/v339/**', 'releases/v341/**', 'releases/v342/**', 'releases/v344/**', 'releases/v346/**', 'wip35-v225-candidate.html', '.github/workflows/pages.yml', '.github/scripts/lts_v283_release_contract.cjs', '.github/scripts/lts_v284_release_contract.cjs', '.github/scripts/lts_v285_release_contract.cjs']
+    paths: ['releases/v373/**', 'releases/v371/**', 'releases/v368/**', 'releases/v365/**', 'releases/v359/**', 'releases/v356/**', 'releases/v353/**', 'releases/v352/**', 'releases/v225/**', 'releases/v225-1/**', 'releases/v226/**', 'releases/v226-1/**', 'releases/v226-2/**', 'releases/v227/**', 'releases/v227-1/**', 'releases/v227-2/**', 'releases/v228/**', 'releases/v229/**', 'releases/v229-1/**', 'releases/v230/**', 'releases/v233/**', 'releases/v234/**', 'releases/v235/**', 'releases/v236/**', 'releases/v237/**', 'releases/v238/**', 'releases/v239/**', 'releases/v240/**', 'releases/v241/**', 'releases/v242/**', 'releases/v244/**', 'releases/v245/**', 'releases/v257/**', 'releases/v258/**', 'releases/v259/**', 'releases/v260/**', 'releases/v261/**', 'releases/v262/**', 'releases/v264/**', 'releases/v268/**', 'releases/v269/**', 'releases/v270/**', 'releases/v271/**', 'releases/v272/**', 'releases/v273/**', 'releases/v274/**', 'releases/v275/**', 'releases/v276/**', 'releases/v277/**', 'releases/v278/**', 'releases/v279/**', 'releases/v280/**', 'releases/v281/**', 'releases/v282/**', 'releases/v283/**', 'releases/v284/**', 'releases/v285/**', 'releases/v290/**', 'releases/v291/**', 'releases/v293/**', 'releases/v295/**', 'releases/v296/**', 'releases/v308/**', 'releases/v309/**', 'releases/v312/**', 'releases/v333/**', 'releases/v335/**', 'releases/v337/**', 'releases/v339/**', 'releases/v341/**', 'releases/v342/**', 'releases/v344/**', 'releases/v346/**', 'wip35-v225-candidate.html', '.github/workflows/pages.yml', '.github/scripts/lts_v283_release_contract.cjs', '.github/scripts/lts_v284_release_contract.cjs', '.github/scripts/lts_v285_release_contract.cjs']
 
 permissions:
   contents: read
@@ -103,6 +103,7 @@ jobs:
           node .github/scripts/lts_v365_release_contract.cjs
           node .github/scripts/lts_v368_release_contract.cjs
           node .github/scripts/lts_v371_release_contract.cjs
+          node .github/scripts/lts_v373_release_contract.cjs
       - name: Configure Pages
         uses: actions/configure-pages@v5
         with:
@@ -121,7 +122,7 @@ jobs:
           import crypto from 'node:crypto';
           import assert from 'node:assert/strict';
           const results=[];
-          const releases=['v371','v368','v365','v359','v356','v353','v352','v346','v344','v342','v341','v339','v337','v335','v333','v312','v309','v308','v296','v295','v242','v244','v245','v257','v258','v259','v260','v261','v262','v264','v268','v269','v270','v271','v272','v273','v274','v275','v276','v277','v278','v279','v280','v281','v282','v283','v284','v285','v290','v291','v293'];
+          const releases=['v373','v371','v368','v365','v359','v356','v353','v352','v346','v344','v342','v341','v339','v337','v335','v333','v312','v309','v308','v296','v295','v242','v244','v245','v257','v258','v259','v260','v261','v262','v264','v268','v269','v270','v271','v272','v273','v274','v275','v276','v277','v278','v279','v280','v281','v282','v283','v284','v285','v290','v291','v293'];
           for(const release of releases){
           const rawManifest=fs.readFileSync('releases/'+release+'/manifest.json');
           const manifest=JSON.parse(rawManifest);
@@ -131,7 +132,7 @@ jobs:
           if(fs.existsSync(provenancePath)&&!entries.some(([name])=>name==='provenance.json')){
             entries.push(['provenance.json',crypto.createHash('sha256').update(fs.readFileSync(provenancePath)).digest('hex')]);
           }
-          if(['v359','v365','v368','v371'].includes(release))assert.deepEqual(entries.map(([name])=>name).sort(),fs.readdirSync('releases/'+release).sort(),'V359 must verify every published file');
+          if(['v359','v365','v368','v371','v373'].includes(release))assert.deepEqual(entries.map(([name])=>name).sort(),fs.readdirSync('releases/'+release).sort(),'V359 must verify every published file');
           if(release==='v285'){
             assert.equal(manifest.release,'v285','Published target release identity');
             assert.equal(manifest.version,'v285','Published target version identity');
@@ -177,12 +178,13 @@ jobs:
           assert.equal(results.filter(result=>result.release==='v365').length,81,'V365 must verify all 81 assets');
           assert.equal(results.filter(result=>result.release==='v368').length,81,'V368 must verify all 81 assets');
           assert.equal(results.filter(result=>result.release==='v371').length,81,'V371 must verify all 81 assets');
-          fs.writeFileSync('v371-published-verification.json',JSON.stringify({pass:true,head:process.env.GITHUB_SHA,url:'https://lthomesilveira-ui.github.io/lts-wealth-/releases/v371/app.html',releases,count:results.length,assets:results},null,2));
-          console.log('Published V371 and preserved earlier release assets verified:',results.length);
+          assert.equal(results.filter(result=>result.release==='v373').length,81,'V373 must verify all 81 assets');
+          fs.writeFileSync('v373-published-verification.json',JSON.stringify({pass:true,head:process.env.GITHUB_SHA,url:'https://lthomesilveira-ui.github.io/lts-wealth-/releases/v373/app.html',releases,count:results.length,assets:results},null,2));
+          console.log('Published V373 and preserved earlier release assets verified:',results.length);
           JS
       - uses: actions/upload-artifact@v4
         with:
-          name: v371-published-verification
-          path: v371-published-verification.json
+          name: v373-published-verification
+          path: v373-published-verification.json
 
 
