@@ -14,6 +14,14 @@ REVOKE ALL ON lts_cash_alert_private_v377.delivery FROM PUBLIC,anon,authenticate
 GRANT SELECT,INSERT ON lts_cash_alert_private_v377.delivery TO service_role;
 CREATE POLICY service_delivery ON lts_cash_alert_private_v377.delivery TO service_role
  USING(true) WITH CHECK(true);
+CREATE INDEX delivery_user_sent_v377 ON lts_cash_alert_private_v377.delivery(user_id,sent_at DESC);
+
+-- The service role cannot read auth.users directly. This private, zero-argument
+-- helper returns only the configured owner's address and exposes no user list.
+CREATE FUNCTION lts_cash_alert_private_v377.owner_email()
+RETURNS text LANGUAGE sql STABLE SECURITY DEFINER SET search_path='' AS $fn$
+ SELECT email FROM auth.users WHERE id=public.lts_open_finance_pilot_owner_v1();
+$fn$;
 
 CREATE FUNCTION lts_cash_alert_private_v377.evaluate(p_payload jsonb,p_as_of date)
 RETURNS jsonb LANGUAGE plpgsql STABLE SET search_path='' AS $fn$
@@ -102,7 +110,8 @@ RETURNS jsonb LANGUAGE plpgsql SECURITY INVOKER SET search_path='' SET "TimeZone
 DECLARE u uuid:=public.lts_open_finance_pilot_owner_v1();mail text;cached jsonb;j jsonb;report jsonb;
  previous jsonb;last_sent timestamptz;epoch_before bigint;freshness text;now_at timestamptz:=clock_timestamp();
 BEGIN
- SELECT email INTO STRICT mail FROM auth.users WHERE id=u;
+ mail:=lts_cash_alert_private_v377.owner_email();
+ IF mail IS NULL THEN RAISE EXCEPTION 'Configured alert recipient unavailable';END IF;
  -- Reuse the existing, owner-scoped warming worker and the exact V242 cache.
  -- This does not create a browser session or alter financial sources.
  PERFORM public.lts_warm_flow_cache_v245();
@@ -136,7 +145,8 @@ CREATE FUNCTION public.lts_cash_alert_record_sent_v377(p_snapshot jsonb,p_messag
 RETURNS jsonb LANGUAGE plpgsql SECURITY INVOKER SET search_path='' AS $fn$
 DECLARE u uuid:=public.lts_open_finance_pilot_owner_v1();mail text;v_token text;previous_id text;
 BEGIN
- SELECT email INTO STRICT mail FROM auth.users WHERE id=u;
+ mail:=lts_cash_alert_private_v377.owner_email();
+ IF mail IS NULL THEN RAISE EXCEPTION 'Configured alert recipient unavailable';END IF;
  v_token:=p_snapshot->>'delivery_token';
  IF v_token IS NULL OR v_token IS DISTINCT FROM lts_cash_alert_private_v377.fingerprint(p_snapshot->'report')
  OR lower(p_snapshot#>>'{report,recipient}')IS DISTINCT FROM lower(mail)
@@ -153,10 +163,12 @@ BEGIN
  RETURN jsonb_build_object('recorded',true,'already_recorded',false);
 END $fn$;
 REVOKE ALL ON FUNCTION lts_cash_alert_private_v377.evaluate(jsonb,date),
+ lts_cash_alert_private_v377.owner_email(),
  lts_cash_alert_private_v377.fingerprint(jsonb),
  lts_cash_alert_private_v377.decision(jsonb,jsonb,timestamptz,timestamptz),
  public.lts_cash_alert_snapshot_v377(),public.lts_cash_alert_record_sent_v377(jsonb,text) FROM PUBLIC,anon,authenticated;
 GRANT EXECUTE ON FUNCTION lts_cash_alert_private_v377.evaluate(jsonb,date),
+ lts_cash_alert_private_v377.owner_email(),
  lts_cash_alert_private_v377.fingerprint(jsonb),
  lts_cash_alert_private_v377.decision(jsonb,jsonb,timestamptz,timestamptz),
  public.lts_cash_alert_snapshot_v377(),public.lts_cash_alert_record_sent_v377(jsonb,text) TO service_role;

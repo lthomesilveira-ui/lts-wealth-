@@ -8,7 +8,6 @@ CREATE SCHEMA auth;
 CREATE TABLE auth.users(id uuid PRIMARY KEY,email text);
 INSERT INTO auth.users VALUES('00000000-0000-4000-8000-000000000001','owner@example.invalid'),('00000000-0000-4000-8000-000000000002','other@example.invalid');
 GRANT USAGE ON SCHEMA auth TO service_role;
-GRANT SELECT ON auth.users TO service_role;
 CREATE TABLE public.financial_events(id integer,amount numeric);
 INSERT INTO public.financial_events VALUES(1,500),(2,-100);
 CREATE TABLE public.lts_read_cache_epoch_v242(singleton boolean,epoch bigint);
@@ -95,6 +94,13 @@ BEGIN
  OR EXISTS(SELECT 1 FROM pg_proc WHERE oid IN('public.lts_cash_alert_snapshot_v377()'::regprocedure,'public.lts_cash_alert_record_sent_v377(jsonb,text)'::regprocedure)AND prosecdef)
  THEN RAISE EXCEPTION 'Alert endpoint exposed';END IF;
 END $test$;
+SET LOCAL ROLE service_role;
+DO $service$BEGIN
+ IF public.lts_cash_alert_snapshot_v377()#>>'{report,recipient}'<>'owner@example.invalid'
+ THEN RAISE EXCEPTION 'Service role failed without direct auth.users access';END IF;
+ IF has_table_privilege('service_role','auth.users','SELECT')THEN RAISE EXCEPTION 'Broad auth access granted';END IF;
+END $service$;
+RESET ROLE;
 SELECT jsonb_build_object('version',377,'pass',true,'twelve_metrics',true,'calendar_coverage',true,'missing_null_duplicate_invalid_rejected',true,
  'isolated_scenarios',true,'unchanged_suppressed',true,'earlier_deeper_and_weekly',true,'recovery_not_unknown',true,'owner_only',true,
  'confirmed_delivery_idempotence',true,'wrong_recipient_and_conflicting_retry_rejected',true,'stale_cache_rejected',true,'financial_rows_unchanged',true,'private_acl',true,'synthetic_native',true);
