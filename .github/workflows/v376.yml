@@ -1,0 +1,43 @@
+name: V376 full five-year recurrence horizon
+on:
+  pull_request:
+    paths: ['backend/patches/v376/**','backend/qa/*v376*','backend/patches/v366/**','backend/qa/*v366*','backend/qa/fixtures/v366*','.github/workflows/v376.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native-full-five-years:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: synthetic-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready --health-interval 5s
+          --health-timeout 5s --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: synthetic-only
+    steps:
+      - uses: actions/checkout@v4
+      - run: psql -v ON_ERROR_STOP=1 -c 'CREATE ROLE anon; CREATE ROLE authenticated; CREATE ROLE service_role;'
+      - run: python3 backend/qa/lts_v376_ci_sql.py > /tmp/v376.sql
+      - run: psql -v ON_ERROR_STOP=1 -At -f /tmp/v376.sql > /tmp/v376-results.log
+      - if: failure()
+        run: tail -c 9000 /tmp/v376-results.log || true
+      - run: |
+          python3 - <<'PY'
+          import json,pathlib
+          rows=[json.loads(x) for x in pathlib.Path('/tmp/v376-results.log').read_text().splitlines() if x.startswith('{')]
+          assert any(x.get('version')==376 and x.get('pass') for x in rows)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v376-native-full-five-years
+          path: /tmp/v376-results.log
