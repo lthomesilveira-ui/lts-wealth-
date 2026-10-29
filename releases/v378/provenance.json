@@ -7,7 +7,8 @@
   "scope": [
     "Inset the installed mobile viewport around all four iPhone safe areas",
     "Keep mobile form text at 16px to avoid focus-driven zoom",
-    "Keep the stable installed entry and approved financial runtime"
+    "Keep the stable installed entry and approved financial runtime",
+    "Keep the version label clear of mobile navigation in landscape"
   ],
   "financial_source_data_changed": false,
   "physical_mobile_validated": false,

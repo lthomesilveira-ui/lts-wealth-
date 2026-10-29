@@ -37,6 +37,8 @@ const session={access_token:'synthetic-only-access',refresh_token:'synthetic-onl
      assert.equal(metrics.width,width);
      screens.push({view,...metrics});
     }
+    const app=page.frames().find(f=>/releases\/v378\/app.html/.test(f.url()));assert(app);
+    if(width<=900){const badge=await app.locator('#release-badge-v183').boundingBox(),nav=await frame.locator('#dx1MobileNav').boundingBox();assert(badge&&nav);assert(badge.y+badge.height<=nav.y||badge.y>=nav.y+nav.height||badge.x+badge.width<=nav.x||badge.x>=nav.x+nav.width,'version must not overlap mobile navigation');}
     const outer=await page.evaluate(()=>({width:innerWidth,height:innerHeight,frame:document.getElementById('wealth').getBoundingClientRect().toJSON()}));
     assert.deepEqual(errors,[]);assert.deepEqual(writes,[]);
     await page.addStyleTag({content:':root{--wealth-safe-top:47px;--wealth-safe-right:0px;--wealth-safe-bottom:34px;--wealth-safe-left:0px}'});

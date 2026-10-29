@@ -7,7 +7,7 @@ for(const[n,h]of Object.entries(m.files))assert.equal(sha(root+'/'+n),h,n);
 for(const[n,h]of Object.entries(m.protected))assert.equal(sha(n),h,n);
 for(const[n,h]of Object.entries(p.protected_base_files))assert.equal(sha(base+'/'+n),h,n);
 assert.equal(read(root,'index.html'),read(base,'index.html').replace('</head>','<link rel="stylesheet" href="lts-v378-mobile-layout.css">\n</head>'));
-assert.equal(read(root,'app.html'),read(base,'app.html').replaceAll('V374','V378').replace('v374-documentary-cycles-20261028','v378-mobile-layout-20261029'));
+assert.equal(read(root,'app.html'),read(base,'app.html').replaceAll('V374','V378').replace('v374-documentary-cycles-20261028','v378-mobile-layout-20261029').replace('@media(max-width:820px)','@media(max-width:900px)'));
 for(const n of fs.readdirSync(base).filter(n=>!['app.html','index.html','manifest.json','provenance.json'].includes(n)))assert.equal(sha(root+'/'+n),sha(base+'/'+n),n);
 assert.equal(p.financial_source_data_changed,false);assert.equal(p.backend_changed,false);
 assert.equal(p.physical_mobile_validated,false);assert.equal(p.private_http_validated,false);

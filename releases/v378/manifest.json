@@ -3,7 +3,7 @@
   "version": "v378",
   "base_release": "v374",
   "files": {
-    "app.html": "4184ca3d88ffe96f304e7e476dac589aa12be11aa19b31472c40b4ccdf00fdaa",
+    "app.html": "e7b6593d673a6880689d3597eec2307589b54826022fac6309a0989358913e0c",
     "index.html": "8330134e79aa59f8c4226d8b81c57cac8dabef924c7037b51541ffd548c538c8",
     "lts-category-display.js": "8b26d86f23a4be83da5f6dafdb1b0a58847181bf6f3482e6445d98456e72918f",
     "lts-category-registry.js": "0b8440229acc040ed89cce6c6ce9e7bb4a3e437a65fcb3d32595ec7c858da8fe",
@@ -82,7 +82,7 @@
     "lts-v365-homologation.js": "80f6b6089fa53917065402acd17aba660ef0edbfe64c6ed4bbad7f66e1559790",
     "lts-v366-recurring.js": "98e8bca1c57bc012271716374dd04795a1d83ac55bd73655128e83edb2f0db96",
     "lts-v378-mobile-layout.css": "5d0c736a4ef539e322db2adb58a677c2e9bbf009307611abc81a2f2333051d5d",
-    "provenance.json": "55a3e307ac8d09fa7e2744bbfdddd0032400de9547157464f79c0d6cf3216f8b",
+    "provenance.json": "2cc1a20e7a30b188930f04992cd27b0d5944a824db66d28f257579a0fa862d87",
     "wip35-v162-flow-recovery.js": "9a519b23052c2f807aeb5a2f20582710bc0466d6f5931db4edd70606ea4a9350"
   },
   "protected": {
