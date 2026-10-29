@@ -28,6 +28,9 @@ CREATE OR REPLACE FUNCTION v303_fixture.lts_card_family_v226(text,text)RETURNS t
  WHEN v303_fixture.lts_v178_norm($1)='visa aeternum'AND $2='Bradesco'THEN'aeternum'ELSE'other'END$$;
 CREATE FUNCTION v303_fixture.lts_bank_fgts_combined_receipt_v261(uuid,uuid)RETURNS jsonb LANGUAGE sql AS $$SELECT NULL::jsonb$$;
 CREATE FUNCTION v303_fixture.lts_flow_classification_decision_v1(uuid,jsonb)RETURNS jsonb LANGUAGE sql AS $$SELECT $2$$;
+-- Fixture card_invoice obligations have no reviewed settlement; this existing
+-- dependency is separate from the actual legacy receipt path tested below.
+CREATE FUNCTION v303_fixture.lts_card_invoice_settled_v290(uuid,text,date,date,numeric)RETURNS boolean LANGUAGE sql AS $$SELECT false$$;
 CREATE FUNCTION v303_fixture.lts_flow_operational_read_v229(uuid,date,date)RETURNS jsonb LANGUAGE sql AS $$
  SELECT coalesce(jsonb_agg(jsonb_build_object('source',source,'source_ref',source_ref,'event_date',event_date,
  'account',account,'description',description,'confidence',confidence,'signed_amount',signed_amount)), '[]')
