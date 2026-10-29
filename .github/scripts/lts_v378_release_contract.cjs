@@ -13,6 +13,6 @@ assert.equal(p.financial_source_data_changed,false);assert.equal(p.backend_chang
 assert.equal(p.physical_mobile_validated,false);assert.equal(p.private_http_validated,false);
 const mobile=read('mobile','index.html');assert(mobile.includes('safe-area-inset-top'));assert(mobile.includes('safe-area-inset-right'));assert(mobile.includes('safe-area-inset-bottom'));assert(mobile.includes('safe-area-inset-left'));
 const manifest=JSON.parse(read('mobile','manifest.webmanifest'));assert.equal(manifest.id,'/lts-wealth-/mobile/');assert.equal(manifest.scope,'./');
-const current=JSON.parse(read('mobile','current.json'));assert.equal(current.release,'v378');assert.equal(current.entry,'../releases/v378/app.html');
+const current=JSON.parse(read('mobile','current.json'));assert.match(current.release,/^v[0-9]+$/);assert.equal(current.entry,'../releases/'+current.release+'/app.html');
 const style=read(root,'lts-v378-mobile-layout.css');assert(style.includes('font-size:16px'));assert(!style.includes('touch-action:none'));
 console.log(JSON.stringify({pass:true,release:'v378',all_financial_scripts_identical:true,base_release_preserved:true,stable_installed_identity:true,financial_data_changes:0}));

@@ -1,5 +1,6 @@
 'use strict';
 const {chromium,webkit}=require('playwright'),fs=require('node:fs'),assert=require('node:assert/strict');
+const current=JSON.parse(fs.readFileSync('mobile/current.json','utf8'));
 const fixture=require('./lts_v309_fixtures.cjs'),base='http://127.0.0.1:8788',out='qa/v378';fs.mkdirSync(out,{recursive:true});
 const session={access_token:'synthetic-only-access',refresh_token:'synthetic-only-refresh',expires_at:4102444800,user:{id:'00000000-0000-4000-8000-000000000001',email:'viewer@example.invalid'}};
 (async()=>{
@@ -37,7 +38,7 @@ const session={access_token:'synthetic-only-access',refresh_token:'synthetic-onl
      assert.equal(metrics.width,width);
      screens.push({view,...metrics});
     }
-    const app=page.frames().find(f=>/releases\/v378\/app.html/.test(f.url()));assert(app);
+    const app=page.frames().find(f=>f.url().includes('/releases/'+current.release+'/app.html'));assert(app);
     if(width<=900){const badge=await app.locator('#release-badge-v183').boundingBox(),nav=await frame.locator('#dx1MobileNav').boundingBox();assert(badge&&nav);assert(badge.y+badge.height<=nav.y||badge.y>=nav.y+nav.height||badge.x+badge.width<=nav.x||badge.x>=nav.x+nav.width,'version must not overlap mobile navigation');}
     const outer=await page.evaluate(()=>({width:innerWidth,height:innerHeight,frame:document.getElementById('wealth').getBoundingClientRect().toJSON()}));
     assert.deepEqual(errors,[]);assert.deepEqual(writes,[]);
