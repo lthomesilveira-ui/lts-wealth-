@@ -97,7 +97,8 @@ function documentaryPaymentNote(cycle, esc, formatDate, mode = 'note', sourcePre
       const head='<div class="v168-cardhead"><div><span>Por banco e cartão</span><h2>Próximas faturas</h2></div><button type="button" class="v168-btn" data-v226-retry>Atualizar faturas</button></div>';
       if(!st.cycles)return head+'<p role="status">'+esc(st.error||'Consultando os próximos ciclos…')+'</p>';
       const next=cards.flatMap(c=>openCycles(c).length?[{card:c,cycle:openCycles(c)[0]}]:[]).sort((a,b)=>String(a.cycle.due_date||a.cycle.month||a.cycle.reference_month||'').localeCompare(String(b.cycle.due_date||b.cycle.month||b.cycle.reference_month||''))||String(a.card.family).localeCompare(String(b.card.family))),nextTotal=cycleTotal(next.map(x=>x.cycle));
-
+      const future=cards.flatMap(c=>openCycles(c).slice(1)),futureTotal=cycleTotal(future);
+      const bankNames=[...new Set(cards.map(c=>c.bank))];
       return head+(st.cycles.complete===false?'<p class="v226-warning" role="status">O C6 tem compras cujo ciclo ou parcela precisa ser conciliado. O total conjunto está incompleto; os demais cartões continuam disponíveis.</p>':'')+(st.loading?'<p role="status">Atualizando faturas…</p>':st.error?'<p role="alert">'+esc(st.error)+' A leitura anterior está indicada abaixo.</p>':'')+'<div class="v226-totals"><div><span>Próximas faturas e valores previstos</span><strong><button class="v226-link" data-v226-overview="next">'+totalLabel(nextTotal)+'</button></strong></div><div><span>Ciclos seguintes conhecidos</span><strong><button class="v226-link" data-v226-overview="future">'+totalLabel(futureTotal)+'</button></strong><small>Valores documentados e parcelas; sem novas compras estimadas</small></div></div>'+
         '<div class="v226-banks">'+bankNames.map(bank=>'<section><h3>'+esc(bank)+'</h3>'+cards.filter(c=>c.bank===bank).map(c=>{
           const cycle=openCycles(c)[0],label=esc(names[c.family]||c.name);

@@ -10,7 +10,7 @@ const changed=fs.readdirSync(root).filter(n=>!fs.existsSync(base+'/'+n)||sha(roo
 assert.deepEqual(changed,[...p.runtime_changes,'manifest.json','provenance.json'].sort());
 assert.equal(read(root,'app.html'),read(base,'app.html').replaceAll('V378','V379').replace('v378-mobile-layout-20261029','v379-expenses-period-20261029'));
 assert.equal(read(root,'index.html'),read(base,'index.html').replace('</head>','<link rel="stylesheet" href="lts-v379-expenses-layout.css">\n</head>'));
-let card=read(base,'lts-v226-card-composition.js');const from=card.indexOf('      const oldest='),to=card.indexOf('\n      return',from);card=card.slice(0,from)+card.slice(to);card=card.replace("        oldestMarkup+'<div class=\"v226-banks\">'","        '<div class=\"v226-banks\">'");assert.equal(read(root,'lts-v226-card-composition.js'),card);
+let card=read(base,'lts-v226-card-composition.js');card=card.split('\n').filter(line=>!['const oldest=','const partial=oldest','const oldestMarkup='].some(prefix=>line.trim().startsWith(prefix))).join('\n');card=card.replace("        oldestMarkup+'<div class=\"v226-banks\">'","        '<div class=\"v226-banks\">'");assert.equal(read(root,'lts-v226-card-composition.js'),card);
 assert(!read(root,'lts-v226-card-composition.js').includes('Obrigação mais antiga'));
 const oldModel=read(base,'lts-v337-month-model.js'),newModel=read(root,'lts-v337-month-model.js');assert.equal(newModel.split(' function validDate')[0],oldModel.split(' return Object.freeze')[0],'existing month arithmetic and bank positions exact');
 assert.equal(p.financial_source_data_changed,false);assert.equal(p.backend_changed,false);assert.equal(p.private_http_validated,false);assert.equal(p.physical_mobile_validated,false);
