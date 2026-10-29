@@ -145,7 +145,7 @@ DO $test$DECLARE r record;p jsonb;BEGIN
  FOR p IN SELECT v303_fixture.v375_event()||x FROM jsonb_array_elements('[{"account":"Itaú"},{"source_ref":"evento_base:999"},{"source":"current_event"},{"description":"Another Visa"},{"signed_amount":120},{"signed_amount":-121},{"event_date":"2026-10-26"},{"internal_transfer":true},{"internal_transfer":"invalid"}]')x LOOP
   IF lts_receipt_private_v375.legacy_aeternum_receipt('00000000-0000-4000-8000-000000000001',p,'2026-10-29')IS NOT NULL THEN RAISE EXCEPTION 'Foreign event accepted: %',p;END IF;
  END LOOP;
- IF EXISTS(SELECT 1 FROM v375_attributes a JOIN pg_proc p ON p.oid=a.signature::regprocedure WHERE a.attrs IS DISTINCT FROM to_jsonb(p)-'prosrc')THEN RAISE EXCEPTION 'Existing attributes or ACL changed';END IF;
+ IF EXISTS(SELECT 1 FROM v375_attributes a JOIN pg_proc proc_meta ON proc_meta.oid=a.signature::regprocedure WHERE a.attrs IS DISTINCT FROM to_jsonb(proc_meta)-'prosrc')THEN RAISE EXCEPTION 'Existing attributes or ACL changed';END IF;
  IF has_schema_privilege('anon','lts_receipt_private_v375','USAGE')OR has_function_privilege('authenticated','lts_receipt_private_v375.legacy_aeternum_receipt(uuid,jsonb,date)','EXECUTE')THEN RAISE EXCEPTION 'Private receipt helper exposed';END IF;
  IF(SELECT j FROM v375_source_snapshot)IS DISTINCT FROM jsonb_build_object('staging',(SELECT jsonb_agg(to_jsonb(x)ORDER BY id)FROM v303_fixture.lts_open_finance_staging x),
  'legacy',(SELECT jsonb_agg(to_jsonb(x)ORDER BY idx)FROM v303_fixture.evento_base x),'links',(SELECT jsonb_agg(to_jsonb(x)ORDER BY payment_source_id)FROM v303_fixture.lts_card_documentary_payment_link_v272 x),
