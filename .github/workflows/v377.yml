@@ -1,0 +1,67 @@
+name: V377 cash alerts and mobile installation
+on:
+  pull_request:
+    paths: ['backend/patches/v377/**','backend/qa/*v377*','mobile/**','.github/scripts/*v377*','.github/workflows/v377.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native-cash-alerts:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: synthetic-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready --health-interval 5s
+          --health-timeout 5s --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: synthetic-only
+    steps:
+      - uses: actions/checkout@v4
+      - run: psql -v ON_ERROR_STOP=1 -c 'CREATE ROLE anon; CREATE ROLE authenticated; CREATE ROLE service_role;'
+      - run: python3 backend/qa/lts_v377_ci_sql.py > /tmp/v377.sql
+      - run: psql -v ON_ERROR_STOP=1 -At -f /tmp/v377.sql > /tmp/v377-results.log
+      - if: failure()
+        run: tail -c 10000 /tmp/v377-results.log || true
+      - run: |
+          python3 - <<'PY'
+          import json,pathlib
+          rows=[json.loads(x) for x in pathlib.Path('/tmp/v377-results.log').read_text().splitlines() if x.startswith('{')]
+          assert any(x.get('version')==377 and x.get('pass') for x in rows)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v377-native-cash-alerts
+          path: /tmp/v377-results.log
+
+  mobile-browser:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    container: mcr.microsoft.com/playwright:v1.58.2-noble
+    env:
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --check mobile/launcher.js
+      - run: npm install --no-save --package-lock=false playwright@1.58.2
+      - run: |
+          python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/lts-v377-http.log 2>&1 &
+          node .github/scripts/lts_v309_wait_http.cjs
+      - run: node .github/scripts/lts_v377_mobile_browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v377-mobile-installation
+          path: qa/v377-mobile/
