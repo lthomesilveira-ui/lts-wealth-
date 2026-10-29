@@ -1,0 +1,18 @@
+'use strict';
+const fs=require('node:fs'),crypto=require('node:crypto'),assert=require('node:assert/strict');
+const root='releases/v378',base='releases/v374',read=(d,n)=>fs.readFileSync(d+'/'+n,'utf8'),sha=p=>crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex');
+const m=JSON.parse(read(root,'manifest.json')),p=JSON.parse(read(root,'provenance.json'));
+assert.equal(m.release,'v378');assert.equal(m.base_release,'v374');
+for(const[n,h]of Object.entries(m.files))assert.equal(sha(root+'/'+n),h,n);
+for(const[n,h]of Object.entries(m.protected))assert.equal(sha(n),h,n);
+for(const[n,h]of Object.entries(p.protected_base_files))assert.equal(sha(base+'/'+n),h,n);
+assert.equal(read(root,'index.html'),read(base,'index.html').replace('</head>','<link rel="stylesheet" href="lts-v378-mobile-layout.css">\n</head>'));
+assert.equal(read(root,'app.html'),read(base,'app.html').replaceAll('V374','V378').replace('v374-documentary-cycles-20261028','v378-mobile-layout-20261029'));
+for(const n of fs.readdirSync(base).filter(n=>!['app.html','index.html','manifest.json','provenance.json'].includes(n)))assert.equal(sha(root+'/'+n),sha(base+'/'+n),n);
+assert.equal(p.financial_source_data_changed,false);assert.equal(p.backend_changed,false);
+assert.equal(p.physical_mobile_validated,false);assert.equal(p.private_http_validated,false);
+const mobile=read('mobile','index.html');assert(mobile.includes('safe-area-inset-top'));assert(mobile.includes('safe-area-inset-right'));assert(mobile.includes('safe-area-inset-bottom'));assert(mobile.includes('safe-area-inset-left'));
+const manifest=JSON.parse(read('mobile','manifest.webmanifest'));assert.equal(manifest.id,'/lts-wealth-/mobile/');assert.equal(manifest.scope,'./');
+const current=JSON.parse(read('mobile','current.json'));assert.equal(current.release,'v378');assert.equal(current.entry,'../releases/v378/app.html');
+const style=read(root,'lts-v378-mobile-layout.css');assert(style.includes('font-size:16px'));assert(!style.includes('touch-action:none'));
+console.log(JSON.stringify({pass:true,release:'v378',all_financial_scripts_identical:true,base_release_preserved:true,stable_installed_identity:true,financial_data_changes:0}));

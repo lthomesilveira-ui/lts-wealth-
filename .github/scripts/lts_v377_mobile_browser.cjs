@@ -3,6 +3,7 @@ const {chromium}=require('playwright'),fs=require('node:fs'),assert=require('nod
 (async()=>{
  const root='http://127.0.0.1:8788',output='qa/v377-mobile';
  fs.mkdirSync(output,{recursive:true});
+ const current=JSON.parse(fs.readFileSync('mobile/current.json','utf8')),release=current.release;
  const manifest=JSON.parse(fs.readFileSync('mobile/manifest.webmanifest','utf8'));
  assert.equal(manifest.display,'standalone');assert.equal(manifest.id,'/lts-wealth-/mobile/');
  assert.equal(manifest.scope,'./');assert.equal(manifest.start_url,'./?source=home-screen');
@@ -15,7 +16,7 @@ const {chromium}=require('playwright'),fs=require('node:fs'),assert=require('nod
  const browser=await chromium.launch({headless:true});
  for(const width of[1440,390,360]){
   const page=await browser.newPage({viewport:{width,height:850}});
-  await page.route('**/releases/v374/app.html',route=>route.fulfill({contentType:'text/html',body:'<!doctype html><html lang="pt-BR"><meta name="viewport" content="width=device-width,initial-scale=1"><body><main><h1>Wealth · teste controlado</h1></main></body></html>'}));
+  await page.route('**/releases/'+release+'/app.html',route=>route.fulfill({contentType:'text/html',body:'<!doctype html><html lang="pt-BR"><meta name="viewport" content="width=device-width,initial-scale=1"><body><main><h1>Wealth · teste controlado</h1></main></body></html>'}));
   await page.goto(root+'/mobile/');
   await page.getByRole('heading',{name:'Seu Wealth na tela inicial.'}).waitFor();
   assert(await page.getByText('Adicionar à Tela de Início',{exact:true}).isVisible());
@@ -33,7 +34,7 @@ const {chromium}=require('playwright'),fs=require('node:fs'),assert=require('nod
  }
  const installed=await browser.newPage({viewport:{width:390,height:850}});
  await installed.addInitScript(()=>Object.defineProperty(navigator,'standalone',{get:()=>true}));
- await installed.route('**/releases/v374/app.html',route=>route.fulfill({contentType:'text/html',body:'<h1>Instalado · teste controlado</h1>'}));
+ await installed.route('**/releases/'+release+'/app.html',route=>route.fulfill({contentType:'text/html',body:'<h1>Instalado · teste controlado</h1>'}));
  await installed.goto(root+'/mobile/?source=home-screen');
  await installed.frameLocator('#wealth').getByRole('heading',{name:'Instalado · teste controlado'}).waitFor();
  assert.equal(await installed.locator('#install').isVisible(),false);

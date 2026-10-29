@@ -18,13 +18,19 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - run: node .github/scripts/lts_v378_release_contract.cjs
       - run: npm install --no-save --package-lock=false playwright@1.58.2
       - run: |
           python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/lts-v378-http.log 2>&1 &
           node .github/scripts/lts_v309_wait_http.cjs
       - run: node .github/scripts/lts_v378_mobile_browser.cjs
+      - run: node .github/scripts/lts_v378_regression_browser.cjs
+      - run: LTS_RELEASE=v378 LTS_QA_DIR=qa/v378-pdf node .github/scripts/lts_v374_pdf_browser.cjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: v378-mobile-layout
-          path: qa/v378/
+          path: |
+            qa/v378/
+            qa/v378-regression/
+            qa/v378-pdf/

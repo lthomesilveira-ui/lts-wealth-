@@ -1,12 +1,13 @@
 'use strict';
 (function(){
  const panel=document.getElementById('install'),frame=document.getElementById('wealth');
+ const viewport=document.getElementById('appViewport');
  const button=document.getElementById('open'),error=document.getElementById('error'),offline=document.getElementById('offline');
  let started=false,busy=false;
  function connection(){offline.hidden=navigator.onLine!==false;if(started&&navigator.onLine!==false)open();}
  async function open(){
   if(busy||navigator.onLine===false){connectionOnly();return;}
-  if(started){frame.hidden=false;return;}
+  if(started){viewport.hidden=false;frame.hidden=false;return;}
   busy=true;button.disabled=true;error.hidden=true;
   try{
    const response=await fetch('current.json',{cache:'no-store',credentials:'same-origin'});
@@ -15,8 +16,9 @@
    const root=new URL('../',location.href).pathname;
    if(target.origin!==location.origin||!/^v[0-9]+$/.test(current.release)||
       target.pathname!==root+'releases/'+current.release+'/app.html'||target.search||target.hash)throw Error('Invalid release');
-   frame.src=target.href;frame.hidden=false;panel.hidden=true;started=true;
-  }catch(_){panel.hidden=false;frame.hidden=true;error.hidden=false;}
+   frame.src=target.href;viewport.hidden=false;frame.hidden=false;panel.hidden=true;
+   document.documentElement.classList.add('wealth-open');document.body.classList.add('wealth-open');started=true;
+  }catch(_){panel.hidden=false;viewport.hidden=true;frame.hidden=true;error.hidden=false;}
   finally{busy=false;button.disabled=false;}
  }
  function connectionOnly(){offline.hidden=navigator.onLine!==false;}
