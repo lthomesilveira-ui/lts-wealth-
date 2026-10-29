@@ -1,0 +1,38 @@
+name: V379 expense layout and period balances
+on:
+  pull_request:
+    paths: ['releases/v379/**','mobile/current.json','.github/scripts/*v379*','.github/workflows/v379.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  expense-period-browser:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    container: mcr.microsoft.com/playwright:v1.58.2-noble
+    env:
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node .github/scripts/lts_v379_release_contract.cjs
+      - run: node .github/scripts/lts_v379_period_contract.cjs
+      - run: npm install --no-save --package-lock=false playwright@1.58.2
+      - run: |
+          python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/lts-v379-http.log 2>&1 &
+          node .github/scripts/lts_v309_wait_http.cjs
+      - run: node .github/scripts/lts_v379_browser.cjs
+      - run: node .github/scripts/lts_v379_rollover_browser.cjs
+      - run: node .github/scripts/lts_v379_regression_browser.cjs
+      - run: LTS_RELEASE=v379 LTS_QA_DIR=qa/v379-pdf node .github/scripts/lts_v374_pdf_browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v379-expenses-and-period-balances
+          path: |
+            qa/v379/
+            qa/v379-regression/
+            qa/v379-pdf/
