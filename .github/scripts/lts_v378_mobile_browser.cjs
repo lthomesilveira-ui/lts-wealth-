@@ -20,7 +20,7 @@ const session={access_token:'synthetic-only-access',refresh_token:'synthetic-onl
    });
    try{
     await page.goto(base+'/mobile/?source=home-screen',{waitUntil:'domcontentloaded'});
-    await page.waitForFunction(()=>document.getElementById('wealth')?.contentDocument?.getElementById('shell')?.contentDocument?.body.dataset.ltsBootState==='ready');
+    await page.waitForFunction(()=>document.getElementById('wealth')?.contentDocument?.getElementById('shell')?.contentDocument?.body?.dataset.ltsBootState==='ready');
     const frame=page.frames().find(f=>/releases\/v[0-9]+\/index.html/.test(f.url()));assert(frame);
     await frame.waitForFunction(()=>window.__LTS_V365?.installed&&D&&!N.classList.contains('hidden'));
     await page.waitForLoadState('networkidle');
