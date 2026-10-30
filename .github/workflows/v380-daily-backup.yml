@@ -1,0 +1,42 @@
+name: V380 daily backup supplement
+on:
+  pull_request:
+    paths:
+      - 'backend/patches/v380/**'
+      - 'backend/tools/backup_v380/**'
+      - '.github/workflows/v380-daily-backup.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  postgres17:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: fixture-only-password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: 5432
+      PGUSER: postgres
+      PGPASSWORD: fixture-only-password
+      PGDATABASE: postgres
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build schema fixtures without private records
+        run: psql -v ON_ERROR_STOP=1 -f backend/tools/backup_v380/fixture.sql
+      - name: Apply additive migration twice to verify safe reapplication
+        run: |
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v380/daily_modern_backup.sql
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v380/daily_modern_backup.sql
+      - name: Verify backup contracts on native PostgreSQL 17
+        run: psql -v ON_ERROR_STOP=1 -f backend/tools/backup_v380/verify.sql
