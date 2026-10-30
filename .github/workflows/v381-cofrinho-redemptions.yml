@@ -1,0 +1,40 @@
+name: V381 documented Cofrinho redemptions
+on:
+  pull_request:
+    paths:
+      - 'backend/patches/v381/**'
+      - 'backend/tools/cofrinho_v381/**'
+      - '.github/workflows/v381-cofrinho-redemptions.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  postgres17:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: fixture-only-password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: 5432
+      PGUSER: postgres
+      PGPASSWORD: fixture-only-password
+      PGDATABASE: postgres
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build synthetic schema
+        run: psql -v ON_ERROR_STOP=1 -f backend/tools/cofrinho_v381/fixture.sql
+      - name: Apply reader migration
+        run: psql -v ON_ERROR_STOP=1 -f backend/patches/v381/cofrinho_documented_redemptions.sql
+      - name: Verify documented receipt behavior on PostgreSQL17
+        run: psql -v ON_ERROR_STOP=1 -f backend/tools/cofrinho_v381/verify.sql

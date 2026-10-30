@@ -10,6 +10,17 @@
       if(d.getElementById('v183-core-loading-guard'))return false;
       const runtime=function(){
         if(window.__LTS_V183_CORE_LOADING_GUARD?.installed)return;
+        // V381: late decorators can read either Flow fallback during loading.
+        // Keep the protected base entry and published release copies unchanged.
+        const originalDays=mergedFlowDays,originalEvents=mergedFlowEvents;
+        mergedFlowDays=function(){
+          if((typeof D==='undefined'||!D)&&(typeof FLOWQ==='undefined'||!FLOWQ))return [];
+          return originalDays();
+        };
+        mergedFlowEvents=function(){
+          if((typeof D==='undefined'||!D)&&(typeof FLOWQ==='undefined'||!FLOWQ))return [];
+          return originalEvents();
+        };
         const original=fluxo;
         fluxo=function(){
           if(typeof D==='undefined'||!D)return '<div class="notice" role="status">Preparando o Fluxo Diário…</div>';
