@@ -116,13 +116,16 @@ WITH latest AS MATERIALIZED (
     AND m.event_date>a.as_of_date AND m.event_date<=p_as_of
   GROUP BY m.asset_position_id
 ), effective AS (
-  SELECT a.*,CASE WHEN a.asset_name='Cofrinho Itaú' AND a.asset_type='cash_investment'
+  SELECT a.*,coalesce(m.delta,0) stored_delta,
+    CASE WHEN a.asset_name='Cofrinho Itaú' AND a.asset_type='cash_investment'
     THEN coalesce(public.lts_cofrinho_effective_locked_v245(p_user_id,p_as_of),a.value_brl+coalesce(m.delta,0))
     ELSE a.value_brl+coalesce(m.delta,0) END actual_value
   FROM latest a LEFT JOIN moves m ON m.asset_position_id=a.id
 )
 SELECT a.id,a.asset_name,a.asset_type,a.as_of_date,a.value_brl,
-  a.actual_value-a.value_brl,a.actual_value,a.liquidity_class,a.is_available_now
+  CASE WHEN a.asset_name='Cofrinho Itaú' AND a.asset_type='cash_investment' AND a.value_brl IS NOT NULL
+    THEN a.actual_value-a.value_brl ELSE a.stored_delta END,
+  a.actual_value,a.liquidity_class,a.is_available_now
 FROM effective a ORDER BY a.asset_name;
 $function$;
 REVOKE ALL ON FUNCTION public.lts_asset_position_effective_v1(uuid,date) FROM PUBLIC,anon,authenticated;
