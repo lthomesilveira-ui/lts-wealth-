@@ -168,8 +168,8 @@ function dashboard(){
 function isoYearRange(y){return [String(y)+'-01-01',String(y)+'-12-31']}
 async function loadFlowRange(a,b){FLOWLOADING=true;FLOWFROM=a;FLOWTO=b;if(V==='Fluxo Diário')render();try{const {data:j,error}=await S.rpc('lts_browser_flow_v3',{p_from:a,p_to:b});if(error||!j?.flow)throw Error(error?.message||'Fluxo indisponível');FLOWQ=j.flow}catch(e){FLOWQ={error:String(e?.message||e),historical:{days:[],events:[]},current_future:{days:[],events:[]}}}finally{FLOWLOADING=false;if(V==='Fluxo Diário')render()}}
 async function loadFlowYear(y){FLOWYEAR=Number(y);PER='Ano';const [a,b]=isoYearRange(FLOWYEAR);return loadFlowRange(a,b)}
-function mergedFlowDays(){if(!FLOWQ)return D?.flow?.days||[];return [...(FLOWQ.historical?.days||[]),...(FLOWQ.current_future?.days||[])]}
-function mergedFlowEvents(){if(!FLOWQ)return D?.flow?.events||[];return [...(FLOWQ.historical?.events||[]),...(FLOWQ.current_future?.events||[])]}
+function mergedFlowDays(){if(!FLOWQ)return D.flow?.days||[];return [...(FLOWQ.historical?.days||[]),...(FLOWQ.current_future?.days||[])]}
+function mergedFlowEvents(){if(!FLOWQ)return D.flow?.events||[];return [...(FLOWQ.historical?.events||[]),...(FLOWQ.current_future?.events||[])]}
 function dayEvents(day){return mergedFlowEvents().filter(e=>e.event_date===day&&(ACC==='Consolidado'||e.account===ACC||e.account===(ACC==='Itaú'?'Itau':ACC)))}
 function dashMoney(v){return v==null||Number.isNaN(Number(v))?'—':brl(v)}
 function flowEventKey(e){return String(e.source||e.source_table||'')+'|'+String(e.source_ref||'')+'|'+String(e.event_date||'')}
