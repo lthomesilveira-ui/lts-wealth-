@@ -29,6 +29,9 @@
     const active=document.activeElement;
     if(root.contains(active)&&active.matches('input,select,textarea'))active.blur();
    },true);
+   // A committed year selection finishes the native picker before its original
+   // change handler redraws the form and the user chooses the next preset.
+   year.addEventListener('change',()=>year.blur(),true);
    const heading=root.querySelector(':scope>.flowbar'),toolbar=heading?.querySelector('.chips');
    if(toolbar){
     heading.classList.add('v382-flow-heading');
