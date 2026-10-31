@@ -1,0 +1,18 @@
+'use strict';
+const fs=require('node:fs'),crypto=require('node:crypto'),assert=require('node:assert/strict');
+const root='releases/v382',base='releases/v379',read=(d,n)=>fs.readFileSync(d+'/'+n,'utf8');
+const sha=p=>crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex');
+const m=JSON.parse(read(root,'manifest.json')),p=JSON.parse(read(root,'provenance.json'));
+assert.equal(m.release,'v382');assert.equal(m.base_release,'v379');
+for(const[n,h]of Object.entries(m.files))assert.equal(sha(root+'/'+n),h,n);
+for(const[n,h]of Object.entries(m.protected))assert.equal(sha(n),h,n);
+for(const[n,h]of Object.entries(p.protected_base_files))assert.equal(sha(base+'/'+n),h,n);
+const changed=fs.readdirSync(root).filter(n=>!fs.existsSync(base+'/'+n)||sha(root+'/'+n)!==sha(base+'/'+n)).sort();
+assert.deepEqual(changed,['app.html','lts-v382-flow-layout.css','lts-v382-flow-layout.js','manifest.json','provenance.json'].sort());
+assert.equal(read(root,'index.html'),read(base,'index.html'));
+assert.equal(read(root,'app.html'),read(base,'app.html').replaceAll('V379','V382').replace('v379-expenses-period-20261029','v382-flow-layout-20261030').replace('</body>','<script src="lts-v382-flow-layout.js"></script>\n</body>'));
+for(const n of fs.readdirSync(base).filter(n=>n.endsWith('.js')))assert.equal(sha(root+'/'+n),sha(base+'/'+n),'existing JavaScript remains exact: '+n);
+assert.equal(p.financial_source_data_changed,false);assert.equal(p.backend_changed,false);assert.equal(p.private_http_validated,false);assert.equal(p.physical_mobile_validated,false);
+assert.deepEqual(JSON.parse(read('mobile','current.json')),{release:'v382',entry:'../releases/v382/app.html'});
+assert.equal(JSON.parse(read('mobile','manifest.webmanifest')).id,'/lts-wealth-/mobile/');
+console.log(JSON.stringify({pass:true,release:'v382',existing_releases_exact:true,existing_javascript_exact:true,new_presentation_only:true,protected_root_exact:true,financial_writes:0}));

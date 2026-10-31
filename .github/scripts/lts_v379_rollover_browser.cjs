@@ -1,7 +1,7 @@
 'use strict';
 // Real immutable release, browser controls and a synthetic clock/data source.
 const {chromium}=require('playwright'),fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
-const release=process.env.LTS_RELEASE||'v379',expectStale=process.env.LTS_EXPECT_STALE_MONTH==='true';assert(['v341','v342','v344','v346','v352','v353','v356','v359','v365','v368','v371','v373','v374','v379'].includes(release));
+const release=process.env.LTS_RELEASE||'v379',expectStale=process.env.LTS_EXPECT_STALE_MONTH==='true';assert(['v341','v342','v344','v346','v352','v353','v356','v359','v365','v368','v371','v373','v374','v379','v382'].includes(release));
 const fixture=require('./lts_v309_fixtures.cjs'),base='http://127.0.0.1:8788',out=path.resolve('qa/'+release);fs.mkdirSync(out,{recursive:true});
 const session={access_token:'synthetic-only-access',refresh_token:'synthetic-only-refresh',expires_at:4102444800,user:{id:'00000000-0000-4000-8000-000000000001',email:'viewer@example.invalid'}};
 async function run(browser,viewport,label){

@@ -14,6 +14,6 @@ let card=read(base,'lts-v226-card-composition.js');card=card.split('\n').filter(
 assert(!read(root,'lts-v226-card-composition.js').includes('Obrigação mais antiga'));
 const oldModel=read(base,'lts-v337-month-model.js'),newModel=read(root,'lts-v337-month-model.js');assert.equal(newModel.split(' function validDate')[0],oldModel.split(' return Object.freeze')[0],'existing month arithmetic and bank positions exact');
 assert.equal(p.financial_source_data_changed,false);assert.equal(p.backend_changed,false);assert.equal(p.private_http_validated,false);assert.equal(p.physical_mobile_validated,false);
-const current=JSON.parse(read('mobile','current.json'));assert.equal(current.release,'v379');assert.equal(current.entry,'../releases/v379/app.html');
+const current=JSON.parse(read('mobile','current.json')),live=process.env.LTS_MOBILE_RELEASE||'v379';assert.equal(current.release,live);assert.equal(current.entry,'../releases/'+live+'/app.html');
 const webmanifest=JSON.parse(read('mobile','manifest.webmanifest'));assert.equal(webmanifest.id,'/lts-wealth-/mobile/');
 console.log(JSON.stringify({pass:true,release:'v379',immutable_base:true,card_financial_calculations_exact:true,old_month_and_bank_arithmetic_exact:true,financial_source_writes:0,stable_mobile_entry:true}));
