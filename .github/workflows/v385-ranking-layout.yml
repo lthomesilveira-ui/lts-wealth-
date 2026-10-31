@@ -1,0 +1,34 @@
+name: V385 mobile rankings and scenario deficits
+on:
+  pull_request:
+    paths: ['releases/v385/**','mobile/current.json','.github/scripts/*v385*','.github/workflows/v385-ranking-layout.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  ranking-browser:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    container: mcr.microsoft.com/playwright:v1.58.2-noble
+    env:
+      LTS_MOBILE_RELEASE: v385
+      LTS_FLOW_RELEASE: v385
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node .github/scripts/lts_v385_release_contract.cjs
+      - run: node .github/scripts/lts_v385_scenario_contract.cjs
+      - run: npm install --no-save --package-lock=false playwright@1.58.2
+      - run: |
+          python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/lts-v385-http.log 2>&1 &
+          node .github/scripts/lts_v309_wait_http.cjs
+      - run: node .github/scripts/lts_v385_browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v385-ranking-layout
+          path: qa/v385/

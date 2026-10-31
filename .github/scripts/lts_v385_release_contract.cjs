@@ -1,0 +1,31 @@
+'use strict';
+const fs=require('node:fs'),assert=require('node:assert/strict'),crypto=require('node:crypto');
+const base='releases/v384',root='releases/v385',read=(p,n)=>fs.readFileSync(p+'/'+n,'utf8'),hash=p=>crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex');
+const m=JSON.parse(read(root,'manifest.json')),p=JSON.parse(read(root,'provenance.json')),ui='lts-v183-v168-feedback-safe.js',bundle='lts-v384-startup-1.js';
+assert.equal(m.release,'v385');assert.equal(m.version,'v385');assert.equal(m.base_release,'v384');
+for(const[n,h]of Object.entries(m.files))assert.equal(hash(root+'/'+n),h,n);
+for(const[n,h]of Object.entries(m.protected))assert.equal(hash(n),h,n);
+for(const[n,h]of Object.entries(p.protected_base_files))assert.equal(hash(base+'/'+n),h,n);
+assert.deepEqual(fs.readdirSync(root).sort(),fs.readdirSync(base).sort());
+const changed=fs.readdirSync(root).filter(n=>hash(root+'/'+n)!==hash(base+'/'+n)).sort();
+assert.deepEqual(changed,['app.html','lts-v225-consolidated.css',ui,bundle,'manifest.json','provenance.json'].sort());
+assert.equal(read(root,'app.html'),read(base,'app.html').replaceAll('V384','V385').replace('v384-startup-20261031','v385-rank-layout-20261031'));
+assert(read(root,'lts-v225-consolidated.css').startsWith(read(base,'lts-v225-consolidated.css')));
+assert(read(root,'lts-v225-consolidated.css').includes('.v178-rankrow>button.v353-open:last-child{grid-column:-2/-1;'));
+assert.equal(read(base,bundle).split(read(base,ui)).length,2,'one unambiguous ordered UI source in bundle');
+assert.equal(read(root,bundle),read(base,bundle).replace(read(base,ui),read(root,ui)));
+const beforeDetail=s=>s.slice(0,s.indexOf('    function deficitDetail(')),afterDetail=s=>s.slice(s.indexOf('    function cockpitPoints'));
+assert.equal(beforeDetail(read(root,ui)),beforeDetail(read(base,ui)),'all reads and daily projection calculations remain exact');
+let remaining=afterDetail(read(root,ui));
+for(const [label,scenario]of[['baseLabel','baseScenario'],['vestedLabel','vestedScenario']]){
+ const added="'+"+label+"+'</span>'+deficitDetail("+scenario+",planningReady)+'</div></div>";
+ const original="'+"+label+"+'</span></div></div>";
+ assert.equal(remaining.split(added).length,2);remaining=remaining.replace(added,original);
+}
+assert.equal(remaining,afterDetail(read(base,ui)),'only two additional visible summary calls');
+for(const n of fs.readdirSync(root).filter(n=>n.endsWith('.js')&&![ui,bundle].includes(n)))assert.equal(hash(root+'/'+n),hash(base+'/'+n),'exact JavaScript: '+n);
+assert.equal(p.backend_changed,false);assert.equal(p.financial_reader_logic_changed,false);assert.equal(p.date_behavior_changed,false);assert.equal(p.daily_projection_arithmetic_unchanged,true);
+assert.equal((read(root,'app.html').match(/<script src=/g)||[]).length,2,'same two startup bundles');
+assert.deepEqual(JSON.parse(read('mobile','current.json')),{release:'v385',entry:'../releases/v385/app.html'});
+assert.deepEqual(Object.keys(m.files).concat('manifest.json').sort(),fs.readdirSync(root).sort());
+console.log(JSON.stringify({pass:true,release:'v385',presentation_source_changes:1,financial_and_date_arithmetic_exact:true,published_v384_exact:true,startup_bundle_count_exact:true,protected_root_exact:true}));
