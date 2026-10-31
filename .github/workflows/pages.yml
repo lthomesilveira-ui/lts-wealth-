@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: ['releases/v382/**', 'mobile/**', 'releases/v374/**', 'releases/v373/**', 'releases/v371/**', 'releases/v368/**', 'releases/v365/**', 'releases/v359/**', 'releases/v356/**', 'releases/v353/**', 'releases/v352/**', 'releases/v225/**', 'releases/v225-1/**', 'releases/v226/**', 'releases/v226-1/**', 'releases/v226-2/**', 'releases/v227/**', 'releases/v227-1/**', 'releases/v227-2/**', 'releases/v228/**', 'releases/v229/**', 'releases/v229-1/**', 'releases/v230/**', 'releases/v233/**', 'releases/v234/**', 'releases/v235/**', 'releases/v236/**', 'releases/v237/**', 'releases/v238/**', 'releases/v239/**', 'releases/v240/**', 'releases/v241/**', 'releases/v242/**', 'releases/v244/**', 'releases/v245/**', 'releases/v257/**', 'releases/v258/**', 'releases/v259/**', 'releases/v260/**', 'releases/v261/**', 'releases/v262/**', 'releases/v264/**', 'releases/v268/**', 'releases/v269/**', 'releases/v270/**', 'releases/v271/**', 'releases/v272/**', 'releases/v273/**', 'releases/v274/**', 'releases/v275/**', 'releases/v276/**', 'releases/v277/**', 'releases/v278/**', 'releases/v279/**', 'releases/v280/**', 'releases/v281/**', 'releases/v282/**', 'releases/v283/**', 'releases/v284/**', 'releases/v285/**', 'releases/v290/**', 'releases/v291/**', 'releases/v293/**', 'releases/v295/**', 'releases/v296/**', 'releases/v308/**', 'releases/v309/**', 'releases/v312/**', 'releases/v333/**', 'releases/v335/**', 'releases/v337/**', 'releases/v339/**', 'releases/v341/**', 'releases/v342/**', 'releases/v344/**', 'releases/v346/**', 'wip35-v225-candidate.html', '.github/workflows/pages.yml', '.github/scripts/lts_v283_release_contract.cjs', '.github/scripts/lts_v284_release_contract.cjs', '.github/scripts/lts_v285_release_contract.cjs']
+    paths: ['releases/v383/**', 'releases/v382/**', 'mobile/**', 'releases/v374/**', 'releases/v373/**', 'releases/v371/**', 'releases/v368/**', 'releases/v365/**', 'releases/v359/**', 'releases/v356/**', 'releases/v353/**', 'releases/v352/**', 'releases/v225/**', 'releases/v225-1/**', 'releases/v226/**', 'releases/v226-1/**', 'releases/v226-2/**', 'releases/v227/**', 'releases/v227-1/**', 'releases/v227-2/**', 'releases/v228/**', 'releases/v229/**', 'releases/v229-1/**', 'releases/v230/**', 'releases/v233/**', 'releases/v234/**', 'releases/v235/**', 'releases/v236/**', 'releases/v237/**', 'releases/v238/**', 'releases/v239/**', 'releases/v240/**', 'releases/v241/**', 'releases/v242/**', 'releases/v244/**', 'releases/v245/**', 'releases/v257/**', 'releases/v258/**', 'releases/v259/**', 'releases/v260/**', 'releases/v261/**', 'releases/v262/**', 'releases/v264/**', 'releases/v268/**', 'releases/v269/**', 'releases/v270/**', 'releases/v271/**', 'releases/v272/**', 'releases/v273/**', 'releases/v274/**', 'releases/v275/**', 'releases/v276/**', 'releases/v277/**', 'releases/v278/**', 'releases/v279/**', 'releases/v280/**', 'releases/v281/**', 'releases/v282/**', 'releases/v283/**', 'releases/v284/**', 'releases/v285/**', 'releases/v290/**', 'releases/v291/**', 'releases/v293/**', 'releases/v295/**', 'releases/v296/**', 'releases/v308/**', 'releases/v309/**', 'releases/v312/**', 'releases/v333/**', 'releases/v335/**', 'releases/v337/**', 'releases/v339/**', 'releases/v341/**', 'releases/v342/**', 'releases/v344/**', 'releases/v346/**', 'wip35-v225-candidate.html', '.github/workflows/pages.yml', '.github/scripts/lts_v283_release_contract.cjs', '.github/scripts/lts_v284_release_contract.cjs', '.github/scripts/lts_v285_release_contract.cjs']
 
 permissions:
   contents: read
@@ -105,8 +105,9 @@ jobs:
           node .github/scripts/lts_v371_release_contract.cjs
           node .github/scripts/lts_v373_release_contract.cjs
           node .github/scripts/lts_v374_release_contract.cjs
-          LTS_MOBILE_RELEASE=v382 node .github/scripts/lts_v379_release_contract.cjs
-          node .github/scripts/lts_v382_release_contract.cjs
+          LTS_MOBILE_RELEASE=v383 node .github/scripts/lts_v379_release_contract.cjs
+          LTS_MOBILE_RELEASE=v383 node .github/scripts/lts_v382_release_contract.cjs
+          node .github/scripts/lts_v383_release_contract.cjs
       - name: Configure Pages
         uses: actions/configure-pages@v5
         with:
@@ -118,12 +119,12 @@ jobs:
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v4
-      - name: Verify published V382, stable mobile entry and preserved V379
-        run: node .github/scripts/lts_v382_verify_published.cjs
+      - name: Verify published V383, stable mobile entry and preserved V382/V379
+        run: node .github/scripts/lts_v383_verify_published.cjs
       - uses: actions/upload-artifact@v4
         with:
-          name: v382-published-verification
-          path: v382-published-verification.json
+          name: v383-published-verification
+          path: v383-published-verification.json
       - name: Verify published V368 and preserved releases
         run: |
           node --input-type=module <<'JS'
