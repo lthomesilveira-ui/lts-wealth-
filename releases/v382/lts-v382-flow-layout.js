@@ -5,7 +5,7 @@
  function runtime(){
   if(window.__LTS_V382_FLOW_LAYOUT)return;
   const previous=render;
-  let expanded=false;
+  let expanded=false,toolsExpanded=false;
   const day=value=>/^\d{4}-\d{2}-\d{2}$/.test(String(value||''))?value.split('-').reverse().join('/'):'Selecione as datas';
   function label(text,node){
    const wrapper=document.createElement('label');wrapper.className='v382-field';
@@ -22,6 +22,14 @@
    const bank=root.querySelector('[data-a]')?.closest('.chips'),host=from?.closest('.chips');
    if(!from||!to||!year||!bank||!host||bank===host)return;
    root.classList.add('v382-flow-controls');bank.classList.add('v382-banks');
+   const heading=root.querySelector(':scope>.flowbar'),toolbar=heading?.querySelector('.chips');
+   if(toolbar){
+    heading.classList.add('v382-flow-heading');
+    const tools=document.createElement('details');tools.className='v382-tools';tools.open=toolsExpanded;
+    const menu=document.createElement('summary');menu.textContent='Opções';
+    const panel=document.createElement('div');panel.className='v382-tool-body';panel.appendChild(toolbar);tools.append(menu,panel);heading.appendChild(tools);
+    tools.addEventListener('toggle',()=>{if(tools.isConnected)toolsExpanded=tools.open;});
+   }
    bank.setAttribute('role','group');bank.setAttribute('aria-label','Contas do Fluxo');
    bank.querySelectorAll('[data-a]').forEach(button=>button.setAttribute('aria-pressed',String(button.classList.contains('active'))));
    const details=document.createElement('details');details.className='v382-period';details.open=expanded;
@@ -49,6 +57,7 @@
   }
   render=function(){
    const details=document.querySelector('.v382-period');
+   const tools=document.querySelector('.v382-tools');if(tools)toolsExpanded=tools.open;
    if(details)expanded=details.open;
    else if(V!=='Fluxo Diário')expanded=false;
    const result=previous.apply(this,arguments);decorate();return result;
