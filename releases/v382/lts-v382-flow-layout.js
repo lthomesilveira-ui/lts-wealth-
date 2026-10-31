@@ -74,7 +74,7 @@
    details.addEventListener('toggle',()=>{if(details.isConnected)expanded=details.open;});
   }
   render=function(){
-   if(V==='Fluxo Diário'&&pointerHeld){renderQueued=true;return;}
+   if(V==='Fluxo Diário'&&pointerHeld&&D&&!N.classList.contains('hidden')&&document.body.dataset.ltsBootState==='ready'){renderQueued=true;return;}
    renderQueued=false;
    const details=document.querySelector('.v382-period');
    const tools=document.querySelector('.v382-tools');if(tools)toolsExpanded=tools.open;
