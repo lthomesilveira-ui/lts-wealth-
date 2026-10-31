@@ -9,7 +9,8 @@
   "private_http_validated": false,
   "scope": [
     "Apply the existing five-previous-days default on first explicit Flow navigation instead of inheriting the Dashboard preload",
-    "Preserve the compact period disclosure, future horizon, zero-day filter, custom periods and explicit transaction navigation"
+    "Preserve the compact period disclosure, future horizon, zero-day filter, custom periods and explicit transaction navigation",
+    "Reuse a pending default action only while that exact period is still selected; allow returning from a different custom period immediately"
   ],
   "protected_base_files": {
     "lts-v268-read-tools.js": "649bdbd6aaa6f9ea3e2dc931cbef287faf8682f9708f07022ef9a1e8c78e2273",

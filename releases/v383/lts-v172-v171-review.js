@@ -224,7 +224,7 @@
     };
     function openDefault(){
       const range=defaultRange(),key=range.from+'|'+range.to;SHOWZERO=false;FLOWFORCEZERO=false;
-      if(state.defaultPending?.key===key)return state.defaultPending.promise;
+      if(state.defaultPending?.key===key&&FLOWFROM===range.from&&FLOWTO===range.to)return state.defaultPending.promise;
       const promise=Promise.resolve(loadFlowRange(range.from,range.to));state.defaultPending={key,promise};
       promise.finally(()=>setTimeout(()=>{if(state.defaultPending?.promise===promise)state.defaultPending=null},1200));return promise;
     }

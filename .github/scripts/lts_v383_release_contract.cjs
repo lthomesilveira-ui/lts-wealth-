@@ -10,7 +10,7 @@ for(const[n,h]of Object.entries(p.protected_base_files))assert.equal(hash(base+'
 assert.deepEqual(Object.keys(m.files).concat('manifest.json').sort(),fs.readdirSync(root).sort());
 assert.deepEqual(fs.readdirSync(root).filter(n=>hash(root+'/'+n)!==hash(base+'/'+n)).sort(),['app.html','lts-v172-v171-review.js','manifest.json','provenance.json'].sort());
 assert.equal(read(root,'app.html'),read(base,'app.html').replaceAll('V382','V383').replace('v382-flow-layout-20261030','v383-flow-default-five-20261031'));
-assert.equal(read(root,'lts-v172-v171-review.js'),read(base,'lts-v172-v171-review.js').replace('renderNav();render();if(!hasPeriod)openDefault()};','renderNav();render();if(!hasPeriod||!state.flowNavigationOpened){state.flowNavigationOpened=true;openDefault()}};'));
+assert.equal(read(root,'lts-v172-v171-review.js'),read(base,'lts-v172-v171-review.js').replace('renderNav();render();if(!hasPeriod)openDefault()};','renderNav();render();if(!hasPeriod||!state.flowNavigationOpened){state.flowNavigationOpened=true;openDefault()}};').replace('if(state.defaultPending?.key===key)return state.defaultPending.promise;','if(state.defaultPending?.key===key&&FLOWFROM===range.from&&FLOWTO===range.to)return state.defaultPending.promise;'));
 for(const n of ['index.html','lts-v382-flow-layout.js','lts-v382-flow-layout.css','lts-v183-flow-period-state.js','lts-v183-exact-flow-navigation.js'])assert.equal(hash(root+'/'+n),hash(base+'/'+n));
 assert.deepEqual(JSON.parse(read('mobile','current.json')),{release:'v383',entry:'../releases/v383/app.html'});
 assert.equal(p.backend_changed,false);assert.equal(p.financial_source_data_changed,false);assert.equal(p.physical_mobile_validated,false);assert.equal(p.private_http_validated,false);
