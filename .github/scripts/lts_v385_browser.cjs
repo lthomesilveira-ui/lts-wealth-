@@ -15,7 +15,7 @@ fixture.response=function(name,args){
   const p=structuredClone(baseResponse('lts_browser_expenses_v229',args));p.summary={...p.summary,selected_total:sum(rows),rows:12};p.management_groups=rows.map(r=>({name:r.category,total:r.amount,rows:1,subgroups:[]}));
   if(mode!=='legacy')p.presentation=presentation(args);else delete p.presentation;return p;
  }
- if(name==='lts_browser_expense_detail_v353'){
+ if(name==='lts_browser_expense_scope_detail_v374'||name==='lts_browser_expense_detail_v374'){
   detailRequests.push({name,args});const filtered=rows.filter(r=>!args.p_scope?.macrogroup||r.category===args.p_scope.macrogroup);
   return{version:'expense-detail-v353',revision:'synthetic-v385',total:sum(filtered),row_count:filtered.length,matched_count:filtered.length,offset:0,next_offset:null,rows:filtered,components:[]};
  }
