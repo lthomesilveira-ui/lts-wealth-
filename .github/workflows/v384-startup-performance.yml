@@ -1,0 +1,31 @@
+name: V384 startup performance with exact readers
+on:
+  pull_request:
+    paths: ['releases/v384/**','.github/scripts/*v384*','.github/workflows/v384-startup-performance.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  startup-performance:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    container: mcr.microsoft.com/playwright:v1.58.2-noble
+    env:
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node .github/scripts/lts_v384_release_contract.cjs
+      - run: npm install --no-save --package-lock=false playwright@1.58.2
+      - run: |
+          python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/lts-v384-http.log 2>&1 &
+          node .github/scripts/lts_v309_wait_http.cjs
+      - run: node .github/scripts/lts_v384_benchmark.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v384-startup-performance
+          path: qa/v384-performance/
