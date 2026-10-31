@@ -1,9 +1,9 @@
 'use strict';
 // All identities, categories and amounts below are invented browser fixtures.
-process.env.LTS_FLOW_RELEASE='v385';
+process.env.LTS_FLOW_RELEASE||='v385';
 const fixture=require('./lts_v379_fixtures.cjs'),{setup,open}=require('./lts_v382_browser.cjs');
 const {chromium,webkit}=require('playwright'),fs=require('node:fs'),assert=require('node:assert/strict'),crypto=require('node:crypto');
-const out='qa/v385';fs.mkdirSync(out,{recursive:true});
+const target=process.env.LTS_FLOW_RELEASE,out='qa/'+target;fs.mkdirSync(out,{recursive:true});
 const groups=['Patrimônio e financiamentos','Saúde','Alimentação','Vida pessoal e familiar','Moradia','Mobilidade','Educação e formação','Lazer e cultura','Assinaturas e serviços','Despesas administrativas','Outras despesas com nome longo para testar a leitura','Compensações de teste'];
 const values=[333333.33,222222.22,111111.11,99999.99,88888.88,77777.77,66666.66,55555.55,44444.44,33333.33,22222.22,-12345.67];
 const rows=groups.map((name,i)=>({key:'synthetic-'+i,date:'2026-10-05',event_date:'2026-10-05',date_kind:'day',period:'2026-10-01',description:'Despesa fictícia '+i,account_source:'Conta fictícia',amount:values[i],category:name,current_category:name,original_category:name,taxonomy:{macrogroup:name,group:'Grupo fictício',category:name,is_tax:false},property_code:null,beneficiary:null,center_cost:null,source_table:'fixture',source_ref:String(i),coverage_mode:'direct_cash'}));
@@ -49,7 +49,7 @@ async function stats(frame,positive=false){
 async function run(browser,engine,width,variant,baseline=false){
  mode=variant;detailRequests=[];const h=await setup(browser,width,width===1366?900:852,'2026-10-31T15:00:00Z'),label=engine+'-'+width+'-'+variant+(baseline?'-before':'');let f;
  try{
-  f=await open(h,baseline?'v384':'v385',!baseline);await ready(f);
+  f=await open(h,baseline?'v384':target,!baseline);await ready(f);
   const geometry=await rankGeometry(f);assert.equal(geometry.length,12);assert.deepEqual(geometry.map(x=>x.name),groups);assert.deepEqual(geometry.map(x=>x.text),values.map(money));
   if(baseline){assert(geometry.some(x=>x.lines>1),'negative control reproduces crushed mobile numbers');return{pass:true,engine,width,variant,negative_control_reproduced:true,geometry};}
   for(const x of geometry){assert.equal(x.lines,1,'unbroken monetary value '+JSON.stringify(x));assert(x.left>=x.cardLeft-1&&x.right<=x.cardRight+1,'value inside card');assert(x.rowHeight<140,'compact row');}
