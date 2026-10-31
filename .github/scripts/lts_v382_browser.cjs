@@ -6,6 +6,17 @@ const session={access_token:'synthetic-only-access',refresh_token:'synthetic-onl
 async function setup(browser,width,height){
  const ctx=await browser.newContext({viewport:{width,height},isMobile:width<1000,hasTouch:width<1000,locale:'pt-BR',timezoneId:'America/Sao_Paulo',serviceWorkers:'block'});
  await ctx.addInitScript(s=>{const NativeDate=Date;window.Date=class extends NativeDate{constructor(...a){super(...(a.length?a:['2026-10-30T15:00:00Z']));}static now(){return NativeDate.parse('2026-10-30T15:00:00Z');}};localStorage.setItem('lts_supabase_session_v1',JSON.stringify(s));sessionStorage.setItem('lts_of_open_refresh_at',String(Date.now()));Object.defineProperty(navigator,'standalone',{get:()=>true});},session);
+ await ctx.addInitScript(()=>{
+  window.__flowTestEvents=[];
+  const state=()=>{try{return {from:FLOWFROM,to:FLOWTO,preset:FLOWPRESET,loading:FLOWLOADING,scrollY};}catch{return {};}};
+  const record=x=>{window.__flowTestEvents.push({...x,at:performance.now()});if(window.__flowTestEvents.length>120)window.__flowTestEvents.shift();};
+  for(const type of ['pointerdown','pointerup','mousedown','mouseup','click','change'])document.addEventListener(type,event=>{
+   const target=event.target.closest?.('button,input,select,summary');if(!target?.closest('.flow-sticky-controls'))return;
+   const identity={id:target.id,tag:target.tagName,text:target.tagName==='SELECT'?'year':target.textContent.trim().slice(0,80),preset:target.dataset.p};
+   record({type,identity,clientX:event.clientX,clientY:event.clientY,rect:target.getBoundingClientRect().toJSON(),state:state()});
+   setTimeout(()=>record({type:type+'-after',identity,connected:target.isConnected,rect:target.getBoundingClientRect().toJSON(),state:state()}),0);
+  },true);
+ });
  const page=await ctx.newPage(),errors=[],writes=[],reads=[];page.setDefaultTimeout(25000);page.on('pageerror',e=>errors.push(String(e)));
  await ctx.route('**/*',async route=>{
   const req=route.request(),url=new URL(req.url());if(url.origin===base)return route.continue();if(url.origin!=='https://tadhkamnwtsbdozwkyut.supabase.co')return route.abort();
@@ -25,6 +36,7 @@ async function ready(page,release){
  const frame=page.frames().find(f=>new URL(f.url()).pathname.endsWith('/releases/'+release+'/index.html'));assert(frame,'inner app frame');
  await frame.waitForFunction(()=>window.__LTS_V365?.installed&&window.__LTS_V183_FLOW_PERIOD_STATE?.installed&&D&&!N.classList.contains('hidden'));
  if(release==='v382')await frame.waitForFunction(()=>window.__LTS_V382_FLOW_LAYOUT?.installed);
+ if(release==='v382')await frame.evaluate(()=>{const base=loadFlowRange;loadFlowRange=function(...args){window.__flowTestEvents.push({type:'loadFlowRange',args,at:performance.now()});return base.apply(this,args)};});
  return frame;
 }
 async function open(h,release,launcher=false){
@@ -79,8 +91,9 @@ async function run(browser,engine,width,height){
   assert.deepEqual(before.errors,[]);assert.deepEqual(after.errors,[]);assert.deepEqual(before.writes,[]);assert.deepEqual(after.writes,[]);
   return {pass:true,engine,width,height,before_height:old.controls.height,after_height:closed.controls.height,financial_response_sha256:hash(current.flow),same_financial_response:true,all_presets_and_banks_preserved:true,native_fields_fit:true,draft_preserved:true,cross_year_apply:true,year_and_quick_presets:true,zero_day_toggle:true,open_state_survives_render:true,keyboard_disclosure:true,dashboard_fit:true,synthetic_http:true,private_session:false,physical_iphone:false};
  }catch(error){
-  if(frame){fs.writeFileSync(out+'/'+label+'-failure-dom.html',await frame.locator('body').innerHTML());fs.writeFileSync(out+'/'+label+'-failure-state.json',JSON.stringify({state:await frame.evaluate(()=>({from:FLOWFROM,to:FLOWTO,loading:FLOWLOADING,focused:document.activeElement?.outerHTML})),reads:after.reads.slice(-20),stack:error.stack},null,2));}
+  if(frame){fs.writeFileSync(out+'/'+label+'-failure-dom.html',await frame.locator('body').innerHTML());fs.writeFileSync(out+'/'+label+'-failure-state.json',JSON.stringify({state:await frame.evaluate(()=>({from:FLOWFROM,to:FLOWTO,preset:FLOWPRESET,loading:FLOWLOADING,focused:document.activeElement?.outerHTML,events:window.__flowTestEvents})),reads:after.reads.slice(-20),stack:error.stack},null,2));}
   await after.page.screenshot({path:out+'/'+label+'-failure.png'}).catch(()=>{});console.error(label,{errors:after.errors,writes:after.writes,last_reads:after.reads.slice(-8)});throw error;
  }finally{await before.ctx.close();await after.ctx.close();}
 }
 (async()=>{const results=[];for(const[engine,type]of [['webkit',webkit],['chromium',chromium]]){const browser=await type.launch({headless:true});try{for(const[w,h]of [[360,800],[393,852],[430,932],[852,393],[1366,900]]){let result;try{result=await run(browser,engine,w,h);}catch(error){result={pass:false,engine,width:w,height:h,error:String(error)};process.exitCode=1;}results.push(result);fs.writeFileSync(out+'/result.json',JSON.stringify({pass:results.length===10&&results.every(r=>r.pass),results},null,2));console.log(JSON.stringify(result));}}finally{await browser.close()}}})().catch(error=>{console.error(error);process.exitCode=1});
+
