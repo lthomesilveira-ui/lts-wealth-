@@ -14,7 +14,8 @@ async function run(browser,engine,release,latency,width,trial){
  const started=performance.now();
  try{
   await h.page.goto(base+'/releases/'+release+'/app.html',{waitUntil:'domcontentloaded'});
-  frame=h.page.frames().find(f=>new URL(f.url()).pathname.endsWith('/releases/'+release+'/index.html'));assert(frame);
+  await h.page.waitForFunction(()=>document.getElementById('shell')?.contentDocument?.body?.dataset.ltsBootState==='ready');
+  frame=h.page.frames().find(f=>f.url().startsWith(base+'/releases/'+release+'/index.html'));assert(frame);
   // A useful opening has every visible financial section, cards and monthly
   // balance loaded. Measure background completion separately, without masking it
   // behind networkidle in the user-visible readiness measurement.
