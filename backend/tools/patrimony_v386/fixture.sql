@@ -13,3 +13,4 @@ INSERT INTO public.asset_positions VALUES('00000000-0000-4000-8000-000000000011'
 INSERT INTO public.asset_positions VALUES('00000000-0000-4000-8000-000000000012','00000000-0000-4000-8000-000000000002','fgts-two','FGTS','Other owner FGTS','2030-01-01',NULL,NULL,999,'restricted','restricted','{}',now());
 INSERT INTO public.app_settings VALUES('00000000-0000-4000-8000-000000000001','{"liquidity_movements_v242":{"fgts":{"receipt_date":"2030-01-08","total_brl":5010}}}');
 INSERT INTO public.lts_open_finance_staging VALUES('00000000-0000-4000-8000-000000000021','00000000-0000-4000-8000-000000000001','transaction','341','BRL',NULL,'2030-01-08',5010,'{"status":"POSTED"}',true);
+ALTER TABLE public.asset_positions ADD COLUMN is_available_now boolean DEFAULT false;
