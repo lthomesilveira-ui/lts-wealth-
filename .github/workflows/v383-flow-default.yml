@@ -1,0 +1,31 @@
+name: V383 previous five days on Flow entry
+on:
+  pull_request:
+    paths: ['releases/v383/**','mobile/current.json','.github/scripts/*v383*','.github/scripts/*v382*','.github/workflows/v383-flow-default.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  flow-default:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    container: mcr.microsoft.com/playwright:v1.58.2-noble
+    env:
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node .github/scripts/lts_v383_release_contract.cjs
+      - run: npm install --no-save --package-lock=false playwright@1.58.2
+      - run: |
+          python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/lts-v383-http.log 2>&1 &
+          node .github/scripts/lts_v309_wait_http.cjs
+      - run: node .github/scripts/lts_v383_browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v383-flow-default
+          path: qa/v383-default/

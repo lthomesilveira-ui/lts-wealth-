@@ -1,11 +1,11 @@
 'use strict';
 const {chromium,webkit}=require('playwright'),fs=require('node:fs'),assert=require('node:assert/strict'),crypto=require('node:crypto');
-const fixture=require('./lts_v379_fixtures.cjs'),base='http://127.0.0.1:8788',out='qa/v382';fs.mkdirSync(out,{recursive:true});
+const fixture=require('./lts_v379_fixtures.cjs'),base='http://127.0.0.1:8788',target=process.env.LTS_FLOW_RELEASE||'v382',out='qa/'+target;fs.mkdirSync(out,{recursive:true});
 const hash=x=>crypto.createHash('sha256').update(JSON.stringify(x)).digest('hex');
 const session={access_token:'synthetic-only-access',refresh_token:'synthetic-only-refresh',expires_at:4102444800,user:{id:'00000000-0000-4000-8000-000000000001',email:'viewer@example.invalid'}};
-async function setup(browser,width,height){
+async function setup(browser,width,height,now='2026-10-30T15:00:00Z'){
  const ctx=await browser.newContext({viewport:{width,height},isMobile:width<1000,hasTouch:width<1000,locale:'pt-BR',timezoneId:'America/Sao_Paulo',serviceWorkers:'block'});
- await ctx.addInitScript(s=>{const NativeDate=Date;window.Date=class extends NativeDate{constructor(...a){super(...(a.length?a:['2026-10-30T15:00:00Z']));}static now(){return NativeDate.parse('2026-10-30T15:00:00Z');}};localStorage.setItem('lts_supabase_session_v1',JSON.stringify(s));sessionStorage.setItem('lts_of_open_refresh_at',String(Date.now()));Object.defineProperty(navigator,'standalone',{get:()=>true});},session);
+ await ctx.addInitScript(({s,now})=>{const NativeDate=Date;window.Date=class extends NativeDate{constructor(...a){super(...(a.length?a:[now]));}static now(){return NativeDate.parse(now);}};localStorage.setItem('lts_supabase_session_v1',JSON.stringify(s));sessionStorage.setItem('lts_of_open_refresh_at',String(Date.now()));Object.defineProperty(navigator,'standalone',{get:()=>true});},{s:session,now});
  const page=await ctx.newPage(),errors=[],writes=[],reads=[];page.setDefaultTimeout(25000);page.on('pageerror',e=>errors.push(String(e)));
  await ctx.route('**/*',async route=>{
   const req=route.request(),url=new URL(req.url());if(url.origin===base)return route.continue();if(url.origin!=='https://tadhkamnwtsbdozwkyut.supabase.co')return route.abort();
@@ -26,8 +26,8 @@ async function ready(page,release){
  try{await frame.waitForFunction(()=>window.__LTS_V365?.installed&&window.__LTS_V183_FLOW_PERIOD_STATE?.installed&&window.__LTS_DASHBOARD_EXECUTIVE_STATUS?.loaded&&!window.__LTS_DASHBOARD_EXECUTIVE_STATUS?.loading&&D&&!N.classList.contains('hidden'));}
  catch(error){error.message+=' BOOT '+JSON.stringify(await frame.evaluate(()=>({url:location.href,view:V,v365:window.__LTS_V365?.installed,v183:window.__LTS_V183_FLOW_PERIOD_STATE?.installed,dashboard:window.__LTS_DASHBOARD_EXECUTIVE_STATUS,product:!!D,navHidden:N.classList.contains('hidden'),components:parent.LTSV339Boot?.snapshot?.()})));throw error;}
  assert.equal(await frame.evaluate(()=>V),'Dashboard','authenticated opening completes on the Dashboard before navigation');
- if(release==='v382')await frame.waitForFunction(()=>window.__LTS_V382_FLOW_LAYOUT?.installed);
- if(release==='v382')await frame.evaluate(()=>{const base=loadFlowRange;loadFlowRange=function(...args){(window.__flowTestEvents||(window.__flowTestEvents=[])).push({type:'loadFlowRange',args,at:performance.now()});return base.apply(this,args)};});
+ if(release===target)await frame.waitForFunction(()=>window.__LTS_V382_FLOW_LAYOUT?.installed);
+ if(release===target)await frame.evaluate(()=>{const base=loadFlowRange;loadFlowRange=function(...args){(window.__flowTestEvents||(window.__flowTestEvents=[])).push({type:'loadFlowRange',args,at:performance.now()});return base.apply(this,args)};});
  return frame;
 }
 async function open(h,release,launcher=false){
@@ -49,7 +49,7 @@ async function run(browser,engine,width,height){
  try{
   const prior=await open(before,'v379');await flow(prior);await before.page.waitForLoadState('networkidle');const original=await snapshot(prior),old=await geometry(prior);
   await before.page.screenshot({path:out+'/'+label+'-before.png'});
-  frame=await open(after,'v382',true);await flow(frame);await after.page.waitForLoadState('networkidle');
+  frame=await open(after,target,true);await flow(frame);await after.page.waitForLoadState('networkidle');
   const current=await snapshot(frame);assert.equal(hash(current.flow),hash(original.flow),'identical financial response under the same dates');assert.deepEqual(current.presets,original.presets);assert.deepEqual(current.banks,original.banks);assert.deepEqual(current.actions,original.actions);assert.deepEqual(current.warnings,original.warnings,'material financial warnings stay visible');
   assert.equal(await frame.locator('.v382-period[open]').count(),0);assert.match(await frame.locator('.v382-period-range').innerText(),/25\/10\/2026.*31\/12\/2030/);
   const closed=await geometry(frame);assert(closed.scroll<=closed.width+2,'closed layout fits');assert(closed.filters.height<=118,'collapsed bank and period height: '+closed.filters.height);assert(closed.controls.height-closed.material_height<=210,'controls excluding visible material warnings: '+JSON.stringify(closed));assert.equal(closed.visiblePresets,0);
@@ -98,4 +98,5 @@ async function run(browser,engine,width,height){
   await after.page.screenshot({path:out+'/'+label+'-failure.png'}).catch(()=>{});console.error(label,{errors:after.errors,writes:after.writes,last_reads:after.reads.slice(-8)});throw error;
  }finally{await before.ctx.close();await after.ctx.close();}
 }
-(async()=>{const results=[];for(const[engine,type]of [['webkit',webkit],['chromium',chromium]]){const browser=await type.launch({headless:true});try{for(const[w,h]of [[360,800],[393,852],[430,932],[852,393],[1366,900]]){let result;try{result=await run(browser,engine,w,h);}catch(error){result={pass:false,engine,width:w,height:h,error:error.stack};process.exitCode=1;}results.push(result);fs.writeFileSync(out+'/result.json',JSON.stringify({pass:results.length===10&&results.every(r=>r.pass),results},null,2));console.log(JSON.stringify(result));}}finally{await browser.close()}}})().catch(error=>{console.error(error);process.exitCode=1});
+module.exports={setup,open,geometry,snapshot};
+if(require.main===module)(async()=>{const results=[];for(const[engine,type]of [['webkit',webkit],['chromium',chromium]]){const browser=await type.launch({headless:true});try{for(const[w,h]of [[360,800],[393,852],[430,932],[852,393],[1366,900]]){let result;try{result=await run(browser,engine,w,h);}catch(error){result={pass:false,engine,width:w,height:h,error:error.stack};process.exitCode=1;}results.push(result);fs.writeFileSync(out+'/result.json',JSON.stringify({pass:results.length===10&&results.every(r=>r.pass),results},null,2));console.log(JSON.stringify(result));}}finally{await browser.close()}}})().catch(error=>{console.error(error);process.exitCode=1});
