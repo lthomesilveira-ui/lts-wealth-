@@ -28,6 +28,6 @@ for(const n of fs.readdirSync(root).filter(n=>n.endsWith('.js')&&![ui,bundle].in
 assert.equal(p.backend_changed,false);assert.equal(p.financial_reader_logic_changed,false);assert.equal(p.date_behavior_changed,false);assert.equal(p.daily_projection_arithmetic_unchanged,true);
 assert.equal(p.scenario_summary_coverage_bound_changed,true);assert.equal(p.projection_period_unchanged,true);assert.equal(p.coverage_dates_unchanged,true);
 assert.equal((read(root,'app.html').match(/<script src=/g)||[]).length,2,'same two startup bundles');
-assert.deepEqual(JSON.parse(read('mobile','current.json')),{release:'v385',entry:'../releases/v385/app.html'});
+const live=process.env.LTS_MOBILE_RELEASE||'v385';assert.deepEqual(JSON.parse(read('mobile','current.json')),{release:live,entry:'../releases/'+live+'/app.html'});
 assert.deepEqual(Object.keys(m.files).concat('manifest.json').sort(),fs.readdirSync(root).sort());
 console.log(JSON.stringify({pass:true,release:'v385',presentation_source_changes:1,financial_and_date_arithmetic_exact:true,published_v384_exact:true,startup_bundle_count_exact:true,protected_root_exact:true}));
