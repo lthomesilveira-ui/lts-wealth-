@@ -74,7 +74,7 @@ async function run(browser,engine,width,height){
   assert.deepEqual(before.errors,[]);assert.deepEqual(after.errors,[]);assert.deepEqual(before.writes,[]);assert.deepEqual(after.writes,[]);
   return {pass:true,engine,width,height,before_height:old.controls.height,after_height:closed.controls.height,financial_response_sha256:hash(current.flow),same_financial_response:true,all_presets_and_banks_preserved:true,native_fields_fit:true,draft_preserved:true,cross_year_apply:true,year_and_quick_presets:true,zero_day_toggle:true,open_state_survives_render:true,keyboard_disclosure:true,dashboard_fit:true,synthetic_http:true,private_session:false,physical_iphone:false};
  }catch(error){
-  if(frame){fs.writeFileSync(out+'/'+label+'-failure-dom.html',await frame.locator('body').innerHTML());fs.writeFileSync(out+'/'+label+'-failure-state.json',JSON.stringify(await frame.evaluate(()=>({from:FLOWFROM,to:FLOWTO,loading:FLOWLOADING})),null,2));}
+  if(frame){fs.writeFileSync(out+'/'+label+'-failure-dom.html',await frame.locator('body').innerHTML());fs.writeFileSync(out+'/'+label+'-failure-state.json',JSON.stringify({state:await frame.evaluate(()=>({from:FLOWFROM,to:FLOWTO,loading:FLOWLOADING,focused:document.activeElement?.outerHTML})),reads:after.reads.slice(-20),stack:error.stack},null,2));}
   await after.page.screenshot({path:out+'/'+label+'-failure.png'}).catch(()=>{});console.error(label,{errors:after.errors,writes:after.writes,last_reads:after.reads.slice(-8)});throw error;
  }finally{await before.ctx.close();await after.ctx.close();}
 }

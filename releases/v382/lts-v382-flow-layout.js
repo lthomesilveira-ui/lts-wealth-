@@ -22,6 +22,13 @@
    const bank=root.querySelector('[data-a]')?.closest('.chips'),host=from?.closest('.chips');
    if(!from||!to||!year||!bank||!host||bank===host)return;
    root.classList.add('v382-flow-controls');bank.classList.add('v382-banks');
+   // Finish a native picker before an existing action triggers a render. The
+   // editing guard otherwise defers that render while the picker keeps focus.
+   root.addEventListener('click',event=>{
+    if(!event.target.closest('button,summary'))return;
+    const active=document.activeElement;
+    if(root.contains(active)&&active.matches('input,select,textarea'))active.blur();
+   },true);
    const heading=root.querySelector(':scope>.flowbar'),toolbar=heading?.querySelector('.chips');
    if(toolbar){
     heading.classList.add('v382-flow-heading');

@@ -105,6 +105,8 @@ jobs:
           node .github/scripts/lts_v371_release_contract.cjs
           node .github/scripts/lts_v373_release_contract.cjs
           node .github/scripts/lts_v374_release_contract.cjs
+          LTS_MOBILE_RELEASE=v382 node .github/scripts/lts_v379_release_contract.cjs
+          node .github/scripts/lts_v382_release_contract.cjs
       - name: Configure Pages
         uses: actions/configure-pages@v5
         with:
@@ -116,6 +118,12 @@ jobs:
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v4
+      - name: Verify published V382, stable mobile entry and preserved V379
+        run: node .github/scripts/lts_v382_verify_published.cjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: v382-published-verification
+          path: v382-published-verification.json
       - name: Verify published V368 and preserved releases
         run: |
           node --input-type=module <<'JS'
