@@ -25,7 +25,7 @@ async function run(browser,engine,width,variant='withdrawn',baseline=false){
  mode=variant;const h=await setup(browser,width,width===1366?900:852,'2026-10-31T15:00:00Z'),label=engine+'-'+width+'-'+variant+(baseline?'-before':'');let f;
  try{
   f=await open(h,baseline?'v385':'v386',!baseline);await navigate(f);const root=f.locator('.v168-wealth'),text=await root.innerText();
-  if(baseline){assert.match(text,/Schiavalli/);const oldFgts=root.locator('.v365-pair').filter({has:root.locator('span',{hasText:/^FGTS/})});assert((await oldFgts.allTextContents()).some(t=>t.includes('0,00')));return{pass:true,engine,width,baseline_regression_reproduced:true};}
+  if(baseline){assert.match(text,/Schiavalli/);const oldFgts=await root.locator('.v365-pair').allTextContents();assert(oldFgts.some(t=>/^FGTS/.test(t)&&t.includes(money(0))));return{pass:true,engine,width,baseline_regression_reproduced:true};}
   assert(!/Schiavalli/i.test(text));const before=hash(await f.evaluate(()=>window.__LTS_V168_STATE.wealth.data));
   const fgts=root.locator('[data-v386-fgts]'),value=fgts.locator(':scope>.v365-pair>b'),totals=root.locator('.v365-wealth-totals');
   assert.equal(await fgts.count(),1);assert.equal(await fgts.locator('details[open]').count(),0,'origin closed by default');
