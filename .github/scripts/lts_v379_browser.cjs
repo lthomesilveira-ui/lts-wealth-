@@ -1,5 +1,6 @@
 'use strict';
 const {chromium,webkit}=require('playwright'),fs=require('node:fs'),assert=require('node:assert/strict');
+const release=process.env.LTS_RELEASE||'v379';
 const fixture=require('./lts_v379_fixtures.cjs'),base='http://127.0.0.1:8788',out='qa/v379';fs.mkdirSync(out,{recursive:true});
 const session={access_token:'synthetic-only-access',refresh_token:'synthetic-only-refresh',expires_at:4102444800,user:{id:'00000000-0000-4000-8000-000000000001',email:'viewer@example.invalid'}};
 async function setup(browser,width,height){
@@ -34,7 +35,7 @@ async function setup(browser,width,height){
 }
 async function ready(page){
  await page.waitForFunction(()=>document.getElementById('wealth')?.contentDocument?.getElementById('shell')?.contentDocument?.body?.dataset.ltsBootState==='ready');
- const frame=page.frames().find(f=>/releases\/v379\/index.html/.test(f.url()));assert(frame);
+ const frame=page.frames().find(f=>f.url().includes('/releases/'+release+'/index.html'));assert(frame);
  await frame.waitForFunction(()=>window.__LTS_V365?.installed&&window.__LTS_V182_FEEDBACK?.installed&&window.__LTS_V337_MONTH?.installed&&D&&!N.classList.contains('hidden'));
  return frame;
 }
