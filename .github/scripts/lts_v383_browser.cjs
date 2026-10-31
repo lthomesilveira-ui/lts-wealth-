@@ -1,14 +1,14 @@
 'use strict';
-process.env.LTS_FLOW_RELEASE='v383';
+process.env.LTS_FLOW_RELEASE=process.env.LTS_FLOW_RELEASE||'v383';
 const {setup,open,geometry}=require('./lts_v382_browser.cjs');
 const {chromium,webkit}=require('playwright'),assert=require('node:assert/strict'),fs=require('node:fs');
-const out='qa/v383-default';fs.mkdirSync(out,{recursive:true});
+const target=process.env.LTS_FLOW_RELEASE,out='qa/v383-default';fs.mkdirSync(out,{recursive:true});
 const cases=[['2026-10-31T15:00:00Z','2026-10-31','2026-10-26','2030-12-31'],['2027-01-01T15:00:00Z','2027-01-01','2026-12-27','2031-12-31'],['2028-03-01T15:00:00Z','2028-03-01','2028-02-25','2032-12-31'],['2027-01-01T02:00:00Z','2026-12-31','2026-12-26','2030-12-31']];
 async function navigate(frame,name){const route=frame.locator('#nav [data-v="'+name+'"]:visible,#dx1MobileNav [data-mobile-route="'+name+'"]:visible');assert.equal(await route.count(),1);await route.click();await frame.waitForFunction(v=>V===v,name);}
 async function run(browser,engine,width,c){
  const[now,today,from,to]=c,h=await setup(browser,width,width===393?852:900,now);let f;
  try{
-  f=await open(h,'v383',true);assert.equal(await f.evaluate(()=>today()),today,'São Paulo calendar day');
+  f=await open(h,target,true);assert.equal(await f.evaluate(()=>today()),today,'São Paulo calendar day');
   // Reproduce a valid period inherited from another screen before first Flow entry.
   const inheritedTo=new Date(today+'T12:00:00Z');inheritedTo.setUTCDate(inheritedTo.getUTCDate()+29);
   await f.evaluate(r=>{FLOWFROM=r.from;FLOWTO=r.to;},{from:today,to:inheritedTo.toISOString().slice(0,10)});
