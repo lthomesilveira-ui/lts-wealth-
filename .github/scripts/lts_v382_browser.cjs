@@ -35,8 +35,8 @@ async function open(h,release,launcher=false){
  const frame=await ready(h.page,release);await h.page.waitForLoadState('networkidle');return frame;
 }
 async function flow(frame){
- const mobile=await frame.evaluate(()=>innerWidth<=820);
- await frame.locator(mobile?'#dx1MobileNav [data-mobile-route="Fluxo Diário"]':'#nav [data-v="Fluxo Diário"]').click();
+ const route=frame.locator('#nav [data-v="Fluxo Diário"]:visible,#dx1MobileNav [data-mobile-route="Fluxo Diário"]:visible');
+ assert.equal(await route.count(),1,'one visible Flow route');await route.click();
  await frame.waitForFunction(()=>V==='Fluxo Diário');
  await frame.evaluate(()=>loadFlowRange('2026-10-25','2030-12-31'));
  await frame.waitForFunction(()=>!FLOWLOADING&&FLOWQ?.from==='2026-10-25'&&FLOWQ?.to==='2030-12-31');
@@ -87,8 +87,10 @@ async function run(browser,engine,width,height){
   assert.deepEqual(before.errors,[]);assert.deepEqual(after.errors,[]);assert.deepEqual(before.writes,[]);assert.deepEqual(after.writes,[]);
   return {pass:true,engine,width,height,before_height:old.controls.height,after_height:closed.controls.height,financial_response_sha256:hash(current.flow),same_financial_response:true,all_presets_and_banks_preserved:true,native_fields_fit:true,draft_preserved:true,cross_year_apply:true,year_and_quick_presets:true,year_to_quick_preset_cycles:5,initial_dashboard_before_flow:true,zero_day_toggle:true,open_state_survives_render:true,keyboard_disclosure:true,dashboard_fit:true,synthetic_http:true,private_session:false,physical_iphone:false};
  }catch(error){
+  const frames=[];for(const f of [...before.page.frames(),...after.page.frames()]){if(!f.url().endsWith('/index.html'))continue;try{frames.push({url:f.url(),state:await f.evaluate(()=>({view:V,boot:document.body.dataset.ltsBootState,product:!!D,navHidden:N.classList.contains('hidden'),v365:window.__LTS_V365,v183:window.__LTS_V183_FLOW_PERIOD_STATE,v290:window.__LTS_V290_USABILITY,v382:window.__LTS_V382_FLOW_LAYOUT,dashboard:window.__LTS_DASHBOARD_EXECUTIVE_STATUS,bootComponents:window.LTSV339Boot?.status,from:FLOWFROM,to:FLOWTO,loading:FLOWLOADING})),body:(await f.locator('body').innerText()).slice(0,1000)});}catch(e){frames.push({url:f.url(),error:String(e)});}}
+  fs.writeFileSync(out+'/'+label+'-failure-bootstrap.json',JSON.stringify({frames,stack:error.stack},null,2));
   if(frame){fs.writeFileSync(out+'/'+label+'-failure-dom.html',await frame.locator('body').innerHTML());fs.writeFileSync(out+'/'+label+'-failure-state.json',JSON.stringify({state:await frame.evaluate(()=>({from:FLOWFROM,to:FLOWTO,preset:FLOWPRESET,loading:FLOWLOADING,focused:document.activeElement?.outerHTML.slice(0,240),events:window.__flowTestEvents})),reads:after.reads.slice(-20),stack:error.stack},null,2));}
   await after.page.screenshot({path:out+'/'+label+'-failure.png'}).catch(()=>{});console.error(label,{errors:after.errors,writes:after.writes,last_reads:after.reads.slice(-8)});throw error;
  }finally{await before.ctx.close();await after.ctx.close();}
 }
-(async()=>{const results=[];for(const[engine,type]of [['webkit',webkit],['chromium',chromium]]){const browser=await type.launch({headless:true});try{for(const[w,h]of [[360,800],[393,852],[430,932],[852,393],[1366,900]]){let result;try{result=await run(browser,engine,w,h);}catch(error){result={pass:false,engine,width:w,height:h,error:String(error)};process.exitCode=1;}results.push(result);fs.writeFileSync(out+'/result.json',JSON.stringify({pass:results.length===10&&results.every(r=>r.pass),results},null,2));console.log(JSON.stringify(result));}}finally{await browser.close()}}})().catch(error=>{console.error(error);process.exitCode=1});
+(async()=>{const results=[];for(const[engine,type]of [['webkit',webkit],['chromium',chromium]]){const browser=await type.launch({headless:true});try{for(const[w,h]of [[360,800],[393,852],[430,932],[852,393],[1366,900]]){let result;try{result=await run(browser,engine,w,h);}catch(error){result={pass:false,engine,width:w,height:h,error:error.stack};process.exitCode=1;}results.push(result);fs.writeFileSync(out+'/result.json',JSON.stringify({pass:results.length===10&&results.every(r=>r.pass),results},null,2));console.log(JSON.stringify(result));}}finally{await browser.close()}}})().catch(error=>{console.error(error);process.exitCode=1});
