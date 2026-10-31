@@ -108,5 +108,9 @@
   "physical_mobile_validated": false,
   "startup_bundle_count_unchanged": true,
   "daily_projection_arithmetic_unchanged": true,
-  "presentation_javascript_changed": true
+  "presentation_javascript_changed": true,
+  "scenario_summary_coverage_bound_changed": true,
+  "projection_period_unchanged": true,
+  "coverage_dates_unchanged": true,
+  "coverage_bound_basis": "Use declared loaded forecast coverage.to instead of rejecting a complete shorter received period against a fixed later calendar year."
 }

@@ -2002,10 +2002,10 @@
       }).sort((a,b)=>String(a.date).localeCompare(String(b.date)));
     }
     function dailyScenario(flow,key){
-      const now=today(),horizon=(Number(now.slice(0,4))+4)+'-12-31',column={base:'saldo_apos_d0_1',vested:'saldo_apos_rsu',fgts:'saldo_apos_fgts'}[key];
+      const now=today(),horizon=flow?.coverage?.to??((Number(now.slice(0,4))+4)+'-12-31'),column={base:'saldo_apos_d0_1',vested:'saldo_apos_rsu',fgts:'saldo_apos_fgts'}[key];
       const days=arr(flow?.flow?.current_future?.days).filter(x=>String(x.date)>=now&&String(x.date)<=horizon).sort((a,b)=>String(a.date).localeCompare(String(b.date))),read=d=>num(d.fix86_columns?.[column]);
       const dates=new Set(days.map(d=>d.date)),expected=Math.round((Date.parse(horizon+'T12:00:00Z')-Date.parse(now+'T12:00:00Z'))/86400000)+1;
-      const complete=dates.size===expected&&days.every(d=>read(d)!=null),firstNegative=days.find(d=>read(d)!=null&&read(d)<0)||null,worst=days.reduce((m,d)=>read(d)==null?m:!m||read(d)<read(m)?d:m,null);
+      const complete=flow?.complete!==false&&flow?.coverage?.complete!==false&&dates.size===expected&&days.every(d=>read(d)!=null),firstNegative=days.find(d=>read(d)!=null&&read(d)<0)||null,worst=days.reduce((m,d)=>read(d)==null?m:!m||read(d)<read(m)?d:m,null);
       return{available:days.some(d=>read(d)!=null),complete,firstNegative,firstAmount:firstNegative?read(firstNegative):null,worstAmount:worst?read(worst):null,worstDate:worst?.date||null,lastDate:days[days.length-1]?.date||null};
     }
     function deficitDetail(scenario,ready){

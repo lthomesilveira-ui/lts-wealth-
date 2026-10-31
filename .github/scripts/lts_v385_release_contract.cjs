@@ -15,7 +15,8 @@ assert(read(root,'lts-v225-consolidated.css').includes('.v178-rankrow>button.v35
 assert.equal(read(base,bundle).split(read(base,ui)).length,2,'one unambiguous ordered UI source in bundle');
 assert.equal(read(root,bundle),read(base,bundle).replace(read(base,ui),read(root,ui)));
 const beforeDetail=s=>s.slice(0,s.indexOf('    function deficitDetail(')),afterDetail=s=>s.slice(s.indexOf('    function cockpitPoints'));
-assert.equal(beforeDetail(read(root,ui)),beforeDetail(read(base,ui)),'all reads and daily projection calculations remain exact');
+const prior=beforeDetail(read(base,ui)).replace("horizon=(Number(now.slice(0,4))+4)+'-12-31',column=","horizon=flow?.coverage?.to??((Number(now.slice(0,4))+4)+'-12-31'),column=").replace('const complete=dates.size===expected&&days.every(d=>read(d)!=null),firstNegative=','const complete=flow?.complete!==false&&flow?.coverage?.complete!==false&&dates.size===expected&&days.every(d=>read(d)!=null),firstNegative=');
+assert.equal(beforeDetail(read(root,ui)),prior,'readers and first/minimum arithmetic remain exact; completeness uses the declared loaded period');
 let remaining=afterDetail(read(root,ui));
 for(const [label,scenario]of[['baseLabel','baseScenario'],['vestedLabel','vestedScenario']]){
  const added="'+"+label+"+'</span>'+deficitDetail("+scenario+",planningReady)+'</div></div>";
@@ -25,6 +26,7 @@ for(const [label,scenario]of[['baseLabel','baseScenario'],['vestedLabel','vested
 assert.equal(remaining,afterDetail(read(base,ui)),'only two additional visible summary calls');
 for(const n of fs.readdirSync(root).filter(n=>n.endsWith('.js')&&![ui,bundle].includes(n)))assert.equal(hash(root+'/'+n),hash(base+'/'+n),'exact JavaScript: '+n);
 assert.equal(p.backend_changed,false);assert.equal(p.financial_reader_logic_changed,false);assert.equal(p.date_behavior_changed,false);assert.equal(p.daily_projection_arithmetic_unchanged,true);
+assert.equal(p.scenario_summary_coverage_bound_changed,true);assert.equal(p.projection_period_unchanged,true);assert.equal(p.coverage_dates_unchanged,true);
 assert.equal((read(root,'app.html').match(/<script src=/g)||[]).length,2,'same two startup bundles');
 assert.deepEqual(JSON.parse(read('mobile','current.json')),{release:'v385',entry:'../releases/v385/app.html'});
 assert.deepEqual(Object.keys(m.files).concat('manifest.json').sort(),fs.readdirSync(root).sort());

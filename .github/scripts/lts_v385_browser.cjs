@@ -38,9 +38,9 @@ async function stats(frame,positive=false){
  const boxes=decision(frame).locator('.v168-decision');assert.equal(await boxes.count(),3);
  const result=[];
  for(let i=0;i<3;i++){
-  const box=boxes.nth(i),dl=box.locator('.v385-scenario-stats');assert.equal(await dl.count(),1,'visible summary for each scenario');
+  const box=boxes.nth(i),dl=box.locator('.v385-scenario-stats');assert.equal(await dl.count(),1,'visible summary for scenario '+i+': '+await box.innerText());
   const times=await dl.locator('time').evaluateAll(es=>es.map(e=>e.dateTime)),amounts=await dl.locator('strong').allTextContents(),cover=await box.locator(':scope>div>span').innerText();
-  if(positive&&i===2){assert.match(await dl.innerText(),/Sem saldo negativo no período/);assert.deepEqual(times,[day]);assert.deepEqual(amounts,[money(0)]);assert.match(cover,/31\/12\/2030/);}
+  if(positive&&i===2){assert.match(await dl.innerText(),/Sem saldo negativo no período/);assert.deepEqual(times,[day]);assert.deepEqual(amounts,[money(0)]);assert.match(cover,/31\/12\/2027/);}
   else{assert.deepEqual(times,[iso(2+i),iso(5+2*i)]);assert.deepEqual(amounts,[money([-12.34,-23.45,-34.56][i]),money([-9876.54,-8765.43,-7654.32][i])]);assert(cover.includes(iso(1+i).split('-').reverse().join('/')),'coverage date preserved');}
   assert.equal(await dl.locator('details').count(),0);assert(await dl.isVisible());result.push({label:await box.locator(':scope>div>b').innerText(),times,amounts,coverage:cover});
  }
@@ -54,8 +54,8 @@ async function run(browser,engine,width,variant,baseline=false){
   if(baseline){assert(geometry.some(x=>x.lines>1),'negative control reproduces crushed mobile numbers');return{pass:true,engine,width,variant,negative_control_reproduced:true,geometry};}
   for(const x of geometry){assert.equal(x.lines,1,'unbroken monetary value '+JSON.stringify(x));assert(x.left>=x.cardLeft-1&&x.right<=x.cardRight+1,'value inside card');assert(x.rowHeight<140,'compact row');}
   const current=await stats(f,variant==='positive'),financial=await f.evaluate(()=>({forecast:window.__LTS_V178_STATE.forecast.data,report:window.__LTS_V178_STATE.dashboardReport.data})),hash=crypto.createHash('sha256').update(JSON.stringify(financial)).digest('hex');
-  for(const index of[0,5,11]){await f.locator('.v168-dashboard .v178-rankrow').nth(index).scrollIntoViewIfNeeded();await h.page.screenshot({path:out+'/'+label+'-groups-'+index+'.png'});}
-  await decision(f).scrollIntoViewIfNeeded();await h.page.screenshot({path:out+'/'+label+'-scenarios.png'});
+  for(const index of[0,5,11]){await f.locator('.v168-dashboard .v178-rankrow').nth(index).scrollIntoViewIfNeeded();await h.page.screenshot({path:out+'/'+label+'-groups-'+index+'.png'});if(label==='webkit-393-presentation'&&index!==5){const preview=await h.page.screenshot({type:'jpeg',quality:80});console.log('V385_VISUAL '+JSON.stringify({label:label+'-groups-'+index,mime:'image/jpeg',base64:preview.toString('base64')}));}}
+  await decision(f).scrollIntoViewIfNeeded();await h.page.screenshot({path:out+'/'+label+'-scenarios.png'});if(label==='webkit-393-presentation'){const preview=await h.page.screenshot({type:'jpeg',quality:80});console.log('V385_VISUAL '+JSON.stringify({label:label+'-scenarios',mime:'image/jpeg',base64:preview.toString('base64')}));}
   if(variant==='presentation'){
    const top=f.locator('.v168-dashboard .v178-rankrow').first();await top.locator(':scope>button').click();await f.waitForFunction(()=>window.__LTS_V178_STATE.detail&&!window.__LTS_V178_STATE.detail.loading);assert.equal(await f.locator('#v178Drawer tbody tr').count(),1);assert.equal(detailRequests.at(-1).args.p_scope.macrogroup,groups[0]);const scope=detailRequests.at(-1).args;
    await f.locator('#v178Drawer .v344-back').click();await top.locator(':scope>div>button').click();await f.waitForFunction(()=>window.__LTS_V178_STATE.detail&&!window.__LTS_V178_STATE.detail.loading);assert.deepEqual(detailRequests.at(-1).args,scope,'group and amount open the same scoped entries');await f.locator('#v178Drawer .v344-back').click();
@@ -64,7 +64,7 @@ async function run(browser,engine,width,variant,baseline=false){
   assert.equal(crypto.createHash('sha256').update(JSON.stringify(await f.evaluate(()=>({forecast:window.__LTS_V178_STATE.forecast.data,report:window.__LTS_V178_STATE.dashboardReport.data})))).digest('hex'),hash,'rendering and drilldown never alter financial response');
   assert.deepEqual(h.writes,[]);assert.deepEqual(h.errors,[]);
   return{pass:true,engine,width,variant,all_twelve_names_and_values_intact:true,scenarios:current,financial_response_sha256:hash,source_values_unchanged:true,synthetic_only:true,physical_iphone:false,private_session:false};
- }catch(error){await h.page.screenshot({path:out+'/'+label+'-failure.png'}).catch(()=>{});if(f)fs.writeFileSync(out+'/'+label+'-failure.json',JSON.stringify({error:error.stack,geometry:await rankGeometry(f).catch(()=>[]),body:(await f.locator('body').innerText()).slice(0,9000),reads:h.reads},null,2));throw error;}finally{await h.ctx.close();}
+ }catch(error){await h.page.screenshot({path:out+'/'+label+'-failure.png'}).catch(()=>{});if(f){const debug=await f.evaluate(()=>{const s=window.__LTS_V178_STATE||{},ds=window.__LTS_V168_STATE?.dashboard,data=s.forecast?.data,days=data?.flow?.current_future?.days||[];return{view:V,forecastStatus:s.forecast?.status,planningUI:s.planningUI,dashboardPlanningUI:ds?.data?.planningUI,complete:data?.complete,coverage:data?.coverage,days:days.length,first:days[0]?.date,last:days.at(-1)?.date,known:days.filter(d=>['saldo_apos_d0_1','saldo_apos_rsu','saldo_apos_fgts'].every(k=>d.fix86_columns?.[k]!=null)).length}});console.log('V385_FAILURE_STATE '+JSON.stringify({label,debug,error:error.message}));fs.writeFileSync(out+'/'+label+'-failure.json',JSON.stringify({error:error.stack,debug,geometry:await rankGeometry(f).catch(()=>[]),body:(await f.locator('body').innerText()).slice(0,9000),reads:h.reads},null,2));}throw error;}finally{await h.ctx.close();}
 }
 (async()=>{const results=[];for(const[engine,type]of[['webkit',webkit],['chromium',chromium]]){const browser=await type.launch({headless:true});try{
  results.push(await run(browser,engine,393,'presentation',true));
