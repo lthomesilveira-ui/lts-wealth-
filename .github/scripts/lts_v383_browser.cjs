@@ -10,7 +10,8 @@ async function run(browser,engine,width,c){
  try{
   f=await open(h,'v383',true);assert.equal(await f.evaluate(()=>today()),today,'São Paulo calendar day');
   // Reproduce a valid period inherited from another screen before first Flow entry.
-  await f.evaluate(()=>{FLOWFROM=today();FLOWTO=shift(today(),29);});
+  const inheritedTo=new Date(today+'T12:00:00Z');inheritedTo.setUTCDate(inheritedTo.getUTCDate()+29);
+  await f.evaluate(r=>{FLOWFROM=r.from;FLOWTO=r.to;},{from:today,to:inheritedTo.toISOString().slice(0,10)});
   await navigate(f,'Fluxo Diário');await f.waitForFunction(r=>!FLOWLOADING&&FLOWQ?.from===r.from&&FLOWQ?.to===r.to,{from,to});
   assert.equal(await f.locator('#flowFrom').inputValue(),from);assert.equal(await f.locator('#flowTo').inputValue(),to);
   const g=await geometry(f);assert(g.scroll<=width+2);assert.equal(await f.locator('.v382-period>summary').count(),1);assert.equal(await f.locator('.v382-period[open]').count(),0);assert.equal(g.visiblePresets,0);assert(g.filters.height<=118);
