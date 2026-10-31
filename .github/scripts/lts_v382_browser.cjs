@@ -62,7 +62,10 @@ async function run(browser,engine,width,height){
   await frame.getByLabel('Ano do período do Fluxo',{exact:true}).selectOption('2026');await frame.waitForFunction(()=>!FLOWLOADING&&FLOWFROM==='2026-01-01'&&FLOWTO==='2026-12-31');
   assert.notEqual(await frame.evaluate(()=>document.activeElement?.id),'flowYear','committed native year picker releases focus');
   assert.equal(await frame.locator('[data-p="Próximos 30 dias"]').evaluate(e=>typeof e.onclick),'function','preserved quick-period handler remains attached');
-  await frame.locator('[data-p="Próximos 30 dias"]').click();await frame.waitForFunction(()=>!FLOWLOADING&&FLOWFROM==='2026-10-30'&&FLOWTO==='2026-11-28');
+  const preset=frame.locator('[data-p="Próximos 30 dias"]');await preset.scrollIntoViewIfNeeded();const box=await preset.boundingBox();assert(box);
+  await after.page.mouse.move(box.x+box.width/2,box.y+box.height/2);await after.page.mouse.down();
+  assert(await frame.evaluate(()=>{const button=document.querySelector('[data-p="Próximos 30 dias"]');render();return button.isConnected&&button===document.querySelector('[data-p="Próximos 30 dias"]');}),'background render preserves the pressed control');
+  await after.page.mouse.up();await frame.waitForFunction(()=>!FLOWLOADING&&FLOWFROM==='2026-10-30'&&FLOWTO==='2026-11-28');
   const shown=await frame.evaluate(()=>SHOWZERO);await frame.locator('#flowZero').click();assert.equal(await frame.evaluate(()=>SHOWZERO),!shown);
   await summary().click();assert.equal(await frame.locator('.v382-period[open]').count(),0);await frame.locator('[data-a="Bradesco"]').click();await frame.waitForFunction(()=>ACC==='Bradesco');assert.equal(await frame.locator('.v382-period[open]').count(),0);
   await frame.locator('[data-a="Consolidado"]').click();await frame.evaluate(()=>{document.activeElement?.blur();render()});assert.equal(await frame.locator('.v382-period[open]').count(),0);

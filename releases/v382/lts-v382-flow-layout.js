@@ -5,7 +5,11 @@
  function runtime(){
   if(window.__LTS_V382_FLOW_LAYOUT)return;
   const previous=render;
-  let expanded=false,toolsExpanded=false;
+  let expanded=false,toolsExpanded=false,pointerHeld=false,renderQueued=false;
+  function flush(){if(renderQueued&&!pointerHeld){renderQueued=false;render();}}
+  function finishPointer(){pointerHeld=false;setTimeout(flush,0);}
+  document.addEventListener('pointerup',()=>{if(pointerHeld)setTimeout(()=>{if(pointerHeld)finishPointer();},350);},true);
+  document.addEventListener('pointercancel',finishPointer,true);window.addEventListener('blur',finishPointer);
   const day=value=>/^\d{4}-\d{2}-\d{2}$/.test(String(value||''))?value.split('-').reverse().join('/'):'Selecione as datas';
   function label(text,node){
    const wrapper=document.createElement('label');wrapper.className='v382-field';
@@ -22,9 +26,13 @@
    const bank=root.querySelector('[data-a]')?.closest('.chips'),host=from?.closest('.chips');
    if(!from||!to||!year||!bank||!host||bank===host)return;
    root.classList.add('v382-flow-controls');bank.classList.add('v382-banks');
+   // Keep the pressed control in the DOM until its click is delivered. A
+   // background refresh must not replace a button between pointerdown and click.
+   root.addEventListener('pointerdown',event=>{if(event.target.closest('button,summary'))pointerHeld=true;},true);
    // Finish a native picker before an existing action triggers a render. The
    // editing guard otherwise defers that render while the picker keeps focus.
    root.addEventListener('click',event=>{
+    finishPointer();
     if(!event.target.closest('button,summary'))return;
     const active=document.activeElement;
     if(root.contains(active)&&active.matches('input,select,textarea'))active.blur();
@@ -66,6 +74,8 @@
    details.addEventListener('toggle',()=>{if(details.isConnected)expanded=details.open;});
   }
   render=function(){
+   if(V==='Fluxo Diário'&&pointerHeld){renderQueued=true;return;}
+   renderQueued=false;
    const details=document.querySelector('.v382-period');
    const tools=document.querySelector('.v382-tools');if(tools)toolsExpanded=tools.open;
    if(details)expanded=details.open;
