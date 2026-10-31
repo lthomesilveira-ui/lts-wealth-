@@ -11,9 +11,21 @@
    const wrapper=document.createElement('label');wrapper.className='v382-field';
    const caption=document.createElement('span');caption.textContent=text;wrapper.append(caption,node);return wrapper;
   }
+  function bindPeriodActions(root){
+   root.querySelectorAll('[data-p],#flowDefaultRange,#flowApply,#goToday').forEach(button=>{
+    const handler=button.onclick;if(typeof handler!=='function'||handler.__v382ExplicitPeriod)return;
+    function explicitPeriod(event){
+     const status=window.__LTS_V382_FLOW_LAYOUT,prior=status.explicit_period_action;
+     status.explicit_period_action=true;
+     try{return handler.call(this,event);}finally{status.explicit_period_action=prior;}
+    }
+    explicitPeriod.__v382ExplicitPeriod=true;button.onclick=explicitPeriod;
+   });
+  }
   function decorate(){
    if(V!=='Fluxo Diário')return;
    const root=document.querySelector('.flow-sticky-controls');if(!root)return;
+   bindPeriodActions(root);
    const existing=root.querySelector('.v382-period');
    if(existing){
     existing.querySelector('.v382-period-range').textContent=day(FLOWFROM)+' – '+day(FLOWTO);return;
@@ -62,7 +74,7 @@
    else if(V!=='Fluxo Diário')expanded=false;
    const result=previous.apply(this,arguments);decorate();return result;
   };
-  window.__LTS_V382_FLOW_LAYOUT={installed:true,presentation_only:true};decorate();
+  window.__LTS_V382_FLOW_LAYOUT={installed:true,presentation_only:false,explicit_period_action:false,financial_readers_preserved:true,control_guard_only:true};decorate();
  }
  function install(){
   try{

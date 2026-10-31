@@ -10,7 +10,8 @@
   "scope": [
     "Collapse Flow period presets and custom dates behind an accessible disclosure",
     "Keep selected dates and all bank controls visible",
-    "Preserve native date input targets, user drafts, every existing handler and financial reader"
+    "Preserve native date input targets, user drafts, every existing handler and financial reader",
+    "Accept an explicit Flow period control action when the obsolete initial Dashboard marker is absent; retain automatic bootstrap suppression and all financial calculations"
   ],
   "protected_base_files": {
     "app.html": "03cea50926c22f57d85e09168c91012629ebdbe48c6e6d429bc8c50873890dc9",
@@ -100,6 +101,9 @@
   "runtime_changes": [
     "app.html",
     "lts-v382-flow-layout.css",
-    "lts-v382-flow-layout.js"
-  ]
+    "lts-v382-flow-layout.js",
+    "lts-v172-v171-review.js"
+  ],
+  "financial_reader_logic_changed": false,
+  "explicit_control_guard_changed": true
 }

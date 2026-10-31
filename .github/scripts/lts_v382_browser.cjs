@@ -23,7 +23,7 @@ async function setup(browser,width,height){
 }
 async function ready(page,release){
  const frame=page.frames().find(f=>new URL(f.url()).pathname.endsWith('/releases/'+release+'/index.html'));assert(frame,'inner app frame');
- try{await frame.waitForFunction(()=>window.__LTS_V365?.installed&&window.__LTS_V183_FLOW_PERIOD_STATE?.installed&&window.__LTS_DASHBOARD_EXECUTIVE_STATUS?.initial_applied_at&&D&&!N.classList.contains('hidden'));}
+ try{await frame.waitForFunction(()=>window.__LTS_V365?.installed&&window.__LTS_V183_FLOW_PERIOD_STATE?.installed&&window.__LTS_DASHBOARD_EXECUTIVE_STATUS?.loaded&&!window.__LTS_DASHBOARD_EXECUTIVE_STATUS?.loading&&D&&!N.classList.contains('hidden'));}
  catch(error){error.message+=' BOOT '+JSON.stringify(await frame.evaluate(()=>({url:location.href,view:V,v365:window.__LTS_V365?.installed,v183:window.__LTS_V183_FLOW_PERIOD_STATE?.installed,dashboard:window.__LTS_DASHBOARD_EXECUTIVE_STATUS,product:!!D,navHidden:N.classList.contains('hidden'),components:parent.LTSV339Boot?.snapshot?.()})));throw error;}
  assert.equal(await frame.evaluate(()=>V),'Dashboard','authenticated opening completes on the Dashboard before navigation');
  if(release==='v382')await frame.waitForFunction(()=>window.__LTS_V382_FLOW_LAYOUT?.installed);
@@ -67,7 +67,11 @@ async function run(browser,engine,width,height){
   assert.match(await frame.locator('.v382-period-range').innerText(),/15\/12\/2025.*10\/01\/2026/);
   await frame.getByLabel('Ano do período do Fluxo',{exact:true}).selectOption('2026');await frame.waitForFunction(()=>!FLOWLOADING&&FLOWFROM==='2026-01-01'&&FLOWTO==='2026-12-31');
   assert.equal(await frame.locator('[data-p="Próximos 30 dias"]').evaluate(e=>typeof e.onclick),'function','preserved quick-period handler remains attached');
+  // Reproduce the observed authenticated Dashboard state with no legacy marker.
+  const marker=await frame.evaluate(()=>{const s=window.__LTS_DASHBOARD_EXECUTIVE_STATUS,old=s.initial_applied_at;delete s.initial_applied_at;return old||null;});
   await frame.locator('[data-p="Próximos 30 dias"]').click();await frame.waitForFunction(()=>!FLOWLOADING&&FLOWQ?.from==='2026-10-30'&&FLOWQ?.to==='2026-11-28');
+  await frame.evaluate(old=>{if(old)window.__LTS_DASHBOARD_EXECUTIVE_STATUS.initial_applied_at=old;},marker);
+
   // Repeat the native picker -> first quick preset click to expose sequencing errors.
   for(let i=0;i<4;i++){
    await frame.getByLabel('Ano do período do Fluxo',{exact:true}).selectOption(String(2025+i%2));
@@ -86,7 +90,7 @@ async function run(browser,engine,width,height){
   const dashboard=await frame.evaluate(()=>({width:innerWidth,scroll:document.documentElement.scrollWidth,sourceOpen:document.querySelectorAll('.v337-source[open]').length}));
   assert(dashboard.scroll<=width+2);assert.equal(dashboard.sourceOpen,0);assert(!(await frame.locator('body').innerText()).includes('Obrigação mais antiga'));await after.page.screenshot({path:out+'/'+label+'-dashboard.png'});
   assert.deepEqual(before.errors,[]);assert.deepEqual(after.errors,[]);assert.deepEqual(before.writes,[]);assert.deepEqual(after.writes,[]);
-  return {pass:true,engine,width,height,before_height:old.controls.height,after_height:closed.controls.height,financial_response_sha256:hash(current.flow),same_financial_response:true,all_presets_and_banks_preserved:true,native_fields_fit:true,draft_preserved:true,cross_year_apply:true,year_and_quick_presets:true,year_to_quick_preset_cycles:5,initial_dashboard_before_flow:true,zero_day_toggle:true,open_state_survives_render:true,keyboard_disclosure:true,dashboard_fit:true,synthetic_http:true,private_session:false,physical_iphone:false};
+  return {pass:true,engine,width,height,before_height:old.controls.height,after_height:closed.controls.height,financial_response_sha256:hash(current.flow),same_financial_response:true,all_presets_and_banks_preserved:true,native_fields_fit:true,draft_preserved:true,cross_year_apply:true,year_and_quick_presets:true,year_to_quick_preset_cycles:5,initial_dashboard_before_flow:true,explicit_period_without_legacy_marker:true,zero_day_toggle:true,open_state_survives_render:true,keyboard_disclosure:true,dashboard_fit:true,synthetic_http:true,private_session:false,physical_iphone:false};
  }catch(error){
   const frames=[];for(const f of [...before.page.frames(),...after.page.frames()]){if(!new URL(f.url()).pathname.endsWith('/index.html'))continue;try{frames.push({url:f.url(),state:await f.evaluate(()=>({view:V,boot:document.body.dataset.ltsBootState,product:!!D,navHidden:N.classList.contains('hidden'),v365:window.__LTS_V365,v183:window.__LTS_V183_FLOW_PERIOD_STATE,v290:window.__LTS_V290_USABILITY,v382:window.__LTS_V382_FLOW_LAYOUT,dashboard:window.__LTS_DASHBOARD_EXECUTIVE_STATUS,bootComponents:parent.LTSV339Boot?.snapshot?.(),from:FLOWFROM,to:FLOWTO,loading:FLOWLOADING})),body:(await f.locator('body').innerText()).slice(0,1000)});}catch(e){frames.push({url:f.url(),error:String(e)});}}
   fs.writeFileSync(out+'/'+label+'-failure-bootstrap.json',JSON.stringify({frames,stack:error.stack},null,2));
