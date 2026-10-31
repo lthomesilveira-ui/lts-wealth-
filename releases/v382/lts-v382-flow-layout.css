@@ -1,6 +1,7 @@
 /* Flow controls only. Native date fields retain a 16px font and 44px touch targets. */
-.flow-sticky-controls.v382-flow-controls{padding-bottom:10px!important}
-.v382-flow-controls>.flowbar{margin-bottom:10px!important;gap:8px!important}
+.flow-sticky-controls.v382-flow-controls{padding-bottom:4px!important}
+.v382-flow-controls>.flowbar{margin-bottom:6px!important;gap:8px!important}
+.v382-flow-controls .v225-balance-freshness{margin-top:4px!important}
 .v382-flow-controls>.flowbar.v382-flow-heading{display:flex!important;flex-wrap:nowrap!important;justify-content:space-between;align-items:center}
 .v382-flow-heading>div>.mut{display:none}
 .v382-flow-heading .title{font-size:18px!important;line-height:1.3}
