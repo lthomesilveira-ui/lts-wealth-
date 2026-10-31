@@ -8,8 +8,9 @@
   "physical_mobile_validated": false,
   "private_http_validated": false,
   "scope": [
-    "Bundle the59existing startup scripts into2ordered/preloaded assets, preserving all original JavaScript bytes and inline execution boundaries",
-    "Keep Flow dates, controls, view layout, auth, reads, writes and cache policy unchanged"
+    "Combine 59 startup sources into two preloaded files;58original source files remain byte-identical",
+    "Change only three transport priority lines and add pure priority model so Dashboard financial reads precede classification queues;retain one heavy reader,all queries,auth,cache,holds,deadlines and financial logic",
+    "Preserve Flow dates,compact controls,layout,history and all published releases"
   ],
   "protected_base_files": {
     "lts-v268-read-tools.js": "649bdbd6aaa6f9ea3e2dc931cbef287faf8682f9708f07022ef9a1e8c78e2273",
@@ -100,10 +101,14 @@
   },
   "runtime_changes": [
     "app.html",
+    "lts-v227-read-transport.js",
+    "lts-v384-read-priority.js",
     "lts-v384-startup-1.js",
     "lts-v384-startup-2.js"
   ],
   "financial_reader_logic_changed": false,
   "date_behavior_changed": false,
-  "layout_changed": false
+  "layout_changed": false,
+  "read_admission_priority_changed": true,
+  "measurement": "Useful readiness includes every visible financial section,monthly balance and cards;complete background completion and identical full RPC set verified separately"
 }

@@ -30,18 +30,18 @@
   }
   function releaseReadHolds(){for(const hold of [...holds])hold.release();}
   // END COLLECTION READ HOLD
-  const priority=name=>/income_review_queue_|card_review_queue_|expense_review_queue_|expense_detail_|expense_composition_|card_detail_/.test(name)?0:/card_cycles_|flow_v/.test(name)?1:/recurring_future_gap_/.test(name)?3:2;
+  const priority=name=>window.parent?.LTSV384ReadPriority?.forRoute(name,typeof V==='undefined'?null:V)??(/income_review_queue_|card_review_queue_|expense_review_queue_|expense_detail_|expense_composition_|card_detail_/.test(name)?0:/card_cycles_|flow_v/.test(name)?1:/recurring_future_gap_/.test(name)?3:2);
   function pump(){
    pumpTimer=null;if(!active)for(const hold of holds)hold.notify();
    if(active||holds.size||!waiting.length)return;
-   waiting.sort((a,b)=>a.priority-b.priority||a.order-b.order);
+   waiting.sort((a,b)=>priority(a.name)-priority(b.name)||a.order-b.order);
    const next=waiting.shift();clearTimeout(next.timer);next.signal.removeEventListener('abort',next.cancel);active=true;
    let released=false;next.resolve(()=>{if(released)return;released=true;active=false;pump();});
   }
   function admit(name,signal){
    if(!heavy.test(name))return Promise.resolve(()=>{});
    return new Promise((resolve,reject)=>{
-    const item={resolve,priority:priority(name),order:order++,signal,cancel:()=>{clearTimeout(item.timer);signal.removeEventListener('abort',item.cancel);const i=waiting.indexOf(item);if(i>=0)waiting.splice(i,1);reject(new DOMException('Aborted','AbortError'));}};
+    const item={resolve,name,order:order++,signal,cancel:()=>{clearTimeout(item.timer);signal.removeEventListener('abort',item.cancel);const i=waiting.indexOf(item);if(i>=0)waiting.splice(i,1);reject(new DOMException('Aborted','AbortError'));}};
     if(signal.aborted){item.cancel();return;}
     signal.addEventListener('abort',item.cancel,{once:true});item.timer=setTimeout(item.cancel,60000);waiting.push(item);
     if(!active&&!pumpTimer)pumpTimer=setTimeout(pump,30);

@@ -11,11 +11,12 @@ function build(base='releases/v383'){
   if(group&&input.slice(group.end,tag.index).trim())flush();
   if(!group)group={start:tag.index,end:0,sources:[]};
   assert(!source[1].includes('://'));const file=source[1].split('?')[0];assert.equal(path.basename(file),file);
-  const text=fs.readFileSync(base+'/'+file,'utf8');
+  const text=fs.readFileSync((file==='lts-v227-read-transport.js'?'releases/v384':base)+'/'+file,'utf8');
   group.sources.push({url:source[1],file,text,sha256:hash(text)});group.end=tag.index+tag[0].length;
  }flush();
  assert.deepEqual(groups.map(g=>g.sources.length),[41,18]);
- const bundles=groups.map((g,i)=>({file:'lts-v384-startup-'+(i+1)+'.js',sources:g.sources.map(({url,file,sha256})=>({url,file,sha256})),content:g.sources.map(x=>';\n/* LTS V384: '+x.file+' */\n'+x.text+'\n;\n').join('')}));
+ const policy=fs.readFileSync('releases/v384/lts-v384-read-priority.js','utf8');
+ const bundles=groups.map((g,i)=>({file:'lts-v384-startup-'+(i+1)+'.js',sources:g.sources.map(({url,file,sha256})=>({url,file,sha256})),content:(i===0?policy+'\n;\n':'')+g.sources.map(x=>';\n/* LTS V384: '+x.file+' */\n'+x.text+'\n;\n').join('')}));
  // Replace from the end so source offsets remain valid before changing the badge.
  let html=input;
  for(let i=groups.length-1;i>=0;i--)html=html.slice(0,groups[i].start)+'<script src="'+bundles[i].file+'"></script>'+html.slice(groups[i].end);
