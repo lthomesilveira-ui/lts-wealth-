@@ -58,7 +58,7 @@
    const fallback=amount(j.wealth?.liquidity?.fgts_contingency),balance=dated?amount(f.balance_brl):!valid&&fallback>0?fallback:null;
    const note=dated?'Posição em '+date(f.balance_as_of)+' · restrito':balance!==null?'Restrito · data da posição a confirmar':'Saldo atual a confirmar no extrato após saques e depósitos';
    let origin='';
-   if(valid&&amount(f.last_documented_balance_brl)!==null&&f.last_documented_as_of)origin+=pair(f.withdrawal?.confirmed===true?'Saldo anterior ao saque':'Última posição registrada',f.last_documented_balance_brl,'Em '+date(f.document_last_posting_date||f.last_documented_as_of));
+   if(valid&&amount(f.last_documented_balance_brl)!==null&&f.last_documented_as_of)origin+=pair('Posição documentada',f.last_documented_balance_brl,'Em '+date(f.document_last_posting_date||f.last_documented_as_of));
    if(valid&&f.withdrawal?.confirmed===true)origin+=pair('Saque recebido',f.withdrawal.amount_brl,'Em '+date(f.withdrawal.date)+' · já incorporado ao caixa');
    return {balance,html:'<section data-v386-fgts>'+pair('FGTS',balance,note)+'<details class="v386-fgts-origin"><summary>Origem do FGTS</summary>'+origin+'<p>O saldo atual depende do extrato após o último saque e dos depósitos recebidos. Aportes previstos ficam separados. O saque já recebido não é somado novamente como ativo.</p></details></section>'};
   }

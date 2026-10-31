@@ -11,7 +11,7 @@ function wealth(){
  j.wealth_v167={assets_central_including_pensions:3003,net_worth_central_including_pensions:null};j.pensions={total_gross_brl:200,positions:[]};
  j.rsu_summary={as_of:'2026-10-06',available_total_brl:3,future_regular_brl:60,future_cash_net_brl:28,future_considered_total_brl:88};
  j.fgts_position={version:'fgts-position-evidence-v386',as_of:'2026-10-31',status:'position_after_withdrawal_unavailable',balance_brl:null,balance_as_of:null,last_documented_balance_brl:5010,last_documented_as_of:'2026-10-01',document_last_posting_date:'2026-09-21',withdrawal:{confirmed:true,date:'2026-10-08',amount_brl:5010}};
- if(['zero','positive','complete'].includes(mode)){j.fgts_position={...j.fgts_position,status:'dated_documentary_position',balance_brl:mode==='zero'?0:55,balance_as_of:'2026-10-30'};j.wealth.liquidity.fgts_contingency=mode==='zero'?0:55;}
+ if(['zero','positive','complete'].includes(mode)){j.fgts_position={...j.fgts_position,status:'dated_documentary_position',balance_brl:mode==='zero'?0:55,balance_as_of:'2026-10-30',last_documented_balance_brl:mode==='zero'?0:55,last_documented_as_of:'2026-10-30',document_last_posting_date:'2026-10-30'};j.wealth.liquidity.fgts_contingency=mode==='zero'?0:55;}
  if(mode==='missing'){delete j.fgts_position;}
  if(mode==='complete'){
   j.financing.summary.commitments.forEach((c,i)=>{c.current_documentary_debt_balance=[900,100,200,300][i];c.current_debt_as_of='2026-10-30';});
@@ -41,7 +41,7 @@ async function run(browser,engine,width,variant='withdrawn',baseline=false){
   assert(geometry.scroll<=width+2,'fits viewport '+JSON.stringify(geometry));assert(geometry.cards.every(x=>x.left>=0&&x.right<=width+2&&x.lines===1),'all monetary values whole and inside viewport');
   await h.page.screenshot({path:out+'/'+label+'-overview.png'});
   if(variant==='withdrawn'&&[393,1366].includes(width)){const preview=await h.page.screenshot({type:'jpeg',quality:80});console.log('V386_VISUAL '+JSON.stringify({label:label+'-overview',mime:'image/jpeg',base64:preview.toString('base64')}));}
-  await fgts.locator('summary').click();if(variant!=='missing'){assert.match(await fgts.innerText(),/5\.010,00/);assert.match(await fgts.innerText(),/21\/09\/2026/);assert.match(await fgts.innerText(),/08\/10\/2026/);assert.match(await fgts.innerText(),/já incorporado ao caixa/);}await fgts.locator('summary').click();
+  await fgts.locator('summary').click();if(variant!=='missing'){assert.match(await fgts.innerText(),/5\.010,00/);assert.match(await fgts.innerText(),['zero','positive','complete'].includes(variant)?/30\/10\/2026/:/21\/09\/2026/);assert.match(await fgts.innerText(),/Posição documentada/);assert.match(await fgts.innerText(),/08\/10\/2026/);assert.match(await fgts.innerText(),/já incorporado ao caixa/);}await fgts.locator('summary').click();
   await root.locator('[data-v168-wealth-tab="assets"]').click();assert.equal(await root.locator('[data-v309-contract]').count(),4);assert(!/Schiavalli/i.test(await root.innerText()));
   await root.locator('[data-v168-wealth-tab="overview"]').click();assert.equal(await root.locator('[data-v386-fgts] details[open]').count(),0);assert(!/Schiavalli/i.test(await root.innerText()));assert.equal(hash(await f.evaluate(()=>window.__LTS_V168_STATE.wealth.data)),before,'tab changes and disclosures preserve all received financial data');
   assert.deepEqual(h.writes,[]);assert.deepEqual(h.errors,[]);
