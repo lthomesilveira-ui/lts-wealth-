@@ -1,7 +1,7 @@
 name: V393 monthly cash and competence
 on:
   pull_request:
-    paths: ['releases/v393/**','mobile/current.json','backend/patches/v393/**','backend/tools/month_overview_v393/**','.github/scripts/*v393*','.github/workflows/v393-month-overview.yml']
+    paths: ['releases/v393/**','mobile/current.json','backend/patches/v393/**','backend/patches/v394/**','backend/tools/month_overview_v393/**','.github/scripts/*v393*','.github/workflows/v393-month-overview.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -31,6 +31,9 @@ jobs:
           psql -v ON_ERROR_STOP=1 -f backend/tools/month_overview_v393/fixture.sql
           psql -v ON_ERROR_STOP=1 -f backend/patches/v393/month_overview.sql
           psql -v ON_ERROR_STOP=1 -f backend/patches/v393/month_overview.sql
+          psql -v ON_ERROR_STOP=1 -f backend/tools/month_overview_v393/noncash_negative_control.sql
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v394/month_non_cash_withholding.sql
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v394/month_non_cash_withholding.sql
           psql -v ON_ERROR_STOP=1 -f backend/tools/month_overview_v393/verify.sql
           mkdir -p qa/v393
           psql -At -c 'SELECT jsonb_object_agg(label,payload) FROM qa.output' > qa/v393/native-output.json

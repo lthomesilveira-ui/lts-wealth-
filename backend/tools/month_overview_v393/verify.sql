@@ -8,7 +8,7 @@ BEGIN
  ASSERT j#>>'{cash,realized,payments}'='0.00';ASSERT j#>>'{cash,realized,entries}'='0.00';
  ASSERT (j#>>'{cash,forecast,entries}')::numeric=1100;ASSERT (j#>>'{cash,forecast,payments}')::numeric=500;
  ASSERT (j#>>'{cash,total,result}')::numeric=600;ASSERT (j#>>'{competence,total}')::numeric=303.57;
- ASSERT jsonb_array_length(j#>'{cash,excluded}')=3;ASSERT jsonb_array_length(j#>'{cash,items}')=3;
+ ASSERT jsonb_array_length(j#>'{cash,excluded}')=4;ASSERT jsonb_array_length(j#>'{cash,items}')=3;
  INSERT INTO qa.output VALUES('default',j);
  INSERT INTO qa.output VALUES('next_day',lts_month_private_v393.build(f,e,'2026-11-01','2026-11-30',today+1));
  r:=jsonb_build_object('source','current_event','source_ref','pending','event_date','2026-11-01','account','Itaú','signed_amount',-20,'is_projection',true);

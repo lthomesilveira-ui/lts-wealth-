@@ -30,6 +30,7 @@ INSERT INTO qa.flow VALUES('00000000-0000-4000-8000-000000000001',jsonb_build_ob
  jsonb_build_object('source','internal_transfer','source_ref','transfer-out','event_date','2026-11-04','account','Itaú','signed_amount',-1000,'internal_transfer',true),
  jsonb_build_object('source','internal_transfer','source_ref','transfer-in','event_date','2026-11-04','account','C6','signed_amount',1000,'internal_transfer',true),
  jsonb_build_object('source','future_rsu_available','source_ref','vesting','event_date','2026-11-09','account','Corretora','signed_amount',9000,'available_from_vesting',true),
- jsonb_build_object('source','current_event','source_ref','next-month','event_date','2026-12-05','account','Itaú','signed_amount',-800)
+ jsonb_build_object('source','current_event','source_ref','next-month','event_date','2026-12-05','account','Itaú','signed_amount',-800),
+ jsonb_build_object('source','economic_withholding','source_ref','payroll-withheld','event_date','2026-11-01','account','Itaú','signed_amount',-70,'confidence','validated_contract','description','Retenção fictícia já abatida do salário líquido')
 )))));
 INSERT INTO qa.flow VALUES('00000000-0000-4000-8000-000000000002',jsonb_build_object('flow',jsonb_build_object('from','2026-11-01','to','2026-11-30','historical',jsonb_build_object('events','[]'::jsonb),'current_future',jsonb_build_object('events',jsonb_build_array(jsonb_build_object('source','current_event','source_ref','other-cash','event_date','2026-11-12','account','C6','signed_amount',-987.65))))));
