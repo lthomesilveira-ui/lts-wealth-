@@ -1,0 +1,95 @@
+name: V387 account transfer and Cofrinho email reminders
+on:
+  pull_request:
+    paths: ['backend/patches/v387/**','backend/tools/account_reminders_v387/**','.github/scripts/*v387*','.github/workflows/v387-account-reminders.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native-reminders:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: synthetic-test-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: synthetic-test-only
+    steps:
+      - uses: actions/checkout@v4
+      - run: psql -v ON_ERROR_STOP=1 -f backend/tools/account_reminders_v387/fixture.sql
+      - name: Apply reminder functions and verify safe reapplication
+        run: |
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v387/account_reminder_plan.sql
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v387/account_reminder_delivery.sql
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v387/account_reminder_plan.sql
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v387/account_reminder_delivery.sql
+      - run: psql -v ON_ERROR_STOP=1 -f backend/tools/account_reminders_v387/verify.sql
+      - uses: actions/upload-artifact@v4
+        with:
+          name: v387-synthetic-email
+          path: /tmp/v387-email-preview.html
+  native-backup-compatibility:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: synthetic-test-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: synthetic-test-only
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          psql -v ON_ERROR_STOP=1 -f backend/tools/backup_v380/fixture.sql
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v380/daily_modern_backup.sql
+          psql -v ON_ERROR_STOP=1 -f backend/tools/backup_v380/verify.sql
+          python3 backend/tools/account_reminders_v387/backup_journal_fixture.py > /tmp/v387-backup-journals.sql
+          psql -v ON_ERROR_STOP=1 -f /tmp/v387-backup-journals.sql
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v387/notification_backup.sql
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v387/notification_backup.sql
+          psql -v ON_ERROR_STOP=1 -f backend/tools/account_reminders_v387/backup_verify.sql
+  email-layout:
+    needs: native-reminders
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    container: mcr.microsoft.com/playwright:v1.58.2-noble
+    env:
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: v387-synthetic-email
+          path: qa/v387/
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-save --package-lock=false playwright@1.58.2
+      - run: node .github/scripts/lts_v387_email_layout.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v387-email-layout-evidence
+          path: qa/v387/
