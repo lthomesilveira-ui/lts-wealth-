@@ -1,0 +1,28 @@
+name: V390 workbook cash coverage
+on:
+  pull_request:
+    paths: ['releases/v390/**','mobile/current.json','.github/scripts/*v390*','.github/workflows/v390-property-coverage.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  property:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    container: mcr.microsoft.com/playwright:v1.58.2-noble
+    env:
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node .github/scripts/lts_v390_property_contract.cjs
+      - run: npm install --no-save --package-lock=false playwright@1.58.2
+      - run: node .github/scripts/lts_v390_property_browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v390-property-coverage
+          path: qa/v390/
