@@ -1,7 +1,7 @@
 name: V386 patrimony evidence and excluded asset regression
 on:
   pull_request:
-    paths: ['releases/v391/**','releases/v390/**','releases/v389/**','releases/v386/**','mobile/current.json','backend/patches/v386/**','backend/tools/patrimony_v386/**','.github/scripts/*v386*','.github/workflows/v386-patrimony.yml']
+    paths: ['releases/v393/**','releases/v391/**','releases/v390/**','releases/v389/**','releases/v386/**','mobile/current.json','backend/patches/v386/**','backend/tools/patrimony_v386/**','.github/scripts/*v386*','.github/workflows/v386-patrimony.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -41,8 +41,8 @@ jobs:
     timeout-minutes: 15
     container: mcr.microsoft.com/playwright:v1.58.2-noble
     env:
-      LTS_MOBILE_RELEASE: v391
-      LTS_FLOW_RELEASE: v391
+      LTS_MOBILE_RELEASE: v393
+      LTS_FLOW_RELEASE: v393
       PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
     steps:

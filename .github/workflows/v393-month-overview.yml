@@ -1,0 +1,69 @@
+name: V393 monthly cash and competence
+on:
+  pull_request:
+    paths: ['releases/v393/**','mobile/current.json','backend/patches/v393/**','backend/patches/v394/**','backend/tools/month_overview_v393/**','.github/scripts/*v393*','.github/workflows/v393-month-overview.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: synthetic-test-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: synthetic-test-only
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          psql -v ON_ERROR_STOP=1 -f backend/tools/month_overview_v393/fixture.sql
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v393/month_overview.sql
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v393/month_overview.sql
+          psql -v ON_ERROR_STOP=1 -f backend/tools/month_overview_v393/noncash_negative_control.sql
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v394/month_non_cash_withholding.sql
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v394/month_non_cash_withholding.sql
+          psql -v ON_ERROR_STOP=1 -f backend/tools/month_overview_v393/verify.sql
+          mkdir -p qa/v393
+          psql -At -c 'SELECT jsonb_object_agg(label,payload) FROM qa.output' > qa/v393/native-output.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: v393-native-proof
+          path: qa/v393/native-output.json
+  browser:
+    needs: native
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    container: mcr.microsoft.com/playwright:v1.58.2-noble
+    env:
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/download-artifact@v4
+        with:
+          name: v393-native-proof
+          path: qa/v393/
+      - run: node .github/scripts/lts_v393_release_contract.cjs
+      - run: node .github/scripts/lts_v393_transport_contract.cjs
+      - run: npm install --no-save --package-lock=false playwright@1.58.2
+      - run: node .github/scripts/lts_v393_browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v393-monthly-cash-competence
+          path: qa/v393/

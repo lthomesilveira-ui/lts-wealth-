@@ -15,6 +15,7 @@ async function setup(browser,width,height,now='2026-10-30T15:00:00Z'){
   if(name==='lts_browser_income_review_queue_v296'||name==='lts_browser_card_review_queue_v312')return send({ok:true,row_count:0,matched_count:0,additional_count:0,offset:0,next_offset:null,rows:[],category_options:[]});
   if(/^lts_browser_card_cycles_/.test(name))return send(fixture.cards());
   if(/recurring_future_gap/.test(name))return send(fixture.recurring());
+  if(name==='lts_browser_month_overview_v393')return send(require('./lts_v393_fixtures.cjs').empty(args,now.slice(0,10)));
   if(/^lts_browser_monthly_/.test(name))return send(fixture.monthly(args.p_from,args.p_to));
   if(name==='lts_browser_recurring_plans_v366')return send({ok:true,rules:[]});
   if(/_save_|_apply_|_delete_|_refresh_|_confirm_|_upload_|_mutate_|_classify_|_classification_|_create_|_update_/.test(name)){writes.push(name);return route.abort();}

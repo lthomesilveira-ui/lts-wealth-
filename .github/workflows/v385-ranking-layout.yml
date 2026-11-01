@@ -1,7 +1,7 @@
 name: V385 mobile rankings and scenario deficits
 on:
   pull_request:
-    paths: ['releases/v391/**','releases/v390/**','releases/v389/**','releases/v386/**','releases/v385/**','mobile/current.json','.github/scripts/*v385*','.github/workflows/v385-ranking-layout.yml']
+    paths: ['releases/v393/**','releases/v391/**','releases/v390/**','releases/v389/**','releases/v386/**','releases/v385/**','mobile/current.json','.github/scripts/*v385*','.github/workflows/v385-ranking-layout.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -11,8 +11,8 @@ jobs:
     timeout-minutes: 15
     container: mcr.microsoft.com/playwright:v1.58.2-noble
     env:
-      LTS_MOBILE_RELEASE: v391
-      LTS_FLOW_RELEASE: v391
+      LTS_MOBILE_RELEASE: v393
+      LTS_FLOW_RELEASE: v393
       PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
     steps:

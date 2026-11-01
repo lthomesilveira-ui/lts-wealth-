@@ -16,5 +16,5 @@ const mutations=s=>s.slice(s.indexOf("          dialog.querySelectorAll('[data-v
 assert.deepEqual([...next.matchAll(/(?:S\.rpc|await rpc)\('([^']+)'/g)].map(x=>x[1]),[...old.matchAll(/(?:S\.rpc|await rpc)\('([^']+)'/g)].map(x=>x[1]));
 assert(next.includes('Vencimento estimado: '));assert(next.includes('Confira a futura fatura antes de pagar.'));
 assert.equal(hash(root+'/lts-property-reconciliation-model.js'),hash(base+'/lts-property-reconciliation-model.js'),'closed property comparison unchanged');
-assert.deepEqual(JSON.parse(fs.readFileSync('mobile/current.json')),{release:'v391',entry:'../releases/v391/app.html'});
+const live=process.env.LTS_MOBILE_RELEASE||'v391';assert.deepEqual(JSON.parse(fs.readFileSync('mobile/current.json')),{release:live,entry:'../releases/'+live+'/app.html'});
 console.log(JSON.stringify({pass:true,release:'v391',money_and_payment_code_exact:true,mutation_capabilities_exact:true,previous_releases_exact:true,missing_dates_only:true}));
