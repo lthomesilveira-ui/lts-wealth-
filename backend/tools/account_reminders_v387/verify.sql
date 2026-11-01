@@ -14,9 +14,15 @@ BEGIN
  (x->>'Itaú')::numeric+(x->>'Bradesco')::numeric+(x->>'C6')::numeric+(100-coalesce((SELECT sum((a->>'amount_brl')::numeric)FROM jsonb_array_elements(r->'actions')a WHERE a->>'kind'='suggested_redemption'AND(a->>'execute_by')::date<=(x->>'date')::date),0))
  IS DISTINCT FROM(SELECT(d#>>'{Itaú,balance}')::numeric+(d#>>'{Bradesco,balance}')::numeric+(d#>>'{C6,balance}')::numeric+100 FROM jsonb_array_elements(input#>'{flow,current_future,days}')d WHERE d->>'date'=x->>'date')),'bank transfers and redemptions conserve combined resources');
  PERFORM public.fixture_assert_v387(r#>>'{accounts,0,first_negative_date}'=(current_date+2)::text AND(r#>>'{accounts,0,first_negative_balance}')::numeric=-20 AND(r#>>'{accounts,0,worst_balance}')::numeric=-70,'per bank first negative and worst values from actual days');
+ changed:=jsonb_set(input,'{account_reminder_cofrinho_v387,value_brl}','20');s:=lts_account_reminder_private_v387.evaluate(changed,'[]',current_date,7);
+ PERFORM public.fixture_assert_v387((s#>>'{cofrinho,suggested_redemptions_brl}')::numeric<=20 AND s->>'plan_complete'='false','other D0 assets cannot be offered as Cofrinho');
+ s:=lts_account_reminder_private_v387.evaluate(input-'account_reminder_cofrinho_v387','[]',current_date,7);
+ PERFORM public.fixture_assert_v387(s#>>'{cofrinho,reference_balance_brl}'IS NULL AND NOT EXISTS(SELECT 1 FROM jsonb_array_elements(s->'actions')x WHERE x->>'kind'='suggested_redemption'),'missing documented Cofrinho does not inherit aggregate D0');
+ changed:=jsonb_set(input,'{account_reminder_cofrinho_v387,available_now}','false');s:=lts_account_reminder_private_v387.evaluate(changed,'[]',current_date,7);
+ PERFORM public.fixture_assert_v387(s#>>'{cofrinho,planning_budget_brl}'IS NULL AND NOT EXISTS(SELECT 1 FROM jsonb_array_elements(s->'actions')x WHERE x->>'kind'='suggested_redemption'),'unavailable Cofrinho cannot fund a redemption');
  -- Explicit zero is valid; absent numbers are not zero.
  SELECT jsonb_set(input,'{flow,current_future,days}',jsonb_agg(jsonb_set(jsonb_set(jsonb_set(jsonb_set(x,'{Itaú,balance}','0'),'{Bradesco,balance}','0'),'{C6,balance}','0'),'{fix86_columns,liq_d0_1_recurso}','0')))INTO changed FROM jsonb_array_elements(input#>'{flow,current_future,days}')x;
- s:=lts_account_reminder_private_v387.evaluate(changed,'[]',current_date,7);
+ changed:=jsonb_set(changed,'{account_reminder_cofrinho_v387,value_brl}','0');s:=lts_account_reminder_private_v387.evaluate(changed,'[]',current_date,7);
  PERFORM public.fixture_assert_v387(s->>'status'='clear'AND s->>'complete'='true'AND lts_account_reminder_private_v387.decision(s,NULL,NULL,now())->>'send'='false','explicit zero clear without unnecessary email');
  changed:=jsonb_set(input,'{flow,current_future,days,0,Itaú,balance}','null');
  PERFORM public.fixture_assert_v387(lts_account_reminder_private_v387.evaluate(changed,'[]',current_date,7)->>'reason'='unknown_account_balance','null bank unknown');
@@ -79,6 +85,15 @@ SET ROLE service_role;
 DO $service$BEGIN IF public.lts_account_reminder_snapshot_v387()#>>'{report,recipient}'<>'owner@example.invalid'OR has_table_privilege('service_role','auth.users','SELECT')THEN RAISE EXCEPTION 'Service role or narrow recipient helper failed';END IF;END $service$;
 RESET ROLE;
 SELECT public.fixture_assert_v387(true,'service reads without auth users select');
+-- A confirmed schedule passes through the native controller once, with its two
+-- exact canonical legs; the other owner's schedule must stay out.
+INSERT INTO public.fixture_bank_schedules_v387 VALUES
+(public.lts_open_finance_pilot_owner_v1(),'00000000-0000-4000-8000-000000000004',current_date+2,'Itaú','C6',-25),
+('00000000-0000-4000-8000-000000000002','00000000-0000-4000-8000-000000000005',current_date+2,'Itaú','C6',-999);
+UPDATE public.lts_v229_read_cache SET payload=jsonb_set(payload,'{flow,current_future,events}',jsonb_build_array(
+ jsonb_build_object('source','internal_transfer','is_projection',true,'event_date',current_date+2,'source_ref','bank_schedule:00000000-0000-4000-8000-000000000004:out','account','Itaú','signed_amount',-25),
+ jsonb_build_object('source','internal_transfer','is_projection',true,'event_date',current_date+2,'source_ref','bank_schedule:00000000-0000-4000-8000-000000000004:in','account','C6','signed_amount',25)))WHERE user_id=public.lts_open_finance_pilot_owner_v1();
+SELECT public.fixture_assert_v387(jsonb_array_length(public.lts_account_reminder_snapshot_v387()#>'{report,scheduled_transfers}')=1 AND position('não repetir a transferência'IN public.lts_account_reminder_snapshot_v387()#>>'{email,html}')>0,'owner schedule rendered only as execution check');
 -- The preview is synthetic and does not contain any owner's personal data.
 \pset tuples_only on
 \pset format unaligned

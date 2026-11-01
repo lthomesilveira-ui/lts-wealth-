@@ -112,7 +112,7 @@ END $fn$;
 CREATE OR REPLACE FUNCTION public.lts_account_reminder_snapshot_v387()
 RETURNS jsonb LANGUAGE plpgsql SECURITY INVOKER SET search_path='' SET "TimeZone"='America/Sao_Paulo' SET statement_timeout='60s' AS $fn$
 DECLARE u uuid:=public.lts_open_finance_pilot_owner_v1();mail text;cached jsonb;j jsonb;schedules jsonb;report jsonb;short_report jsonb;previous jsonb;last_sent timestamptz;
- epoch_before bigint;freshness text;consulted timestamptz:=clock_timestamp();token text;decision jsonb;doc_date date;
+ epoch_before bigint;freshness text;consulted timestamptz:=clock_timestamp();token text;decision jsonb;doc_date date;doc_amount numeric;doc_available boolean;
 BEGIN
  mail:=lts_cash_alert_private_v377.owner_email();IF mail IS NULL THEN RAISE EXCEPTION'Configured reminder recipient unavailable';END IF;
  PERFORM public.lts_warm_flow_cache_v245();
@@ -125,12 +125,15 @@ BEGIN
  j:=public.lts_flow_classifications_v290(u,public.lts_flow_card_completeness_v269(public.lts_flow_slice_v242(cached,current_date,current_date+29),public.lts_prepared_card_cycles_v307(u)));
  SELECT coalesce(jsonb_agg(jsonb_build_object('source_id',s.source_id,'scheduled_date',s.scheduled_date,'from_bank',s.from_bank,'to_bank',s.to_bank,'amount_brl',abs(s.signed_amount)::text)ORDER BY s.scheduled_date,s.source_id),'[]')INTO schedules
  FROM public.lts_confirmed_bank_transfer_schedules_v293(u)s WHERE s.scheduled_date BETWEEN current_date AND current_date+29;
+ SELECT as_of_date,value_brl,is_available_now INTO doc_date,doc_amount,doc_available
+ FROM public.asset_positions WHERE user_id=u AND asset_name='Cofrinho Itaú'AND asset_type='cash_investment'AND as_of_date<=current_date
+ ORDER BY as_of_date DESC,created_at DESC,id DESC LIMIT 1;
+ j:=j||jsonb_build_object('account_reminder_cofrinho_v387',jsonb_build_object('value_brl',doc_amount,'available_now',doc_available,'as_of',doc_date));
  report:=lts_account_reminder_private_v387.evaluate(j,schedules,current_date,30);
  IF report->>'complete'<>'true' THEN
   short_report:=lts_account_reminder_private_v387.evaluate(j,schedules,current_date,7);
   IF short_report->>'complete'='true'THEN report:=short_report||jsonb_build_object('limited_to_seven_days',true);END IF;
  END IF;
- SELECT as_of_date INTO doc_date FROM public.asset_positions WHERE user_id=u AND asset_name='Cofrinho Itaú'AND asset_type='cash_investment'AND as_of_date<=current_date ORDER BY as_of_date DESC,created_at DESC,id DESC LIMIT 1;
  report:=report||jsonb_build_object('recipient',mail,'consulted_at',consulted,'bank_sources',public.lts_open_finance_current_bank_position_v1(u),'source_epoch',epoch_before,'source_freshness',freshness,'reader','same_canonical_v242','scheduled_transfer_basis','bank_pending_and_owner_confirmed_destination');
  report:=jsonb_set(report,'{cofrinho}',coalesce(report->'cofrinho','{}')||jsonb_build_object('documented_as_of',doc_date));
  IF epoch_before<>(SELECT epoch FROM public.lts_read_cache_epoch_v242 WHERE singleton)OR freshness<>public.lts_flow_bank_freshness_key_v246(u)

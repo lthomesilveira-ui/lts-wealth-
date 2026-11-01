@@ -2,7 +2,7 @@
 
 V387 is a backend and email change. Published V386 files are unchanged. It reads the same owner forecast as the Dashboard, identifies a negative balance separately for Itaú, Bradesco and C6, and prepares conditional manual actions for the next 30 days (7 only when that shorter horizon is complete).
 
-Transfers conserve combined bank cash. The source account must remain nonnegative throughout the remaining window; an incoming projected receipt is conditional. Cofrinho funding uses only the lowest already projected D0 resource within the window, reserving existing asset movements and excluding future yield, FGTS and shares. Redemption availability and receipt timing require checking in the bank. An unfunded deficit stays visible. The functions never execute a transfer, redemption or payment, or alter a balance, liability, invoice, source event or classification.
+Transfers conserve combined bank cash. The source account must remain nonnegative throughout the remaining window; an incoming projected receipt is conditional. Cofrinho funding is capped by its documented available position and the lowest already projected D0 resource within the window, reserving existing asset movements and excluding future yield, FGTS and shares. Redemption availability and receipt timing require checking in the bank. An unfunded deficit stays visible. The functions never execute a transfer, redemption or payment, or alter a balance, liability, invoice, source event or classification.
 
 Confirmed bank Pix already represented by both canonical source legs appear as “já agendados”: check execution and do not repeat them. Pairing requires the same source identity and exact account, date, sign and amount; an equal amount and date alone cannot match two events.
 

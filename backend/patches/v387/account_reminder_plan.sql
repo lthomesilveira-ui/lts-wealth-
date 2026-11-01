@@ -8,7 +8,7 @@ RETURNS jsonb LANGUAGE plpgsql STABLE SET search_path='' AS $fn$
 DECLARE banks text[]:=ARRAY['Itaú','Bradesco','C6']; matrix numeric[][];original numeric[][];
  i integer;b integer;k integer;s integer;deadline_i integer;copies integer;bad integer;day_json jsonb;row_json jsonb;
  dates date[];current_date_row date;value numeric;minimum numeric;first_i integer;needed numeric;available numeric;take numeric;
- d0 numeric;d0_min numeric;d0_known boolean:=true;d0_initial numeric;d0_used numeric:=0;
+ d0 numeric;d0_min numeric;d0_known boolean:=true;d0_initial numeric;d0_used numeric:=0;cofrinho_cap numeric;cofrinho_ref jsonb:=p_payload->'account_reminder_cofrinho_v387';
  accounts jsonb:='[]';actions jsonb:='[]';grouped_actions jsonb;unfunded jsonb:='[]';schedules jsonb:='[]';
  schedule jsonb;sid text;from_b text;to_b text;sdate date;samount numeric;represented integer;representation_keys integer;
  scheduled_uncertain boolean:=false;handled boolean[]:=ARRAY[false,false,false];post_min numeric;plan_complete boolean;after_days jsonb;
@@ -23,6 +23,14 @@ BEGIN
  SELECT count(*) INTO bad FROM jsonb_array_elements(p_payload#>'{flow,current_future,days}')x
  WHERE NOT coalesce(pg_input_is_valid(x->>'date','date'),false);
  IF bad>0 THEN RETURN jsonb_build_object('version',387,'as_of',p_as_of,'days',p_days,'complete',false,'status','unknown','actions','[]'::jsonb,'scheduled_transfers','[]'::jsonb,'unfunded','[]'::jsonb,'reason','invalid_dates');END IF;
+ -- D0 may contain other investments: only this documented, available Cofrinho
+ -- can fund a suggestion described as a Cofrinho redemption.
+ IF jsonb_typeof(cofrinho_ref->'value_brl')='number'AND cofrinho_ref->>'available_now'='true'
+ AND coalesce(pg_input_is_valid(cofrinho_ref->>'as_of','date'),false)THEN
+  IF(cofrinho_ref->>'as_of')::date<=p_as_of AND(cofrinho_ref->>'value_brl')::numeric>=0
+  THEN cofrinho_cap:=round((cofrinho_ref->>'value_brl')::numeric*100);END IF;
+ END IF;
+ IF cofrinho_cap IS NULL THEN d0_known:=false;END IF;
  matrix:=array_fill(NULL::numeric,ARRAY[p_days,3]);dates:=array_fill(NULL::date,ARRAY[p_days]);
  FOR i IN 1..p_days LOOP
   current_date_row:=p_as_of+i-1;dates[i]:=current_date_row;
@@ -42,7 +50,7 @@ BEGIN
    d0_min:=CASE WHEN d0_min IS NULL THEN value ELSE least(d0_min,value)END;
   END IF;
  END LOOP;
- original:=matrix;d0:=CASE WHEN d0_known THEN d0_min ELSE 0 END;
+ original:=matrix;d0_min:=least(d0_min,cofrinho_cap);d0:=CASE WHEN d0_known THEN d0_min ELSE 0 END;
  -- A lower future Cofrinho balance reserves already planned asset movements.
  -- Future increases, estimated yield, shares and FGTS cannot fund this plan.
  FOR b IN 1..3 LOOP
@@ -116,7 +124,7 @@ BEGIN
  RETURN jsonb_build_object('version',387,'as_of',p_as_of,'days',p_days,'to',p_as_of+p_days-1,'complete',true,'plan_complete',plan_complete,
   'status',CASE WHEN NOT plan_complete THEN'partial_plan'WHEN jsonb_array_length(grouped_actions)>0 OR jsonb_array_length(schedules)>0 THEN'actions_needed'ELSE'clear'END,
   'accounts',accounts,'actions',grouped_actions,'scheduled_transfers',schedules,'unfunded',unfunded,'proposed_daily_balances',after_days,
-  'cofrinho',jsonb_build_object('balance_known',d0_initial IS NOT NULL,'planning_budget_known',d0_known,'reference_balance_brl',CASE WHEN d0_initial IS NOT NULL THEN(d0_initial/100)::text END,'planning_budget_brl',CASE WHEN d0_known THEN(d0_min/100)::text END,'suggested_redemptions_brl',(d0_used/100)::text,'remaining_planning_budget_brl',CASE WHEN d0_known THEN(d0/100)::text END,'availability_confirmation_required',true),
+  'cofrinho',jsonb_build_object('balance_known',cofrinho_cap IS NOT NULL,'planning_budget_known',d0_known,'reference_balance_brl',CASE WHEN cofrinho_cap IS NOT NULL THEN(cofrinho_cap/100)::text END,'projection_d0_resource_brl',CASE WHEN d0_initial IS NOT NULL THEN(d0_initial/100)::text END,'planning_budget_brl',CASE WHEN d0_known THEN(d0_min/100)::text END,'suggested_redemptions_brl',(d0_used/100)::text,'remaining_planning_budget_brl',CASE WHEN d0_known THEN(d0/100)::text END,'availability_confirmation_required',true),
   'assumption','Conditional suggestions only. Bank source remains nonnegative throughout the remaining forecast. Verify receipts and redemption availability before acting.');
 END $fn$;
 REVOKE ALL ON FUNCTION lts_account_reminder_private_v387.evaluate(jsonb,jsonb,date,integer) FROM PUBLIC,anon,authenticated;
