@@ -1,7 +1,7 @@
 name: V379 expense layout and period balances
 on:
   pull_request:
-    paths: ['releases/v386/**','releases/v385/**','releases/v379/**','mobile/current.json','.github/scripts/*v379*','.github/workflows/v379.yml']
+    paths: ['releases/v389/**','releases/v386/**','releases/v385/**','releases/v379/**','mobile/current.json','.github/scripts/*v379*','.github/workflows/v379.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -11,8 +11,8 @@ jobs:
     timeout-minutes: 15
     container: mcr.microsoft.com/playwright:v1.58.2-noble
     env:
-      LTS_RELEASE: v386
-      LTS_MOBILE_RELEASE: v386
+      LTS_RELEASE: v389
+      LTS_MOBILE_RELEASE: v389
       PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
     steps:
