@@ -1,0 +1,13 @@
+# Account transfer and Cofrinho reminders
+
+V387 is a backend and email change. Published V386 files are unchanged. It reads the same owner forecast as the Dashboard, identifies a negative balance separately for Itaú, Bradesco and C6, and prepares conditional manual actions for the next 30 days (7 only when that shorter horizon is complete).
+
+Transfers conserve combined bank cash. The source account must remain nonnegative throughout the remaining window; an incoming projected receipt is conditional. Cofrinho funding uses only the lowest already projected D0 resource within the window, reserving existing asset movements and excluding future yield, FGTS and shares. Redemption availability and receipt timing require checking in the bank. An unfunded deficit stays visible. The functions never execute a transfer, redemption or payment, or alter a balance, liability, invoice, source event or classification.
+
+Confirmed bank Pix already represented by both canonical source legs appear as “já agendados”: check execution and do not repeat them. Pairing requires the same source identity and exact account, date, sign and amount; an equal amount and date alone cannot match two events.
+
+Only the service role can read the snapshot or append a confirmed notification. It reuses the narrow existing owner-email helper, with no broad `auth.users` grant. Delivery requires the prepared recipient, fingerprint and exact HTML plus the real Gmail message ID. Retries are idempotent. The runner verifies its Gmail identity and sends only to `me`, deduplicates the `TR-` reference in Sent, and records only a confirmed send. A daily reminder is eligible for an outstanding action due within seven days; changed plans are eligible immediately and distant unchanged plans are reviewed weekly. The older negative-balance alert remains separate and unchanged.
+
+`notification_backup.sql` extends the existing scheduled supplement from 29 selected tables to 31 by preserving both notification journals. It accepts and preserves archived 29-table bundles, retains the same cron and integrity checks, and performs no immediate backup. Selected-table coverage is not a full database, roles, authentication or Storage restore; that acceptance remains open.
+
+Validation uses invented data on PostgreSQL 17 and synthetic email renders on WebKit and Chromium at six widths. These checks do not certify the owner's authenticated session or a physical iPhone. Production migration, actual plan read, restricted permissions, first self-addressed send, delivery journal, active daily automation and source-data guards are recorded privately after validation.
