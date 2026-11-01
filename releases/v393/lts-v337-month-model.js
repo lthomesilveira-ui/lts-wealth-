@@ -74,10 +74,10 @@
   return{from,to,months,partial:from<=today&&to>=today};
  }
  function summarizeOverview(payload,range,today){
-  if(!range||payload?.version!=='month-overview-v393'||payload.from!==range.from||payload.to!==range.to||payload.as_of!==today||typeof payload.complete!=='boolean')return null;
+  if(!range||payload?.version!=='month-overview-v393'||payload.from!==range.from||payload.to!==range.to||payload.as_of!==today||typeof payload.complete!=='boolean'||typeof payload.cash_complete!=='boolean')return null;
   const cash=payload.cash,book=payload.competence;
   if(!cash||!book||!Array.isArray(cash.items)||!Array.isArray(cash.excluded)||!Array.isArray(cash.undated)||!Array.isArray(book.items)||!Array.isArray(payload.months))return null;
-  if(cash.undated.length&&payload.complete!==false)return null;
+  if(cash.undated.length&&payload.cash_complete!==false)return null;
   const cents=x=>finite(x)===null?null:Math.round(Number(x)*100),number=x=>finite(x)===null?null:Number(x);
   const count=x=>Number.isSafeInteger(x)&&x>=0;
   const metrics=items=>{const m=items.reduce((m,r)=>{const n=number(r.signed_amount);m.entries+=Math.max(n,0);m.payments-=Math.min(n,0);m.result+=n;m.count++;return m;},{entries:0,payments:0,result:0,count:0});for(const k of['entries','payments','result'])m[k]=Math.round(m[k]*100);return m;};
@@ -104,7 +104,7 @@
    if(!matches(m.cash,metrics(cash.items.filter(r=>r.event_date.slice(0,7)===month)))||cents(m.competence)!==Math.round(book.items.filter(r=>r.competence_month===m.month).reduce((n,r)=>n+number(r.amount),0)*100))return null;
   }
   return{...payload,month:range.month,partial:range.partial,entries:number(cash.total.entries),expenses:number(cash.total.payments),result:number(cash.total.result),
-   sourceIncomplete:payload.complete===false||payload.source_complete===false};
+   sourceIncomplete:payload.cash_complete===false||payload.complete===false||payload.source_complete===false};
  }
  return Object.freeze({bounds,summarize,bankPositions,periodBounds,summarizePeriod,monthBounds,forecastPeriodBounds,summarizeOverview});
 });

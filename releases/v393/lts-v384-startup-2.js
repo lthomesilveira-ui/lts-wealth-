@@ -1739,10 +1739,10 @@ function documentaryPaymentNote(cycle, esc, formatDate, mode = 'note', sourcePre
   return{from,to,months,partial:from<=today&&to>=today};
  }
  function summarizeOverview(payload,range,today){
-  if(!range||payload?.version!=='month-overview-v393'||payload.from!==range.from||payload.to!==range.to||payload.as_of!==today||typeof payload.complete!=='boolean')return null;
+  if(!range||payload?.version!=='month-overview-v393'||payload.from!==range.from||payload.to!==range.to||payload.as_of!==today||typeof payload.complete!=='boolean'||typeof payload.cash_complete!=='boolean')return null;
   const cash=payload.cash,book=payload.competence;
   if(!cash||!book||!Array.isArray(cash.items)||!Array.isArray(cash.excluded)||!Array.isArray(cash.undated)||!Array.isArray(book.items)||!Array.isArray(payload.months))return null;
-  if(cash.undated.length&&payload.complete!==false)return null;
+  if(cash.undated.length&&payload.cash_complete!==false)return null;
   const cents=x=>finite(x)===null?null:Math.round(Number(x)*100),number=x=>finite(x)===null?null:Number(x);
   const count=x=>Number.isSafeInteger(x)&&x>=0;
   const metrics=items=>{const m=items.reduce((m,r)=>{const n=number(r.signed_amount);m.entries+=Math.max(n,0);m.payments-=Math.min(n,0);m.result+=n;m.count++;return m;},{entries:0,payments:0,result:0,count:0});for(const k of['entries','payments','result'])m[k]=Math.round(m[k]*100);return m;};
@@ -1769,7 +1769,7 @@ function documentaryPaymentNote(cycle, esc, formatDate, mode = 'note', sourcePre
    if(!matches(m.cash,metrics(cash.items.filter(r=>r.event_date.slice(0,7)===month)))||cents(m.competence)!==Math.round(book.items.filter(r=>r.competence_month===m.month).reduce((n,r)=>n+number(r.amount),0)*100))return null;
   }
   return{...payload,month:range.month,partial:range.partial,entries:number(cash.total.entries),expenses:number(cash.total.payments),result:number(cash.total.result),
-   sourceIncomplete:payload.complete===false||payload.source_complete===false};
+   sourceIncomplete:payload.cash_complete===false||payload.complete===false||payload.source_complete===false};
  }
  return Object.freeze({bounds,summarize,bankPositions,periodBounds,summarizePeriod,monthBounds,forecastPeriodBounds,summarizeOverview});
 });
@@ -1820,7 +1820,7 @@ function documentaryPaymentNote(cycle, esc, formatDate, mode = 'note', sourcePre
    if(state.mode==='month')return mode+'<label class="v337-month-control">Mês<input type="month" aria-label="Mês do resumo" min="2013-10" max="'+(Number(today().slice(0,4))+5)+'-12" value="'+esc(state.month)+'"></label>';
    return mode+'<div class="v379-balance-range"><label>De<input type="date" aria-label="Data inicial do balanço" min="2013-10-10" max="'+(Number(today().slice(0,4))+5)+'-12-31" value="'+esc(state.draftFrom)+'"></label><label>Até<input type="date" aria-label="Data final do balanço" min="2013-10-10" max="'+(Number(today().slice(0,4))+5)+'-12-31" value="'+esc(state.draftTo)+'"></label><button type="button" class="v168-btn primary" data-v379-apply>Aplicar intervalo</button>'+(state.draftError?'<p role="alert">'+esc(state.draftError)+'</p>':'')+'</div>';
   }
-  const cardName=r=>/^C6(?:\s|$)/i.test(r.account_source||'')?'C6':({'336':'C6','341':/prime|infinite/i.test(r.account_source||'')?'Itaú Prime':'Itaú Mastercard','237':/prime/i.test(r.account_source||'')?'Bradesco Prime':'Bradesco Aeternum'}[r.institution_code]||r.account_source||r.account||'Outros registros');
+  const cardName=r=>!String(r.coverage_mode||'').startsWith('card_')?(r.account_source||r.account||'Outros registros'):/^C6(?:\s|$)/i.test(r.account_source||'')?'C6':({'336':'C6','341':/prime|infinite/i.test(r.account_source||'')?'Itaú Prime':'Itaú Mastercard','237':/prime/i.test(r.account_source||'')?'Bradesco Prime':'Bradesco Aeternum'}[r.institution_code]||r.account_source||r.account||'Outros registros');
   function monthly(){
    const range=selectedRange(),x=state.status==='ready'?state.data:null,isPeriod=state.mode==='period';
    const header='<div class="v168-cardhead"><div><span>Receitas e despesas</span><h2>'+(isPeriod?'Balanço do período':'Resumo do mês')+'</h2></div></div><div class="v379-balance-controls">'+controls()+'</div>';
@@ -1849,7 +1849,7 @@ function documentaryPaymentNote(cycle, esc, formatDate, mode = 'note', sourcePre
    document.getElementById('v393MonthDetail')?.remove();
    const dialog=document.createElement('dialog');dialog.id='v393MonthDetail';dialog.className='v393-dialog';dialog.setAttribute('aria-label',kind==='cash'?'Lançamentos de caixa':'Composição das despesas');
    let query='',limit=20;state.detail=kind;
-   const source=r=>({'lts_open_finance_staging':'Compra recebida pelo Open Finance','lts_card_document_supplement_v234':'Documento da fatura','card_invoice':'Fatura do cartão','current_event':'Registro do planejamento','legacy_fix86':'Planilha e planejamento originais','historical_workbook_cash':'Planilha original','open_finance':'Movimento recebido do banco'}[r.source_table||r.source]||'Registro financeiro');
+   const source=r=>({'lts_open_finance_staging':'Compra recebida pelo Open Finance','lts_card_document_supplement_v234':'Documento da fatura','projected_card_installment':'Parcela prevista a partir da última fatura recebida','card_invoice':'Fatura do cartão','current_event':'Registro do planejamento','legacy_fix86':'Planilha e planejamento originais','historical_workbook_cash':'Planilha original','open_finance':'Movimento recebido do banco'}[r.source_table||r.source]||'Registro financeiro');
    dialog.innerHTML='<div class="v393-dialog-head"><h2>'+(kind==='cash'?'Lançamentos de caixa':'Composição das despesas')+'</h2><button class="v168-btn" data-v393-close aria-label="Fechar detalhamento">Fechar</button></div><p class="v393-dialog-note"></p><label class="v393-search">Buscar lançamento<input type="search" aria-label="Buscar no detalhamento" placeholder="Descrição, categoria ou conta"></label><div class="v393-detail-content"></div>';
    const close=()=>{state.detail=null;dialog.remove();};dialog.querySelector('[data-v393-close]').onclick=close;dialog.addEventListener('cancel',event=>{event.preventDefault();close();});
    function draw(){
@@ -1860,7 +1860,7 @@ function documentaryPaymentNote(cycle, esc, formatDate, mode = 'note', sourcePre
     const html=found.slice(0,limit).map(r=>{
      const amount=kind==='cash'?Number(r.signed_amount):Number(r.amount),tag=kind==='cash'?({realized:'Realizado',forecast:'Previsto',unconfirmed:'A confirmar'}[r.cash_state]):String(r.coverage_mode).includes('projected')?'Parcela prevista':String(r.coverage_mode).startsWith('card_')?'Compra de cartão recebida':'Registro de despesa';
      const dates=kind==='cash'?date(r.event_date)+' · '+(r.account||'Conta a conferir'):(r.purchase_date||r.transaction_date?'Compra em '+date(r.purchase_date||r.transaction_date)+' · ':'')+'Competência '+monthName(r.competence_month.slice(0,7));
-     return '<article class="v393-detail-row"><div class="v393-detail-main"><strong>'+esc(r.description||r.category||'Lançamento')+'</strong><b>'+money(amount)+'</b></div><p>'+esc(dates)+'</p><p><span class="v393-tag">'+tag+'</span> '+esc(kind==='cash'?(r.source==='card_invoice'?'Pagamento de fatura':r.category||''):(cardName(r)+' · '+(r.category||'A classificar')))+'</p><details><summary>Origem</summary><p>'+esc(source(r))+'</p>'+(r.transaction_date?'<p>Data do lançamento recebido: '+date(r.transaction_date)+'.</p>':'')+(r.raw_reference?'<p>'+esc(r.raw_reference)+'</p>':'')+'<p>Referência: '+esc(r.source_ref)+'.</p>'+(kind==='competence'?'<p>Valor atribuído à competência; não confirma débito em conta ou pagamento da fatura.</p>':'')+'</details></article>';
+     return '<article class="v393-detail-row"><div class="v393-detail-main"><strong>'+esc(r.description||r.category||'Lançamento')+'</strong><b>'+money(amount)+'</b></div><p>'+esc(dates)+'</p><p><span class="v393-tag">'+tag+'</span> '+esc(kind==='cash'?(r.source==='card_invoice'?'Pagamento de fatura':r.category||''):(cardName(r)+' · '+(r.category||'A classificar')))+'</p><details><summary>Origem</summary><p>'+esc(source(r))+'</p>'+(r.transaction_date?'<p>Data do lançamento recebido: '+date(r.transaction_date)+'.</p>':'')+(r.raw_reference?'<p>'+esc(r.raw_reference)+'</p>':'')+(kind==='competence'&&r.due_date?'<p>Vencimento previsto da fatura: '+date(r.due_date)+'.</p>':'')+'<p>Referência: '+esc(r.source_ref)+'.</p>'+(kind==='competence'?'<p>Valor atribuído à competência; não confirma débito em conta ou pagamento da fatura.</p>':'')+'</details></article>';
     }).join('');
     dialog.querySelector('.v393-detail-content').innerHTML='<p class="v393-detail-count" role="status">Exibindo '+Math.min(limit,found.length)+' de '+found.length+' lançamento(s)'+(query?' encontrados':'')+'.</p>'+html+(found.length>limit?'<button class="v168-btn" data-v393-more>Mostrar mais 20</button>':'')+(found.length?'':'<p>Nenhum lançamento corresponde à busca.</p>');
     dialog.querySelector('[data-v393-more]')?.addEventListener('click',()=>{limit+=20;draw();});

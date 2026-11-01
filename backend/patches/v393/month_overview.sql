@@ -103,7 +103,8 @@ BEGIN
   'competence',round(coalesce((SELECT sum((x->>'amount')::numeric) FROM jsonb_array_elements(all_expenses)x WHERE (x->>'competence_month')::date=m),0),2)) ORDER BY m),'[]') INTO monthly
  FROM generate_series(date_trunc('month',p_from),date_trunc('month',p_to),interval '1 month') m;
  RETURN jsonb_build_object('version','month-overview-v393','from',p_from,'to',p_to,'as_of',p_as_of,
-  'complete',p_flow->>'complete' IS DISTINCT FROM 'false' AND p_flow#>>'{flow,current_future,complete}' IS DISTINCT FROM 'false' AND jsonb_array_length(undated)=0,
+  'complete',p_flow->>'complete' IS DISTINCT FROM 'false' AND p_flow#>>'{flow,current_future,complete}' IS DISTINCT FROM 'false',
+  'cash_complete',p_flow->>'complete' IS DISTINCT FROM 'false' AND p_flow#>>'{flow,current_future,complete}' IS DISTINCT FROM 'false' AND jsonb_array_length(undated)=0,
   'cash',jsonb_build_object('realized',lts_month_private_v393.cash_metrics(actual),'forecast',lts_month_private_v393.cash_metrics(forecast),
     'unconfirmed',lts_month_private_v393.cash_metrics(pending),'total',lts_month_private_v393.cash_metrics(cash),'items',cash,'excluded',exclusions,'undated',undated),
   'competence',book,'months',monthly,'guardrails',jsonb_build_object('own_transfers_excluded',true,'asset_availability_not_income',true,

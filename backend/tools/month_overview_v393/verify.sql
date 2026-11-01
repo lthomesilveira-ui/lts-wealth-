@@ -31,7 +31,7 @@ BEGIN
  ASSERT n=5;
  bad:=f||'{"complete":false}'::jsonb;j:=lts_month_private_v393.build(bad,e,'2026-11-01','2026-11-30',today);ASSERT (j->>'complete')::boolean=false;INSERT INTO qa.output VALUES('incomplete',j);
  bad:=f||'{"month_undated_card_invoices_v393":[{"family":"fixture_card","card_name":"Cartão fictício sem data","month":"2026-11-01","amount":12.34,"due_date":null}]}'::jsonb;
- j:=lts_month_private_v393.build(bad,e,'2026-11-01','2026-11-30',today);ASSERT (j->>'complete')::boolean=false;ASSERT (j#>>'{cash,total,payments}')::numeric=500;INSERT INTO qa.output VALUES('undated',j);
+ j:=lts_month_private_v393.build(bad,e,'2026-11-01','2026-11-30',today);ASSERT (j->>'complete')::boolean=true;ASSERT (j->>'cash_complete')::boolean=false;ASSERT (j#>>'{cash,total,payments}')::numeric=500;INSERT INTO qa.output VALUES('undated',j);
  SELECT jsonb_agg(jsonb_build_object('row_key','projected-'||g,'source_ref','old-source-'||g,'event_date','2026-11-01','competence_month','2026-11-01',
   'transaction_date','2026-10-01','purchase_date','2026-06-01','amount',1,'category','Teste','description','Parcela fictícia '||g,
   'account_source','Cartão fictício A','coverage_mode','card_installment_projected','source_table','projected_card_installment')) INTO projected FROM generate_series(1,25)g;

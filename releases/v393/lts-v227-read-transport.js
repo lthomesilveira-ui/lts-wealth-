@@ -6,12 +6,12 @@
  function runtime(){
   if(window.__LTS_V227_TRANSPORT)return;
   const native=window.fetch.bind(window),pending=new Map(),completed=new Map(),events=[];let revision=0;const invalidate=(notify=true)=>{revision++;completed.clear();pending.clear();if(notify)window.dispatchEvent(new Event('lts:data-invalidated'))};const ttl=60000;
-  const readName=/^lts_browser_(?:product_|dashboard_cockpit_|cash_today_|income_review_queue_|card_review_queue_|expenses_|expense_executive_|expense_context_|expense_review_queue_|expense_detail_|expense_composition_|wealth_detail_|awards_|planning_ui_|flow_v|monthly_|card_cycles_|card_history_|card_detail_|card_flow_schedule_|open_finance_status_|open_finance_pending_|recurring_future_gap_)/;
+  const readName=/^lts_browser_(?:product_|dashboard_cockpit_|cash_today_|income_review_queue_|card_review_queue_|expenses_|expense_executive_|expense_context_|expense_review_queue_|expense_detail_|expense_composition_|wealth_detail_|awards_|planning_ui_|flow_v|monthly_|month_overview_|card_cycles_|card_history_|card_detail_|card_flow_schedule_|open_finance_status_|open_finance_pending_|recurring_future_gap_)/;
   // The production database has a shared execution budget. Admit one expensive
   // read at a time across screen owners, including classification queues and
   // wealth/award readers that perform the same guarded card preparation.
   // Cash and connection status remain independent; no timeout is enlarged.
-  const heavy=/^lts_browser_(?:product_|dashboard_cockpit_|wealth_detail_|awards_|income_review_queue_|card_review_queue_|expenses_|expense_executive_|expense_context_|expense_review_queue_|expense_detail_|expense_composition_|planning_ui_|flow_v|monthly_|card_cycles_|card_history_|card_detail_|card_flow_schedule_|open_finance_pending_|recurring_future_gap_)/;
+  const heavy=/^lts_browser_(?:product_|dashboard_cockpit_|wealth_detail_|awards_|income_review_queue_|card_review_queue_|expenses_|expense_executive_|expense_context_|expense_review_queue_|expense_detail_|expense_composition_|planning_ui_|flow_v|monthly_|month_overview_|card_cycles_|card_history_|card_detail_|card_flow_schedule_|open_finance_pending_|recurring_future_gap_)/;
   // The complete flow reader has a 45-second database ceiling. Do not cancel
   // valid cold/year reads at the generic 25-second transport deadline.
   const readBudget=name=>/^lts_browser_(?:flow_v|month_overview_v393$)/.test(name)?48000:25000;
