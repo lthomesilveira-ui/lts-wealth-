@@ -1,7 +1,7 @@
 name: V390 workbook cash coverage
 on:
   pull_request:
-    paths: ['releases/v390/**','mobile/current.json','.github/scripts/*v390*','.github/workflows/v390-property-coverage.yml']
+    paths: ['releases/v391/**','releases/v390/**','mobile/current.json','.github/scripts/*v390*','.github/workflows/v390-property-coverage.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -11,6 +11,7 @@ jobs:
     timeout-minutes: 15
     container: mcr.microsoft.com/playwright:v1.58.2-noble
     env:
+      LTS_MOBILE_RELEASE: v391
       PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
     steps:

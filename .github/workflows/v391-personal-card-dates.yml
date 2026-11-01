@@ -1,0 +1,65 @@
+name: V391 personal card forecast dates
+on:
+  pull_request:
+    paths: ['releases/v391/**','mobile/current.json','backend/patches/v391/**','backend/tools/card_due_estimates_v391/**','backend/qa/fixtures/v391*','.github/scripts/*v391*','.github/workflows/v391-personal-card-dates.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: synthetic-test-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: synthetic-test-only
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          psql -v ON_ERROR_STOP=1 -f backend/tools/card_due_estimates_v391/fixture.sql
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v391/personal_card_due_estimates.sql
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v391/personal_card_due_estimates.sql
+          psql -v ON_ERROR_STOP=1 -f backend/tools/card_due_estimates_v391/verify.sql
+          mkdir -p qa/v391
+          psql -At -c 'SELECT jsonb_object_agg(label,payload) FROM public.qa_v391_output' > qa/v391/native-output.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: v391-native-proof
+          path: qa/v391/native-output.json
+  browser:
+    needs: native
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    container: mcr.microsoft.com/playwright:v1.58.2-noble
+    env:
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/download-artifact@v4
+        with:
+          name: v391-native-proof
+          path: qa/v391/
+      - run: node .github/scripts/lts_v391_release_contract.cjs
+      - run: npm install --no-save --package-lock=false playwright@1.58.2
+      - run: node .github/scripts/lts_v391_browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v391-personal-card-dates
+          path: qa/v391/

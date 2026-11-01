@@ -27,6 +27,6 @@ assert.deepEqual(fs.readdirSync(root).sort(),fs.readdirSync(base).sort());
 assert.deepEqual(fs.readdirSync(root).filter(n=>hash(root+'/'+n)!==hash(base+'/'+n)).sort(),[...prov.runtime_changes,'manifest.json','provenance.json'].sort());
 const read=(p,n)=>fs.readFileSync(p+'/'+n,'utf8'),bundle='lts-v384-startup-1.js';
 assert.equal(read(root,bundle),read(base,bundle).replace(read(base,'lts-property-reconciliation-model.js'),read(root,'lts-property-reconciliation-model.js')).replace(read(base,'lts-v179-cash-recovery.js'),read(root,'lts-v179-cash-recovery.js')));
-assert.deepEqual(JSON.parse(fs.readFileSync('mobile/current.json')),{release:'v390',entry:'../releases/v390/app.html'});
+const live=process.env.LTS_MOBILE_RELEASE||'v390';assert.deepEqual(JSON.parse(fs.readFileSync('mobile/current.json')),{release:live,entry:'../releases/'+live+'/app.html'});
 assert.equal(prov.financial_reader_logic_changed,false);assert.equal(prov.date_behavior_changed,false);
 console.log(JSON.stringify({pass:true,release:'v390',rejection_cases:cases,amounts_and_gap_preserved:true,source_only_not_payment:true,previous_releases_unchanged:true}));
