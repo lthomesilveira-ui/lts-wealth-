@@ -27,6 +27,7 @@ async function run(browser,engine,width,explained){
   else{assert.match(visible,/ainda sem vínculo suficiente/);assert.equal(await modal.locator('.v390-coverage').count(),0);}
   assert(!visible.includes('Synthetic.xlsm'),'source details closed');
   const geometry=await modal.evaluate(el=>({height:el.getBoundingClientRect().height,screen:innerHeight,width:el.scrollWidth,client:el.clientWidth}));assert(geometry.height<=geometry.screen+2&&geometry.width<=geometry.client+2,JSON.stringify(geometry));
+  await modal.locator(explained?'.v390-coverage':'.v359-gap').scrollIntoViewIfNeeded();
   await page.screenshot({path:out+'/'+engine+'-'+width+'-'+explained+'.png'});
   await modal.locator('.v359-unlinked > summary').click();assert.equal(await modal.locator('.v359-unlinked tbody tr').count(),2,'distinct original rows, copies counted once');
   if(explained){await modal.locator('.v359-unlinked > .v359-origin > summary').click();assert.match(await modal.innerText(),/Saldo inicial/);assert.match(await modal.innerText(),/Synthetic.xlsm/);}

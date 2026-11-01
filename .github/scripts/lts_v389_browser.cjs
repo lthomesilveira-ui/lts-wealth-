@@ -1,9 +1,10 @@
 'use strict';
 // Invented records; exercise the shipped app and the native category controls.
-process.env.LTS_FLOW_RELEASE='v389';
+process.env.LTS_FLOW_RELEASE||='v389';
+const target=process.env.LTS_FLOW_RELEASE;
 const {setup,open}=require('./lts_v382_browser.cjs');
 const {chromium,webkit}=require('playwright'),fs=require('node:fs'),assert=require('node:assert/strict');
-const out='qa/v389';fs.mkdirSync(out,{recursive:true});
+const out='qa/'+target;fs.mkdirSync(out,{recursive:true});
 const categories=['Despesas Organon','Reembolso Organon','Presentes','Saúde','Categoria histórica fora dos rankings','Categoria criada em outra tela'];
 const card={source_ref:'00000000-0000-4000-8000-000000000389',raw_hash:'a'.repeat(64),event_date:'2026-10-30',amount:10,currency:'BRL',description:'Compra fictícia',account_source:'Cartão fictício',last4:'0000',suggestion:{}};
 async function run(browser,engine,width){
@@ -14,7 +15,7 @@ async function run(browser,engine,width){
  await h.ctx.route('**/rest/v1/rpc/lts_browser_expense_review_queue_v229',r=>send(r,{row_count:1,matched_count:1,offset:0,next_offset:null,category_options:['Presentes'],pending_projections:[],beneficiary_options:[],rows:[{key:'synthetic-expense',source_table:'lts_open_finance_staging',source_ref:'00000000-0000-4000-8000-000000000390',date:'2026-10-30',amount:10,description:'Despesa fictícia',account_source:'Conta fictícia',category:'A classificar',question_kind:'classification',suggestion:{}}]}));
  await h.ctx.route('**/rest/v1/rpc/lts_browser_card_review_save_v312',async r=>{const args=JSON.parse(r.request().postData());assert.equal(args.p_source_id,card.source_ref);assert.equal(args.p_expected_raw_hash,card.raw_hash);assert.equal(args.p_category,'Despesas Organon');assert.equal(args.p_beneficiary,null);writes.push(args);saved=true;await send(r,{ok:true,category:'Despesas Organon',financial_effect:'none'});});
  try{
-  f=await open(h,'v389',true);
+  f=await open(h,target,true);
   await f.waitForFunction(()=>window.__LTS_V312_CARD_REVIEW?.state.data?.row_count===1);
   await f.locator('#nav [data-v="Atualizações"]:visible,#dx1MobileNav [data-mobile-route="Atualizações"]:visible').click();
   await f.locator('#v312CardReview [data-v312-review]').click();

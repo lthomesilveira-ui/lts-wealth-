@@ -1,7 +1,7 @@
 name: V389 shared classification search
 on:
   pull_request:
-    paths: ['releases/v389/**','mobile/current.json','.github/scripts/*v389*','.github/workflows/v389-classification-search.yml','backend/tools/storage_recovery_v389/**']
+    paths: ['releases/v390/**','releases/v389/**','mobile/current.json','.github/scripts/*v389*','.github/workflows/v389-classification-search.yml','backend/tools/storage_recovery_v389/**']
   workflow_dispatch:
 permissions:
   contents: read
@@ -11,6 +11,8 @@ jobs:
     timeout-minutes: 15
     container: mcr.microsoft.com/playwright:v1.58.2-noble
     env:
+      LTS_MOBILE_RELEASE: v390
+      LTS_FLOW_RELEASE: v390
       PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
     steps:
@@ -27,5 +29,5 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: v389-classification-search-evidence
-          path: qa/v389/
+          name: v390-classification-search-evidence
+          path: qa/v390/
