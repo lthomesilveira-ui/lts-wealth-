@@ -1,0 +1,42 @@
+name: V388 distinct reminder actions and real-case idempotence
+on:
+  pull_request:
+    paths: ['backend/patches/v388/**','backend/tools/account_reminders_v388/**','.github/workflows/v388-reminder-idempotence.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native-policy:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: synthetic-test-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: synthetic-test-only
+    steps:
+      - uses: actions/checkout@v4
+      - name: Apply actual reminder migration to invented sources
+        run: |
+          psql -v ON_ERROR_STOP=1 -f backend/tools/account_reminders_v387/fixture.sql
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v387/account_reminder_plan.sql
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v387/account_reminder_delivery.sql
+      - name: Apply policy correction twice
+        run: |
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v388/account_reminder_identity.sql
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v388/account_reminder_identity.sql
+      - name: Verify existing funding and delivery cases plus multiple redemption identity
+        run: |
+          psql -v ON_ERROR_STOP=1 -f backend/tools/account_reminders_v387/verify.sql
+          psql -v ON_ERROR_STOP=1 -f backend/tools/account_reminders_v388/verify.sql
