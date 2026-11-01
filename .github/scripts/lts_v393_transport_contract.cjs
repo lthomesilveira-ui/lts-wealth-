@@ -16,6 +16,7 @@ async function transport(){
  release.get('lts_browser_flow_v242')();await a;await monthReady;release.get('lts_browser_month_overview_v393')();await b;
  await window.fetch('https://example.invalid/rest/v1/rpc/lts_browser_month_overview_v393',{body:'{}'});
  assert.equal(maxActive,1);assert.deepEqual(started,['lts_browser_flow_v242','lts_browser_month_overview_v393']);assert.equal(timers.filter(x=>x===48000).length,2);
+ const dayReady=ready('lts_browser_month_overview_v393');window.__LTS_V227_TRANSPORT.invalidate(false);const d=window.fetch('https://example.invalid/rest/v1/rpc/lts_browser_month_overview_v393',{body:'{}'});await dayReady;release.get('lts_browser_month_overview_v393')();await d;assert.equal(started.filter(x=>x==='lts_browser_month_overview_v393').length,2,'day invalidation cannot reuse yesterday\'s identical month request');
 }
 async function capability(){
  const src=fs.readFileSync('releases/v393/lts-v269-client-contract.js','utf8');let body={complete:true,source_complete:true,source_revision:'synthetic-source',source_epoch:1};const sent=[];

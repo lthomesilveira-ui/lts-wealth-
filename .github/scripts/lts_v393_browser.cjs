@@ -16,10 +16,10 @@ async function run(browser,engine,width){
   await page.addScriptTag({content:model});
   await page.evaluate(({runtime,native})=>{
    const NativeDate=Date;window.__clock=NativeDate.parse('2026-11-01T15:00:00Z');window.Date=class extends NativeDate{constructor(...args){super(...(args.length?args:[window.__clock]));}static now(){return window.__clock;}};
-   Object.assign(window,{D:{},BOOT:{generation:1},N:document.getElementById('fixture-nav'),V:'Dashboard',render:()=>{},__LTS_V312_CARD_REVIEW:{},__case:'default',__calls:[],__hold:false,__late:[]});
+   Object.assign(window,{D:{},BOOT:{generation:1},N:document.getElementById('fixture-nav'),V:'Dashboard',render:()=>{},__LTS_V312_CARD_REVIEW:{},__case:'default',__calls:[],__hold:false,__late:[],__invalidations:0,__LTS_V227_TRANSPORT:{invalidate:()=>window.__invalidations++}});
    window.S={auth:{onAuthStateChange:fn=>{window.__authEvent=fn;}},rpc:async(name,args)=>{
     window.__calls.push({name,args});if(name!=='lts_browser_month_overview_v393')throw Error('Unexpected capability '+name);
-    let payload=structuredClone(native[window.__case]);
+    let payload=structuredClone(window.__clock>=NativeDate.parse('2026-11-02T03:00:00Z')?native.next_day:native[window.__case]);
     if(window.__hold){window.__hold=false;await new Promise(resolve=>window.__late.push(resolve));}
     if(args.p_from==='2026-11-10'&&args.p_to==='2026-11-20')return{data:structuredClone(native.partial),error:null};
     if(args.p_from!=='2026-11-01'||args.p_to!=='2026-11-30')return{data:null,error:true};
@@ -58,6 +58,7 @@ async function run(browser,engine,width){
   await page.evaluate(()=>{window.__hold=true;window.__LTS_V337_MONTH.refresh();});await page.waitForFunction(()=>window.__late.length===1);
   await overview.getByLabel('Mês do resumo').fill('2026-12');await page.waitForFunction(()=>window.__LTS_V337_MONTH.state.status==='error');
   await page.evaluate(()=>window.__late.shift()());assert.equal(await overview.locator('.v337-metrics').count(),0);
+  await overview.getByLabel('Mês do resumo').fill('2026-11');await page.waitForFunction(()=>window.__LTS_V337_MONTH.state.status==='ready');const beforeDay=await page.evaluate(()=>({calls:window.__calls.length,invalidations:window.__invalidations}));await page.evaluate(()=>{window.__clock+=86400000;render();});await page.waitForFunction(()=>window.__LTS_V337_MONTH.state.status==='ready'&&window.__LTS_V337_MONTH.state.data.as_of==='2026-11-02');assert.equal(await page.evaluate(()=>window.__invalidations),beforeDay.invalidations+1);assert.equal(await page.evaluate(()=>window.__calls.length),beforeDay.calls+1);assert.match(await overview.innerText(),/Realizado até 02\/11\/2026/);
   const oldCalls=await page.evaluate(()=>window.__calls.length);await page.evaluate(()=>window.__authEvent('SIGNED_OUT'));assert.equal(await overview.count(),0);assert.equal(await page.evaluate(()=>window.__calls.length),oldCalls);
   assert.deepEqual(network,[]);assert.deepEqual(errors,[]);const storage=await ctx.storageState();assert.equal(storage.cookies.length,0);assert(storage.origins.every(x=>x.localStorage.length===0));
   return{pass:true,engine,width,full_month:true,realized_separated:true,competence_details:true,search:true,source_closed:true,unconfirmed_preserved:true,incomplete_visible:true,late_response_rejected:true,signed_out_cleared:true,network:0,session_created:false,private_http:false,physical_iphone:false};

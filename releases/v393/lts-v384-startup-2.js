@@ -1795,7 +1795,7 @@ function documentaryPaymentNote(cycle, esc, formatDate, mode = 'note', sourcePre
   function invalidate(){state.sequence++;state.status='idle';state.data=null;state.range=null;state.detail=null;document.getElementById('v393MonthDetail')?.remove();}
   function sync(){
    const current=generation(),businessDay=today();
-   if(state.owner!==current||state.day!==businessDay){state.owner=current;state.day=businessDay;invalidate();state.scheduled=false;}
+   if(state.owner!==current||state.day!==businessDay){if(state.day&&state.day!==businessDay)window.__LTS_V227_TRANSPORT?.invalidate(false);state.owner=current;state.day=businessDay;invalidate();state.scheduled=false;}
    if(!state.month||state.followCurrentMonth)state.month=businessDay.slice(0,7);
   }
   const selectedRange=()=>state.mode==='period'?model.forecastPeriodBounds(state.from,state.to,today()):model.monthBounds(state.month,today());
