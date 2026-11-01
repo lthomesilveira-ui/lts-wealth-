@@ -30,6 +30,7 @@ async function run(browser,engine,width){
   const overview=page.locator('#v337Overview');await page.waitForFunction(()=>window.__LTS_V337_MONTH?.state.status==='ready');
   assert.match(await overview.locator('.v337-period').innerText(),/01\/11\/2026 a 30\/11\/2026/);
   assert.match(await overview.innerText(),/Realizado até 01\/11\/2026/);assert.match(await overview.innerText(),/1\.100,00/);assert.match(await overview.innerText(),/500,00/);
+  const detailButton=overview.getByRole('button',{name:/Ver lançamentos de caixa/});const contrast=await detailButton.evaluate(el=>{const c=getComputedStyle(el),rgb=s=>(s.match(/[\d.]+/g)||[]).slice(0,3).map(Number),lum=s=>rgb(s).map(v=>{v/=255;return v<=.04045?v/12.92:((v+.055)/1.055)**2.4;}).reduce((n,v,i)=>n+v*[.2126,.7152,.0722][i],0),a=lum(c.color),b=lum(c.backgroundColor),r=el.getBoundingClientRect();return{ratio:(Math.max(a,b)+.05)/(Math.min(a,b)+.05),height:r.height,visible:r.width>0&&r.height>0};});assert(contrast.visible&&contrast.height>=44&&contrast.ratio>=4.5,JSON.stringify(contrast));
   assert.equal(await overview.locator('details[open]').count(),0);assert(!(await overview.innerText()).includes('Referência:'));
   await overview.getByRole('button',{name:'Realizado',exact:true}).click();assert.match(await overview.locator('.v337-metrics').innerText(),/0,00/);assert(!(await overview.locator('.v337-metrics').innerText()).includes('303,57'));
   await overview.getByRole('button',{name:'Previsto',exact:true}).click();assert.match(await overview.locator('.v337-metrics').innerText(),/500,00/);
