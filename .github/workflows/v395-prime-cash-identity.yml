@@ -1,0 +1,37 @@
+name: V395 Prime projected cash identity
+on:
+  pull_request:
+    paths: ['backend/patches/v395/**','backend/patches/v396/**','backend/qa/fixtures/v395*','backend/qa/fixtures/v396*','backend/tools/prime_identity_v395/**','.github/workflows/v395-prime-cash-identity.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: synthetic-test-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: synthetic-test-only
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          psql -v ON_ERROR_STOP=1 -f backend/tools/prime_identity_v395/fixture.sql
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v395/prime_received_identity.sql
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v395/prime_received_identity.sql
+          psql -v ON_ERROR_STOP=1 -f backend/tools/prime_identity_v395/issuer_negative_control.sql
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v396/prime_issuer_identity.sql
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v396/prime_issuer_identity.sql
+          psql -v ON_ERROR_STOP=1 -f backend/tools/prime_identity_v395/verify.sql
