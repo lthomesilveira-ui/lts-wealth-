@@ -23,7 +23,7 @@ assert.equal(read(root,legacy),read(base,legacy).replace(removed,''),'only obsol
 for(const n of fs.readdirSync(root).filter(n=>n.endsWith('.js')&&![ui,legacy,'lts-v384-startup-1.js','lts-v384-startup-2.js'].includes(n)))assert.equal(hash(root+'/'+n),hash(base+'/'+n),'exact financial reader/transport '+n);
 assert(read(root,'lts-v225-consolidated.css').startsWith(read(base,'lts-v225-consolidated.css')));
 assert.equal((read(root,'app.html').match(/<script src=/g)||[]).length,2);
-assert.deepEqual(JSON.parse(read('mobile','current.json')),{release:'v386',entry:'../releases/v386/app.html'});
+const live=process.env.LTS_MOBILE_RELEASE||'v386';assert.deepEqual(JSON.parse(read('mobile','current.json')),{release:live,entry:'../releases/'+live+'/app.html'});
 assert.deepEqual(Object.keys(m.files).concat('manifest.json').sort(),fs.readdirSync(root).sort());
 assert.equal(p.financial_source_data_changed,false);assert.equal(p.financial_reader_logic_changed,false);assert.equal(p.date_behavior_changed,false);
 console.log(JSON.stringify({pass:true,release:'v386',financial_and_date_code_exact:true,frozen_v385_exact:true,phantom_ui_removed:true,unknown_fgts_not_zero:true}));

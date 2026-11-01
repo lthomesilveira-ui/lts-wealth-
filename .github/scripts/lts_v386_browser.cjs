@@ -1,9 +1,9 @@
 'use strict';
 // Invented identities and amounts. These fixtures are never private acceptance.
-process.env.LTS_FLOW_RELEASE='v386';
+process.env.LTS_FLOW_RELEASE||='v386';
 const fixture=require('./lts_v379_fixtures.cjs'),baseResponse=fixture.response,{setup,open}=require('./lts_v382_browser.cjs');
 const {chromium,webkit}=require('playwright'),fs=require('node:fs'),assert=require('node:assert/strict'),crypto=require('node:crypto');
-const out='qa/v386';fs.mkdirSync(out,{recursive:true});let mode='withdrawn';
+const out='qa/'+process.env.LTS_FLOW_RELEASE;fs.mkdirSync(out,{recursive:true});let mode='withdrawn';
 const money=x=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(x),hash=x=>crypto.createHash('sha256').update(JSON.stringify(x)).digest('hex');
 function wealth(){
  const j=fixture.contracts(structuredClone(baseResponse('lts_browser_wealth_detail_v242')));
@@ -24,7 +24,7 @@ async function navigate(f){const route=f.locator('#nav [data-v="Patrimônio"]:vi
 async function run(browser,engine,width,variant='withdrawn',baseline=false){
  mode=variant;const h=await setup(browser,width,width===1366?900:852,'2026-10-31T15:00:00Z'),label=engine+'-'+width+'-'+variant+(baseline?'-before':'');let f;
  try{
-  f=await open(h,baseline?'v385':'v386',!baseline);await navigate(f);const root=f.locator('.v168-wealth'),text=await root.innerText();
+  f=await open(h,baseline?'v385':process.env.LTS_FLOW_RELEASE,!baseline);await navigate(f);const root=f.locator('.v168-wealth'),text=await root.innerText();
   if(baseline){assert.match(text,/Schiavalli/);const oldFgts=await root.locator('.v365-pair').allTextContents();assert(oldFgts.some(t=>/^FGTS/.test(t)&&t.includes(money(0))));return{pass:true,engine,width,baseline_regression_reproduced:true};}
   assert(!/Schiavalli/i.test(text));const before=hash(await f.evaluate(()=>window.__LTS_V168_STATE.wealth.data));
   const fgts=root.locator('[data-v386-fgts]'),value=fgts.locator(':scope>.v365-pair>b'),totals=root.locator('.v365-wealth-totals');
