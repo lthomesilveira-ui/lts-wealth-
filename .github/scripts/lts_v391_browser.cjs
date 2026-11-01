@@ -32,7 +32,7 @@ async function run(browser,engine,width){
   await page.screenshot({path:out+'/'+engine+'-'+width+'-estimated-detail.png'});await dialog.locator('[data-v226-close]').click();
   await page.evaluate(async()=>{window.__nativeCase='invalid';await window.__LTS_V226.refresh();});
   assert.match(await panel.innerText(),/vencimento estimado do C6 precisa ser revisto/);assert.match(await panel.innerText(),/Total incompleto/);assert.match(await panel.innerText(),/Vencimento a confirmar/);
-  assert.equal(await page.evaluate(()=>localStorage.length),0,'no session or identity stored');
+  const storage=await ctx.storageState();assert.equal(storage.cookies.length,0,'no cookies');assert(storage.origins.every(x=>x.localStorage.length===0),'no session or identity stored');
   const calls=await page.evaluate(()=>window.__fixtureCalls);assert(calls.length>=2&&calls.every(n=>n==='lts_browser_card_cycles_v229'));assert.deepEqual(requests,[]);assert.deepEqual(errors,[]);
   return{pass:true,engine,width,postgres_projection_consumed:true,estimated_date_visible:true,source_failure_visible:true,amounts_unchanged:true,source_disclosures_closed:true,network_requests:0,session_created:false,private_http:false,physical_device:false};
  }catch(e){await page.screenshot({path:out+'/'+engine+'-'+width+'-failure.png'}).catch(()=>{});fs.writeFileSync(out+'/'+engine+'-'+width+'-failure.json',JSON.stringify({error:e.stack,errors,requests,body:await page.locator('body').innerText()},null,2));throw e;}finally{await ctx.close();}
