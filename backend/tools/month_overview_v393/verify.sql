@@ -1,6 +1,6 @@
 CREATE TABLE qa.output(label text,payload jsonb);
 DO $test$
-DECLARE f jsonb;e jsonb;j jsonb;r jsonb;bad jsonb;today date:=date '2026-11-01';n int:=0;
+DECLARE f jsonb;e jsonb;j jsonb;r jsonb;bad jsonb;projected jsonb;today date:=date '2026-11-01';n int:=0;
 BEGIN
  SELECT payload INTO f FROM qa.flow WHERE user_id='00000000-0000-4000-8000-000000000001';
  SELECT jsonb_agg(to_jsonb(x)) INTO e FROM qa.expense x WHERE user_id='00000000-0000-4000-8000-000000000001';
@@ -30,9 +30,20 @@ BEGIN
  BEGIN PERFORM lts_month_private_v393.build(f,e,'2026-11-01','2032-01-01',today);RAISE EXCEPTION 'Invalid horizon accepted';EXCEPTION WHEN raise_exception THEN IF SQLERRM='Invalid horizon accepted' THEN RAISE;END IF;n:=n+1;END;
  ASSERT n=5;
  bad:=f||'{"complete":false}'::jsonb;j:=lts_month_private_v393.build(bad,e,'2026-11-01','2026-11-30',today);ASSERT (j->>'complete')::boolean=false;INSERT INTO qa.output VALUES('incomplete',j);
+ bad:=f||'{"month_undated_card_invoices_v393":[{"family":"fixture_card","card_name":"Cartão fictício sem data","month":"2026-11-01","amount":12.34,"due_date":null}]}'::jsonb;
+ j:=lts_month_private_v393.build(bad,e,'2026-11-01','2026-11-30',today);ASSERT (j->>'complete')::boolean=false;ASSERT (j#>>'{cash,total,payments}')::numeric=500;INSERT INTO qa.output VALUES('undated',j);
+ SELECT jsonb_agg(jsonb_build_object('row_key','projected-'||g,'source_ref','old-source-'||g,'event_date','2026-11-01','competence_month','2026-11-01',
+  'transaction_date','2026-10-01','purchase_date','2026-06-01','amount',1,'category','Teste','description','Parcela fictícia '||g,
+  'account_source','Cartão fictício A','coverage_mode','card_installment_projected','source_table','projected_card_installment')) INTO projected FROM generate_series(1,25)g;
+ bad:=f||jsonb_build_object('month_projected_card_expenses_v393',projected);j:=lts_month_private_v393.build(bad,e,'2026-11-01','2026-11-30',today);
+ ASSERT (j#>>'{competence,received_total}')::numeric=303.57;ASSERT (j#>>'{competence,projected_total}')::numeric=25;ASSERT (j#>>'{competence,total}')::numeric=328.57;ASSERT (j#>>'{cash,total,payments}')::numeric=500;INSERT INTO qa.output VALUES('projected',j);
+ bad:=f||jsonb_build_object('month_projected_card_expenses_v393',jsonb_build_array((projected->0)||'{"source_ref":"a"}'::jsonb));
+ BEGIN PERFORM lts_month_private_v393.build(bad,e,'2026-11-01','2026-11-30',today);RAISE EXCEPTION 'Projected overlap accepted';EXCEPTION WHEN raise_exception THEN IF SQLERRM='Projected overlap accepted' THEN RAISE;END IF;END;
+ projected:=lts_month_private_v393.projected_items('{"cards":[{"family":"test","name":"Test card","cycles":[{"month":"2026-11-01","due_date":"2026-12-03","items":[{"source_id":"earlier-purchase","provider_status":"PROJECTED","amount":12.34,"is_payment":false,"installment_number":2,"total_installments":3,"bank":"Bradesco","posting_date":"2026-10-01","purchase_date":"2026-09-01"},{"source_id":"received","provider_status":"PENDING","amount":45.67}]}]}]}'::jsonb,'2026-11-01','2026-11-30');
+ ASSERT jsonb_array_length(projected)=1;ASSERT projected#>>'{0,due_date}'='2026-12-03';ASSERT projected#>>'{0,event_date}'='2026-11-01';ASSERT (projected#>>'{0,amount}')::numeric=12.34;
  bad:=jsonb_set(f,'{flow,current_future,events,1,bank_confirmed}','true');j:=lts_month_private_v393.build(bad,e,'2026-11-01','2026-11-30',today);ASSERT (j#>>'{cash,realized,count}')::int=0;
  bad:=jsonb_set(jsonb_set(f,'{flow,from}','"2026-11-10"'),'{flow,to}','"2026-11-20"');
- j:=lts_month_private_v393.build(bad,e,'2026-11-10','2026-11-20',today);ASSERT (j#>>'{cash,total,entries}')::numeric=1100;ASSERT j#>>'{competence,from}'='2026-11-01';ASSERT j#>>'{competence,to}'='2026-11-30';
+ j:=lts_month_private_v393.build(bad,e,'2026-11-10','2026-11-20',today);ASSERT (j#>>'{cash,total,entries}')::numeric=1100;ASSERT j#>>'{competence,from}'='2026-11-01';ASSERT j#>>'{competence,to}'='2026-11-30';INSERT INTO qa.output VALUES('partial',j);
  PERFORM set_config('qa.owner','00000000-0000-4000-8000-000000000001',true);
  -- The public wrapper uses its actual clock. The fixture still checks owner binding and guards.
  j:=public.lts_browser_month_overview_v393('2026-11-01','2026-11-30');ASSERT (j#>>'{competence,total}')::numeric=303.57;

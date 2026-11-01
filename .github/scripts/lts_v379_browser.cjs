@@ -34,7 +34,7 @@ async function setup(browser,width,height){
   hold(from){holdFrom=from;return new Promise(resolve=>heldStarted=resolve);},release(){heldResolve?.();heldResolve=null;},corrupt(from){corruptFrom=from;}};
 }
 async function ready(page){
- await page.waitForFunction(()=>document.getElementById('wealth')?.contentDocument?.getElementById('shell')?.contentDocument?.body?.dataset.ltsBootState==='ready');
+ await page.waitForFunction(()=>(document.getElementById('wealth')?.contentDocument?.getElementById('shell')||document.getElementById('shell'))?.contentDocument?.body?.dataset.ltsBootState==='ready');
  const frame=page.frames().find(f=>f.url().includes('/releases/'+release+'/index.html'));assert(frame);
  await frame.waitForFunction(()=>window.__LTS_V365?.installed&&window.__LTS_V182_FEEDBACK?.installed&&window.__LTS_V337_MONTH?.installed&&D&&!N.classList.contains('hidden'));
  return frame;
@@ -43,7 +43,9 @@ async function fit(frame,tag){const size=await frame.evaluate(()=>({width:innerW
 async function run(browser,engine,width,height){
  const h=await setup(browser,width,height),{page}=h,label=engine+'-'+width;let frame;
  try{
-  await page.goto(base+'/mobile/?source=home-screen',{waitUntil:'domcontentloaded'});frame=await ready(page);
+  // This contract targets the explicitly selected immutable period implementation.
+  // V393's replacement monthly contract and launcher are covered in their own tests.
+  await page.goto(base+'/releases/'+release+'/app.html',{waitUntil:'domcontentloaded'});frame=await ready(page);
   await frame.waitForFunction(()=>window.__LTS_V337_MONTH.state.status==='ready');
   const overview=frame.locator('#v337Overview'),waitRange=(from,to)=>frame.waitForFunction(([from,to])=>{const s=window.__LTS_V337_MONTH.state;return s.status==='ready'&&s.data?.from===from&&s.data?.to===to},[from,to]);
   await overview.getByRole('button',{name:'Período',exact:true}).click();await waitRange('2026-10-01','2026-10-16');

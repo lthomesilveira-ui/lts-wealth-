@@ -12,6 +12,7 @@ BEGIN IF nullif(current_setting('qa.owner',true),'') IS NULL THEN RAISE EXCEPTIO
 RETURN current_setting('qa.owner')::uuid;END $$;
 CREATE FUNCTION public.lts_card_read_start_v269(uuid) RETURNS text LANGUAGE sql AS $$SELECT epoch::text FROM public.lts_read_cache_epoch_v242 WHERE singleton$$;
 CREATE FUNCTION public.lts_card_read_finish_v269(uuid,text,jsonb) RETURNS jsonb LANGUAGE sql AS $$SELECT $3||jsonb_build_object('source_complete',true,'source_epoch',1)$$;
+CREATE FUNCTION public.lts_prepared_card_cycles_v307(uuid) RETURNS jsonb LANGUAGE sql AS $$SELECT '{"cards":[]}'::jsonb$$;
 CREATE FUNCTION public.lts_browser_flow_v242(p_from date,p_to date) RETURNS jsonb LANGUAGE plpgsql AS $$
 DECLARE j jsonb;BEGIN SELECT payload INTO j FROM qa.flow WHERE user_id=public.lts_browser_assert_user_v1();
  IF current_setting('qa.drift',true)='yes' THEN UPDATE public.lts_read_cache_epoch_v242 SET epoch=epoch+1;END IF;

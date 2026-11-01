@@ -76,10 +76,11 @@
  function summarizeOverview(payload,range,today){
   if(!range||payload?.version!=='month-overview-v393'||payload.from!==range.from||payload.to!==range.to||payload.as_of!==today||typeof payload.complete!=='boolean')return null;
   const cash=payload.cash,book=payload.competence;
-  if(!cash||!book||!Array.isArray(cash.items)||!Array.isArray(cash.excluded)||!Array.isArray(book.items)||!Array.isArray(payload.months))return null;
+  if(!cash||!book||!Array.isArray(cash.items)||!Array.isArray(cash.excluded)||!Array.isArray(cash.undated)||!Array.isArray(book.items)||!Array.isArray(payload.months))return null;
+  if(cash.undated.length&&payload.complete!==false)return null;
   const cents=x=>finite(x)===null?null:Math.round(Number(x)*100),number=x=>finite(x)===null?null:Number(x);
   const count=x=>Number.isSafeInteger(x)&&x>=0;
-  const metrics=items=>items.reduce((m,r)=>{const n=cents(r.signed_amount);m.entries+=Math.max(n,0);m.payments-=Math.min(n,0);m.result+=n;m.count++;return m;},{entries:0,payments:0,result:0,count:0});
+  const metrics=items=>{const m=items.reduce((m,r)=>{const n=number(r.signed_amount);m.entries+=Math.max(n,0);m.payments-=Math.min(n,0);m.result+=n;m.count++;return m;},{entries:0,payments:0,result:0,count:0});for(const k of['entries','payments','result'])m[k]=Math.round(m[k]*100);return m;};
   const matches=(m,n)=>m&&count(m.count)&&m.count===n.count&&['entries','payments','result'].every(k=>cents(m[k])===n[k])&&cents(m.entries)-cents(m.payments)===cents(m.result);
   const keys=new Set();
   for(const r of cash.items){
@@ -91,16 +92,16 @@
   for(const state of['realized','forecast','unconfirmed'])if(!matches(cash[state],metrics(cash.items.filter(r=>r.cash_state===state))))return null;
   if(!matches(cash.total,metrics(cash.items)))return null;
   if(!validDate(book.from)||!validDate(book.to)||book.from>range.from||book.to<range.to||!count(book.count)||book.count!==book.items.length||cents(book.total)===null||book.basis!=='competence_month'||book.payment_proven!==false)return null;
-  const bookKeys=new Set();let sum=0;
+  const bookKeys=new Set();let sum=0,received=0,projected=0;
   for(const r of book.items){
    if(!r.row_key||bookKeys.has(r.row_key)||!validDate(r.event_date)||r.event_date<book.from||r.event_date>book.to||!validDate(r.competence_month)||r.competence_month!==r.event_date.slice(0,7)+'-01'||cents(r.amount)===null)return null;
    for(const value of[r.transaction_date,r.purchase_date])if(value!==null&&value!==undefined&&!validDate(value))return null;
-   bookKeys.add(r.row_key);sum+=cents(r.amount);
+   bookKeys.add(r.row_key);sum+=number(r.amount);if(r.coverage_mode==='card_installment_projected')projected+=number(r.amount);else received+=number(r.amount);
   }
-  if(sum!==cents(book.total)||payload.months.length!==range.months.length)return null;
+  if(Math.round(sum*100)!==cents(book.total)||Math.round(received*100)!==cents(book.received_total)||Math.round(projected*100)!==cents(book.projected_total)||payload.months.length!==range.months.length)return null;
   const seen=new Set();
   for(const m of payload.months){const month=String(m.month||'').slice(0,7);if(m.month!==month+'-01'||!range.months.includes(month)||seen.has(month))return null;seen.add(month);
-   if(!matches(m.cash,metrics(cash.items.filter(r=>r.event_date.slice(0,7)===month)))||cents(m.competence)!==book.items.filter(r=>r.competence_month===m.month).reduce((n,r)=>n+cents(r.amount),0))return null;
+   if(!matches(m.cash,metrics(cash.items.filter(r=>r.event_date.slice(0,7)===month)))||cents(m.competence)!==Math.round(book.items.filter(r=>r.competence_month===m.month).reduce((n,r)=>n+number(r.amount),0)*100))return null;
   }
   return{...payload,month:range.month,partial:range.partial,entries:number(cash.total.entries),expenses:number(cash.total.payments),result:number(cash.total.result),
    sourceIncomplete:payload.complete===false||payload.source_complete===false};
