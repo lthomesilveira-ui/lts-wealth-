@@ -13,8 +13,7 @@ CREATE FUNCTION public.lts_current_received_card_bills_v263(uuid) RETURNS TABLE(
  LANGUAGE sql STABLE AS $$SELECT family,reference_month,due_date FROM qa.bills WHERE user_id=$1$$;
 CREATE FUNCTION public.lts_aeternum_forecast_cycles_v311(uuid) RETURNS TABLE(reference_month date,due_date date,amount numeric)
  LANGUAGE sql STABLE AS $$SELECT reference_month,due_date,amount FROM qa.forecast WHERE user_id=$1$$;
-CREATE FUNCTION public.lts_card_family_v226(text,text) RETURNS text LANGUAGE sql IMMUTABLE AS $$
- SELECT CASE WHEN $1 ILIKE '%PRIME%' THEN 'bradesco_prime' WHEN $1 ILIKE '%AETERNUM%' THEN 'aeternum' ELSE 'itau_mastercard' END$$;
+\i backend/qa/fixtures/v396_family_actual.sql
 CREATE FUNCTION public.lts_card_projection_date_v370(uuid,text,date,date,date DEFAULT NULL) RETURNS date LANGUAGE sql STABLE AS $$SELECT $4$$;
 CREATE FUNCTION qa.owner(i integer) RETURNS uuid LANGUAGE sql IMMUTABLE AS $$SELECT ('00000000-0000-4000-8000-'||lpad(i::text,12,'0'))::uuid$$;
 CREATE FUNCTION qa.month() RETURNS date LANGUAGE sql STABLE AS $$SELECT date_trunc('month',current_date)::date$$;
@@ -31,7 +30,7 @@ UPDATE public.lts_open_finance_staging SET provider_account_ref=NULL WHERE id=qa
 UPDATE public.lts_open_finance_staging SET normalized_payload=jsonb_set(normalized_payload,'{due_date}','"invalid"') WHERE id=qa.owner(206);
 UPDATE public.lts_open_finance_staging SET normalized_payload=jsonb_set(normalized_payload,'{card_name}','"Other family"') WHERE id=qa.owner(210);
 -- The promoted identity has priority; a received current bill removes the projection.
-INSERT INTO public.card_invoices VALUES(qa.owner(7),'Stored PRIME',qa.month()-interval '1 month',qa.month()-1);
+INSERT INTO public.card_invoices VALUES(qa.owner(7),'Bradesco Stored VISA PRIME',qa.month()-interval '1 month',qa.month()-1);
 INSERT INTO qa.bills VALUES(qa.owner(8),'bradesco_prime',qa.month(),qa.month()+19);
 -- Current payment rows and another owner must never inflate the expense.
 INSERT INTO qa.rows VALUES(qa.owner(1),qa.owner(999),'Bradesco','bradesco_prime',qa.month(),'PENDING',true,-9999);
@@ -40,7 +39,7 @@ DELETE FROM public.lts_card_due_rule_v290 WHERE user_id=qa.owner(9);
 -- Preserve the other-family and Aeternum branches byte-for-byte in behavior.
 INSERT INTO public.lts_card_due_rule_v290 VALUES(qa.owner(1),'itau_mastercard',qa.month(),16);
 INSERT INTO qa.rows VALUES(qa.owner(1),qa.owner(997),'Itaú','itau_mastercard',qa.month(),'DOCUMENTED',false,23.45);
-INSERT INTO public.card_invoices VALUES(qa.owner(1),'Itaú MASTER',qa.month()-interval '1 month',qa.month()-1);
+INSERT INTO public.card_invoices VALUES(qa.owner(1),'Itaú Mastercard Black',qa.month()-interval '1 month',qa.month()-1);
 INSERT INTO public.card_invoices VALUES(qa.owner(1),'Bradesco AETERNUM',qa.month()-interval '1 month',qa.month()-1);
 INSERT INTO qa.forecast VALUES(qa.owner(1),qa.month()+interval '1 month',qa.month()+interval '1 month'+interval '2 days',34.56);
 \i backend/qa/fixtures/v395_projection_before.sql
