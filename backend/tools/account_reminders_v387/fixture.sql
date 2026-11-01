@@ -4,6 +4,7 @@ CREATE ROLE anon;
 CREATE ROLE authenticated;
 CREATE ROLE service_role BYPASSRLS;
 CREATE SCHEMA auth;
+GRANT USAGE ON SCHEMA auth TO service_role;
 CREATE TABLE auth.users(id uuid PRIMARY KEY,email text);
 INSERT INTO auth.users VALUES('00000000-0000-4000-8000-000000000001','owner@example.invalid'),('00000000-0000-4000-8000-000000000002','other@example.invalid');
 CREATE SCHEMA lts_cash_alert_private_v377;
