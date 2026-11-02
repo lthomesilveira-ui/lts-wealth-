@@ -163,7 +163,7 @@ BEGIN
   END IF;
   next_command:=replace(j.command,'lts_backup_snapshot_take_v380','lts_backup_scheduled_v403');
   next_command:=replace(next_command,'::uuid,current_date','::uuid');
-  next_command:=replace(next_command,"SET statement_timeout = '90s'; ","BEGIN ISOLATION LEVEL REPEATABLE READ; SET LOCAL statement_timeout = '90s'; ")||' COMMIT;';
+  next_command:=replace(next_command,$old$SET statement_timeout = '90s'; $old$,$new$BEGIN ISOLATION LEVEL REPEATABLE READ; SET LOCAL statement_timeout = '90s'; SET LOCAL lts.backup_capture_kind = 'scheduled'; $new$)||' COMMIT;';
   -- 03:35/03:40/03:50/03:55 Sao Paulo. Hourly bank sync remains :15.
   -- Stop after the first successful daily capture; later attempts are metadata-only.
   PERFORM cron.alter_job(j.jobid,schedule:='35,40,50,55 6 * * *',command:=next_command);

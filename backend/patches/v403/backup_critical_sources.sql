@@ -66,7 +66,7 @@ WITH base AS MATERIALIZED(SELECT public.lts_backup_modern_export_pre_v403(p_user
 SELECT b.j||jsonb_build_object('tables',(b.j->'tables')||jsonb_build_object(
  'lts_open_finance_sync_run',(SELECT j FROM runs),'lts_open_finance_resource_map',e.j->'mapping','lts_open_finance_observation',e.j->'observations'),
  'coverage',(b.j->'coverage')||jsonb_build_object('selected_tables',35,'position_observation_scope','last_successful_collection_per_bank_and_civil_day',
- 'all_observation_history',false,'verified_resource_mapping',true,'capture_transaction_isolation',current_setting('transaction_isolation'),'sync_history_scope','Staging references plus preserved daily position cohorts'),
+ 'all_observation_history',false,'verified_resource_mapping',true,'capture_transaction_isolation',current_setting('transaction_isolation'),'capture_kind',coalesce(nullif(current_setting('lts.backup_capture_kind',true),''),'unspecified'),'sync_history_scope','Staging references plus preserved daily position cohorts'),
  'schema_columns',(b.j->'schema_columns')||(SELECT j FROM schemas))FROM base b CROSS JOIN evidence e;
 $function$;
 DO $patch$

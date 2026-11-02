@@ -91,10 +91,13 @@ jobs:
           psql -v ON_ERROR_STOP=1 -f backend/patches/v401/backup_manifest.sql
           psql -v ON_ERROR_STOP=1 -f backend/patches/v401/bounded_backup_job.sql
           psql -v ON_ERROR_STOP=1 -f backend/tools/write_policy_v403/backup_sources_fixture.sql
+          psql -v ON_ERROR_STOP=1 -f backend/tools/write_policy_v403/baseline/lts_backup_export_v1.sql
       - name: Validate old profiles and new complete source-position evidence
         run: |
           psql -v ON_ERROR_STOP=1 -f backend/patches/v403/backup_critical_sources.sql
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v403/backup_data_only.sql
           psql -v ON_ERROR_STOP=1 -f backend/patches/v403/backup_critical_sources.sql
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v403/backup_data_only.sql
           psql -v ON_ERROR_STOP=1 -f backend/tools/write_policy_v403/backup_sources_verify.sql | tee v403-backup-proof.txt
       - name: Restore real backup formats into another PostgreSQL database
         run: |

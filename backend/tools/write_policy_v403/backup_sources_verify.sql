@@ -15,6 +15,8 @@ BEGIN
  PERFORM public.lts_backup_snapshot_take_v380(u,current_date);
  r:=public.lts_backup_bundle_read_v380(u,current_date);
  PERFORM public.fixture_expect(jsonb_array_length(r#>'{modern,tables,lts_open_finance_observation}')=2,'v403_capture_and_read_daily_source_evidence');
+ PERFORM public.fixture_expect(r#>>'{base,integrity,version}'='v403-data-backup-no-runtime-qa','v403_data_capture_does_not_run_engine_qa');
+ PERFORM public.fixture_expect(jsonb_array_length(r#>'{base,asset_positions}')=1 AND jsonb_array_length(r#>'{base,accounts}')=1,'v403_base_financial_rows_preserved_without_runtime_diagnostics');
  PERFORM public.fixture_expect((SELECT count(*)=3 FROM public.lts_open_finance_observation),'v403_all_original_observations_still_exist');
  PERFORM public.fixture_expect(NOT EXISTS(SELECT 1 FROM public.qa_backup_history_v403 a LEFT JOIN public.lts_backup_snapshot b USING(user_id,snapshot_date)WHERE a.payload_hash IS DISTINCT FROM b.payload_hash OR a.payload_bytes IS DISTINCT FROM b.payload_bytes),'v403_old_legacy_bundle_metadata_equal');
  PERFORM public.fixture_expect(NOT EXISTS(SELECT 1 FROM public.qa_backup_modern_history_v403 a LEFT JOIN public.lts_backup_supplement_v380 b USING(user_id,snapshot_date)WHERE a.payload_sha256 IS DISTINCT FROM b.payload_sha256 OR a.payload_bytes IS DISTINCT FROM b.payload_bytes OR a.counts IS DISTINCT FROM b.counts),'v403_old_modern_bundle_metadata_equal');
