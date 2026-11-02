@@ -34,7 +34,10 @@ jobs:
           psql -v ON_ERROR_STOP=1 -f backend/tools/dated_d01_v399/fixture.sql
           psql -v ON_ERROR_STOP=1 -f backend/patches/v399/dated_cofrinho_flow.sql
           psql -v ON_ERROR_STOP=1 -f backend/patches/v399/dated_cofrinho_flow.sql
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v399/batched_d0_positions.sql
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v399/batched_d0_positions.sql
           psql -v ON_ERROR_STOP=1 -f backend/tools/dated_d01_v399/verify.sql
+          psql -v ON_ERROR_STOP=1 -f backend/tools/dated_d01_v399/verify_batch.sql
   browser:
     needs: native
     runs-on: ubuntu-24.04
