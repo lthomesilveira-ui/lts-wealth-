@@ -23,8 +23,9 @@ receipt already included in the source position is not subtracted again. An
 unlinked same-day manual movement is not assigned an invented time.
 
 Preserve explicit owner positions on their own dates. A subsequent verified
-provider day updates automatically. Preserve all dates before the original
-reviewed reconciliation boundary and all other assets' rules. Current position,
+provider day updates automatically. Historical provider observations can also
+precede the first documentary anchor; use their own dates and the already
+reviewed identities. Preserve dates with neither source and all other assets' rules. Current position,
 dated composition, effective asset position, batched D0 and downstream flow
 consumers share the same reader. Existing fingerprints include the provider
 payload; the migration advances the existing read-cache epoch once.

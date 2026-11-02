@@ -67,6 +67,15 @@ BEGIN
  END LOOP;
  PERFORM public.qa_assert_v402('mutation_rollback_exact',public.lts_cofrinho_provider_position_v402(u,'2020-01-04')=base);
  BEGIN
+  UPDATE public.lts_validated_lock_registry SET superseded_at=now() WHERE lock_key='itau_cofrinho_fixture_20191231';
+  IF public.lts_cofrinho_effective_locked_v245(u,'2020-01-02')<>910 THEN
+   RAISE EXCEPTION 'historical provider observation incorrectly requires a later documentary anchor';END IF;
+  IF (SELECT d0_resource FROM public.lts_dated_d0_series_v399(u,'2020-01-02','2020-01-02'))<>910 THEN
+   RAISE EXCEPTION 'batched history ignored the provider observation';END IF;
+  RAISE EXCEPTION USING ERRCODE='P0402',MESSAGE='rollback mutation';
+ EXCEPTION WHEN SQLSTATE 'P0402' THEN NULL;END;
+ PERFORM public.qa_assert_v402('provider_before_documentary_anchor',true);
+ BEGIN
   UPDATE public.lts_open_finance_resource_map SET reconciliation_status='candidate' WHERE provider_resource_id='component-b';
   IF (public.lts_cofrinho_provider_position_v402(u,'2020-01-04')->>'has_position')::boolean THEN
    RAISE EXCEPTION 'partial verified map accepted';END IF;

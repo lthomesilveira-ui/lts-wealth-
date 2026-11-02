@@ -111,15 +111,14 @@ DECLARE doc jsonb;pos jsonb;result jsonb;source_at timestamptz;source_date date;
 BEGIN
  -- v402-daily-verified-cofrinho: a position is not a cash movement or guessed yield.
  doc:=public.lts_cofrinho_documentary_composition_v402(p_user_id,p_date);
- -- Preserve all dates preceding the original reviewed reconciliation boundary.
- IF NOT coalesce((doc->>'has_anchor')::boolean,false) THEN RETURN doc;END IF;
  pos:=public.lts_cofrinho_provider_position_v402(p_user_id,p_date);
  IF NOT coalesce((pos->>'has_position')::boolean,false) THEN
   RETURN doc||jsonb_build_object('source_kind','primary_confirmation_and_documented_movements',
    'daily_provider_position_available',false);
  END IF;
  source_date:=(pos->>'snapshot_date')::date;source_at:=(pos->>'snapshot_at')::timestamptz;
- IF source_date<(doc->>'snapshot_date')::date THEN RETURN doc;END IF;
+ IF coalesce((doc->>'has_anchor')::boolean,false)
+  AND source_date<(doc->>'snapshot_date')::date THEN RETURN doc;END IF;
 
  WITH receipt_rows AS MATERIALIZED (
   SELECT r.*,s.occurred_at
@@ -165,7 +164,7 @@ BEGIN
   'daily_provider_position_available',true,'post_snapshot_movements_only',true,
   'source_cached_from_prior_day',source_date<least(p_date,current_date),
   'cash_event_created',false,'yield_event_created',false);
- IF source_date=(doc->>'snapshot_date')::date THEN
+ IF coalesce((doc->>'has_anchor')::boolean,false) AND source_date=(doc->>'snapshot_date')::date THEN
   -- Explicit owner positions remain authoritative for their own dates.
   IF (result->>'available_brl')::numeric IS NOT DISTINCT FROM (doc->>'available_brl')::numeric THEN
    RETURN doc||jsonb_build_object('version','daily-verified-cofrinho-v402',
@@ -188,19 +187,41 @@ AS $function$
  SELECT (public.lts_cofrinho_composition_v399(p_user_id,p_date)->>'available_brl')::numeric;
 $function$;
 
+CREATE OR REPLACE FUNCTION public.lts_dated_d0_series_v399(p_user_id uuid,p_from date,p_to date)
+RETURNS TABLE(flow_date date,d0_resource numeric)
+LANGUAGE sql STABLE SET search_path='' SET "TimeZone"='America/Sao_Paulo'
+AS $function$
+-- v402-daily-verified-cofrinho-series: one composition per day, all other assets unchanged.
+WITH days AS MATERIALIZED (
+ SELECT p_from+n AS d FROM generate_series(0,p_to-p_from)n
+), cofrinho AS MATERIALIZED (
+ SELECT d,public.lts_cofrinho_composition_v399(p_user_id,d) AS j FROM days
+), movements AS MATERIALIZED (
+ SELECT m.* FROM public.lts_liquidity_movement m
+ WHERE m.user_id=p_user_id AND m.status='active' AND m.event_date<=p_to
+), positions AS MATERIALIZED (
+ SELECT d.d,a.id,a.asset_name,a.asset_type,a.as_of_date,a.value_brl,a.liquidity_class,a.is_available_now
+ FROM days d LEFT JOIN LATERAL (
+  SELECT DISTINCT ON(asset_name,asset_type)* FROM public.asset_positions
+  WHERE user_id=p_user_id AND as_of_date<=d.d
+  ORDER BY asset_name,asset_type,as_of_date DESC,id DESC
+ ) a ON true
+), effective AS (
+ SELECT p.*,CASE WHEN p.asset_name='Cofrinho Itaú' AND p.asset_type='cash_investment'
+  AND coalesce((c.j->>'has_anchor')::boolean,false)
+ THEN (c.j->>'available_brl')::numeric
+ ELSE p.value_brl+coalesce((SELECT sum(m.asset_delta_brl) FROM movements m
+  WHERE m.asset_position_id=p.id AND m.event_date>p.as_of_date AND m.event_date<=p.d),0)
+ END AS effective_value
+ FROM positions p JOIN cofrinho c ON c.d=p.d
+)
+SELECT d,coalesce(sum(effective_value) FILTER(WHERE liquidity_class='D+0' AND is_available_now),0)::numeric
+FROM effective GROUP BY d ORDER BY d;
+$function$;
+
 DO $consumers$
 DECLARE d text;old_block text;new_block text;changed boolean:=false;
 BEGIN
- d:=pg_get_functiondef('public.lts_dated_d0_series_v399(uuid,date,date)'::regprocedure);
- IF position('v402-daily-verified-cofrinho-series' IN d)=0 THEN
-  old_block:=substring(d FROM $regex$CASE WHEN p.asset_name='Cofrinho Itaú'[\s\S]*?ELSE p.value_brl$regex$);
-  IF old_block IS NULL THEN RAISE EXCEPTION 'Review the batched D0 consumer before V402';END IF;
-  new_block:=$new$CASE WHEN p.asset_name='Cofrinho Itaú' AND p.asset_type='cash_investment' AND x.dt IS NOT NULL
- THEN (public.lts_cofrinho_composition_v399(p_user_id,p.d)->>'available_brl')::numeric
- -- v402-daily-verified-cofrinho-series: other assets keep their original rules.
- ELSE p.value_brl$new$;
-  EXECUTE replace(d,old_block,new_block);changed:=true;
- END IF;
  d:=pg_get_functiondef('public.lts_current_evidence_position_v2(uuid)'::regprocedure);
  IF position('v402-current-daily-cofrinho' IN d)=0 THEN
   old_block:=$old$c as (select (canonical_value->>'amount')::numeric v from public.lts_validated_lock_registry where lock_key='itau_cofrinho_20260926' and superseded_at is null)$old$;
