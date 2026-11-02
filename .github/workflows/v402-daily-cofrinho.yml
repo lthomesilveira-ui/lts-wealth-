@@ -1,0 +1,50 @@
+name: V402 daily verified Cofrinho
+on:
+  pull_request:
+    paths: ['backend/patches/v402/**','backend/tools/daily_cofrinho_v402/**','releases/v402/**','.github/scripts/*v402*','.github/workflows/v402-daily-cofrinho.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: synthetic-test-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: synthetic-test-only
+      PGTZ: America/Sao_Paulo
+    steps:
+      - uses: actions/checkout@v4
+      - name: Prepare the real prior reader chain with synthetic records
+        run: |
+          psql -v ON_ERROR_STOP=1 -f backend/tools/cofrinho_v381/fixture.sql
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v381/cofrinho_documented_redemptions.sql
+          psql -v ON_ERROR_STOP=1 -f backend/tools/dated_d01_v399/fixture.sql
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v399/dated_cofrinho_flow.sql
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v399/batched_d0_positions.sql
+          psql -v ON_ERROR_STOP=1 -f backend/tools/daily_cofrinho_v402/fixture.sql
+      - name: Apply and replay the daily source correction
+        run: |
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v402/daily_cofrinho.sql
+          psql -v ON_ERROR_STOP=1 -c 'CREATE TABLE public.qa_epoch_v402 AS SELECT epoch FROM public.lts_read_cache_epoch_v242;'
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v402/daily_cofrinho.sql
+          psql -v ON_ERROR_STOP=1 -c 'DO $$BEGIN IF (SELECT epoch FROM public.qa_epoch_v402)<>(SELECT epoch FROM public.lts_read_cache_epoch_v242) THEN RAISE EXCEPTION '\''replay changed epoch'\'';END IF;END$$;'
+      - name: Verify daily values, chronology, isolation, malformed sources and original rows
+        run: psql -v ON_ERROR_STOP=1 -f backend/tools/daily_cofrinho_v402/verify.sql | tee v402-native-proof.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v402-native-proof
+          path: v402-native-proof.txt
