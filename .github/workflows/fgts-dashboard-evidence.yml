@@ -1,13 +1,13 @@
 name: FGTS dashboard evidence candidate
 on:
   pull_request:
-    paths: ['.github/fixtures/fgts-dashboard/**','.github/scripts/fgts_dashboard_browser.cjs','.github/workflows/fgts-dashboard-evidence.yml']
+    paths: ['.github/fixtures/fgts-dashboard/**','.github/scripts/fgts*.cjs','.github/workflows/fgts-dashboard-evidence.yml']
 permissions:
   contents: read
 jobs:
   browser:
     runs-on: ubuntu-24.04
-    timeout-minutes: 8
+    timeout-minutes: 15
     container: mcr.microsoft.com/playwright:v1.58.2-noble
     env:
       PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
@@ -19,8 +19,28 @@ jobs:
           node-version: '22'
       - run: npm install --no-save --package-lock=false playwright@1.58.2
       - run: node .github/scripts/fgts_dashboard_browser.cjs
+      - name: Build isolated V404 and verify V402 stays immutable
+        run: |
+          node .github/scripts/fgts_candidate_build.cjs
+          node --check releases/v404/lts-v384-startup-1.js
+          node .github/scripts/lts_v402_release_contract.cjs
+      - name: Start synthetic-only local fixture server
+        run: |
+          python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/fgts-http.log 2>&1 &
+          node .github/scripts/lts_v309_wait_http.cjs
+      - name: Verify full candidate application with fictional RPC responses
+        run: node .github/scripts/fgts_candidate_app.cjs
+      - name: Recheck immutable V402 and current mobile entry
+        run: node .github/scripts/lts_v402_release_contract.cjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: fgts-dashboard-synthetic-proof
-          path: qa/fgts-dashboard/
+          path: |
+            qa/fgts-dashboard/
+            qa/v404/
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: v404-isolated-candidate-not-deployed
+          path: releases/v404/
