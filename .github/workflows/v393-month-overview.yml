@@ -58,7 +58,7 @@ jobs:
         with:
           name: v393-native-proof
           path: qa/v393/
-      - run: LTS_MOBILE_RELEASE=v398 node .github/scripts/lts_v393_release_contract.cjs
+      - run: LTS_MOBILE_RELEASE=v399 node .github/scripts/lts_v393_release_contract.cjs
       - run: node .github/scripts/lts_v393_transport_contract.cjs
       - run: npm install --no-save --package-lock=false playwright@1.58.2
       - run: node .github/scripts/lts_v393_browser.cjs

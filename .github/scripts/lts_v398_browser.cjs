@@ -1,5 +1,5 @@
 'use strict';
-process.env.LTS_FLOW_RELEASE='v398';
+const target=process.env.LTS_MOBILE_RELEASE||'v398';process.env.LTS_FLOW_RELEASE=target;
 const fixture=require('./lts_v379_fixtures.cjs'),baseResponse=fixture.response;
 const {setup,open}=require('./lts_v382_browser.cjs'),{chromium,webkit}=require('playwright');
 const fs=require('node:fs'),assert=require('node:assert/strict'),crypto=require('node:crypto');
@@ -17,7 +17,7 @@ fixture.response=function(name,args){
 async function run(browser,engine,width,variant){
  mode=variant;const h=await setup(browser,width,width===1366?900:852,'2026-11-01T15:00:00Z');let f;
  try{
-  f=await open(h,'v398',true);await f.waitForFunction(()=>window.__LTS_V398_FAMILY?.installed);
+  f=await open(h,target,true);await f.waitForFunction(()=>window.__LTS_V398_FAMILY?.installed);
   await f.locator('#nav [data-v="Patrimônio"]:visible,#dx1MobileNav [data-mobile-route="Patrimônio"]:visible').click();
   await f.waitForFunction(()=>document.querySelector('[data-v398-family]'));
   const before=hash(await f.evaluate(()=>window.__LTS_V168_STATE.wealth.data)),card=f.locator('[data-v398-family]');
