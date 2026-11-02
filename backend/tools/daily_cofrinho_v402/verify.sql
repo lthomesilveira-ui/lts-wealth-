@@ -94,6 +94,8 @@ BEGIN
    '44444444-4444-4444-8444-444444444450',NULL,'2020-01-04','active','application',-10,10,'{}');
   got:=public.lts_cofrinho_composition_v399(u,'2020-01-04');
   IF (got->>'complete')::boolean OR got->>'available_brl' IS NOT NULL THEN RAISE EXCEPTION 'ambiguous same-day movement accepted';END IF;
+  IF (SELECT d0_resource FROM public.lts_dated_d0_series_v399(u,'2020-01-04','2020-01-04')) IS NOT NULL THEN
+   RAISE EXCEPTION 'unknown balance silently converted to zero';END IF;
   RAISE EXCEPTION USING ERRCODE='P0402',MESSAGE='rollback mutation';
  EXCEPTION WHEN SQLSTATE 'P0402' THEN NULL;END;
  PERFORM public.qa_assert_v402('ambiguous_same_day_move_not_guessed',true);

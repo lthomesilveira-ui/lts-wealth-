@@ -113,6 +113,7 @@ BEGIN
  doc:=public.lts_cofrinho_documentary_composition_v402(p_user_id,p_date);
  pos:=public.lts_cofrinho_provider_position_v402(p_user_id,p_date);
  IF NOT coalesce((pos->>'has_position')::boolean,false) THEN
+  IF NOT coalesce((doc->>'has_anchor')::boolean,false) THEN RETURN doc;END IF;
   RETURN doc||jsonb_build_object('source_kind','primary_confirmation_and_documented_movements',
    'daily_provider_position_available',false);
  END IF;
@@ -215,7 +216,9 @@ WITH days AS MATERIALIZED (
  END AS effective_value
  FROM positions p JOIN cofrinho c ON c.d=p.d
 )
-SELECT d,coalesce(sum(effective_value) FILTER(WHERE liquidity_class='D+0' AND is_available_now),0)::numeric
+SELECT d,CASE WHEN bool_or(asset_name='Cofrinho Itaú' AND asset_type='cash_investment'
+ AND liquidity_class='D+0' AND is_available_now AND effective_value IS NULL)
+ THEN NULL ELSE coalesce(sum(effective_value) FILTER(WHERE liquidity_class='D+0' AND is_available_now),0)::numeric END
 FROM effective GROUP BY d ORDER BY d;
 $function$;
 
