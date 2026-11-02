@@ -63,3 +63,6 @@ INSERT INTO net._http_response VALUES(8002,200,'[{"data":"01/03/2025","dataFim":
 SELECT lts_savings_private_v398.collect();
 SELECT pg_temp.check_case(NOT EXISTS(SELECT 1 FROM public.lts_savings_rate_v398 WHERE period_start='2025-03-01'),'malformed response has no partial writes');
 SELECT pg_temp.check_case((SELECT count(*)=1 FROM cron.job WHERE jobname='lts_savings_daily_v398'),'one private scheduled collector');
+SELECT pg_temp.check_case(public.lts_backup_modern_export_v380('11111111-1111-4111-8111-111111111111')#>'{tables,old_fixture}'='["preserved"]','old selective backup content preserved');
+SELECT pg_temp.check_case(public.lts_backup_modern_export_v380('11111111-1111-4111-8111-111111111111')#>>'{tables,lts_family_loan_v398,0,original_principal}'='1000','new loan input included in selected backup');
+SELECT pg_temp.check_case(public.lts_backup_modern_export_v380('11111111-1111-4111-8111-111111111111')#>>'{coverage,selected_tables}'='3','selected backup count agrees with actual keys');

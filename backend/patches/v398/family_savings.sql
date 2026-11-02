@@ -110,6 +110,7 @@ SELECT CASE WHEN (SELECT count(*) FROM proofs)<>(SELECT count(*) FROM valid)
  THEN jsonb_build_object('status','payment_proof_ambiguous','balance_brl',NULL,'complete',false)
  ELSE public.lts_family_savings_calculate_v398(l.original_principal,l.starts_on,p_as_of,r.j,p.j) END
  ||jsonb_build_object('source_label',l.source_label,'metadata',l.metadata,
+ 'original_principal_brl',l.original_principal,'starts_on',l.starts_on,
  'ambiguous_payment_proofs',(SELECT count(*) FROM proofs)-(SELECT count(*) FROM valid))
  FROM loan l CROSS JOIN rates r CROSS JOIN payments p;
 $fn$;

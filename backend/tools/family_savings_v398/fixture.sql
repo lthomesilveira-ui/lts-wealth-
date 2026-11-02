@@ -24,3 +24,6 @@ CREATE TABLE cron.job(jobname text,schedule text,command text);
 CREATE FUNCTION cron.schedule(p_name text,p_schedule text,p_command text) RETURNS bigint LANGUAGE plpgsql AS $$ BEGIN INSERT INTO cron.job VALUES(p_name,p_schedule,p_command);RETURN 1;END $$;
 CREATE TABLE public.lts_read_cache_epoch_v242(singleton boolean,epoch bigint);
 INSERT INTO public.lts_read_cache_epoch_v242 VALUES(true,1);
+CREATE FUNCTION public.lts_backup_modern_export_v380(p_user_id uuid) RETURNS jsonb LANGUAGE sql STABLE AS $$
+ SELECT jsonb_build_object('format','lts-modern-supplement-v380','tables',jsonb_build_object('old_fixture',jsonb_build_array('preserved')),'coverage',jsonb_build_object('selected_tables',1,'all_application_tables',false),'schema_columns','[]'::jsonb);
+$$;

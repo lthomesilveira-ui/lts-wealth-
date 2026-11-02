@@ -1,7 +1,7 @@
 name: V398 family savings indexation
 on:
   pull_request:
-    paths: ['backend/patches/v398/**','backend/tools/family_savings_v398/**','.github/workflows/v398-family-savings.yml']
+    paths: ['backend/patches/v398/**','backend/tools/family_savings_v398/**','releases/v398/**','mobile/current.json','.github/scripts/*v398*','.github/workflows/v398-family-savings.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -31,6 +31,34 @@ jobs:
           psql -v ON_ERROR_STOP=1 -f backend/tools/family_savings_v398/fixture.sql
           psql -v ON_ERROR_STOP=1 -f backend/patches/v398/family_savings.sql
           psql -v ON_ERROR_STOP=1 -f backend/patches/v398/savings_collection.sql
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v398/family_backup.sql
           psql -v ON_ERROR_STOP=1 -f backend/patches/v398/family_savings.sql
           psql -v ON_ERROR_STOP=1 -f backend/patches/v398/savings_collection.sql
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v398/family_backup.sql
           psql -v ON_ERROR_STOP=1 -f backend/tools/family_savings_v398/verify.sql
+  browser:
+    needs: native
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    container: mcr.microsoft.com/playwright:v1.58.2-noble
+    env:
+      LTS_MOBILE_RELEASE: v398
+      LTS_FLOW_RELEASE: v398
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node .github/scripts/lts_v398_release_contract.cjs
+      - run: npm install --no-save --package-lock=false playwright@1.58.2
+      - run: |
+          python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/lts-v398-http.log 2>&1 &
+          node .github/scripts/lts_v309_wait_http.cjs
+      - run: node .github/scripts/lts_v398_browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v398-family-loan-presentation
+          path: qa/v398/
