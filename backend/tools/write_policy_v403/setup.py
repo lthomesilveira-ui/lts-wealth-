@@ -22,7 +22,8 @@ print("CREATE FUNCTION public.lts_backup_snapshot_take_v380(p_user_id uuid,p_sna
 print("CREATE TABLE cron.job(jobid bigint PRIMARY KEY,schedule text,command text,active boolean,jobname text,username text);")
 print("INSERT INTO cron.job VALUES(1,'15 6 * * *','SET statement_timeout = ''90s''; select public.lts_backup_snapshot_take_v380(''11111111-1111-4111-8111-111111111111''::uuid,current_date);',true,'lts_daily_backup_snapshot','postgres'),(4,'15 * * * *','synthetic-bank-enqueue',true,'sync','postgres');")
 print("CREATE FUNCTION cron.alter_job(job_id bigint,schedule text DEFAULT NULL,command text DEFAULT NULL)RETURNS void LANGUAGE sql AS $$UPDATE cron.job j SET schedule=coalesce($2,j.schedule),command=coalesce($3,j.command)WHERE j.jobid=$1$$;")
-for p in sorted((Path(__file__).parent/'baseline').glob('*.sql')):print(p.read_text().rstrip().rstrip(';')+';')
+for p in sorted((Path(__file__).parent/'baseline').glob('*.sql')):
+ if p.name!='lts_backup_export_v1.sql':print(p.read_text().rstrip().rstrip(';')+';')
 print("CREATE TABLE public.qa_history_v403 AS SELECT jsonb_agg(to_jsonb(o)ORDER BY id) j FROM public.lts_open_finance_observation o;")
 print("CREATE TABLE public.qa_financial_v403 AS SELECT jsonb_build_object('assets',(SELECT jsonb_agg(to_jsonb(a)ORDER BY id)FROM public.asset_positions a),'events',(SELECT jsonb_agg(to_jsonb(e)ORDER BY id)FROM public.financial_events e),'movements',(SELECT jsonb_agg(to_jsonb(m)ORDER BY id)FROM public.lts_liquidity_movement m),'locks',(SELECT jsonb_agg(to_jsonb(l)ORDER BY lock_key)FROM public.lts_validated_lock_registry l))j;")
 print("GRANT USAGE ON SCHEMA public,extensions,cron,net TO service_role;GRANT ALL ON ALL TABLES IN SCHEMA public,cron TO service_role;GRANT USAGE,SELECT ON ALL SEQUENCES IN SCHEMA public TO service_role;")
