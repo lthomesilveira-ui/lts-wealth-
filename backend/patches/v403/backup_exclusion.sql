@@ -32,8 +32,7 @@ begin
  values(p_request_id,p_user_id,c.id,'manual','running',jsonb_build_object('version','pluggy-multibank-shadow-v1','institution_code',p_institution_code,'item_updated_at',p_item->>'lastUpdatedAt','promotion_enabled',false));
  update public.lts_open_finance_connection set last_attempt_at=now(),last_error_code=null,last_error_summary=null where id=c.id;
  return jsonb_build_object('connection_id',c.id,'run_id',p_request_id,'existing',false,'status','running');
-end $function$
-
+end $function$;
 CREATE OR REPLACE FUNCTION public.lts_open_finance_begin_itau_v1(p_user_id uuid, p_item_id text, p_item jsonb, p_request_id uuid)
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -73,8 +72,7 @@ begin
   values(p_request_id,p_user_id,c.id,'manual','running',jsonb_build_object('version','pluggy-itau-shadow-v1','item_updated_at',p_item->>'lastUpdatedAt','promotion_enabled',false));
   update public.lts_open_finance_connection set last_attempt_at=now(),last_error_code=null,last_error_summary=null where id=c.id;
   return jsonb_build_object('connection_id',c.id,'run_id',p_request_id,'existing',false,'status','running');
-end $function$
-
+end $function$;
 CREATE OR REPLACE FUNCTION public.lts_open_finance_enqueue_bank_v1(p_code text, p_action text DEFAULT 'sync'::text)
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -94,8 +92,7 @@ begin
  select net.http_post(url:='https://tadhkamnwtsbdozwkyut.supabase.co/functions/v1/lts-open-finance-itau',body:=jsonb_build_object('action',p_action,'institution_code',p_code),headers:=jsonb_build_object('Content-Type','application/json','Authorization','Bearer internal-job','x-lts-of-job',nonce),timeout_milliseconds:=180000) into req;
  update public.lts_open_finance_job set http_request_id=req where id=jid;
  return jsonb_build_object('job_id',jid,'http_request_id',req,'institution_code',p_code);
-end $function$
-
+end $function$;
 CREATE OR REPLACE FUNCTION public.lts_recover_stale_bank_sync_v245()
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -123,8 +120,7 @@ BEGIN
  INSERT INTO public.lts_of_recovery_attempt_v245(institution_code,http_request_id)
  VALUES(code,(requested->>'http_request_id')::bigint);
  RETURN jsonb_build_object('ok',true,'requested',true,'institution_code',code);
-END $function$
-
+END $function$;
 
 -- V401 already bounds the connection to 90s and validates the 33-table manifest.
 -- This small scheduler gate preserves that writer and all historical bundles.

@@ -79,7 +79,7 @@ BEGIN
    WHEN old.provider_updated_at IS NOT NULL AND nullif(x->>'provider_updated_at','')::timestamptz<old.provider_updated_at THEN 'stale' ELSE 'updated' END;
   -- source_sync_at is collection freshness, not a changed transaction.
   same_material:=old.id IS NOT NULL AND old.raw_hash=x->>'raw_hash' AND old.raw_payload=x->'raw_payload'
-   AND (old.normalized_payload-ARRAY['reconciliation','source_sync_at'])=(x->'normalized_payload'-'source_sync_at')
+   AND (old.normalized_payload-ARRAY['reconciliation','source_sync_at'])=((x->'normalized_payload')-'source_sync_at')
    AND old.normalized_payload->'reconciliation'=x->'reconciliation';
   -- Keep the entire investment/balance cohort on EVERY collection for V402.
   -- Unknown future resource types remain fully observed until reviewed.
@@ -156,7 +156,7 @@ begin
   update public.lts_open_finance_connection set last_success_at=case when p_status='success' then now() else last_success_at end,
     last_error_code=p_error_code,last_error_summary=case when p_error_code is not null then 'Shadow sync incomplete.' end,updated_at=now() where id=r.connection_id;
   return jsonb_build_object('run_id',p_run_id,'status',p_status,'counts',stats,'promotion_enabled',false);
-end $function$
+end $function$;
 
 CREATE OR REPLACE FUNCTION public.lts_open_finance_finish_bank_v1(p_user_id uuid, p_run_id uuid, p_status text, p_metadata jsonb, p_error_code text DEFAULT NULL::text)
  RETURNS jsonb
@@ -174,7 +174,7 @@ begin
  select * into c from public.lts_open_finance_connection where id=r.connection_id;
  update public.lts_open_finance_connection set last_error_code=p_error_code,last_error_summary=case when p_error_code is null then null else 'Sincronização não concluída; tente novamente.' end,last_attempt_at=now(),last_success_at=case when p_status in ('success','partial') then now() else last_success_at end,status=case when p_status in ('success','partial') then 'connected' else status end where id=c.id;
  return jsonb_build_object('run_id',r.id,'connection_id',r.connection_id,'status',r.status,'raw_count',r.raw_count,'normalized_count',r.normalized_count,'promoted_count',0,'error_code',r.error_code,'metadata',r.metadata);
-end $function$
+end $function$;
 
 CREATE OR REPLACE FUNCTION public.lts_open_finance_report_itau_v1(p_user_id uuid, p_run_id uuid DEFAULT NULL::uuid, p_offset integer DEFAULT 0)
  RETURNS jsonb
@@ -196,7 +196,7 @@ begin
       select jsonb_build_object('resource_type',o.resource_type,'provider_record_id',o.provider_record_id,'raw_hash',o.raw_hash,
         'normalized',o.normalized_payload,'reconciliation',o.reconciliation,'ingest_action',o.ingest_action) j
       from public.lts_open_finance_observation o where o.sync_run_id=r.id and o.user_id=p_user_id order by o.resource_type,o.provider_record_id limit 200 offset p_offset) q),'[]'::jsonb));
-end $function$
+end $function$;
 
 REVOKE ALL ON FUNCTION public.lts_observation_fingerprint_v403(text,jsonb,jsonb,jsonb) FROM PUBLIC,anon,authenticated;
 REVOKE ALL ON FUNCTION public.lts_observation_run_stats_v403(uuid,uuid,jsonb) FROM PUBLIC,anon,authenticated;
