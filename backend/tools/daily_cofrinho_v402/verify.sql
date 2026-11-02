@@ -104,4 +104,24 @@ SET ROLE service_role;
 SELECT public.lts_cofrinho_provider_position_v402('11111111-1111-4111-8111-111111111111','2020-01-04');
 RESET ROLE;
 SELECT public.qa_assert_v402('service_role_actual_execution',true);
+-- Enough older indexed collections to expose an accidental history scan per day.
+INSERT INTO public.lts_open_finance_sync_run
+SELECT md5('old-run-'||g)::uuid,'11111111-1111-4111-8111-111111111111',
+ '33333333-3333-4333-8333-333333333333','success',
+ '2018-01-01'::timestamptz+g*interval '1 hour',
+ '2018-01-01'::timestamptz+g*interval '1 hour'+interval '1 minute'
+FROM generate_series(1,1200)g;
+ANALYZE public.lts_open_finance_sync_run;
+SET statement_timeout='12s';
+DO $performance$
+DECLARE started timestamptz:=clock_timestamp();n integer;elapsed numeric;
+BEGIN
+ SELECT count(*) INTO n FROM public.lts_dated_d0_series_v399(
+  '11111111-1111-4111-8111-111111111111',current_date,current_date+1520);
+ elapsed:=extract(epoch FROM clock_timestamp()-started)*1000;
+ IF n<>1521 THEN RAISE EXCEPTION 'future coverage missing';END IF;
+ RAISE NOTICE 'V402_FUTURE_PERFORMANCE rows=% milliseconds=%',n,elapsed;
+ PERFORM public.qa_assert_v402('future_range_1521_days_indexed',n=1521);
+END $performance$;
+RESET statement_timeout;
 SELECT jsonb_build_object('passed',count(*),'all_passed',bool_and(passed),'native_postgres_17',true,'financial_data','synthetic only') FROM public.qa_checks_v402;

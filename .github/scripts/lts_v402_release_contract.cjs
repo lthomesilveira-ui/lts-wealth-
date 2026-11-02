@@ -1,0 +1,15 @@
+'use strict';
+const fs=require('node:fs'),crypto=require('node:crypto'),assert=require('node:assert/strict');
+const root='releases/v402',base='releases/v399',hash=p=>crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex');
+const m=JSON.parse(fs.readFileSync(root+'/manifest.json')),p=JSON.parse(fs.readFileSync(root+'/provenance.json'));
+for(const[n,h]of Object.entries(m.files))assert.equal(hash(root+'/'+n),h,n);
+for(const[n,h]of Object.entries(p.protected_base_files))assert.equal(hash(base+'/'+n),h,'prior release '+n);
+assert.equal(hash(m.protected_manifest.path),m.protected_manifest.sha256,'protected manifest');
+for(const[n,h]of Object.entries(JSON.parse(fs.readFileSync(m.protected_manifest.path)).protected))assert.equal(hash(n),h,'protected '+n);
+const changed=['app.html','provenance.json','manifest.json','lts-v402-d01-composition.js'];
+for(const n of fs.readdirSync(base))if(!changed.includes(n))assert.equal(hash(root+'/'+n),hash(base+'/'+n),'preserved runtime '+n);
+assert.deepEqual(JSON.parse(fs.readFileSync('mobile/current.json')),{release:'v402',entry:'../releases/v402/app.html'});
+assert(!fs.readFileSync(root+'/app.html','utf8').includes('src="lts-v399-d01-composition.js"'));
+assert(fs.readFileSync(root+'/app.html','utf8').includes('src="lts-v402-d01-composition.js"'));
+assert.equal(p.original_financial_sources_changed,false);assert.equal(p.original_cash_forecasts_changed,false);assert.equal(p.private_http_validated,false);assert.equal(p.physical_mobile_validated,false);
+console.log(JSON.stringify({pass:true,release:'v402',immutable_v399:true,preserved_runtime:true,financial_data:'synthetic fixtures only'}));

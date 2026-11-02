@@ -8,6 +8,6 @@ for(const[n,h]of Object.entries(m.protected))assert.equal(hash(n),h,'protected '
 const changed=['app.html','provenance.json','manifest.json','lts-v399-d01-composition.js'];
 assert.deepEqual(fs.readdirSync(root).filter(n=>!changed.includes(n)).sort(),fs.readdirSync(base).filter(n=>!changed.includes(n)).sort());
 for(const n of Object.keys(m.files))if(!changed.includes(n))assert.equal(hash(root+'/'+n),hash(base+'/'+n),'preserved runtime '+n);
-assert.deepEqual(JSON.parse(fs.readFileSync('mobile/current.json')),{release:'v399',entry:'../releases/v399/app.html'});
+const live=process.env.LTS_MOBILE_RELEASE||'v399';assert.deepEqual(JSON.parse(fs.readFileSync('mobile/current.json')),{release:live,entry:'../releases/'+live+'/app.html'});
 assert.equal(p.original_financial_sources_changed,false);assert.equal(p.original_cash_forecasts_changed,false);assert.equal(p.private_http_validated,false);assert.equal(p.physical_mobile_validated,false);
 console.log(JSON.stringify({pass:true,release:'v399',immutable_v398:true,preserved_runtime:true}));
