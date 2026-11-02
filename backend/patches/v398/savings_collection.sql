@@ -34,7 +34,7 @@ BEGIN
      IF to_char(d,'DD/MM/YYYY')<>x->>'data' OR to_char(e,'DD/MM/YYYY')<>x->>'dataFim'
       OR rate<0 OR rate>10 OR e<d OR e>d+interval '32 days' THEN RAISE EXCEPTION 'invalid source period';END IF;
     END LOOP;
-    IF EXISTS(SELECT 1 FROM jsonb_array_elements(body)x WHERE left(x->>'data',3)='01/' GROUP BY x->>'data' HAVING count(*)>1)
+    IF EXISTS(SELECT 1 FROM jsonb_array_elements(body) element(value) WHERE left(element.value->>'data',3)='01/' GROUP BY element.value->>'data' HAVING count(*)>1)
      THEN RAISE EXCEPTION 'duplicate source periods';END IF;
     FOR x IN SELECT value FROM jsonb_array_elements(body) WHERE left(value->>'data',3)='01/' LOOP
      d:=to_date(x->>'data','DD/MM/YYYY');e:=to_date(x->>'dataFim','DD/MM/YYYY');rate:=(x->>'valor')::numeric;
@@ -45,7 +45,7 @@ BEGIN
       WHERE (lts_savings_rate_v398.period_end,lts_savings_rate_v398.rate_pct) IS DISTINCT FROM (excluded.period_end,excluded.rate_pct);
      GET DIAGNOSTICS row_change=ROW_COUNT;changed:=changed+row_change;accepted:=accepted+1;
     END LOOP;
-   EXCEPTION WHEN OTHERS THEN err:='invalid_savings_response';accepted:=0;END;
+   EXCEPTION WHEN OTHERS THEN err:='invalid_savings_response:'||SQLSTATE;accepted:=0;END;
   END IF;
   UPDATE lts_savings_private_v398.request SET processed_at=clock_timestamp(),error_code=err,accepted_rows=accepted,
    response_md5=CASE WHEN r.content IS NOT NULL THEN md5(r.content) END WHERE request_id=r.request_id;

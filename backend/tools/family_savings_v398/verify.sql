@@ -55,6 +55,7 @@ END $tests$;
 INSERT INTO lts_savings_private_v398.request(request_id) VALUES(8001);
 INSERT INTO net._http_response VALUES(8001,200,'[{"data":"01/01/2025","dataFim":"01/02/2025","valor":"1"},{"data":"01/02/2025","dataFim":"01/03/2025","valor":"2"}]',false,NULL);
 SELECT lts_savings_private_v398.collect();
+TABLE lts_savings_private_v398.request;
 SELECT pg_temp.check_case((SELECT accepted_rows=2 AND error_code IS NULL FROM lts_savings_private_v398.request WHERE request_id=8001),'official response accepted');
 SELECT pg_temp.check_case(lts_savings_private_v398.collect()='{ "changed_rows": 0 }'::jsonb,'response replay writes zero');
 INSERT INTO lts_savings_private_v398.request(request_id) VALUES(8002);
