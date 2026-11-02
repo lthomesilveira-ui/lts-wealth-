@@ -38,6 +38,11 @@ jobs:
           psql -v ON_ERROR_STOP=1 -f backend/patches/v399/batched_d0_positions.sql
           psql -v ON_ERROR_STOP=1 -f backend/tools/dated_d01_v399/verify.sql
           psql -v ON_ERROR_STOP=1 -f backend/tools/dated_d01_v399/verify_batch.sql
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v399/forward_liquidity_window.sql
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v399/forward_liquidity_window.sql
+          psql -v ON_ERROR_STOP=1 -f backend/tools/dated_d01_v399/verify_forward.sql
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v399/materialized_liquidity_ladder.sql
+          psql -v ON_ERROR_STOP=1 -f backend/tools/dated_d01_v399/verify_ladder.sql
   browser:
     needs: native
     runs-on: ubuntu-24.04
