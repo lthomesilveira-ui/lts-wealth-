@@ -17,6 +17,7 @@ assert.deepEqual(model.monthBounds('2026-11','2026-11-01'),{from:'2026-11-01',to
 assert.equal(model.monthBounds('2032-01','2026-11-01'),null);assert.equal(model.monthBounds('2026-13','2026-11-01'),null);
 assert.deepEqual(model.monthBounds('2028-02','2026-11-01').to,'2028-02-29');
 assert(model.forecastPeriodBounds('2026-11-01','2027-01-31','2026-11-01'));
-assert.deepEqual(JSON.parse(fs.readFileSync('mobile/current.json')),{release:'v393',entry:'../releases/v393/app.html'});
+const live=process.env.LTS_MOBILE_RELEASE||'v393';assert.deepEqual(JSON.parse(fs.readFileSync('mobile/current.json')),{release:live,entry:'../releases/'+live+'/app.html'});
 assert.equal(p.financial_source_data_changed,false);assert.equal(p.private_http_validated,false);assert.equal(p.physical_mobile_validated,false);
 console.log(JSON.stringify({pass:true,release:'v393',full_calendar_month:true,immutable_previous_releases:true,closed_functionality_exact:true,no_financial_source_writes:true}));
+

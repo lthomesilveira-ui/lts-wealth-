@@ -1,0 +1,12 @@
+'use strict';
+const fs=require('node:fs'),crypto=require('node:crypto'),assert=require('node:assert/strict');
+const root='releases/v398',base='releases/v393',hash=p=>crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex');
+const m=JSON.parse(fs.readFileSync(root+'/manifest.json')),p=JSON.parse(fs.readFileSync(root+'/provenance.json'));
+for(const[n,h]of Object.entries(m.files))assert.equal(hash(root+'/'+n),h,n);
+for(const[n,h]of Object.entries(p.protected_base_files))assert.equal(hash(base+'/'+n),h,'prior release '+n);
+for(const[n,h]of Object.entries(m.protected))assert.equal(hash(n),h,'protected '+n);
+assert.deepEqual(fs.readdirSync(root).filter(n=>!['app.html','lts-v398-family-loan.js','provenance.json','manifest.json'].includes(n)).sort(),fs.readdirSync(base).filter(n=>!['app.html','provenance.json','manifest.json'].includes(n)).sort());
+for(const n of Object.keys(m.files))if(!['app.html','lts-v398-family-loan.js','provenance.json'].includes(n))assert.equal(hash(root+'/'+n),hash(base+'/'+n),'unchanged runtime '+n);
+assert.deepEqual(JSON.parse(fs.readFileSync('mobile/current.json')),{release:'v398',entry:'../releases/v398/app.html'});
+assert.equal(p.original_cash_forecasts_changed,false);assert.equal(p.private_http_validated,false);assert.equal(p.physical_mobile_validated,false);
+console.log(JSON.stringify({pass:true,release:'v398',previous_release_immutable:true,original_forecasts_unchanged:true}));

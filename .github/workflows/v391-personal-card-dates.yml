@@ -1,7 +1,7 @@
 name: V391 personal card forecast dates
 on:
   pull_request:
-    paths: ['releases/v393/**','releases/v391/**','mobile/current.json','backend/patches/v391/**','backend/tools/card_due_estimates_v391/**','backend/qa/fixtures/v391*','.github/scripts/*v391*','.github/workflows/v391-personal-card-dates.yml']
+    paths: ['releases/v398/**','releases/v393/**','releases/v391/**','mobile/current.json','backend/patches/v391/**','backend/tools/card_due_estimates_v391/**','backend/qa/fixtures/v391*','.github/scripts/*v391*','.github/workflows/v391-personal-card-dates.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -44,7 +44,7 @@ jobs:
     timeout-minutes: 12
     container: mcr.microsoft.com/playwright:v1.58.2-noble
     env:
-      LTS_MOBILE_RELEASE: v393
+      LTS_MOBILE_RELEASE: v398
       PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
     steps:
@@ -64,3 +64,4 @@ jobs:
         with:
           name: v391-personal-card-dates
           path: qa/v391/
+
