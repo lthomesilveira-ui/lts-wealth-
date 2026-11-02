@@ -186,3 +186,12 @@ l.fgts_value,
 b.bank_close+a.bank_delta+b.d01_resource+a.d0_delta+l.vested_rsu_value+a.rsu_delta+l.fgts_value
 from base b join lay l on l.flow_date=b.dt cross join params p cross join anchor a order by b.dt
 $function$;
+
+CREATE FUNCTION public.lts_browser_cash_today_v178()RETURNS jsonb LANGUAGE plpgsql AS $function$
+DECLARE u uuid:='11111111-1111-4111-8111-111111111111';d0 numeric;d0_date date;
+BEGIN
+ SELECT (canonical_value->>'amount')::numeric,(canonical_value->>'as_of')::date INTO d0,d0_date
+ FROM public.lts_validated_lock_registry WHERE lock_key='itau_cofrinho_20260926' AND superseded_at IS NULL;
+ d0:=public.lts_cofrinho_effective_locked_v245(u,current_date);
+ RETURN jsonb_build_object('d0',d0,'position_dates',jsonb_build_object('d0',d0_date));
+END $function$;
