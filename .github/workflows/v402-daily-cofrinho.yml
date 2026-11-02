@@ -38,8 +38,10 @@ jobs:
       - name: Apply and replay the daily source correction
         run: |
           psql -v ON_ERROR_STOP=1 -f backend/patches/v402/daily_cofrinho.sql
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v402/batched_daily_cofrinho.sql
           psql -v ON_ERROR_STOP=1 -c 'CREATE TABLE public.qa_epoch_v402 AS SELECT epoch FROM public.lts_read_cache_epoch_v242;'
           psql -v ON_ERROR_STOP=1 -f backend/patches/v402/daily_cofrinho.sql
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v402/batched_daily_cofrinho.sql
           psql -v ON_ERROR_STOP=1 -c 'DO $$BEGIN IF (SELECT epoch FROM public.qa_epoch_v402)<>(SELECT epoch FROM public.lts_read_cache_epoch_v242) THEN RAISE EXCEPTION '\''replay changed epoch'\'';END IF;END$$;'
       - name: Verify daily values, chronology, isolation, malformed sources and original rows
         run: psql -v ON_ERROR_STOP=1 -f backend/tools/daily_cofrinho_v402/verify.sql | tee v402-native-proof.txt

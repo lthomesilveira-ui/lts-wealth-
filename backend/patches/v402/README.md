@@ -1,11 +1,12 @@
 # Daily Cofrinho reconciliation
 
-The V245 reader replaced the daily provider balance with a fixed documentary
-position plus later recorded redemptions. V381 added uniquely identified bank
+The V245 reader uses a fixed documentary position plus later recorded
+redemptions. V381 added uniquely identified bank
 redemptions and V399 corrected date selection and separated FGTS. Those fixes
 did not reconnect the already verified Cofrinho component mapping to daily
 Open Finance positions. The V399 batched D0 reader also independently repeated
-the documentary-only calculation.
+the documentary-only calculation. This identifies the active path; it does not
+prove which earlier version first stopped following daily provider values.
 
 V402 reads only the existing reviewed component set. Its original reviewed
 component values must add to the common reviewed total, so removing or
@@ -29,6 +30,11 @@ reviewed identities. Preserve dates with neither source and all other assets' ru
 dated composition, effective asset position, batched D0 and downstream flow
 consumers share the same reader. Existing fingerprints include the provider
 payload; the migration advances the existing read-cache epoch once.
+
+The range reader materializes each distinct source day and the receipt set.
+Future calendars read the current provider position once, preserving later
+documented movement dates. Native call-count guards prevent a return to one
+expensive banking lookup for every projected day.
 
 The patch creates no financial event, asset position, mapping, adjustment,
 yield, payment or transfer. It does not change backup, retention or job settings.

@@ -135,4 +135,37 @@ BEGIN
  PERFORM public.qa_assert_v402('future_range_1521_days_indexed',n=1521);
 END $performance$;
 RESET statement_timeout;
+CREATE SEQUENCE public.qa_provider_calls_v402;
+CREATE SEQUENCE public.qa_receipt_calls_v402;
+DO $instrument$
+DECLARE d text;
+BEGIN
+ d:=pg_get_functiondef('public.lts_cofrinho_provider_position_v402(uuid,date)'::regprocedure);
+ EXECUTE replace(d,'FUNCTION public.lts_cofrinho_provider_position_v402(',
+  'FUNCTION public.qa_provider_original_v402(');
+ d:=pg_get_functiondef('public.lts_cofrinho_bank_redemptions_v381(uuid,date,date)'::regprocedure);
+ EXECUTE replace(d,'FUNCTION public.lts_cofrinho_bank_redemptions_v381(',
+  'FUNCTION public.qa_receipt_original_v402(');
+END $instrument$;
+CREATE OR REPLACE FUNCTION public.lts_cofrinho_provider_position_v402(p_user_id uuid,p_date date)
+RETURNS jsonb LANGUAGE plpgsql STABLE AS $function$
+BEGIN
+ PERFORM nextval('public.qa_provider_calls_v402');
+ RETURN public.qa_provider_original_v402(p_user_id,p_date);
+END $function$;
+CREATE OR REPLACE FUNCTION public.lts_cofrinho_bank_redemptions_v381(p_user_id uuid,p_after date,p_through date)
+RETURNS TABLE(staging_id uuid,event_date date,bank_amount_brl numeric,
+ represented_by_recorded_movement boolean,representation_conflict boolean,
+ unrepresented_asset_delta_brl numeric,raw_hash text,provider_record_id text)
+LANGUAGE plpgsql STABLE AS $function$
+BEGIN
+ PERFORM nextval('public.qa_receipt_calls_v402');
+ RETURN QUERY SELECT * FROM public.qa_receipt_original_v402(p_user_id,p_after,p_through);
+END $function$;
+SELECT count(*) FROM public.lts_dated_d0_series_v399(
+ '11111111-1111-4111-8111-111111111111',current_date,current_date+1520);
+SELECT public.qa_assert_v402('provider_read_once_for_future_range',
+ (SELECT last_value=1 AND is_called FROM public.qa_provider_calls_v402));
+SELECT public.qa_assert_v402('bank_receipts_read_once_for_future_range',
+ (SELECT last_value=1 AND is_called FROM public.qa_receipt_calls_v402));
 SELECT jsonb_build_object('passed',count(*),'all_passed',bool_and(passed),'native_postgres_17',true,'financial_data','synthetic only') FROM public.qa_checks_v402;
