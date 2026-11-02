@@ -17,7 +17,7 @@ const hash=x=>crypto.createHash('sha256').update(JSON.stringify(x)).digest('hex'
 async function run(browser,engine,width){
  const h=await setup(browser,width,width===1366?900:852,'2026-11-01T15:00:00Z');let f;
  try{
-  f=await open(h,'v399',true);await f.waitForFunction(()=>window.__LTS_V399_D01?.installed);
+  f=await open(h,'v399');await f.waitForFunction(()=>window.__LTS_V399_D01?.installed);
   await f.locator('#nav [data-v="Fluxo Diário"]:visible,#dx1MobileNav [data-mobile-route="Fluxo Diário"]:visible').click();
   await f.evaluate(()=>loadFlowRange('2026-10-27','2026-11-02'));await f.waitForFunction(()=>!FLOWLOADING&&FLOWQ?.from==='2026-10-27'&&document.getElementById('v399-d01-origin'));
   const box=f.locator('#v399-d01-origin'),before=hash(await f.evaluate(()=>FLOWQ));
