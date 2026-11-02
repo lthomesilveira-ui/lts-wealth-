@@ -6,11 +6,19 @@ END $guard$;
 
 CREATE OR REPLACE FUNCTION public.lts_backup_position_sources_v403(p_user uuid)
 RETURNS jsonb LANGUAGE sql STABLE SET search_path=pg_catalog AS $function$
-WITH cohorts AS MATERIALIZED(
+WITH bank_cohorts AS MATERIALIZED(
  SELECT DISTINCT ON(r.connection_id,(r.started_at AT TIME ZONE 'America/Sao_Paulo')::date)r.id
  FROM public.lts_open_finance_sync_run r
  WHERE r.user_id=p_user AND r.status='success' AND r.started_at<=statement_timestamp()
+ AND EXISTS(SELECT 1 FROM public.lts_open_finance_observation o WHERE o.sync_run_id=r.id AND o.user_id=p_user AND o.resource_type IN('balance','investment','loan'))
  ORDER BY r.connection_id,(r.started_at AT TIME ZONE 'America/Sao_Paulo')::date,r.started_at DESC,r.id DESC
+), bounds AS(
+ SELECT min((r.started_at AT TIME ZONE 'America/Sao_Paulo')::date)first_day FROM public.lts_open_finance_sync_run r WHERE r.user_id=p_user AND r.status='success'
+), verified_cofrinho AS MATERIALIZED(
+ SELECT DISTINCT nullif(public.lts_cofrinho_provider_position_v402(p_user,d::date)->>'source_run_id','')::uuid id
+ FROM bounds CROSS JOIN LATERAL generate_series(first_day::timestamp,(statement_timestamp()AT TIME ZONE 'America/Sao_Paulo')::date::timestamp,interval'1 day')d
+), cohorts AS MATERIALIZED(
+ SELECT id FROM bank_cohorts UNION SELECT id FROM verified_cofrinho WHERE id IS NOT NULL
 ), positions AS MATERIALIZED(
  SELECT o.* FROM cohorts c JOIN public.lts_open_finance_observation o ON o.sync_run_id=c.id
  WHERE o.user_id=p_user AND o.resource_type IN('balance','investment','loan') AND o.observed_at<=statement_timestamp()
@@ -29,7 +37,7 @@ BEGIN
  IF n<>35 THEN RETURN public.lts_backup_manifest_valid_v401(p_payload,p_counts);END IF;
  IF jsonb_typeof(p_payload#>'{tables,lts_open_finance_resource_map}')IS DISTINCT FROM'array'
  OR jsonb_typeof(p_payload#>'{tables,lts_open_finance_observation}')IS DISTINCT FROM'array'
- OR p_payload#>>'{coverage,position_observation_scope}'IS DISTINCT FROM'last_successful_collection_per_bank_and_civil_day'
+ OR p_payload#>>'{coverage,position_observation_scope}'IS DISTINCT FROM'daily_position_cohorts_and_verified_cofrinho_days'
  OR p_payload#>'{coverage,all_observation_history}'IS DISTINCT FROM'false'::jsonb
  OR p_payload#>'{coverage,verified_resource_mapping}'IS DISTINCT FROM'true'::jsonb
  OR p_payload#>'{coverage,selected_tables}'IS DISTINCT FROM'35'::jsonb THEN RETURN false;END IF;
@@ -65,7 +73,7 @@ WITH base AS MATERIALIZED(SELECT public.lts_backup_modern_export_pre_v403(p_user
 )
 SELECT b.j||jsonb_build_object('tables',(b.j->'tables')||jsonb_build_object(
  'lts_open_finance_sync_run',(SELECT j FROM runs),'lts_open_finance_resource_map',e.j->'mapping','lts_open_finance_observation',e.j->'observations'),
- 'coverage',(b.j->'coverage')||jsonb_build_object('selected_tables',35,'position_observation_scope','last_successful_collection_per_bank_and_civil_day',
+ 'coverage',(b.j->'coverage')||jsonb_build_object('selected_tables',35,'position_observation_scope','daily_position_cohorts_and_verified_cofrinho_days',
  'all_observation_history',false,'verified_resource_mapping',true,'capture_transaction_isolation',current_setting('transaction_isolation'),'capture_kind',coalesce(nullif(current_setting('lts.backup_capture_kind',true),''),'unspecified'),'sync_history_scope','Staging references plus preserved daily position cohorts'),
  'schema_columns',(b.j->'schema_columns')||(SELECT j FROM schemas))FROM base b CROSS JOIN evidence e;
 $function$;

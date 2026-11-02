@@ -6,8 +6,8 @@ sql=f"SELECT public.lts_backup_bundle_read_v380('{u}',current_date);"
 a=query('postgres',sql);b=query('v403_restore',sql);assert a==b
 j=json.loads(a)
 assert len(j['modern']['tables'])==35
-assert len(j['modern']['tables']['lts_open_finance_observation'])==2
-assert len(j['modern']['tables']['lts_open_finance_sync_run'])==2
+assert len(j['modern']['tables']['lts_open_finance_observation'])==3
+assert len(j['modern']['tables']['lts_open_finance_sync_run'])==3
 for t in ['lts_open_finance_resource_map','lts_open_finance_observation','lts_open_finance_sync_run','lts_backup_snapshot','lts_backup_supplement_v380']:
  sql=f"SELECT encode(sha256(convert_to(coalesce(jsonb_agg(to_jsonb(t)ORDER BY to_jsonb(t)::text),'[]')::text,'UTF8')),'hex')FROM public.{t} t;"
  assert query('postgres',sql)==query('v403_restore',sql),t

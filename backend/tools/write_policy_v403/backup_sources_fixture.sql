@@ -12,6 +12,13 @@ INSERT INTO public.lts_open_finance_observation VALUES
  ('dddddddd-dddd-4ddd-8ddd-000000000001','00000000-0000-4000-8000-000000000004','cccccccc-cccc-4ccc-8ccc-000000000001','bbbbbbbb-bbbb-4bbb-8bbb-000000000001','investment','a','first','{"balance":100}','{}',current_date-1+interval'9 hours'),
  ('dddddddd-dddd-4ddd-8ddd-000000000002','00000000-0000-4000-8000-000000000004','cccccccc-cccc-4ccc-8ccc-000000000001','bbbbbbbb-bbbb-4bbb-8bbb-000000000002','investment','a','last','{"balance":101}','{}',current_date-1+interval'10 hours'),
  ('dddddddd-dddd-4ddd-8ddd-000000000003','00000000-0000-4000-8000-000000000004','cccccccc-cccc-4ccc-8ccc-000000000001','bbbbbbbb-bbbb-4bbb-8bbb-000000000003','investment','a','today','{"balance":102}','{}',current_date+interval'1 minute');
+CREATE FUNCTION public.lts_cofrinho_provider_position_v402(p_user uuid,p_day date)RETURNS jsonb LANGUAGE sql STABLE AS $$
+ SELECT jsonb_build_object('source_run_id',r.id)FROM public.lts_open_finance_sync_run r WHERE r.user_id=p_user AND r.status='success'
+ AND(r.started_at AT TIME ZONE'America/Sao_Paulo')::date<=p_day AND EXISTS(SELECT 1 FROM public.lts_open_finance_observation o WHERE o.sync_run_id=r.id AND o.resource_type='investment')ORDER BY r.started_at DESC LIMIT 1;
+$$;
+-- A later successful balance-only collection must not discard a verified CDB cohort.
+INSERT INTO public.lts_open_finance_sync_run(id,user_id,connection_id,status,started_at)VALUES('bbbbbbbb-bbbb-4bbb-8bbb-000000000004','00000000-0000-4000-8000-000000000004','cccccccc-cccc-4ccc-8ccc-000000000001','success',current_date+interval'2 minutes');
+INSERT INTO public.lts_open_finance_observation VALUES('dddddddd-dddd-4ddd-8ddd-000000000004','00000000-0000-4000-8000-000000000004','cccccccc-cccc-4ccc-8ccc-000000000001','bbbbbbbb-bbbb-4bbb-8bbb-000000000004','balance','bank','balance','{"balance":50}','{}',current_date+interval'2 minutes');
 CREATE TABLE public.qa_backup_history_v403 AS SELECT snapshot_date,user_id,payload_hash,payload_bytes FROM public.lts_backup_snapshot;
 CREATE TABLE public.qa_backup_modern_history_v403 AS SELECT snapshot_date,user_id,payload_sha256,payload_bytes,counts FROM public.lts_backup_supplement_v380;
 CREATE TABLE public.accounts(id uuid,user_id uuid,balance numeric);
