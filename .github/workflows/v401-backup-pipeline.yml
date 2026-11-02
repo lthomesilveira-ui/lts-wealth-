@@ -1,0 +1,51 @@
+name: V401 complete backup pipeline
+on:
+  pull_request:
+    paths: ['backend/patches/v401/**','backend/tools/backup_v401/**','.github/workflows/v401-backup-pipeline.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: synthetic-test-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: synthetic-test-only
+      PGTZ: America/Sao_Paulo
+    steps:
+      - uses: actions/checkout@v4
+      - name: Reproduce the writer and reader regression using real migrations
+        run: |
+          python3 backend/tools/backup_v401/setup.py > /tmp/v401-fixture.sql
+          psql -v ON_ERROR_STOP=1 -f /tmp/v401-fixture.sql
+      - name: Apply and replay the scoped fixes
+        run: |
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v401/backup_manifest.sql
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v401/bounded_backup_job.sql
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v401/backup_manifest.sql
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v401/bounded_backup_job.sql
+      - name: Verify capture, read, replay, history, malformed inputs and access
+        run: psql -v ON_ERROR_STOP=1 -f backend/tools/backup_v401/verify.sql | tee v401-native-proof.txt
+      - name: Verify cancellation through the exact scheduler command
+        run: python3 backend/tools/backup_v401/timeout_verify.py | tee v401-timeout-proof.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v401-backup-pipeline-proof
+          path: |
+            v401-native-proof.txt
+            v401-timeout-proof.json
