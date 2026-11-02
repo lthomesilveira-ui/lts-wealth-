@@ -29,6 +29,7 @@ finally:release(p)
 query(f"INSERT INTO public.lts_open_finance_sync_run(id,user_id,connection_id,status)VALUES('aaaaaaaa-aaaa-4aaa-8aaa-000000009999','{UID}','33333333-3333-4333-8333-333333333333','running');")
 r=json.loads(query(f"select public.lts_backup_scheduled_v403('{UID}');"));assert r['reason']=='active_or_queued_sync'
 query("UPDATE public.lts_open_finance_sync_run SET status='failed',finished_at=clock_timestamp()WHERE id='aaaaaaaa-aaaa-4aaa-8aaa-000000009999';")
-r=json.loads(query(f"select public.lts_backup_scheduled_v403('{UID}');"));assert r['inserted'] and r['exclusion_guard']
+command=query('SELECT command FROM cron.job WHERE jobid=1');proof=query(command);r=json.loads(next(x for x in proof.splitlines()if x.startswith('{')));assert r['inserted'] and r['exclusion_guard'] and r['transaction_isolation']=='repeatable read'
+assert query("SELECT counts->>'transaction_isolation'FROM public.lts_backup_supplement_v380")=='repeatable read'
 r=json.loads(query(f"select public.lts_backup_scheduled_v403('{UID}');"));assert r['already_complete'] and not r['inserted']
-print(json.dumps({'concurrency_checks':7,'sync_transaction_defers_backup':True,'backup_defers_enqueue_without_http':True,'both_begin_routes_blocked':True,'running_run_defers_backup':True,'completed_capture_not_repeated':True}))
+print(json.dumps({'concurrency_checks':8,'sync_transaction_defers_backup':True,'backup_defers_enqueue_without_http':True,'both_begin_routes_blocked':True,'running_run_defers_backup':True,'completed_capture_not_repeated':True,'exact_scheduled_command_repeatable_snapshot':True}))

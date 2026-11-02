@@ -8,6 +8,9 @@ DO $$BEGIN
  BEGIN PERFORM public.qa_batch_v403('aaaaaaaa-aaaa-4aaa-8aaa-000000000001',jsonb_build_array(public.qa_record_v403('transaction','t1',11)));RAISE EXCEPTION 'retry accepted changed payload';
  EXCEPTION WHEN raise_exception THEN IF SQLERRM NOT LIKE '%RETRY_PAYLOAD_CHANGED%'THEN RAISE;END IF;END;
  PERFORM public.qa_assert_v403('changed retry is rejected',true);
+ BEGIN PERFORM public.qa_batch_v403('aaaaaaaa-aaaa-4aaa-8aaa-000000000001',jsonb_build_array(jsonb_set(public.qa_record_v403('transaction','t1'),'{signed_amount}','999')));RAISE EXCEPTION 'scalar-only changed retry accepted';
+ EXCEPTION WHEN raise_exception THEN IF SQLERRM NOT LIKE '%RETRY_PAYLOAD_CHANGED%'THEN RAISE;END IF;END;
+ PERFORM public.qa_assert_v403('scalar-only retry change is rejected',true);
 END$$;
 SELECT public.qa_finish_v403('aaaaaaaa-aaaa-4aaa-8aaa-000000000001',4);
 SELECT public.qa_assert_v403('finished journal is compact',(SELECT NOT(metadata?'_v403_receipts')AND metadata#>>'{ingestion_v403,total}'='4'AND length(metadata#>>'{ingestion_v403,source_set_sha256}')=64 FROM public.lts_open_finance_sync_run WHERE id='aaaaaaaa-aaaa-4aaa-8aaa-000000000001'));
@@ -47,7 +50,40 @@ SELECT public.qa_assert_v403('historical observations remain byte equal',NOT EXI
 SELECT public.qa_assert_v403('financial rows and locks unchanged',(SELECT j FROM public.qa_financial_v403)=jsonb_build_object('assets',(SELECT jsonb_agg(to_jsonb(a)ORDER BY id)FROM public.asset_positions a),'events',(SELECT jsonb_agg(to_jsonb(e)ORDER BY id)FROM public.financial_events e),'movements',(SELECT jsonb_agg(to_jsonb(m)ORDER BY id)FROM public.lts_liquidity_movement m),'locks',(SELECT jsonb_agg(to_jsonb(l)ORDER BY lock_key)FROM public.lts_validated_lock_registry l)));
 SELECT public.qa_assert_v403('helper is inaccessible to anonymous',NOT has_function_privilege('anon','public.lts_open_finance_stage_batch_core_v403(uuid,uuid,uuid,jsonb,text[])','EXECUTE'));
 SELECT public.qa_assert_v403('helper is inaccessible to authenticated',NOT has_function_privilege('authenticated','public.lts_observation_run_stats_v403(uuid,uuid,jsonb)','EXECUTE'));
-SELECT public.qa_assert_v403('backup schedule no longer coincides with sync',(SELECT schedule='35,40,50,55 6 * * *'AND command LIKE '%SET statement_timeout = ''90s'';%'AND command LIKE '%lts_backup_scheduled_v403%'FROM cron.job WHERE jobid=1)AND(SELECT schedule='15 * * * *'FROM cron.job WHERE jobid=4));
+DO $$BEGIN
+ PERFORM public.qa_run_v403('aaaaaaaa-aaaa-4aaa-8aaa-000000000008');
+ BEGIN PERFORM public.lts_open_finance_stage_batch_v1('99999999-9999-4999-8999-999999999999','33333333-3333-4333-8333-333333333333','aaaaaaaa-aaaa-4aaa-8aaa-000000000008','[]');RAISE EXCEPTION 'foreign user accepted';
+ EXCEPTION WHEN raise_exception THEN IF SQLERRM NOT LIKE '%INVALID_RUNNING_SYNC%'THEN RAISE;END IF;END;
+ PERFORM public.qa_assert_v403('foreign owner rejected',true);
+ BEGIN PERFORM public.qa_batch_v403('aaaaaaaa-aaaa-4aaa-8aaa-000000000008',jsonb_build_array(jsonb_set(public.qa_record_v403('transaction','bad'),'{normalized_payload,item_id}','"foreign-item"')));RAISE EXCEPTION 'foreign item accepted';
+ EXCEPTION WHEN raise_exception THEN IF SQLERRM NOT LIKE '%INVALID_RECORD_SCOPE%'THEN RAISE;END IF;END;
+ PERFORM public.qa_assert_v403('foreign provider item rejected',true);
+ BEGIN PERFORM public.qa_batch_v403('aaaaaaaa-aaaa-4aaa-8aaa-000000000008',jsonb_build_array(jsonb_set(public.qa_record_v403('transaction','bad'),'{reconciliation}','{"classification":"unknown"}')));RAISE EXCEPTION 'unknown classification accepted';
+ EXCEPTION WHEN raise_exception THEN IF SQLERRM NOT LIKE '%INVALID_RECONCILIATION%'THEN RAISE;END IF;END;
+ PERFORM public.qa_assert_v403('invalid classification rejected',true);
+ PERFORM public.qa_batch_v403('aaaaaaaa-aaaa-4aaa-8aaa-000000000008',jsonb_build_array(public.qa_record_v403('transaction','overlap-a'),public.qa_record_v403('transaction','overlap-b')));
+ PERFORM public.qa_batch_v403('aaaaaaaa-aaaa-4aaa-8aaa-000000000008',jsonb_build_array(public.qa_record_v403('transaction','overlap-b'),public.qa_record_v403('transaction','overlap-c')));
+ PERFORM public.qa_finish_v403('aaaaaaaa-aaaa-4aaa-8aaa-000000000008',3);
+ PERFORM public.qa_assert_v403('overlapping retries count each source once',(SELECT raw_count=3 FROM public.lts_open_finance_sync_run WHERE id='aaaaaaaa-aaaa-4aaa-8aaa-000000000008'));
+END$$;
+DO $$DECLARE bank text;c uuid;rid uuid;item text;rec jsonb;raw_records jsonb;stats jsonb;i integer:=0;
+BEGIN
+ FOREACH bank IN ARRAY ARRAY['237','336']LOOP
+  i:=i+1;c:=md5('synthetic-connection-'||bank)::uuid;rid:=md5('synthetic-run-'||bank)::uuid;item:=md5('synthetic-item-'||bank)::uuid::text;
+  INSERT INTO public.lts_open_finance_connection(id,user_id,provider,institution_code,provider_connection_ref)VALUES(c,'11111111-1111-4111-8111-111111111111','pluggy',bank,item);
+  rec:=public.qa_record_v403('transaction','other-bank');rec:=jsonb_set(rec,'{provider_record_id}',to_jsonb(item||':other-bank'));rec:=jsonb_set(rec,'{normalized_payload,item_id}',to_jsonb(item));
+  raw_records:=jsonb_build_array(rec);
+  INSERT INTO public.lts_open_finance_sync_run(id,user_id,connection_id,status,metadata)VALUES(rid,'11111111-1111-4111-8111-111111111111',c,'running','{}');
+  PERFORM public.lts_open_finance_stage_batch_bank_v1('11111111-1111-4111-8111-111111111111',c,rid,raw_records);
+  PERFORM public.lts_open_finance_finish_bank_v1('11111111-1111-4111-8111-111111111111',rid,'success','{"expected_count":1,"coverage":[]}',NULL);
+  rid:=md5('synthetic-repeat-'||bank)::uuid;
+  INSERT INTO public.lts_open_finance_sync_run(id,user_id,connection_id,status,metadata)VALUES(rid,'11111111-1111-4111-8111-111111111111',c,'running','{}');
+  PERFORM public.lts_open_finance_stage_batch_bank_v1('11111111-1111-4111-8111-111111111111',c,rid,raw_records);
+  PERFORM public.lts_open_finance_finish_bank_v1('11111111-1111-4111-8111-111111111111',rid,'success','{"expected_count":1,"coverage":[]}',NULL);
+  PERFORM public.qa_assert_v403('multibank '||bank||' receives one without repeating',(SELECT raw_count=1 AND metadata#>>'{ingestion_v403,observations_stored}'='0'FROM public.lts_open_finance_sync_run WHERE id=rid));
+ END LOOP;
+END$$;
+SELECT public.qa_assert_v403('backup schedule no longer coincides with sync',(SELECT schedule='35,40,50,55 6 * * *'AND command LIKE '%SET LOCAL statement_timeout = ''90s'';%'AND command LIKE 'BEGIN ISOLATION LEVEL REPEATABLE READ;%'AND command LIKE '%lts_backup_scheduled_v403%'FROM cron.job WHERE jobid=1)AND(SELECT schedule='15 * * * *'FROM cron.job WHERE jobid=4));
 SELECT public.lts_backup_scheduled_v403('11111111-1111-4111-8111-111111111111');
 SELECT public.qa_assert_v403('one backup captured',(SELECT count(*)=1 FROM public.lts_backup_supplement_v380));
 SELECT public.qa_assert_v403('second scheduled attempt does not recapture',(public.lts_backup_scheduled_v403('11111111-1111-4111-8111-111111111111')->>'already_complete')::boolean);

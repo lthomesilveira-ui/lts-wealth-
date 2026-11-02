@@ -51,9 +51,9 @@ jobs:
         run: python3 backend/tools/write_policy_v403/concurrency.py | tee v403-concurrency-proof.json
       - name: Restore synthetic source history and new run metadata in an independent database
         run: |
-          pg_dump --no-owner --no-privileges --format=custom --file=/tmp/v403.dump postgres
+          docker exec ${{ job.services.postgres.id }} pg_dump -U postgres --no-owner --no-privileges --format=custom postgres > /tmp/v403.dump
           createdb v403_restore
-          pg_restore --no-owner --no-privileges --dbname=v403_restore /tmp/v403.dump
+          docker exec -i ${{ job.services.postgres.id }} pg_restore -U postgres --no-owner --no-privileges --dbname=v403_restore < /tmp/v403.dump
           python3 backend/tools/write_policy_v403/restore_verify.py | tee v403-restore-proof.json
       - uses: actions/upload-artifact@v4
         if: always()
@@ -63,3 +63,49 @@ jobs:
             v403-native-proof.txt
             v403-concurrency-proof.json
             v403-restore-proof.json
+  backup:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: synthetic-test-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: synthetic-test-only
+      PGTZ: America/Sao_Paulo
+    steps:
+      - uses: actions/checkout@v4
+      - name: Preserve real V380, V387, V398 and V401 backup behavior
+        run: |
+          python3 backend/tools/backup_v401/setup.py > /tmp/v401-fixture.sql
+          psql -v ON_ERROR_STOP=1 -f /tmp/v401-fixture.sql
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v401/backup_manifest.sql
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v401/bounded_backup_job.sql
+          psql -v ON_ERROR_STOP=1 -f backend/tools/write_policy_v403/backup_sources_fixture.sql
+      - name: Validate old profiles and new complete source-position evidence
+        run: |
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v403/backup_critical_sources.sql
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v403/backup_critical_sources.sql
+          psql -v ON_ERROR_STOP=1 -f backend/tools/write_policy_v403/backup_sources_verify.sql | tee v403-backup-proof.txt
+      - name: Restore real backup formats into another PostgreSQL database
+        run: |
+          docker exec ${{ job.services.postgres.id }} pg_dump -U postgres --no-owner --no-privileges --format=custom postgres > /tmp/v403-backup.dump
+          createdb v403_restore
+          docker exec -i ${{ job.services.postgres.id }} pg_restore -U postgres --no-owner --no-privileges --dbname=v403_restore < /tmp/v403-backup.dump
+          python3 backend/tools/write_policy_v403/backup_restore_verify.py | tee v403-backup-restore-proof.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v403-backup-source-proof
+          path: |
+            v403-backup-proof.txt
+            v403-backup-restore-proof.json

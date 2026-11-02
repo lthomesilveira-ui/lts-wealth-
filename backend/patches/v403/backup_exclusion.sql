@@ -144,7 +144,7 @@ BEGIN
   RETURN jsonb_build_object('ok',false,'deferred',true,'reason','active_or_queued_sync','snapshot_date',d);
  END IF;
  result:=public.lts_backup_snapshot_take_v380(p_user_id,d);
- RETURN result||jsonb_build_object('writer_revision','v401','scheduler_revision','v403','exclusion_guard',true);
+ RETURN result||jsonb_build_object('writer_revision','v401','scheduler_revision','v403','exclusion_guard',true,'transaction_isolation',current_setting('transaction_isolation'));
 END $function$;
 REVOKE ALL ON FUNCTION public.lts_backup_scheduled_v403(uuid) FROM PUBLIC,anon,authenticated;
 GRANT EXECUTE ON FUNCTION public.lts_backup_scheduled_v403(uuid) TO service_role;
@@ -163,6 +163,7 @@ BEGIN
   END IF;
   next_command:=replace(j.command,'lts_backup_snapshot_take_v380','lts_backup_scheduled_v403');
   next_command:=replace(next_command,'::uuid,current_date','::uuid');
+  next_command:=replace(next_command,"SET statement_timeout = '90s'; ","BEGIN ISOLATION LEVEL REPEATABLE READ; SET LOCAL statement_timeout = '90s'; ")||' COMMIT;';
   -- 03:35/03:40/03:50/03:55 Sao Paulo. Hourly bank sync remains :15.
   -- Stop after the first successful daily capture; later attempts are metadata-only.
   PERFORM cron.alter_job(j.jobid,schedule:='35,40,50,55 6 * * *',command:=next_command);

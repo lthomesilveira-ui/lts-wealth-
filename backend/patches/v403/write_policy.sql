@@ -1,3 +1,8 @@
+DO $deploy$ DECLARE u uuid:=public.lts_open_finance_pilot_owner_v1();BEGIN
+PERFORM pg_advisory_xact_lock(hashtextextended('lts-open-finance-itau:'||u::text,0));
+PERFORM pg_advisory_xact_lock(hashtextextended('lts-open-finance-bank:237:'||u::text,0));
+PERFORM pg_advisory_xact_lock(hashtextextended('lts-open-finance-bank:336:'||u::text,0));
+IF EXISTS(SELECT 1 FROM public.lts_open_finance_sync_run WHERE user_id=u AND status='running')THEN RAISE EXCEPTION 'Active sync; wait for completion before V403';END IF;END $deploy$;
 DO $guard$ BEGIN
 IF position('v403-write-policy' IN pg_get_functiondef('public.lts_open_finance_finish_bank_v1(uuid,uuid,text,jsonb,text)'::regprocedure))=0 AND md5(pg_get_functiondef('public.lts_open_finance_finish_bank_v1(uuid,uuid,text,jsonb,text)'::regprocedure))<>'3d85d8587666e42fc29b4758a9a3569e' THEN RAISE EXCEPTION 'V403 source changed: lts_open_finance_finish_bank_v1';END IF;
 IF position('v403-write-policy' IN pg_get_functiondef('public.lts_open_finance_finish_itau_v1(uuid,uuid,text,jsonb,text)'::regprocedure))=0 AND md5(pg_get_functiondef('public.lts_open_finance_finish_itau_v1(uuid,uuid,text,jsonb,text)'::regprocedure))<>'7af292cc25716fdb7fc10e73d81b6f40' THEN RAISE EXCEPTION 'V403 source changed: lts_open_finance_finish_itau_v1';END IF;
@@ -51,11 +56,9 @@ BEGIN
  IF p_records IS NULL OR jsonb_typeof(p_records)<>'array' OR jsonb_array_length(p_records)>100 THEN RAISE EXCEPTION 'INVALID_BATCH';END IF;
  receipts:=r.metadata->'_v403_receipts';
  IF receipts IS NULL THEN
-  -- An existing V402 run can finish safely across this migration.
-  SELECT coalesce(jsonb_object_agg(o.resource_type||chr(31)||o.provider_record_id,
-   jsonb_build_array(public.lts_observation_fingerprint_v403(o.raw_hash,o.raw_payload,o.normalized_payload,o.reconciliation),
-    o.reconciliation->>'classification',o.ingest_action,true)),'{}') INTO receipts
-  FROM public.lts_open_finance_observation o WHERE o.sync_run_id=p_run_id AND o.user_id=p_user_id;
+  -- Deployment is guarded against active pre-V403 runs. Missing journals fail closed.
+  IF EXISTS(SELECT 1 FROM public.lts_open_finance_observation WHERE sync_run_id=p_run_id AND user_id=p_user_id)THEN RAISE EXCEPTION 'RUN_REQUIRES_LEGACY_FINISH';END IF;
+  receipts:='{}';
  END IF;
  FOR x IN SELECT value FROM jsonb_array_elements(p_records) LOOP
   IF x->>'provider_record_id' IS NULL OR x->>'resource_type' IS NULL OR x->>'resource_type'=''
@@ -66,7 +69,7 @@ BEGIN
   classification:=x->'reconciliation'->>'classification';
   IF classification IS NULL OR classification NOT IN('exact','candidate','new','conflict') THEN RAISE EXCEPTION 'INVALID_RECONCILIATION';END IF;
   receipt_key:=(x->>'resource_type')||chr(31)||(x->>'provider_record_id');
-  fp:=public.lts_observation_fingerprint_v403(x->>'raw_hash',x->'raw_payload',x->'normalized_payload',x->'reconciliation');
+  fp:=public.lts_observation_fingerprint_v403(x->>'raw_hash',x->'raw_payload',x,x->'reconciliation');
   prior:=receipts->receipt_key;
   IF prior IS NOT NULL THEN
    IF prior->>0 IS DISTINCT FROM fp THEN RAISE EXCEPTION 'RETRY_PAYLOAD_CHANGED';END IF;
@@ -80,7 +83,15 @@ BEGIN
   -- source_sync_at is collection freshness, not a changed transaction.
   same_material:=old.id IS NOT NULL AND old.raw_hash=x->>'raw_hash' AND old.raw_payload=x->'raw_payload'
    AND (old.normalized_payload-ARRAY['reconciliation','source_sync_at'])=((x->'normalized_payload')-'source_sync_at')
-   AND old.normalized_payload->'reconciliation'=x->'reconciliation';
+   AND old.normalized_payload->'reconciliation'=x->'reconciliation'
+   AND old.provider_account_ref IS NOT DISTINCT FROM x->>'provider_account_ref'
+   AND old.occurred_at IS NOT DISTINCT FROM nullif(x->>'occurred_at','')::timestamptz
+   AND old.posting_date IS NOT DISTINCT FROM nullif(x->>'posting_date','')::date
+   AND old.reference_month IS NOT DISTINCT FROM nullif(x->>'reference_month','')::date
+   AND old.signed_amount IS NOT DISTINCT FROM nullif(x->>'signed_amount','')::numeric
+   AND old.currency IS NOT DISTINCT FROM x->>'currency'
+   AND old.description_raw IS NOT DISTINCT FROM x->>'description_raw'
+   AND old.match_status IS NOT DISTINCT FROM stage_status;
   -- Keep the entire investment/balance cohort on EVERY collection for V402.
   -- Unknown future resource types remain fully observed until reviewed.
   retain:=NOT coalesce(same_material,false) OR action='stale'
