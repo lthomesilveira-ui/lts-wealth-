@@ -7,6 +7,6 @@ for(const[n,h]of Object.entries(p.protected_base_files))assert.equal(hash(base+'
 for(const[n,h]of Object.entries(m.protected))assert.equal(hash(n),h,'protected '+n);
 assert.deepEqual(fs.readdirSync(root).filter(n=>!['app.html','lts-v398-family-loan.js','provenance.json','manifest.json'].includes(n)).sort(),fs.readdirSync(base).filter(n=>!['app.html','provenance.json','manifest.json'].includes(n)).sort());
 for(const n of Object.keys(m.files))if(!['app.html','lts-v398-family-loan.js','provenance.json'].includes(n))assert.equal(hash(root+'/'+n),hash(base+'/'+n),'unchanged runtime '+n);
-assert.deepEqual(JSON.parse(fs.readFileSync('mobile/current.json')),{release:'v398',entry:'../releases/v398/app.html'});
+const live=process.env.LTS_MOBILE_RELEASE||'v398';assert.deepEqual(JSON.parse(fs.readFileSync('mobile/current.json')),{release:live,entry:'../releases/'+live+'/app.html'});
 assert.equal(p.original_cash_forecasts_changed,false);assert.equal(p.private_http_validated,false);assert.equal(p.physical_mobile_validated,false);
 console.log(JSON.stringify({pass:true,release:'v398',previous_release_immutable:true,original_forecasts_unchanged:true}));

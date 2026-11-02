@@ -12,7 +12,7 @@ jobs:
     container: mcr.microsoft.com/playwright:v1.58.2-noble
     env:
       LTS_RELEASE: v391
-      LTS_MOBILE_RELEASE: v398
+      LTS_MOBILE_RELEASE: v399
       PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
     steps:
