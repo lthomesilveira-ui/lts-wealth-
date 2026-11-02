@@ -34,6 +34,7 @@ async function run(browser,engine,width){
   await h.page.screenshot({path:out+'/'+engine+'-'+width+'-flow-composition.png'});
   await f.evaluate(()=>render());assert.equal(await f.locator('#v402-d01-origin').count(),1);assert.equal(hash(await f.evaluate(()=>FLOWQ)),before,'presentation never changes financial response');
   await f.evaluate(()=>{const d=[...(FLOWQ.historical?.days||[]),...(FLOWQ.current_future?.days||[])].find(x=>x.date==='2026-11-01');d.fix86_columns.d0_composition.complete=false;render();});await f.locator('#v402-d01-warning').waitFor({state:'visible'});assert.equal((await f.locator('#v402-d01-warning').innerText()).trim(),'Saldo do Cofrinho a conferir no banco.');
+  await f.evaluate(()=>{const d=[...(FLOWQ.historical?.days||[]),...(FLOWQ.current_future?.days||[])].find(x=>x.date==='2026-11-01');d.fix86_columns.d0_composition.complete=true;d.fix86_columns.d0_composition.daily_provider_position_available=false;render();});assert.equal((await f.locator('#v402-d01-warning').innerText()).trim(),'Atualização do saldo do Cofrinho pendente.');
   await f.locator('#nav [data-v="Dashboard"]:visible,#dx1MobileNav [data-mobile-route="Dashboard"]:visible').click();await f.waitForFunction(()=>V==='Dashboard');
   assert.equal(await f.locator('#v402-d01-origin').count(),0);await h.page.screenshot({path:out+'/'+engine+'-'+width+'-dashboard.png'});
   assert.deepEqual(h.errors,[]);assert.deepEqual(h.writes,[]);
