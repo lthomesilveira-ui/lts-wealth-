@@ -49,6 +49,8 @@ jobs:
         run: psql -v ON_ERROR_STOP=1 -f backend/tools/write_policy_v403/verify.sql | tee v403-native-proof.txt
       - name: Verify exclusion with independent concurrent database sessions
         run: python3 backend/tools/write_policy_v403/concurrency.py | tee v403-concurrency-proof.json
+      - name: Verify existing-job retiming and upgrade from the bounded03:35 predecessor
+        run: python3 backend/tools/write_policy_v403/scheduler_verify.py | tee v403-scheduler-proof.json
       - name: Restore synthetic source history and new run metadata in an independent database
         run: |
           docker exec ${{ job.services.postgres.id }} pg_dump -U postgres --no-owner --no-privileges --format=custom postgres > /tmp/v403.dump
@@ -62,6 +64,7 @@ jobs:
           path: |
             v403-native-proof.txt
             v403-concurrency-proof.json
+            v403-scheduler-proof.json
             v403-restore-proof.json
   backup:
     runs-on: ubuntu-24.04

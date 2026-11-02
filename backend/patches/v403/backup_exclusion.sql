@@ -158,7 +158,7 @@ BEGIN
    IF j.schedule<>'35,40,50,55 6 * * *' OR NOT j.active THEN RAISE EXCEPTION 'V403 schedule drift';END IF;
    CONTINUE;
   END IF;
-  IF j.schedule<>'15 6 * * *' OR NOT j.active OR j.command !~ $rx$^SET statement_timeout = '90s'; select public\.lts_backup_snapshot_take_v380\('[0-9a-f-]{36}'::uuid,current_date\);$rx$ THEN
+  IF j.schedule NOT IN('15 6 * * *','35 6 * * *') OR NOT j.active OR j.command !~ $rx$^SET statement_timeout = '90s'; select public\.lts_backup_snapshot_take_v380\('[0-9a-f-]{36}'::uuid,current_date\);$rx$ THEN
    RAISE EXCEPTION 'Unexpected backup job; no schedule changed';
   END IF;
   next_command:=replace(j.command,'lts_backup_snapshot_take_v380','lts_backup_scheduled_v403');
