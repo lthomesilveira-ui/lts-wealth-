@@ -1,0 +1,17 @@
+{
+  "id": "99999999-9999-4999-8999-999999999999",
+  "user_id": "11111111-1111-4111-8111-111111111111",
+  "institution": "Fixture bank",
+  "document_type": "credit_card_statement",
+  "processing_status": "processed",
+  "sha256": "fixture-document-hash",
+  "storage_path": "fixture/document.pdf",
+  "metadata": {
+    "closing_date": "2020-10-14",
+    "all_source_lines_matched": "true",
+    "statement_amount": 136.68,
+    "due_date": "2020-10-25",
+    "nonpayment_detail_lines": 114,
+    "existing_source_items": "@SYNTHETIC_CARD_ITEMS@"
+  }
+}

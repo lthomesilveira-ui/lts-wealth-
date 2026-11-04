@@ -1,0 +1,55 @@
+{
+  "format": "overlay_pg17_package_v1",
+  "files": [
+    {
+      "path": "README.md",
+      "sha256": "89daa3c65587ad299d8e34060b0dcd73d745c0c228bf542d4d2ff91ffd6577d4"
+    },
+    {
+      "path": "baseline-28.json",
+      "sha256": "ddc0ea6a7c794f99839377e8f8637fca57c2de3fe0460b31e9779f845233fa8b"
+    },
+    {
+      "path": "build_cases.py",
+      "sha256": "901c3352e4b97c5df65f8e0b12374c127b5f5250d9f9f3d2e11210ed05171254"
+    },
+    {
+      "path": "case-catalog.json",
+      "sha256": "71f9603174348798a0b0628dc837d6101affb5f4cb2473cfad3c0d78ba2a8b99"
+    },
+    {
+      "path": "expected.json",
+      "sha256": "02ac72a4cb4fd232dc2786d14854e80ed156835492bdc6267aab9dee875e4434"
+    },
+    {
+      "path": "inputs.json",
+      "sha256": "5289d119a26f91eb7ca279af7c59673a996e522b325ddb21e7a5d9c73013b7a1"
+    },
+    {
+      "path": "overlay_reference.py",
+      "sha256": "e2a3ce80e7cf7b3d851558886cd998e95bb4bbf2003b62da08d766659becb409"
+    },
+    {
+      "path": "build_sql.py",
+      "sha256": "3fea246126138146ae565e72215dddf1a3fec414c5be3ce1dbbaabf262d46de9"
+    },
+    {
+      "path": "overlay_contract.sql",
+      "sha256": "75540e4f8e13530041dec03b1e592f25424b86fc115f6e7ce8c4a6676902b526"
+    },
+    {
+      "path": "verify_results.py",
+      "sha256": "08d4327a9933a11ff49d56e2a35a85770dd5949bdd189dc267213ad7d4cd07b8"
+    },
+    {
+      "path": "run_pg17.py",
+      "sha256": "cf113bea10e9df804fa16d983915ceb76d6aef5409515e4ef471aad85b6b9045"
+    },
+    {
+      "path": "test_package.py",
+      "sha256": "6a7c9bfc7e844a0812de7f48b2796ab7d5ada6f22f41b113da1a3d8b3ec06e95"
+    }
+  ],
+  "synthetic_only": true,
+  "pg_executed": false
+}

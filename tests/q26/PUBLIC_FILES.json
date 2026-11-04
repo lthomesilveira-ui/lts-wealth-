@@ -1,0 +1,9 @@
+{
+  "purpose": "Synthetic-only review allowlist; does not grant permission to publish",
+  "files": [
+    "README.md", "GATES.json", "PUBLIC_FILES.json", "run_postgres17.py",
+    "generated/apply-synthetic.sql", "generated/rollback-synthetic.sql",
+    "generated/bootstrap-synthetic.sql", "generated/reset-synthetic.sql",
+    "generated/fixtures-synthetic.json", "generated/manifest.json"
+  ]
+}

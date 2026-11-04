@@ -1,0 +1,19 @@
+{
+  "state": "LOCAL_ALLOWLIST_ONLY_NOT_PUBLISHED",
+  "synthetic_only": true,
+  "production_validated": false,
+  "files": {
+    "build_sql.py": "5d8c5787919a334180f3d8c23b72ddfe4cfb7d569061e473ebda6cb9a40f63eb",
+    "catalog-query.sql": "c634a58821fdf35b5d69c7b21ddccaf18c8a2a3550ee0c466139cfb06b20600a",
+    "catalog-config.json": "2ecc1e6020e17f1f58a5d2ad89c20bb28267a5358657e695be858fd9b443969a",
+    "templates/common.sql": "c863833c972a5d3e512db2621d7c2157dfe840362c20cbd6ceb2806183265883",
+    "templates/apply.sql": "0c5386be89625b141da1c402339104f5d87fd70f2fc3911e347baa88432a900d",
+    "templates/rollback.sql": "de6732973c2d400dd42e8862beb70c2706b9152fb5d7eb26115088b43db1187f",
+    "templates/post-guards.sql": "4d6b389fccddf2fd13f417df1db142d64de8f0f05958a90a0b6e61e9a75fdfef",
+    "templates/validate-postimage.sql": "06f3c5c0e77fc03e404e4500357661a02be0c8501ae1be862ea18562e439d086",
+    "bootstrap.sql": "b952f7aed424d0874b10402147148678a77eb5902a346031b0820bd1ea668407",
+    "fixture.py": "ac3a33052bf0e5251cec0d09006ab219f8bc66e917d7905cdf6a11bee7485fc9",
+    "run_postgres17.py": "db31c399a225b59d1a4b5c7beacab81c73ee43e61c24d034b4499c8239ad3123",
+    "README.md": "2f8f7b999cd9b94be894d74fb64e745a16d44245ca1ecd124ed5dfe49824f832"
+  }
+}

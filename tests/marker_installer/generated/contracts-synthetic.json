@@ -1,0 +1,3046 @@
+{
+  "functions": [
+    {
+      "signature": "lts_bank_description_key_v229(text)",
+      "arguments": "p_text text",
+      "result": "text"
+    },
+    {
+      "signature": "lts_bank_known_classification_v231(uuid,uuid)",
+      "arguments": "p_user_id uuid, p_staging_id uuid",
+      "result": "jsonb"
+    },
+    {
+      "signature": "lts_bank_merchant_key_v231(text)",
+      "arguments": "p_text text",
+      "result": "text"
+    },
+    {
+      "signature": "lts_bank_posted_rows_v231(uuid)",
+      "arguments": "p_user_id uuid",
+      "result": "SETOF lts_open_finance_staging"
+    },
+    {
+      "signature": "lts_c6_cycle_identity_v269(uuid)",
+      "arguments": "p_user_id uuid",
+      "result": "TABLE(source_id uuid, reference_month date, due_date date, cycle_basis text)"
+    },
+    {
+      "signature": "lts_c6_paid_identity_v237(uuid)",
+      "arguments": "p_user_id uuid",
+      "result": "jsonb"
+    },
+    {
+      "signature": "lts_canonical_category_v1(uuid,text)",
+      "arguments": "p_user_id uuid, p_category text",
+      "result": "text"
+    },
+    {
+      "signature": "lts_canonical_description_fix86_v1(text)",
+      "arguments": "p_desc text",
+      "result": "text"
+    },
+    {
+      "signature": "lts_card_bank_monthly_deltas_v1(uuid)",
+      "arguments": "p_user_id uuid",
+      "result": "TABLE(source_id bigint, delta numeric)"
+    },
+    {
+      "signature": "lts_card_cycles_v226(uuid)",
+      "arguments": "p_user_id uuid",
+      "result": "jsonb"
+    },
+    {
+      "signature": "lts_card_document_candidates_v269(uuid)",
+      "arguments": "p_user_id uuid",
+      "result": "TABLE(document_id uuid, provider_id uuid, dc bigint, pc bigint)"
+    },
+    {
+      "signature": "lts_card_document_matches_v234(uuid)",
+      "arguments": "p_user_id uuid",
+      "result": "TABLE(document_id uuid, provider_id uuid)"
+    },
+    {
+      "signature": "lts_card_document_rows_v234(uuid)",
+      "arguments": "p_user_id uuid",
+      "result": "TABLE(source_id uuid, bank text, family text, card_name text, last4 text, billing_last4 text, posting_date date, purchase_date date, reference_month date, due_date date, provider_status text, amount numeric, description text, category text, category_basis text, installment_number integer, total_installments integer, is_payment boolean, bill_id text, observed_at timestamp with time zone)"
+    },
+    {
+      "signature": "lts_card_exact_recovery_v226(uuid,date,date)",
+      "arguments": "p_user_id uuid, p_from date, p_to date",
+      "result": "TABLE(event_date date, transaction_date date, competence_month date, amount numeric, category text, center_cost text, counterparty text, origin_type text, origin_name text, source_table text, source_ref text, coverage_mode text, is_property boolean, is_financing boolean, replaced_source_table text, replaced_source_ref text)"
+    },
+    {
+      "signature": "lts_card_family_key_v181(text,text)",
+      "arguments": "p_label text, p_account text",
+      "result": "text"
+    },
+    {
+      "signature": "lts_card_family_v226(text,text)",
+      "arguments": "p_name text, p_bank text",
+      "result": "text"
+    },
+    {
+      "signature": "lts_card_installment_key_v231(lts_open_finance_staging)",
+      "arguments": "s lts_open_finance_staging",
+      "result": "text"
+    },
+    {
+      "signature": "lts_card_invoice_account_v181(text)",
+      "arguments": "p_card_name text",
+      "result": "text"
+    },
+    {
+      "signature": "lts_card_invoice_amounts_v230_engine_v243(uuid)",
+      "arguments": "p_user_id uuid",
+      "result": "TABLE(user_id uuid, card_name text, reference_month date, due_date date, status text, amount numeric, source text)"
+    },
+    {
+      "signature": "lts_card_invoice_amounts_v230(uuid)",
+      "arguments": "p_user_id uuid",
+      "result": "TABLE(user_id uuid, card_name text, reference_month date, due_date date, status text, amount numeric, source text)"
+    },
+    {
+      "signature": "lts_card_merchant_key_v226(text)",
+      "arguments": "p_name text",
+      "result": "text"
+    },
+    {
+      "signature": "lts_card_observed_expense_eligible_v1(jsonb,date,date)",
+      "arguments": "p_card jsonb, p_today date, p_first_month date",
+      "result": "boolean"
+    },
+    {
+      "signature": "lts_card_settlement_contract_v273(uuid,uuid)",
+      "arguments": "p_user_id uuid, p_payment_id uuid",
+      "result": "jsonb"
+    },
+    {
+      "signature": "lts_card_settlement_evidence_valid_v273(uuid,uuid,jsonb,jsonb,jsonb,jsonb,date,jsonb,jsonb)",
+      "arguments": "p_user_id uuid, p_payment_id uuid, p_link jsonb, p_invoice jsonb, p_payment jsonb, p_items jsonb, p_as_of date, p_contract jsonb, p_coverage jsonb",
+      "result": "boolean"
+    },
+    {
+      "signature": "lts_card_settlement_expense_excluded_v273(uuid,uuid,jsonb)",
+      "arguments": "p_user_id uuid, p_payment_id uuid, p_coverage jsonb",
+      "result": "boolean"
+    },
+    {
+      "signature": "lts_card_source_rows_pre_v262(uuid)",
+      "arguments": "p_user_id uuid",
+      "result": "TABLE(source_id uuid, bank text, family text, card_name text, last4 text, billing_last4 text, posting_date date, purchase_date date, reference_month date, due_date date, provider_status text, amount numeric, description text, category text, category_basis text, installment_number integer, total_installments integer, is_payment boolean, bill_id text, observed_at timestamp with time zone)"
+    },
+    {
+      "signature": "lts_card_source_rows_v226(uuid)",
+      "arguments": "p_user_id uuid",
+      "result": "TABLE(source_id uuid, bank text, family text, card_name text, last4 text, billing_last4 text, posting_date date, purchase_date date, reference_month date, due_date date, provider_status text, amount numeric, description text, category text, category_basis text, installment_number integer, total_installments integer, is_payment boolean, bill_id text, observed_at timestamp with time zone)"
+    },
+    {
+      "signature": "lts_card_workbook_bank_rows_v1(uuid)",
+      "arguments": "p_user_id uuid",
+      "result": "SETOF lts_card_workbook_evidence_v226"
+    },
+    {
+      "signature": "lts_confirmation_key_for_flow_ref_v1(uuid,text)",
+      "arguments": "p_user_id uuid, p_source_ref text",
+      "result": "text"
+    },
+    {
+      "signature": "lts_corrected_cashflow_fix86_v1_engine_v247(uuid,date,date)",
+      "arguments": "p_user_id uuid, p_from date, p_to date",
+      "result": "TABLE(event_date date, account text, description text, signed_amount numeric, source text, source_ref text, confidence text, account_assignment text, legacy_index integer, original_date date, displaced boolean)"
+    },
+    {
+      "signature": "lts_corrected_cashflow_fix86_v1(uuid,date,date)",
+      "arguments": "p_user_id uuid, p_from date, p_to date",
+      "result": "TABLE(event_date date, account text, description text, signed_amount numeric, source text, source_ref text, confidence text, account_assignment text, legacy_index integer, original_date date, displaced boolean)"
+    },
+    {
+      "signature": "lts_corrected_cashflow_fix86_v2(uuid,date,date)",
+      "arguments": "p_user_id uuid, p_from date, p_to date",
+      "result": "TABLE(event_date date, account text, description text, signed_amount numeric, source text, source_ref text, confidence text, account_assignment text, legacy_index integer, original_date date, displaced boolean)"
+    },
+    {
+      "signature": "lts_corrected_cashflow_fix86_v3(uuid,date,date)",
+      "arguments": "p_user_id uuid, p_from date, p_to date",
+      "result": "TABLE(event_date date, account text, description text, signed_amount numeric, source text, source_ref text, confidence text, account_assignment text, legacy_index integer, original_date date, displaced boolean)"
+    },
+    {
+      "signature": "lts_corrected_cashflow_fix86_v4(uuid,date,date)",
+      "arguments": "p_user_id uuid, p_from date, p_to date",
+      "result": "TABLE(event_date date, account text, description text, signed_amount numeric, source text, source_ref text, confidence text, account_assignment text, legacy_index integer, original_date date, displaced boolean)"
+    },
+    {
+      "signature": "lts_corrected_cashflow_fix86_v5(uuid,date,date)",
+      "arguments": "p_user_id uuid, p_from date, p_to date",
+      "result": "TABLE(event_date date, account text, description text, signed_amount numeric, source text, source_ref text, confidence text, account_assignment text, legacy_index integer, original_date date, displaced boolean)"
+    },
+    {
+      "signature": "lts_corrected_cashflow_operational_v1(uuid,date,date)",
+      "arguments": "p_user_id uuid, p_from date, p_to date",
+      "result": "TABLE(event_date date, account text, description text, signed_amount numeric, source text, source_ref text, confidence text, account_assignment text, legacy_index integer, original_date date, displaced boolean)"
+    },
+    {
+      "signature": "lts_current_evidence_position_v1(uuid)",
+      "arguments": "p_user_id uuid",
+      "result": "jsonb"
+    },
+    {
+      "signature": "lts_current_evidence_position_v2(uuid)",
+      "arguments": "p_user_id uuid",
+      "result": "jsonb"
+    },
+    {
+      "signature": "lts_current_received_card_bills_v263(uuid)",
+      "arguments": "p_user_id uuid",
+      "result": "TABLE(family text, card_name text, last4 text, reference_month date, due_date date, amount numeric, source_updated_at timestamp with time zone, received_at timestamp with time zone, invoice_source_id uuid, payment_status text, reported_payment_amount numeric)"
+    },
+    {
+      "signature": "lts_expense_effective_rows_pre_v268(uuid,date,date)",
+      "arguments": "p_user_id uuid, p_from date, p_to date",
+      "result": "TABLE(event_date date, transaction_date date, competence_month date, amount numeric, category text, center_cost text, counterparty text, origin_type text, origin_name text, source_table text, source_ref text, coverage_mode text, is_property boolean, is_financing boolean)"
+    },
+    {
+      "signature": "lts_expense_effective_rows_v176(uuid,date,date)",
+      "arguments": "p_user_id uuid, p_from date, p_to date",
+      "result": "TABLE(event_date date, transaction_date date, competence_month date, amount numeric, category text, center_cost text, counterparty text, origin_type text, origin_name text, source_table text, source_ref text, coverage_mode text, is_property boolean, is_financing boolean)"
+    },
+    {
+      "signature": "lts_expense_effective_rows_v225_baseline(uuid,date,date)",
+      "arguments": "p_user_id uuid, p_from date, p_to date",
+      "result": "TABLE(event_date date, transaction_date date, competence_month date, amount numeric, category text, center_cost text, counterparty text, origin_type text, origin_name text, source_table text, source_ref text, coverage_mode text, is_property boolean, is_financing boolean)"
+    },
+    {
+      "signature": "lts_expense_management_group_v3(text,text,text,text,text)",
+      "arguments": "p_category text, p_center_cost text, p_counterparty text, p_origin_name text, p_coverage_mode text",
+      "result": "text"
+    },
+    {
+      "signature": "lts_expense_management_subgroup_v2(text,text,text,text,text)",
+      "arguments": "p_category text, p_center_cost text, p_counterparty text, p_origin_name text, p_coverage_mode text",
+      "result": "text"
+    },
+    {
+      "signature": "lts_expense_rows_v230_baseline(uuid,date,date)",
+      "arguments": "p_user_id uuid, p_from date, p_to date",
+      "result": "TABLE(row_key text, event_date date, transaction_date date, competence_month date, amount numeric, category text, beneficiary text, description text, account_source text, source_table text, source_ref text, coverage_mode text, raw_category text, raw_reference text, purchase_date date, identity_status text, management_group text, management_subgroup text, property_code text, property_component text)"
+    },
+    {
+      "signature": "lts_flow_current_effective_v1(uuid,date,date)",
+      "arguments": "p_user_id uuid, p_from date, p_to date",
+      "result": "TABLE(event_date date, account text, description text, signed_amount numeric, source_ref text, confidence text, account_assignment text, legacy_index integer, original_date date, displaced boolean)"
+    },
+    {
+      "signature": "lts_flow_observed_position_guard_v1(jsonb,date)",
+      "arguments": "p_flow jsonb, p_today date",
+      "result": "jsonb"
+    },
+    {
+      "signature": "lts_flow_operational_read_v229(uuid,date,date)",
+      "arguments": "p_user_id uuid, p_from date, p_to date",
+      "result": "jsonb"
+    },
+    {
+      "signature": "lts_flow_past_operational_v2(uuid,date,date)",
+      "arguments": "p_user_id uuid, p_from date, p_to date",
+      "result": "TABLE(event_date date, account text, description text, signed_amount numeric, source text, source_ref text, confidence text, account_assignment text, legacy_index integer, original_date date, displaced boolean, internal_transfer boolean, category text, counterparty text, center_cost text, excluded_from_spend boolean)"
+    },
+    {
+      "signature": "lts_historical_cash_engine_v243(uuid,date,date)",
+      "arguments": "p_user_id uuid, p_from date, p_to date",
+      "result": "TABLE(event_date date, account text, description text, signed_amount numeric, source text, source_ref text, confidence text, account_assignment text, legacy_index integer, original_date date, displaced boolean, internal_transfer boolean, category text, counterparty text, center_cost text, excluded_from_spend boolean)"
+    },
+    {
+      "signature": "lts_historical_effective_cash_pre_v246(uuid,date,date)",
+      "arguments": "p_user_id uuid, p_from date, p_to date",
+      "result": "TABLE(event_date date, account text, description text, signed_amount numeric, source text, source_ref text, confidence text, account_assignment text, legacy_index integer, original_date date, displaced boolean, internal_transfer boolean, category text, counterparty text, center_cost text, excluded_from_spend boolean)"
+    },
+    {
+      "signature": "lts_historical_effective_cash_v2(uuid,date,date)",
+      "arguments": "p_user_id uuid, p_from date, p_to date",
+      "result": "TABLE(event_date date, account text, description text, signed_amount numeric, source text, source_ref text, confidence text, account_assignment text, legacy_index integer, original_date date, displaced boolean, internal_transfer boolean, category text, counterparty text, center_cost text, excluded_from_spend boolean)"
+    },
+    {
+      "signature": "lts_historical_effective_cash_v3(uuid,date,date)",
+      "arguments": "p_user_id uuid, p_from date, p_to date",
+      "result": "TABLE(event_date date, account text, description text, signed_amount numeric, source text, source_ref text, confidence text, account_assignment text, legacy_index integer, original_date date, displaced boolean, internal_transfer boolean, category text, counterparty text, center_cost text, excluded_from_spend boolean)"
+    },
+    {
+      "signature": "lts_historical_effective_cash_v4_pre_v237(uuid,date,date)",
+      "arguments": "p_user_id uuid, p_from date, p_to date",
+      "result": "TABLE(event_date date, account text, description text, signed_amount numeric, source text, source_ref text, confidence text, account_assignment text, legacy_index integer, original_date date, displaced boolean, internal_transfer boolean, category text, counterparty text, center_cost text, excluded_from_spend boolean)"
+    },
+    {
+      "signature": "lts_historical_effective_cash_v4(uuid,date,date)",
+      "arguments": "p_user_id uuid, p_from date, p_to date",
+      "result": "TABLE(event_date date, account text, description text, signed_amount numeric, source text, source_ref text, confidence text, account_assignment text, legacy_index integer, original_date date, displaced boolean, internal_transfer boolean, category text, counterparty text, center_cost text, excluded_from_spend boolean)"
+    },
+    {
+      "signature": "lts_historical_effective_cash_v5(uuid,date,date)",
+      "arguments": "p_user_id uuid, p_from date, p_to date",
+      "result": "TABLE(event_date date, account text, description text, signed_amount numeric, source text, source_ref text, confidence text, account_assignment text, legacy_index integer, original_date date, displaced boolean, internal_transfer boolean, category text, counterparty text, center_cost text, excluded_from_spend boolean)"
+    },
+    {
+      "signature": "lts_internal_transfer_legs_fix86_v1(uuid,date,date)",
+      "arguments": "p_user_id uuid, p_from date, p_to date",
+      "result": "TABLE(event_date date, account text, description text, signed_amount numeric, source_ref text, confidence text)"
+    },
+    {
+      "signature": "lts_open_finance_checking_positions_v1(uuid)",
+      "arguments": "p_user_id uuid",
+      "result": "jsonb"
+    },
+    {
+      "signature": "lts_open_finance_current_bank_position_v1(uuid)",
+      "arguments": "p_user_id uuid",
+      "result": "jsonb"
+    },
+    {
+      "signature": "lts_open_finance_pilot_owner_v1()",
+      "arguments": "",
+      "result": "uuid"
+    },
+    {
+      "signature": "lts_operational_source_key_pre_v242(uuid)",
+      "arguments": "p_user_id uuid",
+      "result": "text"
+    },
+    {
+      "signature": "lts_operational_source_key_v238(uuid)",
+      "arguments": "p_user_id uuid",
+      "result": "text"
+    },
+    {
+      "signature": "lts_owner_confirmed_transfer_pairs_v263(uuid)",
+      "arguments": "p_user_id uuid",
+      "result": "TABLE(debit_id uuid, credit_id uuid)"
+    },
+    {
+      "signature": "lts_payroll_bank_matches_v231_engine_v243(uuid)",
+      "arguments": "p_user_id uuid",
+      "result": "TABLE(projection_ref text, projection_date date, projection_amount numeric, staging_id uuid, actual_date date, actual_amount numeric, bank text)"
+    },
+    {
+      "signature": "lts_payroll_bank_matches_v231(uuid)",
+      "arguments": "p_user_id uuid",
+      "result": "TABLE(projection_ref text, projection_date date, projection_amount numeric, staging_id uuid, actual_date date, actual_amount numeric, bank text)"
+    },
+    {
+      "signature": "lts_payroll_withholding_effective_v1(uuid,date,date)",
+      "arguments": "p_user_id uuid, p_from date, p_to date",
+      "result": "TABLE(schedule_due_date date, effective_event_date date, amount numeric, salary_source_ref text, salary_original_date date, source text)"
+    },
+    {
+      "signature": "lts_realized_bank_sources_v238(uuid)",
+      "arguments": "p_user_id uuid",
+      "result": "TABLE(financial_event_id uuid, staging_id uuid, bank text, event_date date, signed_amount numeric, description text, legacy_id text, category text, beneficiary text, property_code text, management_group text, management_subgroup text, property_component text)"
+    },
+    {
+      "signature": "lts_v178_norm(text)",
+      "arguments": "v text",
+      "result": "text"
+    },
+    {
+      "signature": "lts_v229_expense_rows_pre_v238(uuid,date,date)",
+      "arguments": "p_user_id uuid, p_from date, p_to date",
+      "result": "TABLE(row_key text, event_date date, transaction_date date, competence_month date, amount numeric, category text, beneficiary text, description text, account_source text, source_table text, source_ref text, coverage_mode text, raw_category text, raw_reference text, purchase_date date, identity_status text, management_group text, management_subgroup text, property_code text, property_component text)"
+    },
+    {
+      "signature": "lts_v229_expense_rows(uuid,date,date)",
+      "arguments": "p_user_id uuid, p_from date, p_to date",
+      "result": "TABLE(row_key text, event_date date, transaction_date date, competence_month date, amount numeric, category text, beneficiary text, description text, account_source text, source_table text, source_ref text, coverage_mode text, raw_category text, raw_reference text, purchase_date date, identity_status text, management_group text, management_subgroup text, property_code text, property_component text)"
+    },
+    {
+      "signature": "lts_v229_new_bank_rows(uuid,date,date)",
+      "arguments": "p_user_id uuid, p_from date, p_to date",
+      "result": "TABLE(id uuid, event_date date, signed_amount numeric, description text, bank text, category text)"
+    }
+  ],
+  "relations": [
+    {
+      "name": "public.accounts",
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid"
+        },
+        {
+          "name": "user_id",
+          "type": "uuid"
+        },
+        {
+          "name": "legacy_id",
+          "type": "text"
+        },
+        {
+          "name": "institution",
+          "type": "text"
+        },
+        {
+          "name": "account_name",
+          "type": "text"
+        },
+        {
+          "name": "account_type",
+          "type": "text"
+        },
+        {
+          "name": "currency",
+          "type": "text"
+        },
+        {
+          "name": "is_active",
+          "type": "boolean"
+        },
+        {
+          "name": "metadata",
+          "type": "jsonb"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "name": "public.card_invoices",
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid"
+        },
+        {
+          "name": "user_id",
+          "type": "uuid"
+        },
+        {
+          "name": "legacy_id",
+          "type": "text"
+        },
+        {
+          "name": "card_name",
+          "type": "text"
+        },
+        {
+          "name": "billing_account_id",
+          "type": "text"
+        },
+        {
+          "name": "reference_month",
+          "type": "date"
+        },
+        {
+          "name": "due_date",
+          "type": "date"
+        },
+        {
+          "name": "status",
+          "type": "text"
+        },
+        {
+          "name": "amount",
+          "type": "numeric(18,2)"
+        },
+        {
+          "name": "source",
+          "type": "text"
+        },
+        {
+          "name": "metadata",
+          "type": "jsonb"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "name": "public.compra_parcelada",
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint"
+        },
+        {
+          "name": "usuario_id",
+          "type": "uuid"
+        },
+        {
+          "name": "idx_origem",
+          "type": "integer"
+        },
+        {
+          "name": "id_origem",
+          "type": "text"
+        },
+        {
+          "name": "dados",
+          "type": "jsonb"
+        },
+        {
+          "name": "importado_em",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "name": "public.deslocamento",
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint"
+        },
+        {
+          "name": "usuario_id",
+          "type": "uuid"
+        },
+        {
+          "name": "idx_origem",
+          "type": "integer"
+        },
+        {
+          "name": "id_origem",
+          "type": "text"
+        },
+        {
+          "name": "dados",
+          "type": "jsonb"
+        },
+        {
+          "name": "importado_em",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "name": "public.evento_base",
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint"
+        },
+        {
+          "name": "usuario_id",
+          "type": "uuid"
+        },
+        {
+          "name": "idx",
+          "type": "integer"
+        },
+        {
+          "name": "dados",
+          "type": "jsonb"
+        }
+      ]
+    },
+    {
+      "name": "public.evento_usuario",
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint"
+        },
+        {
+          "name": "usuario_id",
+          "type": "uuid"
+        },
+        {
+          "name": "idx_origem",
+          "type": "integer"
+        },
+        {
+          "name": "id_origem",
+          "type": "text"
+        },
+        {
+          "name": "dados",
+          "type": "jsonb"
+        },
+        {
+          "name": "importado_em",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "name": "public.financial_events",
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid"
+        },
+        {
+          "name": "user_id",
+          "type": "uuid"
+        },
+        {
+          "name": "account_id",
+          "type": "uuid"
+        },
+        {
+          "name": "legacy_id",
+          "type": "text"
+        },
+        {
+          "name": "legacy_index",
+          "type": "integer"
+        },
+        {
+          "name": "event_date",
+          "type": "date"
+        },
+        {
+          "name": "description_raw",
+          "type": "text"
+        },
+        {
+          "name": "description_normalized",
+          "type": "text"
+        },
+        {
+          "name": "amount",
+          "type": "numeric(18,2)"
+        },
+        {
+          "name": "nature",
+          "type": "text"
+        },
+        {
+          "name": "category",
+          "type": "text"
+        },
+        {
+          "name": "counterparty",
+          "type": "text"
+        },
+        {
+          "name": "source",
+          "type": "text"
+        },
+        {
+          "name": "status",
+          "type": "text"
+        },
+        {
+          "name": "is_internal_transfer",
+          "type": "boolean"
+        },
+        {
+          "name": "is_projection",
+          "type": "boolean"
+        },
+        {
+          "name": "is_suppressed",
+          "type": "boolean"
+        },
+        {
+          "name": "suppression_reason",
+          "type": "text"
+        },
+        {
+          "name": "metadata",
+          "type": "jsonb"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "name": "public.historico_analitico",
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint"
+        },
+        {
+          "name": "usuario_id",
+          "type": "uuid"
+        },
+        {
+          "name": "idx",
+          "type": "integer"
+        },
+        {
+          "name": "dados",
+          "type": "jsonb"
+        }
+      ]
+    },
+    {
+      "name": "public.legacy_namespace",
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint"
+        },
+        {
+          "name": "usuario_id",
+          "type": "uuid"
+        },
+        {
+          "name": "chave",
+          "type": "text"
+        },
+        {
+          "name": "valor_bruto",
+          "type": "text"
+        },
+        {
+          "name": "sha256",
+          "type": "text"
+        },
+        {
+          "name": "importado_em",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "name": "public.lts_access_audit",
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint"
+        },
+        {
+          "name": "user_id",
+          "type": "uuid"
+        },
+        {
+          "name": "email",
+          "type": "text"
+        },
+        {
+          "name": "action",
+          "type": "text"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "meta",
+          "type": "jsonb"
+        }
+      ]
+    },
+    {
+      "name": "public.lts_analytics_timeline",
+      "columns": [
+        {
+          "name": "user_id",
+          "type": "uuid"
+        },
+        {
+          "name": "source_table",
+          "type": "text"
+        },
+        {
+          "name": "source_ref",
+          "type": "text"
+        },
+        {
+          "name": "event_date",
+          "type": "date"
+        },
+        {
+          "name": "description_raw",
+          "type": "text"
+        },
+        {
+          "name": "account_raw",
+          "type": "text"
+        },
+        {
+          "name": "category_raw",
+          "type": "text"
+        },
+        {
+          "name": "macro_raw",
+          "type": "text"
+        },
+        {
+          "name": "direction",
+          "type": "text"
+        },
+        {
+          "name": "amount",
+          "type": "numeric"
+        },
+        {
+          "name": "is_future_vs_checkpoint",
+          "type": "boolean"
+        },
+        {
+          "name": "raw_payload",
+          "type": "jsonb"
+        }
+      ]
+    },
+    {
+      "name": "public.lts_card_document_supplement_v234",
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid"
+        },
+        {
+          "name": "user_id",
+          "type": "uuid"
+        },
+        {
+          "name": "institution_code",
+          "type": "text"
+        },
+        {
+          "name": "bank",
+          "type": "text"
+        },
+        {
+          "name": "family",
+          "type": "text"
+        },
+        {
+          "name": "card_name",
+          "type": "text"
+        },
+        {
+          "name": "provider_account_ref",
+          "type": "text"
+        },
+        {
+          "name": "billing_last4",
+          "type": "text"
+        },
+        {
+          "name": "last4",
+          "type": "text"
+        },
+        {
+          "name": "reference_month",
+          "type": "date"
+        },
+        {
+          "name": "due_date",
+          "type": "date"
+        },
+        {
+          "name": "purchase_date",
+          "type": "date"
+        },
+        {
+          "name": "amount",
+          "type": "numeric(18,2)"
+        },
+        {
+          "name": "description",
+          "type": "text"
+        },
+        {
+          "name": "installment_number",
+          "type": "integer"
+        },
+        {
+          "name": "total_installments",
+          "type": "integer"
+        },
+        {
+          "name": "category",
+          "type": "text"
+        },
+        {
+          "name": "source_as_of",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "source_file_ref",
+          "type": "text"
+        },
+        {
+          "name": "source_sha256",
+          "type": "text"
+        },
+        {
+          "name": "source_page",
+          "type": "integer"
+        },
+        {
+          "name": "source_line",
+          "type": "integer"
+        },
+        {
+          "name": "reported_invoice_total",
+          "type": "numeric(18,2)"
+        },
+        {
+          "name": "metadata",
+          "type": "jsonb"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "name": "public.lts_card_documentary_payment_link_v272",
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid"
+        },
+        {
+          "name": "user_id",
+          "type": "uuid"
+        },
+        {
+          "name": "invoice_source_id",
+          "type": "uuid"
+        },
+        {
+          "name": "payment_source_id",
+          "type": "uuid"
+        },
+        {
+          "name": "institution_code",
+          "type": "text"
+        },
+        {
+          "name": "provider_item_id",
+          "type": "text"
+        },
+        {
+          "name": "invoice_account_ref",
+          "type": "text"
+        },
+        {
+          "name": "payment_account_ref",
+          "type": "text"
+        },
+        {
+          "name": "expected_amount",
+          "type": "numeric(18,2)"
+        },
+        {
+          "name": "expected_due_date",
+          "type": "date"
+        },
+        {
+          "name": "expected_closing_date",
+          "type": "date"
+        },
+        {
+          "name": "expected_payment_date",
+          "type": "date"
+        },
+        {
+          "name": "invoice_raw_hash",
+          "type": "text"
+        },
+        {
+          "name": "payment_raw_hash",
+          "type": "text"
+        },
+        {
+          "name": "documentary_sources",
+          "type": "jsonb"
+        },
+        {
+          "name": "active",
+          "type": "boolean"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "name": "public.lts_card_formula_resolution_v237",
+      "columns": [
+        {
+          "name": "user_id",
+          "type": "uuid"
+        },
+        {
+          "name": "family",
+          "type": "text"
+        },
+        {
+          "name": "reference_month",
+          "type": "date"
+        },
+        {
+          "name": "source_hash",
+          "type": "text"
+        },
+        {
+          "name": "source_sheet",
+          "type": "text"
+        },
+        {
+          "name": "expected_rows",
+          "type": "integer"
+        },
+        {
+          "name": "invoice_amount",
+          "type": "numeric"
+        },
+        {
+          "name": "raw_detail_total",
+          "type": "numeric"
+        },
+        {
+          "name": "excluded_rows",
+          "type": "jsonb"
+        },
+        {
+          "name": "formula_evidence",
+          "type": "jsonb"
+        },
+        {
+          "name": "source_note",
+          "type": "text"
+        },
+        {
+          "name": "verified_at",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "name": "public.lts_card_historical_category_allocation",
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint"
+        },
+        {
+          "name": "user_id",
+          "type": "uuid"
+        },
+        {
+          "name": "competence_month",
+          "type": "date"
+        },
+        {
+          "name": "origin_name",
+          "type": "text"
+        },
+        {
+          "name": "ledger_source_table",
+          "type": "text"
+        },
+        {
+          "name": "ledger_source_ref",
+          "type": "text"
+        },
+        {
+          "name": "category_raw",
+          "type": "text"
+        },
+        {
+          "name": "category",
+          "type": "text"
+        },
+        {
+          "name": "amount",
+          "type": "numeric"
+        },
+        {
+          "name": "source_row_count",
+          "type": "integer"
+        },
+        {
+          "name": "source_file",
+          "type": "text"
+        },
+        {
+          "name": "source_snapshot",
+          "type": "text"
+        },
+        {
+          "name": "source_total",
+          "type": "numeric"
+        },
+        {
+          "name": "ledger_total",
+          "type": "numeric"
+        },
+        {
+          "name": "reconciliation_delta",
+          "type": "numeric"
+        },
+        {
+          "name": "allocation_status",
+          "type": "text"
+        },
+        {
+          "name": "evidence",
+          "type": "jsonb"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "name": "public.lts_card_historical_validation_registry",
+      "columns": [
+        {
+          "name": "user_id",
+          "type": "uuid"
+        },
+        {
+          "name": "origin_name",
+          "type": "text"
+        },
+        {
+          "name": "competence_month",
+          "type": "date"
+        },
+        {
+          "name": "ledger_source_ref",
+          "type": "text"
+        },
+        {
+          "name": "source_total",
+          "type": "numeric"
+        },
+        {
+          "name": "ledger_total",
+          "type": "numeric"
+        },
+        {
+          "name": "signed_credit_evidence",
+          "type": "numeric"
+        },
+        {
+          "name": "validation_status",
+          "type": "text"
+        },
+        {
+          "name": "settlement_status",
+          "type": "text"
+        },
+        {
+          "name": "composition_status",
+          "type": "text"
+        },
+        {
+          "name": "blocker",
+          "type": "text"
+        },
+        {
+          "name": "provenance",
+          "type": "text"
+        },
+        {
+          "name": "evidence",
+          "type": "jsonb"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "name": "public.lts_card_history_recovered_purchase",
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint"
+        },
+        {
+          "name": "user_id",
+          "type": "uuid"
+        },
+        {
+          "name": "source_hash",
+          "type": "text"
+        },
+        {
+          "name": "source_file",
+          "type": "text"
+        },
+        {
+          "name": "source_sheet",
+          "type": "text"
+        },
+        {
+          "name": "source_row",
+          "type": "integer"
+        },
+        {
+          "name": "invoice_due_date",
+          "type": "date"
+        },
+        {
+          "name": "competence_month",
+          "type": "date"
+        },
+        {
+          "name": "billing_family_key",
+          "type": "text"
+        },
+        {
+          "name": "card_final",
+          "type": "text"
+        },
+        {
+          "name": "category_raw",
+          "type": "text"
+        },
+        {
+          "name": "canonical_category",
+          "type": "text"
+        },
+        {
+          "name": "description_raw",
+          "type": "text"
+        },
+        {
+          "name": "merchant_raw",
+          "type": "text"
+        },
+        {
+          "name": "amount",
+          "type": "numeric"
+        },
+        {
+          "name": "provenance",
+          "type": "text"
+        },
+        {
+          "name": "evidence",
+          "type": "jsonb"
+        },
+        {
+          "name": "promoted_from_staging_id",
+          "type": "bigint"
+        },
+        {
+          "name": "promoted_at",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "name": "public.lts_card_history_source_audit_v235",
+      "columns": [
+        {
+          "name": "user_id",
+          "type": "uuid"
+        },
+        {
+          "name": "source_table",
+          "type": "text"
+        },
+        {
+          "name": "source_ref",
+          "type": "text"
+        },
+        {
+          "name": "event_date",
+          "type": "date"
+        },
+        {
+          "name": "competence_month",
+          "type": "date"
+        },
+        {
+          "name": "origin_name",
+          "type": "text"
+        },
+        {
+          "name": "ledger_amount",
+          "type": "numeric"
+        },
+        {
+          "name": "source_signed_amount",
+          "type": "numeric"
+        },
+        {
+          "name": "source_file",
+          "type": "text"
+        },
+        {
+          "name": "source_sha256",
+          "type": "text"
+        },
+        {
+          "name": "source_sheet",
+          "type": "text"
+        },
+        {
+          "name": "source_rows",
+          "type": "jsonb"
+        },
+        {
+          "name": "source_description",
+          "type": "text"
+        },
+        {
+          "name": "composition_status",
+          "type": "text"
+        },
+        {
+          "name": "detail_rows",
+          "type": "integer"
+        },
+        {
+          "name": "detail_total",
+          "type": "numeric"
+        },
+        {
+          "name": "detail_difference",
+          "type": "numeric"
+        },
+        {
+          "name": "evidence",
+          "type": "jsonb"
+        },
+        {
+          "name": "verified_at",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "name": "public.lts_card_purchase_detail",
+      "columns": [
+        {
+          "name": "user_id",
+          "type": "uuid"
+        },
+        {
+          "name": "row_id",
+          "type": "bigint"
+        },
+        {
+          "name": "source_id",
+          "type": "text"
+        },
+        {
+          "name": "purchase_id",
+          "type": "text"
+        },
+        {
+          "name": "invoice_id",
+          "type": "text"
+        },
+        {
+          "name": "bank",
+          "type": "text"
+        },
+        {
+          "name": "account",
+          "type": "text"
+        },
+        {
+          "name": "card_name",
+          "type": "text"
+        },
+        {
+          "name": "card_final",
+          "type": "text"
+        },
+        {
+          "name": "holder",
+          "type": "text"
+        },
+        {
+          "name": "holder_type",
+          "type": "text"
+        },
+        {
+          "name": "card_type",
+          "type": "text"
+        },
+        {
+          "name": "purchase_date",
+          "type": "date"
+        },
+        {
+          "name": "invoice_due_date",
+          "type": "date"
+        },
+        {
+          "name": "description_raw",
+          "type": "text"
+        },
+        {
+          "name": "description_normalized",
+          "type": "text"
+        },
+        {
+          "name": "category",
+          "type": "text"
+        },
+        {
+          "name": "note",
+          "type": "text"
+        },
+        {
+          "name": "installments",
+          "type": "integer"
+        },
+        {
+          "name": "installment_number",
+          "type": "integer"
+        },
+        {
+          "name": "installment_amount",
+          "type": "numeric"
+        },
+        {
+          "name": "purchase_total",
+          "type": "numeric"
+        },
+        {
+          "name": "purchase_key",
+          "type": "text"
+        },
+        {
+          "name": "line_key",
+          "type": "text"
+        },
+        {
+          "name": "source",
+          "type": "text"
+        },
+        {
+          "name": "imported_at",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "name": "public.lts_card_settlement_expense_contract_v273",
+      "columns": [
+        {
+          "name": "user_id",
+          "type": "uuid"
+        },
+        {
+          "name": "payment_source_id",
+          "type": "uuid"
+        },
+        {
+          "name": "revision",
+          "type": "text"
+        },
+        {
+          "name": "payload",
+          "type": "jsonb"
+        },
+        {
+          "name": "active",
+          "type": "boolean"
+        }
+      ]
+    },
+    {
+      "name": "public.lts_card_workbook_evidence_v226",
+      "columns": [
+        {
+          "name": "user_id",
+          "type": "uuid"
+        },
+        {
+          "name": "family",
+          "type": "text"
+        },
+        {
+          "name": "reference_month",
+          "type": "date"
+        },
+        {
+          "name": "source_hash",
+          "type": "text"
+        },
+        {
+          "name": "source_sheet",
+          "type": "text"
+        },
+        {
+          "name": "source_row",
+          "type": "integer"
+        },
+        {
+          "name": "source_date",
+          "type": "date"
+        },
+        {
+          "name": "category",
+          "type": "text"
+        },
+        {
+          "name": "last4",
+          "type": "text"
+        },
+        {
+          "name": "amount",
+          "type": "numeric"
+        },
+        {
+          "name": "expected_invoice_amount",
+          "type": "numeric"
+        },
+        {
+          "name": "expected_rows",
+          "type": "integer"
+        },
+        {
+          "name": "evidence",
+          "type": "jsonb"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "name": "public.lts_category_alias",
+      "columns": [
+        {
+          "name": "user_id",
+          "type": "uuid"
+        },
+        {
+          "name": "alias",
+          "type": "text"
+        },
+        {
+          "name": "canonical_category",
+          "type": "text"
+        },
+        {
+          "name": "rationale",
+          "type": "text"
+        },
+        {
+          "name": "active",
+          "type": "boolean"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "name": "public.lts_commitment_documentary_schedule",
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid"
+        },
+        {
+          "name": "user_id",
+          "type": "uuid"
+        },
+        {
+          "name": "commitment_id",
+          "type": "text"
+        },
+        {
+          "name": "installment_number",
+          "type": "integer"
+        },
+        {
+          "name": "due_date",
+          "type": "date"
+        },
+        {
+          "name": "amount_total",
+          "type": "numeric"
+        },
+        {
+          "name": "principal",
+          "type": "numeric"
+        },
+        {
+          "name": "interest",
+          "type": "numeric"
+        },
+        {
+          "name": "mip",
+          "type": "numeric"
+        },
+        {
+          "name": "dfi",
+          "type": "numeric"
+        },
+        {
+          "name": "tsa",
+          "type": "numeric"
+        },
+        {
+          "name": "balance_after",
+          "type": "numeric"
+        },
+        {
+          "name": "status",
+          "type": "text"
+        },
+        {
+          "name": "paid_date",
+          "type": "date"
+        },
+        {
+          "name": "paid_amount",
+          "type": "numeric"
+        },
+        {
+          "name": "source_label",
+          "type": "text"
+        },
+        {
+          "name": "metadata",
+          "type": "jsonb"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "name": "public.lts_document_card_purchase",
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid"
+        },
+        {
+          "name": "user_id",
+          "type": "uuid"
+        },
+        {
+          "name": "source_inbox_id",
+          "type": "uuid"
+        },
+        {
+          "name": "source_entry_index",
+          "type": "integer"
+        },
+        {
+          "name": "purchase_date",
+          "type": "date"
+        },
+        {
+          "name": "card_name",
+          "type": "text"
+        },
+        {
+          "name": "amount",
+          "type": "numeric"
+        },
+        {
+          "name": "description",
+          "type": "text"
+        },
+        {
+          "name": "category",
+          "type": "text"
+        },
+        {
+          "name": "cost_center",
+          "type": "text"
+        },
+        {
+          "name": "counterparty",
+          "type": "text"
+        },
+        {
+          "name": "status",
+          "type": "text"
+        },
+        {
+          "name": "idempotency_key",
+          "type": "text"
+        },
+        {
+          "name": "metadata",
+          "type": "jsonb"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "name": "public.lts_expense_analytics_candidate",
+      "columns": [
+        {
+          "name": "user_id",
+          "type": "uuid"
+        },
+        {
+          "name": "source_table",
+          "type": "text"
+        },
+        {
+          "name": "source_ref",
+          "type": "text"
+        },
+        {
+          "name": "event_date",
+          "type": "date"
+        },
+        {
+          "name": "description_raw",
+          "type": "text"
+        },
+        {
+          "name": "account_raw",
+          "type": "text"
+        },
+        {
+          "name": "category_raw",
+          "type": "text"
+        },
+        {
+          "name": "macro_raw",
+          "type": "text"
+        },
+        {
+          "name": "direction",
+          "type": "text"
+        },
+        {
+          "name": "amount",
+          "type": "numeric"
+        },
+        {
+          "name": "is_future_vs_checkpoint",
+          "type": "boolean"
+        },
+        {
+          "name": "raw_payload",
+          "type": "jsonb"
+        },
+        {
+          "name": "semantic_rule_id",
+          "type": "text"
+        },
+        {
+          "name": "semantic_nature",
+          "type": "text"
+        },
+        {
+          "name": "category_candidate",
+          "type": "text"
+        },
+        {
+          "name": "counterparty_candidate",
+          "type": "text"
+        },
+        {
+          "name": "center_cost_candidate",
+          "type": "text"
+        },
+        {
+          "name": "is_internal_transfer",
+          "type": "boolean"
+        },
+        {
+          "name": "is_asset_movement",
+          "type": "boolean"
+        },
+        {
+          "name": "exclude_from_spend",
+          "type": "boolean"
+        },
+        {
+          "name": "semantic_confidence",
+          "type": "text"
+        }
+      ]
+    },
+    {
+      "name": "public.lts_expense_effective_read_cache",
+      "columns": [
+        {
+          "name": "user_id",
+          "type": "uuid"
+        },
+        {
+          "name": "event_date",
+          "type": "date"
+        },
+        {
+          "name": "transaction_date",
+          "type": "date"
+        },
+        {
+          "name": "competence_month",
+          "type": "date"
+        },
+        {
+          "name": "amount",
+          "type": "numeric"
+        },
+        {
+          "name": "category",
+          "type": "text"
+        },
+        {
+          "name": "center_cost",
+          "type": "text"
+        },
+        {
+          "name": "counterparty",
+          "type": "text"
+        },
+        {
+          "name": "origin_type",
+          "type": "text"
+        },
+        {
+          "name": "origin_name",
+          "type": "text"
+        },
+        {
+          "name": "source_table",
+          "type": "text"
+        },
+        {
+          "name": "source_ref",
+          "type": "text"
+        },
+        {
+          "name": "coverage_mode",
+          "type": "text"
+        },
+        {
+          "name": "is_property",
+          "type": "boolean"
+        },
+        {
+          "name": "is_financing",
+          "type": "boolean"
+        },
+        {
+          "name": "refreshed_at",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "name": "public.lts_expense_realized",
+      "columns": [
+        {
+          "name": "user_id",
+          "type": "uuid"
+        },
+        {
+          "name": "source_table",
+          "type": "text"
+        },
+        {
+          "name": "source_ref",
+          "type": "text"
+        },
+        {
+          "name": "event_date",
+          "type": "date"
+        },
+        {
+          "name": "description_raw",
+          "type": "text"
+        },
+        {
+          "name": "account_raw",
+          "type": "text"
+        },
+        {
+          "name": "category_raw",
+          "type": "text"
+        },
+        {
+          "name": "macro_raw",
+          "type": "text"
+        },
+        {
+          "name": "direction",
+          "type": "text"
+        },
+        {
+          "name": "amount",
+          "type": "numeric"
+        },
+        {
+          "name": "is_future_vs_checkpoint",
+          "type": "boolean"
+        },
+        {
+          "name": "raw_payload",
+          "type": "jsonb"
+        },
+        {
+          "name": "semantic_rule_id",
+          "type": "text"
+        },
+        {
+          "name": "semantic_nature",
+          "type": "text"
+        },
+        {
+          "name": "category_candidate",
+          "type": "text"
+        },
+        {
+          "name": "counterparty_candidate",
+          "type": "text"
+        },
+        {
+          "name": "center_cost_candidate",
+          "type": "text"
+        },
+        {
+          "name": "is_internal_transfer",
+          "type": "boolean"
+        },
+        {
+          "name": "is_asset_movement",
+          "type": "boolean"
+        },
+        {
+          "name": "exclude_from_spend",
+          "type": "boolean"
+        },
+        {
+          "name": "semantic_confidence",
+          "type": "text"
+        },
+        {
+          "name": "superseded_or_suppressed_legacy",
+          "type": "boolean"
+        }
+      ]
+    },
+    {
+      "name": "public.lts_external_reference_fact",
+      "columns": [
+        {
+          "name": "reference_key",
+          "type": "text"
+        },
+        {
+          "name": "as_of_date",
+          "type": "date"
+        },
+        {
+          "name": "scope",
+          "type": "text"
+        },
+        {
+          "name": "value_numeric",
+          "type": "numeric"
+        },
+        {
+          "name": "value_text",
+          "type": "text"
+        },
+        {
+          "name": "unit",
+          "type": "text"
+        },
+        {
+          "name": "confidence",
+          "type": "text"
+        },
+        {
+          "name": "source_name",
+          "type": "text"
+        },
+        {
+          "name": "source_url",
+          "type": "text"
+        },
+        {
+          "name": "evidence",
+          "type": "text"
+        },
+        {
+          "name": "metadata",
+          "type": "jsonb"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "name": "public.lts_fact_confirmation",
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint"
+        },
+        {
+          "name": "user_id",
+          "type": "uuid"
+        },
+        {
+          "name": "source_ref",
+          "type": "text"
+        },
+        {
+          "name": "event_date",
+          "type": "date"
+        },
+        {
+          "name": "account",
+          "type": "text"
+        },
+        {
+          "name": "signed_amount",
+          "type": "numeric"
+        },
+        {
+          "name": "confirmation_source",
+          "type": "text"
+        },
+        {
+          "name": "note",
+          "type": "text"
+        },
+        {
+          "name": "confirmed_at",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "name": "public.lts_flow_event_operation",
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid"
+        },
+        {
+          "name": "user_id",
+          "type": "uuid"
+        },
+        {
+          "name": "target_event_id",
+          "type": "uuid"
+        },
+        {
+          "name": "operation",
+          "type": "text"
+        },
+        {
+          "name": "payload",
+          "type": "jsonb"
+        },
+        {
+          "name": "idempotency_key",
+          "type": "text"
+        },
+        {
+          "name": "active",
+          "type": "boolean"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "op_seq",
+          "type": "bigint"
+        }
+      ]
+    },
+    {
+      "name": "public.lts_liquidity_movement",
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid"
+        },
+        {
+          "name": "user_id",
+          "type": "uuid"
+        },
+        {
+          "name": "event_date",
+          "type": "date"
+        },
+        {
+          "name": "movement_type",
+          "type": "text"
+        },
+        {
+          "name": "account_id",
+          "type": "uuid"
+        },
+        {
+          "name": "asset_position_id",
+          "type": "uuid"
+        },
+        {
+          "name": "amount_brl",
+          "type": "numeric"
+        },
+        {
+          "name": "bank_delta_brl",
+          "type": "numeric"
+        },
+        {
+          "name": "asset_delta_brl",
+          "type": "numeric"
+        },
+        {
+          "name": "description",
+          "type": "text"
+        },
+        {
+          "name": "idempotency_key",
+          "type": "text"
+        },
+        {
+          "name": "bank_event_id",
+          "type": "uuid"
+        },
+        {
+          "name": "status",
+          "type": "text"
+        },
+        {
+          "name": "metadata",
+          "type": "jsonb"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "name": "public.lts_manual_card_purchase",
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid"
+        },
+        {
+          "name": "user_id",
+          "type": "uuid"
+        },
+        {
+          "name": "purchase_date",
+          "type": "date"
+        },
+        {
+          "name": "card_name",
+          "type": "text"
+        },
+        {
+          "name": "amount",
+          "type": "numeric"
+        },
+        {
+          "name": "description",
+          "type": "text"
+        },
+        {
+          "name": "category",
+          "type": "text"
+        },
+        {
+          "name": "cost_center",
+          "type": "text"
+        },
+        {
+          "name": "counterparty",
+          "type": "text"
+        },
+        {
+          "name": "status",
+          "type": "text"
+        },
+        {
+          "name": "source_inbox_id",
+          "type": "uuid"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "metadata",
+          "type": "jsonb"
+        }
+      ]
+    },
+    {
+      "name": "public.lts_open_finance_staging",
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid"
+        },
+        {
+          "name": "user_id",
+          "type": "uuid"
+        },
+        {
+          "name": "connection_id",
+          "type": "uuid"
+        },
+        {
+          "name": "sync_run_id",
+          "type": "uuid"
+        },
+        {
+          "name": "provider",
+          "type": "text"
+        },
+        {
+          "name": "resource_type",
+          "type": "text"
+        },
+        {
+          "name": "provider_record_id",
+          "type": "text"
+        },
+        {
+          "name": "provider_account_ref",
+          "type": "text"
+        },
+        {
+          "name": "institution_code",
+          "type": "text"
+        },
+        {
+          "name": "institution_name",
+          "type": "text"
+        },
+        {
+          "name": "occurred_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "posting_date",
+          "type": "date"
+        },
+        {
+          "name": "reference_month",
+          "type": "date"
+        },
+        {
+          "name": "signed_amount",
+          "type": "numeric"
+        },
+        {
+          "name": "currency",
+          "type": "text"
+        },
+        {
+          "name": "description_raw",
+          "type": "text"
+        },
+        {
+          "name": "description_normalized",
+          "type": "text"
+        },
+        {
+          "name": "normalized_payload",
+          "type": "jsonb"
+        },
+        {
+          "name": "raw_payload",
+          "type": "jsonb"
+        },
+        {
+          "name": "raw_hash",
+          "type": "text"
+        },
+        {
+          "name": "match_status",
+          "type": "text"
+        },
+        {
+          "name": "matched_source_table",
+          "type": "text"
+        },
+        {
+          "name": "matched_source_ref",
+          "type": "text"
+        },
+        {
+          "name": "match_confidence",
+          "type": "numeric"
+        },
+        {
+          "name": "promotion_status",
+          "type": "text"
+        },
+        {
+          "name": "promotion_source_table",
+          "type": "text"
+        },
+        {
+          "name": "promotion_source_ref",
+          "type": "text"
+        },
+        {
+          "name": "block_reason",
+          "type": "text"
+        },
+        {
+          "name": "first_seen_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "last_seen_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "source_event_type",
+          "type": "text"
+        },
+        {
+          "name": "provider_updated_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "provider_deleted_at",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "name": "public.lts_project_checkpoint",
+      "columns": [
+        {
+          "name": "id",
+          "type": "text"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "current_release",
+          "type": "text"
+        },
+        {
+          "name": "homologation_url",
+          "type": "text"
+        },
+        {
+          "name": "api_version",
+          "type": "integer"
+        },
+        {
+          "name": "engine_qa",
+          "type": "jsonb"
+        },
+        {
+          "name": "canonical_rules",
+          "type": "jsonb"
+        },
+        {
+          "name": "current_financial_evidence",
+          "type": "jsonb"
+        },
+        {
+          "name": "unresolved_blockers",
+          "type": "jsonb"
+        },
+        {
+          "name": "next_actions",
+          "type": "jsonb"
+        },
+        {
+          "name": "notes",
+          "type": "jsonb"
+        }
+      ]
+    },
+    {
+      "name": "public.lts_projection_replacement_rule",
+      "columns": [
+        {
+          "name": "id",
+          "type": "text"
+        },
+        {
+          "name": "user_id",
+          "type": "uuid"
+        },
+        {
+          "name": "source_table",
+          "type": "text"
+        },
+        {
+          "name": "description_exact",
+          "type": "text"
+        },
+        {
+          "name": "account_exact",
+          "type": "text"
+        },
+        {
+          "name": "date_from",
+          "type": "date"
+        },
+        {
+          "name": "date_to",
+          "type": "date"
+        },
+        {
+          "name": "action",
+          "type": "text"
+        },
+        {
+          "name": "replacement_source",
+          "type": "text"
+        },
+        {
+          "name": "replacement_ref",
+          "type": "text"
+        },
+        {
+          "name": "reason",
+          "type": "text"
+        },
+        {
+          "name": "evidence",
+          "type": "jsonb"
+        },
+        {
+          "name": "active",
+          "type": "boolean"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "name": "public.lts_read_cache_epoch_v242",
+      "columns": [
+        {
+          "name": "singleton",
+          "type": "boolean"
+        },
+        {
+          "name": "epoch",
+          "type": "bigint"
+        }
+      ]
+    },
+    {
+      "name": "public.lts_realized_bank_event_v238",
+      "columns": [
+        {
+          "name": "user_id",
+          "type": "uuid"
+        },
+        {
+          "name": "financial_event_id",
+          "type": "uuid"
+        },
+        {
+          "name": "staging_id",
+          "type": "uuid"
+        },
+        {
+          "name": "bank",
+          "type": "text"
+        },
+        {
+          "name": "expected_date",
+          "type": "date"
+        },
+        {
+          "name": "expected_amount",
+          "type": "numeric"
+        },
+        {
+          "name": "category",
+          "type": "text"
+        },
+        {
+          "name": "beneficiary",
+          "type": "text"
+        },
+        {
+          "name": "property_code",
+          "type": "text"
+        },
+        {
+          "name": "management_group",
+          "type": "text"
+        },
+        {
+          "name": "management_subgroup",
+          "type": "text"
+        },
+        {
+          "name": "property_component",
+          "type": "text"
+        },
+        {
+          "name": "evidence",
+          "type": "jsonb"
+        },
+        {
+          "name": "verified_at",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "name": "public.lts_reconciliation_evidence",
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid"
+        },
+        {
+          "name": "user_id",
+          "type": "uuid"
+        },
+        {
+          "name": "evidence_date",
+          "type": "date"
+        },
+        {
+          "name": "account",
+          "type": "text"
+        },
+        {
+          "name": "amount",
+          "type": "numeric"
+        },
+        {
+          "name": "description",
+          "type": "text"
+        },
+        {
+          "name": "evidence_type",
+          "type": "text"
+        },
+        {
+          "name": "source_ref",
+          "type": "text"
+        },
+        {
+          "name": "status",
+          "type": "text"
+        },
+        {
+          "name": "metadata",
+          "type": "jsonb"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "name": "public.lts_semantic_amount_signature",
+      "columns": [
+        {
+          "name": "user_id",
+          "type": "uuid"
+        },
+        {
+          "name": "source_kind",
+          "type": "text"
+        },
+        {
+          "name": "source_ref",
+          "type": "text"
+        },
+        {
+          "name": "event_date",
+          "type": "date"
+        },
+        {
+          "name": "description_norm",
+          "type": "text"
+        },
+        {
+          "name": "name_key",
+          "type": "text"
+        },
+        {
+          "name": "amount",
+          "type": "numeric"
+        },
+        {
+          "name": "category",
+          "type": "text"
+        },
+        {
+          "name": "context",
+          "type": "text"
+        },
+        {
+          "name": "refreshed_at",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "name": "public.lts_semantic_rule",
+      "columns": [
+        {
+          "name": "id",
+          "type": "text"
+        },
+        {
+          "name": "user_id",
+          "type": "uuid"
+        },
+        {
+          "name": "match_type",
+          "type": "text"
+        },
+        {
+          "name": "match_value",
+          "type": "text"
+        },
+        {
+          "name": "semantic_nature",
+          "type": "text"
+        },
+        {
+          "name": "category",
+          "type": "text"
+        },
+        {
+          "name": "counterparty",
+          "type": "text"
+        },
+        {
+          "name": "center_cost",
+          "type": "text"
+        },
+        {
+          "name": "is_internal_transfer",
+          "type": "boolean"
+        },
+        {
+          "name": "is_asset_movement",
+          "type": "boolean"
+        },
+        {
+          "name": "exclude_from_spend",
+          "type": "boolean"
+        },
+        {
+          "name": "confidence",
+          "type": "text"
+        },
+        {
+          "name": "rationale",
+          "type": "text"
+        },
+        {
+          "name": "active",
+          "type": "boolean"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "name": "public.lts_v175_workbook_monthly_category_source",
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint"
+        },
+        {
+          "name": "user_id",
+          "type": "uuid"
+        },
+        {
+          "name": "competence_month",
+          "type": "date"
+        },
+        {
+          "name": "parent_group",
+          "type": "text"
+        },
+        {
+          "name": "category_raw",
+          "type": "text"
+        },
+        {
+          "name": "amount",
+          "type": "numeric"
+        },
+        {
+          "name": "card_total",
+          "type": "numeric"
+        },
+        {
+          "name": "source_row",
+          "type": "integer"
+        },
+        {
+          "name": "source_workbook_sha256",
+          "type": "text"
+        },
+        {
+          "name": "source_label",
+          "type": "text"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "name": "public.lts_v178_review_decision",
+      "columns": [
+        {
+          "name": "user_id",
+          "type": "uuid"
+        },
+        {
+          "name": "source_table",
+          "type": "text"
+        },
+        {
+          "name": "source_ref",
+          "type": "text"
+        },
+        {
+          "name": "beneficiary",
+          "type": "text"
+        },
+        {
+          "name": "property_code",
+          "type": "text"
+        },
+        {
+          "name": "category_label",
+          "type": "text"
+        },
+        {
+          "name": "decision_basis",
+          "type": "text"
+        },
+        {
+          "name": "decided_at",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "name": "public.lts_v229_documentary_match",
+      "columns": [
+        {
+          "name": "user_id",
+          "type": "uuid"
+        },
+        {
+          "name": "staging_id",
+          "type": "uuid"
+        },
+        {
+          "name": "source_ref",
+          "type": "text"
+        },
+        {
+          "name": "canonical_date",
+          "type": "date"
+        },
+        {
+          "name": "bank",
+          "type": "text"
+        },
+        {
+          "name": "signed_amount",
+          "type": "numeric"
+        },
+        {
+          "name": "evidence",
+          "type": "jsonb"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "name": "public.lts_v229_read_cache",
+      "columns": [
+        {
+          "name": "user_id",
+          "type": "uuid"
+        },
+        {
+          "name": "kind",
+          "type": "text"
+        },
+        {
+          "name": "as_of",
+          "type": "date"
+        },
+        {
+          "name": "from_date",
+          "type": "date"
+        },
+        {
+          "name": "to_date",
+          "type": "date"
+        },
+        {
+          "name": "payload",
+          "type": "jsonb"
+        },
+        {
+          "name": "refreshed_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "source_fingerprint",
+          "type": "text"
+        }
+      ]
+    },
+    {
+      "name": "public.lts_validated_lock_registry",
+      "columns": [
+        {
+          "name": "lock_key",
+          "type": "text"
+        },
+        {
+          "name": "domain",
+          "type": "text"
+        },
+        {
+          "name": "canonical_value",
+          "type": "jsonb"
+        },
+        {
+          "name": "evidence",
+          "type": "jsonb"
+        },
+        {
+          "name": "locked_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "supersede_rule",
+          "type": "text"
+        },
+        {
+          "name": "superseded_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "superseded_by",
+          "type": "text"
+        }
+      ]
+    },
+    {
+      "name": "public.lts_workbook_identity_evidence_v232",
+      "columns": [
+        {
+          "name": "user_id",
+          "type": "uuid"
+        },
+        {
+          "name": "source_table",
+          "type": "text"
+        },
+        {
+          "name": "source_ref",
+          "type": "text"
+        },
+        {
+          "name": "event_date",
+          "type": "date"
+        },
+        {
+          "name": "amount",
+          "type": "numeric"
+        },
+        {
+          "name": "original_category",
+          "type": "text"
+        },
+        {
+          "name": "original_description",
+          "type": "text"
+        },
+        {
+          "name": "source_sha256",
+          "type": "text"
+        },
+        {
+          "name": "source_sheet",
+          "type": "text"
+        },
+        {
+          "name": "source_rows",
+          "type": "jsonb"
+        },
+        {
+          "name": "evidence",
+          "type": "jsonb"
+        },
+        {
+          "name": "verified_at",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "name": "public.projecao_op",
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint"
+        },
+        {
+          "name": "usuario_id",
+          "type": "uuid"
+        },
+        {
+          "name": "idx_origem",
+          "type": "integer"
+        },
+        {
+          "name": "id_origem",
+          "type": "text"
+        },
+        {
+          "name": "dados",
+          "type": "jsonb"
+        },
+        {
+          "name": "importado_em",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "name": "public.reconciliacao",
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint"
+        },
+        {
+          "name": "usuario_id",
+          "type": "uuid"
+        },
+        {
+          "name": "idx_origem",
+          "type": "integer"
+        },
+        {
+          "name": "id_origem",
+          "type": "text"
+        },
+        {
+          "name": "dados",
+          "type": "jsonb"
+        },
+        {
+          "name": "importado_em",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "name": "public.source_documents",
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid"
+        },
+        {
+          "name": "user_id",
+          "type": "uuid"
+        },
+        {
+          "name": "institution",
+          "type": "text"
+        },
+        {
+          "name": "document_type",
+          "type": "text"
+        },
+        {
+          "name": "reference_date",
+          "type": "date"
+        },
+        {
+          "name": "storage_path",
+          "type": "text"
+        },
+        {
+          "name": "sha256",
+          "type": "text"
+        },
+        {
+          "name": "processing_status",
+          "type": "text"
+        },
+        {
+          "name": "metadata",
+          "type": "jsonb"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone"
+        }
+      ]
+    }
+  ]
+}

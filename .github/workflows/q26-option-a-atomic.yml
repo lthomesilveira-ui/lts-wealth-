@@ -1,0 +1,71 @@
+name: Q26 option A atomic envelope
+on:
+  pull_request:
+    paths: ['tests/q26_option_a_atomic/**', 'tests/q26_option_a_generator/**', '.github/workflows/q26-option-a-atomic.yml']
+permissions:
+  contents: read
+jobs:
+  postgres17:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: fixture_option_a_atomic_ci
+          POSTGRES_PASSWORD: synthetic-ci-only
+        ports: ['5432:5432']
+        options: --health-cmd "pg_isready -U postgres" --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      PGHOST: 127.0.0.1
+      PGPORT: 5432
+      PGUSER: postgres
+      PGDATABASE: fixture_option_a_atomic_ci
+      PGPASSWORD: synthetic-ci-only
+      OPTION_A_SYNTHETIC_DISPOSABLE: "YES"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Reconstruct exact reviewed outputs
+        run: |
+          set -euo pipefail
+          echo '9fef9dea0df0a2ad50fa6f36a1d038aa1fb9fa19d10321707f0c333827c4e7ea  tests/q26_option_a_generator/SOURCE_MANIFEST.json' | sha256sum -c -
+          mkdir -p qa
+          python3 tests/q26_option_a_generator/generate.py --output "$RUNNER_TEMP/q26-option-a-reconstructed" > qa/generation.log 2> qa/generation.stderr
+          echo "67a947fea0facbc39cdc3e00198d63afb563662f14331ea111b9c90a60e31752  $RUNNER_TEMP/q26-option-a-reconstructed/PUBLIC_MANIFEST.json" | sha256sum -c -
+          echo "3317e1c1001e04a9c7aaf1f6496e5b322d4754e395f1ebe868323f1a616eaba7  $RUNNER_TEMP/q26-option-a-reconstructed/option_a_full_consumers.sql" | sha256sum -c -
+      - name: Reconstruct and run isolated atomic gate
+        run: |
+          set -euo pipefail
+          echo 'c945e24f5c7bdfed04b829eccb5c2f070be6a1c0fd91d4bf51e10d71981e4433  tests/q26_option_a_atomic/SOURCE_MANIFEST.json' | sha256sum -c -
+          python3 tests/q26_option_a_atomic/generate.py --consumer-dir "$RUNNER_TEMP/q26-option-a-reconstructed" --output "$RUNNER_TEMP/q26-option-a-atomic" > qa/atomic-generation.log 2> qa/atomic-generation.stderr
+          echo "4be2f306e23d2347d8aba83085dbf771b546aa18c3f0a16fd32c9f8e8ac2c173  $RUNNER_TEMP/q26-option-a-atomic/PUBLIC_MANIFEST.json" | sha256sum -c -
+          psql -X -Atc 'select version()' > qa/server-version.txt
+          python3 "$RUNNER_TEMP/q26-option-a-atomic/run_disposable.py" > qa/atomic-runner.log 2> qa/atomic-runner.stderr
+          python3 - <<'CHECK'
+          import json,os,pathlib
+          d=pathlib.Path(os.environ['RUNNER_TEMP'])/'q26-option-a-atomic/results'
+          r=json.loads((d/'result.json').read_text())
+          assert r['functional_count']==175 and len(set(r['functional_labels']))==175
+          assert r['concurrency_count']==10 and len(set(r['concurrency_labels']))==10
+          assert r['empty_instance_guard_count']==4 and r['cleanup_verified'] is True
+          assert json.loads((d/'cleanup.json').read_text())['verified'] is True
+          CHECK
+      - name: Preserve sources
+        if: always()
+        run: |
+          mkdir -p qa/sources
+          cp -R tests/q26_option_a_generator qa/sources/consumer-generator
+          cp -R tests/q26_option_a_atomic qa/sources/atomic-generator
+          if test -d "$RUNNER_TEMP/q26-option-a-atomic"; then cp -R "$RUNNER_TEMP/q26-option-a-atomic" qa/atomic-reconstructed; fi
+          if test -d "$RUNNER_TEMP/q26-option-a-reconstructed"; then
+            cp -R "$RUNNER_TEMP/q26-option-a-reconstructed" qa/reconstructed
+            sha256sum "$RUNNER_TEMP/q26-option-a-reconstructed"/* > qa/reconstructed.sha256
+          fi
+          find tests/q26_option_a_generator tests/q26_option_a_atomic -type f -print0 | sort -z | xargs -0 sha256sum > qa/source.sha256
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: q26-option-a-atomic-evidence
+          path: qa/

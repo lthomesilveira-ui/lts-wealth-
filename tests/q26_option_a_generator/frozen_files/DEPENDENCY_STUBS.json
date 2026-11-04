@@ -1,0 +1,696 @@
+{
+  "complete_consumer_bodies": [
+    "lts_v229_expense_rows",
+    "lts_browser_card_detail_v226"
+  ],
+  "auth_guard_preserved": true,
+  "ancestors": [
+    {
+      "name": "lts_bank_posted_rows_v231",
+      "kind": "typed synthetic ancestor stub",
+      "original_header": "CREATE OR REPLACE FUNCTION public.lts_bank_posted_rows_v231(p_user_id uuid)\n RETURNS SETOF lts_open_finance_staging\n LANGUAGE sql\n STABLE\n SET search_path TO ''",
+      "fixture_header": "CREATE OR REPLACE FUNCTION public.lts_bank_posted_rows_v231(p_user_id uuid)\n RETURNS SETOF lts_open_finance_staging\n LANGUAGE plpgsql\n STABLE\n SET search_path TO ''",
+      "stub_body": "RETURN;"
+    },
+    {
+      "name": "lts_browser_assert_user_v1",
+      "kind": "original auth guard preserved",
+      "header": "CREATE OR REPLACE FUNCTION public.lts_browser_assert_user_v1()\n RETURNS uuid\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO 'public'"
+    },
+    {
+      "name": "lts_canonical_category_v1",
+      "kind": "typed synthetic ancestor stub",
+      "original_header": "CREATE OR REPLACE FUNCTION public.lts_canonical_category_v1(p_user_id uuid, p_category text)\n RETURNS text\n LANGUAGE sql\n STABLE SECURITY DEFINER\n SET search_path TO 'public'",
+      "fixture_header": "CREATE OR REPLACE FUNCTION public.lts_canonical_category_v1(p_user_id uuid, p_category text)\n RETURNS text\n LANGUAGE plpgsql\n STABLE SECURITY DEFINER\n SET search_path TO 'public'",
+      "stub_body": "RETURN p_category;"
+    },
+    {
+      "name": "lts_card_cycles_v226",
+      "kind": "typed synthetic ancestor stub",
+      "original_header": "CREATE OR REPLACE FUNCTION public.lts_card_cycles_v226(p_user_id uuid)\n RETURNS jsonb\n LANGUAGE plpgsql\n STABLE\n SET search_path TO ''\n SET \"TimeZone\" TO 'America/Sao_Paulo'",
+      "fixture_header": "CREATE OR REPLACE FUNCTION public.lts_card_cycles_v226(p_user_id uuid)\n RETURNS jsonb\n LANGUAGE plpgsql\n STABLE\n SET search_path TO ''\n SET \"TimeZone\" TO 'America/Sao_Paulo'",
+      "stub_body": "RETURN CASE WHEN p_user_id='11111111-1111-4111-8111-111111111111'::uuid THEN (SELECT value FROM public.fixture_control WHERE key='core') ELSE '{\"cards\":[]}'::jsonb END;"
+    },
+    {
+      "name": "lts_card_document_cycles_v226",
+      "kind": "typed synthetic ancestor stub",
+      "original_header": "CREATE OR REPLACE FUNCTION public.lts_card_document_cycles_v226(p_user_id uuid)\n RETURNS jsonb\n LANGUAGE sql\n STABLE\n SET search_path TO ''",
+      "fixture_header": "CREATE OR REPLACE FUNCTION public.lts_card_document_cycles_v226(p_user_id uuid)\n RETURNS jsonb\n LANGUAGE plpgsql\n STABLE\n SET search_path TO ''",
+      "stub_body": "RETURN '[]'::jsonb;"
+    },
+    {
+      "name": "lts_card_document_matches_v234",
+      "kind": "typed synthetic ancestor stub",
+      "original_header": "CREATE OR REPLACE FUNCTION public.lts_card_document_matches_v234(p_user_id uuid)\n RETURNS TABLE(document_id uuid, provider_id uuid)\n LANGUAGE sql\n STABLE\n SET search_path TO ''",
+      "fixture_header": "CREATE OR REPLACE FUNCTION public.lts_card_document_matches_v234(p_user_id uuid)\n RETURNS TABLE(document_id uuid, provider_id uuid)\n LANGUAGE plpgsql\n STABLE\n SET search_path TO ''",
+      "stub_body": "RETURN;"
+    },
+    {
+      "name": "lts_card_family_v226",
+      "kind": "typed synthetic ancestor stub",
+      "original_header": "CREATE OR REPLACE FUNCTION public.lts_card_family_v226(p_name text, p_bank text)\n RETURNS text\n LANGUAGE sql\n IMMUTABLE\n SET search_path TO ''",
+      "fixture_header": "CREATE OR REPLACE FUNCTION public.lts_card_family_v226(p_name text, p_bank text)\n RETURNS text\n LANGUAGE plpgsql\n IMMUTABLE\n SET search_path TO ''",
+      "stub_body": "RETURN CASE WHEN p_name='Fixture C6' THEN 'c6' ELSE 'aeternum' END;"
+    },
+    {
+      "name": "lts_card_observed_expense_eligible_v1",
+      "kind": "typed synthetic ancestor stub",
+      "original_header": "CREATE OR REPLACE FUNCTION public.lts_card_observed_expense_eligible_v1(p_card jsonb, p_today date, p_first_month date)\n RETURNS boolean\n LANGUAGE sql\n IMMUTABLE\n SET search_path TO ''",
+      "fixture_header": "CREATE OR REPLACE FUNCTION public.lts_card_observed_expense_eligible_v1(p_card jsonb, p_today date, p_first_month date)\n RETURNS boolean\n LANGUAGE plpgsql\n IMMUTABLE\n SET search_path TO ''",
+      "stub_body": "RETURN p_card->>'provider_status' IN ('POSTED','PENDING','DOCUMENTED') AND coalesce((p_card->>'is_payment')::boolean,false)=false;"
+    },
+    {
+      "name": "lts_card_read_finish_v269",
+      "kind": "typed synthetic ancestor stub",
+      "original_header": "CREATE OR REPLACE FUNCTION public.lts_card_read_finish_v269(p_user_id uuid, p_revision text, p_payload jsonb)\n RETURNS jsonb\n LANGUAGE plpgsql\n SET search_path TO ''",
+      "fixture_header": "CREATE OR REPLACE FUNCTION public.lts_card_read_finish_v269(p_user_id uuid, p_revision text, p_payload jsonb)\n RETURNS jsonb\n LANGUAGE plpgsql\n SET search_path TO ''",
+      "stub_body": "IF p_revision IS DISTINCT FROM 'fixture-revision' THEN RAISE EXCEPTION 'fixture revision mismatch'; END IF; RETURN p_payload||jsonb_build_object('fixture_read_finish',true);"
+    },
+    {
+      "name": "lts_card_read_start_v269",
+      "kind": "typed synthetic ancestor stub",
+      "original_header": "CREATE OR REPLACE FUNCTION public.lts_card_read_start_v269(p_user_id uuid)\n RETURNS text\n LANGUAGE plpgsql\n SET search_path TO ''",
+      "fixture_header": "CREATE OR REPLACE FUNCTION public.lts_card_read_start_v269(p_user_id uuid)\n RETURNS text\n LANGUAGE plpgsql\n SET search_path TO ''",
+      "stub_body": "RETURN 'fixture-revision';"
+    },
+    {
+      "name": "lts_card_source_rows_v226",
+      "kind": "typed synthetic ancestor stub",
+      "original_header": "CREATE OR REPLACE FUNCTION public.lts_card_source_rows_v226(p_user_id uuid)\n RETURNS TABLE(source_id uuid, bank text, family text, card_name text, last4 text, billing_last4 text, posting_date date, purchase_date date, reference_month date, due_date date, provider_status text, amount numeric, description text, category text, category_basis text, installment_number integer, total_installments integer, is_payment boolean, bill_id text, observed_at timestamp with time zone)\n LANGUAGE plpgsql\n SET search_path TO ''\n SET \"TimeZone\" TO 'America/Sao_Paulo'\n SET jit TO 'off'",
+      "fixture_header": "CREATE OR REPLACE FUNCTION public.lts_card_source_rows_v226(p_user_id uuid)\n RETURNS TABLE(source_id uuid, bank text, family text, card_name text, last4 text, billing_last4 text, posting_date date, purchase_date date, reference_month date, due_date date, provider_status text, amount numeric, description text, category text, category_basis text, installment_number integer, total_installments integer, is_payment boolean, bill_id text, observed_at timestamp with time zone)\n LANGUAGE plpgsql\n SET search_path TO ''\n SET \"TimeZone\" TO 'America/Sao_Paulo'\n SET jit TO 'off'",
+      "stub_body": "RETURN QUERY SELECT f.source_id,f.bank,f.family,f.card_name,f.last4,f.billing_last4,f.posting_date,f.purchase_date,f.reference_month,f.due_date,f.provider_status,f.amount,f.description,f.category,f.category_basis,f.installment_number,f.total_installments,f.is_payment,f.bill_id,f.observed_at FROM public.fixture_card_rows f WHERE f.fixture_owner=p_user_id;"
+    },
+    {
+      "name": "lts_card_workbook_cycles_v226",
+      "kind": "typed synthetic ancestor stub",
+      "original_header": "CREATE OR REPLACE FUNCTION public.lts_card_workbook_cycles_v226(p_user_id uuid)\n RETURNS jsonb\n LANGUAGE sql\n STABLE\n SET search_path TO ''",
+      "fixture_header": "CREATE OR REPLACE FUNCTION public.lts_card_workbook_cycles_v226(p_user_id uuid)\n RETURNS jsonb\n LANGUAGE plpgsql\n STABLE\n SET search_path TO ''",
+      "stub_body": "RETURN CASE WHEN p_user_id='11111111-1111-4111-8111-111111111111'::uuid THEN (SELECT value FROM public.fixture_control WHERE key='alternatives') ELSE '[]'::jsonb END;"
+    },
+    {
+      "name": "lts_expense_management_group_v3",
+      "kind": "typed synthetic ancestor stub",
+      "original_header": "CREATE OR REPLACE FUNCTION public.lts_expense_management_group_v3(p_category text, p_center_cost text, p_counterparty text, p_origin_name text, p_coverage_mode text)\n RETURNS text\n LANGUAGE sql\n IMMUTABLE\n SET search_path TO 'public'",
+      "fixture_header": "CREATE OR REPLACE FUNCTION public.lts_expense_management_group_v3(p_category text, p_center_cost text, p_counterparty text, p_origin_name text, p_coverage_mode text)\n RETURNS text\n LANGUAGE plpgsql\n IMMUTABLE\n SET search_path TO 'public'",
+      "stub_body": "RETURN p_category;"
+    },
+    {
+      "name": "lts_realized_bank_sources_v238",
+      "kind": "typed synthetic ancestor stub",
+      "original_header": "CREATE OR REPLACE FUNCTION public.lts_realized_bank_sources_v238(p_user_id uuid)\n RETURNS TABLE(financial_event_id uuid, staging_id uuid, bank text, event_date date, signed_amount numeric, description text, legacy_id text, category text, beneficiary text, property_code text, management_group text, management_subgroup text, property_component text)\n LANGUAGE sql\n STABLE\n SET search_path TO ''",
+      "fixture_header": "CREATE OR REPLACE FUNCTION public.lts_realized_bank_sources_v238(p_user_id uuid)\n RETURNS TABLE(financial_event_id uuid, staging_id uuid, bank text, event_date date, signed_amount numeric, description text, legacy_id text, category text, beneficiary text, property_code text, management_group text, management_subgroup text, property_component text)\n LANGUAGE plpgsql\n STABLE\n SET search_path TO ''",
+      "stub_body": "RETURN;"
+    },
+    {
+      "name": "lts_v178_norm",
+      "kind": "typed synthetic ancestor stub",
+      "original_header": "CREATE OR REPLACE FUNCTION public.lts_v178_norm(v text)\n RETURNS text\n LANGUAGE sql\n IMMUTABLE",
+      "fixture_header": "CREATE OR REPLACE FUNCTION public.lts_v178_norm(v text)\n RETURNS text\n LANGUAGE plpgsql\n IMMUTABLE",
+      "stub_body": "RETURN lower(v);"
+    },
+    {
+      "name": "lts_v229_expense_rows_pre_v238",
+      "kind": "typed synthetic ancestor stub",
+      "original_header": "CREATE OR REPLACE FUNCTION public.lts_v229_expense_rows_pre_v238(p_user_id uuid, p_from date, p_to date)\n RETURNS TABLE(row_key text, event_date date, transaction_date date, competence_month date, amount numeric, category text, beneficiary text, description text, account_source text, source_table text, source_ref text, coverage_mode text, raw_category text, raw_reference text, purchase_date date, identity_status text, management_group text, management_subgroup text, property_code text, property_component text)\n LANGUAGE sql\n SET search_path TO ''\n SET \"TimeZone\" TO 'America/Sao_Paulo'",
+      "fixture_header": "CREATE OR REPLACE FUNCTION public.lts_v229_expense_rows_pre_v238(p_user_id uuid, p_from date, p_to date)\n RETURNS TABLE(row_key text, event_date date, transaction_date date, competence_month date, amount numeric, category text, beneficiary text, description text, account_source text, source_table text, source_ref text, coverage_mode text, raw_category text, raw_reference text, purchase_date date, identity_status text, management_group text, management_subgroup text, property_code text, property_component text)\n LANGUAGE plpgsql\n SET search_path TO ''\n SET \"TimeZone\" TO 'America/Sao_Paulo'",
+      "stub_body": "RETURN QUERY SELECT f.row_key,f.event_date,f.transaction_date,f.competence_month,f.amount,f.category,f.beneficiary,f.description,f.account_source,f.source_table,f.source_ref,f.coverage_mode,f.raw_category,f.raw_reference,f.purchase_date,f.identity_status,f.management_group,f.management_subgroup,f.property_code,f.property_component FROM public.fixture_expenses f WHERE f.fixture_owner=p_user_id AND f.event_date BETWEEN p_from AND p_to;"
+    }
+  ],
+  "relation_columns": {
+    "card_invoices": [
+      {
+        "name": "id",
+        "type": "uuid"
+      },
+      {
+        "name": "user_id",
+        "type": "uuid"
+      },
+      {
+        "name": "legacy_id",
+        "type": "text"
+      },
+      {
+        "name": "card_name",
+        "type": "text"
+      },
+      {
+        "name": "billing_account_id",
+        "type": "text"
+      },
+      {
+        "name": "reference_month",
+        "type": "date"
+      },
+      {
+        "name": "due_date",
+        "type": "date"
+      },
+      {
+        "name": "status",
+        "type": "text"
+      },
+      {
+        "name": "amount",
+        "type": "numeric(18,2)"
+      },
+      {
+        "name": "source",
+        "type": "text"
+      },
+      {
+        "name": "metadata",
+        "type": "jsonb"
+      },
+      {
+        "name": "created_at",
+        "type": "timestamp with time zone"
+      }
+    ],
+    "evento_base": [
+      {
+        "name": "id",
+        "type": "bigint"
+      },
+      {
+        "name": "usuario_id",
+        "type": "uuid"
+      },
+      {
+        "name": "idx",
+        "type": "integer"
+      },
+      {
+        "name": "dados",
+        "type": "jsonb"
+      }
+    ],
+    "financial_events": [
+      {
+        "name": "id",
+        "type": "uuid"
+      },
+      {
+        "name": "user_id",
+        "type": "uuid"
+      },
+      {
+        "name": "account_id",
+        "type": "uuid"
+      },
+      {
+        "name": "legacy_id",
+        "type": "text"
+      },
+      {
+        "name": "legacy_index",
+        "type": "integer"
+      },
+      {
+        "name": "event_date",
+        "type": "date"
+      },
+      {
+        "name": "description_raw",
+        "type": "text"
+      },
+      {
+        "name": "description_normalized",
+        "type": "text"
+      },
+      {
+        "name": "amount",
+        "type": "numeric(18,2)"
+      },
+      {
+        "name": "nature",
+        "type": "text"
+      },
+      {
+        "name": "category",
+        "type": "text"
+      },
+      {
+        "name": "counterparty",
+        "type": "text"
+      },
+      {
+        "name": "source",
+        "type": "text"
+      },
+      {
+        "name": "status",
+        "type": "text"
+      },
+      {
+        "name": "is_internal_transfer",
+        "type": "boolean"
+      },
+      {
+        "name": "is_projection",
+        "type": "boolean"
+      },
+      {
+        "name": "is_suppressed",
+        "type": "boolean"
+      },
+      {
+        "name": "suppression_reason",
+        "type": "text"
+      },
+      {
+        "name": "metadata",
+        "type": "jsonb"
+      },
+      {
+        "name": "created_at",
+        "type": "timestamp with time zone"
+      }
+    ],
+    "lts_allowed_users": [
+      {
+        "name": "email",
+        "type": "text"
+      },
+      {
+        "name": "role",
+        "type": "text"
+      },
+      {
+        "name": "active",
+        "type": "boolean"
+      },
+      {
+        "name": "created_at",
+        "type": "timestamp with time zone"
+      }
+    ],
+    "lts_card_document_supplement_v234": [
+      {
+        "name": "id",
+        "type": "uuid"
+      },
+      {
+        "name": "user_id",
+        "type": "uuid"
+      },
+      {
+        "name": "institution_code",
+        "type": "text"
+      },
+      {
+        "name": "bank",
+        "type": "text"
+      },
+      {
+        "name": "family",
+        "type": "text"
+      },
+      {
+        "name": "card_name",
+        "type": "text"
+      },
+      {
+        "name": "provider_account_ref",
+        "type": "text"
+      },
+      {
+        "name": "billing_last4",
+        "type": "text"
+      },
+      {
+        "name": "last4",
+        "type": "text"
+      },
+      {
+        "name": "reference_month",
+        "type": "date"
+      },
+      {
+        "name": "due_date",
+        "type": "date"
+      },
+      {
+        "name": "purchase_date",
+        "type": "date"
+      },
+      {
+        "name": "amount",
+        "type": "numeric(18,2)"
+      },
+      {
+        "name": "description",
+        "type": "text"
+      },
+      {
+        "name": "installment_number",
+        "type": "integer"
+      },
+      {
+        "name": "total_installments",
+        "type": "integer"
+      },
+      {
+        "name": "category",
+        "type": "text"
+      },
+      {
+        "name": "source_as_of",
+        "type": "timestamp with time zone"
+      },
+      {
+        "name": "source_file_ref",
+        "type": "text"
+      },
+      {
+        "name": "source_sha256",
+        "type": "text"
+      },
+      {
+        "name": "source_page",
+        "type": "integer"
+      },
+      {
+        "name": "source_line",
+        "type": "integer"
+      },
+      {
+        "name": "reported_invoice_total",
+        "type": "numeric(18,2)"
+      },
+      {
+        "name": "metadata",
+        "type": "jsonb"
+      },
+      {
+        "name": "created_at",
+        "type": "timestamp with time zone"
+      }
+    ],
+    "lts_open_finance_staging": [
+      {
+        "name": "id",
+        "type": "uuid"
+      },
+      {
+        "name": "user_id",
+        "type": "uuid"
+      },
+      {
+        "name": "connection_id",
+        "type": "uuid"
+      },
+      {
+        "name": "sync_run_id",
+        "type": "uuid"
+      },
+      {
+        "name": "provider",
+        "type": "text"
+      },
+      {
+        "name": "resource_type",
+        "type": "text"
+      },
+      {
+        "name": "provider_record_id",
+        "type": "text"
+      },
+      {
+        "name": "provider_account_ref",
+        "type": "text"
+      },
+      {
+        "name": "institution_code",
+        "type": "text"
+      },
+      {
+        "name": "institution_name",
+        "type": "text"
+      },
+      {
+        "name": "occurred_at",
+        "type": "timestamp with time zone"
+      },
+      {
+        "name": "posting_date",
+        "type": "date"
+      },
+      {
+        "name": "reference_month",
+        "type": "date"
+      },
+      {
+        "name": "signed_amount",
+        "type": "numeric"
+      },
+      {
+        "name": "currency",
+        "type": "text"
+      },
+      {
+        "name": "description_raw",
+        "type": "text"
+      },
+      {
+        "name": "description_normalized",
+        "type": "text"
+      },
+      {
+        "name": "normalized_payload",
+        "type": "jsonb"
+      },
+      {
+        "name": "raw_payload",
+        "type": "jsonb"
+      },
+      {
+        "name": "raw_hash",
+        "type": "text"
+      },
+      {
+        "name": "match_status",
+        "type": "text"
+      },
+      {
+        "name": "matched_source_table",
+        "type": "text"
+      },
+      {
+        "name": "matched_source_ref",
+        "type": "text"
+      },
+      {
+        "name": "match_confidence",
+        "type": "numeric"
+      },
+      {
+        "name": "promotion_status",
+        "type": "text"
+      },
+      {
+        "name": "promotion_source_table",
+        "type": "text"
+      },
+      {
+        "name": "promotion_source_ref",
+        "type": "text"
+      },
+      {
+        "name": "block_reason",
+        "type": "text"
+      },
+      {
+        "name": "first_seen_at",
+        "type": "timestamp with time zone"
+      },
+      {
+        "name": "last_seen_at",
+        "type": "timestamp with time zone"
+      },
+      {
+        "name": "created_at",
+        "type": "timestamp with time zone"
+      },
+      {
+        "name": "updated_at",
+        "type": "timestamp with time zone"
+      },
+      {
+        "name": "source_event_type",
+        "type": "text"
+      },
+      {
+        "name": "provider_updated_at",
+        "type": "timestamp with time zone"
+      },
+      {
+        "name": "provider_deleted_at",
+        "type": "timestamp with time zone"
+      }
+    ],
+    "lts_reconciliation_evidence": [
+      {
+        "name": "id",
+        "type": "uuid"
+      },
+      {
+        "name": "user_id",
+        "type": "uuid"
+      },
+      {
+        "name": "evidence_date",
+        "type": "date"
+      },
+      {
+        "name": "account",
+        "type": "text"
+      },
+      {
+        "name": "amount",
+        "type": "numeric"
+      },
+      {
+        "name": "description",
+        "type": "text"
+      },
+      {
+        "name": "evidence_type",
+        "type": "text"
+      },
+      {
+        "name": "source_ref",
+        "type": "text"
+      },
+      {
+        "name": "status",
+        "type": "text"
+      },
+      {
+        "name": "metadata",
+        "type": "jsonb"
+      },
+      {
+        "name": "created_at",
+        "type": "timestamp with time zone"
+      }
+    ],
+    "lts_v178_review_decision": [
+      {
+        "name": "user_id",
+        "type": "uuid"
+      },
+      {
+        "name": "source_table",
+        "type": "text"
+      },
+      {
+        "name": "source_ref",
+        "type": "text"
+      },
+      {
+        "name": "beneficiary",
+        "type": "text"
+      },
+      {
+        "name": "property_code",
+        "type": "text"
+      },
+      {
+        "name": "category_label",
+        "type": "text"
+      },
+      {
+        "name": "decision_basis",
+        "type": "text"
+      },
+      {
+        "name": "decided_at",
+        "type": "timestamp with time zone"
+      }
+    ],
+    "lts_v229_documentary_match": [
+      {
+        "name": "user_id",
+        "type": "uuid"
+      },
+      {
+        "name": "staging_id",
+        "type": "uuid"
+      },
+      {
+        "name": "source_ref",
+        "type": "text"
+      },
+      {
+        "name": "canonical_date",
+        "type": "date"
+      },
+      {
+        "name": "bank",
+        "type": "text"
+      },
+      {
+        "name": "signed_amount",
+        "type": "numeric"
+      },
+      {
+        "name": "evidence",
+        "type": "jsonb"
+      },
+      {
+        "name": "created_at",
+        "type": "timestamp with time zone"
+      }
+    ],
+    "source_documents": [
+      {
+        "name": "id",
+        "type": "uuid"
+      },
+      {
+        "name": "user_id",
+        "type": "uuid"
+      },
+      {
+        "name": "institution",
+        "type": "text"
+      },
+      {
+        "name": "document_type",
+        "type": "text"
+      },
+      {
+        "name": "reference_date",
+        "type": "date"
+      },
+      {
+        "name": "storage_path",
+        "type": "text"
+      },
+      {
+        "name": "sha256",
+        "type": "text"
+      },
+      {
+        "name": "processing_status",
+        "type": "text"
+      },
+      {
+        "name": "metadata",
+        "type": "jsonb"
+      },
+      {
+        "name": "created_at",
+        "type": "timestamp with time zone"
+      }
+    ]
+  },
+  "limits": [
+    "Ancestors are synthetic stubs, not the complete live dependency graph.",
+    "Relation column types preserved; production defaults, indexes, triggers and constraints not reproduced.",
+    "Source/evidence duplicate fixture tables deliberately omit PK to test conservative reads of malformed inputs.",
+    "Evidence access mirrors existing privileged roles; fixture plumbing SELECT/log INSERT are disposable and not deployment grants.",
+    "No cache trigger, epoch, transaction envelope, concurrency or production auth proof."
+  ]
+}
