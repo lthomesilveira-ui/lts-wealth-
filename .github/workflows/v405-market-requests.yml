@@ -1,0 +1,57 @@
+name: V405 market request generation
+on:
+  pull_request:
+    paths:
+      - 'backend/patches/v405/**'
+      - 'backend/tools/market_request_v405/**'
+      - 'supabase/migrations/*v405*'
+      - '.github/workflows/v405-market-requests.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: synthetic-test-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: synthetic-test-only
+      PGTZ: America/Sao_Paulo
+    steps:
+      - uses: actions/checkout@v4
+      - name: Reproduce the predecessor failure with a synthetic transport
+        run: |
+          python3 backend/tools/market_request_v405/setup.py > /tmp/v405-fixture.sql
+          psql -X -v ON_ERROR_STOP=1 -f /tmp/v405-fixture.sql
+      - name: Apply the guarded request-generation migration
+        run: |
+          cmp backend/patches/v405/market_request_generations.sql supabase/migrations/*v405_market_request_generations.sql
+          psql -X -v ON_ERROR_STOP=1 --single-transaction -f backend/patches/v405/market_request_generations.sql
+      - name: Verify historical conservation, response identity, expiry and permissions
+        run: psql -X -v ON_ERROR_STOP=1 -f backend/tools/market_request_v405/verify.sql | tee v405-native-proof.txt
+      - name: Verify an actual unclean PostgreSQL restart and recycled transport IDs
+        env:
+          V405_POSTGRES_CONTAINER: ${{ job.services.postgres.id }}
+        run: |
+          createdb v405_restart
+          PGDATABASE=v405_restart python3 backend/tools/market_request_v405/native_crash.py > v405-crash-proof.json
+          cat v405-crash-proof.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v405-market-request-proof
+          path: |
+            v405-native-proof.txt
+            v405-crash-proof.json
