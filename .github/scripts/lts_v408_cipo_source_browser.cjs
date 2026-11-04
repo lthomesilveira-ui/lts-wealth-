@@ -5,7 +5,7 @@ const {setup,open}=require('./lts_v382_browser.cjs'),{synthetic}=require('../fix
 const fixture=require('./lts_v379_fixtures.cjs'),baseResponse=fixture.response;fixture.response=function(name,args){const j=baseResponse(name,args);return /^lts_browser_wealth_detail_/.test(name)?fixture.contracts(structuredClone(j)):j;};
 const out='qa/v407-cipo';fs.mkdirSync(out,{recursive:true});const hash=x=>crypto.createHash('sha256').update(JSON.stringify(x)).digest('hex');
 async function run(browser,engine,width,height=980){const h=await setup(browser,width,height,'2026-11-04T15:00:00Z');let f;try{
- f=await open(h,'v407',true);await f.waitForFunction(()=>window.__LTS_V408_CIPO?.installed);
+ f=await open(h,process.env.LTS_FLOW_RELEASE,true);await f.waitForFunction(()=>window.__LTS_V408_CIPO?.installed);
  await f.locator('#nav [data-v="Patrimônio"]:visible,#dx1MobileNav [data-mobile-route="Patrimônio"]:visible').click();await f.waitForFunction(()=>__LTS_V168_STATE.wealth.data&&!__LTS_V168_STATE.wealth.loading);
  const evidence=synthetic();await f.evaluate(p=>{const s=__LTS_V168_STATE.wealth;s.data.financing.documentary.items[0].metadata.acquisition_documentary_bridge_v408=p;s.tab='assets';render();},evidence);
  const root=f.locator('[data-v408-cipo]'),details=root.locator(':scope>details');assert.equal(await root.count(),1);assert.equal(await details.getAttribute('open'),null);

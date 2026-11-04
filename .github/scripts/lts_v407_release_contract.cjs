@@ -14,7 +14,8 @@ for(const name of fs.readdirSync(base))if(!['app.html','manifest.json','provenan
 let expected=read(base,'app.html').replaceAll('V404','V407').replace('v404-fgts-documentary-20261104','v407-wealth-documents-20261104');
 for(const name of additions)expected=expected.replace('</body>','<script src="'+name+'"></script>\n</body>');
 assert.equal(read(root,'app.html'),expected,'only release identity and additive scripts change');
-assert.deepEqual(JSON.parse(read('mobile','current.json')),{release:'v407',entry:'../releases/v407/app.html'});
+const mobileRelease=process.env.LTS_MOBILE_RELEASE||'v407';
+assert.deepEqual(JSON.parse(read('mobile','current.json')),{release:mobileRelease,entry:'../releases/'+mobileRelease+'/app.html'});
 assert.equal(hash(root+'/lts-v407-document-review.js'),hash('lts-v407-document-review.js'),'reviewed document source is the released source');
 for(const key of ['candidate_only','financial_event_writers_added','received_financial_payloads_modified','private_http_validated','physical_mobile_validated'])assert.equal(provenance[key],false,key);
 assert.equal(provenance.document_uploads_use_existing_authenticated_storage_and_inbox,true);

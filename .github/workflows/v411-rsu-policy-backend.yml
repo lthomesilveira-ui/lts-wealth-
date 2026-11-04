@@ -1,0 +1,35 @@
+name: V411 owner RSU liquidity policy
+on:
+  pull_request:
+    paths: ['backend/patches/v411/**','backend/tools/rsu_policy_v411/**','supabase/migrations/*v411*','.github/workflows/v411-rsu-policy-backend.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native-postgres17:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: synthetic-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready --health-interval 5s
+          --health-timeout 5s --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: synthetic-only
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 backend/tools/rsu_policy_v411/build_migration.py --check
+      - run: python3 backend/tools/rsu_policy_v411/test_sql.py > /tmp/v411-test.sql
+      - run: psql -v ON_ERROR_STOP=1 -At -f /tmp/v411-test.sql > /tmp/v411-results.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v411-postgres17-synthetic-proof
+          path: /tmp/v411-results.log

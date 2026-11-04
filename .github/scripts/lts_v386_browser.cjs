@@ -4,6 +4,7 @@ process.env.LTS_FLOW_RELEASE||='v386';
 const fixture=require('./lts_v379_fixtures.cjs'),baseResponse=fixture.response,{setup,open}=require('./lts_v382_browser.cjs');
 const {chromium,webkit}=require('playwright'),fs=require('node:fs'),assert=require('node:assert/strict'),crypto=require('node:crypto');
 const out='qa/'+process.env.LTS_FLOW_RELEASE;fs.mkdirSync(out,{recursive:true});let mode='withdrawn';
+const partialWealth=Object.hasOwn(JSON.parse(fs.readFileSync('releases/'+process.env.LTS_FLOW_RELEASE+'/manifest.json','utf8')).files,'lts-v407-wealth-summary.js');
 const money=x=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(x),hash=x=>crypto.createHash('sha256').update(JSON.stringify(x)).digest('hex');
 function wealth(){
  const j=fixture.contracts(structuredClone(baseResponse('lts_browser_wealth_detail_v242')));
@@ -33,7 +34,7 @@ async function run(browser,engine,width,variant='withdrawn',baseline=false){
   else{assert.equal(await value.innerText(),'—');assert.match(await fgts.innerText(),/Saldo atual a confirmar/);assert(!(await fgts.innerText()).includes(money(0)));}
   if(variant==='complete'){assert.match(await totals.innerText(),/1\.558,00/);assert(!(await totals.innerText()).includes('Em apuração'));assert.equal(await root.locator('.v365-material').count(),0);}
   else{
-   if(process.env.LTS_FLOW_RELEASE==='v407'){assert.match(await totals.innerText(),/Patrimônio líquido parcial/);assert.match(await totals.innerText(),/2\.103,00/);}else assert.match(await totals.innerText(),/Em apuração/);assert.match(await totals.innerText(),/3\.003,00/);assert.match(await totals.innerText(),/900,00/);assert.match(await totals.innerText(),/1 de 4 saldos documentados/);
+   if(partialWealth){assert.match(await totals.innerText(),/Patrimônio líquido parcial/);assert.match(await totals.innerText(),/2\.103,00/);}else assert.match(await totals.innerText(),/Em apuração/);assert.match(await totals.innerText(),/3\.003,00/);assert.match(await totals.innerText(),/900,00/);assert.match(await totals.innerText(),/1 de 4 saldos documentados/);
    for(const id of ['volvo','coopharma','pai_mae']){const d=root.locator('[data-v386-debt="'+id+'"]');assert.equal(await d.locator('b').innerText(),'—');assert.match(await d.innerText(),/Falta extrato com saldo devedor atual/);}
   }
   assert.match(await root.locator('.v386-debt-basis').innerText(),/não são somados/);
@@ -48,7 +49,8 @@ async function run(browser,engine,width,variant='withdrawn',baseline=false){
   return{pass:true,engine,width,variant,excluded_asset_absent:true,fgts_balance_semantics:true,missing_debts_explicit:true,no_double_counting:true,financial_response_sha256:before,source_values_unchanged:true,origin_collapsed:true,synthetic_only:true,physical_iphone:false,private_session:false};
  }catch(error){await h.page.screenshot({path:out+'/'+label+'-failure.png'}).catch(()=>{});if(f)fs.writeFileSync(out+'/'+label+'-failure.json',JSON.stringify({error:error.stack,body:await f.locator('body').innerText(),reads:h.reads},null,2));throw error;}finally{await h.ctx.close();}
 }
-(async()=>{const results=[];for(const[engine,type]of [['webkit',webkit],['chromium',chromium]]){const browser=await type.launch({headless:true});try{
+module.exports={run};
+if(require.main===module)(async()=>{const results=[];for(const[engine,type]of [['webkit',webkit],['chromium',chromium]]){const browser=await type.launch({headless:true});try{
  results.push(await run(browser,engine,393,'withdrawn',true));
  for(const width of[320,360,393,430,852,1366])results.push(await run(browser,engine,width));
  for(const variant of['zero','positive','complete','missing','contradiction'])results.push(await run(browser,engine,393,variant));
