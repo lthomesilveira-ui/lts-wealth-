@@ -1,0 +1,31 @@
+DO $test$
+DECLARE u uuid:='00000000-0000-4000-8000-000000000004';j jsonb;c jsonb;r jsonb;bad jsonb;
+BEGIN
+ j:=public.lts_backup_modern_export_v380(u);
+ SELECT jsonb_object_agg(key,jsonb_array_length(value))INTO c FROM jsonb_each(j->'tables');
+ PERFORM public.fixture_expect((SELECT count(*)=35 FROM jsonb_object_keys(j->'tables')),'v403_export_35_datasets');
+ PERFORM public.fixture_expect(public.lts_backup_manifest_valid_v403(j,c),'v403_full_manifest');
+ PERFORM public.fixture_expect(jsonb_array_length(j#>'{tables,lts_open_finance_resource_map}')=1,'v403_owner_scoped_mapping');
+ PERFORM public.fixture_expect(jsonb_array_length(j#>'{tables,lts_open_finance_observation}')=3,'v403_latest_daily_cohort_without_historical_deletion');
+ PERFORM public.fixture_expect(jsonb_array_length(j#>'{tables,lts_open_finance_sync_run}')=3,'v403_referenced_daily_runs_are_included');
+ PERFORM public.fixture_expect(EXISTS(SELECT 1 FROM jsonb_array_elements(j#>'{tables,lts_open_finance_observation}')x WHERE x->>'id'='dddddddd-dddd-4ddd-8ddd-000000000003'),'v403_verified_cofrinho_source_survives_later_balance_only_collection');
+ bad:=jsonb_set(j,'{tables}',(j->'tables')-'lts_open_finance_resource_map');
+ PERFORM public.fixture_expect(NOT public.lts_backup_manifest_valid_v403(bad,c),'v403_missing_mapping_rejected');
+ bad:=jsonb_set(j,'{coverage,all_observation_history}','true');
+ PERFORM public.fixture_expect(NOT public.lts_backup_manifest_valid_v403(bad,c),'v403_no_false_full_history_claim');
+ PERFORM public.lts_backup_snapshot_take_v380(u,current_date);
+ r:=public.lts_backup_bundle_read_v380(u,current_date);
+ PERFORM public.fixture_expect(jsonb_array_length(r#>'{modern,tables,lts_open_finance_observation}')=3,'v403_capture_and_read_daily_source_evidence');
+ PERFORM public.fixture_expect(r#>>'{base,integrity,version}'='v403-data-backup-no-runtime-qa','v403_data_capture_does_not_run_engine_qa');
+ PERFORM public.fixture_expect(jsonb_array_length(r#>'{base,asset_positions}')=1 AND jsonb_array_length(r#>'{base,accounts}')=1,'v403_base_financial_rows_preserved_without_runtime_diagnostics');
+ PERFORM public.fixture_expect((SELECT count(*)=4 FROM public.lts_open_finance_observation),'v403_all_original_observations_still_exist');
+ PERFORM public.fixture_expect(NOT EXISTS(SELECT 1 FROM public.qa_backup_history_v403 a LEFT JOIN public.lts_backup_snapshot b USING(user_id,snapshot_date)WHERE a.payload_hash IS DISTINCT FROM b.payload_hash OR a.payload_bytes IS DISTINCT FROM b.payload_bytes),'v403_old_legacy_bundle_metadata_equal');
+ PERFORM public.fixture_expect(NOT EXISTS(SELECT 1 FROM public.qa_backup_modern_history_v403 a LEFT JOIN public.lts_backup_supplement_v380 b USING(user_id,snapshot_date)WHERE a.payload_sha256 IS DISTINCT FROM b.payload_sha256 OR a.payload_bytes IS DISTINCT FROM b.payload_bytes OR a.counts IS DISTINCT FROM b.counts),'v403_old_modern_bundle_metadata_equal');
+ PERFORM public.fixture_expect(NOT has_function_privilege('anon','public.lts_backup_position_sources_v403(uuid)','EXECUTE'),'v403_backup_helper_not_anonymous');
+ PERFORM public.fixture_expect(NOT has_function_privilege('authenticated','public.lts_backup_modern_export_pre_v403(uuid)','EXECUTE'),'v403_private_predecessor_not_authenticated');
+ r:=public.lts_backup_bundle_read_v380('00000000-0000-4000-8000-000000000001',current_date);
+ PERFORM public.fixture_expect((r#>>'{modern,coverage,selected_tables}')::integer=29,'v403_old_29_profile_remains_readable');
+ r:=public.lts_backup_bundle_read_v380('00000000-0000-4000-8000-000000000002',current_date);
+ PERFORM public.fixture_expect((r#>>'{modern,coverage,selected_tables}')::integer=31,'v403_old_31_profile_remains_readable');
+END $test$;
+SELECT jsonb_build_object('backup_checks',count(*),'labels',jsonb_agg(label ORDER BY label))FROM public.fixture_results WHERE label LIKE 'v403_%';
