@@ -1,0 +1,64 @@
+name: V406 backup export equivalence
+on:
+  pull_request:
+    paths: ['backend/patches/v406/**','backend/tools/backup_v406/**','.github/workflows/v406-backup-export.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: synthetic-test-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: synthetic-test-only
+      PGTZ: America/Sao_Paulo
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install the real V403 backup pipeline with synthetic source data
+        run: |
+          python3 backend/tools/backup_v401/setup.py > /tmp/v406-fixture.sql
+          psql -v ON_ERROR_STOP=1 -f /tmp/v406-fixture.sql
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v401/backup_manifest.sql
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v401/bounded_backup_job.sql
+          psql -v ON_ERROR_STOP=1 -f backend/tools/write_policy_v403/backup_sources_fixture.sql
+          psql -v ON_ERROR_STOP=1 -f backend/tools/write_policy_v403/baseline/lts_backup_export_v1.sql
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v403/backup_critical_sources.sql
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v403/backup_data_only.sql
+          psql -v ON_ERROR_STOP=1 -f backend/tools/backup_v406/prepare.sql
+      - name: Apply and replay the guarded exporter replacement
+        run: |
+          psql -1 -v ON_ERROR_STOP=1 -f backend/patches/v406/single_assembly_export.sql
+          psql -1 -v ON_ERROR_STOP=1 -f backend/patches/v406/single_assembly_export.sql
+      - name: Verify exact payload equivalence and unchanged access and scheduling
+        run: psql -v ON_ERROR_STOP=1 -f backend/tools/backup_v406/verify.sql | tee v406-parity.txt
+      - name: Verify existing capture, history, manifest and daily Cofrinho source contracts
+        run: psql -v ON_ERROR_STOP=1 -f backend/tools/write_policy_v403/backup_sources_verify.sql | tee v406-backup-contract.txt
+      - name: Reject changed predecessor functions
+        run: python3 backend/tools/backup_v406/guard_verify.py | tee v406-guard.json
+      - name: Restore the exact predecessor and reapply the verified replacement
+        run: |
+          psql -1 -v ON_ERROR_STOP=1 -f backend/patches/v406/rollback.sql
+          psql -v ON_ERROR_STOP=1 -c "DO \$\$ BEGIN IF (SELECT prosrc FROM pg_proc WHERE oid='public.lts_backup_modern_export_v380(uuid)'::regprocedure) IS DISTINCT FROM (SELECT prosrc FROM pg_proc WHERE oid='public.qa_backup_before_v406(uuid)'::regprocedure) THEN RAISE EXCEPTION 'Rollback source mismatch'; END IF; END \$\$;"
+          psql -1 -v ON_ERROR_STOP=1 -f backend/patches/v406/single_assembly_export.sql
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v406-backup-proof
+          path: |
+            v406-parity.txt
+            v406-backup-contract.txt
+            v406-guard.json
