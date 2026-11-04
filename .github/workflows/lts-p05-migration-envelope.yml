@@ -1,0 +1,44 @@
+# Proposed standalone job; adjust only the checkout-relative tests/envelope path.
+name: PostgreSQL 17 synthetic envelope
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'wealth-p05-regression-20261016/tests/envelope/**'
+permissions:
+  contents: read
+jobs:
+  synthetic-envelope:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: lts_p05_synthetic
+          POSTGRES_USER: lts_p05_synthetic
+          POSTGRES_PASSWORD: synthetic-ci-only
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U lts_p05_synthetic -d lts_p05_synthetic"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install PostgreSQL client
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+      - name: Static synthetic artifact checks
+        run: python wealth-p05-regression-20261016/tests/envelope/validate_static.py
+      - name: Run synthetic migration envelope
+        run: python wealth-p05-regression-20261016/tests/envelope/run_envelope_postgres17.py --allow-fresh-synthetic-postgres17
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: p05-synthetic-envelope
+          path: wealth-p05-regression-20261016/tests/envelope/results/
+          if-no-files-found: warn
