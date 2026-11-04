@@ -1,7 +1,7 @@
 name: V399 dated D0 and independent FGTS
 on:
   pull_request:
-    paths: ['backend/patches/v399/**','backend/tools/dated_d01_v399/**','releases/v399/**','mobile/current.json','.github/scripts/*v399*','.github/workflows/v399-dated-d01.yml']
+    paths: ['releases/v407/**','backend/patches/v399/**','backend/tools/dated_d01_v399/**','releases/v399/**','mobile/current.json','.github/scripts/*v399*','.github/workflows/v399-dated-d01.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -52,8 +52,8 @@ jobs:
     timeout-minutes: 10
     container: mcr.microsoft.com/playwright:v1.58.2-noble
     env:
-      LTS_MOBILE_RELEASE: v404
-      LTS_FLOW_RELEASE: v404
+      LTS_MOBILE_RELEASE: v407
+      LTS_FLOW_RELEASE: v407
       PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
     steps:

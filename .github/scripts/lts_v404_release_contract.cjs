@@ -19,7 +19,7 @@ assert.equal(original.split(anchor).length,2);assert.equal(original.split(old).l
 const expected=original.replace(anchor,helper+anchor).replace(old,"   const fgtsPosition=dashboardFgtsPosition(state.wealth.status==='ready'?state.wealth.data:null);\n   kpi(root,'FGTS',fgtsPosition.balance,fgtsPosition.note);");
 assert.equal(read(root,'lts-v384-startup-1.js'),expected,'only the reviewed documentary FGTS display changes');
 assert.equal(read(root,'app.html'),read(base,'app.html').replaceAll('V402','V404').replace('v402-daily-cofrinho-20261102','v404-fgts-documentary-20261104'));
-assert.deepEqual(JSON.parse(read('mobile','current.json')),{release:'v404',entry:'../releases/v404/app.html'});
+const live=process.env.LTS_MOBILE_RELEASE||'v404';assert.deepEqual(JSON.parse(read('mobile','current.json')),{release:live,entry:'../releases/'+live+'/app.html'});
 for(const key of ['candidate_only','original_financial_sources_changed','original_cash_forecasts_changed','private_http_validated','physical_mobile_validated'])assert.equal(provenance[key],false,key);
 assert.equal(provenance.isolated_recovered_fgts_reader_validated,true);
 assert.equal(provenance.other_rpc_responses_in_private_fgts_test,'fictional repository fixture');
