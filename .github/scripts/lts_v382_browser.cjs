@@ -1,6 +1,6 @@
 'use strict';
 const {chromium,webkit}=require('playwright'),fs=require('node:fs'),assert=require('node:assert/strict'),crypto=require('node:crypto');
-const fixture=require('./lts_v379_fixtures.cjs'),base='http://127.0.0.1:8788',target=process.env.LTS_FLOW_RELEASE||'v382',out='qa/'+target;fs.mkdirSync(out,{recursive:true});
+const fixture=require('./lts_v379_fixtures.cjs'),base=process.env.LTS_BROWSER_BASE||'http://127.0.0.1:8788',target=process.env.LTS_FLOW_RELEASE||'v382',out='qa/'+target;fs.mkdirSync(out,{recursive:true});
 const hash=x=>crypto.createHash('sha256').update(JSON.stringify(x)).digest('hex');
 const session={access_token:'synthetic-only-access',refresh_token:'synthetic-only-refresh',expires_at:4102444800,user:{id:'00000000-0000-4000-8000-000000000001',email:'viewer@example.invalid'}};
 async function setup(browser,width,height,now='2026-10-30T15:00:00Z'){

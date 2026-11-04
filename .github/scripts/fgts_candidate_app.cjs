@@ -1,11 +1,11 @@
 'use strict';
-process.env.LTS_FLOW_RELEASE='v404';
+process.env.LTS_FLOW_RELEASE=process.env.LTS_MOBILE_RELEASE||'v404';
 const fixture=require('./lts_v379_fixtures.cjs'),base=fixture.response;
 fixture.response=function(name,args){const j=base(name,args);if(/wealth_detail/.test(name))j.fgts_position={version:'fgts-position-evidence-v386',status:'position_after_withdrawal_unavailable',balance_brl:null};return j};
 const {setup,open}=require('./lts_v382_browser.cjs'),{chromium,webkit}=require('playwright'),fs=require('node:fs'),assert=require('node:assert/strict');
-const out='qa/v404';fs.mkdirSync(out,{recursive:true});
+const target=process.env.LTS_FLOW_RELEASE,out='qa/'+target;fs.mkdirSync(out,{recursive:true});
 async function run(browser,engine,width){const h=await setup(browser,width,980,'2026-11-02T15:00:00Z');let f;try{
- f=await open(h,'v404',true);await f.waitForFunction(()=>window.__LTS_V178_STATE?.wealth.status==='ready');
+ f=await open(h,target,true);await f.waitForFunction(()=>window.__LTS_V178_STATE?.wealth.status==='ready');
  const fgts=()=>f.locator('.v168-dashboard .v168-kpi').filter({has:f.locator('span').filter({hasText:/^FGTS$/})});
  assert.equal(await fgts().locator('strong').innerText(),'—');assert.match(await fgts().innerText(),/confirmar no extrato/);
  const source=await f.evaluate(()=>JSON.stringify({cash:__LTS_V178_STATE.cash.data,forecast:__LTS_V178_STATE.forecast.data}));

@@ -33,7 +33,7 @@ async function run(browser,engine,width,variant='withdrawn',baseline=false){
   else{assert.equal(await value.innerText(),'—');assert.match(await fgts.innerText(),/Saldo atual a confirmar/);assert(!(await fgts.innerText()).includes(money(0)));}
   if(variant==='complete'){assert.match(await totals.innerText(),/1\.558,00/);assert(!(await totals.innerText()).includes('Em apuração'));assert.equal(await root.locator('.v365-material').count(),0);}
   else{
-   assert.match(await totals.innerText(),/Em apuração/);assert.match(await totals.innerText(),/3\.003,00/);assert.match(await totals.innerText(),/900,00/);assert.match(await totals.innerText(),/1 de 4 saldos documentados/);
+   if(process.env.LTS_FLOW_RELEASE==='v407'){assert.match(await totals.innerText(),/Patrimônio líquido parcial/);assert.match(await totals.innerText(),/2\.103,00/);}else assert.match(await totals.innerText(),/Em apuração/);assert.match(await totals.innerText(),/3\.003,00/);assert.match(await totals.innerText(),/900,00/);assert.match(await totals.innerText(),/1 de 4 saldos documentados/);
    for(const id of ['volvo','coopharma','pai_mae']){const d=root.locator('[data-v386-debt="'+id+'"]');assert.equal(await d.locator('b').innerText(),'—');assert.match(await d.innerText(),/Falta extrato com saldo devedor atual/);}
   }
   assert.match(await root.locator('.v386-debt-basis').innerText(),/não são somados/);
