@@ -1,0 +1,34 @@
+name: V410 persistent recurring review scope
+on:
+  pull_request:
+    paths: ['backend/patches/v410/**','backend/tools/recurring_review_v410/**','.github/workflows/v410-recurring-review-scope.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native-postgres17:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: synthetic-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready --health-interval 5s
+          --health-timeout 5s --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: synthetic-only
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 backend/tools/recurring_review_v410/test_sql.py > /tmp/v410-test.sql
+      - run: psql -v ON_ERROR_STOP=1 -At -f /tmp/v410-test.sql > /tmp/v410-results.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v410-postgres17-synthetic-proof
+          path: /tmp/v410-results.log
