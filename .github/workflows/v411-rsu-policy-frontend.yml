@@ -1,0 +1,34 @@
+name: V411 RSU gross and net policy interface
+on:
+  pull_request:
+    paths: ['lts-v411-rsu-policy.js','releases/v411/**','mobile/current.json','.github/scripts/*v411*','.github/workflows/v411-rsu-policy-frontend.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  browser:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    container: mcr.microsoft.com/playwright:v1.58.2-noble
+    env:
+      LTS_MOBILE_RELEASE: v411
+      LTS_FLOW_RELEASE: v411
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node .github/scripts/lts_v411_release_contract.cjs
+      - run: node --test .github/scripts/lts_v411_rsu_model_test.cjs
+      - run: npm install --no-save --package-lock=false playwright@1.58.2
+      - run: |
+          python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/lts-v411-http.log 2>&1 &
+          node .github/scripts/lts_v309_wait_http.cjs
+      - run: node .github/scripts/lts_v411_rsu_browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v411-rsu-policy-browser-evidence
+          path: qa/v411-rsu/

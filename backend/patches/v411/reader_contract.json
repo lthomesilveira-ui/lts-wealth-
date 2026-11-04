@@ -1,0 +1,158 @@
+{
+  "schema_version": 1,
+  "version": "rsu-policy-v411",
+  "policy": {
+    "enabled": true,
+    "reserve_rate": 0.3,
+    "net_factor": 0.7,
+    "scope": [
+      "RSU",
+      "Cash RSU"
+    ],
+    "basis": "owner_confirmed_conservative_cash_reserve",
+    "cash_already_available_untouched": true,
+    "retention_award_excluded": true
+  },
+  "summary": {
+    "schedule_gross_brl": 1500.0,
+    "schedule_net_brl": 1050.0,
+    "schedule_reserve_brl": 450.0,
+    "regular_gross_brl": 1000.0,
+    "regular_net_brl": 700.0,
+    "cash_gross_brl": 500.0,
+    "cash_net_brl": 350.0,
+    "calculation_basis": "sum_of_rounded_schedule_components"
+  },
+  "future_schedule": [
+    {
+      "group_key": "rsu:2030-03-31",
+      "asset_type": "RSU",
+      "eligibility_date": "2030-03-31",
+      "available_date": "2030-04-03",
+      "quantity": 10,
+      "gross_value_brl": 1000.0,
+      "net_value_brl": 700.0,
+      "reserve_value_brl": 300.0,
+      "acceleration_eligible": null,
+      "components": [
+        {
+          "award_id": "SYNTHETIC_SCHEDULE_COMPONENT",
+          "quantity": 10,
+          "eligibility_date": "2030-03-31",
+          "available_date": "2030-04-03",
+          "gross_value_brl": 1000.0,
+          "net_value_brl": 700.0,
+          "reserve_value_brl": 300.0,
+          "grant_id": null,
+          "grant_date": null,
+          "grant_year": null,
+          "grant_link_status": "unmapped",
+          "acceleration_eligible": null,
+          "valuation_basis": "manual_assumption",
+          "settlement_days": 3
+        }
+      ]
+    },
+    {
+      "group_key": "cash_rsu:2030-02-18",
+      "asset_type": "Cash RSU",
+      "eligibility_date": "2030-02-18",
+      "available_date": "2030-02-21",
+      "quantity": 5,
+      "gross_value_brl": 500.0,
+      "net_value_brl": 350.0,
+      "reserve_value_brl": 150.0,
+      "acceleration_eligible": null,
+      "components": [
+        {
+          "award_id": "SYNTHETIC_CASH_COMPONENT",
+          "quantity": 5,
+          "eligibility_date": "2030-02-18",
+          "available_date": "2030-02-21",
+          "gross_value_brl": 500.0,
+          "net_value_brl": 350.0,
+          "reserve_value_brl": 150.0,
+          "grant_id": null,
+          "grant_date": null,
+          "grant_year": null,
+          "grant_link_status": "unmapped",
+          "acceleration_eligible": null,
+          "valuation_basis": "manual_assumption",
+          "settlement_days": 3
+        }
+      ]
+    }
+  ],
+  "morgan_reference": {
+    "as_of_date": null,
+    "received_at": "2030-01-02T12:00:00Z",
+    "reference_date_known": false,
+    "currency": "BRL",
+    "total_gross_brl": 1505.0,
+    "available_total_brl": 3.0,
+    "unavailable_gross_brl": 1502.0,
+    "regular_rsu_gross_brl": 1000.0,
+    "regular_rsu_net_brl": 700.0,
+    "cash_rsu_gross_brl": 500.0,
+    "cash_rsu_net_brl": 350.0,
+    "brokerage_cash_brl": 3.0,
+    "unallocated_gross_brl": 2.0,
+    "unallocated_net_brl": null,
+    "known_awards_net_brl": 1050.0,
+    "known_after_reserve_brl": 1053.0,
+    "source_document_ids": [],
+    "replaces_dated_position": false,
+    "received_on": "2030-01-02",
+    "known_awards_gross_brl": 1500
+  },
+  "acceleration": {
+    "status": "conditional",
+    "event": "Synthetic corporate transaction closing",
+    "confirmed_date": null,
+    "grant_cutoff": "2026-01-01",
+    "calendar_unchanged": true,
+    "contract_price_usd": 14.0,
+    "eligible_quantity": 10,
+    "excluded_quantity": 20,
+    "eligible_gross_usd": 140.0,
+    "eligible_net_usd": 98.0,
+    "eligible_gross_brl": 700.0,
+    "eligible_net_brl": 490.0,
+    "fx_rate": 5.0,
+    "fx_basis": "market_reference",
+    "schedule_mapped_count": 0,
+    "schedule_unmapped_count": 2,
+    "grants": [
+      {
+        "grant_id": "SYNTHETIC_PRE_2026",
+        "grant_date": "2025-03-31",
+        "asset_type": "RSU",
+        "quantity": 10,
+        "acceleration_eligible": true
+      },
+      {
+        "grant_id": "SYNTHETIC_2026",
+        "grant_date": "2026-03-31",
+        "asset_type": "RSU",
+        "quantity": 20,
+        "acceleration_eligible": false
+      }
+    ]
+  },
+  "payroll_policy": {
+    "monthly_base_brl": 10000.0,
+    "coopharma_treatment": "subtract_documented_schedule_once",
+    "actual_net_preserved": true,
+    "forecasts_only": true
+  },
+  "contract_notes": [
+    "Synthetic contract example; numeric values are not a user position.",
+    "All displayed money is supplied by the server; the browser must not apply 70% again.",
+    "morgan_reference is null when absent. It never silently replaces a dated documentary position.",
+    "acceleration is null when no documented grant policy is supplied; it never changes canonical dates.",
+    "Eligibility is true or false only with a documented grant link; otherwise it is null.",
+    "A mixed group is eligible only if all components are eligible; an unknown component prevents group acceleration.",
+    "payroll_policy is null when no owner confirmation is supplied.",
+    "The production response omits contract_notes."
+  ]
+}
