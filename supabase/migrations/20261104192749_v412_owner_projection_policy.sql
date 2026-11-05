@@ -7,6 +7,40 @@ CREATE SCHEMA IF NOT EXISTS lts_projection_private_v412;
 REVOKE ALL ON SCHEMA lts_projection_private_v412 FROM PUBLIC,anon,authenticated;
 GRANT USAGE ON SCHEMA lts_projection_private_v412 TO authenticated,service_role;
 
+-- Dated documentary prices change amounts, never the monthly billing calendar.
+CREATE OR REPLACE FUNCTION lts_projection_private_v412.fixed_amount(p_rule jsonb,p_on date)
+RETURNS numeric LANGUAGE plpgsql IMMUTABLE STRICT SECURITY INVOKER SET search_path='' AS $f$
+DECLARE change jsonb; effective date; previous date; amount numeric; result numeric;
+BEGIN
+ IF p_rule->>'method' IS DISTINCT FROM 'fixed'
+  OR coalesce(p_rule->>'amount_brl','') !~ '^[0-9]+([.][0-9]{1,2})?$'
+  OR NOT coalesce(pg_catalog.pg_input_is_valid(p_rule->>'starts_on','date'),false)
+  THEN RAISE EXCEPTION 'Confira a regra de valor fixo.'; END IF;
+ result:=(p_rule->>'amount_brl')::numeric;
+ IF result<=0 OR result>100000000 THEN RAISE EXCEPTION 'Valor fixo fora dos limites.'; END IF;
+ IF p_rule ? 'amount_changes' THEN
+  IF jsonb_typeof(p_rule->'amount_changes') IS DISTINCT FROM 'array'
+   THEN RAISE EXCEPTION 'Confira as vigências de preço.'; END IF;
+  FOR change IN SELECT value FROM jsonb_array_elements(p_rule->'amount_changes') LOOP
+   IF jsonb_typeof(change) IS DISTINCT FROM 'object'
+    OR coalesce(change->>'effective_on','') !~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}$'
+    OR NOT coalesce(pg_catalog.pg_input_is_valid(change->>'effective_on','date'),false)
+    OR coalesce(change->>'amount_brl','') !~ '^[0-9]+([.][0-9]{1,2})?$'
+    OR nullif(btrim(change->>'source_ref'),'') IS NULL
+    THEN RAISE EXCEPTION 'Falta uma vigência de preço documentada.'; END IF;
+   effective:=(change->>'effective_on')::date;amount:=(change->>'amount_brl')::numeric;
+   IF effective<(p_rule->>'starts_on')::date OR (previous IS NOT NULL AND effective<=previous)
+    OR amount<=0 OR amount>100000000
+    THEN RAISE EXCEPTION 'Vigências de preço inválidas ou repetidas.'; END IF;
+   previous:=effective;
+   IF effective<=p_on THEN result:=amount; END IF;
+  END LOOP;
+ END IF;
+ RETURN result;
+END $f$;
+REVOKE ALL ON FUNCTION lts_projection_private_v412.fixed_amount(jsonb,date) FROM PUBLIC,anon,authenticated;
+GRANT EXECUTE ON FUNCTION lts_projection_private_v412.fixed_amount(jsonb,date) TO service_role;
+
 CREATE OR REPLACE FUNCTION lts_projection_private_v412.owner_policy(p_user_id uuid)
 RETURNS jsonb LANGUAGE plpgsql STABLE SECURITY INVOKER SET search_path='' AS $f$
 DECLARE p jsonb; r jsonb; seen text[]:='{}'; k text; activated_at timestamptz;
@@ -36,6 +70,10 @@ BEGIN
   IF r->>'method' IN('fixed','salary_net') AND
    (coalesce(r->>'amount_brl','') !~ '^[0-9]+([.][0-9]{1,2})?$' OR (r->>'amount_brl')::numeric<=0)
    THEN RAISE EXCEPTION 'Falta o valor confirmado da projeção.'; END IF;
+  IF r ? 'amount_changes' AND r->>'method'<>'fixed'
+   THEN RAISE EXCEPTION 'Esta série não utiliza vigências de preço fixo.'; END IF;
+  IF r->>'method'='fixed' THEN
+   PERFORM lts_projection_private_v412.fixed_amount(r,(r->>'starts_on')::date); END IF;
   IF r->>'method'='inflated_calendar' AND
    (coalesce(r->>'annual_rate','') !~ '^0([.][0-9]+)?$' OR (r->>'annual_rate')::numeric>0.25
     OR coalesce(r->>'base_year','') !~ '^[12][0-9]{3}$')
@@ -485,7 +523,7 @@ BEGIN
    target:=NULL;
    CASE method
     WHEN 'history_total_budget' THEN target:=mean_amount;
-    WHEN 'fixed' THEN target:=(r->>'amount_brl')::numeric;
+    WHEN 'fixed' THEN target:=lts_projection_private_v412.fixed_amount(r,effective_date);
     WHEN 'salary_net' THEN
      IF coalesce((s->>'withholding_known')::boolean,false) AND nullif(s->>'withholding_brl','') IS NOT NULL
       AND (s->>'withholding_brl')::numeric>=0
@@ -536,7 +574,10 @@ BEGIN
      'confidence',CASE WHEN method='history_total_budget' THEN 'owner_authorized_12m_history' ELSE 'owner_authorized_planning_rule' END,
      'account_assignment','owner_policy','legacy_index',NULL,'original_date',effective_date,'displaced',false,
      'series_key',key,'method',method,'budget_total_brl',amount,'known_amount_brl',known,
-     'source_refs',coalesce(s->'source_refs','[]')));
+     'source_refs',coalesce(s->'source_refs','[]')||CASE WHEN method='fixed' THEN coalesce((
+      SELECT jsonb_build_array(c->>'source_ref') FROM jsonb_array_elements(coalesce(r->'amount_changes','[]'))c
+      WHERE (c->>'effective_on')::date<=effective_date ORDER BY (c->>'effective_on')::date DESC LIMIT 1),'[]')
+      ELSE '[]'::jsonb END));
     generated:=generated+1;
    END IF;
   END LOOP;
@@ -551,7 +592,7 @@ BEGIN
    FROM jsonb_array_elements(results)x GROUP BY 1,4)a;
   series:=series||jsonb_build_array(jsonb_build_object('series_key',key,'description',r->>'description',
    'direction',r->>'direction','account',r->>'account','method',method,
-   'reference_amount_brl',CASE WHEN uses_history THEN mean_amount ELSE nullif(r->>'amount_brl','')::numeric END,
+   'reference_amount_brl',CASE WHEN uses_history THEN mean_amount WHEN method='fixed' THEN lts_projection_private_v412.fixed_amount(r,p_as_of) ELSE nullif(r->>'amount_brl','')::numeric END,
    'history_total_brl',CASE WHEN uses_history THEN amount_sum END,'uses_history',uses_history,
    'template_source',r->>'template_source','template_year',r->'template_year',
    'reference_window',jsonb_build_object('from',reference_from,'to',reference_to),

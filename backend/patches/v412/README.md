@@ -85,3 +85,9 @@ sessão do usuário.
 `rollback.sql` restaura os dois corpos de função anteriores apenas se não houver
 drift, desativa os dois RPCs novos e preserva fontes, política, referência e
 auditoria. Reaplicar a migração restaura a integração.
+
+Fixed rules may include ordered `amount_changes` with a documentary `source_ref`,
+`effective_on` and positive two-decimal `amount_brl`. The original amount applies
+until each effective date. These dates never redefine the billing day; cancelled,
+existing and documentary occurrences retain precedence. Changes on other methods,
+duplicate dates and incomplete price evidence are rejected.

@@ -106,7 +106,7 @@ BEGIN
    target:=NULL;
    CASE method
     WHEN 'history_total_budget' THEN target:=mean_amount;
-    WHEN 'fixed' THEN target:=(r->>'amount_brl')::numeric;
+    WHEN 'fixed' THEN target:=lts_projection_private_v412.fixed_amount(r,effective_date);
     WHEN 'salary_net' THEN
      IF coalesce((s->>'withholding_known')::boolean,false) AND nullif(s->>'withholding_brl','') IS NOT NULL
       AND (s->>'withholding_brl')::numeric>=0
@@ -157,7 +157,10 @@ BEGIN
      'confidence',CASE WHEN method='history_total_budget' THEN 'owner_authorized_12m_history' ELSE 'owner_authorized_planning_rule' END,
      'account_assignment','owner_policy','legacy_index',NULL,'original_date',effective_date,'displaced',false,
      'series_key',key,'method',method,'budget_total_brl',amount,'known_amount_brl',known,
-     'source_refs',coalesce(s->'source_refs','[]')));
+     'source_refs',coalesce(s->'source_refs','[]')||CASE WHEN method='fixed' THEN coalesce((
+      SELECT jsonb_build_array(c->>'source_ref') FROM jsonb_array_elements(coalesce(r->'amount_changes','[]'))c
+      WHERE (c->>'effective_on')::date<=effective_date ORDER BY (c->>'effective_on')::date DESC LIMIT 1),'[]')
+      ELSE '[]'::jsonb END));
     generated:=generated+1;
    END IF;
   END LOOP;
@@ -172,7 +175,7 @@ BEGIN
    FROM jsonb_array_elements(results)x GROUP BY 1,4)a;
   series:=series||jsonb_build_array(jsonb_build_object('series_key',key,'description',r->>'description',
    'direction',r->>'direction','account',r->>'account','method',method,
-   'reference_amount_brl',CASE WHEN uses_history THEN mean_amount ELSE nullif(r->>'amount_brl','')::numeric END,
+   'reference_amount_brl',CASE WHEN uses_history THEN mean_amount WHEN method='fixed' THEN lts_projection_private_v412.fixed_amount(r,p_as_of) ELSE nullif(r->>'amount_brl','')::numeric END,
    'history_total_brl',CASE WHEN uses_history THEN amount_sum END,'uses_history',uses_history,
    'template_source',r->>'template_source','template_year',r->'template_year',
    'reference_window',jsonb_build_object('from',reference_from,'to',reference_to),

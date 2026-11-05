@@ -187,6 +187,35 @@
             "items": {
               "type": "string"
             }
+          },
+          "amount_changes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "effective_on",
+                "amount_brl",
+                "source_ref"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "effective_on": {
+                  "type": "string",
+                  "format": "date",
+                  "pattern": "^\\d{4}-\\d\\d-\\d\\d$"
+                },
+                "amount_brl": {
+                  "type": "number",
+                  "exclusiveMinimum": 0,
+                  "maximum": 100000000,
+                  "multipleOf": 0.01
+                },
+                "source_ref": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
           }
         },
         "allOf": [
@@ -250,6 +279,20 @@
               "required": [
                 "template_year"
               ]
+            }
+          },
+          {
+            "if": {
+              "required": [
+                "amount_changes"
+              ]
+            },
+            "then": {
+              "properties": {
+                "method": {
+                  "const": "fixed"
+                }
+              }
             }
           }
         ]

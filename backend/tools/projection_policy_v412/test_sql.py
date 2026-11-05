@@ -76,6 +76,7 @@ SELECT qa_v412.assert('generic migration creates no owner policy audit or foreca
  (SELECT count(*) FROM public.legacy_namespace)=0 AND(SELECT count(*) FROM public.audit_log)=0
  AND(SELECT count(*) FROM qa_v412.raw_flow)=0);
 """)
+    print(read(QA / "v412_price_checks.sql"))
     print(read(QA / "v412_verify.sql"))
     rollback = read(PATCH / "rollback.sql")
     print(rollback)
@@ -123,3 +124,4 @@ SELECT jsonb_build_object('pass',bool_and(pass),'checks',count(*),
 
 if __name__ == "__main__":
     main()
+
