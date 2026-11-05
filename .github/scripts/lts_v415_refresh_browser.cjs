@@ -7,6 +7,21 @@ const out = 'qa/v415-refresh', base = process.env.LTS_BROWSER_BASE || 'http://12
 fs.mkdirSync(out, { recursive: true });
 fixture.response = (name, args) => name === 'lts_browser_projection_policy_v412' ? projection.policy() : baseResponse(name, args);
 const hash = value => crypto.createHash('sha256').update(JSON.stringify(value)).digest('hex');
+function financialFlow(value) {
+  const result = structuredClone(value);
+  // The preserved legacy cachedFlow reader keeps the larger source window here.
+  // Compare all other fields exactly, including requested from/to, every date,
+  // monetary value, row, event and completeness flag.
+  delete result.current_future.from; delete result.current_future.to;
+  return result;
+}
+function assertWindowRows(value) {
+  assert.equal(value.from, '2027-01-01'); assert.equal(value.to, '2027-01-31');
+  for (const part of ['historical', 'current_future']) {
+    for (const row of value[part].days) assert(row.date >= value.from && row.date <= value.to, 'Day inside requested window');
+    for (const row of value[part].events) { const date = String(row.event_date).slice(0, 10); assert(date >= value.from && date <= value.to, 'Event inside requested window'); }
+  }
+}
 const refresh = (state = 'pending', extra = {}) => ({ state, required: state !== 'ready', cached_available: true,
   request_version: '2', completed_version: state === 'ready' ? '2' : '1', attempts: 1,
   requested_at: '2026-11-05T21:01:00Z', started_at: null, completed_at: null, next_attempt_at: null, error_code: null,
@@ -16,7 +31,9 @@ async function routes(h, initial) {
   const send = (route, value, code = 200) => route.fulfill({ status: code, contentType: 'application/json', body: JSON.stringify(value) });
   await h.ctx.route('**/rest/v1/rpc/lts_browser_product_v1', route => {
     state.products++;
-    return send(route, { ok: true, mvp: state.refresh.cached_available ? fixture.product() : null,
+    const withheld = !!state.nextProductMissing; state.nextProductMissing = false;
+    if (state.nextProductRefresh) { state.refresh = state.nextProductRefresh; state.nextProductRefresh = null; }
+    return send(route, { ok: true, mvp: state.refresh.cached_available && !withheld ? fixture.product() : null,
       refresh: state.refresh, cache: { refresh_required: state.refresh.required, is_stale: state.refresh.required, refreshed_at: state.refresh.cached_refreshed_at } });
   });
   await h.ctx.route('**/rest/v1/rpc/lts_browser_product_refresh_status_v415', route => {
@@ -77,15 +94,32 @@ async function runCached(browser, engine, width) {
     await f.evaluate(() => loadFlowRange('2027-01-01', '2027-01-31'));
     await f.waitForFunction(() => !FLOWLOADING && FLOWQ?.to === '2027-01-31');
     const before = await f.evaluate(() => structuredClone(FLOWQ)), pendingFlow = await checkBanner(f, width, true);
+    assertWindowRows(before);
+    assert.deepEqual({ from: before.current_future.from, to: before.current_future.to }, { from: '2026-10-31', to: '2031-12-31' }, 'Explicit preserved legacy source coverage');
     assert(pendingFlow.controls.height < 450, JSON.stringify(pendingFlow));
     assert.equal(await f.locator('.v382-period[open]').count(), 0);
     await h.page.screenshot({ path: out + '/' + label + '-flow-pending.png' });
     const productsBefore = state.products;
     state.refresh = refresh('ready');
+    // A fresh invalidation can occur after the lightweight readiness check.
+    state.nextProductRefresh = refresh('pending', { request_version: '3', completed_version: '2', cached_available: true });
+    state.nextProductMissing = true;
+    await f.evaluate(() => __LTS_V415_REFRESH.poll());
+    await f.waitForFunction(() => BOOT.phase === 'preparing' && D === null);
+    assert(!(await f.locator('#app').isVisible()), 'Old numbers are withdrawn when current completeness cannot be proved');
+    assert(await f.getByText('Preparando seus dados', { exact: true }).isVisible());
+    assert.equal(state.products, productsBefore + 1);
+    await h.page.screenshot({ path: out + '/' + label + '-rendered-to-preparing.png' });
+    state.refresh = refresh('ready', { request_version: '3', completed_version: '3' });
     await f.evaluate(() => __LTS_V415_REFRESH.poll());
     await f.waitForFunction(() => !__LTS_V415_REFRESH.snapshot().pending && !FLOWLOADING && FLOWQ?.to === '2027-01-31');
-    assert.equal(state.products, productsBefore + 1, 'One product fetch after readiness');
-    assert.equal(hash(await f.evaluate(() => FLOWQ)), hash(before), 'Server financial response unchanged');
+    assert.equal(state.products, productsBefore + 2, 'Each verified completion is fetched once, including the superseded completion');
+    assert.equal(await f.evaluate(() => V), 'Fluxo Diário', 'Recovery returns to the previously visible view');
+    const after = await f.evaluate(() => FLOWQ);
+    assertWindowRows(after);
+    assert.deepEqual({ from: after.current_future.from, to: after.current_future.to }, { from: '2027-01-01', to: '2027-01-31' }, 'New reader coverage matches the exact requested period');
+    fs.writeFileSync(out + '/' + label + '-flow-parity.json', JSON.stringify({ before, after }, null, 2));
+    assert.deepEqual(financialFlow(after), financialFlow(before), 'Every financial field, requested date and completeness flag unchanged');
     assert.deepEqual(await f.evaluate(() => ({ from: FLOWFROM, to: FLOWTO })), { from: '2027-01-01', to: '2027-01-31' });
     const freshFlow = await checkBanner(f, width, false);
     await h.page.screenshot({ path: out + '/' + label + '-flow-fresh.png' });
@@ -101,7 +135,9 @@ async function runCached(browser, engine, width) {
       cached_refreshed_at: '2026-11-05T21:03:00Z' };
     await f.evaluate(() => __LTS_V415_REFRESH.poll());
     await f.waitForFunction(() => !__LTS_V415_REFRESH.snapshot().pending && !FLOWLOADING && __LTS_V412_PROJECTION.status === 'ready');
-    assert.equal(state.products, manualProducts + 1); assert.equal(hash(await f.evaluate(() => FLOWQ)), hash(before));
+    const afterManual = await f.evaluate(() => FLOWQ); assertWindowRows(afterManual);
+    assert.deepEqual({ from: afterManual.current_future.from, to: afterManual.current_future.to }, { from: '2027-01-01', to: '2027-01-31' });
+    assert.equal(state.products, manualProducts + 1); assert.deepEqual(financialFlow(afterManual), financialFlow(before));
     await go(f, 'Dashboard'); await h.page.waitForLoadState('networkidle');
     await f.waitForFunction(() => !__LTS_V168_STATE.dashboard.loading);
     const dashboardAfter = await f.evaluate(() => __LTS_V168_STATE.dashboard.data);
@@ -113,7 +149,8 @@ async function runCached(browser, engine, width) {
       pending_dashboard_height: pendingDashboard.banner.height, pending_flow_height: pendingFlow.banner.height,
       healthy_dashboard_height: freshDashboard.banner.height, healthy_flow_height: freshFlow.banner.height,
       collapsed_flow_controls_height: pendingFlow.controls.height, exact_flow_range_preserved: true,
-      financial_response_sha256: hash(before), financial_response_unchanged: true, manual_request_queued: true,
+      rendered_snapshot_withdrawn_on_missing_current_completeness: true,
+      financial_response_sha256: hash(financialFlow(before)), financial_response_unchanged: true, source_window_metadata_retained_by_legacy_cache: true, manual_request_queued: true,
       products: state.products, statuses: state.statuses, manual_refreshes: state.manual,
       synthetic_http: true, private_session: false, physical_iphone: false };
   } catch (error) { await recordFailure(h, f, label, error); throw error; }
@@ -146,11 +183,20 @@ async function runMissing(browser, engine, width) {
     await f.waitForFunction(() => BOOT.phase === 'ready' && D && !N.classList.contains('hidden'));
     await h.page.waitForLoadState('networkidle'); assert.equal(state.products, 2);
     await checkBanner(f, width, false); assert.deepEqual(h.errors, []); assert.deepEqual(h.writes, []);
+    // The unchanged client reports a missing session with its exact local message.
+    await f.evaluate(() => localStorage.removeItem('lts_supabase_session_v1'));
+    await f.evaluate(() => __LTS_V415_REFRESH.poll());
+    await f.waitForFunction(() => BOOT.phase === 'signed-out');
+    assert(await f.getByText('Sua sessão terminou. Entre novamente.', { exact: true }).isVisible());
+    assert.equal(await f.evaluate(() => __LTS_V415_REFRESH.snapshot().active), false);
+    // Restore only the synthetic fixture session to exercise the existing logout.
+    await f.evaluate(() => { localStorage.setItem('lts_supabase_session_v1', JSON.stringify({ access_token: 'synthetic-only-access', refresh_token: 'synthetic-only-refresh', expires_at: 4102444800, user: { id: '00000000-0000-4000-8000-000000000001', email: 'viewer@example.invalid' } })); return load(); });
+    await f.waitForFunction(() => BOOT.phase === 'ready');
     await f.locator('#logout').focus(); await h.page.keyboard.press('Enter');
     await f.waitForFunction(() => BOOT.phase === 'signed-out');
     assert.equal(await f.evaluate(() => __LTS_V415_REFRESH.snapshot().active), false);
     return { pass: true, engine, width, scenario: 'missing', no_fabricated_financial_payload: true,
-      preparing_visible: true, failure_retry_visible: true, one_coalesced_retry: true, recovered: true, logout_stops_refresh: true,
+      preparing_visible: true, failure_retry_visible: true, one_coalesced_retry: true, recovered: true, expired_session_returns_to_login: true, logout_stops_refresh: true,
       products: state.products, requests: state.requests, synthetic_http: true, private_session: false, physical_iphone: false };
   } catch (error) { await recordFailure(h, f, label, error); throw error; }
   finally { await h.ctx.close(); }

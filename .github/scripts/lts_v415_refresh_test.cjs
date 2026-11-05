@@ -8,15 +8,16 @@ const status = (state = 'pending', extra = {}) => ({ state, required: state !== 
 const product = (refresh = status(), mvp = { balance: 1234.56, rows: [{ amount: -90.5, date: '2026-11-06' }] }) => ({ ok: true, mvp, refresh });
 function harness(t) {
   let visible = true, id = 0;
-  const timers = new Map(), calls = [], installed = [], completed = [], states = [], handlers = new Map();
+  const timers = new Map(), calls = [], installed = [], unavailable = [], completed = [], states = [], authErrors = [], handlers = new Map();
   const c = api.create({
     visible: () => visible,
     setTimeout: (fn, ms) => { timers.set(++id, { fn, ms }); return id; }, clearTimeout: key => timers.delete(key),
     rpc: (name, args, signal) => { calls.push({ name, args, signal }); const fn = handlers.get(name); assert(fn, 'Unexpected RPC: ' + name); return fn(); },
-    onProduct: (payload, metadata) => installed.push({ payload, metadata }), onReady: s => completed.push(s), onState: s => states.push(s)
+    onProduct: (payload, metadata) => installed.push({ payload, metadata }), onProductUnavailable: payload => unavailable.push(payload),
+    onReady: s => completed.push(s), onState: s => states.push(s), onAuthError: issue => authErrors.push(issue)
   });
   t.after(() => c.dispose());
-  return { c, timers, calls, installed, completed, states,
+  return { c, timers, calls, installed, unavailable, completed, states, authErrors,
     visible(value) { visible = value; },
     respond(name, value) { handlers.set(name, typeof value === 'function' ? value : () => ({ data: structuredClone(value) })); },
     async tick() { assert.equal(timers.size, 1, 'One bounded timer'); const [key, task] = timers.entries().next().value; timers.delete(key); task.fn(); await flush(); return task.ms; }
@@ -150,4 +151,24 @@ test('legacy cache flags request verification instead of silently presenting a s
 test('a complete healthy legacy response does not call endpoints absent from its protocol', async t => {
   const h = harness(t); h.c.acceptProduct({ ok: true, mvp: { balance: 7 } });
   await h.c.poll(); h.c.resume(); await flush(); assert.equal(h.calls.length, 0); assert.equal(h.c.snapshot().pending, false);
+});
+
+test('a new invalidation between ready status and product withdraws a previously rendered snapshot', async t => {
+  const h = harness(t); h.c.acceptProduct(product());
+  h.respond(api.STATUS_RPC, { ok: true, refresh: status('ready') });
+  const missing = product(status('pending', { request_version: '3', completed_version: '2', cached_available: true }), null);
+  h.respond(api.PRODUCT_RPC, missing); await h.c.poll();
+  assert.equal(h.c.snapshot().hasProduct, false); assert.equal(h.c.snapshot().pending, true);
+  assert.deepEqual(h.unavailable, [missing], 'The view must explicitly withdraw old numbers even though the server retains a full cache');
+  assert.equal(h.installed.length, 0); assert.equal(h.completed.length, 0);
+  const fresh = status('ready', { request_version: '3', completed_version: '3' });
+  h.respond(api.STATUS_RPC, { ok: true, refresh: fresh }); h.respond(api.PRODUCT_RPC, product(fresh));
+  await h.c.poll(); assert.equal(h.installed.length, 1); assert.equal(h.c.snapshot().pending, false);
+});
+
+test('the native expired-session error invokes existing authentication recovery once and stops polling', async t => {
+  const h = harness(t); h.c.acceptProduct(product());
+  h.respond(api.STATUS_RPC, () => ({ data: null, error: { message: 'Sessão expirada' } }));
+  await h.c.poll(); assert.equal(h.authErrors.length, 1); assert.equal(h.timers.size, 0);
+  assert.equal(h.calls.length, 1); assert.equal(h.authErrors[0].sessionExpired, true);
 });

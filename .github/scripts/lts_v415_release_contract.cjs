@@ -15,10 +15,11 @@ assert.deepEqual(fs.readdirSync(root).sort(), [...fs.readdirSync(base), runtime]
 for (const name of fs.readdirSync(base)) if (!changed.includes(name)) assert.equal(hash(root + '/' + name), hash(base + '/' + name), 'Preserved ' + name);
 assert.equal(hash(root + '/' + runtime), hash(runtime));
 assert.equal(read(root, 'app.html'), read(base, 'app.html').replaceAll('V412', 'V415').replace('v412-projection-policy-20261104', 'v415-durable-refresh-20261105'));
-// The authentication client changes only by accepting AbortSignal on RPC fetches.
+// The authentication client only accepts AbortSignal and preserves existing error metadata.
 const originalIndex = read(base, 'index.html'), candidateIndex = read(root, 'index.html');
 let restored = candidateIndex.replace('<script src="lts-v415-product-refresh.js"></script>', '')
   .replace('async rpc(fn,args={},options={})', 'async rpc(fn,args={})')
+  .replace("function errObj(e){return {message:(e&&e.message)||String(e||'erro'),status:e?.status,code:e?.code}}", "function errObj(e){return {message:(e&&e.message)||String(e||'erro')}}")
   .replace('body:JSON.stringify(args||{}),signal:options.signal', 'body:JSON.stringify(args||{})');
 const integrationStart = restored.indexOf('const PRODUCT_REFRESH_RPC_V415='), integrationEnd = restored.indexOf('function bootPanel(){', integrationStart);
 assert(integrationStart > 0 && integrationEnd > integrationStart); restored = restored.slice(0, integrationStart) + restored.slice(integrationEnd);

@@ -71,6 +71,7 @@
         if (token !== generation || !canRun()) return null;
         if (response?.error) {
           const issue = Error('Request unavailable'); issue.status = response.error.status; issue.code = response.error.code;
+          issue.sessionExpired = response.error.message === 'Sessão expirada';
           throw issue;
         }
         if (!response?.data || response.data.ok === false) throw Error('Invalid response');
@@ -80,7 +81,7 @@
     function fail(kind, issue, token) {
       if (token !== generation || !active || disposed) return;
       clearTimer(); error = kind; emit();
-      if (issue?.status === 401 || ['PGRST301', 'session_not_found', 'refresh_token_not_found'].includes(issue?.code))
+      if (issue?.sessionExpired || issue?.status === 401 || ['PGRST301', 'session_not_found', 'refresh_token_not_found'].includes(issue?.code))
         options.onAuthError?.(issue);
     }
     function setRefresh(value, cache, available) {
@@ -120,6 +121,7 @@
           const state = acceptProduct(payload);
           if (token !== generation) return;
           if (payload.mvp) await options.onProduct?.(payload, { fresh: ready(state.refresh) });
+          else await options.onProductUnavailable?.(payload);
           if (token !== generation) return;
           if (ready(state.refresh)) options.onReady?.(snapshot());
         } catch (issue) { fail('product', issue, token); }
