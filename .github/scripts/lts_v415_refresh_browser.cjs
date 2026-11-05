@@ -80,6 +80,10 @@ async function dashboardSnapshot(h, f) {
 async function geometry(f) {
   return f.evaluate(() => ({ width: innerWidth, scroll: document.documentElement.scrollWidth,
     banner: document.querySelector('#ltsRefreshStatusV415').getBoundingClientRect().toJSON(),
+    header: document.querySelector('.hdr').getBoundingClientRect().toJSON(),
+    bannerText: [...document.querySelectorAll('#ltsRefreshStatusV415 strong,#ltsRefreshStatusV415 p')].flatMap(element => {
+      const range = document.createRange(); range.selectNodeContents(element); return [...range.getClientRects()].map(rect => rect.toJSON());
+    }),
     sourceOpen: document.querySelectorAll('.v337-source[open],.v412-origin[open]').length,
     controls: document.querySelector('.flow-sticky-controls')?.getBoundingClientRect().toJSON(),
     buttons: [...document.querySelectorAll('#ltsRefreshStatusV415 button')].map(x => x.getBoundingClientRect().toJSON()) }));
@@ -92,6 +96,8 @@ async function checkBanner(f, width, pending) {
     assert.match(text, /Atualizando seus dados/); assert.match(text, /Última atualização: 05\/11/);
     assert(!/cache|worker|fila|payload|backend|posição de|SQL|RPC/i.test(text));
     assert(measured.banner.height <= 90, 'Compact pending banner: ' + measured.banner.height);
+    if (width > 900) assert(measured.banner.left >= measured.header.right, 'Pending banner stays beside the desktop sidebar');
+    assert(measured.bannerText.length >= 2 && measured.bannerText.every(rect => rect.left >= measured.banner.left && rect.right <= measured.banner.right + 1), 'Every title/detail line fits inside the visible banner');
   } else { assert(!(await banner.isVisible())); assert.equal(measured.banner.height, 0, 'No healthy banner height'); }
   return measured;
 }
