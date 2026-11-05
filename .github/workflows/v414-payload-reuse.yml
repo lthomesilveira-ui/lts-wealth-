@@ -1,0 +1,44 @@
+name: V414 payload single evaluation
+on:
+  pull_request:
+    paths:
+      - 'backend/patches/v414/**'
+      - 'backend/qa/v414*'
+      - 'backend/qa/fixtures/v414*'
+      - 'backend/tools/payload_reuse_v414/**'
+      - 'supabase/migrations/*v414_payload_single_evaluation.sql'
+      - '.github/workflows/v414-payload-reuse.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native-postgres17:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: synthetic-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready --health-interval 5s
+          --health-timeout 5s --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: synthetic-only
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compose exact migration and differential fixtures
+        run: python3 backend/tools/payload_reuse_v414/test_sql.py > /tmp/v414-differential.sql
+      - name: Verify complete payload parity, call counts and migration metadata
+        run: |
+          createdb v414_differential
+          psql -X -d v414_differential -v ON_ERROR_STOP=1 -At -f /tmp/v414-differential.sql > /tmp/v414-differential.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v414-postgres17-differential-proof
+          path: /tmp/v414-differential.log
