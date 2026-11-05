@@ -1,0 +1,15 @@
+{
+  "policy_namespace": "lts_owner_projection_policy_v412",
+  "reference_namespace": "lts_projection_reference_v412",
+  "policy_schema": "policy_contract.schema.json",
+  "reference_schema": "reference_contract.schema.json",
+  "decimal_arithmetic": "PostgreSQL numeric; mean_brl=round(sum_brl/12,2); no missing-month zeros",
+  "snapshot_hash": "sha256 of exact valor_bruto UTF-8, hexadecimal lowercase",
+  "admin_invalidate": "SELECT lts_projection_private_v412.invalidate_reads(<owner_uuid>);",
+  "admin_refresh": "SELECT lts_projection_private_v412.refresh_reference(<owner_uuid>,current_date);",
+  "authenticated_reader": "lts_browser_projection_policy_v412()",
+  "authenticated_refresh": "lts_browser_projection_refresh_v412()",
+  "rules": "Only a complete 12-month window replaces a stored reference. Incomplete new windows retain the previous complete reference and disclose its date. Salary reads the persisted schedule once. Official future obligations outrank estimates.",
+  "financial_event_writers_added": false,
+  "source_data_in_public_contract": false
+}

@@ -1,0 +1,302 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "lts-owner-projection-policy-v412",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "approved_on",
+    "owner_evidence_ref",
+    "review",
+    "horizon_years",
+    "rules"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "approved_on": {
+      "type": "string",
+      "format": "date",
+      "pattern": "^\\d{4}-\\d\\d-\\d\\d$"
+    },
+    "policy_id": {
+      "type": "string"
+    },
+    "owner_evidence_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "review": {
+      "const": "calendar_year"
+    },
+    "horizon_years": {
+      "const": 5
+    },
+    "rules": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "series_key",
+          "description",
+          "account",
+          "direction",
+          "method",
+          "starts_on"
+        ],
+        "properties": {
+          "series_key": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1
+          },
+          "account": {
+            "enum": [
+              "Itaú",
+              "Bradesco",
+              "C6"
+            ]
+          },
+          "direction": {
+            "enum": [
+              "income",
+              "expense"
+            ]
+          },
+          "method": {
+            "enum": [
+              "history_total_budget",
+              "fixed",
+              "salary_net",
+              "inflated_calendar",
+              "repeat_calendar"
+            ]
+          },
+          "starts_on": {
+            "type": "string",
+            "format": "date",
+            "pattern": "^\\d{4}-\\d\\d-\\d\\d$"
+          },
+          "ends_on": {
+            "oneOf": [
+              {
+                "type": "string",
+                "format": "date",
+                "pattern": "^\\d{4}-\\d\\d-\\d\\d$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "source_kind": {
+            "enum": [
+              "card_invoice",
+              "expense",
+              "template"
+            ]
+          },
+          "card_family": {
+            "type": "string"
+          },
+          "amount_brl": {
+            "oneOf": [
+              {
+                "type": "number",
+                "minimum": 0
+              },
+              {
+                "type": "string",
+                "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
+              }
+            ]
+          },
+          "due_day": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 31
+          },
+          "due_day_basis": {
+            "type": "string"
+          },
+          "template_source": {
+            "enum": [
+              "calendar",
+              "history_mean"
+            ]
+          },
+          "template_year": {
+            "type": "integer",
+            "minimum": 1900,
+            "maximum": 2200
+          },
+          "base_year": {
+            "type": "integer",
+            "minimum": 1900,
+            "maximum": 2200
+          },
+          "annual_rate": {
+            "oneOf": [
+              {
+                "type": "number",
+                "minimum": 0
+              },
+              {
+                "type": "string",
+                "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
+              }
+            ]
+          },
+          "withholding_commitment": {
+            "type": "string",
+            "minLength": 1
+          },
+          "withholding_ends_on": {
+            "type": "string",
+            "format": "date",
+            "pattern": "^\\d{4}-\\d\\d-\\d\\d$"
+          },
+          "withholding_end_source_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "expense_scope": {
+            "type": "string"
+          },
+          "category_aliases": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "beneficiary": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "aliases": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "amount_changes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "effective_on",
+                "amount_brl",
+                "source_ref"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "effective_on": {
+                  "type": "string",
+                  "format": "date",
+                  "pattern": "^\\d{4}-\\d\\d-\\d\\d$"
+                },
+                "amount_brl": {
+                  "type": "number",
+                  "exclusiveMinimum": 0,
+                  "maximum": 100000000,
+                  "multipleOf": 0.01
+                },
+                "source_ref": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "method": {
+                  "enum": [
+                    "fixed",
+                    "salary_net"
+                  ]
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "amount_brl"
+              ]
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "method": {
+                  "const": "salary_net"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "withholding_commitment",
+                "withholding_ends_on",
+                "withholding_end_source_ref"
+              ]
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "method": {
+                  "const": "inflated_calendar"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "annual_rate",
+                "base_year"
+              ]
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "method": {
+                  "const": "repeat_calendar"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "template_year"
+              ]
+            }
+          },
+          {
+            "if": {
+              "required": [
+                "amount_changes"
+              ]
+            },
+            "then": {
+              "properties": {
+                "method": {
+                  "const": "fixed"
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

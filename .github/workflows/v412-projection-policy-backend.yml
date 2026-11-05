@@ -1,0 +1,55 @@
+name: V412 owner projection policy
+on:
+  pull_request:
+    paths:
+      - 'backend/patches/v412/**'
+      - 'backend/qa/v412*'
+      - 'backend/qa/fixtures/v412*'
+      - 'backend/qa/fixtures/v366_series_key.sql'
+      - 'backend/tools/projection_policy_v412/**'
+      - 'supabase/migrations/*v412*'
+      - '.github/workflows/v412-projection-policy-backend.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native-postgres17:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: synthetic-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready --health-interval 5s
+          --health-timeout 5s --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: synthetic-only
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check exact migration artifact
+        run: python3 backend/tools/projection_policy_v412/build_migration.py --check
+      - name: Compose isolated synthetic suites
+        run: |
+          python3 backend/tools/projection_policy_v412/test_sql.py > /tmp/v412-core.sql
+          python3 backend/tools/projection_policy_v412/test_sql.py --source-adapter-only > /tmp/v412-source.sql
+      - name: Core migration and projection behavior on PostgreSQL 17
+        run: |
+          createdb v412_core
+          psql -d v412_core -v ON_ERROR_STOP=1 -At -f /tmp/v412-core.sql > /tmp/v412-core.log
+      - name: Independent source-adapter coverage on PostgreSQL 17
+        run: |
+          createdb v412_source
+          psql -d v412_source -v ON_ERROR_STOP=1 -At -f /tmp/v412-source.sql > /tmp/v412-source.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v412-postgres17-synthetic-proof
+          path: |
+            /tmp/v412-core.log
+            /tmp/v412-source.log

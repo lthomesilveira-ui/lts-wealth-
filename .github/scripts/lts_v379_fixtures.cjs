@@ -14,6 +14,7 @@ function monthly(from,to){
 }
 function cards(){return{version:'card-cycles-v226',as_of:'2026-10-16',complete:true,active_billing_accounts:2,cards:[{bank:'Bradesco',family:'aeternum',name:'Visa Aeternum',last4:'0000',status:'ACTIVE',cycles:[{month:'2026-12-01',due_date:'2026-12-03',amount:2299.31,complete:true,basis:'received_and_projected_installments',payment_status:'open',settlement_confirmed:false}]},{bank:'Itaú',family:'itau_mastercard',name:'Mastercard Black',last4:'0001',status:'ACTIVE',cycles:[{month:'2026-11-01',due_date:'2026-11-16',amount:532.73,complete:true,basis:'open_finance_composition',payment_status:'open',settlement_confirmed:false}]}]};}
 function response(name,args){
+ if(name==='lts_browser_projection_policy_v412')return{version:'projection-policy-v412',schema_version:1,enabled:false};
  if(name==='lts_browser_rsu_policy_v411')return{version:'rsu-policy-v411',schema_version:1,policy:{enabled:false}};
  return base.response(name,args);
 }
