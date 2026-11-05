@@ -5,7 +5,13 @@ const fixture = require('./lts_v379_fixtures.cjs'), baseResponse = fixture.respo
 const { setup, open } = require('./lts_v382_browser.cjs'), { chromium, webkit } = require('playwright');
 const out = 'qa/v415-refresh', base = process.env.LTS_BROWSER_BASE || 'http://127.0.0.1:8788';
 fs.mkdirSync(out, { recursive: true });
-fixture.response = (name, args) => name === 'lts_browser_projection_policy_v412' ? projection.policy() : baseResponse(name, args);
+fixture.response = (name, args) => {
+  if (name === 'lts_browser_projection_policy_v412') return projection.policy();
+  // V296's product fixture has four actions while its inherited cockpit RPC has
+  // none. This parity scenario must provide the same source through both paths.
+  if (name === 'lts_browser_dashboard_cockpit_v1') return structuredClone(fixture.product().dashboard_cockpit);
+  return baseResponse(name, args);
+};
 const hash = value => crypto.createHash('sha256').update(JSON.stringify(value)).digest('hex');
 function financialFlow(value) {
   const result = structuredClone(value);
@@ -229,11 +235,14 @@ async function runMissing(browser, engine, width) {
     const browser = await type.launch({ headless: true });
     try {
       for (const width of [393, 1366]) for (const run of [runCached, runMissing]) {
-        const result = await run(browser, engine, width); results.push(result);
+        let result;
+        try { result = await run(browser, engine, width); }
+        catch (error) { result = { pass: false, engine, width, scenario: run === runCached ? 'cached' : 'missing', error: error.stack }; process.exitCode = 1; }
+        results.push(result);
         fs.writeFileSync(out + '/result.json', JSON.stringify({ pass: false, completed_runs: results.length, results }, null, 2));
         console.log(JSON.stringify(result));
       }
     } finally { await browser.close(); }
   }
-  fs.writeFileSync(out + '/result.json', JSON.stringify({ pass: true, results }, null, 2));
+  fs.writeFileSync(out + '/result.json', JSON.stringify({ pass: results.length === 8 && results.every(result => result.pass), results }, null, 2));
 })().catch(error => { console.error(error); process.exitCode = 1; });
