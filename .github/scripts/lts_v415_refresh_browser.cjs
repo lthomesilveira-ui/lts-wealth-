@@ -191,7 +191,7 @@ async function runMissing(browser, engine, width) {
     await h.page.goto(base + '/mobile/?source=home-screen', { waitUntil: 'domcontentloaded' });
     await h.page.waitForFunction(() => document.getElementById('wealth')?.contentDocument?.getElementById('shell')?.contentDocument?.body?.dataset.ltsBootState === 'preparing');
     f = h.page.frames().find(frame => new URL(frame.url()).pathname.endsWith('/releases/v415/index.html')); assert(f);
-    await f.waitForFunction(() => __LTS_V365?.installed);
+    await f.waitForFunction(() => window.__LTS_V415_REFRESH?.snapshot().active);
     assert.equal(await f.evaluate(() => D), null);
     assert(await f.getByText('Preparando seus dados', { exact: true }).isVisible());
     assert(!(await f.locator('#app').isVisible())); assert(!(await f.locator('#nav').isVisible()));
@@ -209,6 +209,7 @@ async function runMissing(browser, engine, width) {
     state.refresh = refresh('ready', { request_version: state.refresh.request_version, completed_version: state.refresh.request_version });
     await f.evaluate(() => __LTS_V415_REFRESH.poll());
     await f.waitForFunction(() => BOOT.phase === 'ready' && D && !N.classList.contains('hidden'));
+    await f.waitForFunction(() => window.__LTS_V365?.installed);
     await h.page.waitForLoadState('networkidle'); assert.equal(state.products, 2);
     await checkBanner(f, width, false); assert.deepEqual(h.errors, []); assert.deepEqual(h.writes, []);
     // The unchanged client reports a missing session with its exact local message.
