@@ -1,0 +1,43 @@
+name: V413 projection bootstrap performance
+on:
+  pull_request:
+    paths:
+      - 'backend/patches/v413/**'
+      - 'backend/qa/v413*'
+      - 'backend/tools/projection_performance_v413/**'
+      - 'supabase/migrations/*v413_bootstrap_projection_performance.sql'
+      - '.github/workflows/v413-projection-performance.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native-postgres17:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: synthetic-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready --health-interval 5s
+          --health-timeout 5s --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: synthetic-only
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compose exact migration and differential fixtures
+        run: python3 backend/tools/projection_performance_v413/test_sql.py > /tmp/v413-differential.sql
+      - name: Verify full JSON parity, boundaries and migration metadata
+        run: |
+          createdb v413_differential
+          psql -X -d v413_differential -v ON_ERROR_STOP=1 -At -f /tmp/v413-differential.sql > /tmp/v413-differential.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v413-postgres17-differential-proof
+          path: /tmp/v413-differential.log
