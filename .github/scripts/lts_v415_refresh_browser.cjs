@@ -56,6 +56,21 @@ async function go(f, view) {
   await f.locator('#nav [data-v="' + view + '"]:visible,#dx1MobileNav [data-mobile-route="' + view + '"]:visible').click();
   await f.waitForFunction(v => V === v, view);
 }
+async function dashboardSnapshot(h, f) {
+  // dashboard178 marks the superseded V168 loading flag false on each render.
+  // Wait for the actual sequential readers before comparing their full output.
+  await f.waitForFunction(() => ['wealth', 'forecast', 'awards', 'dashboardReport'].every(key => __LTS_V178_STATE[key].status === 'ready')
+    && !['idle', 'loading'].includes(__LTS_V178_STATE.cash.status));
+  await h.page.waitForLoadState('networkidle');
+  return f.evaluate(() => ({
+    product: structuredClone(D),
+    readers: Object.fromEntries(['cash', 'wealth', 'forecast', 'awards', 'dashboardReport'].map(key => {
+      const slot = __LTS_V178_STATE[key]; return [key, { status: slot.status, date: slot.date, data: structuredClone(slot.data) }];
+    })),
+    legacy: structuredClone(__LTS_V168_STATE.dashboard.data),
+    visibleText: document.querySelector('.v168-dashboard').innerText
+  }));
+}
 async function geometry(f) {
   return f.evaluate(() => ({ width: innerWidth, scroll: document.documentElement.scrollWidth,
     banner: document.querySelector('#ltsRefreshStatusV415').getBoundingClientRect().toJSON(),
@@ -77,8 +92,12 @@ async function checkBanner(f, width, pending) {
 async function recordFailure(h, f, label, error) {
   await h.page.screenshot({ path: out + '/' + label + '-failure.png', fullPage: true }).catch(() => {});
   fs.writeFileSync(out + '/' + label + '-failure.json', JSON.stringify({ error: error.stack, errors: h.errors,
+    reads: h.reads.slice(-30),
     body: f ? await f.locator('body').innerText().catch(() => null) : null,
-    state: f ? await f.evaluate(() => ({ boot: BOOT.phase, hasProduct: !!D, view: V, refresh: __LTS_V415_REFRESH.snapshot() })).catch(() => null) : null }, null, 2));
+    state: f ? await f.evaluate(() => ({ boot: BOOT.phase, hasProduct: !!D, view: V, refresh: __LTS_V415_REFRESH.snapshot(),
+      readers: Object.fromEntries(['cash', 'wealth', 'forecast', 'awards', 'dashboardReport'].map(key => {
+        const slot = window.__LTS_V178_STATE?.[key]; return [key, slot && { status: slot.status, date: slot.date, token: slot.token, error: slot.error }];
+      })) })).catch(() => null) : null }, null, 2));
 }
 async function runCached(browser, engine, width) {
   const h = await setup(browser, width, 980, '2026-11-05T21:02:00Z'), label = engine + '-' + width;
@@ -86,8 +105,7 @@ async function runCached(browser, engine, width) {
   try {
     f = await open(h, 'v415', true);
     await f.waitForFunction(() => __LTS_V412_PROJECTION?.status === 'ready');
-    await f.waitForFunction(() => !__LTS_V168_STATE.dashboard.loading);
-    const dashboardBefore = await f.evaluate(() => structuredClone(__LTS_V168_STATE.dashboard.data));
+    const dashboardBefore = await dashboardSnapshot(h, f);
     const pendingDashboard = await checkBanner(f, width, true);
     await h.page.screenshot({ path: out + '/' + label + '-dashboard-pending.png' });
     await go(f, 'Fluxo Diário');
@@ -138,10 +156,13 @@ async function runCached(browser, engine, width) {
     const afterManual = await f.evaluate(() => FLOWQ); assertWindowRows(afterManual);
     assert.deepEqual({ from: afterManual.current_future.from, to: afterManual.current_future.to }, { from: '2027-01-01', to: '2027-01-31' });
     assert.equal(state.products, manualProducts + 1); assert.deepEqual(financialFlow(afterManual), financialFlow(before));
-    await go(f, 'Dashboard'); await h.page.waitForLoadState('networkidle');
-    await f.waitForFunction(() => !__LTS_V168_STATE.dashboard.loading);
-    const dashboardAfter = await f.evaluate(() => __LTS_V168_STATE.dashboard.data);
-    for (const key of ['cockpit', 'wealth', 'expense', 'expenseContext']) assert.deepEqual(dashboardAfter[key], dashboardBefore[key], key);
+    await go(f, 'Dashboard');
+    const dashboardAfter = await dashboardSnapshot(h, f);
+    fs.writeFileSync(out + '/' + label + '-dashboard-parity.json', JSON.stringify({ before: dashboardBefore, after: dashboardAfter }, null, 2));
+    assert.deepEqual(dashboardAfter.product, dashboardBefore.product, 'Complete product is unchanged');
+    assert.deepEqual(dashboardAfter.readers, dashboardBefore.readers, 'Every active Dashboard financial reader is unchanged');
+    for (const key of ['cockpit', 'wealth', 'expense']) assert.deepEqual(dashboardAfter.legacy[key], dashboardBefore.legacy[key], key);
+    assert.equal(dashboardAfter.visibleText, dashboardBefore.visibleText, 'Every visible Dashboard value, date and warning is unchanged');
     const freshDashboard = await checkBanner(f, width, false);
     await h.page.screenshot({ path: out + '/' + label + '-dashboard-fresh.png' });
     assert.deepEqual(h.errors, []); assert.deepEqual(h.writes, []);
@@ -151,6 +172,7 @@ async function runCached(browser, engine, width) {
       collapsed_flow_controls_height: pendingFlow.controls.height, exact_flow_range_preserved: true,
       rendered_snapshot_withdrawn_on_missing_current_completeness: true,
       financial_response_sha256: hash(financialFlow(before)), financial_response_unchanged: true, source_window_metadata_retained_by_legacy_cache: true, manual_request_queued: true,
+      complete_product_unchanged: true, all_active_dashboard_readers_unchanged: true, all_dashboard_visible_text_unchanged: true,
       products: state.products, statuses: state.statuses, manual_refreshes: state.manual,
       synthetic_http: true, private_session: false, physical_iphone: false };
   } catch (error) { await recordFailure(h, f, label, error); throw error; }
