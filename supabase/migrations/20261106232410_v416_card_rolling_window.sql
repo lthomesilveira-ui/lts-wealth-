@@ -218,6 +218,8 @@ DECLARE r jsonb; s jsonb; f jsonb; stats jsonb; series jsonb:='[]'; events jsonb
  target numeric; extra numeric; effective_date date; protected boolean; cancelled boolean; complete boolean;
  skipped integer; generated integer; invalid_slots integer; annual jsonb; slot_result jsonb; results jsonb:='[]';
  series_from date; series_to date; expected_months integer; history_basis text;
+ budget_scopes jsonb; budget_scope jsonb; scope_key text; scope_keys text[];
+ matched_amount numeric; scope_target numeric; scope_consumed numeric; scoped_extra numeric;
  reference jsonb; reference_from date;reference_to date;reference_stale boolean;uses_history boolean;
 BEGIN
  IF p_policy IS NULL THEN RETURN jsonb_build_object('version','projection-policy-v412','enabled',false); END IF;
@@ -343,7 +345,35 @@ BEGIN
     THEN RAISE EXCEPTION 'Valor de projeção fora dos limites.';END IF;
    IF method='history_total_budget' THEN
     -- A total budget floor. It is deliberately not "new spending plus installments".
-    extra:=greatest(0,target-known);amount:=greatest(target,known);
+    IF r->>'source_kind'='card_invoice' AND r->>'card_budget_mode'='scoped' THEN
+     -- The adapter must provide mutually exclusive, verified scopes. The rolling
+     -- reference is the general scope after separately budgeted purchases are removed.
+     -- Obligations outside these scopes remain in known, but consume no budget.
+     budget_scopes:=s->'verified_budget_scopes';
+     IF jsonb_typeof(budget_scopes) IS DISTINCT FROM 'array'
+      OR budget_scopes='[]'::jsonb THEN
+      invalid_slots:=invalid_slots+1;CONTINUE;
+     END IF;
+     matched_amount:=0;scoped_extra:=0;scope_keys:='{}';
+     FOR budget_scope IN SELECT value FROM jsonb_array_elements(budget_scopes) LOOP
+      scope_key:=nullif(btrim(budget_scope->>'scope'),'');
+      IF scope_key IS NULL OR scope_key=ANY(scope_keys)
+       OR coalesce(budget_scope->>'consumed_brl','') !~ '^[0-9]{1,9}([.][0-9]{1,2})?$'
+       OR (scope_key<>'general' AND coalesce(budget_scope->>'target_brl','') !~ '^[0-9]{1,9}([.][0-9]{1,2})?$')
+      THEN EXIT; END IF;
+      scope_keys:=array_append(scope_keys,scope_key);
+      scope_target:=CASE WHEN scope_key='general' THEN target ELSE (budget_scope->>'target_brl')::numeric END;
+      scope_consumed:=(budget_scope->>'consumed_brl')::numeric;
+      matched_amount:=matched_amount+scope_consumed;
+      scoped_extra:=scoped_extra+greatest(0,scope_target-scope_consumed);
+     END LOOP;
+     IF cardinality(scope_keys)<>jsonb_array_length(budget_scopes)
+      OR NOT ('general'=ANY(scope_keys)) OR matched_amount>known OR scoped_extra>100000000
+     THEN invalid_slots:=invalid_slots+1;CONTINUE; END IF;
+     extra:=scoped_extra;amount:=known+extra;
+    ELSE
+     extra:=greatest(0,target-known);amount:=greatest(target,known);
+    END IF;
    ELSIF method='inflated_calendar' THEN
     -- Replace only identified, non-documentary future estimates at this exact slot.
     IF known>replacement_amount THEN

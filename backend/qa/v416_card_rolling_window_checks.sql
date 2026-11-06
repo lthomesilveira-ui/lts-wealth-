@@ -66,3 +66,31 @@ BEGIN
  PERFORM qa_v412.assert('older refresh cannot overwrite newer card reference',
   NOT(result->>'changed')::boolean AND saved=lts_projection_private_v412.reference_state(qa_v412.owner()),result);
 END $tests$;
+
+DO $tests$
+DECLARE p jsonb; history jsonb; slot jsonb; result jsonb;
+BEGIN
+ p:=qa_v412.policy('history_total_budget','{"source_kind":"card_invoice","card_budget_mode":"scoped"}');
+ SELECT jsonb_agg(jsonb_build_object('series_key','synthetic','month',make_date(2020,n,1),
+  'amount_brl',100,'coverage','complete')) INTO history FROM generate_series(10,12)n;
+ slot:=qa_v412.slot('{"known_amount_brl":200,"verified_budget_scopes":[
+  {"scope":"general","consumed_brl":20},
+  {"scope":"new_treatment","target_brl":80,"consumed_brl":15},
+  {"scope":"supplies","target_brl":35,"consumed_brl":50}]}');
+ result:=lts_projection_private_v412.calculate(p,history,jsonb_build_array(slot),'2021-01-15');
+ PERFORM qa_v412.assert('old obligations do not consume new budget and excess in a scope does not offset another',
+  (result#>>'{events,0,signed_amount}')::numeric=-145
+  AND (result#>>'{events,0,budget_total_brl}')::numeric=345,result);
+ result:=lts_projection_private_v412.calculate(p,history,jsonb_build_array(slot-'verified_budget_scopes'),'2021-01-15');
+ PERFORM qa_v412.assert('unverified scoped obligations do not create a speculative complement',
+  jsonb_array_length(result->'events')=0 AND result#>>'{series,0,unresolved_periods}'='1',result);
+ result:=lts_projection_private_v412.calculate(p,history,
+  jsonb_build_array(jsonb_set(slot,'{known_amount_brl}','50')),'2021-01-15');
+ PERFORM qa_v412.assert('scope allocations above known obligations are rejected',
+  jsonb_array_length(result->'events')=0 AND result#>>'{series,0,unresolved_periods}'='1',result);
+ result:=lts_projection_private_v412.calculate(p,history,
+  jsonb_build_array((slot-'verified_budget_scopes')||'{"authoritative":true}'),'2021-01-15');
+ PERFORM qa_v412.assert('closed statements keep the official amount before budget composition',
+  jsonb_array_length(result->'events')=0
+  AND (result#>>'{series,0,annual_totals,0,budget_total_brl}')::numeric=200,result);
+END $tests$;
