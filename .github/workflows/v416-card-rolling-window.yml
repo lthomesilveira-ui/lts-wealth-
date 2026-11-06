@@ -1,0 +1,36 @@
+name: V416 card rolling window
+on:
+  pull_request:
+    paths:
+      - 'backend/qa/v416_card_rolling_window_checks.sql'
+      - 'supabase/migrations/*v416_card_rolling_window.sql'
+      - '.github/workflows/v416-card-rolling-window.yml'
+permissions:
+  contents: read
+jobs:
+  native-postgres17:
+    runs-on: ubuntu-24.04
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: synthetic-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready --health-interval 5s
+          --health-timeout 5s --health-retries 10
+    env:
+      PGHOST: localhost
+      PGUSER: postgres
+      PGPASSWORD: synthetic-only
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify the installed predecessor and rolling-window behavior
+        run: |
+          createdb v416_test
+          python3 backend/tools/projection_policy_v412/test_sql.py > /tmp/v416-base.sql
+          psql -X -d v416_test -v ON_ERROR_STOP=1 -f /tmp/v416-base.sql
+          psql -X -d v416_test -v ON_ERROR_STOP=1 -f supabase/migrations/20261105211649_v413_bootstrap_projection_performance.sql
+          psql -X -d v416_test -v ON_ERROR_STOP=1 -f supabase/migrations/20261106232410_v416_card_rolling_window.sql
+          psql -X -d v416_test -v ON_ERROR_STOP=1 -c 'SELECT qa_v412.install_test_adapters();'
+          psql -X -d v416_test -v ON_ERROR_STOP=1 -f backend/qa/v416_card_rolling_window_checks.sql
