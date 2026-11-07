@@ -4,6 +4,7 @@ on:
     paths:
       - 'backend/patches/v418/**'
       - 'backend/qa/v418*'
+      - 'backend/tools/projection_summary_v418/**'
       - '.github/workflows/v418-projection-summary.yml'
 permissions:
   contents: read
@@ -48,6 +49,7 @@ jobs:
           text=Path('backend/patches/v418/capture.sql').read_text()
           Path('/tmp/v418-capture.sql').write_text(text.split('CREATE OR REPLACE FUNCTION lts_product_refresh_private_v415.run_claimed')[0])
           PY
+          psql -X -d v418_capture -v ON_ERROR_STOP=1 -c "CREATE TABLE qa_v412.v418_builder_attributes AS SELECT to_jsonb(p)-'prosrc' AS attributes FROM pg_proc p WHERE p.oid='lts_projection_private_v412.build(uuid,date)'::regprocedure;"
           psql -X -d v418_capture -v ON_ERROR_STOP=1 -f /tmp/v418-capture.sql
           psql -X -d v418_capture -v ON_ERROR_STOP=1 -f backend/qa/v418_projection_capture_checks.sql
       - name: Verify existing worker publication and rollback
@@ -65,3 +67,12 @@ jobs:
           PY
           psql -X -d v418_worker -v ON_ERROR_STOP=1 -f /tmp/v418-worker.sql
           psql -X -d v418_worker -v ON_ERROR_STOP=1 -f backend/qa/v418_projection_worker_checks.sql
+      - name: Verify summary capture under native concurrent invalidation and crash
+        run: |
+          python3 backend/tools/projection_summary_v418/concurrency_test.py --database v418_worker --output /tmp/v418-concurrency.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v418-native-concurrency
+          path: /tmp/v418-concurrency.json
+          if-no-files-found: error

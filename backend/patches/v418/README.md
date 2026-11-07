@@ -11,10 +11,12 @@ the missing summary before taking publication locks. A failed or superseded
 refresh rolls the summary back with the product. The browser never invokes the
 heavy builder and reports unavailable premises when the prepared result is stale.
 
-These files are a draft deployment candidate. The read contract has isolated
-tests. Acceptance still requires native integration tests of the exact worker,
-capture, fallback, concurrent invalidation and rollback, preserved attributes
-and privileges, representative performance, and installation verification.
+These files are a draft deployment candidate. The native CI covers the reader contract, real builder capture, worker fallback,
+reuse and function metadata. Interleaving tests pause after summary calculation
+and cover invalidation, request coalescing, changed epochs/card receipts and
+connection loss with rollback of the previous product and summary. Acceptance
+still requires passing results for the final commit, representative performance
+and installation verification.
 No installation or new scheduler is included in this draft.
 
 Apply guard.sql, capture.sql and read.sql atomically only after acceptance.

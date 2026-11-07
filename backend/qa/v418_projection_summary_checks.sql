@@ -33,5 +33,9 @@ BEGIN
  PERFORM set_config('qa.disabled','true',true);
  result:=lts_projection_private_v412.read_policy();
  INSERT INTO qa_v418.results VALUES('disabled policy keeps existing contract',result->>'enabled'='false');
+ INSERT INTO qa_v418.results
+ SELECT 'reader execution attributes owner and ACL preserved',
+  (SELECT attributes FROM qa_v418.reader_attributes)=to_jsonb(p)-'prosrc'
+ FROM pg_proc p WHERE p.oid='lts_projection_private_v412.read_policy()'::regprocedure;
 END $tests$;
 SELECT count(*) checks,bool_and(pass) pass FROM qa_v418.results;

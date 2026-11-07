@@ -31,3 +31,17 @@ SELECT '11111111-1111-4111-8111-111111111111',jsonb_build_object('projection_sum
  jsonb_build_object('user_id','11111111-1111-4111-8111-111111111111','as_of',current_date,
  'guard',jsonb_build_object('request_version','7','source_epoch','5','card_source_key','cards-a','policy_sha256','policy-a','reference_sha256','reference-a'),
  'summary','{"enabled":true,"series":[{"series_key":"invented","reference_amount_brl":123.45}],"horizon_end":"2032-12-31"}'::jsonb));
+
+-- Mirror the installed reader attributes and private execution grant.
+CREATE FUNCTION lts_projection_private_v412.read_policy()
+RETURNS jsonb LANGUAGE plpgsql SECURITY DEFINER SET search_path='' SET TimeZone='America/Sao_Paulo' AS $f$
+DECLARE u uuid:=public.lts_browser_assert_user_v1(); result jsonb;
+BEGIN
+ result:=lts_projection_private_v412.build(u,current_date);
+ RETURN (result-'events'-'replacement_refs')||jsonb_build_object('read_at',clock_timestamp());
+END $f$;
+REVOKE ALL ON FUNCTION lts_projection_private_v412.read_policy() FROM PUBLIC,authenticated;
+GRANT EXECUTE ON FUNCTION lts_projection_private_v412.read_policy() TO authenticated;
+CREATE TABLE qa_v418.reader_attributes AS
+SELECT to_jsonb(p)-'prosrc' AS attributes FROM pg_proc p
+WHERE p.oid='lts_projection_private_v412.read_policy()'::regprocedure;

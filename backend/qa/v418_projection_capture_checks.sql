@@ -20,5 +20,8 @@ BEGIN
  result:=lts_projection_private_v412.build(qa_v412.owner(),current_date+1);
  PERFORM qa_v412.assert('custom-date builds cannot overwrite current premises',
   nullif(current_setting('lts.projection_summary_v418',true),'') IS NULL);
+ PERFORM qa_v412.assert('builder execution attributes owner and ACL preserved',
+  (SELECT attributes FROM qa_v412.v418_builder_attributes)=
+  (SELECT to_jsonb(p)-'prosrc' FROM pg_proc p WHERE p.oid='lts_projection_private_v412.build(uuid,date)'::regprocedure));
 END $tests$;
 SELECT count(*) checks,bool_and(pass) pass FROM qa_v412.results;
