@@ -26,7 +26,7 @@ jobs:
       - run: |
           python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/lts-v415-http.log 2>&1 &
           node .github/scripts/lts_v309_wait_http.cjs
-      - run: node .github/scripts/lts_v415_refresh_browser.cjs
+      - run: node .github/scripts/lts_v415_refresh_current_entry.cjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
