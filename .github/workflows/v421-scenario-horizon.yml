@@ -1,0 +1,49 @@
+name: V421 full scenario horizon
+on:
+  pull_request:
+    paths: ['backend/tools/scenario_horizon_v421/**','releases/v421/**','.github/scripts/lts_v421*','.github/workflows/v421-scenario-horizon.yml']
+permissions:
+  contents: read
+jobs:
+  browser:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    container: mcr.microsoft.com/playwright:v1.58.2-noble
+    permissions:
+      contents: write
+    env:
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: |
+          mkdir -p qa/v421
+          python3 backend/tools/scenario_horizon_v421/build.py
+          python3 backend/tools/scenario_horizon_v421/build.py
+          node --check releases/v421/lts-v384-startup-1.js
+          node backend/tools/scenario_horizon_v421/test.cjs > qa/v421/unit.json
+          npm install --no-save --package-lock=false playwright@1.58.2
+          python3 -m http.server 8788 --bind 127.0.0.1 >/tmp/v421-http.log 2>&1 &
+          node .github/scripts/lts_v309_wait_http.cjs
+      - run: node .github/scripts/lts_v421_horizon_browser.cjs
+      - name: Stage reviewed release objects without updating branches
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          REVIEWED_HEAD: ${{ github.event.pull_request.head.sha }}
+        run: python3 backend/tools/scenario_horizon_v421/stage.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v421-scenario-proof
+          include-hidden-files: true
+          path: |
+            qa/v421/
+            releases/v421/
+            .github/scripts/
+            .github/workflows/
