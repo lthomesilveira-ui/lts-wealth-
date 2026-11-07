@@ -32,3 +32,7 @@
 
 - Work autonomously within the existing project authorization; do not request routine approval. Do not perform payments or money transfers.
 - Report what was actually changed and tested, and state the remaining limitations honestly. Do not certify real-device, private-session, source, or full-backlog completion from synthetic browser fixtures.
+
+## Flow options hierarchy
+
+Read `UX_FLOW_OPTIONS.md` before editing Flow. Standalone collapsed premise/source panels still clutter the main report. Use the existing Options control, preserve material warnings and verify rendered default/open states.

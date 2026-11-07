@@ -5,9 +5,9 @@
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),assert=require('node:assert/strict');
 const file=path.join(__dirname,'lts_v385_browser.cjs');let source=fs.readFileSync(file,'utf8');
 const bytes=Buffer.from(source),hash=crypto.createHash('sha1').update(Buffer.concat([Buffer.from('blob '+bytes.length+'\0'),bytes])).digest('hex');
-assert.equal(hash,'313cf57f091f62269781735cb4d6583512b059d8','Review this adapter if the historical suite changes');
+assert.equal(hash,'ed9d300d069558e3e874f875b9d665bce7f7f4a2','Review this adapter if the historical suite changes');
 const previous='assert.deepEqual(geometry.map(x=>x.name),groups);';
-const replacement="const visibleGroups=groups.map(name=>new URL(f.url()).pathname.includes('/releases/v423/')&&variant!=='legacy'&&name==='Patrimônio e financiamentos'?'Financiamentos e empréstimos':name);assert.deepEqual(geometry.map(x=>x.name),visibleGroups);";
+const replacement="const visibleGroups=groups.map(name=>['/releases/v423/','/releases/v425/'].some(p=>new URL(f.url()).pathname.includes(p))&&variant!=='legacy'&&name==='Patrimônio e financiamentos'?'Financiamentos e empréstimos':name);assert.deepEqual(geometry.map(x=>x.name),visibleGroups);";
 assert.equal(source.split(previous).length,2,'Exactly one visible-name assertion is adapted');
 source=source.replace(previous,replacement);
 assert(source.includes('assert.equal(detailRequests.at(-1).args.p_scope.macrogroup,groups[0])'),'Original filter-key assertion is retained');

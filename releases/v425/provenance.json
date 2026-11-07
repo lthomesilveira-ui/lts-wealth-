@@ -1,0 +1,9 @@
+{
+  "release": "v425",
+  "base_release": "v423",
+  "scope": "Flow options and report hierarchy only",
+  "financial_values_changed": false,
+  "new_financial_reads_or_writes": false,
+  "private_session_verified": false,
+  "physical_iphone_verified": false
+}
