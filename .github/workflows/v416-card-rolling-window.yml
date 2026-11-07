@@ -3,6 +3,8 @@ on:
   pull_request:
     paths:
       - 'backend/qa/v416_card_rolling_window_checks.sql'
+      - 'backend/patches/v416/**'
+      - 'backend/qa/v416*'
       - 'supabase/migrations/*v416_card_rolling_window.sql'
       - '.github/workflows/v416-card-rolling-window.yml'
 permissions:
@@ -27,6 +29,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Verify the installed predecessor and rolling-window behavior
         run: |
+          set -euo pipefail
           createdb v416_test
           python3 backend/tools/projection_policy_v412/test_sql.py > /tmp/v416-base.sql
           psql -X -d v416_test -v ON_ERROR_STOP=1 -f /tmp/v416-base.sql
@@ -34,3 +37,14 @@ jobs:
           psql -X -d v416_test -v ON_ERROR_STOP=1 -f supabase/migrations/20261106232410_v416_card_rolling_window.sql
           psql -X -d v416_test -v ON_ERROR_STOP=1 -c 'SELECT qa_v412.install_test_adapters();'
           psql -X -d v416_test -v ON_ERROR_STOP=1 -f backend/qa/v416_card_rolling_window_checks.sql
+      - name: Retain reviewed source snapshot
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v416-reviewed-source
+          path: |
+            supabase/migrations/20261106232410_v416_card_rolling_window.sql
+            backend/qa/v416_card_rolling_window_checks.sql
+            backend/patches/v416/
+          if-no-files-found: error
+          retention-days: 14
