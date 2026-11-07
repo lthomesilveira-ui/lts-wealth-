@@ -18,7 +18,7 @@ jobs:
           POSTGRES_PASSWORD: synthetic-only
         ports: ['5432:5432']
         options: >-
-          --health-cmd 'pg_isready -U postgres' --health-interval 5s
+          --health-cmd pg_isready --health-interval 5s
           --health-timeout 5s --health-retries 10
     env:
       PGHOST: localhost
@@ -27,7 +27,7 @@ jobs:
       PGOPTIONS: '-c timezone=America/Sao_Paulo'
     steps:
       - uses: actions/checkout@v4
-      - name: Verify the installed predecessor and rolling-window behavior
+      - name: Verify installed predecessor, rolling window and scopes
         run: |
           set -euo pipefail
           createdb v416_test
@@ -35,8 +35,12 @@ jobs:
           psql -X -d v416_test -v ON_ERROR_STOP=1 -f /tmp/v416-base.sql
           psql -X -d v416_test -v ON_ERROR_STOP=1 -f supabase/migrations/20261105211649_v413_bootstrap_projection_performance.sql
           psql -X -d v416_test -v ON_ERROR_STOP=1 -f supabase/migrations/20261106232410_v416_card_rolling_window.sql
+          psql -X -d v416_test -v ON_ERROR_STOP=1 -f backend/patches/v416/scope_adapter.sql
+          psql -X -d v416_test -v ON_ERROR_STOP=1 -f backend/patches/v416/integrate_scopes.sql
           psql -X -d v416_test -v ON_ERROR_STOP=1 -c 'SELECT qa_v412.install_test_adapters();'
-          psql -X -d v416_test -v ON_ERROR_STOP=1 -f backend/qa/v416_card_rolling_window_checks.sql
+          sed 's/"source_kind":"card_invoice"/"source_kind":"card_invoice","history_window_months":3/g' backend/qa/v416_card_rolling_window_checks.sql > /tmp/v416-rolling-checks.sql
+          psql -X -d v416_test -v ON_ERROR_STOP=1 -f /tmp/v416-rolling-checks.sql
+          psql -X -d v416_test -v ON_ERROR_STOP=1 -f backend/qa/v416_scope_adapter_checks.sql
           psql -X -d v416_test -v ON_ERROR_STOP=1 -Atc "SELECT jsonb_build_object('checks',count(*),'pass',bool_and(pass),'timezone',current_setting('TimeZone'),'runtime',version()) FROM qa_v412.results" > v416-native-result.json
       - name: Retain reviewed source snapshot
         if: always()
@@ -45,7 +49,7 @@ jobs:
           name: v416-reviewed-source
           path: |
             supabase/migrations/20261106232410_v416_card_rolling_window.sql
-            backend/qa/v416_card_rolling_window_checks.sql
+            backend/qa/v416*checks.sql
             backend/patches/v416/
             v416-native-result.json
           if-no-files-found: error
