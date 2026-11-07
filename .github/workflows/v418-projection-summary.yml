@@ -50,3 +50,18 @@ jobs:
           PY
           psql -X -d v418_capture -v ON_ERROR_STOP=1 -f /tmp/v418-capture.sql
           psql -X -d v418_capture -v ON_ERROR_STOP=1 -f backend/qa/v418_projection_capture_checks.sql
+      - name: Verify existing worker publication and rollback
+        run: |
+          set -euo pipefail
+          createdb v418_worker
+          python3 backend/tools/durable_refresh_v415/test_sql.py --setup-only > /tmp/v418-worker-base.sql
+          psql -X -d v418_worker -v ON_ERROR_STOP=1 -f /tmp/v418-worker-base.sql
+          psql -X -d v418_worker -v ON_ERROR_STOP=1 -f backend/qa/v418_projection_worker_setup.sql
+          python3 - <<'PY'
+          from pathlib import Path
+          text=Path('backend/patches/v418/capture.sql').read_text()
+          marker='CREATE OR REPLACE FUNCTION lts_product_refresh_private_v415.run_claimed'
+          Path('/tmp/v418-worker.sql').write_text(marker+text.split(marker)[1])
+          PY
+          psql -X -d v418_worker -v ON_ERROR_STOP=1 -f /tmp/v418-worker.sql
+          psql -X -d v418_worker -v ON_ERROR_STOP=1 -f backend/qa/v418_projection_worker_checks.sql
