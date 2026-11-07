@@ -1,0 +1,60 @@
+name: V424 current card month known amounts
+on:
+  pull_request:
+    paths: ['backend/patches/v424/**','backend/tools/current_card_month_v424/**','.github/workflows/v424-current-card-month.yml']
+permissions:
+  contents: read
+jobs:
+  native-postgres17:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: synthetic-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready --health-interval 5s
+          --health-timeout 5s --health-retries 10
+    env:
+      PGHOST: localhost
+      PGUSER: postgres
+      PGPASSWORD: synthetic-only
+      PGOPTIONS: '-c timezone=America/Sao_Paulo'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Install reviewed predecessor and full isolated projection fixture
+        run: |
+          set -euo pipefail
+          createdb v424_test
+          python3 backend/tools/projection_policy_v412/test_sql.py > /tmp/v424-base.sql
+          psql -X -d v424_test -v ON_ERROR_STOP=1 -f /tmp/v424-base.sql
+          psql -X -d v424_test -v ON_ERROR_STOP=1 -f supabase/migrations/20261105211649_v413_bootstrap_projection_performance.sql
+          psql -X -d v424_test -v ON_ERROR_STOP=1 -f supabase/migrations/20261106232410_v416_card_rolling_window.sql
+          psql -X -d v424_test -v ON_ERROR_STOP=1 -f backend/patches/v416/scope_adapter.sql
+          psql -X -d v424_test -v ON_ERROR_STOP=1 -f backend/patches/v416/integrate_scopes.sql
+          psql -X -d v424_test -v ON_ERROR_STOP=1 -c 'SELECT qa_v412.install_test_adapters();'
+      - name: Apply current month policy support and preserve all prior checks
+        run: |
+          set -euo pipefail
+          psql -X -d v424_test -v ON_ERROR_STOP=1 -f backend/patches/v424/current_month_card_budget.sql
+          sed 's/"source_kind":"card_invoice"/"source_kind":"card_invoice","history_window_months":3/g' backend/qa/v416_card_rolling_window_checks.sql > /tmp/v424-previous-checks.sql
+          psql -X -d v424_test -v ON_ERROR_STOP=1 -f /tmp/v424-previous-checks.sql
+          psql -X -d v424_test -v ON_ERROR_STOP=1 -f backend/qa/v416_scope_adapter_checks.sql
+          psql -X -d v424_test -v ON_ERROR_STOP=1 -f backend/qa/v416_builder_integration_checks.sql
+          psql -X -d v424_test -v ON_ERROR_STOP=1 -f backend/tools/current_card_month_v424/verify.sql
+          psql -X -d v424_test -v ON_ERROR_STOP=1 -Atc "SELECT jsonb_build_object('checks',count(*),'pass',bool_and(pass),'current_month_checks',count(*) FILTER(WHERE name LIKE 'v424 %'),'tests',jsonb_agg(jsonb_build_object('name',name,'pass',pass)ORDER BY name)) FROM qa_v412.results" > v424-native-result.json
+          psql -X -d v424_test -v ON_ERROR_STOP=1 -c "CREATE TABLE qa_v412.v424_definition AS SELECT md5(pg_get_functiondef('lts_projection_private_v412.calculate(jsonb,jsonb,jsonb,date)'::regprocedure)) hash;"
+          psql -X -d v424_test -v ON_ERROR_STOP=1 -f backend/patches/v424/current_month_card_budget.sql
+          psql -X -d v424_test -v ON_ERROR_STOP=1 -c "DO \$\$BEGIN IF (SELECT hash FROM qa_v412.v424_definition)<>md5(pg_get_functiondef('lts_projection_private_v412.calculate(jsonb,jsonb,jsonb,date)'::regprocedure)) THEN RAISE EXCEPTION 'Replay changed definition'; END IF;END\$\$;"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v424-native-proof
+          path: |
+            v424-native-result.json
+            backend/patches/v424/
+            backend/tools/current_card_month_v424/
