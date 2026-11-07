@@ -10,7 +10,6 @@
    if(p?.status==='error')reasons.push('Projeções não verificadas.');
    else if(p?.model?.series?.some(s=>s.amount===null&&s.usesHistory||s.warnings?.some(w=>['unreconciled_periods','calendar_unavailable'].includes(w))))reasons.push('Há previsões incompletas.');
    if(r?.status==='error')reasons.push('Líquido das ações a conferir.');
-   if(document.getElementById('v399-d01-origin')?.textContent.includes('Há um resgate a conferir no Cofrinho.'))reasons.push('Cofrinho a conferir.');
    return reasons;
   }
   function paint(){
@@ -32,7 +31,7 @@
    move(controls.querySelector('.v225-balance-freshness>.lts-update-details'),'sources');
    move(document.querySelector('[data-v412-policy="flow"]'),'projection');
    move(document.querySelector('[data-v411-flow-policy]'),'rsu');
-   move(document.getElementById('v399-d01-origin'),'applications');
+   move(document.getElementById('v402-d01-origin'),'applications');
    // Empty provenance containers occupy no vertical space. Their material
    // freshness warnings remain outside the options, with original semantics.
    for(const host of controls.querySelectorAll('.v225-balance-freshness'))host.classList.toggle('v425-empty',!host.textContent.trim());
@@ -70,7 +69,7 @@
  }
  function install(){try{
   const w=shell?.contentWindow,d=shell?.contentDocument;
-  if(!w?.__LTS_V382_FLOW_LAYOUT||!w?.__LTS_V412_PROJECTION||!w?.__LTS_V399_D01)return false;
+  if(!w?.__LTS_V382_FLOW_LAYOUT||!w?.__LTS_V412_PROJECTION||!w?.__LTS_V402_D01)return false;
   if(w.__LTS_V425_FLOW_OPTIONS)return true;
   const script=d.createElement('script');script.textContent='('+runtime.toString()+')();';d.head.append(script);return !!w.__LTS_V425_FLOW_OPTIONS;
  }catch{return false;}}
