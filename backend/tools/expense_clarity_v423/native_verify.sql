@@ -1,0 +1,20 @@
+SELECT set_config('qa.owner','00000000-0000-4000-8000-000000000001',false);
+DO $$DECLARE j jsonb;BEGIN
+ j:=public.lts_browser_pending_bank_evidence_v423();
+ IF j#>>'{accounts,0,pending_count}'<>'2' OR (j#>>'{accounts,0,pending_total_brl}')::numeric<>-19.50 OR j#>>'{accounts,0,complete}'<>'true' OR jsonb_array_length(j->'accounts')<>1 THEN RAISE EXCEPTION 'Incorrect snapshot selection';END IF;
+ IF j::text LIKE '%Other owner%' OR j::text LIKE '%previous-snapshot%' THEN RAISE EXCEPTION 'Wrong source included';END IF;
+ IF has_function_privilege('anon','public.lts_browser_pending_bank_evidence_v423()','EXECUTE') OR has_function_privilege('anon','lts_pending_evidence_private_v423.read_pending()','EXECUTE') THEN RAISE EXCEPTION 'Anonymous access';END IF;
+ IF NOT has_function_privilege('authenticated','public.lts_browser_pending_bank_evidence_v423()','EXECUTE') THEN RAISE EXCEPTION 'Missing authorized access';END IF;
+END$$;
+SET ROLE authenticated;
+SELECT public.lts_browser_pending_bank_evidence_v423();
+RESET ROLE;
+SELECT set_config('qa.owner','00000000-0000-4000-8000-000000000002',false);
+DO $$BEGIN IF jsonb_array_length(public.lts_browser_pending_bank_evidence_v423()->'accounts')<>0 THEN RAISE EXCEPTION 'Owner isolation failed';END IF;END$$;
+SELECT set_config('qa.owner','00000000-0000-4000-8000-000000000001',false);
+BEGIN;
+UPDATE public.lts_open_finance_staging SET signed_amount=NULL WHERE id='00000000-0000-4000-8000-000000000002';
+DO $$BEGIN IF public.lts_browser_pending_bank_evidence_v423()#>>'{accounts,0,complete}'<>'false' THEN RAISE EXCEPTION 'Missing amount certified';END IF;END$$;
+ROLLBACK;
+DO $$BEGIN IF (SELECT source_hash FROM public.qa_before) IS DISTINCT FROM (SELECT md5(string_agg(to_jsonb(s)::text,'' ORDER BY id)) FROM public.lts_open_finance_staging s) THEN RAISE EXCEPTION 'Financial data changed';END IF;END$$;
+SELECT jsonb_build_object('passed',true,'snapshot_selection',true,'pending_preserved',true,'source_rows_unchanged',true,'synthetic_owner_isolation',true,'real_sessions_verified',false) AS proof;
