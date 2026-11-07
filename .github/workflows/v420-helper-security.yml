@@ -1,0 +1,43 @@
+name: V420 fixed helper search paths
+on:
+  pull_request:
+    paths: ['backend/patches/v420/**','backend/tools/helper_security_v420/**','.github/workflows/v420-helper-security.yml']
+permissions:
+  contents: read
+jobs:
+  native:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: synthetic-test-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: synthetic-test-only
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Prepare invented inputs and exact predecessor definitions
+        run: psql -v ON_ERROR_STOP=1 -f backend/tools/helper_security_v420/fixture.sql
+      - name: Apply, verify and replay without changing results or grants
+        run: |
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v420/fixed_helper_search_path.sql
+          psql -v ON_ERROR_STOP=1 -f backend/tools/helper_security_v420/verify.sql | tee v420-first-proof.txt
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v420/fixed_helper_search_path.sql
+          psql -v ON_ERROR_STOP=1 -f backend/tools/helper_security_v420/verify.sql | tee v420-replay-proof.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v420-native-proof
+          path: v420-*-proof.txt
