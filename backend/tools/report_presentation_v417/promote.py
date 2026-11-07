@@ -1,6 +1,6 @@
 """Prepare routing and deployment verification, retaining every previous gate."""
 from pathlib import Path
-import json, subprocess, textwrap
+import json, subprocess, textwrap,re
 ROOT=Path(__file__).resolve().parents[3]
 p=ROOT/'.github/workflows/pages.yml';s=p.read_text()
 if 'LTS_MOBILE_RELEASE=v417' not in s:
@@ -19,9 +19,19 @@ v=v.replace('v415-published-verification','v417-published-verification').replace
 v=v.replace("previous_ui:['v412'","previous_ui:['v415','v412'")
 (ROOT/'.github/scripts/lts_v417_verify_published.cjs').write_text(v)
 (ROOT/'mobile/current.json').write_text(json.dumps({'release':'v417','entry':'../releases/v417/app.html'},indent=2)+'\n')
+# The mobile pointer is a shared entry, not the historical release under test.
+# Keep all LTS_FLOW_RELEASE settings, test commands and fixture roots unchanged.
+workflow_paths=[]
+for wf in sorted((ROOT/'.github/workflows').glob('*.yml')):
+ original=wf.read_text()
+ updated=re.sub(r'(?m)^(\s*LTS_MOBILE_RELEASE:\s*)v415(\s*)$',r'\g<1>v417\2',original)
+ updated=updated.replace('LTS_MOBILE_RELEASE=v415','LTS_MOBILE_RELEASE=v417')
+ if updated!=original:wf.write_text(updated)
+ if 'LTS_MOBILE_RELEASE: v417' in updated or 'LTS_MOBILE_RELEASE=v417' in updated:
+  workflow_paths.append(str(wf.relative_to(ROOT)))
 start=s.index('      - name: Verify release assets and protected history\n        run: |\n')
 block=s[start:].split('        run: |\n',1)[1].split('      - name: Configure Pages',1)[0]
 commands=textwrap.dedent(block)
 assert commands.count('node .github/scripts/')>=70
 subprocess.run(['bash','-euo','pipefail','-c',commands],cwd=ROOT,check=True)
-print(json.dumps({'promoted_candidate':'v417','prior_release_gates_preserved':True,'deploy_not_run':True}))
+print(json.dumps({'promoted_candidate':'v417','prior_release_gates_preserved':True,'deploy_not_run':True,'mobile_pointer_workflows':workflow_paths}))

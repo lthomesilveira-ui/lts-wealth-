@@ -1,8 +1,4 @@
-"""Export reviewed promotion bytes for the authorized repository connector.
-
-The test job has read-only repository access. It never writes Git objects,
-commits, branches or workflow files through the GitHub API.
-"""
+"""Export reviewed promotion bytes without GitHub API writes or credentials."""
 import os,json,subprocess,hashlib,shutil
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[3]
@@ -12,8 +8,12 @@ assert subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).st
 assert json.loads((out/'render-result.json').read_text())['passed']
 assert json.loads((ROOT/'mobile/current.json').read_text())=={'release':'v417','entry':'../releases/v417/app.html'}
 assert (out/'prior-release-gates.txt').stat().st_size>0
+names={'mobile/current.json','.github/workflows/pages.yml','.github/scripts/lts_v417_verify_published.cjs'}
+for wf in (ROOT/'.github/workflows').glob('*.yml'):
+ text=wf.read_text()
+ if 'LTS_MOBILE_RELEASE: v417' in text or 'LTS_MOBILE_RELEASE=v417' in text:names.add(str(wf.relative_to(ROOT)))
 entries=[]
-for name in ['mobile/current.json','.github/workflows/pages.yml','.github/scripts/lts_v417_verify_published.cjs']:
+for name in sorted(names):
  p=ROOT/name;data=p.read_bytes();dest=out/'promotion'/name
  dest.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(p,dest)
  entries.append({'path':name,'mode':'100644','type':'blob',
