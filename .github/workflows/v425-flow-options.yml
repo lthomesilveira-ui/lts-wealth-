@@ -1,0 +1,50 @@
+name: V425 Flow financial-first options
+on:
+  pull_request:
+    paths: ['backend/tools/flow_options_v425/**','releases/v425/**','.github/scripts/lts_v425*','.github/workflows/v425-flow-options.yml','UX_FLOW_OPTIONS.md']
+permissions:
+  contents: read
+jobs:
+  rendered:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    container: mcr.microsoft.com/playwright:v1.58.2-noble
+    permissions:
+      contents: write
+    env:
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Reproducible new release; published predecessor unchanged
+        run: |
+          python3 backend/tools/flow_options_v425/build.py
+          python3 backend/tools/flow_options_v425/build.py
+          node --check releases/v425/lts-v425-flow-options.js
+          npm install --no-save --package-lock=false playwright@1.58.2
+          python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/v425-http.log 2>&1 &
+          node .github/scripts/lts_v309_wait_http.cjs
+      - name: Rendered financial parity, compact default, options and material warnings
+        run: node .github/scripts/lts_v425_options_browser.cjs
+      - name: Store tested release objects without commits or branch changes
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          REVIEWED_HEAD: ${{ github.event.pull_request.head.sha }}
+        run: python3 backend/tools/flow_options_v425/stage.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v425-reviewed-candidate
+          include-hidden-files: true
+          retention-days: 14
+          path: |
+            qa/v425/
+            releases/v425/
+            .github/scripts/
+            .github/workflows/
