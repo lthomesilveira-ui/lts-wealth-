@@ -86,6 +86,7 @@ jobs:
         with:
           name: v423-reviewed-candidate
           retention-days: 14
+          include-hidden-files: true
           path: |
             qa/v423/
             releases/v423/

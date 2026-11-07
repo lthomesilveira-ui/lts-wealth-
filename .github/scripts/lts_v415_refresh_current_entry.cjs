@@ -12,7 +12,7 @@ const pointer=JSON.parse(fs.readFileSync(path.join(__dirname,'../../mobile/curre
 assert.deepEqual(pointer,{release,entry:'../releases/'+release+'/app.html'});
 const previous='/releases/v415/index.html';assert.equal(source.split(previous).length,2,'exactly one initializing-frame target');
 source=source.replace(previous,'/releases/'+release+'/index.html');
-if(release==='v421'){
+if(['v421','v423'].includes(release)){
  const old="assert.deepEqual({ from: before.current_future.from, to: before.current_future.to }, { from: '2026-10-31', to: '2031-12-31' }, 'Explicit preserved legacy source coverage');";
  const replacement="assert.deepEqual({ from: before.current_future.from, to: before.current_future.to }, { from: '2027-01-01', to: '2027-01-31' }, 'Cached slice declares the same explicit period as its validated daily rows');";
  assert.equal(source.split(old).length,2,'exactly one legacy coverage assertion');
@@ -25,5 +25,5 @@ if(release==='v421'){
  assert.strictEqual(normalized.flow.current_future.events,original.flow.current_future.events,'all movements retained verbatim');
  assert.deepEqual({from:normalized.flow.current_future.from,to:normalized.flow.current_future.to},{from:'2027-01-01',to:'2027-01-31'});
 }
-console.log(JSON.stringify({suite:'v415-durable-refresh',mobile_release:release,financial_assertions_preserved:true,selected_period_metadata_checked:release==='v421',production_files_modified:false}));
+console.log(JSON.stringify({suite:'v415-durable-refresh',mobile_release:release,financial_assertions_preserved:true,selected_period_metadata_checked:['v421','v423'].includes(release),production_files_modified:false}));
 module._compile(source,filename);
