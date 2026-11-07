@@ -1,0 +1,86 @@
+name: V418 prepared projection premises
+on:
+  pull_request:
+    paths:
+      - 'backend/patches/v418/**'
+      - 'backend/qa/v418*'
+      - 'backend/qa/fixtures/v418*'
+      - 'backend/tools/projection_summary_v418/**'
+      - '.github/workflows/v418-projection-summary.yml'
+permissions:
+  contents: read
+jobs:
+  reader-contract:
+    runs-on: ubuntu-24.04
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: synthetic-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready --health-interval 5s
+          --health-timeout 5s --health-retries 10
+    env:
+      PGHOST: localhost
+      PGUSER: postgres
+      PGPASSWORD: synthetic-only
+      PGOPTIONS: '-c timezone=America/Sao_Paulo'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify guarded reader with synthetic identities and stale inputs
+        run: |
+          set -euo pipefail
+          createdb v418_reader
+          psql -X -d v418_reader -v ON_ERROR_STOP=1 -f backend/qa/v418_projection_summary_setup.sql
+          psql -X -d v418_reader -v ON_ERROR_STOP=1 -f backend/patches/v418/read.sql
+          psql -X -d v418_reader -v ON_ERROR_STOP=1 -f backend/qa/v418_projection_summary_checks.sql
+      - name: Verify capture using the real projection builder
+        run: |
+          set -euo pipefail
+          createdb v418_capture
+          python3 backend/tools/projection_policy_v412/test_sql.py > /tmp/v418-base.sql
+          psql -X -d v418_capture -v ON_ERROR_STOP=1 -f /tmp/v418-base.sql
+          psql -X -d v418_capture -v ON_ERROR_STOP=1 -f supabase/migrations/20261105211649_v413_bootstrap_projection_performance.sql
+          psql -X -d v418_capture -v ON_ERROR_STOP=1 -f supabase/migrations/20261106232410_v416_card_rolling_window.sql
+          psql -X -d v418_capture -v ON_ERROR_STOP=1 -f backend/patches/v416/scope_adapter.sql
+          psql -X -d v418_capture -v ON_ERROR_STOP=1 -f backend/patches/v416/integrate_scopes.sql
+          python3 - <<'PY'
+          from pathlib import Path
+          text=Path('backend/patches/v418/capture.sql').read_text()
+          Path('/tmp/v418-capture.sql').write_text(text.split('CREATE OR REPLACE FUNCTION lts_product_refresh_private_v415.run_claimed')[0])
+          PY
+          psql -X -d v418_capture -v ON_ERROR_STOP=1 -c "CREATE TABLE qa_v412.v418_builder_attributes AS SELECT to_jsonb(p)-'prosrc' AS attributes FROM pg_proc p WHERE p.oid='lts_projection_private_v412.build(uuid,date)'::regprocedure;"
+          psql -X -d v418_capture -v ON_ERROR_STOP=1 -f /tmp/v418-capture.sql
+          psql -X -d v418_capture -v ON_ERROR_STOP=1 -f backend/qa/v418_projection_capture_checks.sql
+      - name: Verify existing worker publication and rollback
+        run: |
+          set -euo pipefail
+          createdb v418_worker
+          python3 backend/tools/durable_refresh_v415/test_sql.py --setup-only > /tmp/v418-worker-base.sql
+          psql -X -d v418_worker -v ON_ERROR_STOP=1 -f /tmp/v418-worker-base.sql
+          psql -X -d v418_worker -v ON_ERROR_STOP=1 -f backend/qa/v418_projection_worker_setup.sql
+          python3 - <<'PY'
+          from pathlib import Path
+          text=Path('backend/patches/v418/capture.sql').read_text()
+          marker='CREATE OR REPLACE FUNCTION lts_product_refresh_private_v415.run_claimed'
+          Path('/tmp/v418-worker.sql').write_text(marker+text.split(marker)[1])
+          PY
+          psql -X -d v418_worker -v ON_ERROR_STOP=1 -f /tmp/v418-worker.sql
+          psql -X -d v418_worker -v ON_ERROR_STOP=1 -f backend/qa/v418_projection_worker_checks.sql
+      - name: Verify summary capture under native concurrent invalidation and crash
+        run: |
+          python3 backend/tools/projection_summary_v418/concurrency_test.py --database v418_worker --output /tmp/v418-concurrency.json
+      - name: Verify exact guarded deployment as one atomic transaction
+        run: |
+          set -euo pipefail
+          createdb v418_package
+          psql -X -d v418_package -v ON_ERROR_STOP=1 -f /tmp/v418-worker-base.sql
+          psql -X -d v418_package -v ON_ERROR_STOP=1 -f backend/qa/fixtures/v418_guarded_predecessors.sql
+          python3 backend/tools/projection_summary_v418/package_test.py --database v418_package
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v418-native-concurrency
+          path: /tmp/v418-concurrency.json
+          if-no-files-found: error
