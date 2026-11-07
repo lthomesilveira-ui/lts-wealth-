@@ -9,9 +9,8 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     container: mcr.microsoft.com/playwright:v1.58.2-noble
-    permissions:
-      contents: write
     env:
+      LTS_MOBILE_RELEASE: v423
       PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
     steps:
@@ -32,11 +31,8 @@ jobs:
           python3 -m http.server 8788 --bind 127.0.0.1 >/tmp/v421-http.log 2>&1 &
           node .github/scripts/lts_v309_wait_http.cjs
       - run: node .github/scripts/lts_v421_horizon_browser.cjs
-      - name: Stage reviewed release objects without updating branches
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-          REVIEWED_HEAD: ${{ github.event.pull_request.head.sha }}
-        run: python3 backend/tools/scenario_horizon_v421/stage.py
+      - name: Verify current gates without changing routing or Git objects
+        run: python3 backend/tools/report_presentation_v417/read_only_gates.py > qa/v421/current-static-gates.txt
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -45,5 +41,3 @@ jobs:
           path: |
             qa/v421/
             releases/v421/
-            .github/scripts/
-            .github/workflows/

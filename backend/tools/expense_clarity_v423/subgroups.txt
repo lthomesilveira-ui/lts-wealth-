@@ -1,0 +1,10 @@
+  function drawKnownSubgroups(){
+   const d=state.detail,host=document.getElementById('v178Drawer');if(!d||!host||d.composition||d.archive)return;
+   let box=host.querySelector('.v423-subgroups');
+   if(d.loading||d.error){box?.remove();return;}
+   let groups;try{groups=window.parent.LTSV423Clarity.groups(d.rows,d.total);}catch{box?.remove();return;}
+   if(!groups.length){box?.remove();return;}
+   if(!box){box=document.createElement('section');box.className='v423-subgroups';host.querySelector('.v178-filter').before(box);}
+   box.innerHTML='<h3>Categorias e subgrupos</h3><div class="v423-group-list"><button type="button" data-v423-group="" aria-pressed="'+(!d.v423Subgroup)+'"><span>Todos os lançamentos</span><strong>'+money(d.total)+'</strong></button>'+groups.map((g,i)=>'<button type="button" data-v423-group="'+i+'" aria-pressed="'+(d.v423Subgroup===g.key)+'"><span>'+escape(g.subgroup)+'<small>'+escape(g.group)+' · '+g.count+' lançamento'+(g.count===1?'':'s')+'</small></span><strong>'+money(g.total)+'</strong></button>').join('')+'</div>';
+   box.querySelectorAll('[data-v423-group]').forEach(b=>b.onclick=()=>{d.v423Subgroup=b.dataset.v423Group===''?null:groups[Number(b.dataset.v423Group)].key;d.visibleRows=300;drawRows();drawKnownSubgroups();});
+  }

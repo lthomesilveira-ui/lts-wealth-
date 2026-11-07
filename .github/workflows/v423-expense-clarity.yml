@@ -1,0 +1,92 @@
+name: V423 expense and pending cash clarity
+on:
+  pull_request:
+    paths: ['backend/patches/v423/**','backend/tools/expense_clarity_v423/**','releases/v423/**','.github/scripts/lts_v423*','.github/workflows/v423-expense-clarity.yml']
+permissions:
+  contents: read
+jobs:
+  native:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: synthetic-test-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: synthetic-test-only
+      PGTZ: America/Sao_Paulo
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - name: Verify snapshot scope, owner isolation and unchanged sources
+        run: |
+          set -euo pipefail
+          mkdir -p qa/v423
+          psql -v ON_ERROR_STOP=1 -f backend/tools/expense_clarity_v423/native_fixture.sql
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v423/pending_bank_evidence.sql
+          psql -v ON_ERROR_STOP=1 -f backend/tools/expense_clarity_v423/native_verify.sql | tee qa/v423/native-proof.txt
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v423/pending_bank_evidence.sql
+          psql -v ON_ERROR_STOP=1 -f backend/tools/expense_clarity_v423/native_verify.sql | tee qa/v423/native-replay.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v423-native-proof
+          path: qa/v423/
+  browser:
+    needs: native
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    container: mcr.microsoft.com/playwright:v1.58.2-noble
+    permissions:
+      contents: write
+    env:
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build reproducibly and verify pure presentation contracts
+        run: |
+          mkdir -p qa/v423
+          python3 backend/tools/expense_clarity_v423/build.py
+          python3 backend/tools/expense_clarity_v423/build.py
+          node --check releases/v423/lts-v384-startup-1.js
+          node --check releases/v423/lts-v423-clarity.js
+          node backend/tools/expense_clarity_v423/test.cjs > qa/v423/unit.json
+          npm install --no-save --package-lock=false playwright@1.58.2
+          python3 -m http.server 8788 --bind 127.0.0.1 >/tmp/v423-http.log 2>&1 &
+          node .github/scripts/lts_v309_wait_http.cjs
+      - name: Render complete application with invented data
+        run: node .github/scripts/lts_v423_clarity_browser.cjs
+      - name: Stage generic release objects without updating refs
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          REVIEWED_HEAD: ${{ github.event.pull_request.head.sha }}
+        run: python3 backend/tools/expense_clarity_v423/stage.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v423-reviewed-candidate
+          retention-days: 14
+          include-hidden-files: true
+          path: |
+            qa/v423/
+            releases/v423/

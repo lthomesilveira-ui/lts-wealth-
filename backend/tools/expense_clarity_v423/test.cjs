@@ -1,0 +1,26 @@
+'use strict';const a=require('node:assert/strict'),m=require('./model.js');let tests=[];function t(n,f){f();tests.push(n)}
+const rows=[{key:'a',category:'Saúde',subgroup:'Consultas',current_category:'Saúde',amount:30},{key:'b',category:'Saúde',subgroup:'Farmácia',amount:50},{key:'c',category:'Saúde',subgroup:'Farmácia',amount:-10}];
+t('original subgroup names and compensated totals',()=>a.deepEqual(m.groups(rows,70).map(g=>[g.subgroup,g.total,g.count]),[['Farmácia',40,2],['Consultas',30,1]]));
+t('source rows unchanged',()=>{const j=JSON.stringify(rows);m.groups(rows,70);a.equal(JSON.stringify(rows),j)});
+t('duplicate identity rejected',()=>a.throws(()=>m.groups([...rows,rows[0]],100)));
+t('partial group not certified',()=>a.throws(()=>m.groups(rows,80)));
+t('missing amount not zero',()=>a.throws(()=>m.groups([{key:'x',amount:null}],0)));
+t('fallback uses known original category',()=>a.equal(m.identity({original_category:'Nome preservado'}).subgroup,'Nome preservado'));
+t('same subgroup in different groups stays separate',()=>a.equal(m.groups([{key:'a',category:'A',subgroup:'X',amount:1},{key:'b',category:'B',subgroup:'X',amount:2}],3).length,2));
+t('card supplement identified by source not merchant guess',()=>a.match(m.cardLabel({source:'planning_projection_v412',source_ref:'projection:v412:card_itau:2030-01-16'}).title,/complemento/));
+t('actual invoice not relabelled as budget',()=>a.equal(m.cardLabel({source:'card_invoice',source_ref:'projection:v412:card_itau:2030-01-16'}),null));
+t('noncard projection preserved',()=>a.equal(m.cardLabel({source:'planning_projection_v412',source_ref:'projection:v412:salary:2030-01-16'}),null));
+const day={date:'2026-11-07',Bradesco:{observed_balance:980.5,unposted_projection_net:0,cash_position_guard:{ledger_reconstruction:{balance:1000}}}},e={version:'pending-bank-evidence-v423',as_of:'2026-11-07',accounts:[{bank:'Bradesco',balance_brl:980.5,source_date:'2026-11-06',complete:true,pending_count:2,pending_total_brl:-19.5,movements:[{key:'a',date:'2026-11-06',amount:-20,description:'Parcela fictícia',status:'PENDING'},{key:'b',date:'2026-11-06',amount:.5,description:'Crédito fictício',status:'PENDING'}]}]};
+t('pending arithmetic explained without settlement',()=>{const b=m.bridge(day,e,'Bradesco');a.equal(b.net,-19.5);a.equal(b.settled,false)});
+t('mismatched balance not explained',()=>{const x=structuredClone(e);x.accounts[0].balance_brl=981;a.equal(m.bridge(day,x,'Bradesco'),null)});
+t('wrong day rejected',()=>a.equal(m.bridge({...day,date:'2026-11-08'},e,'Bradesco'),null));
+t('old pending set not forced to fit',()=>{const x=structuredClone(e);x.accounts[0].movements[0].amount=-21;a.equal(m.bridge(day,x,'Bradesco'),null)});
+t('posted record cannot enter pending bridge',()=>{const x=structuredClone(e);x.accounts[0].movements[0].status='POSTED';a.equal(m.bridge(day,x,'Bradesco'),null)});
+t('duplicate pending id rejected',()=>{const x=structuredClone(e);x.accounts[0].movements[1].key='a';a.equal(m.bridge(day,x,'Bradesco'),null)});
+t('two same-named accounts are not collapsed',()=>{const x=structuredClone(e);x.accounts.push(x.accounts[0]);a.equal(m.bridge(day,x,'Bradesco'),null)});
+t('source day after current day rejected',()=>{const x=structuredClone(e);x.accounts[0].source_date='2026-11-08';a.equal(m.bridge(day,x,'Bradesco'),null)});
+t('other account not fabricated',()=>a.equal(m.bridge(day,e,'Itaú'),null));
+t('display alias never changes source key',()=>{const k='Patrimônio e financiamentos';a.equal(m.label(k),'Financiamentos e empréstimos');a.equal(k,'Patrimônio e financiamentos')});
+t('null pending total rejected',()=>{const x=structuredClone(e);x.accounts[0].pending_total_brl=null;a.equal(m.bridge(day,x,'Bradesco'),null)});
+t('invalid calendar date rejected',()=>{const x=structuredClone(e);x.accounts[0].movements[0].date='2026-02-30';a.equal(m.bridge(day,x,'Bradesco'),null)});
+console.log(JSON.stringify({passed:true,count:tests.length,tests},null,2));

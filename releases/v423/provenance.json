@@ -1,0 +1,8 @@
+{
+  "release": "v423",
+  "base_release": "v421",
+  "scope": "expense subgroup and pending cash evidence presentation",
+  "financial_writes_added": false,
+  "real_device_verified": false,
+  "private_session_verified": false
+}

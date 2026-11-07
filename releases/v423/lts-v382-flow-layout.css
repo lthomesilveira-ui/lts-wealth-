@@ -1,0 +1,38 @@
+/* Flow controls only. Native date fields retain a 16px font and 44px touch targets. */
+.flow-sticky-controls.v382-flow-controls{padding-bottom:4px!important}
+.v382-flow-controls>.flowbar{margin-bottom:6px!important;gap:8px!important}
+.v382-flow-controls .v225-balance-freshness{margin-top:4px!important}
+.v382-flow-controls .v225-balance-freshness>.lts-update-details{margin:3px 0!important}
+.v382-flow-controls>.flowbar.v382-flow-heading{display:flex!important;flex-wrap:nowrap!important;justify-content:space-between;align-items:center}
+.v382-flow-heading>div>.mut{display:none}
+.v382-flow-heading .title{font-size:18px!important;line-height:1.3}
+.v382-tools{position:relative;flex:none;font-size:13px}
+.v382-tools>summary{cursor:pointer;padding:10px 12px;min-height:44px;box-sizing:border-box;display:flex;align-items:center;gap:8px;border:1px solid #d8e1e9;border-radius:8px;background:#fff;color:#18344f}
+.v382-tools>.v382-tool-body{position:absolute;right:0;top:calc(100% + 6px);width:240px;max-width:calc(100vw - 32px);padding:10px;background:#fff;border:1px solid #d8e1e9;border-radius:12px;box-shadow:0 8px 24px #10263f20;z-index:100}
+.v382-tools:not([open])>.v382-tool-body{display:none!important}
+.v382-tools .chips{display:grid!important;gap:8px!important}
+.v382-tools .chips button{margin:0!important;width:100%;min-height:44px;font-size:13px!important;font-weight:600;white-space:normal}
+.v382-flow-controls>.flowbar:has(.v382-banks){display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:8px!important}
+.flow-sticky-controls.v382-flow-controls .v382-banks{display:flex!important;flex-wrap:wrap!important;gap:6px!important;min-width:0;max-width:100%}
+.v382-flow-controls .v382-banks button{min-height:44px;padding:8px 12px!important;font-size:13px!important;line-height:1.2!important;white-space:nowrap}
+.v382-flow-controls .v382-period{margin:0;border:1px solid #d8e1e9;border-radius:12px;background:#fff;min-width:0;max-width:100%}
+.v382-period>summary{display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:pointer;list-style:none;min-height:48px;padding:10px 12px;color:#18344f}
+.v382-period>summary::-webkit-details-marker{display:none}
+.v382-period>summary::after{content:'⌄';font-size:20px;line-height:1;flex:none}
+.v382-period[open]>summary::after{content:'⌃'}
+.v382-period-title{font-size:14px;font-weight:700}
+.v382-period-range{min-width:0;flex:1;text-align:right;font-size:12px;font-weight:500;font-variant-numeric:tabular-nums;line-height:1.4;overflow-wrap:anywhere}
+.v382-period-body{display:grid;gap:14px;padding:2px 12px 12px}
+.v382-period:not([open])>.v382-period-body{display:none!important}
+.v382-flow-controls .v382-presets{display:flex;flex-wrap:wrap;gap:6px}
+.v382-flow-controls .v382-presets button,.v382-flow-controls .v382-period-actions button{font-size:13px!important;font-weight:600!important;line-height:1.3!important;min-height:44px;padding:8px 12px!important;white-space:normal;max-width:100%;margin:0!important}
+.v382-field{display:grid;gap:6px;min-width:0;margin:0;font-size:12px;font-weight:600;color:#53677d}
+.v382-field>span{line-height:1.3}
+.v382-flow-controls .v382-field input,.v382-flow-controls .v382-field select{display:block;box-sizing:border-box;width:100%;min-width:0;max-width:100%;min-height:44px;margin:0!important;padding:8px!important;border:1px solid #ccd8e4!important;border-radius:8px!important;background:#fff;color:#18344f;font:400 16px/1.3 system-ui,-apple-system,BlinkMacSystemFont,sans-serif!important;text-align:left}
+.v382-field input::-webkit-date-and-time-value{text-align:left;min-width:0}
+.v382-dates{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;min-width:0}
+.v382-period-actions{display:flex;flex-wrap:wrap;gap:8px}
+.v382-period-actions #flowApply{background:#1a3c6b;color:#fff;border-color:#1a3c6b}
+.v382-period>summary:focus-visible,.v382-flow-controls button:focus-visible{outline:3px solid #b88b39;outline-offset:2px}
+@media(max-width:380px){.v382-flow-controls .v382-banks button{padding:8px 10px!important}.v382-period-range{font-size:11px}.v382-period-body{padding-left:10px;padding-right:10px}}
+@media(max-width:700px){.v382-flow-controls .v382-period-actions{display:grid;grid-template-columns:minmax(0,1fr)}.v382-flow-controls .v382-period-actions button{width:100%;text-align:center}.v382-flow-controls .v382-presets button{flex:1 1 auto}}
