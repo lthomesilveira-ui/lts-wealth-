@@ -13,6 +13,7 @@ async function run(browser,engine,width){
  await h.ctx.route('**/rest/v1/rpc/lts_browser_flow_v242',route=>{
   const a=JSON.parse(route.request().postData()||'{}'),p=fixture.response('lts_browser_flow_v242',a),part=p.flow.current_future;
   for(const d of part.days){if(d.date!=='2026-11-07')continue;d.Bradesco={opening_balance:1000,balance:980.5,observed_balance:980.5,unposted_projection_net:0,movements_complete:false,cash_position_guard:{unexplained_balance_difference:-19.5,position_delta:-19.5,ledger_reconstruction:{balance:1000,net:0}}};d.movements_complete=false;d.cash_position_guard={unexplained_bank_differences:{Bradesco:-19.5}};Object.assign(d.fix86_columns,{saldo_anterior:2000,saldo_final:1980.5,entradas:null,saidas:null});}
+  const cardDay=part.days.find(d=>d.date==='2026-11-16');if(cardDay){cardDay.summary={...cardDay.summary,events:2,exits:700,entries:0,net:-700};cardDay.Itaú={...cardDay.Itaú,net:-700};Object.assign(cardDay.fix86_columns,{saidas:700,entradas:0});}
   if(a.p_from<='2026-11-16'&&a.p_to>='2026-11-16')part.events.push({event_date:'2026-11-16',description:'Fatura cartão de exemplo',signed_amount:-500,account:'Itaú',source:'card_invoice',source_ref:'example-card:2030',confidence:'documented_projected_snapshot'},{event_date:'2026-11-16',description:'Mastercard',signed_amount:-200,account:'Itaú',source:'planning_projection_v412',source_ref:'projection:v412:card_itau:2026-11-16',confidence:'owner_authorized_3m_history'});
   return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(p)});
  });
@@ -35,7 +36,7 @@ async function run(browser,engine,width){
   await f.locator('#d-2026-11-07 .exp').click();await f.waitForSelector('.v423-bank-evidence');
   const bridge=f.locator('.v423-bank-evidence');assert.match(await bridge.innerText(),/Parcela fictícia/);assert.match(await bridge.innerText(),/Crédito fictício/);assert.match(await bridge.innerText(),/980,50/);assert.match(await bridge.innerText(),/confirmação.*pendente/);assert.equal(await bridge.locator('details[open]').count(),0);
   assert.equal(await f.evaluate(()=>JSON.stringify(mergedFlowDays().find(x=>x.date===today()).fix86_columns)),before,'no balance changed to create explanation');
-  assert.equal(bankReads,1);await h.page.screenshot({path:out+'/'+engine+'-'+width+'-reconciliation.png'});
+  assert.equal(bankReads,1);await bridge.scrollIntoViewIfNeeded();await h.page.screenshot({path:out+'/'+engine+'-'+width+'-reconciliation.png'});
   await f.locator('#d-2026-11-16 .exp').click();
   const cardDetail=f.locator('#d-2026-11-16 + .fx89-details');assert.match(await cardDetail.innerText(),/complemento do orçamento/);assert.match(await cardDetail.innerText(),/não é outra fatura/);assert.match(await cardDetail.innerText(),/500,00/);assert.match(await cardDetail.innerText(),/200,00/);
   const cardEvents=await f.evaluate(()=>dayEvents('2026-11-16').filter(x=>['card_invoice','planning_projection_v412'].includes(x.source)).map(x=>x.signed_amount));assert.deepEqual(cardEvents,[-500,-200]);
