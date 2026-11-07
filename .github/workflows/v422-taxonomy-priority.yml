@@ -1,0 +1,47 @@
+name: V422 explicit management classification priority
+on:
+  pull_request:
+    paths: ['backend/patches/v422/**','backend/tools/taxonomy_priority_v422/**','.github/workflows/v422-taxonomy-priority.yml']
+permissions:
+  contents: read
+jobs:
+  native:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: synthetic-test-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: synthetic-test-only
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Create invented predecessor and input matrix
+        run: psql -v ON_ERROR_STOP=1 -f backend/tools/taxonomy_priority_v422/fixture.sql
+      - name: Verify the same guarded transformation on a synthetic predecessor
+        run: |
+          set -euo pipefail
+          hash=$(psql -At -c "SELECT md5(pg_get_functiondef('public.lts_expense_taxonomy_v353(text,text,text)'::regprocedure))")
+          test ${#hash} -eq 32
+          sed "s/b73aaab59b0677ca0499606e8e607823/$hash/" backend/patches/v422/taxonomy_priority.sql > /tmp/v422-synthetic-patch.sql
+          psql -v ON_ERROR_STOP=1 -f /tmp/v422-synthetic-patch.sql
+          psql -v ON_ERROR_STOP=1 -f backend/tools/taxonomy_priority_v422/verify.sql | tee v422-first-proof.txt
+          psql -v ON_ERROR_STOP=1 -f /tmp/v422-synthetic-patch.sql
+          psql -v ON_ERROR_STOP=1 -f backend/tools/taxonomy_priority_v422/verify.sql | tee v422-replay-proof.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v422-native-proof
+          path: v422-*-proof.txt
