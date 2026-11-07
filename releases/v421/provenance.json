@@ -1,0 +1,9 @@
+{
+  "release": "v421",
+  "base_release": "v417",
+  "scope": "full configured scenario horizon",
+  "financial_balances_recalculated": false,
+  "server_or_source_writes_added": false,
+  "physical_iphone_verified": false,
+  "private_session_verified": false
+}
