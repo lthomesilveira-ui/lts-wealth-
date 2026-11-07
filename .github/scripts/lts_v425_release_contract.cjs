@@ -1,0 +1,10 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),assert=require('node:assert/strict');
+const root='releases/v425',m=JSON.parse(fs.readFileSync(root+'/manifest.json')),sha=b=>crypto.createHash('sha256').update(b).digest('hex');
+assert.equal(m.release,'v425');assert.equal(m.base_release,'v423');
+for(const[n,h]of Object.entries(m.files))assert.equal(sha(fs.readFileSync(path.join(root,n))),h,n);
+assert.deepEqual(Object.keys(m.files).concat('manifest.json').sort(),fs.readdirSync(root).sort());
+assert.equal(sha(fs.readFileSync('releases/v423/manifest.json')),m.protected_manifest.sha256);
+assert.deepEqual(JSON.parse(fs.readFileSync('mobile/current.json')),{release:'v425',entry:'../releases/v425/app.html'});
+const app=fs.readFileSync(root+'/app.html','utf8');assert(app.indexOf('<script src="lts-v425-flow-options.js"')>app.indexOf('<script src="lts-v423-clarity.js"'));
+assert(app.includes('V425'));console.log(JSON.stringify({pass:true,release:'v425',assets:Object.keys(m.files).length,predecessor_unchanged:true}));

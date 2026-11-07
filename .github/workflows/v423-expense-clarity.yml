@@ -50,8 +50,6 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 12
     container: mcr.microsoft.com/playwright:v1.58.2-noble
-    permissions:
-      contents: write
     env:
       PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
@@ -76,11 +74,8 @@ jobs:
           node .github/scripts/lts_v309_wait_http.cjs
       - name: Render complete application with invented data
         run: node .github/scripts/lts_v423_clarity_browser.cjs
-      - name: Stage generic release objects without updating refs
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-          REVIEWED_HEAD: ${{ github.event.pull_request.head.sha }}
-        run: python3 backend/tools/expense_clarity_v423/stage.py
+      - name: Verify current gates without rewinding historical routing
+        run: python3 backend/tools/report_presentation_v417/read_only_gates.py > qa/v423/current-static-gates.txt
       - uses: actions/upload-artifact@v4
         if: always()
         with:

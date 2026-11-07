@@ -15,12 +15,15 @@ fixture.response=function(name,args){
  return j;
 };
 const hash=x=>crypto.createHash('sha256').update(JSON.stringify(x)).digest('hex');
+
+async function showFlowOptions(f){const t=f.locator('.v425-options');if(await t.count()&&await t.getAttribute('open')===null)await t.locator(':scope>summary').click();}
 async function run(browser,engine,width){
  const h=await setup(browser,width,width===1366?900:852,'2026-11-01T15:00:00Z');let f;
  try{
   f=await open(h,target,true);await f.waitForFunction(()=>window.__LTS_V402_D01?.installed);
   await f.locator('#nav [data-v="Fluxo Diário"]:visible,#dx1MobileNav [data-mobile-route="Fluxo Diário"]:visible').click();
   await f.evaluate(()=>loadFlowRange('2026-10-27','2026-11-02'));await f.waitForFunction(()=>!FLOWLOADING&&FLOWQ?.from==='2026-10-27'&&document.getElementById('v402-d01-origin'));
+  await showFlowOptions(f);
   const box=f.locator('#v402-d01-origin'),before=hash(await f.evaluate(()=>FLOWQ));
   assert.equal(await box.locator('details[open]').count(),0);assert.equal(await box.getAttribute('open'),null);
   const height=await box.evaluate(e=>e.getBoundingClientRect().height);assert(height<70,'compact collapsed source');

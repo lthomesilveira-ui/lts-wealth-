@@ -18,6 +18,8 @@ async function geometry(f){return f.evaluate(()=>({width:innerWidth,scroll:docum
  controls:document.querySelector('.flow-sticky-controls')?.getBoundingClientRect().toJSON(),
  open:document.querySelectorAll('.v412-origin[open]').length,
  buttons:[...document.querySelectorAll('[data-v412-refresh]')].map(e=>e.getBoundingClientRect().toJSON())}));}
+
+async function showFlowOptions(f){const t=f.locator('.v425-options');if(await t.count()&&await t.getAttribute('open')===null)await t.locator(':scope>summary').click();}
 async function run(browser,engine,width){
  current=projection.policy();const h=await setup(browser,width,width===1366?950:980,'2026-11-04T15:00:00Z');
  const initialAuthError=width!==1366;
@@ -35,7 +37,7 @@ async function run(browser,engine,width){
  });
  try{
   f=await open(h,target,true);await f.waitForFunction(()=>__LTS_V412_PROJECTION?.installed);
-  const concise=/\/releases\/v(?:417|421|423)\//.test(new URL(f.url()).pathname);
+  const concise=/\/releases\/v(?:417|421|423|425)\//.test(new URL(f.url()).pathname);
   if(!initialAuthError){await ready(f);await h.page.waitForLoadState('networkidle');
    await f.waitForFunction(()=>!__LTS_V168_STATE.dashboard.loading);
    assert.equal(await f.evaluate(()=>__LTS_V168_STATE.dashboard.data.flow.flow.current_future.days.at(-1).date),
@@ -48,6 +50,7 @@ async function run(browser,engine,width){
   else assert.equal(await f.locator('[data-v412-policy]').count(),0,'healthy Dashboard has no extra policy banner');
   await h.page.screenshot({path:out+'/'+engine+'-'+width+'-dashboard.png'});
   await go(f,'Fluxo Diário');const panel=()=>f.locator('[data-v412-policy="flow"]');
+  const optionsLayout=new URL(f.url()).pathname.includes('/releases/v425/');
   if(initialAuthError){await f.waitForFunction(()=>__LTS_V412_PROJECTION.status==='error');
    assert.match(await panel().innerText(),/Não foi possível conferir/);assert.equal(await f.evaluate(()=>__LTS_V412_PROJECTION.model),null);}
   mode='ok';await f.evaluate(()=>__LTS_V412_PROJECTION.load(true));await ready(f);
@@ -63,11 +66,11 @@ async function run(browser,engine,width){
   assert.equal(await f.getByLabel('Ano do período do Fluxo',{exact:true}).locator('option[value="2031"]').count(),1);
   await f.locator('.v382-period>summary').click();
   await f.evaluate(()=>loadFlowRange('2031-01-01','2031-01-31'));await f.waitForFunction(()=>!FLOWLOADING&&FLOWQ?.to==='2031-01-31');
-  assert.match(await panel().innerText(),/Projeções até 31\/12\/2031/);assert.equal(await panel().locator('details').getAttribute('open'),null);
+  if(optionsLayout){assert.equal(await panel().isVisible(),false);assert.equal(await f.evaluate(()=>__LTS_V412_PROJECTION.model.horizon),'2031-12-31');}else assert.match(await panel().innerText(),/Projeções até 31\/12\/2031/);assert.equal(await panel().locator('details').getAttribute('open'),null);
   const before=await f.evaluate(()=>structuredClone(FLOWQ)),closed=await geometry(f);
   assert(closed.scroll<=width+2,JSON.stringify(closed));assert(closed.panel.height<=135,JSON.stringify(closed));assert(closed.controls.height<430);
-  assert(closed.buttons.every(b=>b.x>=0&&b.right<=width+2&&b.height>=40));
-  await panel().locator('summary').click();const text=await panel().innerText();
+  if(optionsLayout)assert(closed.buttons.every(b=>b.height===0),'secondary controls stay outside default report');else assert(closed.buttons.every(b=>b.x>=0&&b.right<=width+2&&b.height>=40));
+  await showFlowOptions(f);await panel().locator('summary').click();const text=await panel().innerText();
   if(concise){
    assert.match(text,/Média de 12 meses completos/);
    assert.match(text,/Reajuste estimado de 5% ao ano/);
@@ -84,19 +87,20 @@ async function run(browser,engine,width){
   assert.match(text,/12 de 12 meses cobertos; 9 meses com gasto/);assert.match(text,/Valores atípicos foram mantidos/);
   assert.match(text,/Dia de planejamento estimado/);assert.match(text,/ano corrente.*parcial/);
   assert.equal(hash(await f.evaluate(()=>FLOWQ)),hash(before));
-  await panel().locator('summary').click();await h.page.screenshot({path:out+'/'+engine+'-'+width+'-flow.png'});
+  await showFlowOptions(f);await panel().locator('summary').click();await h.page.screenshot({path:out+'/'+engine+'-'+width+'-flow.png'});
   if(concise){
    const r=current.series[0];r.expected_months=3;r.coverage_months=3;r.observed_months=3;r.months_with_spend=3;
    r.reference_window={from:'2026-08-01',to:'2026-10-31'};r.history_total_brl=360;
    await f.evaluate(()=>__LTS_V412_PROJECTION.load(true));await ready(f);
    assert.equal(await f.evaluate(()=>__LTS_V412_PROJECTION.model.series[0].expected),3);
    assert.equal(await f.evaluate(()=>__LTS_V412_PROJECTION.model.series[1].expected),12);
-   await panel().locator('summary').click();assert.match(await panel().innerText(),/Média de 3 meses completos/);
-   assert.match(await panel().innerText(),/3 de 3 meses cobertos/);await panel().locator('summary').click();
+   await showFlowOptions(f);await panel().locator('summary').click();assert.match(await panel().innerText(),/Média de 3 meses completos/);
+   assert.match(await panel().innerText(),/3 de 3 meses cobertos/);await showFlowOptions(f);await panel().locator('summary').click();
    assert.equal(hash(await f.evaluate(()=>FLOWQ)),hash(before),'rolling reference does not recalculate cash in browser');
    current=projection.policy();await f.evaluate(()=>__LTS_V412_PROJECTION.load(true));await ready(f);
   }
   const callsBefore=await f.evaluate(()=>(__flowTestEvents||[]).length);
+  await showFlowOptions(f);
   await panel().locator('[data-v412-refresh]').click();await ready(f);await f.waitForFunction(()=>!FLOWLOADING);
   assert.equal(refreshes,1);assert.deepEqual(allowedWrites[0].args,{});
   assert((await f.evaluate(()=>(__flowTestEvents||[]).length))>callsBefore,'refresh reloads the same visible Flow period');

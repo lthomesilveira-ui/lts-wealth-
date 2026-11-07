@@ -18,6 +18,8 @@ fixture.response=function(name,args){
 async function go(f,view){await f.locator('#nav [data-v="'+view+'"]:visible,#dx1MobileNav [data-mobile-route="'+view+'"]:visible').click();await f.waitForFunction(v=>V===v,view);}
 async function ready(f){await f.waitForFunction(()=>window.__LTS_V411_RSU?.status==='ready');}
 async function geometry(f){return f.evaluate(()=>({width:innerWidth,scroll:document.documentElement.scrollWidth,values:[...document.querySelectorAll('.v411-values td,.v411-pair b,.v411-award-values>b')].filter(e=>e.getClientRects().length).map(e=>{const r=e.getBoundingClientRect(),range=document.createRange();range.selectNodeContents(e);return{left:r.left,right:r.right,text:e.textContent,lines:new Set([...range.getClientRects()].map(v=>Math.round(v.top))).size};})}));}
+
+async function showFlowOptions(f){const t=f.locator('.v425-options');if(await t.count()&&await t.getAttribute('open')===null)await t.locator(':scope>summary').click();}
 async function run(browser,engine,width){
  current=rsu.policy();const h=await setup(browser,width,width===1366?950:980,'2026-11-04T15:00:00Z');let f,mode='ok',policyReads=0;const allowedWrites=[];
  await h.ctx.route('**/rest/v1/rpc/lts_browser_rsu_policy_v411',async route=>{policyReads++;if(mode==='unauthorized')return route.fulfill({status:401,contentType:'application/json',body:JSON.stringify({message:'Synthetic expired token',code:'PGRST301'})});if(mode==='malformed'){const p=structuredClone(current);p.summary.schedule_net_brl=null;return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(p)});}return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(current)});});
@@ -50,6 +52,7 @@ async function run(browser,engine,width){
   await go(f,'Fluxo Diário');await f.evaluate(()=>loadFlowRange('2030-02-17','2030-04-04'));await f.waitForFunction(()=>!FLOWLOADING&&FLOWQ?.to==='2030-04-04');
   const flowBefore=await f.evaluate(()=>structuredClone(FLOWQ)),flowBody=flowBefore.flow||flowBefore,last=flowBody.current_future.days.find(d=>d.date==='2030-04-04');assert.equal(last.fix86_columns.rsus_vested,1350);assert.equal(last.fix86_columns.saldo_apos_rsu,2550);
   const flowUI=await f.evaluate(()=>({width:innerWidth,scroll:document.documentElement.scrollWidth,periodOpen:!!document.querySelector('.v382-period[open]'),height:document.querySelector('.flow-sticky-controls').getBoundingClientRect().height}));assert(flowUI.scroll<=width+2);assert.equal(flowUI.periodOpen,false);assert(flowUI.height<430);
+  await showFlowOptions(f);
   const basis=f.locator('[data-v411-flow-policy]');assert.equal(await basis.getAttribute('open'),null);await basis.locator('summary').click();assert.match(await basis.innerText(),/base R\$\s*10\.000,00 menos a parcela Coopharma/);await basis.locator('summary').click();assert.equal(hash(await f.evaluate(()=>FLOWQ)),hash(flowBefore));
   await h.page.screenshot({path:out+'/'+engine+'-'+width+'-flow.png'});
   // A token rejection after a successful read clears the separate policy model.

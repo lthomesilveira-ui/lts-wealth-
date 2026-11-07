@@ -32,3 +32,7 @@ Use invented data for public test fixtures. Owner screenshots, balances, grant l
 ## Completion rule
 
 Changing this document or `AGENTS.md` persists the requirement; it does not repair an existing screen or prove that a future defect is impossible. Actual defects stay open until corrected and verified on the rendered result.
+
+## Flow options hierarchy
+
+Read `UX_FLOW_OPTIONS.md` before editing Flow. Standalone collapsed premise/source panels still clutter the main report. Use the existing Options control, preserve material warnings and verify rendered default/open states.
