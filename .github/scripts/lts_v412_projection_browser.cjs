@@ -35,7 +35,7 @@ async function run(browser,engine,width){
  });
  try{
   f=await open(h,target,true);await f.waitForFunction(()=>__LTS_V412_PROJECTION?.installed);
-  const concise=new URL(f.url()).pathname.includes('/releases/v417/');
+  const concise=/\/releases\/v(?:417|421)\//.test(new URL(f.url()).pathname);
   if(!initialAuthError){await ready(f);await h.page.waitForLoadState('networkidle');
    await f.waitForFunction(()=>!__LTS_V168_STATE.dashboard.loading);
    assert.equal(await f.evaluate(()=>__LTS_V168_STATE.dashboard.data.flow.flow.current_future.days.at(-1).date),
