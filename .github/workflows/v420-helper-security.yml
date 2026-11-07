@@ -32,6 +32,7 @@ jobs:
         run: psql -v ON_ERROR_STOP=1 -f backend/tools/helper_security_v420/fixture.sql
       - name: Apply, verify and replay without changing results or grants
         run: |
+          set -euo pipefail
           psql -v ON_ERROR_STOP=1 -f backend/patches/v420/fixed_helper_search_path.sql
           psql -v ON_ERROR_STOP=1 -f backend/tools/helper_security_v420/verify.sql | tee v420-first-proof.txt
           psql -v ON_ERROR_STOP=1 -f backend/patches/v420/fixed_helper_search_path.sql
