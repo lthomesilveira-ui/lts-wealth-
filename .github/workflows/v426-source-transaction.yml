@@ -1,0 +1,60 @@
+name: V426 source reader transaction
+on:
+  pull_request:
+    paths: ['backend/patches/v426/**','backend/tools/source_transaction_v426/**','.github/workflows/v426-source-transaction.yml']
+permissions:
+  contents: read
+jobs:
+  native-postgres17:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 6
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: synthetic-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready --health-interval 5s
+          --health-timeout 5s --health-retries 10
+    env:
+      PGHOST: localhost
+      PGUSER: postgres
+      PGPASSWORD: synthetic-only
+      PGOPTIONS: '-c timezone=America/Sao_Paulo'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Reproduce read-only repeated calculation on invented sources
+        run: |
+          set -euo pipefail
+          python3 backend/tools/source_transaction_v426/setup.py > /tmp/v426-setup.sql
+          psql -X -v ON_ERROR_STOP=1 -f /tmp/v426-setup.sql
+          psql -X -v ON_ERROR_STOP=1 -f backend/tools/source_transaction_v426/before.sql
+      - name: Apply and replay with equality, invalidation and security checks
+        run: |
+          set -euo pipefail
+          psql -X -v ON_ERROR_STOP=1 -f backend/patches/v426/source_transaction.sql
+          psql -X -v ON_ERROR_STOP=1 -f backend/tools/source_transaction_v426/after.sql
+          psql -X -v ON_ERROR_STOP=1 -f backend/patches/v426/source_transaction.sql
+          psql -X -v ON_ERROR_STOP=1 -f backend/tools/source_transaction_v426/after.sql
+      - name: Reject an unreviewed predecessor atomically
+        run: |
+          set -euo pipefail
+          psql -X -v ON_ERROR_STOP=1 <<'SQL'
+          DO $$DECLARE d text;BEGIN
+           SELECT pg_get_functiondef('public.lts_open_finance_sources_v226(uuid,date,date)'::regprocedure) INTO d;
+           EXECUTE replace(d,'declare result jsonb;','declare result jsonb; -- synthetic drift');
+           ALTER FUNCTION public.lts_open_finance_sources_v226(uuid,date,date) STABLE;
+          END$$;
+          SQL
+          if psql -X -v ON_ERROR_STOP=1 -f backend/patches/v426/source_transaction.sql; then
+            echo 'Unreviewed source body was accepted'; exit 1
+          fi
+          psql -X -v ON_ERROR_STOP=1 <<'SQL'
+          DO $$BEGIN
+           IF (SELECT provolatile FROM pg_proc WHERE oid='public.lts_open_finance_sources_v226(uuid,date,date)'::regprocedure)<>'s'
+            THEN RAISE EXCEPTION 'Rejected patch changed volatility';END IF;
+          END$$;
+          SQL
