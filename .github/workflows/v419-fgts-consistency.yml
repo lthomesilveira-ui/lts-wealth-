@@ -31,11 +31,16 @@ jobs:
         run: |
           psql -v ON_ERROR_STOP=1 -f backend/qa/v419_setup.sql
           psql -v ON_ERROR_STOP=1 -f backend/patches/v419/helpers.sql
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v419/economic_identity.sql
           psql -v ON_ERROR_STOP=1 -f backend/patches/v419/ladder.sql
           psql -v ON_ERROR_STOP=1 -f backend/qa/v419_checks.sql
+          psql -v ON_ERROR_STOP=1 -f backend/qa/v419_economic_checks.sql
           psql -At -c "SELECT jsonb_build_object('passed',bool_and(passed),'count',count(*),'checks',jsonb_agg(name ORDER BY name)) FROM public.v419_tests" > v419-native-result.json
+          python3 backend/patches/v419/package.py > v419-reviewed-package.sql
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: v419-native-proof
-          path: v419-native-result.json
+          path: |
+            v419-native-result.json
+            v419-reviewed-package.sql

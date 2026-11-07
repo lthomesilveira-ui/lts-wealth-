@@ -20,5 +20,5 @@ END $request$;
 COMMIT;
 """
 def compose():
- return prefix+'\n'.join((P/name).read_text() for name in ['helpers.sql','rewire.sql','ladder.sql','metadata.sql'])+suffix
+ return prefix+'\n'.join((P/name).read_text() for name in ['helpers.sql','economic_identity.sql','rewire.sql','ladder.sql','metadata.sql'])+suffix
 if __name__=='__main__':print(compose(),end='')
