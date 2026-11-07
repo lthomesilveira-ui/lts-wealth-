@@ -1,0 +1,52 @@
+name: V418 prepared projection premises
+on:
+  pull_request:
+    paths:
+      - 'backend/patches/v418/**'
+      - 'backend/qa/v418*'
+      - '.github/workflows/v418-projection-summary.yml'
+permissions:
+  contents: read
+jobs:
+  reader-contract:
+    runs-on: ubuntu-24.04
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: synthetic-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready --health-interval 5s
+          --health-timeout 5s --health-retries 10
+    env:
+      PGHOST: localhost
+      PGUSER: postgres
+      PGPASSWORD: synthetic-only
+      PGOPTIONS: '-c timezone=America/Sao_Paulo'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify guarded reader with synthetic identities and stale inputs
+        run: |
+          set -euo pipefail
+          createdb v418_reader
+          psql -X -d v418_reader -v ON_ERROR_STOP=1 -f backend/qa/v418_projection_summary_setup.sql
+          psql -X -d v418_reader -v ON_ERROR_STOP=1 -f backend/patches/v418/read.sql
+          psql -X -d v418_reader -v ON_ERROR_STOP=1 -f backend/qa/v418_projection_summary_checks.sql
+      - name: Verify capture using the real projection builder
+        run: |
+          set -euo pipefail
+          createdb v418_capture
+          python3 backend/tools/projection_policy_v412/test_sql.py > /tmp/v418-base.sql
+          psql -X -d v418_capture -v ON_ERROR_STOP=1 -f /tmp/v418-base.sql
+          psql -X -d v418_capture -v ON_ERROR_STOP=1 -f supabase/migrations/20261105211649_v413_bootstrap_projection_performance.sql
+          psql -X -d v418_capture -v ON_ERROR_STOP=1 -f supabase/migrations/20261106232410_v416_card_rolling_window.sql
+          psql -X -d v418_capture -v ON_ERROR_STOP=1 -f backend/patches/v416/scope_adapter.sql
+          psql -X -d v418_capture -v ON_ERROR_STOP=1 -f backend/patches/v416/integrate_scopes.sql
+          python3 - <<'PY'
+          from pathlib import Path
+          text=Path('backend/patches/v418/capture.sql').read_text()
+          Path('/tmp/v418-capture.sql').write_text(text.split('CREATE OR REPLACE FUNCTION lts_product_refresh_private_v415.run_claimed')[0])
+          PY
+          psql -X -d v418_capture -v ON_ERROR_STOP=1 -f /tmp/v418-capture.sql
+          psql -X -d v418_capture -v ON_ERROR_STOP=1 -f backend/qa/v418_projection_capture_checks.sql
