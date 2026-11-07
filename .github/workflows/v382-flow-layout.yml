@@ -31,5 +31,4 @@ jobs:
         if: always()
         with:
           name: v382-flow-layout
-          path: qa/v382/
-
+          path: qa/${{ env.LTS_FLOW_RELEASE }}/

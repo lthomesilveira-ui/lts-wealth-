@@ -17,3 +17,29 @@
  }
  const api={horizon,scenario};if(typeof module!=='undefined'&&module.exports)module.exports=api;else root.LTSV421Scenario=api;
 })(typeof window==='undefined'?globalThis:window);
+
+/* Keep a reused response's declared subperiod consistent with its sliced days. */
+(function(root){'use strict';
+ function normalize(value,from,to){
+  if(!value?.flow)return value;
+  const out={...value,flow:{...value.flow}};
+  for(const key of ['historical','current_future']){
+   const part=value.flow[key];if(!part)continue;
+   const low=typeof part.from==='string'?(part.from<from?from:part.from):null;
+   const high=typeof part.to==='string'?(part.to>to?to:part.to):null;
+   if(low&&high&&low<=high)out.flow[key]={...part,from:low,to:high};
+  }
+  return out;
+ }
+ if(typeof module!=='undefined'&&module.exports){module.exports={...module.exports,normalize};return;}
+ const frame=document.getElementById('shell');let generation=0;
+ function install(){try{
+  const w=frame?.contentWindow,api=w?.__LTS_V178_REVIEW;
+  if(!api?.cachedFlow)return false;if(api.cachedFlow.__rangeConsistentV421)return true;
+  const previous=api.cachedFlow;
+  const wrapped=async function(from,to){return normalize(await previous.call(this,from,to),from,to)};
+  wrapped.__rangeConsistentV421=true;api.cachedFlow=wrapped;return true;
+ }catch{return false}}
+ function burst(){const ticket=++generation;let n=0;function step(){if(ticket!==generation)return;if(!install()&&++n<320)setTimeout(step,100)}step()}
+ frame?.addEventListener('load',burst);burst();
+})(typeof window==='undefined'?globalThis:window);
