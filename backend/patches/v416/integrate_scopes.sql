@@ -5,7 +5,7 @@ BEGIN
  d:=pg_get_functiondef('lts_projection_private_v412.build(uuid,date)'::regprocedure);
  old:=' RETURN lts_projection_private_v412.calculate(policy,history,slots,p_as_of);';
  IF strpos(d,old)=0 OR strpos(d,'scope_history_read_v416')>0 THEN RAISE EXCEPTION 'Unexpected scoped builder predecessor';END IF;
- replacement:=' IF EXISTS(SELECT 1 FROM jsonb_array_elements(policy->''rules'')r WHERE r->>''card_budget_mode''=''scoped'') THEN
+ replacement:=' IF EXISTS(SELECT 1 FROM jsonb_array_elements(policy->''rules'')scope_rule WHERE scope_rule->>''card_budget_mode''=''scoped'') THEN
   history:=lts_projection_private_v412.scope_history_read_v416(p_user_id,policy,history,p_as_of);
   slots:=lts_projection_private_v412.scope_slots_v416(policy,slots,public.lts_card_cycles_v226(p_user_id));
  END IF;
@@ -18,7 +18,6 @@ BEGIN
  IF strpos(d,old)=0 THEN RAISE EXCEPTION 'Missing slot budget fields';END IF;
  d:=replace(d,old,old||E'\n     ''legacy_estimate_brl'',coalesce((monthly_bucket->>''legacy_estimate_brl'')::numeric,0),');
  EXECUTE d;
-
  d:=pg_get_functiondef('lts_projection_private_v412.refresh_reference(uuid,date)'::regprocedure);
  old:=' IF EXISTS(SELECT 1 FROM jsonb_array_elements(facts)x';
  IF strpos(d,old)=0 THEN RAISE EXCEPTION 'Missing reference coverage guard';END IF;
@@ -27,7 +26,6 @@ BEGIN
  IF strpos(d,old)=0 THEN RAISE EXCEPTION 'Missing reference identity guard';END IF;
  d:=replace(d,old,'  IF r->>''card_budget_mode''=''scoped'' THEN candidate:=candidate||jsonb_build_object(''scope_digest'',md5((r->''budget_definition'')::text));END IF;'||E'\n'||old);
  EXECUTE d;
-
  d:=pg_get_functiondef('lts_projection_private_v412.calculate(jsonb,jsonb,jsonb,date)'::regprocedure);
  old:='    WHERE v->>''series_key''=key';
  IF strpos(d,old)=0 THEN RAISE EXCEPTION 'Missing fallback identity check';END IF;
@@ -37,8 +35,6 @@ BEGIN
  d:=replace(d,old,'''reference_base_brl'',CASE WHEN uses_history THEN mean_amount END,'||E'\n   '||
   '''reference_amount_brl'',CASE WHEN uses_history THEN mean_amount+CASE WHEN r->>''card_budget_mode''=''scoped'' THEN coalesce((SELECT sum((a->>''amount_brl'')::numeric) FROM jsonb_array_elements(r#>''{budget_definition,allowances}'')a WHERE a->>''funded_by_series''=key),0) ELSE 0 END');
  EXECUTE d;
-
- -- New reference semantics are explicitly activated by an owner policy, never globally.
  FOREACH sig IN ARRAY ARRAY['lts_projection_private_v412.calculate(jsonb,jsonb,jsonb,date)',
   'lts_projection_private_v412.refresh_reference(uuid,date)'] LOOP
   d:=pg_get_functiondef(to_regprocedure(sig));

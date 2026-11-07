@@ -41,7 +41,10 @@ jobs:
           sed 's/"source_kind":"card_invoice"/"source_kind":"card_invoice","history_window_months":3/g' backend/qa/v416_card_rolling_window_checks.sql > /tmp/v416-rolling-checks.sql
           psql -X -d v416_test -v ON_ERROR_STOP=1 -f /tmp/v416-rolling-checks.sql
           psql -X -d v416_test -v ON_ERROR_STOP=1 -f backend/qa/v416_scope_adapter_checks.sql
-          psql -X -d v416_test -v ON_ERROR_STOP=1 -Atc "SELECT jsonb_build_object('checks',count(*),'pass',bool_and(pass),'timezone',current_setting('TimeZone'),'runtime',version()) FROM qa_v412.results" > v416-native-result.json
+          psql -X -d v416_test -v ON_ERROR_STOP=1 -f backend/qa/v416_builder_integration_checks.sql
+          psql -X -d v416_test -v ON_ERROR_STOP=1 -Atc "SELECT jsonb_build_object('checks',count(*),'pass',bool_and(pass),'timezone',current_setting('TimeZone'),'runtime',version(),'tests',(SELECT jsonb_agg(jsonb_build_object('name',name,'pass',pass) ORDER BY name) FROM qa_v412.results)) FROM qa_v412.results" > v416-native-result.json
+          cat supabase/migrations/20261106232410_v416_card_rolling_window.sql backend/patches/v416/scope_adapter.sql backend/patches/v416/integrate_scopes.sql > v416-deployment.sql
+          sha256sum v416-deployment.sql > v416-deployment.sha256
       - name: Retain reviewed source snapshot
         if: always()
         uses: actions/upload-artifact@v4
@@ -52,5 +55,7 @@ jobs:
             backend/qa/v416*checks.sql
             backend/patches/v416/
             v416-native-result.json
+            v416-deployment.sql
+            v416-deployment.sha256
           if-no-files-found: error
           retention-days: 14
