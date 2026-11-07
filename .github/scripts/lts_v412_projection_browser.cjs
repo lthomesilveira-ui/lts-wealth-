@@ -35,6 +35,7 @@ async function run(browser,engine,width){
  });
  try{
   f=await open(h,target,true);await f.waitForFunction(()=>__LTS_V412_PROJECTION?.installed);
+  const concise=new URL(f.url()).pathname.includes('/releases/v417/');
   if(!initialAuthError){await ready(f);await h.page.waitForLoadState('networkidle');
    await f.waitForFunction(()=>!__LTS_V168_STATE.dashboard.loading);
    assert.equal(await f.evaluate(()=>__LTS_V168_STATE.dashboard.data.flow.flow.current_future.days.at(-1).date),
@@ -67,12 +68,34 @@ async function run(browser,engine,width){
   assert(closed.scroll<=width+2,JSON.stringify(closed));assert(closed.panel.height<=135,JSON.stringify(closed));assert(closed.controls.height<430);
   assert(closed.buttons.every(b=>b.x>=0&&b.right<=width+2&&b.height>=40));
   await panel().locator('summary').click();const text=await panel().innerText();
-  assert.match(text,/Média nominal de 12 meses completos/);assert.match(text,/12 de 12 meses cobertos; 9 meses com gasto/);
-  assert.match(text,/Valores atípicos foram mantidos/);assert.match(text,/5% ao ano, aplicada uma vez/);
-  assert.match(text,/parcela documentada.*uma única vez/);assert.match(text,/maior entre a média e os valores já conhecidos/);
-  assert.match(text,/fatura fechada ou pagamento confirmado/);assert.match(text,/Dia de planejamento estimado/);
-  assert.match(text,/ano corrente.*parcial/);assert.equal(hash(await f.evaluate(()=>FLOWQ)),hash(before));
+  if(concise){
+   assert.match(text,/Média de 12 meses completos/);
+   assert.match(text,/Reajuste estimado de 5% ao ano/);
+   assert.match(text,/Salário previsto após o desconto do empréstimo em folha/);
+   assert.match(text,/Faturas fechadas prevalecem/);
+   assert.match(text,/Parcelas antigas de gastos não recorrentes continuam até terminar/);
+   assert.match(text,/reservas de novas compras não são somadas duas vezes/);
+   for(const term of ['RPC','SQLSTATE','source_ref','payload','backend'])assert(!text.includes(term),'no raw diagnostic: '+term);
+  }else{
+   assert.match(text,/Média nominal de 12 meses completos/);assert.match(text,/5% ao ano, aplicada uma vez/);
+   assert.match(text,/parcela documentada.*uma única vez/);assert.match(text,/maior entre a média e os valores já conhecidos/);
+   assert.match(text,/fatura fechada ou pagamento confirmado/);
+  }
+  assert.match(text,/12 de 12 meses cobertos; 9 meses com gasto/);assert.match(text,/Valores atípicos foram mantidos/);
+  assert.match(text,/Dia de planejamento estimado/);assert.match(text,/ano corrente.*parcial/);
+  assert.equal(hash(await f.evaluate(()=>FLOWQ)),hash(before));
   await panel().locator('summary').click();await h.page.screenshot({path:out+'/'+engine+'-'+width+'-flow.png'});
+  if(concise){
+   const r=current.series[0];r.expected_months=3;r.coverage_months=3;r.observed_months=3;r.months_with_spend=3;
+   r.reference_window={from:'2026-08-01',to:'2026-10-31'};r.history_total_brl=360;
+   await f.evaluate(()=>__LTS_V412_PROJECTION.load(true));await ready(f);
+   assert.equal(await f.evaluate(()=>__LTS_V412_PROJECTION.model.series[0].expected),3);
+   assert.equal(await f.evaluate(()=>__LTS_V412_PROJECTION.model.series[1].expected),12);
+   await panel().locator('summary').click();assert.match(await panel().innerText(),/Média de 3 meses completos/);
+   assert.match(await panel().innerText(),/3 de 3 meses cobertos/);await panel().locator('summary').click();
+   assert.equal(hash(await f.evaluate(()=>FLOWQ)),hash(before),'rolling reference does not recalculate cash in browser');
+   current=projection.policy();await f.evaluate(()=>__LTS_V412_PROJECTION.load(true));await ready(f);
+  }
   const callsBefore=await f.evaluate(()=>(__flowTestEvents||[]).length);
   await panel().locator('[data-v412-refresh]').click();await ready(f);await f.waitForFunction(()=>!FLOWLOADING);
   assert.equal(refreshes,1);assert.deepEqual(allowedWrites[0].args,{});
@@ -84,7 +107,10 @@ async function run(browser,engine,width){
   current=projection.stale();for(const r of current.series)if(r.uses_history){r.coverage_months=0;r.observed_months=12;r.months_with_spend=9;}
   await f.evaluate(()=>__LTS_V412_PROJECTION.load(true));await ready(f);
   const updates=f.locator('[data-v412-policy="updates"]');assert.match(await updates.innerText(),/Projeções até 31\/12\/2032/);
-  assert.match(await updates.innerText(),/mantida a última média completa/);await updates.locator('summary').click();
+  if(concise){assert.match(await updates.innerText(),/Há estimativas a conferir nas premissas/);assert.equal(await updates.locator('details[open]').count(),0);}
+  else assert.match(await updates.innerText(),/mantida a última média completa/);
+  await updates.locator('summary').click();
+  if(concise)assert.match(await updates.innerText(),/usando a última média completa/);
   assert.match(await updates.innerText(),/Revisão atual com 0 de 12 meses cobertos/);assert(!(await updates.innerText()).includes('Revisão atual com 12 de 12 meses cobertos'));
   await updates.locator('summary').click();assert((await geometry(f)).scroll<=width+2);
   current=projection.policy();mode='malformed';await f.evaluate(()=>__LTS_V412_PROJECTION.load(true));
@@ -108,7 +134,7 @@ async function run(browser,engine,width){
    initial_range:initialRange,future2031_read:true,year2032_reference_fallback:true,missing_coverage_not_zero:true,closed_origin_height:closed.panel.height,
    flow_controls_height:closed.controls.height,financial_response_sha256:hash(before),server_amounts_unchanged:true,
    refresh_reloads_visible_period:true,initial_401_clear_values:initialAuthError,direct_dashboard_full_horizon:!initialAuthError,
-   malformed_clear_values:true,obsolete_identity_response_ignored:true,
+   malformed_clear_values:true,obsolete_identity_response_ignored:true,rolling_card_window_rendered:concise,
    no_namespace_legacy_preserved:true,dashboard_unchanged:true,synthetic_http:true,private_session:false,physical_iphone:false};
  }catch(error){await h.page.screenshot({path:out+'/'+engine+'-'+width+'-failure.png',fullPage:true}).catch(()=>{});
   fs.writeFileSync(out+'/'+engine+'-'+width+'-failure.json',JSON.stringify({error:error.stack,body:f?await f.locator('body').innerText():null,

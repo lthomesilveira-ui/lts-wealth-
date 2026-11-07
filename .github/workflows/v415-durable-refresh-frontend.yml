@@ -11,7 +11,7 @@ jobs:
     timeout-minutes: 15
     container: mcr.microsoft.com/playwright:v1.58.2-noble
     env:
-      LTS_MOBILE_RELEASE: v415
+      LTS_MOBILE_RELEASE: v417
       LTS_FLOW_RELEASE: v415
       PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
@@ -26,7 +26,7 @@ jobs:
       - run: |
           python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/lts-v415-http.log 2>&1 &
           node .github/scripts/lts_v309_wait_http.cjs
-      - run: node .github/scripts/lts_v415_refresh_browser.cjs
+      - run: node .github/scripts/lts_v415_refresh_current_entry.cjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
