@@ -6,7 +6,7 @@ const out='qa/v421';fs.mkdirSync(out,{recursive:true});
 async function run(browser,engine,width){
  const h=await setup(browser,width,width<1000?900:1000,'2026-11-07T15:00:00Z');let mode='normal',f;const calls=[];
  await h.ctx.route('**/rest/v1/rpc/lts_browser_flow_v242',async route=>{
-  const args=JSON.parse(route.request().postData()||'{}');calls.push(args);
+  const args=JSON.parse(route.request().postData()||'{}');calls.push({...args,testMode:mode});
   const p=structuredClone(fixture.response('lts_browser_flow_v242',args)),days=p?.flow?.current_future?.days;
   assert(Array.isArray(days),'existing complete flow fixture required');
   for(const d of days){let a=1000,b=2000,c=3000;
@@ -15,7 +15,7 @@ async function run(browser,engine,width){
    if(d.date==='2031-11-11')c=19;
    Object.assign(d.fix86_columns,{saldo_apos_d0_1:a,saldo_apos_rsu:b,saldo_apos_fgts:c});
   }
-  if(mode==='missing')days.splice(Math.min(5,days.length-1),1);
+  if(mode==='missing'){const index=days.findIndex(d=>d.date==='2030-01-01');assert(index>=0);days.splice(index,1);}
   return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(p)});
  });
  try{
@@ -42,14 +42,18 @@ async function run(browser,engine,width){
   await f.locator('#nav [data-v="Dashboard"]:visible,#dx1MobileNav [data-mobile-route="Dashboard"]:visible').click();
   await f.waitForFunction(()=>V==='Dashboard');
   assert.equal(await f.evaluate(()=>JSON.stringify(__LTS_V178_STATE.forecast.data)),source,'explicit Flow filter cannot replace the full dashboard horizon');
-  mode='missing';await f.evaluate(()=>__LTS_V178_REVIEW.refreshForecast());
+  // The fixture now models a changed source. Invalidate the normal transport
+  // memo as a successful source update does, without changing production code.
+  mode='missing';const beforeMissing=calls.length;
+  await f.evaluate(()=>{__LTS_V227_TRANSPORT.invalidate(false);return __LTS_V178_REVIEW.refreshForecast()});
+  assert(calls.slice(beforeMissing).some(x=>x.testMode==='missing'&&x.p_to==='2031-12-31'),'incomplete response was actually requested');
   await f.waitForFunction(()=>__LTS_V178_STATE.forecast.status==='incomplete');
   assert.equal(await cards.locator('.v385-scenario-stats').count(),0,'no definitive minima from incomplete data');
   assert.equal(await cards.locator('.v385-scenario-unavailable').count(),3);
   await cards.first().scrollIntoViewIfNeeded();await h.page.screenshot({path:out+'/'+engine+'-'+width+'-incomplete.png'});
   assert.deepEqual(h.errors,[]);assert.deepEqual(h.writes,[]);
   return{passed:true,engine,width,horizon:'2031-12-31',policy_metadata_required:false,positive_minimum:true,late_deficit:true,explicit_flow_range_preserved:true,incomplete_not_certified:true,financial_writes:0,private_session:false,physical_iphone:false};
- }catch(error){if(f)fs.writeFileSync(out+'/'+engine+'-'+width+'-failure.txt',String(error.stack)+'\n'+await f.locator('body').innerText());await h.page.screenshot({path:out+'/'+engine+'-'+width+'-failure.png'}).catch(()=>{});throw error;}
+ }catch(error){if(f)fs.writeFileSync(out+'/'+engine+'-'+width+'-failure.txt',String(error.stack)+'\n'+JSON.stringify({calls,errors:h.errors})+'\n'+await f.locator('body').innerText());await h.page.screenshot({path:out+'/'+engine+'-'+width+'-failure.png'}).catch(()=>{});throw error;}
  finally{await h.ctx.close();}
 }
 (async()=>{let results=[];for(const[engine,type]of[['chromium',chromium],['webkit',webkit]]){let b=await type.launch({headless:true});try{for(const w of[320,393,1366]){results.push(await run(b,engine,w));fs.writeFileSync(out+'/result.json',JSON.stringify({passed:false,results},null,2));}}finally{await b.close();}}fs.writeFileSync(out+'/result.json',JSON.stringify({passed:true,results},null,2));console.log(JSON.stringify({passed:true,runs:results.length}));})().catch(e=>{console.error(e);process.exitCode=1});
