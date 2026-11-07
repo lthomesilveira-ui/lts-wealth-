@@ -1,0 +1,48 @@
+name: V417 report presentation
+on:
+  pull_request:
+    paths:
+      - 'backend/tools/report_presentation_v417/**'
+      - 'releases/v417/**'
+      - '.github/workflows/v417-report-presentation.yml'
+permissions:
+  contents: read
+jobs:
+  rendered-acceptance:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    env:
+      V417_EVIDENCE: v417-evidence
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install pinned browser test dependency
+        run: |
+          python -m pip install playwright==1.58.0
+          python -m playwright install --with-deps chromium
+      - name: Build immutable candidate and verify contract
+        run: |
+          mkdir -p v417-evidence
+          python backend/tools/report_presentation_v417/build.py
+          python backend/tools/report_presentation_v417/build.py
+          node backend/tools/report_presentation_v417/test.cjs > v417-evidence/unit-result.json
+          python backend/tools/report_presentation_v417/render_test.py
+      - name: Stage generic objects without updating any branch
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          REVIEWED_HEAD: ${{ github.event.pull_request.head.sha }}
+        run: python backend/tools/report_presentation_v417/stage_objects.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v417-reviewed-candidate
+          retention-days: 14
+          path: |
+            v417-evidence/
+            releases/v417/
