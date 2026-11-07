@@ -1,8 +1,12 @@
 """Stage generic release objects only after tests. Never commit, update refs or deploy."""
-import json,os,subprocess,hashlib,urllib.request
+import json,os,hashlib,urllib.request,re
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[3];head=os.environ['REVIEWED_HEAD'];out=ROOT/'qa/v421'
-assert subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()==head
+# checkout@v4 explicitly selects this reviewed SHA in detached mode. Read its
+# local metadata without changing global safe.directory or repository ownership.
+assert re.fullmatch(r'[0-9a-f]{40}',head)
+assert (ROOT/'.git').is_dir() and not (ROOT/'.git').is_symlink()
+assert (ROOT/'.git/HEAD').read_text().strip()==head,'reviewed detached checkout required'
 assert json.loads((out/'result.json').read_text())['passed']
 assert json.loads((out/'unit.json').read_text())['passed']
 api='https://api.github.com/repos/'+os.environ['GITHUB_REPOSITORY']
