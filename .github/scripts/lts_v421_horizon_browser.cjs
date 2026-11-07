@@ -48,9 +48,13 @@ async function run(browser,engine,width){
   await f.evaluate(()=>{__LTS_V227_TRANSPORT.invalidate(false);return __LTS_V178_REVIEW.refreshForecast()});
   assert(calls.slice(beforeMissing).some(x=>x.testMode==='missing'&&x.p_to==='2031-12-31'),'incomplete response was actually requested');
   await f.waitForFunction(()=>__LTS_V178_STATE.forecast.status==='incomplete');
-  assert.equal(await cards.locator('.v385-scenario-stats').count(),0,'no definitive minima from incomplete data');
-  assert.equal(await cards.locator('.v385-scenario-unavailable').count(),3);
-  await cards.first().scrollIntoViewIfNeeded();await h.page.screenshot({path:out+'/'+engine+'-'+width+'-incomplete.png'});
+  const decision=f.locator('.v168-dashboard .v168-card').filter({has:f.locator('h2',{hasText:'O que exige decisão'})});
+  assert.equal(await decision.count(),1);
+  assert.equal(await decision.locator('.v385-scenario-stats').count(),0,'no definitive minima from incomplete data');
+  assert.equal(await decision.locator('.v168-decision').count(),0,'existing report guard withholds incomplete scenario cards');
+  assert.match(await decision.locator('[role="status"]').innerText(),/Projeção incompleta/);
+  assert.equal(await decision.getByRole('button',{name:'Atualizar projeção',exact:true}).count(),1);
+  await decision.scrollIntoViewIfNeeded();await h.page.screenshot({path:out+'/'+engine+'-'+width+'-incomplete.png'});
   assert.deepEqual(h.errors,[]);assert.deepEqual(h.writes,[]);
   return{passed:true,engine,width,horizon:'2031-12-31',policy_metadata_required:false,positive_minimum:true,late_deficit:true,explicit_flow_range_preserved:true,incomplete_not_certified:true,financial_writes:0,private_session:false,physical_iphone:false};
  }catch(error){if(f)fs.writeFileSync(out+'/'+engine+'-'+width+'-failure.txt',String(error.stack)+'\n'+JSON.stringify({calls,errors:h.errors})+'\n'+await f.locator('body').innerText());await h.page.screenshot({path:out+'/'+engine+'-'+width+'-failure.png'}).catch(()=>{});throw error;}
