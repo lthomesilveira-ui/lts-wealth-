@@ -1,7 +1,7 @@
 name: V412 rolling cash-flow projection interface
 on:
   pull_request:
-    paths: ['lts-v412-projection-policy.js','releases/v412/**','mobile/current.json','.github/scripts/*v412*','.github/workflows/v412-projection-policy-frontend.yml']
+    paths: ['lts-v412-projection-policy.js','releases/v412/**','mobile/current.json','.github/scripts/*v412*','.github/scripts/lts_v425_projection_current_entry.cjs','.github/workflows/v412-projection-policy-frontend.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -26,7 +26,7 @@ jobs:
       - run: |
           python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/lts-v412-http.log 2>&1 &
           node .github/scripts/lts_v309_wait_http.cjs
-      - run: node .github/scripts/lts_v412_projection_browser.cjs
+      - run: node .github/scripts/lts_v425_projection_current_entry.cjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
