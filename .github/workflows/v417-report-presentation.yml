@@ -4,6 +4,9 @@ on:
     paths:
       - 'backend/tools/report_presentation_v417/**'
       - 'releases/v417/**'
+      - 'mobile/current.json'
+      - '.github/workflows/pages.yml'
+      - '.github/scripts/lts_v417_verify_published.cjs'
       - '.github/workflows/v417-report-presentation.yml'
 permissions:
   contents: read
@@ -33,6 +36,7 @@ jobs:
           python backend/tools/report_presentation_v417/build.py
           node backend/tools/report_presentation_v417/test.cjs > v417-evidence/unit-result.json
           python backend/tools/report_presentation_v417/render_test.py
+          python backend/tools/report_presentation_v417/promote.py > v417-evidence/prior-release-gates.txt
       - name: Stage generic objects without updating any branch
         env:
           GITHUB_TOKEN: ${{ github.token }}
