@@ -37,7 +37,10 @@ async function run(browser,engine,width){
   assert.equal(await f.locator('#v425-flow-attention').count(),0,'a last complete average is not a failed forecast');
   assert.deepEqual(await f.locator('.lts-freshness-alert').allInnerTexts(),await baseline.locator('.lts-freshness-alert').allInnerTexts(),'bank freshness warning preserved');
   const geometry=await f.evaluate(()=>({width:innerWidth,scroll:document.documentElement.scrollWidth}));
-  assert(geometry.scroll<=width+2);const baselineY=await baseline.locator('.fx87-row').first().evaluate(n=>n.getBoundingClientRect().top),afterY=await f.locator('.fx87-row').first().evaluate(n=>n.getBoundingClientRect().top);
+  assert(geometry.scroll<=width+2);
+  const visibleRow='.fx87-row:visible,.mrow:visible';
+  const baselineY=await baseline.locator(visibleRow).first().evaluate(n=>n.getBoundingClientRect().top),afterY=await f.locator(visibleRow).first().evaluate(n=>n.getBoundingClientRect().top);
+  assert(baselineY>0&&afterY>0,'measure a displayed financial row');
   assert(baselineY-afterY>=160,'removed panel stack moves first day up: '+JSON.stringify({baselineY,afterY}));
   await after.page.screenshot({path:out+'/'+engine+'-'+width+'-default.png'});
   await toggle.click();for(const s of selectors)assert(await f.locator(s).isVisible());
