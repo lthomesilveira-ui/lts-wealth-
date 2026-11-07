@@ -4,6 +4,7 @@ on:
     paths:
       - 'backend/patches/v418/**'
       - 'backend/qa/v418*'
+      - 'backend/qa/fixtures/v418*'
       - 'backend/tools/projection_summary_v418/**'
       - '.github/workflows/v418-projection-summary.yml'
 permissions:
@@ -70,6 +71,13 @@ jobs:
       - name: Verify summary capture under native concurrent invalidation and crash
         run: |
           python3 backend/tools/projection_summary_v418/concurrency_test.py --database v418_worker --output /tmp/v418-concurrency.json
+      - name: Verify exact guarded deployment as one atomic transaction
+        run: |
+          set -euo pipefail
+          createdb v418_package
+          psql -X -d v418_package -v ON_ERROR_STOP=1 -f /tmp/v418-worker-base.sql
+          psql -X -d v418_package -v ON_ERROR_STOP=1 -f backend/qa/fixtures/v418_guarded_predecessors.sql
+          python3 backend/tools/projection_summary_v418/package_test.py --database v418_package
       - uses: actions/upload-artifact@v4
         if: always()
         with:
