@@ -32,9 +32,15 @@ async function run(browser,engine,width){
   assert(await f.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+2));
   await cards.first().scrollIntoViewIfNeeded();await h.page.screenshot({path:out+'/'+engine+'-'+width+'-scenarios.png'});
   const source=await f.evaluate(()=>JSON.stringify(__LTS_V178_STATE.forecast.data));
-  await f.evaluate(()=>{V='Fluxo Diário';renderNav();render();return loadFlowRange('2026-11-07','2027-12-31')});
-  await f.waitForFunction(()=>!FLOWLOADING&&FLOWTO==='2027-12-31');
-  await f.evaluate(()=>{V='Dashboard';renderNav();render()});
+  await f.locator('#nav [data-v="Fluxo Diário"]:visible,#dx1MobileNav [data-mobile-route="Fluxo Diário"]:visible').click();
+  await f.waitForFunction(()=>V==='Fluxo Diário'&&!FLOWLOADING);
+  if(!await f.locator('.v382-period').getAttribute('open'))await f.locator('.v382-period>summary').click();
+  await f.getByLabel('Data inicial do Fluxo',{exact:true}).fill('2026-11-07');
+  await f.getByLabel('Data final do Fluxo',{exact:true}).fill('2027-12-31');
+  await f.locator('#flowApply').click();
+  await f.waitForFunction(()=>!FLOWLOADING&&FLOWFROM==='2026-11-07'&&FLOWTO==='2027-12-31');
+  await f.locator('#nav [data-v="Dashboard"]:visible,#dx1MobileNav [data-mobile-route="Dashboard"]:visible').click();
+  await f.waitForFunction(()=>V==='Dashboard');
   assert.equal(await f.evaluate(()=>JSON.stringify(__LTS_V178_STATE.forecast.data)),source,'explicit Flow filter cannot replace the full dashboard horizon');
   mode='missing';await f.evaluate(()=>__LTS_V178_REVIEW.refreshForecast());
   await f.waitForFunction(()=>__LTS_V178_STATE.forecast.status==='incomplete');
