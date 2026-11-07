@@ -1,0 +1,41 @@
+name: V419 FGTS scenario consistency
+on:
+  pull_request:
+    paths: ['backend/patches/v419/**','backend/qa/v419*','.github/workflows/v419-fgts-consistency.yml']
+permissions:
+  contents: read
+jobs:
+  native:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: synthetic-test-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: synthetic-test-only
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Test restricted-resource arithmetic and preserved cash
+        run: |
+          psql -v ON_ERROR_STOP=1 -f backend/qa/v419_setup.sql
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v419/helpers.sql
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v419/ladder.sql
+          psql -v ON_ERROR_STOP=1 -f backend/qa/v419_checks.sql
+          psql -At -c "SELECT jsonb_build_object('passed',bool_and(passed),'count',count(*),'checks',jsonb_agg(name ORDER BY name)) FROM public.v419_tests" > v419-native-result.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v419-native-proof
+          path: v419-native-result.json
