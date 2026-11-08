@@ -81,6 +81,22 @@ def validate_manifest(manifest: dict) -> None:
         raise RehearsalError("The manifest contains an unsupported recovery scope state")
     if scope["database_history"] != "covered_by_sql_acceptance":
         raise RehearsalError("Database history must be covered by SQL acceptance")
+    covered = {
+        name for name, state in scope.items()
+        if state == "covered_by_sql_acceptance"
+    }
+    expected_evidence = manifest.get("sql_acceptance_evidence_sha256")
+    if not isinstance(expected_evidence, dict) or set(expected_evidence) != covered:
+        raise RehearsalError(
+            "The manifest must bind one expected SQL evidence digest per covered component"
+        )
+    if any(
+        not isinstance(value, str) or not SHA256_PATTERN.fullmatch(value)
+        for value in expected_evidence.values()
+    ):
+        raise RehearsalError(
+            "Expected SQL evidence digests must be lowercase SHA-256 values"
+        )
 
 
 def recovery_scope_summary(scope: dict) -> dict:
@@ -106,8 +122,10 @@ def recovery_scope_summary(scope: dict) -> dict:
     }
 
 
-def validate_sql_acceptance_evidence(rows: list[dict], scope: dict) -> list[dict]:
-    """Require one successful, digested result for every SQL-covered component."""
+def validate_sql_acceptance_evidence(
+    rows: list[dict], scope: dict, expected_digests: dict
+) -> list[dict]:
+    """Require SQL evidence to match independently declared expected digests."""
     expected = {
         name for name, state in scope.items()
         if state == "covered_by_sql_acceptance"
@@ -126,6 +144,10 @@ def validate_sql_acceptance_evidence(rows: list[dict], scope: dict) -> list[dict
         evidence_sha256 = row.get("evidence_sha256")
         if not isinstance(evidence_sha256, str) or not SHA256_PATTERN.fullmatch(evidence_sha256):
             raise RehearsalError("SQL acceptance evidence requires a lowercase SHA-256 digest")
+        if evidence_sha256 != expected_digests.get(row["component"]):
+            raise RehearsalError(
+                "SQL acceptance evidence does not match the manifest expectation"
+            )
         normalized.append({
             "component": row["component"],
             "passed": True,
@@ -275,7 +297,9 @@ def rehearse(args) -> int:
             )
             evidence_rows = json.loads(run(psql + ["-At", "-c", evidence_sql], capture=True))
             receipt["sql_acceptance_evidence"] = validate_sql_acceptance_evidence(
-                evidence_rows, manifest["recovery_scope"]
+                evidence_rows,
+                manifest["recovery_scope"],
+                manifest["sql_acceptance_evidence_sha256"],
             )
             settings_after = json.loads(run(psql + ["-At", "-c", settings_sql], capture=True))
             if settings_after != settings:
