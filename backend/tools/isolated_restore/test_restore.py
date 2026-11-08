@@ -82,6 +82,20 @@ RESET ROLE;
 def rehash(directory):
     (directory / "manifest.json").write_text(json.dumps({
         "data_kind": "synthetic",
+        "capture": {
+            "id": "synthetic-fixture-1",
+            "captured_at": "2026-01-01T00:00:00Z",
+            "consistent_snapshot": True,
+        },
+        "recovery_scope": {
+            "database_history": "covered_by_sql_acceptance",
+            "auth_records": "covered_by_sql_acceptance",
+            "storage_metadata": "covered_by_sql_acceptance",
+            "storage_object_bytes": "separate_evidence_required",
+            "roles_grants_rls": "covered_by_sql_acceptance",
+            "application_consumers": "covered_by_sql_acceptance",
+            "replay_and_cache": "not_captured",
+        },
         "sha256": {name: restore.digest(directory / name) for name in restore.INPUTS}
     }))
 
@@ -123,6 +137,30 @@ class InputGuards(FixtureCase, unittest.TestCase):
         with self.assertRaises(restore.RehearsalError):
             restore.freeze_inputs(self.source, self.root / "frozen")
 
+    def test_rejects_mixed_or_undeclared_capture(self):
+        manifest_path = self.source / "manifest.json"
+        manifest = json.loads(manifest_path.read_text())
+        manifest["capture"]["consistent_snapshot"] = False
+        manifest_path.write_text(json.dumps(manifest))
+        with self.assertRaises(restore.RehearsalError):
+            restore.freeze_inputs(self.source, self.root / "frozen")
+
+    def test_rejects_incomplete_recovery_scope(self):
+        manifest_path = self.source / "manifest.json"
+        manifest = json.loads(manifest_path.read_text())
+        del manifest["recovery_scope"]["storage_object_bytes"]
+        manifest_path.write_text(json.dumps(manifest))
+        with self.assertRaises(restore.RehearsalError):
+            restore.freeze_inputs(self.source, self.root / "frozen")
+
+    def test_rejects_unsupported_scope_state(self):
+        manifest_path = self.source / "manifest.json"
+        manifest = json.loads(manifest_path.read_text())
+        manifest["recovery_scope"]["replay_and_cache"] = "verified"
+        manifest_path.write_text(json.dumps(manifest))
+        with self.assertRaises(restore.RehearsalError):
+            restore.freeze_inputs(self.source, self.root / "frozen")
+
     def test_rejects_same_network_namespace(self):
         with self.assertRaises(restore.RehearsalError):
             restore.verify_isolation(os.readlink('/proc/self/ns/net'))
@@ -159,6 +197,9 @@ class NativeRestore(FixtureCase, unittest.TestCase):
         self.assertFalse(receipt["full_application_recovery_certified"])
         self.assertFalse(receipt["real_authentication_verified"])
         self.assertFalse(receipt["storage_binary_api_restore_verified"])
+        self.assertEqual(receipt["capture"]["id"], "synthetic-fixture-1")
+        self.assertEqual(receipt["components_requiring_separate_evidence"],
+                         ["replay_and_cache", "storage_object_bytes"])
         original = (self.root / "success" / "receipt.json").read_bytes()
         repeated, _ = self.invoke("success")
         self.assertNotEqual(repeated.returncode, 0)
@@ -189,3 +230,4 @@ class NativeRestore(FixtureCase, unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
