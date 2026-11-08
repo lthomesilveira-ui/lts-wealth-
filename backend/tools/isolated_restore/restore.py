@@ -7,6 +7,7 @@ Its receipt certifies only this database rehearsal, not whole-app recovery.
 from __future__ import annotations
 
 import argparse
+from datetime import datetime
 import hashlib
 import json
 import os
@@ -58,6 +59,15 @@ def validate_manifest(manifest: dict) -> None:
         raise RehearsalError("The capture must have a non-empty identifier")
     if not isinstance(capture.get("captured_at"), str) or not capture["captured_at"].strip():
         raise RehearsalError("The capture must have a timestamp")
+    timestamp = capture["captured_at"].strip()
+    try:
+        parsed_timestamp = datetime.fromisoformat(
+            timestamp[:-1] + "+00:00" if timestamp.endswith("Z") else timestamp
+        )
+    except ValueError as exc:
+        raise RehearsalError("The capture timestamp must be valid ISO 8601") from exc
+    if parsed_timestamp.tzinfo is None or parsed_timestamp.utcoffset() is None:
+        raise RehearsalError("The capture timestamp must include a timezone")
     if capture.get("consistent_snapshot") is not True:
         raise RehearsalError("The SQL inputs must belong to one consistent snapshot")
     scope = manifest.get("recovery_scope")
@@ -68,6 +78,29 @@ def validate_manifest(manifest: dict) -> None:
         raise RehearsalError("The manifest contains an unsupported recovery scope state")
     if scope["database_history"] != "covered_by_sql_acceptance":
         raise RehearsalError("Database history must be covered by SQL acceptance")
+
+
+def recovery_scope_summary(scope: dict) -> dict:
+    """Separate declared SQL coverage from missing and external evidence."""
+    return {
+        "components_covered_by_sql_acceptance": sorted(
+            name for name, state in scope.items()
+            if state == "covered_by_sql_acceptance"
+        ),
+        "components_with_separate_evidence_required": sorted(
+            name for name, state in scope.items()
+            if state == "separate_evidence_required"
+        ),
+        "components_not_captured": sorted(
+            name for name, state in scope.items()
+            if state == "not_captured"
+        ),
+        # Compatibility field retained for existing receipt consumers.
+        "components_requiring_separate_evidence": sorted(
+            name for name, state in scope.items()
+            if state != "covered_by_sql_acceptance"
+        ),
+    }
 
 
 def verify_isolation(outer_namespace: str) -> dict:
@@ -144,10 +177,7 @@ def rehearse(args) -> int:
         receipt["data_kind"] = manifest["data_kind"]
         receipt["capture"] = manifest["capture"]
         receipt["recovery_scope"] = manifest["recovery_scope"]
-        receipt["components_requiring_separate_evidence"] = sorted(
-            name for name, state in manifest["recovery_scope"].items()
-            if state != "covered_by_sql_acceptance"
-        )
+        receipt.update(recovery_scope_summary(manifest["recovery_scope"]))
         receipt["input_sha256"] = manifest["sha256"]
         pg_bin = args.pg_bin.resolve()
         version = subprocess.check_output([str(pg_bin / "postgres"), "--version"],
