@@ -40,7 +40,7 @@ BEGIN
   UNION ALL SELECT 'staging',to_jsonb(s) FROM public.lts_open_finance_staging s
  )x;
  IF before_hash IS DISTINCT FROM after_hash THEN RAISE EXCEPTION 'V429 source tables changed'; END IF;
- IF EXISTS(SELECT 1 FROM v429_attrs_before b JOIN pg_proc p ON p.oid=b.oid WHERE b.attrs IS DISTINCT FROM to_jsonb(p)-'prosrc')
+ IF EXISTS(SELECT 1 FROM v429_attrs_before b JOIN pg_proc proc ON proc.oid=b.oid WHERE b.attrs IS DISTINCT FROM to_jsonb(proc)-'prosrc')
  THEN RAISE EXCEPTION 'V429 function attributes changed'; END IF;
 END
 $test$;
