@@ -172,6 +172,50 @@ def validate_sql_acceptance_evidence(
     return sorted(normalized, key=lambda row: row["component"])
 
 
+def validate_external_evidence_artifact(payload: dict, component: str, manifest: dict) -> None:
+    """Bind a private external-evidence summary to this exact source capture."""
+    required = {"component", "capture_id", "data_kind", "captured_at", "checks"}
+    if not isinstance(payload, dict) or set(payload) != required:
+        raise RehearsalError("External evidence must use the required private JSON schema")
+    if payload["component"] != component:
+        raise RehearsalError("External evidence component does not match its filename")
+    if payload["capture_id"] != manifest["capture"]["id"]:
+        raise RehearsalError("External evidence belongs to a different source capture")
+    if payload["data_kind"] != manifest["data_kind"]:
+        raise RehearsalError("External evidence data kind does not match the manifest")
+    timestamp = payload["captured_at"]
+    if not isinstance(timestamp, str) or not timestamp.strip():
+        raise RehearsalError("External evidence must have a timestamp")
+    try:
+        parsed_timestamp = datetime.fromisoformat(
+            timestamp[:-1] + "+00:00" if timestamp.endswith("Z") else timestamp
+        )
+    except ValueError as exc:
+        raise RehearsalError("External evidence timestamp must be valid ISO 8601") from exc
+    if parsed_timestamp.tzinfo is None or parsed_timestamp.utcoffset() is None:
+        raise RehearsalError("External evidence timestamp must include a timezone")
+    checks = payload["checks"]
+    if not isinstance(checks, list) or not checks:
+        raise RehearsalError("External evidence must contain at least one structured check")
+    names = []
+    for check in checks:
+        if not isinstance(check, dict) or set(check) != {
+            "name", "passed", "evidence_sha256"
+        }:
+            raise RehearsalError("External evidence checks must use the required schema")
+        if not isinstance(check["name"], str) or not check["name"].strip():
+            raise RehearsalError("External evidence check names must be non-empty")
+        if not isinstance(check["passed"], bool):
+            raise RehearsalError("External evidence check results must be boolean")
+        if not isinstance(check["evidence_sha256"], str) or not SHA256_PATTERN.fullmatch(
+            check["evidence_sha256"]
+        ):
+            raise RehearsalError("External evidence checks require lowercase SHA-256 values")
+        names.append(check["name"])
+    if len(set(names)) != len(names):
+        raise RehearsalError("External evidence check names must be unique")
+
+
 def verify_isolation(outer_namespace: str) -> dict:
     current_namespace = os.readlink("/proc/self/ns/net")
     if not outer_namespace or current_namespace == outer_namespace:
@@ -234,6 +278,11 @@ def freeze_inputs(source: Path, destination: Path, expected_manifest_sha256: str
         actual = digest(frozen)
         if actual != separate_evidence[component]:
             raise RehearsalError("An external evidence artifact did not match its manifest")
+        try:
+            artifact = json.loads(frozen.read_text(encoding="utf-8"))
+        except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+            raise RehearsalError("External evidence must be valid UTF-8 JSON") from exc
+        validate_external_evidence_artifact(artifact, component, manifest)
         frozen_external_evidence.append({
             "component": component,
             "evidence_sha256": actual,
@@ -414,5 +463,6 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
 
 
