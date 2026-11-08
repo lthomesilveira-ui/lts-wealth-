@@ -33,7 +33,9 @@ jobs:
       - name: Reject a divergent predecessor
         run: |
           createdb v430_guard
-          if psql -X -v ON_ERROR_STOP=1 -At -d v430_guard -f backend/qa/lts_v430_predecessor_guard.sql; then
+          if psql -X -v ON_ERROR_STOP=1 -At -d v430_guard -f backend/qa/lts_v430_predecessor_guard.sql >v430-guard.log 2>&1; then
             echo 'divergent predecessor was accepted' >&2
             exit 1
           fi
+          cat v430-guard.log
+          rg -q 'V430_PREDECESSOR_CHANGED' v430-guard.log
