@@ -22,9 +22,45 @@ results must share the export's consistent snapshot; unrelated daily snapshots
 must not be combined and certified as a single capture.
 
 A private `manifest.json` must contain `data_kind` (`production` or `synthetic`)
-and a `sha256` mapping for exactly those four files. The files are copied to a new
-private directory and checked against their hashes before any SQL is executed.
-The manifest is an integrity record, not a source-authenticity attestation.
+and a `sha256` mapping for exactly those four files. It must also identify one
+consistent capture and declare the status of every recovery component: database
+history, Auth records, Storage metadata, Storage object bytes, roles/grants/RLS,
+application consumers, and replay/cache. The accepted states are
+`covered_by_sql_acceptance`, `separate_evidence_required`, and `not_captured`.
+Database history must be covered by the SQL acceptance file. Missing components
+remain explicit; declaring them does not verify them or turn a partial rehearsal
+into full recovery.
+
+```json
+{
+  "data_kind": "production",
+  "capture": {
+    "id": "private-capture-id",
+    "captured_at": "2026-11-07T10:50:37Z",
+    "consistent_snapshot": true
+  },
+  "recovery_scope": {
+    "database_history": "covered_by_sql_acceptance",
+    "auth_records": "covered_by_sql_acceptance",
+    "storage_metadata": "covered_by_sql_acceptance",
+    "storage_object_bytes": "separate_evidence_required",
+    "roles_grants_rls": "covered_by_sql_acceptance",
+    "application_consumers": "separate_evidence_required",
+    "replay_and_cache": "not_captured"
+  },
+  "sha256": {
+    "roles.sql": "...",
+    "schema.sql": "...",
+    "data.sql": "...",
+    "acceptance.sql": "..."
+  }
+}
+```
+
+The files are copied to a new private directory and checked against their hashes
+before any SQL is executed. The receipt preserves the capture declaration and
+lists every component still requiring separate evidence. The manifest is an
+integrity record, not a source-authenticity attestation.
 
 Use a PostgreSQL 17 runtime with every extension and managed-schema prerequisite
 needed by the official export. Missing extensions are a hard failure. Never strip
@@ -71,3 +107,4 @@ still requires an authorized complete production export, independent source
 comparisons, actual Auth/API behavior, separately recovered Storage object bytes,
 and the remaining application consumers and replay/cache checks. An offline local
 copy or a synthetic test cannot close those criteria.
+
