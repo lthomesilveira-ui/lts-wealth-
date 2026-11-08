@@ -32,7 +32,7 @@ CREATE FUNCTION public.lts_card_projection_date_v370(uuid,text,date,date,date) R
 CREATE FUNCTION public.lts_card_transition_cash_date_v370(uuid,text,date) RETURNS date LANGUAGE sql AS $$SELECT $3$$;
 CREATE TABLE public.lts_card_due_transition_v370(user_id uuid,family text);
 CREATE FUNCTION public.lts_current_received_card_bills_v263(uuid)
-RETURNS TABLE(family text,reference_month date) LANGUAGE sql AS $$SELECT 'unused',current_date WHERE false$$;
+RETURNS TABLE(family text,reference_month date,due_date date) LANGUAGE sql AS $$SELECT 'unused',current_date,current_date WHERE false$$;
 \ir fixtures/v430/lts_corrected_cashflow_fix86_v1.sql
 \ir fixtures/v430/lts_card_invoice_amounts_v230.sql
 \ir fixtures/v430/lts_payroll_bank_matches_v231.sql
