@@ -45,13 +45,31 @@ async function run(browser,engine,width){
   const text=await f.locator('.v168-updates').innerText();
   assert(!/RPC|SQLSTATE|source_ref|source_fingerprint|backend|payload|epoch/i.test(text));
   await after.page.screenshot({path:out+'/'+engine+'-'+width+'-empty.png'});
+  if(engine==='chromium'&&width===393){
+   // Real transport admission: both complete apps wait behind the same kind
+   // of bounded read hold. Only the predecessor loses the valid response.
+   for(const h of [before,after]){
+    h.mode='one';
+    await h.frame.evaluate(()=>{__LTS_V227_TRANSPORT.invalidate(false);window.__v433FixtureHold=__LTS_V227_TRANSPORT.holdHeavyReads();return window.__v433FixtureHold.ready;});
+    await search(h,'admission');
+   }
+   await before.frame.waitForFunction(()=>__LTS_V181_STATE.review.status==='error',null,{timeout:26000});
+   assert.equal(await f.evaluate(()=>__LTS_V181_STATE.review.status),'loading');
+   assert.equal(after.queueCalls.filter(x=>x.p_query==='admission').length,0,'request is still waiting for admission');
+   await after.page.screenshot({path:out+'/'+engine+'-'+width+'-waiting.png'});
+   for(const h of [before,after])await h.frame.evaluate(()=>window.__v433FixtureHold.release());
+   await f.waitForFunction(()=>__LTS_V181_STATE.review.status==='ready'&&__LTS_V181_STATE.review.data.row_count===1);
+   assert.equal(await before.frame.evaluate(()=>__LTS_V181_STATE.review.status),'error');
+   assert.match(await f.locator('#v181ReviewQueue').innerText(),/Despesa de teste/);
+   result.queued_response_regression_reproduced=true;
+  }
   after.mode='one';await search(after,'one');await f.waitForFunction(()=>__LTS_V181_STATE.review.status==='ready'&&__LTS_V181_STATE.review.data.row_count===1);
   assert.match(await f.locator('#v181ReviewQueue').innerText(),/Despesa de teste/);
   const known=await f.evaluate(()=>JSON.stringify(__LTS_V181_STATE.review.data));
   after.mode='failed';await f.evaluate(()=>__LTS_V227_TRANSPORT.invalidate(false));await f.locator('[data-v181-review-search]').click();await f.waitForFunction(()=>__LTS_V181_STATE.review.status==='error');
   assert.equal(await f.evaluate(()=>JSON.stringify(__LTS_V181_STATE.review.data)),known);
   assert.match(await f.locator('#v181ReviewQueue').innerText(),/informações anteriores podem estar desatualizadas/);
-  const warningHeight=await f.locator('#v181ReviewQueue [role=status]').evaluate(n=>n.getBoundingClientRect().height);assert(warningHeight<150);
+  const warningHeight=await f.locator('#v181ReviewQueue .lts-review-alert[role=status]').evaluate(n=>n.getBoundingClientRect().height);assert(warningHeight<150);
   await after.page.screenshot({path:out+'/'+engine+'-'+width+'-failed-known.png'});
   after.mode='empty';await f.locator('[data-v181-review-retry]').click();await f.waitForFunction(()=>__LTS_V181_STATE.review.status==='ready');
   after.mode='invalid';await search(after,'invalid');await f.waitForFunction(()=>__LTS_V181_STATE.review.status==='error');
