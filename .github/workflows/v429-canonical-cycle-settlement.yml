@@ -1,0 +1,37 @@
+name: V429 canonical card-cycle settlement
+on:
+  pull_request:
+    paths: ['backend/patches/v429/**','backend/qa/lts_v429*','backend/qa/fixtures/v429/**','.github/workflows/v429-canonical-cycle-settlement.yml']
+permissions:
+  contents: read
+jobs:
+  native-contract:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: synthetic-test-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: synthetic-test-only
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify exact cycle consumer and source immutability
+        run: psql -X -v ON_ERROR_STOP=1 -At -f backend/qa/lts_v429_functional.sql
+      - name: Reject a divergent predecessor
+        run: |
+          createdb v429_guard
+          if psql -X -v ON_ERROR_STOP=1 -At -d v429_guard -f backend/qa/lts_v429_predecessor_guard.sql; then
+            echo 'divergent predecessor was accepted' >&2
+            exit 1
+          fi
