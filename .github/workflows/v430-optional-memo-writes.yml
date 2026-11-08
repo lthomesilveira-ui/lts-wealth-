@@ -1,0 +1,39 @@
+name: V430 optional memo writes
+on:
+  pull_request:
+    paths: ['backend/patches/v430/**','backend/qa/lts_v430*','backend/qa/fixtures/v430/**','.github/workflows/v430-optional-memo-writes.yml']
+permissions:
+  contents: read
+jobs:
+  native-contract:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: synthetic-test-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: synthetic-test-only
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify unchanged results and cache boundaries
+        run: psql -X -v ON_ERROR_STOP=1 -At -f backend/qa/lts_v430_functional.sql
+      - name: Verify cache collisions return computed data promptly
+        run: python3 backend/qa/lts_v430_concurrency.py
+      - name: Reject a divergent predecessor
+        run: |
+          createdb v430_guard
+          if psql -X -v ON_ERROR_STOP=1 -At -d v430_guard -f backend/qa/lts_v430_predecessor_guard.sql; then
+            echo 'divergent predecessor was accepted' >&2
+            exit 1
+          fi
