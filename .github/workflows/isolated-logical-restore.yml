@@ -1,0 +1,36 @@
+name: Offline logical restore rehearsal
+on:
+  pull_request:
+    paths:
+      - 'backend/tools/isolated_restore/**'
+      - '.github/workflows/isolated-logical-restore.yml'
+permissions:
+  contents: read
+jobs:
+  invented-data-only:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Use the native PostgreSQL 17 runtime
+        run: |
+          set -euo pipefail
+          if [ ! -x /usr/lib/postgresql/17/bin/postgres ]; then
+            # Use a host supporting unprivileged user namespaces without changing
+            # its AppArmor/sysctl protections. PGDG remains the official source.
+            sudo install -d /usr/share/postgresql-common/pgdg
+            sudo curl --fail --silent --show-error \
+              -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc \
+              https://www.postgresql.org/media/keys/ACCC4CF8.asc
+            echo 'deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt jammy-pgdg main' \
+              | sudo tee /etc/apt/sources.list.d/pgdg.list > /dev/null
+            sudo apt-get update
+            sudo apt-get install --yes postgresql-17
+          fi
+          /usr/lib/postgresql/17/bin/postgres --version
+      - name: Test restore, isolation and hard failures on invented data
+        env:
+          LTS_RESTORE_PG_BIN: /usr/lib/postgresql/17/bin
+        run: python3 -m unittest discover -s backend/tools/isolated_restore -p test_restore.py -v

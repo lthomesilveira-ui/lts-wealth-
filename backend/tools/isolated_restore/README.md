@@ -1,0 +1,73 @@
+# Offline logical recovery rehearsal
+
+This tool prepares the independent recovery test without creating a paid project,
+copying production credentials to a cloud test service, or starting production
+integrations. It consumes files already exported by an authorized official route.
+It does not export a database, request secrets, contact production or restore into
+an existing cluster. No frontend release or production migration is required.
+
+## Input
+
+Use the official [Supabase CLI backup and restore workflow](https://supabase.com/docs/guides/platform/migrating-within-supabase/backup-restore)
+and [platform-to-self-hosted guide](https://supabase.com/docs/guides/self-hosting/restore-from-platform)
+for `roles.sql`, `schema.sql` and `data.sql`. Production export requires an existing
+authorized database connection; this repository contains no credentials or dumps.
+Do not revive a custom bulk-export endpoint or use a test cloud service as transit.
+
+Provide `acceptance.sql` with independently derived checks for the captured source:
+table coverage, complete observation history, Auth records, RLS/grants, audit and
+notification journals, financial results and all required database consumers.
+Counts alone do not prove identical values. Source inventories and expected
+results must share the export's consistent snapshot; unrelated daily snapshots
+must not be combined and certified as a single capture.
+
+A private `manifest.json` must contain `data_kind` (`production` or `synthetic`)
+and a `sha256` mapping for exactly those four files. The files are copied to a new
+private directory and checked against their hashes before any SQL is executed.
+The manifest is an integrity record, not a source-authenticity attestation.
+
+Use a PostgreSQL 17 runtime with every extension and managed-schema prerequisite
+needed by the official export. Missing extensions are a hard failure. Never strip
+an extension, grant, trigger or protected dataset to make the test pass.
+
+## Execution
+
+```sh
+python3 backend/tools/isolated_restore/restore.py \
+  --input /absolute/private/export \
+  --output /absolute/private/new-rehearsal \
+  --pg-bin /absolute/postgresql/17/bin
+```
+
+The host must permit an unprivileged Linux user/network namespace. The command
+fails closed when isolation cannot be established. Both IPv4 and IPv6 must report
+no route before startup. PostgreSQL listens only on a private Unix socket,
+preloaded background workers are disabled, and imported cron jobs are deactivated
+inside the isolated copy. Triggers are disabled only during the transactional data
+import. Connection credentials and PostgreSQL startup overrides are not inherited.
+The command never accepts a destination database URL or reuses an existing output.
+
+The server is stopped after success or failure. The stopped cluster, immutable
+input copy, private log and `receipt.json` remain in the private output directory.
+Keep this directory outside source control and outside any published artifact.
+Raw logs can contain sensitive source values. Receipts expose only verification
+state, runtime settings and hashes. They always keep whole-app certification false.
+
+## Verification and remaining boundary
+
+```sh
+LTS_RESTORE_PG_BIN=/absolute/postgresql/17/bin \
+  python3 -m unittest discover -s backend/tools/isolated_restore -p test_restore.py -v
+```
+
+Native tests use invented data: roles, RLS, Auth-shaped records, Storage metadata,
+history totals, a reader, a trigger that must not run, and active jobs that must be
+disabled. Failure cases include altered inputs, symlinks, missing acceptance,
+unsafe network context, reused outputs, failed assertions and absent extensions.
+These tests do not use real accounts or certify cross-owner HTTP isolation.
+
+Passing the database rehearsal is one recovery substep. A full recovery claim
+still requires an authorized complete production export, independent source
+comparisons, actual Auth/API behavior, separately recovered Storage object bytes,
+and the remaining application consumers and replay/cache checks. An offline local
+copy or a synthetic test cannot close those criteria.
