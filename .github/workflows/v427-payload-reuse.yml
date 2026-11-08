@@ -1,0 +1,70 @@
+name: V427 unchanged consultation payload
+on:
+  pull_request:
+    paths: ['backend/patches/v427/**','backend/tools/clock_payload_v427/**','.github/workflows/v427-payload-reuse.yml']
+permissions:
+  contents: read
+jobs:
+  native-postgres17:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 6
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: synthetic-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready --health-interval 5s
+          --health-timeout 5s --health-retries 10
+    env:
+      PGHOST: localhost
+      PGUSER: postgres
+      PGPASSWORD: synthetic-only
+      PGTZ: America/Sao_Paulo
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Prepare real ingestion and daily position chain on invented sources
+        run: |
+          set -euo pipefail
+          psql -X -v ON_ERROR_STOP=1 -f backend/tools/cofrinho_v381/fixture.sql
+          psql -X -v ON_ERROR_STOP=1 -f backend/patches/v381/cofrinho_documented_redemptions.sql
+          psql -X -v ON_ERROR_STOP=1 -f backend/tools/dated_d01_v399/fixture.sql
+          psql -X -v ON_ERROR_STOP=1 -f backend/patches/v399/dated_cofrinho_flow.sql
+          psql -X -v ON_ERROR_STOP=1 -f backend/patches/v399/batched_d0_positions.sql
+          psql -X -v ON_ERROR_STOP=1 -f backend/tools/daily_cofrinho_v402/fixture.sql
+          psql -X -v ON_ERROR_STOP=1 -f backend/patches/v402/daily_cofrinho.sql
+          psql -X -v ON_ERROR_STOP=1 -f backend/patches/v402/batched_daily_cofrinho.sql
+          python3 backend/tools/write_policy_v403/setup.py > /tmp/v427-fixture.sql
+          psql -X -v ON_ERROR_STOP=1 -f /tmp/v427-fixture.sql
+          psql -X -v ON_ERROR_STOP=1 -f backend/patches/v403/write_policy.sql
+          psql -X -v ON_ERROR_STOP=1 -f backend/patches/v403/backup_exclusion.sql
+      - name: Apply and replay guarded change; verify conservation and clock variants
+        run: |
+          set -euo pipefail
+          psql -X -v ON_ERROR_STOP=1 -f backend/patches/v427/reuse_unchanged_payload.sql
+          psql -X -v ON_ERROR_STOP=1 -f backend/patches/v427/reuse_unchanged_payload.sql
+          psql -X -v ON_ERROR_STOP=1 -f backend/tools/write_policy_v403/verify.sql
+          psql -X -v ON_ERROR_STOP=1 -f backend/tools/clock_payload_v427/verify.sql
+      - name: Record WAL example on invented large payloads
+        run: psql -X -v ON_ERROR_STOP=1 -f backend/tools/clock_payload_v427/wal_probe.sql
+      - name: Reject source drift without rewriting it
+        run: |
+          set -euo pipefail
+          psql -X -v ON_ERROR_STOP=1 <<'SQL'
+          DO $$DECLARE d text;BEGIN
+           SELECT pg_get_functiondef('public.lts_open_finance_stage_batch_core_v403(uuid,uuid,uuid,jsonb,text[])'::regprocedure) INTO d;
+           EXECUTE replace(d,'-- v427-reuse-unchanged-payload','-- synthetic unexpected drift');
+          END$$;
+          SQL
+          if psql -X -v ON_ERROR_STOP=1 -f backend/patches/v427/reuse_unchanged_payload.sql; then
+            echo 'Unreviewed source body was accepted'; exit 1
+          fi
+          psql -X -v ON_ERROR_STOP=1 <<'SQL'
+          DO $$BEGIN
+           IF position('-- synthetic unexpected drift' IN pg_get_functiondef('public.lts_open_finance_stage_batch_core_v403(uuid,uuid,uuid,jsonb,text[])'::regprocedure))=0
+            THEN RAISE EXCEPTION 'Rejected patch rewrote the unreviewed source';END IF;
+          END$$;
+          SQL
