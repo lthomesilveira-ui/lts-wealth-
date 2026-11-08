@@ -30,11 +30,12 @@ $$;
 CREATE FUNCTION public.lts_card_payment_refresh_annotation_v273(
  p_user_id uuid,p_link jsonb,p_invoice jsonb,p_payment jsonb,p_contract jsonb,p_as_of date)
 RETURNS jsonb LANGUAGE sql IMMUTABLE SET search_path='' AS $$
- SELECT CASE WHEN p_contract->>'valid'='true' THEN '{"status":"identified_in_statement"}'::jsonb END
+ SELECT CASE WHEN p_contract->>'valid'='true' THEN jsonb_build_object(
+  'status','identified_in_statement','issuer_payment_type',p_contract->>'issuer_payment_type') END
 $$;
 
 \ir fixtures/v429/lts_card_invoice_settled_v290.sql
-\ir fixtures/v351_lts_card_settlement_overlay_v290.sql
+\ir fixtures/v429/lts_card_settlement_overlay_v290.sql
 REVOKE ALL ON FUNCTION public.lts_card_invoice_settled_v290(uuid,text,date,date,numeric),
  public.lts_card_settlement_overlay_v290(uuid,jsonb) FROM PUBLIC,anon,authenticated;
 GRANT EXECUTE ON FUNCTION public.lts_card_invoice_settled_v290(uuid,text,date,date,numeric),
@@ -71,7 +72,7 @@ INSERT INTO public.lts_open_finance_staging VALUES
 INSERT INTO public.lts_card_documentary_payment_link_v272 VALUES
  ('00000000-0000-4000-8000-000000000001','30000000-0000-4000-8000-000000000001','30000000-0000-4000-8000-000000000002',80,'2026-10-05','2026-10-05',true);
 INSERT INTO public.lts_card_settlement_expense_contract_v273 VALUES
- ('00000000-0000-4000-8000-000000000001','30000000-0000-4000-8000-000000000002',true,'{"valid":true}');
+ ('00000000-0000-4000-8000-000000000001','30000000-0000-4000-8000-000000000002',true,'{"valid":true,"issuer_payment_type":"OTHER_PAYMENT"}');
 
 CREATE TABLE v429_sources_before AS
 SELECT md5(coalesce(jsonb_agg(to_jsonb(x) ORDER BY to_jsonb(x)::text)::text,'[]')) hash FROM(

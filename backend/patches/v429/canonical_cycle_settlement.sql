@@ -105,7 +105,9 @@ SELECT CASE WHEN jsonb_typeof(p_payload->'cards')='array' THEN jsonb_set(p_paylo
    AND CASE WHEN pg_input_is_valid(y.value->>'due_date','date') THEN (y.value->>'due_date')::date=l.expected_due_date ELSE false END THEN
    jsonb_build_object('source_payment_status',y.value->>'payment_status','payment_status','paid',
     'settlement_confirmed',true,'settled_on',l.expected_payment_date,
-    'settlement_basis','reviewed_issuer_full_payment_and_exact_posted_checking_debit')
+    'settlement_basis',CASE WHEN l.receipt->>'issuer_payment_type'='OTHER_PAYMENT'
+     THEN 'reviewed_c6_other_payment_and_exact_posted_checking_debit'
+     ELSE 'reviewed_issuer_full_payment_and_exact_posted_checking_debit' END)
   WHEN f.card_name IS NOT NULL THEN
    jsonb_build_object('source_payment_status',y.value->>'payment_status','payment_status','paid',
     'settlement_confirmed',true,'settled_on',f.due_date,

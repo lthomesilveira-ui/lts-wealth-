@@ -20,7 +20,7 @@ BEGIN
 
  p:='{"version":"card-cycles-v226","complete":true,"cards":[{"family":"c6","name":"synthetic-c6","complete":true,"cycles":[{"month":"2026-10-01","due_date":"2026-10-05","amount":80,"invoice_source_id":"30000000-0000-4000-8000-000000000001","payment_status":"unconfirmed"},{"month":"2026-11-01","due_date":"2026-11-05","amount":100,"payment_status":null},{"month":"2026-12-01","due_date":"2026-12-05","amount":70,"payment_status":"unconfirmed"}]},{"family":"prime","name":"synthetic-prime","complete":true,"cycles":[{"month":"2026-11-01","due_date":"2026-11-12","amount":40}]},{"family":"dup","name":"synthetic-dup","complete":true,"cycles":[{"month":"2026-11-01","due_date":"2026-11-15","amount":30}]}]}'::jsonb;
  r:=public.lts_card_settlement_overlay_v290(u,p);
- IF r#>>'{cards,0,cycles,0,settlement_basis}' IS DISTINCT FROM 'reviewed_issuer_full_payment_and_exact_posted_checking_debit'
+ IF r#>>'{cards,0,cycles,0,settlement_basis}' IS DISTINCT FROM 'reviewed_c6_other_payment_and_exact_posted_checking_debit'
  THEN RAISE EXCEPTION 'V429 prior reviewed-link path regressed'; END IF;
  IF r#>>'{cards,0,cycles,1,settlement_basis}' IS DISTINCT FROM 'exact_card_cycle_fact_confirmation_v429'
   OR r#>'{cards,0,cycles,1,settlement_confirmed}' IS DISTINCT FROM 'true'::jsonb
