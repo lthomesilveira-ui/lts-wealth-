@@ -87,6 +87,13 @@ INSERT INTO public.lts_recovery_acceptance(component,passed,evidence_sha256) VAL
     }
     for name, content in contents.items():
         (directory / name).write_text(content)
+    evidence = directory / "evidence"
+    evidence.mkdir()
+    (evidence / "storage_object_bytes.json").write_text(json.dumps({
+        "component": "storage_object_bytes",
+        "data_kind": "synthetic",
+        "checks": ["invented object digest only"],
+    }))
     rehash(directory)
 
 
@@ -114,6 +121,11 @@ def rehash(directory):
             "roles_grants_rls": "4" * 64,
             "application_consumers": "5" * 64,
         },
+        "separate_evidence_sha256": {
+            "storage_object_bytes": restore.digest(
+                directory / "evidence" / "storage_object_bytes.json"
+            ),
+        },
         "sha256": {name: restore.digest(directory / name) for name in restore.INPUTS}
     }))
 
@@ -137,14 +149,29 @@ class InputGuards(FixtureCase, unittest.TestCase):
 
     def test_freezes_bytes_and_permissions(self):
         frozen = self.root / "frozen"
-        manifest, frozen_manifest_digest = restore.freeze_inputs(
+        manifest, frozen_manifest_digest, frozen_external_evidence = restore.freeze_inputs(
             self.source, frozen, manifest_digest(self.source)
         )
         (self.source / "data.sql").write_text("changed after copy")
+        (self.source / "evidence" / "storage_object_bytes.json").write_text(
+            "changed after copy"
+        )
         self.assertEqual(restore.digest(frozen / "data.sql"), manifest["sha256"]["data.sql"])
         self.assertEqual(frozen.stat().st_mode & 0o777, 0o700)
         self.assertEqual((frozen / "data.sql").stat().st_mode & 0o777, 0o600)
         self.assertEqual(frozen_manifest_digest, restore.digest(frozen / "manifest.json"))
+        self.assertEqual(frozen_external_evidence, [{
+            "component": "storage_object_bytes",
+            "evidence_sha256": manifest["separate_evidence_sha256"][
+                "storage_object_bytes"
+            ],
+        }])
+        frozen_evidence = frozen / "external_evidence" / "storage_object_bytes.json"
+        self.assertEqual(frozen_evidence.stat().st_mode & 0o777, 0o600)
+        self.assertEqual(
+            restore.digest(frozen_evidence),
+            manifest["separate_evidence_sha256"]["storage_object_bytes"],
+        )
 
     def test_rejects_tampering(self):
         (self.source / "data.sql").write_text("changed before copy")
@@ -272,6 +299,40 @@ class InputGuards(FixtureCase, unittest.TestCase):
                 manifest_digest(self.source),
             )
 
+    def test_rejects_missing_or_tampered_external_evidence_artifact(self):
+        artifact = self.source / "evidence" / "storage_object_bytes.json"
+        artifact.unlink()
+        with self.assertRaises(restore.RehearsalError):
+            restore.freeze_inputs(
+                self.source, self.root / "missing-external-evidence",
+                manifest_digest(self.source),
+            )
+
+        artifact = self.source / "evidence" / "storage_object_bytes.json"
+        artifact.write_text(json.dumps({
+            "component": "storage_object_bytes",
+            "data_kind": "synthetic",
+            "checks": ["invented object digest only"],
+        }))
+        rehash(self.source)
+        artifact.write_text("tampered after manifest")
+        with self.assertRaises(restore.RehearsalError):
+            restore.freeze_inputs(
+                self.source, self.root / "tampered-external-evidence",
+                manifest_digest(self.source),
+            )
+
+    def test_rejects_incomplete_external_evidence_mapping(self):
+        manifest_path = self.source / "manifest.json"
+        manifest = json.loads(manifest_path.read_text())
+        manifest["separate_evidence_sha256"] = {}
+        manifest_path.write_text(json.dumps(manifest))
+        with self.assertRaises(restore.RehearsalError):
+            restore.freeze_inputs(
+                self.source, self.root / "incomplete-external-evidence-map",
+                manifest_digest(self.source),
+            )
+
     def test_rejects_unsupported_scope_state(self):
         manifest_path = self.source / "manifest.json"
         manifest = json.loads(manifest_path.read_text())
@@ -336,6 +397,11 @@ class NativeRestore(FixtureCase, unittest.TestCase):
         self.assertEqual(receipt["components_not_captured"], ["replay_and_cache"])
         self.assertEqual(receipt["components_with_separate_evidence_required"],
                          ["storage_object_bytes"])
+        self.assertTrue(receipt["separate_evidence_artifacts_frozen"])
+        self.assertEqual(
+            [row["component"] for row in receipt["separate_evidence_artifacts"]],
+            ["storage_object_bytes"],
+        )
         self.assertEqual(
             [row["component"] for row in receipt["sql_acceptance_evidence"]],
             ["application_consumers", "auth_records", "database_history",
@@ -398,4 +464,5 @@ class NativeRestore(FixtureCase, unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
 

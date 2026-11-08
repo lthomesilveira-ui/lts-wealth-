@@ -33,6 +33,14 @@ digest in `sql_acceptance_evidence_sha256`. A digest emitted only by
 `acceptance.sql` is self-declared and is rejected when it differs from that
 frozen expectation.
 
+For every component marked `separate_evidence_required`, provide one private JSON
+artifact at `evidence/<component>.json` and bind it in
+`separate_evidence_sha256`. The tool copies the exact artifact into the private
+output and verifies its digest. The receipt records only the component and digest,
+not the artifact contents. Freezing an artifact proves which bytes accompanied the
+rehearsal; it does not validate the artifact's claims or turn external evidence
+into SQL coverage.
+
 A private `manifest.json` must contain `data_kind` (`production` or `synthetic`)
 and a `sha256` mapping for exactly those four files. It must also identify one
 consistent capture and declare the status of every recovery component: database
@@ -67,6 +75,9 @@ into full recovery.
     "roles_grants_rls": "...",
     "application_consumers": "..."
   },
+  "separate_evidence_sha256": {
+    "storage_object_bytes": "..."
+  },
   "sha256": {
     "roles.sql": "...",
     "schema.sql": "...",
@@ -85,6 +96,11 @@ components not captured at all. The capture timestamp must be valid ISO 8601 and
 include a timezone. The compatibility list of all components outside SQL coverage
 is retained for existing receipt consumers. The manifest is an integrity record,
 not a source-authenticity attestation.
+
+The external evidence mapping must likewise contain exactly the components marked
+`separate_evidence_required`. Missing files, symlinks, malformed digests, extra
+components or changed bytes fail closed. The frozen artifacts stay private beside
+the stopped cluster and are not published or embedded in the receipt.
 
 Before handing the input directory to this tool, retain the exact SHA-256 of
 `manifest.json` through an independent authorized channel. Supplying a digest
@@ -141,4 +157,5 @@ still requires an authorized complete production export, independent source
 comparisons, actual Auth/API behavior, separately recovered Storage object bytes,
 and the remaining application consumers and replay/cache checks. An offline local
 copy or a synthetic test cannot close those criteria.
+
 

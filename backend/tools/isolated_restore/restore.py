@@ -97,6 +97,22 @@ def validate_manifest(manifest: dict) -> None:
         raise RehearsalError(
             "Expected SQL evidence digests must be lowercase SHA-256 values"
         )
+    separate = {
+        name for name, state in scope.items()
+        if state == "separate_evidence_required"
+    }
+    separate_evidence = manifest.get("separate_evidence_sha256")
+    if not isinstance(separate_evidence, dict) or set(separate_evidence) != separate:
+        raise RehearsalError(
+            "The manifest must bind one external evidence artifact per separate component"
+        )
+    if any(
+        not isinstance(value, str) or not SHA256_PATTERN.fullmatch(value)
+        for value in separate_evidence.values()
+    ):
+        raise RehearsalError(
+            "External evidence artifact digests must be lowercase SHA-256 values"
+        )
 
 
 def recovery_scope_summary(scope: dict) -> dict:
@@ -178,7 +194,7 @@ def verify_isolation(outer_namespace: str) -> dict:
             "ipv6_unreachable": True}
 
 
-def freeze_inputs(source: Path, destination: Path, expected_manifest_sha256: str) -> dict:
+def freeze_inputs(source: Path, destination: Path, expected_manifest_sha256: str) -> tuple:
     manifest_path = source / "manifest.json"
     if not manifest_path.is_file() or manifest_path.is_symlink():
         raise RehearsalError("A regular manifest.json file is required")
@@ -201,12 +217,33 @@ def freeze_inputs(source: Path, destination: Path, expected_manifest_sha256: str
         frozen.chmod(0o600)
         if digest(frozen) != expected[name]:
             raise RehearsalError("An input hash did not match its manifest")
+    frozen_external_evidence = []
+    evidence_directory = destination / "external_evidence"
+    separate_evidence = manifest["separate_evidence_sha256"]
+    if separate_evidence:
+        evidence_directory.mkdir(mode=0o700)
+    for component in sorted(separate_evidence):
+        original = source / "evidence" / f"{component}.json"
+        if not original.is_file() or original.is_symlink():
+            raise RehearsalError(
+                "Every separately required component must have a regular evidence artifact"
+            )
+        frozen = evidence_directory / f"{component}.json"
+        shutil.copyfile(original, frozen)
+        frozen.chmod(0o600)
+        actual = digest(frozen)
+        if actual != separate_evidence[component]:
+            raise RehearsalError("An external evidence artifact did not match its manifest")
+        frozen_external_evidence.append({
+            "component": component,
+            "evidence_sha256": actual,
+        })
     frozen_manifest = destination / "manifest.json"
     frozen_manifest.write_bytes(manifest_bytes)
     frozen_manifest.chmod(0o600)
     if digest(frozen_manifest) != expected_manifest_sha256:
         raise RehearsalError("The frozen manifest did not preserve its supplied digest")
-    return manifest, actual_manifest_sha256
+    return manifest, actual_manifest_sha256, frozen_external_evidence
 
 
 def child_environment() -> dict:
@@ -233,7 +270,7 @@ def rehearse(args) -> int:
         output.mkdir(mode=0o700, parents=False, exist_ok=False)
         output_created = True
         frozen = output / "input"
-        manifest, manifest_sha256 = freeze_inputs(
+        manifest, manifest_sha256, frozen_external_evidence = freeze_inputs(
             args.input.resolve(), frozen, args.manifest_sha256
         )
         receipt["data_kind"] = manifest["data_kind"]
@@ -243,6 +280,8 @@ def rehearse(args) -> int:
         receipt["recovery_scope"] = manifest["recovery_scope"]
         receipt.update(recovery_scope_summary(manifest["recovery_scope"]))
         receipt["input_sha256"] = manifest["sha256"]
+        receipt["separate_evidence_artifacts"] = frozen_external_evidence
+        receipt["separate_evidence_artifacts_frozen"] = True
         pg_bin = args.pg_bin.resolve()
         version = subprocess.check_output([str(pg_bin / "postgres"), "--version"],
                                           env=env, text=True).strip()
@@ -375,4 +414,5 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
 
