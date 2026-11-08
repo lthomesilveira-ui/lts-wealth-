@@ -1,0 +1,41 @@
+name: V433 review admission and FGTS caption
+on:
+  pull_request:
+    paths: ['backend/tools/review_admission_v433/**','releases/v433/**','.github/scripts/lts_v433*','.github/workflows/v433-review-admission.yml']
+permissions:
+  contents: read
+jobs:
+  rendered:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    container: mcr.microsoft.com/playwright:v1.58.2-noble
+    env:
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Immutable build and lifecycle regression
+        run: |
+          python3 backend/tools/review_admission_v433/build.py
+          python3 backend/tools/review_admission_v433/build.py
+          node --check releases/v433/lts-v384-startup-1.js
+          node .github/scripts/lts_v433_review_lifecycle.cjs
+          npm install --no-save --package-lock=false playwright@1.58.2
+          python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/v433-http.log 2>&1 &
+          node .github/scripts/lts_v309_wait_http.cjs
+      - name: Rendered queue lifecycle and unchanged financial data
+        run: node .github/scripts/lts_v433_review_browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v433-reviewed-candidate
+          retention-days: 14
+          path: |
+            qa/v433/
+            releases/v433/

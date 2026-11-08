@@ -12,7 +12,7 @@ const pointer=JSON.parse(fs.readFileSync(path.join(__dirname,'../../mobile/curre
 assert.deepEqual(pointer,{release,entry:'../releases/'+release+'/app.html'});
 const previous='/releases/v415/index.html';assert.equal(source.split(previous).length,2,'exactly one initializing-frame target');
 source=source.replace(previous,'/releases/'+release+'/index.html');
-if(['v421','v423','v425'].includes(release)){
+if(['v421','v423','v425','v433'].includes(release)){
  const old="assert.deepEqual({ from: before.current_future.from, to: before.current_future.to }, { from: '2026-10-31', to: '2031-12-31' }, 'Explicit preserved legacy source coverage');";
  const replacement="assert.deepEqual({ from: before.current_future.from, to: before.current_future.to }, { from: '2027-01-01', to: '2027-01-31' }, 'Cached slice declares the same explicit period as its validated daily rows');";
  assert.equal(source.split(old).length,2,'exactly one legacy coverage assertion');
@@ -25,9 +25,9 @@ if(['v421','v423','v425'].includes(release)){
  assert.strictEqual(normalized.flow.current_future.events,original.flow.current_future.events,'all movements retained verbatim');
  assert.deepEqual({from:normalized.flow.current_future.from,to:normalized.flow.current_future.to},{from:'2027-01-01',to:'2027-01-31'});
 }
-console.log(JSON.stringify({suite:'v415-durable-refresh',mobile_release:release,financial_assertions_preserved:true,selected_period_metadata_checked:['v421','v423','v425'].includes(release),production_files_modified:false}));
+console.log(JSON.stringify({suite:'v415-durable-refresh',mobile_release:release,financial_assertions_preserved:true,selected_period_metadata_checked:['v421','v423','v425','v433'].includes(release),production_files_modified:false}));
 
-if(release==='v425'){
+if(['v425','v433'].includes(release)){
  const action="    await f.locator('[data-v412-policy=\"flow\"] [data-v412-refresh]').click();";
  const navigation="    const options=f.locator('.v425-options');if(await options.count()&&await options.getAttribute('open')===null)await options.locator(':scope>summary').click();\n";
  assert.equal(source.split(action).length,2,'original manual refresh action retained exactly once');
