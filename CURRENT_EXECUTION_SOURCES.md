@@ -6,9 +6,8 @@ does not certify that the product or all historical requests are complete.
 1. Read `AGENTS.md`, `UX_ACCEPTANCE.md` and, for Flow, `UX_FLOW_OPTIONS.md`.
 2. Read `mobile/current.json` for the published entry. Verify the live entry;
    repository head, a prepared release and an applied backend migration are
-   distinct states. At this audit the live UI is V425 and installed backend V428. The V428 reader fix is applied privately; publication of
-   the code and this index to GitHub awaits explicit approval after an automatic
-   review blocked the branch push. Do not claim this index was already merged.
+   distinct states. At this audit the live UI is V425 and installed backend V428. Verify the current repository publication separately
+   from the installed migration and the live frontend; they can advance independently.
 3. Reconcile the current private `LTS_CONTINUAR.md`,
    `LTS_PENDENCIAS_ATUAIS_2026-10-27.csv`,
    `LTS_MAPA_ATUAL_DAS_15_PENDENCIAS_2026-11-07.md` and
