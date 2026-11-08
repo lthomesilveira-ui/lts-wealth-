@@ -79,7 +79,7 @@ async function run(browser,engine,width){
   await after.page.screenshot({path:out+'/'+engine+'-'+width+'-unknown.png'});
   after.mode='empty';await f.evaluate(()=>__LTS_V227_TRANSPORT.invalidate(false));await f.locator('[data-v181-review-retry]').click();await f.waitForFunction(()=>__LTS_V181_STATE.review.status==='ready');
   await go(f,'Fluxo Diário');await go(before.frame,'Fluxo Diário');
-  for(const x of [f,before.frame])await x.waitForFunction(()=>!FLOWLOADING&&FLOWQ?.flow);
+  for(const x of [f,before.frame])await x.waitForFunction(()=>!FLOWLOADING&&!!FLOWQ);
   assert.equal(hash(await f.evaluate(()=>FLOWQ)),hash(await before.frame.evaluate(()=>FLOWQ)),'full flow response unchanged');
   await f.locator('button.exp[data-d="2026-11-05"]').click();
   assert.match(await f.locator('#d-2026-11-05 + .fx89-details').innerText(),/Resgate FGTS/);

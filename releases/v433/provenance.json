@@ -1,0 +1,13 @@
+{
+  "release": "v433",
+  "base_release": "v425",
+  "scope": "admitted expense review lifecycle and confirmed FGTS caption",
+  "financial_values_changed": false,
+  "new_financial_reads_or_writes": false,
+  "query_arguments_changed": false,
+  "cache_or_auth_policy_changed": false,
+  "active_review_budget_ms": 22000,
+  "existing_admission_budget_ms": 60000,
+  "private_session_verified": false,
+  "physical_iphone_verified": false
+}

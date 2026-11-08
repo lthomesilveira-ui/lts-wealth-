@@ -1,0 +1,73 @@
+/* Preserve the approved composition; only release identity and sync controls. */
+header.hdr .brand small[aria-label*="Homologação"], .brand small,
+span.v168-release, span.v181-release { display:none!important; }
+.v225-sync {display:flex;align-items:center;gap:8px;flex-wrap:wrap;max-width:420px;justify-content:flex-end}
+.v225-sync span {font-size:12px;color:#52667c}
+.v225-bankstatus {font-size:12px;text-align:left;max-width:420px}
+.v225-bankstatus summary {cursor:pointer;color:#195a9c;padding:6px 0}
+.v225-banklist {display:grid;gap:8px;width:100%}
+.v225-bank {display:grid;grid-template-columns:70px minmax(90px,1fr) auto;gap:8px;align-items:center;font-size:12px;padding:6px 0;border-bottom:1px solid #e5ecf2}
+.v225-bank span,.v225-bank time {color:#52667c}
+.v168-openfinance>.v225-banklist {min-width:0}
+@media(max-width:600px){.v225-sync{justify-content:flex-start;max-width:100%}.v225-bank{grid-template-columns:55px 1fr}.v225-bank time{grid-column:2}.v225-bankstatus{max-width:100%}}
+
+.v225-provisional{margin:8px 0;padding:10px 12px;border:1px solid #e4be72;background:#fff8e7;border-radius:8px;display:flex;gap:6px;flex-wrap:wrap;align-items:center;color:#674c18;font-size:12px}
+.v171-expense-total .v225-provisional span{color:#674c18!important}
+.v225-provisional[hidden]{display:none!important}.v225-provisional span{font-size:12px;color:#674c18}.v225-provisional button{background:white;color:#674c18;border:1px solid #e4be72;border-radius:5px;padding:6px;cursor:pointer}
+.v168-kpi .v225-provisional{display:grid;margin-bottom:0}.v225-pending-dialog{width:min(950px,92vw);max-height:88vh;border:1px solid #dce5ee;border-radius:16px;padding:22px;color:#17304b}.v225-pending-dialog::backdrop{background:#0a203a99}.v225-pending-dialog header{display:flex;gap:12px;justify-content:space-between;align-items:center}.v225-pending-dialog h2{font-size:20px}.v225-pending-dialog p{font-size:13px;line-height:1.5}.v225-pending-table{overflow:auto;max-height:55vh}.v225-pending-table table{width:100%;border-collapse:collapse;font-size:13px}.v225-pending-table th,.v225-pending-table td{text-align:left;padding:9px;border-bottom:1px solid #e6edf4}.v225-pending-table td:last-child{white-space:nowrap}
+/* Keep wide month tables inside their own scroll area, including custom ranges. */
+.v168-expenses{grid-template-columns:minmax(0,1fr)}
+.v168-expenses>.v168-head,.v168-expenses .v175-monthly,.v168-expenses .v175-section{min-width:0;max-width:100%}
+.v168-expenses .v168-head{flex-wrap:wrap}
+.v168-expenses .v168-headmeta,.v168-expenses .v168-expense-controls{min-width:0;max-width:100%}
+
+/* V260: secondary detail within the existing coverage row. */
+.v168-decision .v260-deficit{display:block;margin-top:5px;font-size:12px;line-height:1.5;color:#536174;overflow-wrap:anywhere}.v168-decision .v260-deficit strong{font-size:inherit;font-weight:600;color:#a23b43}.v168-decision .v260-horizon{display:block;margin-top:4px;font-size:11px;color:#718096}
+
+/* Visible provenance beside received balances; a separate grid row keeps KPI cards compact. */
+.v225-balance-freshness{margin-top:10px;padding:10px;border:1px solid #d6dfe9;border-radius:8px;background:#f7f9fc;color:#42566b;font-size:12px;line-height:1.45;min-width:0;max-width:100%;overflow-wrap:anywhere;text-align:left;font-weight:400}
+.v168-kpis>.v225-balance-freshness[data-view="Dashboard"]{order:1;grid-column:1/-1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px 12px;margin-top:0}
+.v168-kpis>.v225-balance-freshness[data-view="Dashboard"]>.v225-freshness-title,.v168-kpis>.v225-balance-freshness[data-view="Dashboard"]>p{grid-column:1/-1}
+.v168-kpis>.v225-balance-freshness[data-view="Dashboard"]>.v225-freshness-bank{margin-top:0}
+@media(max-width:520px){.v168-kpis>.v225-balance-freshness[data-view="Dashboard"]{order:0;grid-template-columns:minmax(0,1fr)}}
+.v225-balance-freshness .v225-freshness-title{display:block;font-size:12px;color:#17304d}
+.v225-balance-freshness p{margin:4px 0;font-size:11px;line-height:1.45}
+.v225-freshness-bank{font-size:11px;line-height:1.45;margin-top:5px;min-width:0;overflow-wrap:anywhere}
+.v225-freshness-bank>b{font-size:11px;display:inline;line-height:1.45;color:#42566b}.v225-freshness-bank>small{display:block;font-size:10px;line-height:1.45}
+.v225-freshness-bank>div{font-size:11px;line-height:1.45}
+.v225-freshness-bank[data-freshness="previous-day"],.v225-freshness-bank[data-freshness="aged"],.v225-freshness-bank[data-freshness="unknown"]{border-left:3px solid #a87318;padding-left:7px}
+.v225-freshness-bank[data-freshness="aged"]>b{color:#8b421c}
+.v168-kpis>.v225-balance-freshness[data-view="Dashboard"]{display:block;background:transparent;border:0;padding:0}
+.v225-balance-freshness{border:0;background:transparent;padding:0}
+.lts-update-details{margin:6px 0;font-size:12px;line-height:1.5;color:#52657b;text-align:left;font-weight:400;max-width:100%}
+.lts-update-details>summary{cursor:pointer;min-height:32px;display:list-item;width:max-content;max-width:100%;color:#3e5f83;padding:6px 4px;box-sizing:border-box}
+.lts-update-details[open]{padding:8px 12px;background:#f7f9fc;border:1px solid #dbe4ed;border-radius:8px}
+.lts-update-details p{font-size:12px;line-height:1.5;white-space:normal;overflow-wrap:anywhere}
+.v225-freshness-bank>span{display:block}
+.lts-freshness-alert{border-left:3px solid #b98428;padding-left:8px;color:#755116}
+.lts-new-category{font-size:12px;line-height:1.45;min-width:0;max-width:100%;grid-column:1/-1}
+.lts-new-category summary{min-height:36px;padding:6px 0;box-sizing:border-box;cursor:pointer;color:#255b89}
+.lts-new-category[open]{padding:8px;background:#f4f8fc;border:1px solid #d7e2ed;border-radius:8px}
+.lts-new-category label,.lts-new-category input,.lts-new-category [role=status]{display:block;min-width:0;max-width:100%;box-sizing:border-box}
+.lts-new-category input{width:100%;margin:6px 0;font:inherit;min-height:42px}
+.lts-new-category button{min-height:42px;margin:4px 0}.lts-new-category [role=status]{font-size:12px;white-space:normal}
+.lts-phase{display:block;font-size:10px;line-height:1.35;font-weight:500;color:#5d7187}
+.lts-market-values{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.lts-market-values>div{display:grid;gap:5px;min-width:0}.lts-market-values b{font-size:22px}.lts-market-values small{font-size:11px;line-height:1.4;color:#617489}
+.lts-market-panel,.lts-future-bank{grid-column:1/-1;min-width:0;max-width:100%;box-sizing:border-box}
+.lts-future-bank{margin:12px 0}.lts-future-bank p{font-size:12px;line-height:1.5}.lts-future-bank summary{cursor:pointer;min-height:44px;padding:12px 0;box-sizing:border-box;font-size:13px}
+.lts-future-row{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid #e0e7ef}.lts-future-row b{font-size:13px}.lts-future-row small{display:block;margin-top:5px;font-size:11px}.lts-future-row>div{min-width:0;overflow-wrap:anywhere}.lts-future-row strong{white-space:nowrap}
+.v170-global-award[hidden],[data-v168-award-edit][hidden]{display:none!important}
+.lts-editing-update{margin:0;padding:8px 16px;background:#f1f6fb;color:#405e7b;font-size:12px;line-height:1.5}.lts-editing-update[hidden]{display:none!important}
+@media(max-width:600px){.lts-future-row{grid-template-columns:minmax(0,1fr) auto}.lts-future-row button{grid-column:1/-1;min-height:44px}.lts-market-values{gap:10px}.lts-market-values b{font-size:20px}.lts-future-bank>.v168-cardhead{flex-wrap:wrap}}
+@media(max-width:600px){.lts-update-details>summary{min-height:44px;padding:12px 4px}.lts-new-category summary{min-height:44px;padding:12px 0}select[data-lts-category]{min-height:44px;max-width:100%;font-size:16px}.v231-classification-dialog{width:calc(100vw - 28px);max-width:calc(100vw - 28px);box-sizing:border-box;padding:16px}.v231-classification-dialog label{min-width:0}}
+
+/* V385: monetary presentation buttons use the final ranking column at every width. */
+.v178-rankrow>button.v353-open:last-child{grid-column:-2/-1;justify-self:start;white-space:nowrap;overflow-wrap:normal;font-variant-numeric:tabular-nums}
+
+/* V385: scenario dates and monetary values stay visible in the action summary. */
+.v385-scenario-stats{display:grid;gap:8px;margin:10px 0 0;min-width:0}.v385-scenario-stats>div{min-width:0}.v385-scenario-stats dt{font-size:12px;color:#536174;line-height:1.5}.v385-scenario-stats dd{display:flex;flex-wrap:wrap;align-items:baseline;gap:3px 12px;margin:2px 0 0;font-size:13px;line-height:1.5}.v385-scenario-stats time,.v385-scenario-stats strong{white-space:nowrap;font-variant-numeric:tabular-nums}.v385-scenario-stats strong{font-size:inherit;font-weight:650;color:#284862}.v385-scenario-stats .negative{color:#a23b43}.v385-scenario-unavailable{display:block;margin-top:8px;font-size:12px;line-height:1.5;color:#795b20}
+
+/* V386: dated patrimony evidence and readable partial positions. */
+.v386-incomplete-value{font-size:clamp(22px,5vw,30px)!important;line-height:1.2!important;white-space:normal!important}
+.v386-fgts-origin,.v386-debt-basis{font-size:13px;line-height:1.5;color:#536174}
+.v386-fgts-origin{margin:8px 0 14px}.v386-fgts-origin summary{cursor:pointer;padding:6px 0}

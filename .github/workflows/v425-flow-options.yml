@@ -9,8 +9,6 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     container: mcr.microsoft.com/playwright:v1.58.2-noble
-    permissions:
-      contents: write
     env:
       PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
@@ -32,11 +30,8 @@ jobs:
           node .github/scripts/lts_v309_wait_http.cjs
       - name: Rendered financial parity, compact default, options and material warnings
         run: node .github/scripts/lts_v425_options_browser.cjs
-      - name: Store tested release objects without commits or branch changes
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-          REVIEWED_HEAD: ${{ github.event.pull_request.head.sha }}
-        run: python3 backend/tools/flow_options_v425/stage.py
+      - name: Verify current gates without rewinding historical routing
+        run: python3 backend/tools/report_presentation_v417/read_only_gates.py > qa/v425/current-static-gates.txt
       - uses: actions/upload-artifact@v4
         if: always()
         with:

@@ -37,7 +37,7 @@ async function run(browser,engine,width){
  });
  try{
   f=await open(h,target,true);await f.waitForFunction(()=>__LTS_V412_PROJECTION?.installed);
-  const concise=/\/releases\/v(?:417|421|423|425)\//.test(new URL(f.url()).pathname);
+  const concise=/\/releases\/v(?:417|421|423|425|433)\//.test(new URL(f.url()).pathname);
   if(!initialAuthError){await ready(f);await h.page.waitForLoadState('networkidle');
    await f.waitForFunction(()=>!__LTS_V168_STATE.dashboard.loading);
    assert.equal(await f.evaluate(()=>__LTS_V168_STATE.dashboard.data.flow.flow.current_future.days.at(-1).date),
@@ -50,7 +50,7 @@ async function run(browser,engine,width){
   else assert.equal(await f.locator('[data-v412-policy]').count(),0,'healthy Dashboard has no extra policy banner');
   await h.page.screenshot({path:out+'/'+engine+'-'+width+'-dashboard.png'});
   await go(f,'Fluxo Diário');const panel=()=>f.locator('[data-v412-policy="flow"]');
-  const optionsLayout=new URL(f.url()).pathname.includes('/releases/v425/');
+  const optionsLayout=['/releases/v425/','/releases/v433/'].some(p=>new URL(f.url()).pathname.includes(p));
   if(initialAuthError){await f.waitForFunction(()=>__LTS_V412_PROJECTION.status==='error');
    assert.match(await panel().innerText(),/Não foi possível conferir/);assert.equal(await f.evaluate(()=>__LTS_V412_PROJECTION.model),null);}
   mode='ok';await f.evaluate(()=>__LTS_V412_PROJECTION.load(true));await ready(f);
