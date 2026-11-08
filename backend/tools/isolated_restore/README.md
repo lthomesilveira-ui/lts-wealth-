@@ -41,6 +41,14 @@ not the artifact contents. Freezing an artifact proves which bytes accompanied t
 rehearsal; it does not validate the artifact's claims or turn external evidence
 into SQL coverage.
 
+Each external artifact must be valid UTF-8 JSON with exactly `component`,
+`capture_id`, `data_kind`, `captured_at` and `checks`. Its component, capture ID
+and data kind must match the manifest; its timestamp must be ISO 8601 with a
+timezone. `checks` is a non-empty list of unique names, boolean results and
+lowercase evidence digests. This prevents a mislabeled, cross-capture or arbitrary
+file from satisfying the artifact contract. Schema validation still does not
+authenticate the source or independently prove the checks.
+
 A private `manifest.json` must contain `data_kind` (`production` or `synthetic`)
 and a `sha256` mapping for exactly those four files. It must also identify one
 consistent capture and declare the status of every recovery component: database
@@ -84,6 +92,24 @@ into full recovery.
     "data.sql": "...",
     "acceptance.sql": "..."
   }
+}
+```
+
+Example private `evidence/storage_object_bytes.json`:
+
+```json
+{
+  "component": "storage_object_bytes",
+  "capture_id": "private-capture-id",
+  "data_kind": "production",
+  "captured_at": "2026-11-07T11:05:00Z",
+  "checks": [
+    {
+      "name": "object_inventory_digest",
+      "passed": true,
+      "evidence_sha256": "..."
+    }
+  ]
 }
 ```
 
@@ -157,5 +183,6 @@ still requires an authorized complete production export, independent source
 comparisons, actual Auth/API behavior, separately recovered Storage object bytes,
 and the remaining application consumers and replay/cache checks. An offline local
 copy or a synthetic test cannot close those criteria.
+
 
 
