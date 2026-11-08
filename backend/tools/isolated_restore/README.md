@@ -28,6 +28,10 @@ one row for every component declared `covered_by_sql_acceptance`. Each row conta
 set used by that component; it must not contain source values. Missing, duplicate,
 failed, extra or malformed rows make the rehearsal fail. This prevents a generic
 successful SQL script from being mistaken for complete declared coverage.
+The manifest must independently bind each SQL-covered component to its expected
+digest in `sql_acceptance_evidence_sha256`. A digest emitted only by
+`acceptance.sql` is self-declared and is rejected when it differs from that
+frozen expectation.
 
 A private `manifest.json` must contain `data_kind` (`production` or `synthetic`)
 and a `sha256` mapping for exactly those four files. It must also identify one
@@ -56,6 +60,13 @@ into full recovery.
     "application_consumers": "separate_evidence_required",
     "replay_and_cache": "not_captured"
   },
+  "sql_acceptance_evidence_sha256": {
+    "database_history": "...",
+    "auth_records": "...",
+    "storage_metadata": "...",
+    "roles_grants_rls": "...",
+    "application_consumers": "..."
+  },
   "sha256": {
     "roles.sql": "...",
     "schema.sql": "...",
@@ -66,7 +77,9 @@ into full recovery.
 ```
 
 The files are copied to a new private directory and checked against their hashes
-before any SQL is executed. The receipt preserves the capture declaration and
+before any SQL is executed. The expected SQL evidence mapping must contain exactly
+the components declared as covered by SQL, with lowercase SHA-256 values; missing,
+extra, malformed or mismatched expectations fail closed. The receipt preserves the capture declaration and
 lists SQL-covered components, components requiring separate evidence, and
 components not captured at all. The capture timestamp must be valid ISO 8601 and
 include a timezone. The compatibility list of all components outside SQL coverage

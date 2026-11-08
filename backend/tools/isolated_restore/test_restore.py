@@ -107,6 +107,13 @@ def rehash(directory):
             "application_consumers": "covered_by_sql_acceptance",
             "replay_and_cache": "not_captured",
         },
+        "sql_acceptance_evidence_sha256": {
+            "database_history": "1" * 64,
+            "auth_records": "2" * 64,
+            "storage_metadata": "3" * 64,
+            "roles_grants_rls": "4" * 64,
+            "application_consumers": "5" * 64,
+        },
         "sha256": {name: restore.digest(directory / name) for name in restore.INPUTS}
     }))
 
@@ -187,8 +194,13 @@ class InputGuards(FixtureCase, unittest.TestCase):
                 if state == "covered_by_sql_acceptance"
             ), start=1)
         ]
+        expected_digests = {
+            row["component"]: row["evidence_sha256"] for row in expected
+        }
         self.assertEqual(
-            restore.validate_sql_acceptance_evidence(expected, manifest["recovery_scope"]),
+            restore.validate_sql_acceptance_evidence(
+                expected, manifest["recovery_scope"], expected_digests
+            ),
             expected,
         )
         for bad in (
@@ -202,8 +214,14 @@ class InputGuards(FixtureCase, unittest.TestCase):
             with self.subTest(rows=bad):
                 with self.assertRaises(restore.RehearsalError):
                     restore.validate_sql_acceptance_evidence(
-                        bad, manifest["recovery_scope"]
+                        bad, manifest["recovery_scope"], expected_digests
                     )
+        mismatched = dict(expected_digests)
+        mismatched[expected[0]["component"]] = "f" * 64
+        with self.assertRaises(restore.RehearsalError):
+            restore.validate_sql_acceptance_evidence(
+                expected, manifest["recovery_scope"], mismatched
+            )
 
     def test_rejects_incomplete_recovery_scope(self):
         manifest_path = self.source / "manifest.json"
@@ -212,6 +230,21 @@ class InputGuards(FixtureCase, unittest.TestCase):
         manifest_path.write_text(json.dumps(manifest))
         with self.assertRaises(restore.RehearsalError):
             restore.freeze_inputs(self.source, self.root / "frozen")
+
+    def test_rejects_missing_or_malformed_expected_sql_evidence(self):
+        manifest_path = self.source / "manifest.json"
+        manifest = json.loads(manifest_path.read_text())
+        del manifest["sql_acceptance_evidence_sha256"]
+        manifest_path.write_text(json.dumps(manifest))
+        with self.assertRaises(restore.RehearsalError):
+            restore.freeze_inputs(self.source, self.root / "missing-evidence-map")
+
+        rehash(self.source)
+        manifest = json.loads(manifest_path.read_text())
+        manifest["sql_acceptance_evidence_sha256"]["database_history"] = "NOT-A-DIGEST"
+        manifest_path.write_text(json.dumps(manifest))
+        with self.assertRaises(restore.RehearsalError):
+            restore.freeze_inputs(self.source, self.root / "malformed-evidence-map")
 
     def test_rejects_unsupported_scope_state(self):
         manifest_path = self.source / "manifest.json"
@@ -293,6 +326,20 @@ class NativeRestore(FixtureCase, unittest.TestCase):
         self.assertIsNotNone(receipt, result.stdout + result.stderr)
         self.assertFalse(receipt["database_rehearsal_passed"])
         self.assertIn("server_settings", receipt)
+        self.assertTrue(receipt["cluster_stopped"])
+
+    def test_mismatched_structured_acceptance_evidence_is_rejected(self):
+        acceptance = self.source / "acceptance.sql"
+        acceptance.write_text(
+            acceptance.read_text().replace(
+                "('database_history',true,repeat('1',64))",
+                "('database_history',true,repeat('f',64))",
+            )
+        )
+        rehash(self.source)
+        result, receipt = self.invoke("mismatched-evidence")
+        self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertFalse(receipt["database_rehearsal_passed"])
         self.assertTrue(receipt["cluster_stopped"])
 
     def test_missing_structured_acceptance_evidence_is_rejected(self):
