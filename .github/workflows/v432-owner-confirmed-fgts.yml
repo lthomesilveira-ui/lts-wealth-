@@ -1,0 +1,40 @@
+name: V432 owner confirmed FGTS
+on:
+  pull_request:
+    paths: ['backend/patches/v432/**','backend/qa/lts_v432*','backend/qa/fixtures/v432/**','.github/workflows/v432-owner-confirmed-fgts.yml']
+permissions:
+  contents: read
+jobs:
+  native-fgts:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: synthetic-test-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: synthetic-test-only
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify additional redemption, zero position, history and rejected conflicts
+        run: psql -X -v ON_ERROR_STOP=1 -At -f backend/qa/lts_v432_fgts.sql
+      - name: Reject a divergent reader contract
+        run: |
+          createdb v432_guard
+          if psql -X -v ON_ERROR_STOP=1 -At -d v432_guard -f backend/qa/lts_v432_predecessor_guard.sql >v432-guard.log 2>&1; then
+            echo 'divergent predecessor was accepted' >&2
+            exit 1
+          fi
+          cat v432-guard.log
+          grep -Fq 'V432_PREDECESSOR_CHANGED' v432-guard.log
+
