@@ -89,6 +89,10 @@ INSERT INTO public.lts_recovery_acceptance(component,passed,evidence_sha256) VAL
         (directory / name).write_text(content)
     evidence = directory / "evidence"
     evidence.mkdir()
+    payload_directory = evidence / "payloads" / "storage_object_bytes"
+    payload_directory.mkdir(parents=True)
+    payload = payload_directory / "invented_object_digest.bin"
+    payload.write_bytes(b"invented storage object bytes\n")
     (evidence / "storage_object_bytes.json").write_text(json.dumps({
         "component": "storage_object_bytes",
         "capture_id": "synthetic-fixture-1",
@@ -97,7 +101,7 @@ INSERT INTO public.lts_recovery_acceptance(component,passed,evidence_sha256) VAL
         "checks": [{
             "name": "invented_object_digest",
             "passed": True,
-            "evidence_sha256": "6" * 64,
+            "evidence_sha256": restore.digest(payload),
         }],
     }))
     rehash(directory)
@@ -177,6 +181,13 @@ class InputGuards(FixtureCase, unittest.TestCase):
         self.assertEqual(
             restore.digest(frozen_evidence),
             manifest["separate_evidence_sha256"]["storage_object_bytes"],
+        )
+        frozen_payload = (frozen / "external_evidence_payloads" /
+                          "storage_object_bytes" / "invented_object_digest.bin")
+        self.assertEqual(frozen_payload.stat().st_mode & 0o777, 0o600)
+        self.assertEqual(
+            restore.digest(frozen_payload),
+            json.loads(frozen_evidence.read_text())["checks"][0]["evidence_sha256"],
         )
 
     def test_rejects_tampering(self):
@@ -323,7 +334,10 @@ class InputGuards(FixtureCase, unittest.TestCase):
             "checks": [{
                 "name": "invented_object_digest",
                 "passed": True,
-                "evidence_sha256": "6" * 64,
+                "evidence_sha256": restore.digest(
+                    self.source / "evidence" / "payloads" /
+                    "storage_object_bytes" / "invented_object_digest.bin"
+                ),
             }],
         }))
         rehash(self.source)
@@ -367,7 +381,13 @@ class InputGuards(FixtureCase, unittest.TestCase):
             {**original, "checks": [{
                 "name": "invented_object_digest",
                 "passed": "yes",
-                "evidence_sha256": "6" * 64,
+                "evidence_sha256": original["checks"][0]["evidence_sha256"],
+            }]},
+            {**original, "checks": [{
+                **original["checks"][0], "passed": False,
+            }]},
+            {**original, "checks": [{
+                **original["checks"][0], "name": "../escape",
             }]},
             {**original, "checks": [
                 original["checks"][0], original["checks"][0]
@@ -384,6 +404,45 @@ class InputGuards(FixtureCase, unittest.TestCase):
                     )
         artifact.write_text(json.dumps(original))
         rehash(self.source)
+
+    def test_external_evidence_payload_bytes_are_bound_and_exact(self):
+        payload_directory = (self.source / "evidence" / "payloads" /
+                             "storage_object_bytes")
+        payload = payload_directory / "invented_object_digest.bin"
+        original = payload.read_bytes()
+
+        payload.write_bytes(b"tampered payload")
+        with self.assertRaises(restore.RehearsalError):
+            restore.freeze_inputs(
+                self.source, self.root / "tampered-payload",
+                manifest_digest(self.source),
+            )
+
+        payload.write_bytes(original)
+        extra = payload_directory / "extra.bin"
+        extra.write_bytes(b"undeclared")
+        with self.assertRaises(restore.RehearsalError):
+            restore.freeze_inputs(
+                self.source, self.root / "extra-payload",
+                manifest_digest(self.source),
+            )
+
+        extra.unlink()
+        payload.unlink()
+        with self.assertRaises(restore.RehearsalError):
+            restore.freeze_inputs(
+                self.source, self.root / "missing-payload",
+                manifest_digest(self.source),
+            )
+
+        target = self.source / "payload-target.bin"
+        target.write_bytes(original)
+        payload.symlink_to(target)
+        with self.assertRaises(restore.RehearsalError):
+            restore.freeze_inputs(
+                self.source, self.root / "symlink-payload",
+                manifest_digest(self.source),
+            )
 
     def test_rejects_unsupported_scope_state(self):
         manifest_path = self.source / "manifest.json"
