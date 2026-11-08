@@ -1,0 +1,51 @@
+{
+  "state": "prepared_not_executed",
+  "synthetic_only": true,
+  "production_validated": false,
+  "runner": "run_postgres17.py",
+  "fresh_database": "wealth_synthetic_q26",
+  "cases": [
+    "PostgreSQL proves January 2000 Sao Paulo DST offset and exactly round-trips complete July origin decision and audit rows",
+    "one overlay preserves PENDING, first-installment and document decisions and all sources",
+    "backup includes complete protected sources and explicit prior absence",
+    "Established category/beneficiary semantic equivalents survive the synthetic parameterization",
+    "repeat apply is rejected without effects",
+    "rollback restores exact prior absence and target output while preserving audit",
+    "repeat rollback is rejected without effects",
+    "uncleared release gate aborts before all external actions",
+    "raw-hash drift blocks",
+    "1 ms purchase timestamp drift with unchanged hash blocks",
+    "normalized status drift blocks",
+    "PENDING beneficiary/decision drift blocks",
+    "historical audit drift blocks",
+    "new same-key source outside report interval blocks",
+    "final before-image drift blocks",
+    "disabled cache trigger blocks",
+    "function lease drift blocks",
+    "post-write outside-row change is atomic",
+    "post-write amount change is atomic",
+    "post-write raw-reference change is atomic",
+    "post-write classification failure is atomic",
+    "post-write missing occurrence is atomic",
+    "rollback does not overwrite a later decision",
+    "rollback does not overwrite later target output",
+    "rollback compares entire protected source, including administrative fields",
+    "rollback pins the manifest in its receipt",
+    "two simultaneous applications serialize on real table locks"
+  ],
+  "remaining_integration_gates": [
+    "current production consumer-chain permissions and full transitive function contracts",
+    "production schema, owners, ACL, RLS and additional trigger inventory",
+    "actual cache invalidation semantics and affected owners",
+    "independent invoice/payment/flow invariance",
+    "authenticated UI and post-commit read-only readback if authorized"
+  ],
+  "not_authorized": [
+    "production execution",
+    "publication",
+    "merge",
+    "deduplication",
+    "pending deletion"
+  ],
+  "expected_runner_cases": 25
+}

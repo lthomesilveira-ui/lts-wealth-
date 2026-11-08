@@ -1,0 +1,23 @@
+{
+  "apply_control_bindings": [
+    "Replace the held lease JSON literal with a fresh synthetic lease generated in the disposable database",
+    "Replace the private fixed-scope JSON literal with the synthetic evidence-derived scope",
+    "Replace the production required-catalog JSON literal with the declared synthetic dependency set",
+    "Replace the external decision date literal with the synthetic date 2020-10-16"
+  ],
+  "rollback_control_bindings": [
+    "Replace the held rollback lease JSON literal with a separate fresh synthetic lease",
+    "Replace the private fixed-scope JSON literal with the synthetic evidence-derived scope",
+    "Replace the production required-catalog JSON literal with the declared synthetic dependency set"
+  ],
+  "consumer_bodies": "The complete original/candidate bodies are reused byte-for-byte from the independently reviewed sanitized consumer fixture. The two UNBOUND fingerprint literals are bound only to the canonical SHA256 calculated by PostgreSQL from synthetic evidence.",
+  "test_only_injection": "For exactly one apply case and one rollback case, append RAISE EXCEPTION immediately before the DO's closing END. This is used only to prove final-statement atomic failure and never enters a release.",
+  "production_control_flow_changes": "None beyond the declared bindings. A private local proof reconstructs each held control byte-for-byte.",
+  "claims": {
+    "sql_executed_during_preparation": false,
+    "production_lease_populated": false,
+    "consumer_chain_104_reproduced": false,
+    "permission_change_for_production": false,
+    "export_authorized_by_this_file": false
+  }
+}

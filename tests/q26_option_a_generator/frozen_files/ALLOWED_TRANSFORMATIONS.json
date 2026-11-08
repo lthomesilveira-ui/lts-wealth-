@@ -1,0 +1,54 @@
+{
+  "version": 1,
+  "body_count": 4,
+  "transformations": [
+    {
+      "kind": "reversible personal-label substitution",
+      "targets": [
+        "FixturePersonAlpha",
+        "FixturePersonBeta",
+        "FixturePersonGamma",
+        "FixturePersonDelta"
+      ],
+      "scope": "all four complete bodies including regex and derived labels"
+    },
+    {
+      "kind": "reversible property-label substitution",
+      "targets": [
+        "fixture_property_001",
+        "FIXTURE PROPERTY 001",
+        "Fixture Property 001"
+      ],
+      "scope": "all four complete bodies"
+    },
+    {
+      "kind": "reversible employer-label substitution",
+      "targets": [
+        "fixture_employer",
+        "FixtureEmployer",
+        "FIXTURE_EMPLOYER"
+      ],
+      "scope": "all four complete bodies and derived category strings"
+    },
+    {
+      "kind": "opaque operation UUID substitution",
+      "target": "55555555-5555-4555-8555-555555555555",
+      "scope": "both candidate bodies"
+    },
+    {
+      "kind": "canonical pin runtime binding",
+      "from_token": "UNBOUND_CANONICAL_SHA256_REQUIRES_PG17_REVIEW",
+      "to": "PostgreSQL-calculated SHA256 of synthetic immutable projection",
+      "occurrences_per_candidate": 2
+    }
+  ],
+  "roundtrip_all_four_exact": true,
+  "no_real_date_literals_in_four_bodies": true,
+  "synthetic_inputs": "All case data invented and separately mapped privately; not real snapshots.",
+  "prohibited": [
+    "editing frozen prototype",
+    "publishing private map or source snapshots",
+    "changing consumer signatures, body structure, auth calls or configs",
+    "production SQL or permission changes"
+  ]
+}
