@@ -1,0 +1,32 @@
+[
+  {
+    "signature": "public.lts_card_payment_refresh_annotation_v273(uuid,jsonb,jsonb,jsonb,jsonb,date)",
+    "before_md5": "18ff33beb8fb18fd6e8e3cbc3773927c",
+    "after_md5": "fae7df78dd9b93ef4ec0d687684a9575",
+    "edits": [
+      {
+        "old": "AND ((p_invoice->'raw_payload') - 'updatedAt')=p_contract->'invoice_canonical_payload'",
+        "new": "AND CASE WHEN p_contract->>'issuer_settlement_policy'='one_c6_other_payment_in_cycle_v351' THEN public.lts_card_later_issuer_payments_valid_v428(p_invoice,p_contract,p_link) ELSE ((p_invoice->'raw_payload') - 'updatedAt')=p_contract->'invoice_canonical_payload' END"
+      },
+      {
+        "old": "AND p_invoice#>'{raw_payload,payments}'=p_contract->'issuer_payments'",
+        "new": "AND CASE WHEN p_contract->>'issuer_settlement_policy'='one_c6_other_payment_in_cycle_v351' AND p_contract->>'invoice_evidence_policy'='raw_except_updatedAt_v1' THEN public.lts_card_later_issuer_payments_valid_v428(p_invoice,p_contract,p_link) ELSE p_invoice#>'{raw_payload,payments}'=p_contract->'issuer_payments' END"
+      }
+    ]
+  },
+  {
+    "signature": "public.lts_card_settlement_evidence_valid_v273(uuid,uuid,jsonb,jsonb,jsonb,jsonb,date,jsonb,jsonb)",
+    "before_md5": "991a801162907b2c92fa1773490c526b",
+    "after_md5": "ae021358126947745f50673239ee2263",
+    "edits": [
+      {
+        "old": "AND ((p_invoice->'raw_payload') - 'updatedAt')=p_contract->'invoice_canonical_payload'",
+        "new": "AND CASE WHEN p_contract->>'issuer_settlement_policy'='one_c6_other_payment_in_cycle_v351' THEN public.lts_card_later_issuer_payments_valid_v428(p_invoice,p_contract,p_link) ELSE ((p_invoice->'raw_payload') - 'updatedAt')=p_contract->'invoice_canonical_payload' END"
+      },
+      {
+        "old": "AND p_invoice#>'{raw_payload,payments}'=p_contract->'issuer_payments'",
+        "new": "AND CASE WHEN p_contract->>'issuer_settlement_policy'='one_c6_other_payment_in_cycle_v351' AND p_contract->>'invoice_evidence_policy'='raw_except_updatedAt_v1' THEN public.lts_card_later_issuer_payments_valid_v428(p_invoice,p_contract,p_link) ELSE p_invoice#>'{raw_payload,payments}'=p_contract->'issuer_payments' END"
+      }
+    ]
+  }
+]

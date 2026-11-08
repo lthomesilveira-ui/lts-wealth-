@@ -1,3 +1,5 @@
+> Current continuation: read [CURRENT_EXECUTION_SOURCES.md](CURRENT_EXECUTION_SOURCES.md) before historical state below. The live entry and dated private evidence supersede old version headers; no prior request or acceptance is erased.
+
 # LTS Wealth — Matriz de Requisitos, Decisões e Validações
 
 Última auditoria material: 10/09/2026 — recuperação do Fluxo
