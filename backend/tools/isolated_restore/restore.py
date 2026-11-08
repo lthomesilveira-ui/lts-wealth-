@@ -178,11 +178,15 @@ def verify_isolation(outer_namespace: str) -> dict:
             "ipv6_unreachable": True}
 
 
-def freeze_inputs(source: Path, destination: Path) -> dict:
+def freeze_inputs(source: Path, destination: Path, expected_manifest_sha256: str) -> dict:
     manifest_path = source / "manifest.json"
     if not manifest_path.is_file() or manifest_path.is_symlink():
         raise RehearsalError("A regular manifest.json file is required")
-    manifest = json.loads(manifest_path.read_text())
+    manifest_bytes = manifest_path.read_bytes()
+    actual_manifest_sha256 = hashlib.sha256(manifest_bytes).hexdigest()
+    if actual_manifest_sha256 != expected_manifest_sha256:
+        raise RehearsalError("The manifest did not match the independently supplied digest")
+    manifest = json.loads(manifest_bytes)
     validate_manifest(manifest)
     expected = manifest.get("sha256", {})
     if set(expected) != set(INPUTS):
@@ -197,9 +201,12 @@ def freeze_inputs(source: Path, destination: Path) -> dict:
         frozen.chmod(0o600)
         if digest(frozen) != expected[name]:
             raise RehearsalError("An input hash did not match its manifest")
-    (destination / "manifest.json").write_text(json.dumps(manifest, indent=2))
-    (destination / "manifest.json").chmod(0o600)
-    return manifest
+    frozen_manifest = destination / "manifest.json"
+    frozen_manifest.write_bytes(manifest_bytes)
+    frozen_manifest.chmod(0o600)
+    if digest(frozen_manifest) != expected_manifest_sha256:
+        raise RehearsalError("The frozen manifest did not preserve its supplied digest")
+    return manifest, actual_manifest_sha256
 
 
 def child_environment() -> dict:
@@ -226,9 +233,13 @@ def rehearse(args) -> int:
         output.mkdir(mode=0o700, parents=False, exist_ok=False)
         output_created = True
         frozen = output / "input"
-        manifest = freeze_inputs(args.input.resolve(), frozen)
+        manifest, manifest_sha256 = freeze_inputs(
+            args.input.resolve(), frozen, args.manifest_sha256
+        )
         receipt["data_kind"] = manifest["data_kind"]
         receipt["capture"] = manifest["capture"]
+        receipt["manifest_sha256"] = manifest_sha256
+        receipt["manifest_digest_supplied_independently"] = True
         receipt["recovery_scope"] = manifest["recovery_scope"]
         receipt.update(recovery_scope_summary(manifest["recovery_scope"]))
         receipt["input_sha256"] = manifest["sha256"]
@@ -337,11 +348,17 @@ def main() -> int:
     parser.add_argument("--output", type=Path, required=True,
                         help="A new private directory; existing paths are rejected")
     parser.add_argument("--pg-bin", type=Path, required=True)
+    parser.add_argument(
+        "--manifest-sha256", required=True,
+        help="SHA-256 retained independently from the input directory"
+    )
     parser.add_argument("--timeout", type=int, default=1800)
     parser.add_argument("--outer-namespace", help=argparse.SUPPRESS)
     args = parser.parse_args()
     if args.timeout < 1:
         parser.error("timeout must be positive")
+    if not SHA256_PATTERN.fullmatch(args.manifest_sha256):
+        parser.error("manifest-sha256 must be a lowercase SHA-256 value")
     if args.outer_namespace:
         return rehearse(args)
     if args.output.exists() or args.output.is_symlink():

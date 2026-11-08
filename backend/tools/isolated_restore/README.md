@@ -86,6 +86,14 @@ include a timezone. The compatibility list of all components outside SQL coverag
 is retained for existing receipt consumers. The manifest is an integrity record,
 not a source-authenticity attestation.
 
+Before handing the input directory to this tool, retain the exact SHA-256 of
+`manifest.json` through an independent authorized channel. Supplying a digest
+calculated from the same untrusted directory at execution time defeats this guard.
+The rehearsal rejects a manifest changed after that digest was retained and copies
+the exact verified manifest bytes into the private output. This detached digest
+binds the bundle presented to the rehearsal; it is not a digital signature and
+does not by itself prove source authenticity.
+
 Use a PostgreSQL 17 runtime with every extension and managed-schema prerequisite
 needed by the official export. Missing extensions are a hard failure. Never strip
 an extension, grant, trigger or protected dataset to make the test pass.
@@ -96,7 +104,8 @@ an extension, grant, trigger or protected dataset to make the test pass.
 python3 backend/tools/isolated_restore/restore.py \
   --input /absolute/private/export \
   --output /absolute/private/new-rehearsal \
-  --pg-bin /absolute/postgresql/17/bin
+  --pg-bin /absolute/postgresql/17/bin \
+  --manifest-sha256 independently-retained-lowercase-sha256
 ```
 
 The host must permit an unprivileged Linux user/network namespace. The command
