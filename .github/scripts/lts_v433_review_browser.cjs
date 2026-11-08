@@ -48,7 +48,7 @@ async function run(browser,engine,width){
   after.mode='one';await search(after,'one');await f.waitForFunction(()=>__LTS_V181_STATE.review.status==='ready'&&__LTS_V181_STATE.review.data.row_count===1);
   assert.match(await f.locator('#v181ReviewQueue').innerText(),/Despesa de teste/);
   const known=await f.evaluate(()=>JSON.stringify(__LTS_V181_STATE.review.data));
-  after.mode='failed';await f.locator('[data-v181-review-search]').click();await f.waitForFunction(()=>__LTS_V181_STATE.review.status==='error');
+  after.mode='failed';await f.evaluate(()=>__LTS_V227_TRANSPORT.invalidate(false));await f.locator('[data-v181-review-search]').click();await f.waitForFunction(()=>__LTS_V181_STATE.review.status==='error');
   assert.equal(await f.evaluate(()=>JSON.stringify(__LTS_V181_STATE.review.data)),known);
   assert.match(await f.locator('#v181ReviewQueue').innerText(),/informações anteriores podem estar desatualizadas/);
   const warningHeight=await f.locator('#v181ReviewQueue [role=status]').evaluate(n=>n.getBoundingClientRect().height);assert(warningHeight<150);
@@ -59,12 +59,12 @@ async function run(browser,engine,width){
   assert.match(await f.locator('#v181ReviewQueue').innerText(),/Não foi possível carregar/);
   assert.match(await f.locator('#v296IncomeQueue').innerText(),/Nenhuma receita sem classificação/,'independent list still available');
   await after.page.screenshot({path:out+'/'+engine+'-'+width+'-unknown.png'});
-  after.mode='empty';await f.locator('[data-v181-review-retry]').click();await f.waitForFunction(()=>__LTS_V181_STATE.review.status==='ready');
+  after.mode='empty';await f.evaluate(()=>__LTS_V227_TRANSPORT.invalidate(false));await f.locator('[data-v181-review-retry]').click();await f.waitForFunction(()=>__LTS_V181_STATE.review.status==='ready');
   await go(f,'Fluxo Diário');await go(before.frame,'Fluxo Diário');
   for(const x of [f,before.frame])await x.waitForFunction(()=>!FLOWLOADING&&FLOWQ?.flow);
   assert.equal(hash(await f.evaluate(()=>FLOWQ)),hash(await before.frame.evaluate(()=>FLOWQ)),'full flow response unchanged');
   await f.locator('button.exp[data-d="2026-11-05"]').click();
-  assert.match(await f.locator('#d-2026-11-05').innerText(),/Resgate FGTS/);
+  assert.match(await f.locator('#d-2026-11-05 + .fx89-details').innerText(),/Resgate FGTS/);
   assert.equal(await f.locator('.v425-options[open]').count(),0,'secondary controls remain closed');
   await f.locator('.v425-options>summary').click();assert.equal(await f.locator('.v425-options[open]').count(),1);await after.page.screenshot({path:out+'/'+engine+'-'+width+'-options.png'});
   await after.page.keyboard.press('Escape');await go(f,'Dashboard');await go(f,'Atualizações');
