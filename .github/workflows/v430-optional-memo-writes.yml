@@ -38,4 +38,4 @@ jobs:
             exit 1
           fi
           cat v430-guard.log
-          rg -q 'V430_PREDECESSOR_CHANGED' v430-guard.log
+          grep -Fq 'V430_PREDECESSOR_CHANGED' v430-guard.log
