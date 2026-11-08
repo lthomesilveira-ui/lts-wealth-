@@ -20,6 +20,20 @@ import time
 
 
 INPUTS = ("roles.sql", "schema.sql", "data.sql", "acceptance.sql")
+RECOVERY_COMPONENTS = (
+    "database_history",
+    "auth_records",
+    "storage_metadata",
+    "storage_object_bytes",
+    "roles_grants_rls",
+    "application_consumers",
+    "replay_and_cache",
+)
+SCOPE_STATES = {
+    "covered_by_sql_acceptance",
+    "separate_evidence_required",
+    "not_captured",
+}
 
 
 class RehearsalError(Exception):
@@ -32,6 +46,28 @@ def digest(path: Path) -> str:
         for block in iter(lambda: source.read(1024 * 1024), b""):
             h.update(block)
     return h.hexdigest()
+
+
+def validate_manifest(manifest: dict) -> None:
+    if manifest.get("data_kind") not in ("synthetic", "production"):
+        raise RehearsalError("The manifest must identify the data kind")
+    capture = manifest.get("capture")
+    if not isinstance(capture, dict):
+        raise RehearsalError("The manifest must declare one capture")
+    if not isinstance(capture.get("id"), str) or not capture["id"].strip():
+        raise RehearsalError("The capture must have a non-empty identifier")
+    if not isinstance(capture.get("captured_at"), str) or not capture["captured_at"].strip():
+        raise RehearsalError("The capture must have a timestamp")
+    if capture.get("consistent_snapshot") is not True:
+        raise RehearsalError("The SQL inputs must belong to one consistent snapshot")
+    scope = manifest.get("recovery_scope")
+    if not isinstance(scope, dict) or set(scope) != set(RECOVERY_COMPONENTS):
+        raise RehearsalError("The manifest must declare every recovery component")
+    invalid = {name: state for name, state in scope.items() if state not in SCOPE_STATES}
+    if invalid:
+        raise RehearsalError("The manifest contains an unsupported recovery scope state")
+    if scope["database_history"] != "covered_by_sql_acceptance":
+        raise RehearsalError("Database history must be covered by SQL acceptance")
 
 
 def verify_isolation(outer_namespace: str) -> dict:
@@ -61,8 +97,7 @@ def freeze_inputs(source: Path, destination: Path) -> dict:
     if not manifest_path.is_file() or manifest_path.is_symlink():
         raise RehearsalError("A regular manifest.json file is required")
     manifest = json.loads(manifest_path.read_text())
-    if manifest.get("data_kind") not in ("synthetic", "production"):
-        raise RehearsalError("The manifest must identify the data kind")
+    validate_manifest(manifest)
     expected = manifest.get("sha256", {})
     if set(expected) != set(INPUTS):
         raise RehearsalError("The manifest must hash every required input")
@@ -107,6 +142,12 @@ def rehearse(args) -> int:
         frozen = output / "input"
         manifest = freeze_inputs(args.input.resolve(), frozen)
         receipt["data_kind"] = manifest["data_kind"]
+        receipt["capture"] = manifest["capture"]
+        receipt["recovery_scope"] = manifest["recovery_scope"]
+        receipt["components_requiring_separate_evidence"] = sorted(
+            name for name, state in manifest["recovery_scope"].items()
+            if state != "covered_by_sql_acceptance"
+        )
         receipt["input_sha256"] = manifest["sha256"]
         pg_bin = args.pg_bin.resolve()
         version = subprocess.check_output([str(pg_bin / "postgres"), "--version"],
@@ -222,3 +263,4 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
