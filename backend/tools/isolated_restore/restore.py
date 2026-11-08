@@ -12,6 +12,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import re
 import shutil
 import socket
 import subprocess
@@ -35,6 +36,8 @@ SCOPE_STATES = {
     "separate_evidence_required",
     "not_captured",
 }
+ACCEPTANCE_EVIDENCE_TABLE = "public.lts_recovery_acceptance"
+SHA256_PATTERN = re.compile(r"^[0-9a-f]{64}$")
 
 
 class RehearsalError(Exception):
@@ -101,6 +104,34 @@ def recovery_scope_summary(scope: dict) -> dict:
             if state != "covered_by_sql_acceptance"
         ),
     }
+
+
+def validate_sql_acceptance_evidence(rows: list[dict], scope: dict) -> list[dict]:
+    """Require one successful, digested result for every SQL-covered component."""
+    expected = {
+        name for name, state in scope.items()
+        if state == "covered_by_sql_acceptance"
+    }
+    if not isinstance(rows, list):
+        raise RehearsalError("SQL acceptance evidence must be a list")
+    components = [row.get("component") for row in rows if isinstance(row, dict)]
+    if len(components) != len(rows) or len(set(components)) != len(components):
+        raise RehearsalError("SQL acceptance evidence has invalid or duplicate components")
+    if set(components) != expected:
+        raise RehearsalError("SQL acceptance evidence does not match declared coverage")
+    normalized = []
+    for row in rows:
+        if row.get("passed") is not True:
+            raise RehearsalError("A SQL-covered recovery component did not pass")
+        evidence_sha256 = row.get("evidence_sha256")
+        if not isinstance(evidence_sha256, str) or not SHA256_PATTERN.fullmatch(evidence_sha256):
+            raise RehearsalError("SQL acceptance evidence requires a lowercase SHA-256 digest")
+        normalized.append({
+            "component": row["component"],
+            "passed": True,
+            "evidence_sha256": evidence_sha256,
+        })
+    return sorted(normalized, key=lambda row: row["component"])
 
 
 def verify_isolation(outer_namespace: str) -> dict:
@@ -236,6 +267,16 @@ def rehearse(args) -> int:
                             "EXECUTE 'UPDATE cron.job SET active=false'; END IF; END $offline$;")
             run(psql + ["-c", disable_jobs])
             run(psql + ["-f", str(frozen / "acceptance.sql")], timeout=args.timeout)
+            evidence_sql = (
+                "select coalesce(json_agg(json_build_object("
+                "'component',component,'passed',passed,'evidence_sha256',evidence_sha256) "
+                "order by component),'[]'::json)::text from "
+                f"{ACCEPTANCE_EVIDENCE_TABLE};"
+            )
+            evidence_rows = json.loads(run(psql + ["-At", "-c", evidence_sql], capture=True))
+            receipt["sql_acceptance_evidence"] = validate_sql_acceptance_evidence(
+                evidence_rows, manifest["recovery_scope"]
+            )
             settings_after = json.loads(run(psql + ["-At", "-c", settings_sql], capture=True))
             if settings_after != settings:
                 raise RehearsalError("Restore altered an isolation setting")

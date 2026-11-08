@@ -21,6 +21,14 @@ Counts alone do not prove identical values. Source inventories and expected
 results must share the export's consistent snapshot; unrelated daily snapshots
 must not be combined and certified as a single capture.
 
+The acceptance script must create `public.lts_recovery_acceptance` with exactly
+one row for every component declared `covered_by_sql_acceptance`. Each row contains
+`component text`, `passed boolean` and a lowercase 64-character
+`evidence_sha256`. The digest identifies the independently derived expectation
+set used by that component; it must not contain source values. Missing, duplicate,
+failed, extra or malformed rows make the rehearsal fail. This prevents a generic
+successful SQL script from being mistaken for complete declared coverage.
+
 A private `manifest.json` must contain `data_kind` (`production` or `synthetic`)
 and a `sha256` mapping for exactly those four files. It must also identify one
 consistent capture and declare the status of every recovery component: database
@@ -90,7 +98,8 @@ The server is stopped after success or failure. The stopped cluster, immutable
 input copy, private log and `receipt.json` remain in the private output directory.
 Keep this directory outside source control and outside any published artifact.
 Raw logs can contain sensitive source values. Receipts expose only verification
-state, runtime settings and hashes. They always keep whole-app certification false.
+state, runtime settings and hashes, including the structured SQL evidence matrix.
+They always keep whole-app certification false.
 
 ## Verification and remaining boundary
 
