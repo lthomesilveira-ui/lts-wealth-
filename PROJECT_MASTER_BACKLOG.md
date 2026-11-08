@@ -1,3 +1,5 @@
+> Current continuation: read [CURRENT_EXECUTION_SOURCES.md](CURRENT_EXECUTION_SOURCES.md) before historical state below. The live entry and dated private evidence supersede old version headers; no prior request or acceptance is erased.
+
 # Estado vigente do backlog — V285, 17/10/2026
 
 Aplicativo: https://lthomesilveira-ui.github.io/lts-wealth-/releases/v285/app.html
