@@ -54,6 +54,11 @@ COPY public.ledger(id,owner_name,amount) FROM stdin;
 \\.
 """,
         "acceptance.sql": """
+CREATE TABLE public.lts_recovery_acceptance(
+ component text PRIMARY KEY,
+ passed boolean NOT NULL,
+ evidence_sha256 text NOT NULL
+);
 DO $$BEGIN
  IF (SELECT count(*) FROM auth.users)<>2 THEN RAISE EXCEPTION 'auth count'; END IF;
  IF (SELECT count(*) FROM storage.objects)<>1 THEN RAISE EXCEPTION 'metadata'; END IF;
@@ -72,6 +77,12 @@ DO $$BEGIN
  THEN RAISE EXCEPTION 'other role'; END IF;
 END$$;
 RESET ROLE;
+INSERT INTO public.lts_recovery_acceptance(component,passed,evidence_sha256) VALUES
+ ('database_history',true,repeat('1',64)),
+ ('auth_records',true,repeat('2',64)),
+ ('storage_metadata',true,repeat('3',64)),
+ ('roles_grants_rls',true,repeat('4',64)),
+ ('application_consumers',true,repeat('5',64));
 """,
     }
     for name, content in contents.items():
@@ -167,6 +178,33 @@ class InputGuards(FixtureCase, unittest.TestCase):
         self.assertEqual(summary["components_requiring_separate_evidence"],
                          ["replay_and_cache", "storage_object_bytes"])
 
+    def test_sql_acceptance_evidence_must_match_declared_coverage(self):
+        manifest = json.loads((self.source / "manifest.json").read_text())
+        expected = [
+            {"component": name, "passed": True, "evidence_sha256": str(i) * 64}
+            for i, name in enumerate(sorted(
+                key for key, state in manifest["recovery_scope"].items()
+                if state == "covered_by_sql_acceptance"
+            ), start=1)
+        ]
+        self.assertEqual(
+            restore.validate_sql_acceptance_evidence(expected, manifest["recovery_scope"]),
+            expected,
+        )
+        for bad in (
+            expected[:-1],
+            expected + [expected[0]],
+            [{**row, "passed": False} if index == 0 else row
+             for index, row in enumerate(expected)],
+            [{**row, "evidence_sha256": "not-a-digest"} if index == 0 else row
+             for index, row in enumerate(expected)],
+        ):
+            with self.subTest(rows=bad):
+                with self.assertRaises(restore.RehearsalError):
+                    restore.validate_sql_acceptance_evidence(
+                        bad, manifest["recovery_scope"]
+                    )
+
     def test_rejects_incomplete_recovery_scope(self):
         manifest_path = self.source / "manifest.json"
         manifest = json.loads(manifest_path.read_text())
@@ -225,6 +263,11 @@ class NativeRestore(FixtureCase, unittest.TestCase):
         self.assertEqual(receipt["components_not_captured"], ["replay_and_cache"])
         self.assertEqual(receipt["components_with_separate_evidence_required"],
                          ["storage_object_bytes"])
+        self.assertEqual(
+            [row["component"] for row in receipt["sql_acceptance_evidence"]],
+            ["application_consumers", "auth_records", "database_history",
+             "roles_grants_rls", "storage_metadata"],
+        )
         original = (self.root / "success" / "receipt.json").read_bytes()
         repeated, _ = self.invoke("success")
         self.assertNotEqual(repeated.returncode, 0)
@@ -250,6 +293,19 @@ class NativeRestore(FixtureCase, unittest.TestCase):
         self.assertIsNotNone(receipt, result.stdout + result.stderr)
         self.assertFalse(receipt["database_rehearsal_passed"])
         self.assertIn("server_settings", receipt)
+        self.assertTrue(receipt["cluster_stopped"])
+
+    def test_missing_structured_acceptance_evidence_is_rejected(self):
+        acceptance = self.source / "acceptance.sql"
+        acceptance.write_text(
+            acceptance.read_text().split(
+                "CREATE TABLE public.lts_recovery_acceptance", 1
+            )[0] + "SELECT 1;\n"
+        )
+        rehash(self.source)
+        result, receipt = self.invoke("missing-evidence")
+        self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertFalse(receipt["database_rehearsal_passed"])
         self.assertTrue(receipt["cluster_stopped"])
 
 
