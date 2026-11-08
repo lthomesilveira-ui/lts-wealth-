@@ -38,6 +38,7 @@ SCOPE_STATES = {
 }
 ACCEPTANCE_EVIDENCE_TABLE = "public.lts_recovery_acceptance"
 SHA256_PATTERN = re.compile(r"^[0-9a-f]{64}$")
+CHECK_NAME_PATTERN = re.compile(r"^[a-z0-9][a-z0-9_-]{0,63}$")
 
 
 class RehearsalError(Exception):
@@ -203,10 +204,12 @@ def validate_external_evidence_artifact(payload: dict, component: str, manifest:
             "name", "passed", "evidence_sha256"
         }:
             raise RehearsalError("External evidence checks must use the required schema")
-        if not isinstance(check["name"], str) or not check["name"].strip():
-            raise RehearsalError("External evidence check names must be non-empty")
-        if not isinstance(check["passed"], bool):
-            raise RehearsalError("External evidence check results must be boolean")
+        if not isinstance(check["name"], str) or not CHECK_NAME_PATTERN.fullmatch(
+            check["name"]
+        ):
+            raise RehearsalError("External evidence check names must be safe file stems")
+        if check["passed"] is not True:
+            raise RehearsalError("Every required external evidence check must pass")
         if not isinstance(check["evidence_sha256"], str) or not SHA256_PATTERN.fullmatch(
             check["evidence_sha256"]
         ):
@@ -214,6 +217,31 @@ def validate_external_evidence_artifact(payload: dict, component: str, manifest:
         names.append(check["name"])
     if len(set(names)) != len(names):
         raise RehearsalError("External evidence check names must be unique")
+
+
+def freeze_external_evidence_payloads(
+    source: Path, destination: Path, component: str, artifact: dict
+) -> None:
+    """Freeze and verify the exact bytes named by every external check."""
+    source_directory = source / "evidence" / "payloads" / component
+    if not source_directory.is_dir() or source_directory.is_symlink():
+        raise RehearsalError("External evidence payloads require a regular directory")
+    expected_names = {f"{check['name']}.bin" for check in artifact["checks"]}
+    actual_names = {entry.name for entry in source_directory.iterdir()}
+    if actual_names != expected_names:
+        raise RehearsalError("External evidence payload inventory does not match its checks")
+    frozen_directory = destination / "external_evidence_payloads" / component
+    frozen_directory.mkdir(mode=0o700, parents=True)
+    for check in sorted(artifact["checks"], key=lambda item: item["name"]):
+        name = f"{check['name']}.bin"
+        original = source_directory / name
+        if not original.is_file() or original.is_symlink():
+            raise RehearsalError("Every external evidence payload must be a regular file")
+        frozen = frozen_directory / name
+        shutil.copyfile(original, frozen)
+        frozen.chmod(0o600)
+        if digest(frozen) != check["evidence_sha256"]:
+            raise RehearsalError("External evidence payload bytes do not match their check")
 
 
 def verify_isolation(outer_namespace: str) -> dict:
@@ -283,6 +311,7 @@ def freeze_inputs(source: Path, destination: Path, expected_manifest_sha256: str
         except (UnicodeDecodeError, json.JSONDecodeError) as exc:
             raise RehearsalError("External evidence must be valid UTF-8 JSON") from exc
         validate_external_evidence_artifact(artifact, component, manifest)
+        freeze_external_evidence_payloads(source, destination, component, artifact)
         frozen_external_evidence.append({
             "component": component,
             "evidence_sha256": actual,

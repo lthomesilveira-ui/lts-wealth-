@@ -45,9 +45,14 @@ Each external artifact must be valid UTF-8 JSON with exactly `component`,
 `capture_id`, `data_kind`, `captured_at` and `checks`. Its component, capture ID
 and data kind must match the manifest; its timestamp must be ISO 8601 with a
 timezone. `checks` is a non-empty list of unique names, boolean results and
-lowercase evidence digests. This prevents a mislabeled, cross-capture or arbitrary
-file from satisfying the artifact contract. Schema validation still does not
-authenticate the source or independently prove the checks.
+lowercase evidence digests. Every check must pass, and its name must be a safe
+lowercase file stem. Put the exact private bytes behind each check at
+`evidence/payloads/<component>/<check-name>.bin`. The tool requires an exact file
+inventory, copies those payloads privately and verifies their actual SHA-256 values
+against the check. This prevents a mislabeled, cross-capture, arbitrary or
+self-declared digest from satisfying the artifact contract. Byte binding still
+does not authenticate the source or establish that a check's interpretation is
+correct.
 
 A private `manifest.json` must contain `data_kind` (`production` or `synthetic`)
 and a `sha256` mapping for exactly those four files. It must also identify one
@@ -125,8 +130,9 @@ not a source-authenticity attestation.
 
 The external evidence mapping must likewise contain exactly the components marked
 `separate_evidence_required`. Missing files, symlinks, malformed digests, extra
-components or changed bytes fail closed. The frozen artifacts stay private beside
-the stopped cluster and are not published or embedded in the receipt.
+components, failed checks, missing/extra payloads or changed bytes fail closed.
+The frozen artifacts and their bound payload bytes stay private beside the stopped
+cluster and are not published or embedded in the receipt.
 
 Before handing the input directory to this tool, retain the exact SHA-256 of
 `manifest.json` through an independent authorized channel. Supplying a digest
