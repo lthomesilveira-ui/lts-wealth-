@@ -91,8 +91,14 @@ INSERT INTO public.lts_recovery_acceptance(component,passed,evidence_sha256) VAL
     evidence.mkdir()
     (evidence / "storage_object_bytes.json").write_text(json.dumps({
         "component": "storage_object_bytes",
+        "capture_id": "synthetic-fixture-1",
         "data_kind": "synthetic",
-        "checks": ["invented object digest only"],
+        "captured_at": "2026-01-01T00:00:01Z",
+        "checks": [{
+            "name": "invented_object_digest",
+            "passed": True,
+            "evidence_sha256": "6" * 64,
+        }],
     }))
     rehash(directory)
 
@@ -311,8 +317,14 @@ class InputGuards(FixtureCase, unittest.TestCase):
         artifact = self.source / "evidence" / "storage_object_bytes.json"
         artifact.write_text(json.dumps({
             "component": "storage_object_bytes",
+            "capture_id": "synthetic-fixture-1",
             "data_kind": "synthetic",
-            "checks": ["invented object digest only"],
+            "captured_at": "2026-01-01T00:00:01Z",
+            "checks": [{
+                "name": "invented_object_digest",
+                "passed": True,
+                "evidence_sha256": "6" * 64,
+            }],
         }))
         rehash(self.source)
         artifact.write_text("tampered after manifest")
@@ -332,6 +344,46 @@ class InputGuards(FixtureCase, unittest.TestCase):
                 self.source, self.root / "incomplete-external-evidence-map",
                 manifest_digest(self.source),
             )
+
+    def test_rejects_non_json_external_evidence_even_when_hash_matches(self):
+        artifact = self.source / "evidence" / "storage_object_bytes.json"
+        artifact.write_text("not-json")
+        rehash(self.source)
+        with self.assertRaises(restore.RehearsalError):
+            restore.freeze_inputs(
+                self.source, self.root / "non-json-external-evidence",
+                manifest_digest(self.source),
+            )
+
+    def test_external_evidence_must_match_capture_and_schema(self):
+        artifact = self.source / "evidence" / "storage_object_bytes.json"
+        original = json.loads(artifact.read_text())
+        variants = [
+            {**original, "component": "application_consumers"},
+            {**original, "capture_id": "other-capture"},
+            {**original, "data_kind": "production"},
+            {**original, "captured_at": "2026-01-01T00:00:01"},
+            {**original, "checks": []},
+            {**original, "checks": [{
+                "name": "invented_object_digest",
+                "passed": "yes",
+                "evidence_sha256": "6" * 64,
+            }]},
+            {**original, "checks": [
+                original["checks"][0], original["checks"][0]
+            ]},
+        ]
+        for index, variant in enumerate(variants):
+            with self.subTest(index=index):
+                artifact.write_text(json.dumps(variant))
+                rehash(self.source)
+                with self.assertRaises(restore.RehearsalError):
+                    restore.freeze_inputs(
+                        self.source, self.root / f"invalid-external-evidence-{index}",
+                        manifest_digest(self.source),
+                    )
+        artifact.write_text(json.dumps(original))
+        rehash(self.source)
 
     def test_rejects_unsupported_scope_state(self):
         manifest_path = self.source / "manifest.json"
@@ -464,5 +516,6 @@ class NativeRestore(FixtureCase, unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
 
 
