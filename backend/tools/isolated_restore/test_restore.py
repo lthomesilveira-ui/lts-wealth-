@@ -118,6 +118,10 @@ def rehash(directory):
     }))
 
 
+def manifest_digest(directory):
+    return restore.digest(directory / "manifest.json")
+
+
 class FixtureCase:
     def setUp(self):
         self.temporary = tempfile.TemporaryDirectory()
@@ -133,27 +137,36 @@ class InputGuards(FixtureCase, unittest.TestCase):
 
     def test_freezes_bytes_and_permissions(self):
         frozen = self.root / "frozen"
-        manifest = restore.freeze_inputs(self.source, frozen)
+        manifest, frozen_manifest_digest = restore.freeze_inputs(
+            self.source, frozen, manifest_digest(self.source)
+        )
         (self.source / "data.sql").write_text("changed after copy")
         self.assertEqual(restore.digest(frozen / "data.sql"), manifest["sha256"]["data.sql"])
         self.assertEqual(frozen.stat().st_mode & 0o777, 0o700)
         self.assertEqual((frozen / "data.sql").stat().st_mode & 0o777, 0o600)
+        self.assertEqual(frozen_manifest_digest, restore.digest(frozen / "manifest.json"))
 
     def test_rejects_tampering(self):
         (self.source / "data.sql").write_text("changed before copy")
         with self.assertRaises(restore.RehearsalError):
-            restore.freeze_inputs(self.source, self.root / "frozen")
+            restore.freeze_inputs(
+                self.source, self.root / "frozen", manifest_digest(self.source)
+            )
 
     def test_rejects_symlink(self):
         (self.source / "data.sql").unlink()
         (self.source / "data.sql").symlink_to(self.source / "schema.sql")
         with self.assertRaises(restore.RehearsalError):
-            restore.freeze_inputs(self.source, self.root / "frozen")
+            restore.freeze_inputs(
+                self.source, self.root / "frozen", manifest_digest(self.source)
+            )
 
     def test_rejects_missing_acceptance(self):
         (self.source / "acceptance.sql").unlink()
         with self.assertRaises(restore.RehearsalError):
-            restore.freeze_inputs(self.source, self.root / "frozen")
+            restore.freeze_inputs(
+                self.source, self.root / "frozen", manifest_digest(self.source)
+            )
 
     def test_rejects_mixed_or_undeclared_capture(self):
         manifest_path = self.source / "manifest.json"
@@ -161,7 +174,9 @@ class InputGuards(FixtureCase, unittest.TestCase):
         manifest["capture"]["consistent_snapshot"] = False
         manifest_path.write_text(json.dumps(manifest))
         with self.assertRaises(restore.RehearsalError):
-            restore.freeze_inputs(self.source, self.root / "frozen")
+            restore.freeze_inputs(
+                self.source, self.root / "frozen", manifest_digest(self.source)
+            )
 
     def test_rejects_invalid_or_timezone_free_capture_timestamp(self):
         for timestamp in ("not-a-timestamp", "2026-01-01T00:00:00"):
@@ -171,7 +186,10 @@ class InputGuards(FixtureCase, unittest.TestCase):
                 manifest["capture"]["captured_at"] = timestamp
                 manifest_path.write_text(json.dumps(manifest))
                 with self.assertRaises(restore.RehearsalError):
-                    restore.freeze_inputs(self.source, self.root / f"frozen-{timestamp[:3]}")
+                    restore.freeze_inputs(
+                        self.source, self.root / f"frozen-{timestamp[:3]}",
+                        manifest_digest(self.source),
+                    )
                 rehash(self.source)
 
     def test_recovery_scope_summary_distinguishes_missing_evidence(self):
@@ -229,7 +247,9 @@ class InputGuards(FixtureCase, unittest.TestCase):
         del manifest["recovery_scope"]["storage_object_bytes"]
         manifest_path.write_text(json.dumps(manifest))
         with self.assertRaises(restore.RehearsalError):
-            restore.freeze_inputs(self.source, self.root / "frozen")
+            restore.freeze_inputs(
+                self.source, self.root / "frozen", manifest_digest(self.source)
+            )
 
     def test_rejects_missing_or_malformed_expected_sql_evidence(self):
         manifest_path = self.source / "manifest.json"
@@ -237,14 +257,20 @@ class InputGuards(FixtureCase, unittest.TestCase):
         del manifest["sql_acceptance_evidence_sha256"]
         manifest_path.write_text(json.dumps(manifest))
         with self.assertRaises(restore.RehearsalError):
-            restore.freeze_inputs(self.source, self.root / "missing-evidence-map")
+            restore.freeze_inputs(
+                self.source, self.root / "missing-evidence-map",
+                manifest_digest(self.source),
+            )
 
         rehash(self.source)
         manifest = json.loads(manifest_path.read_text())
         manifest["sql_acceptance_evidence_sha256"]["database_history"] = "NOT-A-DIGEST"
         manifest_path.write_text(json.dumps(manifest))
         with self.assertRaises(restore.RehearsalError):
-            restore.freeze_inputs(self.source, self.root / "malformed-evidence-map")
+            restore.freeze_inputs(
+                self.source, self.root / "malformed-evidence-map",
+                manifest_digest(self.source),
+            )
 
     def test_rejects_unsupported_scope_state(self):
         manifest_path = self.source / "manifest.json"
@@ -252,7 +278,18 @@ class InputGuards(FixtureCase, unittest.TestCase):
         manifest["recovery_scope"]["replay_and_cache"] = "verified"
         manifest_path.write_text(json.dumps(manifest))
         with self.assertRaises(restore.RehearsalError):
-            restore.freeze_inputs(self.source, self.root / "frozen")
+            restore.freeze_inputs(
+                self.source, self.root / "frozen", manifest_digest(self.source)
+            )
+
+    def test_rejects_manifest_changed_after_independent_digest(self):
+        expected = manifest_digest(self.source)
+        manifest_path = self.source / "manifest.json"
+        manifest = json.loads(manifest_path.read_text())
+        manifest["capture"]["id"] = "substituted-capture"
+        manifest_path.write_text(json.dumps(manifest))
+        with self.assertRaises(restore.RehearsalError):
+            restore.freeze_inputs(self.source, self.root / "frozen", expected)
 
     def test_rejects_same_network_namespace(self):
         with self.assertRaises(restore.RehearsalError):
@@ -274,7 +311,8 @@ class NativeRestore(FixtureCase, unittest.TestCase):
     def invoke(self, name):
         result = subprocess.run([
             sys.executable, str(SCRIPT), "--input", str(self.source), "--output", str(self.root/name),
-            "--pg-bin", os.environ["LTS_RESTORE_PG_BIN"], "--timeout", "30"
+            "--pg-bin", os.environ["LTS_RESTORE_PG_BIN"], "--timeout", "30",
+            "--manifest-sha256", manifest_digest(self.source),
         ], capture_output=True, text=True, timeout=60)
         receipt = self.root / name / "receipt.json"
         return result, json.loads(receipt.read_text()) if receipt.exists() else None
@@ -291,6 +329,8 @@ class NativeRestore(FixtureCase, unittest.TestCase):
         self.assertFalse(receipt["real_authentication_verified"])
         self.assertFalse(receipt["storage_binary_api_restore_verified"])
         self.assertEqual(receipt["capture"]["id"], "synthetic-fixture-1")
+        self.assertEqual(receipt["manifest_sha256"], manifest_digest(self.source))
+        self.assertTrue(receipt["manifest_digest_supplied_independently"])
         self.assertEqual(receipt["components_requiring_separate_evidence"],
                          ["replay_and_cache", "storage_object_bytes"])
         self.assertEqual(receipt["components_not_captured"], ["replay_and_cache"])
