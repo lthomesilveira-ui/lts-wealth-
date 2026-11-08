@@ -59,8 +59,11 @@ into full recovery.
 
 The files are copied to a new private directory and checked against their hashes
 before any SQL is executed. The receipt preserves the capture declaration and
-lists every component still requiring separate evidence. The manifest is an
-integrity record, not a source-authenticity attestation.
+lists SQL-covered components, components requiring separate evidence, and
+components not captured at all. The capture timestamp must be valid ISO 8601 and
+include a timezone. The compatibility list of all components outside SQL coverage
+is retained for existing receipt consumers. The manifest is an integrity record,
+not a source-authenticity attestation.
 
 Use a PostgreSQL 17 runtime with every extension and managed-schema prerequisite
 needed by the official export. Missing extensions are a hard failure. Never strip

@@ -145,6 +145,28 @@ class InputGuards(FixtureCase, unittest.TestCase):
         with self.assertRaises(restore.RehearsalError):
             restore.freeze_inputs(self.source, self.root / "frozen")
 
+    def test_rejects_invalid_or_timezone_free_capture_timestamp(self):
+        for timestamp in ("not-a-timestamp", "2026-01-01T00:00:00"):
+            with self.subTest(timestamp=timestamp):
+                manifest_path = self.source / "manifest.json"
+                manifest = json.loads(manifest_path.read_text())
+                manifest["capture"]["captured_at"] = timestamp
+                manifest_path.write_text(json.dumps(manifest))
+                with self.assertRaises(restore.RehearsalError):
+                    restore.freeze_inputs(self.source, self.root / f"frozen-{timestamp[:3]}")
+                rehash(self.source)
+
+    def test_recovery_scope_summary_distinguishes_missing_evidence(self):
+        manifest = json.loads((self.source / "manifest.json").read_text())
+        summary = restore.recovery_scope_summary(manifest["recovery_scope"])
+        self.assertEqual(summary["components_not_captured"], ["replay_and_cache"])
+        self.assertEqual(summary["components_with_separate_evidence_required"],
+                         ["storage_object_bytes"])
+        self.assertIn("database_history",
+                      summary["components_covered_by_sql_acceptance"])
+        self.assertEqual(summary["components_requiring_separate_evidence"],
+                         ["replay_and_cache", "storage_object_bytes"])
+
     def test_rejects_incomplete_recovery_scope(self):
         manifest_path = self.source / "manifest.json"
         manifest = json.loads(manifest_path.read_text())
@@ -200,6 +222,9 @@ class NativeRestore(FixtureCase, unittest.TestCase):
         self.assertEqual(receipt["capture"]["id"], "synthetic-fixture-1")
         self.assertEqual(receipt["components_requiring_separate_evidence"],
                          ["replay_and_cache", "storage_object_bytes"])
+        self.assertEqual(receipt["components_not_captured"], ["replay_and_cache"])
+        self.assertEqual(receipt["components_with_separate_evidence_required"],
+                         ["storage_object_bytes"])
         original = (self.root / "success" / "receipt.json").read_bytes()
         repeated, _ = self.invoke("success")
         self.assertNotEqual(repeated.returncode, 0)
