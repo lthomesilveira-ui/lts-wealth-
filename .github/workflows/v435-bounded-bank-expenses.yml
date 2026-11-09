@@ -1,0 +1,39 @@
+name: V435 bank expense period and classification
+on:
+  pull_request:
+    paths: ['backend/patches/v435/**','backend/qa/lts_v435*','backend/qa/fixtures/v435/**','.github/workflows/v435-bounded-bank-expenses.yml']
+permissions:
+  contents: read
+jobs:
+  native-expenses:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: synthetic-test-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: synthetic-test-only
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compare the expense results with the predecessor
+        run: psql -X -v ON_ERROR_STOP=1 -At -f backend/qa/lts_v435_bounded_bank_expenses.sql
+      - name: Reject a different predecessor
+        run: |
+          createdb v435_guard
+          if psql -X -v ON_ERROR_STOP=1 -At -d v435_guard -f backend/qa/lts_v435_predecessor_guard.sql >v435-guard.log 2>&1; then
+            echo 'divergent predecessor was accepted' >&2
+            exit 1
+          fi
+          cat v435-guard.log
+          grep -Fq 'V435_PREDECESSOR_CHANGED' v435-guard.log
