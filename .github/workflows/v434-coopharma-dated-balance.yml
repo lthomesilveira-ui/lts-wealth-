@@ -1,0 +1,39 @@
+name: V434 Coopharma dated balance
+on:
+  pull_request:
+    paths: ['backend/patches/v434/**','backend/qa/lts_v434*','.github/workflows/v434-coopharma-dated-balance.yml']
+permissions:
+  contents: read
+jobs:
+  native-debt:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: synthetic-test-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: synthetic-test-only
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify dated debt and independent payroll schedule
+        run: psql -X -v ON_ERROR_STOP=1 -At -f backend/qa/lts_v434_coopharma_balance.sql
+      - name: Reject a divergent predecessor
+        run: |
+          createdb v434_guard
+          if psql -X -v ON_ERROR_STOP=1 -At -d v434_guard -f backend/qa/lts_v434_predecessor_guard.sql >v434-guard.log 2>&1; then
+            echo 'divergent predecessor was accepted' >&2
+            exit 1
+          fi
+          cat v434-guard.log
+          grep -Fq 'V434_PREDECESSOR_CHANGED' v434-guard.log
