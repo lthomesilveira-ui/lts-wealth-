@@ -1,0 +1,42 @@
+name: V436 Updates recovery
+on:
+  pull_request:
+    paths: ['backend/tools/update_recovery_v436/**','releases/v436/**','.github/scripts/lts_v436*','.github/workflows/v436-updates-recovery.yml']
+permissions:
+  contents: read
+jobs:
+  rendered:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    container: mcr.microsoft.com/playwright:v1.58.2-noble
+    env:
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify the immutable build and the retry lifecycle
+        run: |
+          python3 backend/tools/update_recovery_v436/build.py
+          python3 backend/tools/update_recovery_v436/build.py
+          node --check releases/v436/lts-v384-startup-1.js
+          node --check releases/v436/lts-v384-startup-2.js
+          node .github/scripts/lts_v436_release_contract.cjs
+          node .github/scripts/lts_v436_updates_lifecycle.cjs
+          npm install --no-save --package-lock=false playwright@1.58.2
+          python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/v436-http.log 2>&1 &
+          node .github/scripts/lts_v309_wait_http.cjs
+      - name: Render Updates in desktop and mobile browsers
+        run: node .github/scripts/lts_v436_updates_browser.cjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: v436-reviewed-candidate
+          retention-days: 14
+          path: |
+            qa/v436/
+            releases/v436/

@@ -16,6 +16,6 @@ assert.equal(p.active_review_budget_ms,22000);assert.equal(p.existing_admission_
 const transport=fs.readFileSync(root+'lts-v227-read-transport.js','utf8');
 assert(transport.includes("name==='lts_browser_expense_review_queue_v229'?22000:"));
 assert(transport.includes('setTimeout(item.cancel,60000)'));assert(transport.includes('generation===revision'));
-assert.deepEqual(JSON.parse(fs.readFileSync('mobile/current.json')),{release:'v433',entry:'../releases/v433/app.html'});
+const entry=process.env.LTS_MOBILE_RELEASE||'v433';assert.match(entry,/^v[0-9]+$/);assert.deepEqual(JSON.parse(fs.readFileSync('mobile/current.json')),{release:entry,entry:'../releases/'+entry+'/app.html'});
 assert(fs.readFileSync(root+'app.html','utf8').includes('V433'));
 console.log(JSON.stringify({pass:true,release:'v433',assets:Object.keys(m.files).length,changed_assets:changed,financial_policy_unchanged:true,protected_predecessor:true}));

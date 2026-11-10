@@ -15,16 +15,18 @@ async function verify(path,expected){
 }
 (async()=>{
  const entries=[];
- for(const release of ['v433','v425','v423','v421','v417','v415','v412','v411','v407','v404','v402']){
+ const current=process.env.LTS_MOBILE_RELEASE||'v433';assert.match(current,/^v[0-9]+$/);
+ const previous=['v433','v425','v423','v421','v417','v415','v412','v411','v407','v404','v402'].filter(release=>release!==current);
+ for(const release of [current,...previous]){
   const root='releases/'+release+'/',raw=fs.readFileSync(root+'manifest.json'),manifest=JSON.parse(raw);
   const files={...manifest.files,'manifest.json':sha(raw)};
   assert.deepEqual(Object.keys(files).sort(),fs.readdirSync(root).sort(),'every release asset is covered');
   for(const[name,expected]of Object.entries(files))entries.push([root+name,expected]);
  }
- assert.deepEqual(JSON.parse(fs.readFileSync('mobile/current.json')),{release:'v433',entry:'../releases/v433/app.html'});
+ assert.deepEqual(JSON.parse(fs.readFileSync('mobile/current.json')),{release:current,entry:'../releases/'+current+'/app.html'});
  for(const path of ['mobile/current.json','mobile/index.html','mobile/launcher.js','mobile/manifest.webmanifest','mobile/icon.svg','mobile/apple-touch-icon.png'])entries.push([path,sha(fs.readFileSync(path))]);
  const assets=[];for(let offset=0;offset<entries.length;offset+=6)assets.push(...await Promise.all(entries.slice(offset,offset+6).map(([path,expected])=>verify(path,expected))));
  assert.equal(assets.length,entries.length);assert.equal(new Set(assets.map(x=>x.path)).size,entries.length);
- fs.writeFileSync('v433-published-verification.json',JSON.stringify({pass:true,head:process.env.GITHUB_SHA,ui:'v433',url:origin+'mobile/',assets,private_session:false,physical_iphone:false},null,2));
- console.log(JSON.stringify({pass:true,ui:'v433',served_assets:assets.length,previous_ui:['v425','v423','v421','v417','v415','v412','v411','v407','v404','v402'],stable_mobile_entry:true}));
+ fs.writeFileSync(current+'-published-verification.json',JSON.stringify({pass:true,head:process.env.GITHUB_SHA,ui:current,url:origin+'mobile/',assets,private_session:false,physical_iphone:false},null,2));
+ console.log(JSON.stringify({pass:true,ui:current,served_assets:assets.length,previous_ui:previous,stable_mobile_entry:true}));
 })().catch(error=>{console.error(error);process.exitCode=1});

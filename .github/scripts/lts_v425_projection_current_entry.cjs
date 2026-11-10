@@ -4,7 +4,7 @@
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),assert=require('node:assert/strict');
 const filename=path.join(__dirname,'lts_v412_projection_browser.cjs');let source=fs.readFileSync(filename,'utf8');
 const data=Buffer.from(source),sha=crypto.createHash('sha1').update(Buffer.concat([Buffer.from('blob '+data.length+'\0'),data])).digest('hex');
-assert.equal(sha,'be98ae7686fe0270c10e642c6bf75b3901dd7987','Review adapter when original acceptance changes');
+assert.equal(sha,'6fb28194555507324c73d1ab6884b3cecac552c0','Review adapter when original acceptance changes');
 const assertion="   assert.match(await panel().innerText(),/Não foi possível conferir/);assert.equal(await f.evaluate(()=>__LTS_V412_PROJECTION.model),null);}";
 const replacement=`   if(optionsLayout){
     const notice=f.locator('#v425-flow-attention');
