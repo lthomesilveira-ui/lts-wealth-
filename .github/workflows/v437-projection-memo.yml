@@ -3,8 +3,10 @@ on:
   pull_request:
     paths:
       - 'backend/qa/fixtures/v437/**'
+      - 'backend/qa/fixtures/v438/**'
       - 'backend/tools/projection_memo_v437/**'
       - 'supabase/migrations/*_v437_statement_projection_memo.sql'
+      - 'supabase/migrations/*_v438_guarded_projection_read.sql'
       - '.github/workflows/v437-projection-memo.yml'
   workflow_dispatch:
 permissions:
@@ -30,7 +32,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Compose exact migration and synthetic boundaries
-        run: python3 backend/tools/projection_memo_v437/test_sql.py > /tmp/v437.sql
+        run: python3 backend/tools/projection_memo_v437/test_v438_sql.py > /tmp/v437.sql
       - name: Verify exact JSON, invalidation and unchanged access
         run: |
           createdb v437_memo

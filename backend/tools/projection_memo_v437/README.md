@@ -12,7 +12,7 @@ except the function body, and accepts an exact replay. A malformed or damaged
 optional memo falls back to the calculation. No timeout or schedule is enlarged.
 
 ```sh
-python3 backend/tools/projection_memo_v437/test_sql.py > /tmp/v437.sql
+python3 backend/tools/projection_memo_v437/test_v438_sql.py > /tmp/v437.sql
 createdb v437_memo
 psql -X -d v437_memo -v ON_ERROR_STOP=1 -At -f /tmp/v437.sql
 ```
@@ -24,3 +24,16 @@ reference changes, the worker summary hook, read-only behavior, transaction
 cleanup, replay and unchanged access. They do not certify a real second user,
 physical device, restore acceptance or physical disk I/O. Private production
 comparison and timing evidence remains outside the public repository.
+
+V438 adds reuse across requests without another scheduled job or another
+calculation. The existing guarded refresh publishes the full result it already
+calculated, together with its source guards and content digest. Normal reads use
+it only for the same owner and current date, a completed current queue version,
+the same source epoch, receipt fingerprint and full policy/reference fingerprint.
+An absent or outdated publication falls back to the existing calculation.
+
+The exact worker tests also verify atomic publication, independent receipt-only
+and epoch guards, rollback of unsuccessful publications, damaged memo rejection,
+recovery of missing full results and unchanged function access. The new private
+reader is not executable by browser roles. Old sources and all financial rows
+are preserved.
