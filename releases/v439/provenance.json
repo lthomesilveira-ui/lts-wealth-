@@ -1,0 +1,9 @@
+{
+  "release": "v439",
+  "base_release": "v436",
+  "scope": "refresh the outgoing review list after a successful card classification",
+  "financial_values_changed": false,
+  "mutation_paths_changed": false,
+  "query_arguments_changed": false,
+  "cache_or_auth_policy_changed": false
+}

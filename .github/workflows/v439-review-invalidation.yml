@@ -1,0 +1,40 @@
+name: V439 classified card review refresh
+on:
+  pull_request:
+    paths: ['backend/tools/review_invalidation_v439/**','releases/v439/**','.github/scripts/lts_v439*','.github/workflows/v439-review-invalidation.yml']
+permissions:
+  contents: read
+jobs:
+  rendered:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    container: mcr.microsoft.com/playwright:v1.58.2-noble
+    env:
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Immutable release and late-response lifecycle
+        run: |
+          python3 backend/tools/review_invalidation_v439/build.py
+          python3 backend/tools/review_invalidation_v439/build.py
+          node --check releases/v439/lts-v384-startup-1.js
+          node .github/scripts/lts_v439_release_contract.cjs
+          node .github/scripts/lts_v439_review_lifecycle.cjs
+          npm install --no-save --package-lock=false playwright@1.58.2
+          python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/v439-http.log 2>&1 &
+          node .github/scripts/lts_v309_wait_http.cjs
+      - name: Render confirmed, empty, failed and unknown lists
+        run: node .github/scripts/lts_v439_review_browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v439-reviewed-candidate
+          retention-days: 14
+          path: qa/v439/
