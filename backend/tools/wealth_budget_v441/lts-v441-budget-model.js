@@ -1,6 +1,6 @@
 (function(root,factory){'use strict';const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;else root.LTSV441Budget=api;})(typeof window==='undefined'?globalThis:window,function(){
  'use strict';
- const cents=v=>v===null||v===undefined||v===''?null:Number.isFinite(Number(v))&&Number.isSafeInteger(Math.round(Number(v)*100))?Math.round(Number(v)*100):null;
+ const cents=v=>typeof v!=='number'&&!(typeof v==='string'&&/^[+-]?\d+(\.\d+)?$/.test(v))?null:Number.isFinite(Number(v))&&Number.isSafeInteger(Math.round(Number(v)*100))?Math.round(Number(v)*100):null;
  const sum=xs=>xs.some(x=>x===null)?null:xs.reduce((a,b)=>a+b,0);
  const nullable=(v,positive=false)=>{const n=cents(v);if(v!==null&&(n===null||positive&&n<0))throw Error('invalid amount');return n;};
  function build(p){

@@ -34,12 +34,12 @@
    const close=()=>{d.remove();if(s.dialog===d)s.dialog=null;};d.querySelector('[data-cancel]').onclick=close;d.addEventListener('cancel',e=>{e.preventDefault();if(!d.dataset.saving)close();});
    d.querySelector('[data-save]').onclick=async()=>{
     const input=d.querySelector('input'),n=Number(input.value),c=api.cents(input.value),status=d.querySelector('[role=status]');
-    if(!input.value||c===null||n<0||n>100000000||Math.abs(n*100-c)>.00001){status.textContent='Informe um valor válido com até dois centavos.';return;}
+    if(!input.value||c===null||n<0||n>100000000||Math.abs(n*100-c)>.00001){status.textContent='Informe um valor válido com até duas casas decimais.';return;}
     if(owner!==gen()||seq!==s.sequence){status.textContent='O período mudou. Feche e confira novamente.';return;}
     d.dataset.saving='true';d.querySelectorAll('button,input').forEach(b=>b.disabled=true);status.textContent='Salvando…';
     try{const r=await S.rpc('lts_browser_budget_save_v441',{p_year:year,p_month:scope==='year'?null:month,p_targets:category===null?{}:{[category]:c/100},p_income:category===null?c/100:null,p_expected:revision});
      if(r.error||r.data?.saved!==true)throw Error();if(owner!==gen())return;close();await load(true);
-    }catch{if(d.isConnected){status.textContent='Não foi possível confirmar a meta. Feche e atualize o orçamento antes de tentar novamente.';d.querySelector('[data-cancel]').disabled=false;delete d.dataset.saving;}}
+    }catch{if(d.isConnected){status.textContent='Não foi possível confirmar a meta. Feche e atualize o orçamento antes de tentar novamente.';d.querySelector('[data-cancel]').disabled=false;delete d.dataset.saving;s.status='error';paint();}}
    };
    document.body.append(d);d.showModal();d.querySelector('input').focus();
   }
@@ -58,7 +58,7 @@
     if(v.plannedBalance!==null&&v.plannedBalance<0)html+='<p class="v441-warning">As metas superam a renda regular em <strong>'+money(-v.plannedBalance)+'</strong>. Ajuste as metas abaixo.</p>';
     if(s.data.reference.months<6||s.data.reference.salaryMonths<1)html+='<p class="v441-warning">A referência histórica está incompleta. Confira as metas e a renda antes de usar este orçamento.</p>';
     if(s.data.proposed)html+='<p class="v441-muted">Metas iniciais sugeridas pelo histórico. Você pode ajustar cada categoria.</p>';
-    html+='<div class="v441-extras">Bônus registrado: <strong>'+money(v.started?v.bonus:null)+'</strong> · Outras entradas fora da renda regular: <strong>'+money(v.started?v.extra-v.bonus:null)+'</strong><button data-income>Ajustar renda</button></div>';
+    html+='<div class="v441-extras">Renda regular registrada: <strong>'+money(v.started?v.incomeRegular:null)+'</strong> · Bônus registrado: <strong>'+money(v.started?v.bonus:null)+'</strong> · Outras entradas fora da renda regular: <strong>'+money(v.started?v.extra-v.bonus:null)+'</strong><button data-income>Ajustar renda</button></div>';
     html+='<div class="v441-table" role="table" aria-label="Orçamento por categoria"><div class="v441-row v441-columns" role="row"><b>Categoria</b><b>Orçado</b><b>Realizado registrado</b><b>Diferença</b><span></span></div>';
     for(const r of v.rows)html+='<div class="v441-row" role="row"><strong>'+esc(window.LTSCategoryDisplay?.category(r.category)||r.category)+'</strong><span data-label="Orçado">'+money(r.target)+(r.suggested?' <small>referência</small>':'')+'</span><span data-label="Realizado">'+money(v.started?r.actual:null)+'</span><span data-label="Diferença" class="'+(r.gap!==null&&r.gap<0?'v441-negative':'')+'">'+money(v.started?r.gap:null)+'</span><button data-edit="'+esc(r.category)+'">Ajustar</button></div>';
     html+='</div>';

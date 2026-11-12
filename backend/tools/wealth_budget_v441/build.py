@@ -80,7 +80,7 @@ if __name__=='__main__':
    # This path is an unpublished local build only. Published releases are never edited.
    if (ROOT/'.git').exists():
     import subprocess
-    committed=subprocess.run(['git','ls-files',str(OUT.relative_to(ROOT))],cwd=ROOT,capture_output=True,text=True,check=True).stdout
+    committed=subprocess.run(['git','ls-tree','-r','--name-only','HEAD','--',str(OUT.relative_to(ROOT))],cwd=ROOT,capture_output=True,text=True,check=True).stdout
     assert not committed,'Do not rebuild a committed release'
    shutil.rmtree(OUT)
   if '--check' not in sys.argv:p.rename(OUT)

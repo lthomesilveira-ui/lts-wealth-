@@ -33,4 +33,13 @@ if(['v425','v433','v436','v439','v440','v441'].includes(release)){
  assert.equal(source.split(action).length,2,'original manual refresh action retained exactly once');
  source=source.replace(action,navigation+action);
 }
+if(release==='v441'){
+ const fixture=require('./lts_v379_fixtures.cjs'),baseResponse=fixture.response,budget=require('./lts_v441_fixture.cjs');
+ fixture.response=(name,args)=>name==='lts_browser_budget_read_v441'?budget(args.p_year):baseResponse(name,args);
+ // The new independent reader must settle before comparing the full Dashboard.
+ // All original source, amount, warning and visible-text assertions stay intact.
+ const snapshot="  await h.page.waitForLoadState('networkidle');\n  return f.evaluate(() => ({";
+ assert.equal(source.split(snapshot).length,2,'One complete Dashboard snapshot');
+ source=source.replace(snapshot,"  await h.page.waitForLoadState('networkidle');\n  await f.waitForFunction(() => !window.__LTS_V441_BUDGET || __LTS_V441_BUDGET.state.status === 'ready');\n  return f.evaluate(() => ({");
+}
 module._compile(source,filename);
