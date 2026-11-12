@@ -1,0 +1,8 @@
+{
+  "release": "v442",
+  "base_release": "v441",
+  "scope": "Native budget period input; guarded calendar audit prepared separately",
+  "provision_policy_changed": false,
+  "existing_financial_writers_changed": false,
+  "physical_mobile_validated": false
+}

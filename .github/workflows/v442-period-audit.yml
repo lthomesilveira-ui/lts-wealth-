@@ -1,0 +1,50 @@
+name: V442 native periods and guarded audit
+on:
+  pull_request:
+    paths: ['releases/v442/**','backend/tools/period_inputs_v442/**','backend/tools/card_statement_memo_v442/**','backend/patches/v442/**','backend/qa/v442/**','.github/scripts/lts_v442*','.github/workflows/v442-period-audit.yml','mobile/current.json']
+permissions:
+  contents: read
+jobs:
+  rendered:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    container: mcr.microsoft.com/playwright:v1.58.2-noble
+    env:
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+      LTS_MOBILE_RELEASE: v442
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Immutable assets and database contracts
+        run: |
+          python3 backend/tools/period_inputs_v442/build.py --check
+          node .github/scripts/lts_v442_release_contract.cjs
+          npm ci --prefix backend/qa/v442 --ignore-scripts
+          node backend/qa/v442/test.mjs
+          node backend/qa/v442/cash_test.mjs
+          node backend/qa/v442/audit_test.mjs
+          npm ci --prefix backend/qa/v441 --ignore-scripts
+          node backend/qa/v441/test.mjs
+      - name: Full budget, refresh, Flow and period controls in Chromium and WebKit
+        run: |
+          npm install --no-save --package-lock=false playwright@1.58.2
+          python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/v442-http.log 2>&1 &
+          node .github/scripts/lts_v309_wait_http.cjs
+          node .github/scripts/lts_v441_browser.cjs
+          node .github/scripts/lts_v442_period_browser.cjs
+      - name: Complete current deployment gates
+        run: python3 backend/tools/report_presentation_v417/read_only_gates.py > qa/v442/current-static-gates.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v442-validation
+          retention-days: 14
+          path: |
+            qa/v442/
+            qa/v441/

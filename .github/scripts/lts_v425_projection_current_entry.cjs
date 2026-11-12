@@ -24,7 +24,7 @@ const optionsVersion="'/releases/v439/'";
 assert.equal(source.split(conciseVersions).length,2);
 assert.equal(source.split(optionsVersion).length,2);
 source=source.replace(conciseVersions,conciseVersions+'|440|441');
-source=source.replace(optionsVersion,optionsVersion+",'/releases/v440/','/releases/v441/'");
+source=source.replace(optionsVersion,optionsVersion+",'/releases/v440/','/releases/v441/','/releases/v442/'");
 assert(source.includes("'old identity response cannot replace new identity data'"));
 assert(source.includes("'refresh cannot change server amounts in the browser'"));
 assert(source.includes("malformed_clear_values:true"));
