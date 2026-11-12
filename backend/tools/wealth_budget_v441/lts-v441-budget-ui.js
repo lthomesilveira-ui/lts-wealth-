@@ -17,9 +17,13 @@
   }
   function setMonth(v){if(!/^\d{4}-\d{2}$/.test(v))return;if(s.month.slice(0,4)!==v.slice(0,4)){s.sequence++;s.status='idle';s.data=null;}s.month=v;}
   async function load(force=false){
-   sync();if(!visible()||s.status==='loading'||!force&&s.status!=='idle')return;
+   sync();
+   // A confirmed save can finish while an older budget read is still in flight.
+   // Settle that read before requesting the saved revision; never reuse it.
+   if(force&&s.status==='loading'&&s.request){const old=s.request,owner=s.owner;s.sequence++;await Promise.resolve(old).catch(()=>{});if(owner!==gen())return;sync();if(s.request===old)s.status='idle';}
+   if(!visible()||s.status==='loading'||!force&&s.status!=='idle')return;
    const owner=s.owner,year=Number(s.month.slice(0,4)),seq=++s.sequence;s.status='loading';paint();
-   try{const r=await S.rpc('lts_browser_budget_read_v441',{p_year:year});if(r.error)throw Error();const m=api.build(r.data);
+   try{const request=S.rpc('lts_browser_budget_read_v441',{p_year:year});s.request=request;const r=await request;if(r.error)throw Error();const m=api.build(r.data);
     if(owner!==gen()||seq!==s.sequence||year!==Number(s.month.slice(0,4)))return;s.data=m;s.status='ready';
    }catch{if(owner===gen()&&seq===s.sequence)s.status='error';}
    finally{if(owner===gen()&&seq===s.sequence)paint();}
