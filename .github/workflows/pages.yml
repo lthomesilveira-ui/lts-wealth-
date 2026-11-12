@@ -130,6 +130,7 @@ jobs:
           LTS_MOBILE_RELEASE=v439 node .github/scripts/lts_v433_release_contract.cjs
           LTS_MOBILE_RELEASE=v439 node .github/scripts/lts_v436_release_contract.cjs
           LTS_MOBILE_RELEASE=v439 node .github/scripts/lts_v439_release_contract.cjs
+          node .github/scripts/lts_v440_release_contract.cjs
       - name: Configure Pages
         uses: actions/configure-pages@v5
         with:

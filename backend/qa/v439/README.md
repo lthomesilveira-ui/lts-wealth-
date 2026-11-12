@@ -1,4 +1,4 @@
-# V439 independent candidate
+# V439 backend and V440 independent candidate
 
 This package contains generic dated card-spend provisions, fictional regression tests and a complete independent V440 frontend release based on immutable V439. It does not change the default mobile loader or seed an owner's policy.
 
