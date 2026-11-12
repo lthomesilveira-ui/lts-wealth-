@@ -67,7 +67,7 @@
   }
   function paint(){
    sync();let host=document.getElementById('v441Budget');if(!visible()){host?.remove();return;}
-   const page=document.querySelector('.v168-expenses'),anchor=page?.querySelector('.v169-monthly')||page?.lastElementChild;if(!anchor)return;
+   const page=document.querySelector('.v168-expenses'),anchor=page?.querySelector('.v175-monthly');if(!anchor)return;
    if(!host){host=document.createElement('section');host.id='v441Budget';host.className='v168-card v441-budget';anchor.after(host);}
    const year=Number(s.month.slice(0,4)),currentYear=Number(day().slice(0,4));
    let html='<header><div><span class="v441-kicker">Planejamento</span><h2>Orçamento estratégico</h2></div><div class="v441-controls"><button data-mode="month" aria-pressed="'+(s.mode==='month')+'">Mensal</button><button data-mode="year" aria-pressed="'+(s.mode==='year')+'">Anual</button>'+(s.mode==='month'?'<input type="month" aria-label="Mês do orçamento" min="'+(currentYear-1)+'-01" max="'+(currentYear+5)+'-12" value="'+s.month+'">':'<input type="number" aria-label="Ano do orçamento" min="'+(currentYear-1)+'" max="'+(currentYear+5)+'" value="'+year+'">')+'</div></header>';

@@ -1,4 +1,4 @@
-DO $migration$ DECLARE original text;attributes jsonb;BEGIN SELECT pg_get_functiondef(p.oid),to_jsonb(p)-'prosrc' INTO STRICT original,attributes FROM pg_proc p WHERE p.oid='public.lts_corrected_cashflow_fix86_v1(uuid,date,date)'::regprocedure;IF md5(original)='74d485e5ce27f02705136e95dd5fe576' THEN RETURN;END IF;IF md5(original)<>'dd65d959b134f4937b7bb3e66fc1cdc6' THEN RAISE EXCEPTION 'V442 cash predecessor changed';END IF;EXECUTE $candidate$CREATE OR REPLACE FUNCTION public.lts_corrected_cashflow_fix86_v1(p_user_id uuid, p_from date, p_to date)
+DO $migration$ DECLARE original text;attributes jsonb;BEGIN SELECT pg_get_functiondef(p.oid),to_jsonb(p)-'prosrc' INTO STRICT original,attributes FROM pg_proc p WHERE p.oid='public.lts_corrected_cashflow_fix86_v1(uuid,date,date)'::regprocedure;IF md5(original)='206c6ae57f42d3872a5526b6074bb9f2' THEN RETURN;END IF;IF md5(original) NOT IN('dd65d959b134f4937b7bb3e66fc1cdc6','74d485e5ce27f02705136e95dd5fe576') THEN RAISE EXCEPTION 'V442 cash predecessor changed';END IF;EXECUTE $candidate$CREATE OR REPLACE FUNCTION public.lts_corrected_cashflow_fix86_v1(p_user_id uuid, p_from date, p_to date)
  RETURNS TABLE(event_date date, account text, description text, signed_amount numeric, source text, source_ref text, confidence text, account_assignment text, legacy_index integer, original_date date, displaced boolean)
  LANGUAGE plpgsql
  SECURITY DEFINER
@@ -38,7 +38,6 @@ BEGIN
  AND c.kind='corrected_cash_v1_v268' AND c.as_of=current_date AND c.from_date<=cache_from AND c.to_date>=cache_to
  AND c.source_fingerprint=fingerprint AND c.refreshed_at>clock_timestamp()-interval '5 minutes'
  ORDER BY c.to_date-c.from_date,c.refreshed_at DESC LIMIT 1;
- END IF;
  IF memo IS NULL THEN
   SELECT coalesce(jsonb_agg(to_jsonb(r)),'[]'::jsonb) INTO memo
   FROM public.lts_corrected_cashflow_fix86_v1_engine_v247(p_user_id,cache_from,cache_to) r;
@@ -55,6 +54,7 @@ BEGIN
  PERFORM set_config('lts.cash_base_memo_v442',jsonb_build_object(
   'key',statement_key_v442,'from',cache_from,'to',cache_to,'payload',memo,
   'digest',encode(sha256(convert_to(memo::text,'UTF8')),'hex'))::text,true);
+ END IF;
  RETURN QUERY SELECT r.event_date,r.account,r.description,r.signed_amount,r.source,r.source_ref,r.confidence,r.account_assignment,r.legacy_index,r.original_date,r.displaced
  FROM jsonb_array_elements(memo) WITH ORDINALITY a(j,ord)
  CROSS JOIN LATERAL jsonb_to_record(a.j) r(event_date date,account text,description text,signed_amount numeric,source text,source_ref text,confidence text,account_assignment text,legacy_index integer,original_date date,displaced boolean)
@@ -64,4 +64,4 @@ BEGIN
  AND (r.source IS DISTINCT FROM 'legacy_fix86' OR r.original_date<=p_to)
  ORDER BY a.ord;
 END $function$
-$candidate$;IF attributes IS DISTINCT FROM(SELECT to_jsonb(p)-'prosrc' FROM pg_proc p WHERE p.oid='public.lts_corrected_cashflow_fix86_v1(uuid,date,date)'::regprocedure) OR md5(pg_get_functiondef('public.lts_corrected_cashflow_fix86_v1(uuid,date,date)'::regprocedure))<>'74d485e5ce27f02705136e95dd5fe576' THEN RAISE EXCEPTION 'V442 cash contract changed';END IF;END $migration$;
+$candidate$;IF attributes IS DISTINCT FROM(SELECT to_jsonb(p)-'prosrc' FROM pg_proc p WHERE p.oid='public.lts_corrected_cashflow_fix86_v1(uuid,date,date)'::regprocedure) OR md5(pg_get_functiondef('public.lts_corrected_cashflow_fix86_v1(uuid,date,date)'::regprocedure))<>'206c6ae57f42d3872a5526b6074bb9f2' THEN RAISE EXCEPTION 'V442 cash contract changed';END IF;END $migration$;

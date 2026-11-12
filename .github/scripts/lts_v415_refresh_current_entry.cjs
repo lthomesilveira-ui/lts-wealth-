@@ -40,6 +40,6 @@ if(['v441','v442'].includes(release)){
  // All original source, amount, warning and visible-text assertions stay intact.
  const snapshot="  await h.page.waitForLoadState('networkidle');\n  return f.evaluate(() => ({";
  assert.equal(source.split(snapshot).length,2,'One complete Dashboard snapshot');
- source=source.replace(snapshot,"  await h.page.waitForLoadState('networkidle');\n  await f.waitForFunction(() => !window.__LTS_V441_BUDGET || __LTS_V441_BUDGET.state.status === 'ready');\n  return f.evaluate(() => ({");
+ source=source.replace(snapshot,"  await h.page.waitForLoadState('networkidle');\n  await f.waitForFunction(() => !document.getElementById('v441Budget') || __LTS_V441_BUDGET.state.status === 'ready');\n  return f.evaluate(() => ({");
 }
 module._compile(source,filename);

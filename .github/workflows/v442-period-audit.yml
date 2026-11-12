@@ -1,7 +1,7 @@
 name: V442 native periods and guarded audit
 on:
   pull_request:
-    paths: ['releases/v442/**','backend/tools/period_inputs_v442/**','backend/tools/strategic_budget_v442/**','backend/tools/card_statement_memo_v442/**','backend/patches/v442/**','backend/qa/v442/**','.github/scripts/lts_v442*','.github/workflows/v442-period-audit.yml','mobile/current.json']
+    paths: ['releases/v442/**','backend/tools/period_inputs_v442/**','backend/tools/strategic_budget_v442/**','backend/tools/card_statement_memo_v442/**','backend/tools/auxiliary_reads_v442/**','backend/patches/v442/**','backend/qa/v442/**','.github/scripts/lts_v442*','.github/workflows/v442-period-audit.yml','mobile/current.json']
 permissions:
   contents: read
 jobs:
@@ -28,6 +28,7 @@ jobs:
           npm ci --prefix backend/qa/v442 --ignore-scripts
           node backend/qa/v442/test.mjs
           node backend/qa/v442/cash_test.mjs
+          node backend/qa/v442/auxiliary_test.mjs
           node backend/qa/v442/audit_test.mjs
           node backend/qa/v442/reporting_test.mjs
           node .github/scripts/lts_v442_strategy_test.cjs

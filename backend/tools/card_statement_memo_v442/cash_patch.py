@@ -34,12 +34,13 @@ STORE=""" PERFORM set_config('lts.cash_base_memo_v442',jsonb_build_object(
 def patch(s):
  for marker in [DECL,READ,READ_END,RETURN]:assert s.count(marker)==1,marker
  assert 'statement_memo_v442' not in s
- r=s.replace(DECL,DECL+PREFIX).replace(READ,ENTRY+READ).replace(READ_END,READ_END+'\n END IF;').replace(RETURN,STORE+RETURN)
- assert r.replace(DECL+PREFIX,DECL).replace(ENTRY+READ,READ).replace(READ_END+'\n END IF;',READ_END).replace(STORE+RETURN,RETURN)==s
+ r=s.replace(DECL,DECL+PREFIX).replace(READ,ENTRY+READ).replace(RETURN,STORE+' END IF;\n'+RETURN)
+ assert r.replace(DECL+PREFIX,DECL).replace(ENTRY+READ,READ).replace(STORE+' END IF;\n'+RETURN,RETURN)==s
  return r
 if __name__=='__main__':
  p=ROOT/'backend/patches/v442';s=(p/'cash_base_before.sql').read_text();expected=hashlib.md5(s.encode()).hexdigest();assert expected=='dd65d959b134f4937b7bb3e66fc1cdc6'
  r=patch(s);h=hashlib.md5(r.encode()).hexdigest();(p/'cash_base_candidate.sql').write_text(r)
- (p/'cash_install.sql').write_text("DO $migration$ DECLARE original text;attributes jsonb;BEGIN SELECT pg_get_functiondef(p.oid),to_jsonb(p)-'prosrc' INTO STRICT original,attributes FROM pg_proc p WHERE p.oid='public.lts_corrected_cashflow_fix86_v1(uuid,date,date)'::regprocedure;IF md5(original)='"+h+"' THEN RETURN;END IF;IF md5(original)<>'"+expected+"' THEN RAISE EXCEPTION 'V442 cash predecessor changed';END IF;EXECUTE $candidate$"+r+"$candidate$;IF attributes IS DISTINCT FROM(SELECT to_jsonb(p)-'prosrc' FROM pg_proc p WHERE p.oid='public.lts_corrected_cashflow_fix86_v1(uuid,date,date)'::regprocedure) OR md5(pg_get_functiondef('public.lts_corrected_cashflow_fix86_v1(uuid,date,date)'::regprocedure))<>'"+h+"' THEN RAISE EXCEPTION 'V442 cash contract changed';END IF;END $migration$;\n")
- (p/'cash_rollback.sql').write_text("DO $rollback$ BEGIN IF md5(pg_get_functiondef('public.lts_corrected_cashflow_fix86_v1(uuid,date,date)'::regprocedure))<>'"+h+"' THEN RAISE EXCEPTION 'V442 cash changed since installation';END IF;EXECUTE $before$"+s+"$before$;END $rollback$;\n")
+ previous=(p/'cash_base_memo_v1.sql').read_text();previous_hash=hashlib.md5(previous.encode()).hexdigest();assert previous_hash=='74d485e5ce27f02705136e95dd5fe576'
+ (p/'cash_install.sql').write_text("DO $migration$ DECLARE original text;attributes jsonb;BEGIN SELECT pg_get_functiondef(p.oid),to_jsonb(p)-'prosrc' INTO STRICT original,attributes FROM pg_proc p WHERE p.oid='public.lts_corrected_cashflow_fix86_v1(uuid,date,date)'::regprocedure;IF md5(original)='"+h+"' THEN RETURN;END IF;IF md5(original) NOT IN('"+expected+"','"+previous_hash+"') THEN RAISE EXCEPTION 'V442 cash predecessor changed';END IF;EXECUTE $candidate$"+r+"$candidate$;IF attributes IS DISTINCT FROM(SELECT to_jsonb(p)-'prosrc' FROM pg_proc p WHERE p.oid='public.lts_corrected_cashflow_fix86_v1(uuid,date,date)'::regprocedure) OR md5(pg_get_functiondef('public.lts_corrected_cashflow_fix86_v1(uuid,date,date)'::regprocedure))<>'"+h+"' THEN RAISE EXCEPTION 'V442 cash contract changed';END IF;END $migration$;\n")
+ (p/'cash_rollback.sql').write_text("DO $rollback$ BEGIN IF md5(pg_get_functiondef('public.lts_corrected_cashflow_fix86_v1(uuid,date,date)'::regprocedure))<>'"+h+"' THEN RAISE EXCEPTION 'V442 cash changed since installation';END IF;EXECUTE $previous$"+previous+"$previous$;END $rollback$;\n")
  print({'predecessor_md5':expected,'candidate_md5':h})

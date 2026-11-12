@@ -55,13 +55,13 @@
     else if(type==='fixed'){const loan=/emprestimo|financiamento|compromissos financeiros/.test(norm(r.category));proposed=loan?floor:Math.max(floor,history===null?0:round(history));reason=loan?'Somente compromissos e parcelas identificados; descontos já abatidos do salário não são somados.':'Compromisso previsto ou referência recorrente sujeita a confirmação, preservando parcelas conhecidas.';}
     else if(type==='essential'){proposed=history===null?null:Math.max(floor,round(history));reason='Necessidade essencial: referência recente arredondada, preservando obrigações. Rever o detalhe antes de reduzir.';}
     else if(type==='seasonal'){proposed=floor;reason='Valor previsto no calendário; confirme o que ainda não tem data e valor.';}
-    else{proposed=floor;desired=history===null?0:Math.max(0,Math.min(round(history*.5),round((income||0)*.05))-floor);reason='Novos gastos discricionários limitados à sobra após obrigações e essenciais; até 50% da referência recente e 5% da renda nesta categoria.';}
+    else{proposed=floor;desired=history===null?0:Math.max(0,Math.min(Math.floor(history*.5),Math.floor((income||0)*.05))-floor);reason='Novos gastos discricionários limitados à sobra após obrigações e essenciais; até 50% da referência recente e 5% da renda nesta categoria.';}
     rows.push({row:r,value:x,type,owner,floor,proposed,desired,reason,details,history});
    }
    const essentialTotal=sum(rows.map(r=>r.proposed)),room=income===null||essentialTotal===null?0:Math.max(0,income-essentialTotal),wants=rows.reduce((a,r)=>a+r.desired,0);
    let remaining=room;
    for(const r of rows){let value=r.proposed;
-    if(!r.owner&&!past&&r.type==='discretionary'&&value!==null&&wants&&remaining){const allocation=Math.min(remaining,Math.floor(room*r.desired/wants));value+=allocation;remaining-=allocation;}
+    if(!r.owner&&!past&&r.type==='discretionary'&&value!==null&&wants&&remaining){const allocation=Math.min(r.desired,remaining,Math.floor(room*r.desired/wants));value+=allocation;remaining-=allocation;}
     r.value.target=money(value);r.value.target_basis=r.owner?'owner':'proposal';
     r.value.strategy={type:r.type,reason:r.reason,floor:money(r.floor),history:money(r.history),details:r.details,proposed:!r.owner,needsReview:r.type==='seasonal'&&!r.floor};
    }
