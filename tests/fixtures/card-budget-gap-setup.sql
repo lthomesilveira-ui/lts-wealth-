@@ -1,0 +1,28 @@
+CREATE ROLE anon; CREATE ROLE authenticated; CREATE ROLE service_role;
+CREATE SCHEMA lts_projection_private_v412;
+CREATE TABLE public.legacy_namespace(usuario_id uuid,chave text,valor_bruto text,sha256 text);
+CREATE TABLE test_policy(user_id uuid,payload jsonb);
+CREATE FUNCTION lts_projection_private_v412.owner_policy(uuid) RETURNS jsonb LANGUAGE sql STABLE AS $$SELECT payload FROM public.test_policy WHERE user_id=$1$$;
+CREATE TABLE test_known(user_id uuid,series_key text,reference_month date,due_date date,amount_brl numeric,closed boolean,paid boolean,complete boolean,source_refs jsonb);
+CREATE FUNCTION lts_projection_private_v412.known_card_periods_v412(uuid) RETURNS TABLE(series_key text,reference_month date,due_date date,amount_brl numeric,closed boolean,paid boolean,complete boolean,source_refs jsonb) LANGUAGE sql STABLE AS $$SELECT series_key,reference_month,due_date,amount_brl,closed,paid,complete,source_refs FROM public.test_known WHERE user_id=$1$$;
+CREATE FUNCTION public.lts_forecast_series_key_v1(text) RETURNS text LANGUAGE sql IMMUTABLE AS $$SELECT CASE $1 WHEN 'Fatura C6' THEN 'card_c6' WHEN 'Fatura Itaú Mastercard' THEN 'card_itau' WHEN 'Fatura Visa Aeternum' THEN 'card_aeternum' ELSE lower($1) END$$;
+CREATE TABLE test_date_shift(user_id uuid,family text,months int);
+CREATE FUNCTION public.lts_card_projection_date_v370(uuid,text,date,date,date) RETURNS date LANGUAGE sql STABLE AS $$SELECT ($4+make_interval(months=>coalesce((SELECT months FROM public.test_date_shift WHERE user_id=$1 AND family=$2),0)))::date$$;
+CREATE TABLE public.evento_base(usuario_id uuid,idx int,dados jsonb);
+CREATE TABLE public.financial_events(id uuid,user_id uuid,event_date date,amount numeric,is_suppressed boolean DEFAULT false,is_projection boolean DEFAULT false,description_normalized text,description_raw text,legacy_id text,metadata jsonb DEFAULT '{}');
+CREATE TABLE public.lts_projection_replacement_rule(id uuid,user_id uuid,replacement_ref text,date_from date,date_to date,description_exact text,account_exact text,active boolean,action text,replacement_source text,source_table text,evidence jsonb);
+CREATE TABLE public.lts_card_due_transition_v370(user_id uuid,family text,last_old_due date,first_new_due date,decision_source text,confirmed_at timestamptz);
+CREATE TABLE public.lts_v229_documentary_match(user_id uuid,staging_id uuid,source_ref text,bank text,signed_amount numeric);
+CREATE TABLE test_future(user_id uuid,event_date date,description text,source text,source_ref text,confidence text,signed_amount numeric,account text);
+CREATE FUNCTION public.lts_corrected_cashflow_operational_v1(uuid,date,date) RETURNS TABLE(event_date date,description text,source text,source_ref text,confidence text,signed_amount numeric,account text) LANGUAGE sql STABLE AS $$SELECT event_date,description,source,source_ref,confidence,signed_amount,account FROM public.test_future WHERE user_id=$1 AND event_date BETWEEN $2 AND $3$$;
+CREATE TABLE test_history(user_id uuid,event_date date,description text,source text,source_ref text,confidence text,signed_amount numeric,account text,internal_transfer boolean DEFAULT false,excluded_from_spend boolean DEFAULT false);
+CREATE FUNCTION public.lts_historical_effective_cash_v4(uuid,date,date) RETURNS TABLE(event_date date,description text,source text,source_ref text,confidence text,signed_amount numeric,account text,internal_transfer boolean,excluded_from_spend boolean) LANGUAGE sql STABLE AS $$SELECT event_date,description,source,source_ref,confidence,signed_amount,account,internal_transfer,excluded_from_spend FROM public.test_history WHERE user_id=$1 AND event_date BETWEEN $2 AND $3$$;
+CREATE FUNCTION public.lts_recurring_receipt_identities_v303(uuid,date) RETURNS TABLE(staging_id uuid,actual_date date,actual_amount numeric,description text,projection_ref text,projection_date date,series_key text,direction text) LANGUAGE sql AS $$SELECT NULL::uuid,NULL::date,NULL::numeric,NULL::text,NULL::text,NULL::date,NULL::text,NULL::text WHERE false$$;
+CREATE FUNCTION public.lts_bank_posted_rows_v231(uuid) RETURNS TABLE(id uuid,posting_date date,signed_amount numeric,description_raw text,institution_code text,institution_name text,normalized_payload jsonb,user_id uuid,resource_type text,currency text,provider_deleted_at timestamptz) LANGUAGE sql AS $$SELECT NULL::uuid,NULL::date,NULL::numeric,NULL::text,NULL::text,NULL::text,NULL::jsonb,NULL::uuid,NULL::text,NULL::text,NULL::timestamptz WHERE false$$;
+CREATE FUNCTION public.lts_bank_known_classification_v231(uuid,uuid) RETURNS jsonb LANGUAGE sql AS $$SELECT '{}'::jsonb$$;
+CREATE FUNCTION public.lts_documented_bank_event_identity_v242(uuid,uuid,jsonb) RETURNS boolean LANGUAGE sql AS $$SELECT false$$;
+CREATE TABLE test_base(payload jsonb);
+CREATE FUNCTION public.lts_recurring_future_gap_audit_v4(uuid,date) RETURNS jsonb LANGUAGE sql AS $$SELECT payload FROM public.test_base$$;
+INSERT INTO test_base VALUES('{"items":[{"description":"card_c6","description_key":"card_c6","direction":"expense","review_kind":"planning_review"},{"description":"card_itau","description_key":"card_itau","direction":"expense","review_kind":"planning_review"}],"planning_review_count":2}');
+
+CREATE FUNCTION public.lts_card_family_v226(text,text) RETURNS text LANGUAGE sql IMMUTABLE AS $$SELECT CASE $1 WHEN 'card_c6' THEN 'c6' WHEN 'card_itau' THEN 'itau_mastercard' WHEN 'card_aeternum' THEN 'aeternum' END$$;
