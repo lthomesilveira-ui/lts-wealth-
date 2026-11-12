@@ -4,7 +4,7 @@
   "base_release": "v441",
   "entry": "app.html",
   "files": {
-    "app.html": "eec43ab9ee714087178b82f29b7396a81f64dcacd996601718d69acca6554a94",
+    "app.html": "87d01c4d5208588f159eb078caf448db7cc59ed78357dd3bccefb13bb4567180",
     "index.html": "3e0434a8dfaf79f3d4bc5b41696c3d2e70938ea928ce68bcf17310b544b00d2c",
     "lts-category-display.js": "8b26d86f23a4be83da5f6dafdb1b0a58847181bf6f3482e6445d98456e72918f",
     "lts-category-registry.js": "bef89cbfac538b18c28c2d3a080d5710e232c9bef012b962a1d3fcc356433253",
@@ -103,10 +103,12 @@
     "lts-v423-clarity-model.js": "05849eb1d41a27de0cbceb83af164c21542cec116d857a3b424ce8cc06873d0f",
     "lts-v423-clarity.js": "3435b9296e11756ceb124f93a018176bdae980b9579581f6e572c9bf27869d4d",
     "lts-v425-flow-options.js": "afb82049b28d55b019cf8029256bb431fb1f4b27020d8e886634086548f0b5d5",
-    "lts-v441-budget-model.js": "3115a5920c9c98b82d1add3296b65e59cd078d30771f9dae72ac1d4c67e886fa",
-    "lts-v441-budget-ui.js": "ca00d3da8f4330d6964948670d28bff87d36729f361750c6ffa08e1e134d1639",
+    "lts-v441-budget-model.js": "c384f2f50d3529d02d6d826e90d0041fb8f0ddac7c40a176a8e3e18686b76a20",
+    "lts-v441-budget-ui.js": "6f025f5f76d604435a4ecb818ee35e698b445506dc0ccbf38e4c9b5751a29b9a",
     "lts-v441-flow-summary.js": "d10a8df9283e5179231bec3dd75e3238d12e3da3cc2b670d52a43784cb281796",
-    "provenance.json": "71a20ab0722f4d38b33c78bf768ca6055b62145c6678eb7a34d8d8d2f086507a",
+    "lts-v442-income-composition.js": "e783d9f1d2b629e93a53f5f73b57be9539ba724ddbffc7f5070455ef296feaa1",
+    "lts-v442-strategy.js": "be96013c077b46e75188427d068da2186dfa38b8d6e0426c238b9fd42d3cc715",
+    "provenance.json": "1e53d5e09a7a9d90d7ea15cba3c1bd48d56c50aabc822b83d468a1bf70c5ea1d",
     "wip35-v162-flow-recovery.js": "9a519b23052c2f807aeb5a2f20582710bc0466d6f5931db4edd70606ea4a9350"
   },
   "protected_manifest": {

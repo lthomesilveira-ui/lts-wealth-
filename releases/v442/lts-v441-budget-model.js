@@ -12,33 +12,33 @@
    if(typeof r.category!=='string'||!r.category.trim()||r.category.length>120||seen.has(r.category)||!Array.isArray(r.months)||r.months.length!==12)throw Error('invalid category');
    seen.add(r.category);
    return {category:r.category,reference:nullable(r.reference_monthly,true),months:r.months.map((m,i)=>{
-    if(m.month!==keys[i]||!['owner','history'].includes(m.target_basis))throw Error('invalid month');
-    return {month:m.month,target:nullable(m.target,true),actual:nullable(m.actual),pending:nullable(m.pending),basis:m.target_basis};
+    if(m.month!==keys[i]||!['owner','history','proposal'].includes(m.target_basis))throw Error('invalid month');
+    return {month:m.month,target:nullable(m.target,true),actual:nullable(m.actual),pending:nullable(m.pending),basis:m.target_basis,strategy:m.strategy||null};
    })};
   });
   const months=p.months.map((m,i)=>{
    if(m.month!==keys[i]||typeof m.started!=='boolean'||typeof m.complete!=='boolean')throw Error('invalid month');
    const v={month:m.month,target:nullable(m.target,true),actual:nullable(m.actual),pending:nullable(m.pending),incomeTarget:nullable(m.income_target,true),
-    incomeRegular:nullable(m.income_regular),extra:nullable(m.income_extraordinary),bonus:nullable(m.income_bonus??0),started:m.started,complete:m.complete};
+    incomeRegular:nullable(m.income_regular),extra:nullable(m.income_extraordinary),bonus:nullable(m.income_bonus??0),thirteenth:nullable(m.income_thirteenth??0),started:m.started,complete:m.complete};
    if(sum(rows.map(r=>r.months[i].actual))!==v.actual||sum(rows.map(r=>r.months[i].pending))!==v.pending||(rows.length?sum(rows.map(r=>r.months[i].target)):null)!==v.target)throw Error('totals mismatch');
    return v;
   });
   return {year:p.year,asOf:p.as_of,revision:p.plan_revision,proposed:p.proposed===true,rows,months,
    reference:{from:p.reference.from,to:p.reference.to,months:p.reference.months,expected:p.reference.expected_months,salaryMonths:p.reference.salary_months,salaryMonthly:nullable(p.reference.salary_monthly,true)},
-   unknown:nullable(p.unclassified_actual),incomeGroups:p.actual_income_groups||[]};
+   strategy:p.strategy||null,unknown:nullable(p.unclassified_actual),incomeGroups:p.actual_income_groups||[]};
  }
  function view(m,mode,month){
   const indices=mode==='year'?m.months.map((_,i)=>i):[Number(month.slice(5,7))-1];
   if(indices.some(i=>i<0||i>11)||month.slice(0,4)!==String(m.year))throw Error('invalid period');
   const selected=indices.map(i=>m.months[i]),target=sum(selected.map(x=>x.target)),actual=sum(selected.map(x=>x.actual)),incomeTarget=sum(selected.map(x=>x.incomeTarget)),incomeRegular=sum(selected.map(x=>x.incomeRegular)),extra=sum(selected.map(x=>x.extra));
-  return {target,actual,incomeTarget,incomeRegular,extra,bonus:sum(selected.map(x=>x.bonus)),pending:sum(selected.map(x=>x.pending)),
+  return {target,actual,incomeTarget,incomeRegular,extra,bonus:sum(selected.map(x=>x.bonus)),thirteenth:sum(selected.map(x=>x.thirteenth)),minimum:sum(m.rows.map(r=>sum(indices.map(i=>cents(r.months[i].strategy?.floor??0))))),pending:sum(selected.map(x=>x.pending)),
    plannedBalance:target===null||incomeTarget===null?null:incomeTarget-target,
    operating:incomeRegular===null||actual===null?null:incomeRegular-actual,
    afterExtras:incomeRegular===null||actual===null||extra===null?null:incomeRegular+extra-actual,
    started:selected.some(x=>x.started),complete:selected.every(x=>x.complete),
    rows:m.rows.map(r=>({category:r.category,reference:r.reference,target:sum(indices.map(i=>r.months[i].target)),actual:sum(indices.map(i=>r.months[i].actual)),
     gap:sum(indices.map(i=>r.months[i].target))===null?null:sum(indices.map(i=>r.months[i].target))-sum(indices.map(i=>r.months[i].actual)),
-    suggested:indices.some(i=>r.months[i].basis==='history')}))};
+    type:r.months[indices[0]].strategy?.type||'discretionary',reason:r.months[indices[0]].strategy?.reason||'',minimum:sum(indices.map(i=>cents(r.months[i].strategy?.floor??0))),details:indices.flatMap(i=>r.months[i].strategy?.details||[]),suggested:indices.some(i=>r.months[i].basis==='history'||r.months[i].basis==='proposal')}))};
  }
  function flow(p,asOf){
   const days=p?.current_future?.days;if(!Array.isArray(days))return null;

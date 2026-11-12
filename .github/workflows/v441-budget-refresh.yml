@@ -35,7 +35,7 @@ jobs:
           npm install --no-save --package-lock=false playwright@1.58.2
           python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/v441-http.log 2>&1 &
           node .github/scripts/lts_v309_wait_http.cjs
-          node .github/scripts/lts_v441_browser.cjs
+          node .github/scripts/lts_v441_historical_browser.cjs
       - name: Current deployment gates
         run: python3 backend/tools/report_presentation_v417/read_only_gates.py > qa/v441/current-static-gates.txt
       - uses: actions/upload-artifact@v4

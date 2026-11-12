@@ -1,7 +1,7 @@
 {
   "release": "v442",
   "base_release": "v441",
-  "scope": "Native budget period input; guarded calendar audit prepared separately",
+  "scope": "Strategic category budget in Expenses with native periods, income composition and separately guarded audit",
   "provision_policy_changed": false,
   "existing_financial_writers_changed": false,
   "physical_mobile_validated": false

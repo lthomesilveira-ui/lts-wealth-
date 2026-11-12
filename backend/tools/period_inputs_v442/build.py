@@ -8,12 +8,14 @@ def build(out):
  for n,h in m['files'].items():assert digest(BASE/n)==h,n
  shutil.copytree(BASE,out)
  (out/'app.html').write_text((BASE/'app.html').read_text().replace('V441','V442'))
- s=(BASE/'lts-v441-budget-ui.js').read_text();old="const input=host.querySelector('input');if(input)input.onchange=";assert s.count(old)==1
- s=s.replace(old,"const input=host.querySelector('input');if(input)input.oninput=input.onchange=")
- old='&&y<=currentYear+5){setMonth(value);paint();}';assert s.count(old)==1
- s=s.replace(old,'&&y<=currentYear+5&&value!==s.month){setMonth(value);paint();}')
- (out/'lts-v441-budget-ui.js').write_text(s)
- (out/'provenance.json').write_text(json.dumps({'release':'v442','base_release':'v441','scope':'Native budget period input; guarded calendar audit prepared separately','provision_policy_changed':False,'existing_financial_writers_changed':False,'physical_mobile_validated':False},indent=2)+'\n')
+ source=ROOT/'backend/tools/strategic_budget_v442'
+ for name,target in [('budget-ui.js','lts-v441-budget-ui.js'),('budget-model.js','lts-v441-budget-model.js'),('strategy.js','lts-v442-strategy.js'),('income-composition.js','lts-v442-income-composition.js')]:
+  shutil.copyfile(source/name,out/target)
+ app=(out/'app.html').read_text()
+ app=app.replace('<script src="lts-v441-budget-ui.js"></script>','<script src="lts-v442-strategy.js"></script>\n<script src="lts-v441-budget-ui.js"></script>')
+ app=app.replace('<script src="lts-v441-flow-summary.js"></script>','<script src="lts-v441-flow-summary.js"></script>\n<script src="lts-v442-income-composition.js"></script>')
+ (out/'app.html').write_text(app)
+ (out/'provenance.json').write_text(json.dumps({'release':'v442','base_release':'v441','scope':'Strategic category budget in Expenses with native periods, income composition and separately guarded audit','provision_policy_changed':False,'existing_financial_writers_changed':False,'physical_mobile_validated':False},indent=2)+'\n')
  m.update(release='v442',version='v442',base_release='v441',protected_manifest={'path':'releases/v441/manifest.json','sha256':digest(BASE/'manifest.json')})
  m['files']={p.name:digest(p) for p in sorted(out.iterdir()) if p.name!='manifest.json'}
  (out/'manifest.json').write_text(json.dumps(m,indent=2,ensure_ascii=False)+'\n')
