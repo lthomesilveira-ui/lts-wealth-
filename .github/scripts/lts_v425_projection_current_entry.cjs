@@ -18,6 +18,13 @@ const replacement=`   if(optionsLayout){
   }`;
 assert.equal(source.split(assertion).length,2,'Only the initial Flow error inspection is adapted');
 source=source.replace(assertion,replacement);
+// V440 preserves the same Options layout; keep the frozen historical suite intact.
+const conciseVersions='417|421|423|425|433|436|439';
+const optionsVersion="'/releases/v439/'";
+assert.equal(source.split(conciseVersions).length,2);
+assert.equal(source.split(optionsVersion).length,2);
+source=source.replace(conciseVersions,conciseVersions+'|440');
+source=source.replace(optionsVersion,optionsVersion+",'/releases/v440/'");
 assert(source.includes("'old identity response cannot replace new identity data'"));
 assert(source.includes("'refresh cannot change server amounts in the browser'"));
 assert(source.includes("malformed_clear_values:true"));
