@@ -2,7 +2,7 @@
 import {PGlite} from '@electric-sql/pglite';
 import fs from 'node:fs';import assert from 'node:assert/strict';
 const root=new URL('../',import.meta.url),read=p=>fs.readFileSync(new URL(p,root),'utf8');
-const migration=read('supabase/migrations/20261112015043_respect_card_budget_gap_terms.sql');
+const migration=read('supabase/migrations/20261112020933_respect_card_budget_gap_terms.sql');
 const helper=migration.slice(migration.indexOf('CREATE OR REPLACE FUNCTION lts_projection_private_v412.card_budget_exempt_periods_v1'),migration.indexOf('\nDO $migration$'));
 const db=new PGlite(),q=(sql,args=[])=>db.query(sql,args),results=[];
 const owner='00000000-0000-4000-8000-000000000001',other='00000000-0000-4000-8000-000000000002';
