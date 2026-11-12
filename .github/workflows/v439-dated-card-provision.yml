@@ -1,0 +1,25 @@
+name: V440 dated card provision candidate
+on:
+  pull_request:
+    paths: ['releases/v440/**', 'backend/qa/v439/**', 'backend/qa/v439-reconciliation/**', 'backend/patches/v439/**', 'supabase/migrations/*v439*', 'lts-v412-projection-policy.js', '.github/scripts/lts_v440_release_contract.cjs', '.github/workflows/v439-dated-card-provision.yml']
+permissions:
+  contents: read
+jobs:
+  synthetic:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node .github/scripts/lts_v440_release_contract.cjs
+      - run: npm ci --ignore-scripts
+        working-directory: backend/qa/v439
+      - run: PROVISION_UI_FILE="$PWD/ui/lts-v412-projection-policy.js" node test_candidate.mjs
+        working-directory: backend/qa/v439
+      - run: node ui/test.cjs
+        working-directory: backend/qa/v439
+      - run: npm ci --ignore-scripts
+        working-directory: backend/qa/v439-reconciliation
+      - run: PROVISION_UI_FILE="$PWD/../v439/ui/lts-v412-projection-policy.js" node test_delta.mjs
+        working-directory: backend/qa/v439-reconciliation
