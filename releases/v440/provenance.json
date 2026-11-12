@@ -1,0 +1,13 @@
+{
+  "release": "v440",
+  "base_release": "v439",
+  "candidate_only": true,
+  "scope": "Dated card-spend provisions and bounded history assumptions. Financial totals remain calculated server-side.",
+  "default_loader_promoted": false,
+  "financial_event_writers_added": false,
+  "client_recalculates_financial_totals": false,
+  "private_http_validated": false,
+  "physical_mobile_validated": false,
+  "full_app_render_validated": false,
+  "test_scope": "Fictional SQL, parser and isolated DOM checks only; complete desktop/mobile Chromium and WebKit acceptance remains pending."
+}

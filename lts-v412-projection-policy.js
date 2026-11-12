@@ -35,11 +35,13 @@
       if (horizon !== (Number(asOf.slice(0, 4)) + 5) + '-12-31' || nextReview <= asOf) return invalid();
       const historyWindow = windowDates(payload.history_window), keys = new Set();
       const series = payload.series.map(row => {
+        const expected = row?.expected_months;
+        const cardBudget = row?.method === 'history_total_budget' && /^card_/.test(row?.series_key || '');
         if (!row || typeof row.series_key !== 'string' || !row.series_key.trim() || keys.has(row.series_key)
           || typeof row.description !== 'string' || !row.description.trim() || !methods.has(row.method)
-          || !['income', 'expense'].includes(row.direction) || row.expected_months !== 12
-          || !Number.isInteger(row.coverage_months) || row.coverage_months < 0 || row.coverage_months > 12
-          || !Number.isInteger(row.observed_months) || row.observed_months < row.coverage_months || row.observed_months > 12
+          || !['income', 'expense'].includes(row.direction) || !(expected === 12 || expected === 3 && cardBudget)
+          || !Number.isInteger(row.coverage_months) || row.coverage_months < 0 || row.coverage_months > expected
+          || !Number.isInteger(row.observed_months) || row.observed_months < row.coverage_months || row.observed_months > expected
           || !Number.isInteger(row.months_with_spend) || row.months_with_spend < 0 || row.months_with_spend > row.observed_months
           || !Array.isArray(row.outlier_months) || !Array.isArray(row.warnings) || !Array.isArray(row.annual_totals)
           || typeof row.reference_stale !== 'boolean') return invalid();
@@ -47,13 +49,36 @@
         const rate = Number(row.annual_rate);
         if (!Number.isFinite(rate) || rate < 0 || rate > .25 || row.method !== 'inflated_calendar' && rate !== 0) return invalid();
         const referenceWindow = windowDates(row.reference_window), amount = cents(row.reference_amount_brl, true);
-        if ((row.method === 'history_total_budget' || row.uses_history === true) && amount !== null && row.coverage_months < 12 && !row.reference_stale) return invalid();
+        let endsOn = null;
+        if (row.ends_on !== undefined) {
+          if (!cardBudget || row.direction !== 'expense') return invalid();
+          endsOn = day(row.ends_on);
+        }
+        let provision = null;
+        if (row.new_spend_provision !== undefined) {
+          const value = row.new_spend_provision;
+          if (!value || typeof value !== 'object' || Array.isArray(value)
+            || !cardBudget || row.direction !== 'expense') return invalid();
+          const startsOn = day(value.starts_on), provisionAmount = cents(value.amount_brl);
+          if (!startsOn.endsWith('-01') || provisionAmount <= 0 || provisionAmount > 10000000000) return invalid();
+          provision = { startsOn, amount: provisionAmount, active: asOf >= startsOn };
+          if (provision.active && (row.uses_history !== false || amount !== provisionAmount)) return invalid();
+        }
+        if (expected === 3) {
+          const start = new Date(referenceWindow.from + 'T12:00:00Z');
+          const end = new Date(start); end.setUTCMonth(end.getUTCMonth() + expected); end.setUTCDate(end.getUTCDate() - 1);
+          if (!referenceWindow.from.endsWith('-01') || end.toISOString().slice(0, 10) !== referenceWindow.to
+            || referenceWindow.to >= asOf.slice(0, 7) + '-01') return invalid();
+        }
+        if (!provision?.active && (row.method === 'history_total_budget' || row.uses_history === true) && amount !== null && row.coverage_months < expected && !row.reference_stale) return invalid();
         return { key: row.series_key, description: row.description, method: row.method, direction: row.direction,
           account: String(row.account || ''), amount, rate, historyWindow: referenceWindow, referenceStale: row.reference_stale,
           templateYear: Number.isInteger(row.template_year) ? row.template_year : null,
-          covered: row.coverage_months, observed: row.observed_months, spendingMonths: row.months_with_spend, outliers: row.outlier_months.map(day),
+          expected, covered: row.coverage_months, observed: row.observed_months, spendingMonths: row.months_with_spend, outliers: row.outlier_months.map(day),
           warnings: row.warnings.map(String), dueDayBasis: row.due_day_basis || null,
-          usesHistory: row.uses_history === true || row.method === 'history_total_budget',
+          usesHistory: !provision?.active && (row.uses_history === true || row.method === 'history_total_budget'),
+          ...(provision ? { newSpendProvision: provision } : {}),
+          ...(endsOn ? { endsOn } : {}),
           annual: row.annual_totals.map(year => {
             if (!Number.isInteger(year.year) || year.year < Number(asOf.slice(0, 4)) || year.year > Number(horizon.slice(0, 4))
               || typeof year.partial_year !== 'boolean') return invalid();
@@ -158,38 +183,46 @@
     function warningTexts(model) {
       const texts = [];
       for (const row of model.series) {
-        if (row.referenceStale) texts.push(row.description + ': mantida a última média completa enquanto chegam os dados da revisão anual.');
-        else if (row.warnings.includes('history_unavailable') || row.warnings.includes('partial_history')) texts.push(row.description + ': histórico incompleto; a estimativa ainda precisa de conferência.');
-        if (row.warnings.includes('unreconciled_periods') || row.warnings.includes('calendar_unavailable')) texts.push(row.description + ': há períodos sem valor ou data conferidos.');
+        if (row.referenceStale) texts.push(row.description + ': usando a última média completa.');
+        else if (row.warnings.includes('history_unavailable') || row.warnings.includes('partial_history')) texts.push(row.description + ': histórico incompleto.');
+        if (row.warnings.includes('unreconciled_periods') || row.warnings.includes('calendar_unavailable')) texts.push(row.description + ': há previsões a conferir.');
       }
       return texts;
     }
+    function provisionText(row) {
+      const provision = row.newSpendProvision;
+      return 'Novos gastos: ' + money(provision.amount) + '/mês a partir de ' + date(provision.startsOn) + ', além das parcelas.';
+    }
     function methodText(row) {
-      if (row.method === 'history_total_budget') return 'Média nominal de 12 meses completos. A revisão anual usa novas observações; meses sem gasto entram como zero somente quando o acervo do mês está coberto.';
-      if (row.method === 'inflated_calendar') return 'Calendário histórico com premissa de ' + new Intl.NumberFormat('pt-BR', { style: 'percent', maximumFractionDigits: 2 }).format(row.rate) + ' ao ano, aplicada uma vez desde a data-base. Valores futuros documentados têm prioridade.';
-      if (row.method === 'salary_net') return 'Base nominal confirmada menos a parcela documentada do empréstimo em folha, uma única vez. O líquido efetivamente recebido permanece separado.';
-      if (row.method === 'repeat_calendar') return 'Repetição do calendário e dos valores de referência confirmados, sem aumento automático.';
-      return 'Valor nominal confirmado, mantido durante a vigência da regra, sem aumento automático.';
+      if (row.newSpendProvision?.active) return provisionText(row);
+      if (row.method === 'history_total_budget') return 'Média de ' + row.expected + ' meses completos' + (row.expected === 3 ? ', atualizada com as novas faturas.' : '.');
+      if (row.method === 'inflated_calendar') return 'Reajuste estimado de ' + new Intl.NumberFormat('pt-BR', { style: 'percent', maximumFractionDigits: 2 }).format(row.rate) + ' ao ano. Cobranças confirmadas têm prioridade.';
+      if (row.method === 'salary_net') return 'Salário previsto após o desconto do empréstimo em folha.';
+      if (row.method === 'repeat_calendar') return 'Calendário e valores mantidos, sem aumento automático.';
+      return 'Valor mantido, sem aumento automático.';
     }
     function origin(model) {
-      const details = el('details', null, 'v412-origin'); details.append(el('summary', 'Origem das projeções'));
-      details.append(el('p', 'Horizonte até ' + date(model.horizon) + '. Na virada do ano, o horizonte acrescenta mais um ano completo. Próxima revisão das médias: ' + date(model.nextReview) + '.'));
+      const details = el('details', null, 'v412-origin'); details.append(el('summary', 'Premissas das projeções'));
+      details.append(el('p', 'Planejamento até ' + date(model.horizon) + ', com extensão anual.'));
+      warningTexts(model).forEach(text => details.append(message(text)));
       if (model.partialYear) details.append(el('p', 'O ano corrente considera somente as datas futuras; sua soma é parcial.'));
       for (const row of model.series) {
         const section = el('section', null, 'v412-rule'); section.append(el('h3', row.description));
-        if (row.amount !== null) section.append(el('strong', money(row.amount) + (row.method === 'history_total_budget' ? ' · referência mensal' : ' · base nominal')));
+        if (row.amount !== null && !row.newSpendProvision?.active) section.append(el('strong', money(row.amount) + (row.method === 'history_total_budget' ? ' · referência mensal' : ' · base nominal')));
         section.append(el('p', methodText(row)));
+        if (row.newSpendProvision && !row.newSpendProvision.active) section.append(el('p', provisionText(row)));
+        if (row.endsOn) section.append(el('p', 'Projeção de novos gastos até ' + date(row.endsOn) + '; parcelas já existentes continuam.'));
         if (row.templateYear !== null) section.append(el('p', 'Calendário de referência: ' + row.templateYear + '.'));
         if (row.usesHistory) {
           section.append(el('p', 'Janela da média: ' + date(row.historyWindow.from) + ' a ' + date(row.historyWindow.to) + '.'));
-          if (row.referenceStale) section.append(el('p', 'Revisão atual com ' + row.covered + ' de 12 meses cobertos. A última base completa continua em uso.'));
-          else section.append(el('p', row.covered + ' de 12 meses cobertos; ' + row.spendingMonths + ' meses com gasto.'));
+          if (row.referenceStale) section.append(el('p', 'Revisão atual com ' + row.covered + ' de ' + row.expected + ' meses cobertos. A última base completa continua em uso.'));
+          else section.append(el('p', row.covered + ' de ' + row.expected + ' meses cobertos; ' + row.spendingMonths + ' meses com gasto.'));
           if (row.outliers.length) section.append(el('p', 'Valores atípicos foram mantidos na média. Meses: ' + row.outliers.map(x => x.slice(5, 7) + '/' + x.slice(0, 4)).join(', ') + '.'));
         }
         if (String(row.dueDayBasis || '').startsWith('history_modal_day')) section.append(el('p', 'Dia de planejamento estimado pela data mais frequente do histórico; uma data documentada tem prioridade.'));
         details.append(section);
       }
-      details.append(el('p', 'Nos cartões, o orçamento total é o maior entre a média e os valores já conhecidos. Somente a diferença entra como complemento. Uma fatura fechada ou pagamento confirmado substitui a estimativa do ciclo. Compras adicionais podem superar o orçamento quando as parcelas conhecidas já são maiores que a média.'));
+      details.append(el('p', 'Faturas fechadas prevalecem. Parcelas antigas de gastos não recorrentes continuam até terminar; as reservas de novas compras não são somadas duas vezes.'));
       return details;
     }
     function panel(compact) {
@@ -197,11 +230,11 @@
       card.dataset.v412Policy = compact ? 'flow' : 'updates';
       const header = el('div', null, 'v412-heading');
       header.append(el(compact ? 'strong' : 'h2', state.model ? 'Projeções até ' + date(state.model.horizon) : 'Projeções futuras'));
-      const button = el('button', state.status === 'refreshing' ? 'Atualizando…' : 'Atualizar projeções', 'v168-btn');
-      button.type = 'button'; button.dataset.v412Refresh = ''; button.disabled = ['loading', 'refreshing'].includes(state.status); button.onclick = () => refresh(); header.append(button); card.append(header);
+      const button = el('button', state.status === 'queued' ? 'Atualização em andamento…' : state.status === 'refreshing' ? 'Solicitando…' : 'Atualizar projeções', 'v168-btn');
+      button.type = 'button'; button.dataset.v412Refresh = ''; button.disabled = ['loading', 'refreshing', 'queued'].includes(state.status); button.onclick = () => refresh(); header.append(button); card.append(header);
       if (state.status === 'error') card.append(message('Não foi possível conferir as projeções. Atualize antes de usar as estimativas.'));
       else if (!state.model) card.append(el('p', 'Conferindo as projeções…', 'v412-loading'));
-      else { warningTexts(state.model).forEach(text => card.append(message(text))); card.append(origin(state.model)); }
+      else { const warnings = warningTexts(state.model); if (warnings.length) card.append(message('Há estimativas a conferir nas premissas.')); card.append(origin(state.model)); }
       return card;
     }
     function patchDialog() {
@@ -230,7 +263,7 @@
       if (['Dashboard', 'Fluxo Diário', 'Atualizações'].includes(V)) queueMicrotask(() => load());
     }
     async function load(force = false, recalculate = false) {
-      reset(); if (!D || N.classList.contains('hidden') || ['loading', 'refreshing'].includes(state.status)
+      reset(); if (!D || N.classList.contains('hidden') || ['loading', 'refreshing', 'queued'].includes(state.status)
         || !force && Date.now() - state.readAt < 300000) return;
       const generation = owner, token = ++state.sequence;
       state.status = recalculate ? 'refreshing' : 'loading';
@@ -238,6 +271,16 @@
       try {
         const response = await S.rpc(recalculate ? 'lts_browser_projection_refresh_v412' : 'lts_browser_projection_policy_v412', {});
         if (response.error) throw Error();
+        if (generation !== identity() || token !== state.sequence) return;
+        if (recalculate && response.data?.refresh && window.__LTS_V415_REFRESH) {
+          window.__LTS_V415_REFRESH.observeRefresh(response.data.refresh);
+          if (!window.LTSV415ProductRefresh.ready(response.data.refresh)) {
+            state.status = 'queued'; state.readAt = Date.now();
+            if (response.data.version === 'projection-policy-v412') state.model = api.build(response.data);
+            if (typeof toast === 'function') toast('Atualização solicitada.');
+            return;
+          }
+        }
         const model = api.build(response.data);
         if (generation !== identity() || token !== state.sequence) return;
         const wasEnabled = !!state.model;
@@ -270,6 +313,11 @@
     const style = document.createElement('style'); style.textContent = '.v412-policy{box-sizing:border-box;margin:10px 0;padding:12px 14px;border:1px solid #dbe3eb;border-radius:12px;background:#fff;color:#20364b;max-width:100%}.v412-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}.v412-heading h2{font-size:18px;margin:0}.v412-heading>strong{font-size:14px}.v412-heading button{min-height:40px}.v412-origin{font-size:12px;line-height:1.45;margin-top:7px}.v412-origin>summary{cursor:pointer;color:#52677a}.v412-origin p{margin:7px 0}.v412-rule{padding:10px 0;border-bottom:1px solid #e4eaf0}.v412-rule h3{font-size:13px;margin:0 0 5px}.v412-rule strong{white-space:nowrap}.v412-warning{color:#79500a;background:#fff7e5;padding:8px;border-radius:8px;font-size:12px;line-height:1.45;margin:8px 0}.v412-loading{font-size:12px;margin:7px 0}@media(max-width:400px){.v412-policy{padding:10px}.v412-heading{gap:7px}.v412-heading button{font-size:12px}}'; document.head.append(style);
     render = function () { const result = previous.apply(this, arguments); paint(); return result; };
     Object.assign(state, { load, refresh }); window.__LTS_V412_PROJECTION = state;
+    window.addEventListener('lts:product-refresh-ready', () => {
+      reset(); if (!D || N.classList.contains('hidden')) return;
+      state.status = 'idle'; state.readAt = 0;
+      load(true, false).then(() => { if (state.model && state.status === 'ready') refreshConsumers(); });
+    });
     const observer = new MutationObserver(patchDialog); observer.observe(document.body, { childList: true, subtree: true });
     paint();
   }
@@ -283,3 +331,4 @@
   shell?.addEventListener('load', () => { attempts = 0; start(); }); start();
   window.LTSV339Boot?.watch('lts-v412-projection-policy.js', install);
 })();
+
