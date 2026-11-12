@@ -21,7 +21,7 @@ async function run(browser,engine,width){const h=await setup(browser,width,980,'
   await f.locator('[data-edit="Habitação"]').click();await f.getByRole('button',{name:'Cancelar',exact:true}).click();assert.equal(saves,1);
   await f.evaluate(()=>{V='Fluxo Diário';renderNav();render();});await f.waitForFunction(()=>!FLOWLOADING&&FLOWQ&&__LTS_V441_FLOW);await h.page.waitForLoadState('networkidle');
   const before=await f.evaluate(()=>structuredClone(FLOWQ));assert(await f.locator('#v441FlowSummary').isVisible());assert.equal(await f.locator('.v382-tools[open]').count(),0);
-  assert.match(await f.locator('#v441FlowSummary').innerText(),/Entradas futuras são projeções/);await h.page.screenshot({path:out+'/'+label+'-flow.png'});
+  assert.match(await f.locator('#v441FlowSummary').innerText(),/Entradas futuras são projeções/);await f.locator('#v441FlowSummary').scrollIntoViewIfNeeded();await h.page.screenshot({path:out+'/'+label+'-flow.png'});
   await f.getByLabel('Opções do Fluxo').click();assert(await f.locator('#v441FlowPremises').isVisible());await h.page.screenshot({path:out+'/'+label+'-flow-options.png'});assert.equal(hash(await f.evaluate(()=>FLOWQ)),hash(before));
   const geom=await f.evaluate(()=>({width:innerWidth,scroll:document.documentElement.scrollWidth}));assert(geom.scroll<=width+2);assert.deepEqual(h.errors,[]);assert.deepEqual(h.writes,[]);
   return{pass:true,engine,width,budget_below_monthly:true,monthly_and_annual:true,save_persists_without_financial_invalidation:true,cancel_has_no_write:true,flow_response_unchanged:true,flow_options_closed_by_default:true,synthetic_http:true,private_session:false,physical_iphone:false};
