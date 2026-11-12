@@ -6,6 +6,8 @@ permissions:
   contents: read
 jobs:
   synthetic:
+    env:
+      LTS_MOBILE_RELEASE: v441
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

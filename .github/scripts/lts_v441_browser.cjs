@@ -1,0 +1,34 @@
+'use strict';process.env.LTS_FLOW_RELEASE='v441';
+const fs=require('node:fs'),assert=require('node:assert/strict'),crypto=require('node:crypto');
+const {chromium,webkit}=require('playwright'),fixture=require('./lts_v379_fixtures.cjs'),projection=require('./lts_v412_projection_fixtures.cjs');
+const oldResponse=fixture.response;fixture.response=(name,args)=>name==='lts_browser_projection_policy_v412'?projection.policy():oldResponse(name,args);
+const {setup,open}=require('./lts_v382_browser.cjs'),out='qa/v441';fs.mkdirSync(out,{recursive:true});
+const hash=x=>crypto.createHash('sha256').update(JSON.stringify(x)).digest('hex');
+async function run(browser,engine,width){const h=await setup(browser,width,980,'2026-11-11T15:00:00Z'),label=engine+'-'+width;let f,budget=JSON.parse(fs.readFileSync(out+'/budget-fixture.json')),reads=0,saves=0;
+ const send=(route,value)=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(value)});
+ let releaseSave,releaseBudget,saveArrived,budgetArrived;
+ const saving=new Promise(r=>saveArrived=r),readingOld=new Promise(r=>budgetArrived=r);
+ await h.ctx.route('**/rest/v1/rpc/lts_browser_budget_read_v441',async route=>{reads++;const args=JSON.parse(route.request().postData());const b=structuredClone(budget);b.year=args.p_year;b.months.forEach(x=>x.month=args.p_year+x.month.slice(4));b.rows.forEach(r=>r.months.forEach(x=>x.month=args.p_year+x.month.slice(4)));if(reads===2){const wait=new Promise(r=>releaseBudget=r);budgetArrived();await wait;}return send(route,b);});
+ await h.ctx.route('**/rest/v1/rpc/lts_browser_budget_save_v441',async route=>{const a=JSON.parse(route.request().postData());assert.equal(a.p_expected,budget.plan_revision);assert.equal(a.p_month,11);assert.deepEqual(a.p_targets,{'Mercado':875.25});saves++;const wait=new Promise(r=>releaseSave=r);saveArrived();await wait;budget.plan_revision++;budget.proposed=false;budget.rows[1].months[10].target=875.25;budget.rows[1].months[10].target_basis='owner';budget.months[10].target=1375.25;return send(route,{ok:true,saved:true,revision:budget.plan_revision});});
+ try{
+  f=await open(h,'v441',true);await f.waitForFunction(()=>__LTS_V441_BUDGET?.state.status==='ready');assert.equal(reads,1);
+  const place=await f.evaluate(()=>({after:document.getElementById('v337Overview').nextElementSibling?.id,scroll:document.documentElement.scrollWidth,width:innerWidth}));assert.equal(place.after,'v441Budget');assert(place.scroll<=width+2);
+  const monthly=await f.locator('#v441Budget').innerText();assert.match(monthly,/R\$\s*3\.000,00/);assert.match(monthly,/R\$\s*1\.500,00/);assert.match(monthly,/R\$\s*50,00/);assert.equal(await f.locator('.v441-premises[open]').count(),0);
+  await f.locator('#v441Budget').scrollIntoViewIfNeeded();await h.page.screenshot({path:out+'/'+label+'-monthly.png'});
+  await f.locator('[data-mode=year]').click();assert.match(await f.locator('#v441Budget').innerText(),/R\$\s*18\.000,00/);assert.match(await f.locator('#v441Budget').innerText(),/R\$\s*20\.000,00/);assert.equal(reads,1);await h.page.screenshot({path:out+'/'+label+'-annual.png'});
+  await f.locator('.v441-premises>summary').click();await h.page.screenshot({path:out+'/'+label+'-premises.png'});await f.locator('.v441-premises>summary').click();await f.locator('[data-mode=month]').click();
+  const productHash=await f.evaluate(()=>JSON.stringify(D)),epoch=await f.evaluate(()=>__LTS_V227_TRANSPORT.revision),productReads=h.reads.filter(x=>x.name==='lts_browser_product_v1').length;
+  await f.locator('[data-edit="Mercado"]').click();await f.getByLabel('Valor mensal da meta').fill('875.25');await f.getByRole('button',{name:'Salvar meta',exact:true}).click();await saving;
+  await f.evaluate(()=>window.dispatchEvent(new Event('lts:product-refresh-ready')));await readingOld;releaseSave();await f.waitForFunction(()=>!document.getElementById('v441BudgetEdit'));releaseBudget();
+  await f.waitForFunction(()=>__LTS_V441_BUDGET.state.status==='ready');assert.equal(reads,3,'A pre-save read cannot replace the confirmed goal');assert.equal(saves,1);assert.match(await f.locator('#v441Budget').innerText(),/R\$\s*1\.375,25/);
+  assert.equal(await f.evaluate(()=>JSON.stringify(D)),productHash);assert.equal(await f.evaluate(()=>__LTS_V227_TRANSPORT.revision),epoch);assert.equal(h.reads.filter(x=>x.name==='lts_browser_product_v1').length,productReads);
+  await f.locator('[data-edit="Habitação"]').click();await f.getByRole('button',{name:'Cancelar',exact:true}).click();assert.equal(saves,1);
+  await f.evaluate(()=>{V='Fluxo Diário';renderNav();render();});await f.waitForFunction(()=>!FLOWLOADING&&FLOWQ&&__LTS_V441_FLOW);await h.page.waitForLoadState('networkidle');
+  const before=await f.evaluate(()=>structuredClone(FLOWQ));assert(await f.locator('#v441FlowSummary').isVisible());assert.equal(await f.locator('.v382-tools[open]').count(),0);
+  assert.match(await f.locator('#v441FlowSummary').innerText(),/Entradas futuras são projeções/);await f.locator('#v441FlowSummary').scrollIntoViewIfNeeded();await h.page.screenshot({path:out+'/'+label+'-flow.png'});
+  await f.getByLabel('Opções do Fluxo').click();assert(await f.locator('#v441FlowPremises').isVisible());await h.page.screenshot({path:out+'/'+label+'-flow-options.png'});assert.equal(hash(await f.evaluate(()=>FLOWQ)),hash(before));
+  const geom=await f.evaluate(()=>({width:innerWidth,scroll:document.documentElement.scrollWidth}));assert(geom.scroll<=width+2);assert.deepEqual(h.errors,[]);assert.deepEqual(h.writes,[]);
+  return{pass:true,engine,width,budget_below_monthly:true,monthly_and_annual:true,save_persists_without_financial_invalidation:true,old_budget_read_cannot_replace_saved_goal:true,cancel_has_no_write:true,flow_response_unchanged:true,flow_options_closed_by_default:true,synthetic_http:true,private_session:false,physical_iphone:false};
+ }catch(error){await h.page.screenshot({path:out+'/'+label+'-failure.png',fullPage:true}).catch(()=>{});fs.writeFileSync(out+'/'+label+'-failure.json',JSON.stringify({error:error.stack,errors:h.errors,reads:h.reads.slice(-20),body:f?await f.locator('body').innerText():null},null,2));throw error;}finally{await h.ctx.close();}
+}
+(async()=>{const results=[];for(const[engine,type]of[['chromium',chromium],['webkit',webkit]]){const browser=await type.launch({headless:true});try{for(const width of[320,393,1366]){let r;try{r=await run(browser,engine,width);}catch(e){r={pass:false,engine,width,error:e.stack};process.exitCode=1;}results.push(r);console.log(JSON.stringify(r));fs.writeFileSync(out+'/browser-result.json',JSON.stringify({pass:results.length===6&&results.every(x=>x.pass),results},null,2));}}finally{await browser.close();}}})().catch(e=>{console.error(e);process.exitCode=1;});

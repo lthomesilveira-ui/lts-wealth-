@@ -14,7 +14,8 @@ for(const [name,expected] of Object.entries(prior.files)){
 }
 const changed=Object.keys(next.files).filter(name=>next.files[name]!==prior.files[name]).sort();
 assert.deepEqual(changed,['app.html','lts-v412-projection-policy.js','provenance.json']);
-assert.deepEqual(JSON.parse(fs.readFileSync('mobile/current.json')),{release:'v439',entry:'../releases/v439/app.html'});
+const mobile=process.env.LTS_MOBILE_RELEASE||'v439';assert.match(mobile,/^v\d+$/);
+assert.deepEqual(JSON.parse(fs.readFileSync('mobile/current.json')),{release:mobile,entry:'../releases/'+mobile+'/app.html'});
 assert(fs.readFileSync(release+'app.html','utf8').includes('V440'));
 const provenance=JSON.parse(fs.readFileSync(release+'provenance.json'));
 assert.equal(provenance.default_loader_promoted,false);
