@@ -40,7 +40,7 @@ async function stats(frame,positive=false){
  for(let i=0;i<3;i++){
   const box=boxes.nth(i),dl=box.locator('.v385-scenario-stats');assert.equal(await dl.count(),1,'visible summary for scenario '+i+': '+await box.innerText());
   const times=await dl.locator('time').evaluateAll(es=>es.map(e=>e.dateTime)),amounts=await dl.locator('strong').allTextContents(),cover=await box.locator(':scope>div>span').innerText();
-  if(positive&&i===2){const full=/\/releases\/v(?:421|423|425|433|436)\//.test(new URL(frame.url()).pathname);assert.match(await dl.innerText(),full?/Sem saldo negativo até 31\/12\/2031/:/Sem saldo negativo no período/);assert.deepEqual(times,[day]);assert.deepEqual(amounts,[money(0)]);assert.match(cover,full?/31\/12\/2031/:/31\/12\/2027/);}
+  if(positive&&i===2){const full=/\/releases\/v(?:421|423|425|433|436|439)\//.test(new URL(frame.url()).pathname);assert.match(await dl.innerText(),full?/Sem saldo negativo até 31\/12\/2031/:/Sem saldo negativo no período/);assert.deepEqual(times,[day]);assert.deepEqual(amounts,[money(0)]);assert.match(cover,full?/31\/12\/2031/:/31\/12\/2027/);}
   else{assert.deepEqual(times,[iso(2+i),iso(5+2*i)]);assert.deepEqual(amounts,[money([-12.34,-23.45,-34.56][i]),money([-9876.54,-8765.43,-7654.32][i])]);assert(cover.includes(iso(1+i).split('-').reverse().join('/')),'coverage date preserved');}
   assert.equal(await dl.locator('details').count(),0);assert(await dl.isVisible());result.push({label:await box.locator(':scope>div>b').innerText(),times,amounts,coverage:cover});
  }

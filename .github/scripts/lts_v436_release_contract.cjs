@@ -21,7 +21,7 @@ for (const [name, expected] of Object.entries(prior.files)) {
 const changed = Object.keys(next.files).filter(name => next.files[name] !== prior.files[name]).sort();
 assert.deepEqual(changed, ['app.html', 'lts-v183-v168-feedback-safe.js', 'lts-v312-card-review.js',
   'lts-v384-startup-1.js', 'lts-v384-startup-2.js', 'provenance.json']);
-assert.deepEqual(JSON.parse(fs.readFileSync('mobile/current.json')), {release: 'v436', entry: '../releases/v436/app.html'});
+const entry=process.env.LTS_MOBILE_RELEASE||'v436';assert.match(entry,/^v[0-9]+$/);assert.deepEqual(JSON.parse(fs.readFileSync('mobile/current.json')), {release:entry,entry:'../releases/'+entry+'/app.html'});
 assert(fs.readFileSync(release + 'app.html', 'utf8').includes('V436'));
 const provenance = JSON.parse(fs.readFileSync(release + 'provenance.json'));
 for (const flag of ['financial_values_changed', 'mutation_paths_changed', 'query_arguments_changed',
