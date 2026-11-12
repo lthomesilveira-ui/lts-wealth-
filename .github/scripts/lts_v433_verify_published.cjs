@@ -16,7 +16,7 @@ async function verify(path,expected){
 (async()=>{
  const entries=[];
  const current=process.env.LTS_MOBILE_RELEASE||'v433';assert.match(current,/^v[0-9]+$/);
- const previous=['v436','v433','v425','v423','v421','v417','v415','v412','v411','v407','v404','v402'].filter(release=>release!==current);
+ const previous=['v440','v439','v436','v433','v425','v423','v421','v417','v415','v412','v411','v407','v404','v402'].filter(release=>release!==current);
  for(const release of [current,...previous]){
   const root='releases/'+release+'/',raw=fs.readFileSync(root+'manifest.json'),manifest=JSON.parse(raw);
   const files={...manifest.files,'manifest.json':sha(raw)};

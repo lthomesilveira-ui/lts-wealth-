@@ -1,4 +1,10 @@
 -- Planning targets only. Canonical expense/income readers own all actuals.
+DO $guard$ BEGIN
+ IF to_regnamespace('lts_budget_private_v441') IS NOT NULL
+  OR to_regprocedure('public.lts_browser_budget_read_v441(integer)') IS NOT NULL
+  OR to_regprocedure('public.lts_browser_budget_save_v441(integer,integer,jsonb,numeric,bigint)') IS NOT NULL
+ THEN RAISE EXCEPTION 'Budget implementation already exists; inspect before applying';END IF;
+END $guard$;
 CREATE SCHEMA IF NOT EXISTS lts_budget_private_v441;
 REVOKE ALL ON SCHEMA lts_budget_private_v441 FROM PUBLIC,anon,authenticated;
 CREATE TABLE IF NOT EXISTS lts_budget_private_v441.plans(
