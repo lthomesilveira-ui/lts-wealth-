@@ -7,7 +7,7 @@ const file=path.join(__dirname,'lts_v385_browser.cjs');let source=fs.readFileSyn
 const bytes=Buffer.from(source),hash=crypto.createHash('sha1').update(Buffer.concat([Buffer.from('blob '+bytes.length+'\0'),bytes])).digest('hex');
 assert.equal(hash,'ce00f1e52d809f81da8ffc6e1dbee444a6df443d','Review this adapter if the historical suite changes');
 const previous='assert.deepEqual(geometry.map(x=>x.name),groups);';
-const replacement="const visibleGroups=groups.map(name=>['/releases/v423/','/releases/v425/','/releases/v433/','/releases/v436/','/releases/v439/'].some(p=>new URL(f.url()).pathname.includes(p))&&variant!=='legacy'&&name==='Patrimônio e financiamentos'?'Financiamentos e empréstimos':name);assert.deepEqual(geometry.map(x=>x.name),visibleGroups);";
+const replacement="const visibleGroups=groups.map(name=>['/releases/v423/','/releases/v425/','/releases/v433/','/releases/v436/','/releases/v439/','/releases/v440/'].some(p=>new URL(f.url()).pathname.includes(p))&&variant!=='legacy'&&name==='Patrimônio e financiamentos'?'Financiamentos e empréstimos':name);assert.deepEqual(geometry.map(x=>x.name),visibleGroups);";
 assert.equal(source.split(previous).length,2,'Exactly one visible-name assertion is adapted');
 source=source.replace(previous,replacement);
 assert(source.includes('assert.equal(detailRequests.at(-1).args.p_scope.macrogroup,groups[0])'),'Original filter-key assertion is retained');
