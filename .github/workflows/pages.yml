@@ -105,31 +105,31 @@ jobs:
           node .github/scripts/lts_v371_release_contract.cjs
           node .github/scripts/lts_v373_release_contract.cjs
           node .github/scripts/lts_v374_release_contract.cjs
-          LTS_MOBILE_RELEASE=v439 node .github/scripts/lts_v379_release_contract.cjs
-          LTS_MOBILE_RELEASE=v439 node .github/scripts/lts_v382_release_contract.cjs
-          LTS_MOBILE_RELEASE=v439 node .github/scripts/lts_v383_release_contract.cjs
+          LTS_MOBILE_RELEASE=v440 node .github/scripts/lts_v379_release_contract.cjs
+          LTS_MOBILE_RELEASE=v440 node .github/scripts/lts_v382_release_contract.cjs
+          LTS_MOBILE_RELEASE=v440 node .github/scripts/lts_v383_release_contract.cjs
           node .github/scripts/lts_v384_release_contract.cjs
           node .github/scripts/lts_v384_priority_contract.cjs
-          LTS_MOBILE_RELEASE=v439 node .github/scripts/lts_v385_release_contract.cjs
-          LTS_MOBILE_RELEASE=v439 node .github/scripts/lts_v386_release_contract.cjs
-          LTS_MOBILE_RELEASE=v439 node .github/scripts/lts_v389_release_contract.cjs
-          LTS_MOBILE_RELEASE=v439 node .github/scripts/lts_v390_property_contract.cjs
-          LTS_MOBILE_RELEASE=v439 node .github/scripts/lts_v391_release_contract.cjs
-          LTS_MOBILE_RELEASE=v439 node .github/scripts/lts_v393_release_contract.cjs
-          LTS_MOBILE_RELEASE=v439 node .github/scripts/lts_v398_release_contract.cjs
-          LTS_MOBILE_RELEASE=v439 node .github/scripts/lts_v399_release_contract.cjs
-          LTS_MOBILE_RELEASE=v439 node .github/scripts/lts_v402_release_contract.cjs
-          LTS_MOBILE_RELEASE=v439 node .github/scripts/lts_v404_release_contract.cjs
-          LTS_MOBILE_RELEASE=v439 node .github/scripts/lts_v407_release_contract.cjs
-          LTS_MOBILE_RELEASE=v439 node .github/scripts/lts_v411_release_contract.cjs
-          LTS_MOBILE_RELEASE=v439 node .github/scripts/lts_v412_release_contract.cjs
-          LTS_MOBILE_RELEASE=v439 node .github/scripts/lts_v415_release_contract.cjs
-          LTS_MOBILE_RELEASE=v439 node .github/scripts/lts_v421_release_contract.cjs
-          LTS_MOBILE_RELEASE=v439 node .github/scripts/lts_v423_release_contract.cjs
-          LTS_MOBILE_RELEASE=v439 node .github/scripts/lts_v425_release_contract.cjs
-          LTS_MOBILE_RELEASE=v439 node .github/scripts/lts_v433_release_contract.cjs
-          LTS_MOBILE_RELEASE=v439 node .github/scripts/lts_v436_release_contract.cjs
-          LTS_MOBILE_RELEASE=v439 node .github/scripts/lts_v439_release_contract.cjs
+          LTS_MOBILE_RELEASE=v440 node .github/scripts/lts_v385_release_contract.cjs
+          LTS_MOBILE_RELEASE=v440 node .github/scripts/lts_v386_release_contract.cjs
+          LTS_MOBILE_RELEASE=v440 node .github/scripts/lts_v389_release_contract.cjs
+          LTS_MOBILE_RELEASE=v440 node .github/scripts/lts_v390_property_contract.cjs
+          LTS_MOBILE_RELEASE=v440 node .github/scripts/lts_v391_release_contract.cjs
+          LTS_MOBILE_RELEASE=v440 node .github/scripts/lts_v393_release_contract.cjs
+          LTS_MOBILE_RELEASE=v440 node .github/scripts/lts_v398_release_contract.cjs
+          LTS_MOBILE_RELEASE=v440 node .github/scripts/lts_v399_release_contract.cjs
+          LTS_MOBILE_RELEASE=v440 node .github/scripts/lts_v402_release_contract.cjs
+          LTS_MOBILE_RELEASE=v440 node .github/scripts/lts_v404_release_contract.cjs
+          LTS_MOBILE_RELEASE=v440 node .github/scripts/lts_v407_release_contract.cjs
+          LTS_MOBILE_RELEASE=v440 node .github/scripts/lts_v411_release_contract.cjs
+          LTS_MOBILE_RELEASE=v440 node .github/scripts/lts_v412_release_contract.cjs
+          LTS_MOBILE_RELEASE=v440 node .github/scripts/lts_v415_release_contract.cjs
+          LTS_MOBILE_RELEASE=v440 node .github/scripts/lts_v421_release_contract.cjs
+          LTS_MOBILE_RELEASE=v440 node .github/scripts/lts_v423_release_contract.cjs
+          LTS_MOBILE_RELEASE=v440 node .github/scripts/lts_v425_release_contract.cjs
+          LTS_MOBILE_RELEASE=v440 node .github/scripts/lts_v433_release_contract.cjs
+          LTS_MOBILE_RELEASE=v440 node .github/scripts/lts_v436_release_contract.cjs
+          LTS_MOBILE_RELEASE=v440 node .github/scripts/lts_v439_release_contract.cjs
           node .github/scripts/lts_v440_release_contract.cjs
       - name: Configure Pages
         uses: actions/configure-pages@v5
@@ -146,11 +146,11 @@ jobs:
         with:
           artifact_name: github-pages-${{ github.run_id }}-${{ github.run_attempt }}
       - name: Verify published V439 and preserved releases
-        run: LTS_MOBILE_RELEASE=v439 node .github/scripts/lts_v433_verify_published.cjs
+        run: LTS_MOBILE_RELEASE=v440 node .github/scripts/lts_v433_verify_published.cjs
       - uses: actions/upload-artifact@v4
         with:
-          name: v439-published-verification
-          path: v439-published-verification.json
+          name: v440-published-verification
+          path: v440-published-verification.json
       - name: Verify published V368 and preserved releases
         run: |
           node --input-type=module <<'JS'

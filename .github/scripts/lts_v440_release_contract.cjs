@@ -14,10 +14,10 @@ for(const [name,expected] of Object.entries(prior.files)){
 }
 const changed=Object.keys(next.files).filter(name=>next.files[name]!==prior.files[name]).sort();
 assert.deepEqual(changed,['app.html','lts-v412-projection-policy.js','provenance.json']);
-assert.deepEqual(JSON.parse(fs.readFileSync('mobile/current.json')),{release:'v439',entry:'../releases/v439/app.html'});
+assert.deepEqual(JSON.parse(fs.readFileSync('mobile/current.json')),{release:'v440',entry:'../releases/v440/app.html'});
 assert(fs.readFileSync(release+'app.html','utf8').includes('V440'));
 const provenance=JSON.parse(fs.readFileSync(release+'provenance.json'));
 assert.equal(provenance.default_loader_promoted,false);
 assert.equal(provenance.private_http_validated,false);
 assert.equal(provenance.physical_mobile_validated,false);
-console.log(JSON.stringify({pass:true,release:'v440',assets:Object.keys(next.files).length,changed,default_release:'v439'}));
+console.log(JSON.stringify({pass:true,release:'v440',assets:Object.keys(next.files).length,changed,default_release:'v440'}));
