@@ -3,7 +3,7 @@ import fs from 'node:fs';import assert from 'node:assert/strict';import {execFil
 const db=new PGlite(),results=[],u='11111111-1111-4111-8111-111111111111',v='22222222-2222-4222-8222-222222222222';
 const one=async q=>(await db.query(q)).rows[0];
 async function test(name,f){await f();results.push(name);console.log('PASS',name);}
-function patch(s){return execFileSync('python',['-c',`import importlib.util,sys;s=importlib.util.spec_from_file_location('p','backend/tools/card_statement_memo_v442/patch.py');p=importlib.util.module_from_spec(s);s.loader.exec_module(p);print(p.patch(sys.stdin.read()),end='')`],{input:s,encoding:'utf8'});}
+function patch(s){return execFileSync('python3',['-c',`import importlib.util,sys;s=importlib.util.spec_from_file_location('p','backend/tools/card_statement_memo_v442/patch.py');p=importlib.util.module_from_spec(s);s.loader.exec_module(p);print(p.patch(sys.stdin.read()),end='')`],{input:s,encoding:'utf8'});}
 const source=`CREATE OR REPLACE FUNCTION public.lts_card_cycles_v226(p_user_id uuid)
  RETURNS jsonb LANGUAGE plpgsql STABLE SET search_path TO '' SET "TimeZone" TO 'America/Sao_Paulo'
 AS $function$

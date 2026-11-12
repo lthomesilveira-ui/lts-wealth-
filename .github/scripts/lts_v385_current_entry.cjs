@@ -12,7 +12,7 @@ assert.equal(source.split(previous).length,2,'Exactly one visible-name assertion
 source=source.replace(previous,replacement);
 const horizonVersions='421|423|425|433|436|439';
 assert.equal(source.split(horizonVersions).length,2,'Exactly one full-horizon layout condition');
-source=source.replace(horizonVersions,horizonVersions+'|440|441');
+source=source.replace(horizonVersions,horizonVersions+'|440|441|442');
 assert(source.includes('assert.equal(detailRequests.at(-1).args.p_scope.macrogroup,groups[0])'),'Original filter-key assertion is retained');
 assert(source.includes('assert.deepEqual(geometry.map(x=>x.text),values.map(money))'),'Monetary assertions are retained');
 console.log(JSON.stringify({suite:'v385-rankings',approved_display_alias:'Financiamentos e empréstimos',legacy_names_preserved:true,source_keys_and_financial_assertions_preserved:true}));
