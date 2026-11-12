@@ -1,0 +1,9 @@
+{
+  "release": "v441",
+  "base_release": "v440",
+  "scope": "Queue-aware product readiness, canonical category budgets and liquidity scenarios",
+  "provision_policy_changed": false,
+  "existing_financial_writers_changed": false,
+  "planning_targets_writer_added": true,
+  "physical_mobile_validated": false
+}
