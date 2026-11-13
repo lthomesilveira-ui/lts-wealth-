@@ -29,6 +29,7 @@ jobs:
           node backend/qa/v442/test.mjs
           node backend/qa/v442/cash_test.mjs
           node backend/qa/v442/auxiliary_test.mjs
+          node backend/qa/v442/payment_order_test.mjs
           node backend/qa/v442/audit_test.mjs
           node backend/qa/v442/reporting_test.mjs
           node .github/scripts/lts_v442_strategy_test.cjs
