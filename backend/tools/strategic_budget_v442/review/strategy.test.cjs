@@ -18,4 +18,19 @@ test('Payroll exclusion requires matching identity and net-income arithmetic',()
 
 test('History-based cash estimates do not become contractual floors',()=>{const f={current_future:{...flow.current_future,events:[{event_date:'2026-12-01',source:'planning_projection_v412',source_ref:'estimated',description:'Parcela de despesa estimada',category:'Restaurantes',signed_amount:-900,confidence:'owner_authorized_12m_history'}]}};assert.equal(derive(original,f,cards).rows[1].months[11].strategy.floor,0)});
 test('Cash payment date never silently becomes service competence',()=>{const e={event_date:'2026-12-05',source:'synthetic',source_ref:'condo',description:'Condomínio',category:'Condomínio',signed_amount:-400};const f={current_future:{...flow.current_future,events:[e]}};let q=derive(original,f,cards);assert.equal(q.rows[0].months[11].strategy.floor,0);assert.equal(q.strategy.cash_without_competence[0].amount,400);e.competence_month='2026-11';e.competence_evidence=['Synthetic service month record'];q=derive(original,f,cards);assert.equal(q.rows[0].months[10].strategy.floor,400);assert.equal(q.rows[0].months[11].strategy.floor,0);assert.equal(q.strategy.cash_without_competence.length,0)});
-console.log(n+' tests passed; synthetic only; not a complete planner implementation');
+test('Exact canonical card identity prevents a second commitment under a beneficiary label',()=>{
+ const p=structuredClone(original);p.rows[1].months[10].actual=175;p.rows[1].months[10].card_actual=175;
+ const it={source_id:'canonical-card-one',provider_status:'PENDING',amount:175,category:'Pessoa — Restaurantes',purchase_date:'2026-11-03'};
+ const cs={cards:[{family:'synthetic',cycles:[{month:'2026-11-01',items:[it]}]}]};
+ p.card_category_evidence=[{source_ref:it.source_id,purchase_date:it.purchase_date,raw_category:it.category,category:'Restaurantes',amount:175}];
+ const before=JSON.stringify([p,cs]),q=derive(p,flow,cs);
+ assert.equal(q.rows[1].months[10].strategy.floor,175);assert(!q.rows.some(r=>r.category===it.category));assert.equal(JSON.stringify([p,cs]),before);
+ for(const field of ['source_ref','purchase_date','raw_category','amount']){const changed=structuredClone(p);changed.card_category_evidence[0][field]=field==='amount'?174:'changed';assert(derive(changed,flow,cs).rows.some(r=>r.category===it.category),field);}
+ const conflict=structuredClone(p);conflict.card_category_evidence.push({...p.card_category_evidence[0],category:'Outra categoria'});assert(derive(conflict,flow,cs).rows.some(r=>r.category===it.category));
+});
+test('Projected installment reuses exact original purchase category without a new transaction',()=>{
+ const p=structuredClone(original),it={source_id:'canonical-installment',provider_status:'PROJECTED',amount:80,category:'Pessoa — Restaurantes',purchase_date:'2026-10-03',total_installments:4,installment_number:3};
+ p.card_category_evidence=[{source_ref:it.source_id,purchase_date:it.purchase_date,raw_category:it.category,category:'Restaurantes',amount:80}];
+ const q=derive(p,flow,{cards:[{family:'synthetic',cycles:[{month:'2026-12-01',items:[it]}]}]});assert.equal(q.rows[1].months[11].strategy.floor,80);assert(!q.rows.some(r=>r.category===it.category));
+});
+console.log(n+' tests passed; synthetic only; owner validation is separate');

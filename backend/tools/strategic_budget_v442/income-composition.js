@@ -4,5 +4,14 @@
   const rows=d.composition.filter(x=>typeof x.rubric==='string'&&Number.isFinite(Number(x.amount)));if(rows.length!==d.composition.length)return html;
   const detail='<details class="v442-income-composition"><summary>Composição do pagamento previsto</summary><p>Referência: '+esc(d.payroll_reference_date||'—')+'</p>'+rows.map(x=>'<p>'+esc(x.rubric)+' · <strong>'+brl(Number(x.amount))+'</strong></p>').join('')+'<p>Total da previsão: '+brl(Number(d.amount))+'</p>'+(d.composition_document_pending?'<p>Informado por você; demonstrativo a conferir.</p>':'')+'</details>';
   return html.replace('<div class="flowedit-actions">',detail+'<div class="flowedit-actions">');
+ };
+ const priorBadge=flowClassificationBadge;
+ flowClassificationBadge=function(e){
+  const today=new Intl.DateTimeFormat('en-CA',{timeZone:'America/Sao_Paulo',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
+  if(Number(e.signed_amount)>0&&/^\d{4}-\d{2}-\d{2}$/.test(e.event_date||'')&&e.event_date>today){
+   const label=/(^|\D)13[º°o]?|d[eé]cimo terceiro/i.test(e.description||'')?'13º previsto':'Entrada prevista';
+   return '<span class="tag">'+label+'</span>';
+  }
+  return priorBadge.apply(this,arguments);
  };window.__LTS_V442_INCOME_DETAIL=true;
 }function install(){try{const w=shell?.contentWindow,d=shell?.contentDocument;if(!w?.__LTS_V337_MONTH)return false;if(!w.__LTS_V442_INCOME_DETAIL){const s=d.createElement('script');s.textContent='('+runtime.toString()+')();';d.head.append(s);}return!!w.__LTS_V442_INCOME_DETAIL;}catch{return false;}}let tries=0;function start(){if(!install()&&++tries<400)setTimeout(start,100);}shell?.addEventListener('load',start);start();window.LTSV339Boot?.watch('lts-v442-income-composition.js',install);})();

@@ -40,13 +40,19 @@
    if(!hasCompetence){unallocatedCash.push({description,date:e.event_date,category:e.category,amount:money(-n),source:e.source,source_ref:e.source_ref,reason:'Data de pagamento conhecida; competência do serviço ainda não comprovada.'});continue;}
    add(competence,e.category,-n,{description,date:e.event_date,competence_month:competence,competence_evidence:e.competence_evidence,kind:'scheduled',contracted:/financiamento|emprestimo|parcela/.test(c)});
   }
+  function cardCategory(item){
+   const date=item.purchase_date||item.posting_date;
+   if(!item.source_id||!date||!Array.isArray(p.card_category_evidence))return item.category;
+   const labels=new Set(p.card_category_evidence.filter(e=>e.source_ref===item.source_id&&e.purchase_date===date&&e.raw_category===item.category&&cents(e.amount)===cents(item.amount)&&typeof e.category==='string'&&e.category.trim()).map(e=>e.category));
+   return labels.size===1?[...labels][0]:item.category;
+  }
   for(const card of cardRows)for(const cycle of card.cycles||[])for(const item of cycle.items||[]){
    const installment=Number(item.total_installments)>1;
    const received=['PENDING','POSTED','DOCUMENTED'].includes(item.provider_status);
    if((!installment&&!received)||item.is_payment||Number(item.amount)<=0)continue;
    const month=String(item.reference_month||cycle.month||'').slice(0,7),identity=[card.family,month,item.source_id,item.installment_number].join(':');
    if(!item.source_id||seen.has(identity))continue;seen.add(identity);
-   add(month,item.category,cents(item.amount),{description:item.description,date:item.purchase_date||item.posting_date,kind:installment?'installment':'card_commitment',installment:item.installment_number,total_installments:item.total_installments,contracted:true});
+   add(month,cardCategory(item),cents(item.amount),{description:item.description,date:item.purchase_date||item.posting_date,kind:installment?'installment':'card_commitment',installment:item.installment_number,total_installments:item.total_installments,contracted:true});
   }
   // Unknown obligations remain explicit. They are never silently converted to zero.
   const extraCategories=[...new Set(unmapped.map(x=>x.category))].filter(c=>!knownKeys.has(c));

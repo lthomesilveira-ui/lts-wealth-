@@ -8,14 +8,14 @@
   if(/ipva|iptu|impostos|tributos|licenciamento|viagen|passagem|hotel|duty free|batizado|casamento|eventos|documentos/.test(c))return'seasonal';
   if(/brinquedo|presente|vestuario|restaurante|ifood|rappi|bebida|cabele|cabeler|passeio|lazer|mercado livre|amazon|apple|moveis|decoracao|doacao/.test(c))return'discretionary';
   if(/saude|farmacia|educacao|aulas|mercado$|alimentacao|energia|enel|combustivel|rafiki|moradia|familia|benjamin/.test(c))return'essential';
-  return'discretionary';
+  return'unreviewed';
  }
  function derive(input,flow,cards){
   if(!input||input.ok!==true||!Array.isArray(input.rows)||!Array.isArray(input.months)||input.months.length!==12)throw Error('budget unavailable');
   const p=structuredClone(input),asOf=p.as_of,current=asOf.slice(0,7),year=p.year,events=flow?.flow?.current_future?.events??flow?.current_future?.events;
   const cf=flow?.flow?.current_future??flow?.current_future,cardRows=cards?.cards;if(!Array.isArray(events)||!Array.isArray(cardRows)||cards.complete===false||!p.income_approvals||!p.category_aliases||Array.isArray(p.category_aliases)||typeof p.category_aliases!=='object')throw Error('commitments or approval metadata unavailable');
   if(year>=Number(asOf.slice(0,4))&&(flow.complete===false||cf.complete===false||!cf.from||cf.from>asOf||!cf.to||cf.to<year+'-12-31'))throw Error('commitment horizon incomplete');
-  const amounts=new Map(),cardAmounts=new Map(),evidence=new Map(),withheld=[],unmapped=[],knownKeys=new Set(p.rows.map(r=>r.category)),seen=new Set(),salary=new Map();
+  const amounts=new Map(),cardAmounts=new Map(),evidence=new Map(),withheld=[],unallocatedCash=[],unmapped=[],knownKeys=new Set(p.rows.map(r=>r.category)),seen=new Set(),salary=new Map();
   const key=(m,c)=>m+'\u0000'+c,categoryFor=c=>{if(knownKeys.has(c))return c;if(knownKeys.has(p.category_aliases[c]))return p.category_aliases[c];
    // Two established Portuguese labels for the same mortgage category. This
    // changes only planning assignment, never the original event or its amount.
@@ -23,27 +23,41 @@
   const add=(month,category,amount,detail)=>{if(!new RegExp('^'+year+'-(0[1-9]|1[0-2])$').test(month)||amount<=0)return;
    category=categoryFor(category);
    if(!category||!knownKeys.has(category)){unmapped.push({month,category:category||'Compromisso sem categoria',amount:money(amount),...detail});return;}
-   const k=key(month,category),map=detail.kind==='installment'?cardAmounts:amounts;map.set(k,(map.get(k)||0)+amount);const a=evidence.get(k)||[];a.push({...detail,amount:money(amount)});evidence.set(k,a);
+   const k=key(month,category),map=['installment','card_commitment'].includes(detail.kind)?cardAmounts:amounts;map.set(k,(map.get(k)||0)+amount);const a=evidence.get(k)||[];a.push({...detail,amount:money(amount)});evidence.set(k,a);
   };
   for(const e of events){const n=cents(e.signed_amount),description=e.description||'',c=norm(description+' '+e.category),source=String(e.source||'');
    if(n!==null&&n>0&&String(e.event_date)>asOf&&/^(salario( liquido)?|adiantamento quinzenal)$/.test(norm(description))&&!/bonus|13[º°o]?|decimo|ferias/.test(c)){const mk=String(e.event_date).slice(0,7);salary.set(mk,(salary.get(mk)||0)+n);}
-   if(n===null||n>=0||e.internal_transfer||e.is_asset_movement||e.excluded_from_spend||/card|invoice|budget|historical_spending|projection_policy/.test(source)||/fatura|aeternum|mastercard|personnalite|c6 carbon/.test(c))continue;
-   if(/coopharma|consignado/.test(c)){withheld.push({description,amount:money(-n),date:e.event_date});continue;}
-   const proof=/financiamento|emprestimo|condominio|seguro|iptu|ipva|licenciamento|mensalidade|parcela/.test(c)||e.confidence==='user_flow_editable'||e.confidence==='documented_scheduled';
-   if(!proof||String(e.event_date)<asOf||String(e.event_date)===asOf&&!['user_flow_editable','legacy_projection_adjusted','documented_scheduled','documented_expected'].includes(e.confidence))continue;
+   if(n===null||n>=0||e.internal_transfer||e.is_asset_movement||e.excluded_from_spend||/card|invoice|budget|historical_spending|projection_policy|planning_projection/.test(source)||/fatura|aeternum|mastercard|personnalite|c6 carbon/.test(c))continue;
+   const payrollProof=(p.planning?.payroll_withholding||[]).find(w=>typeof e.source==='string'&&e.source.length>0&&typeof e.source_ref==='string'&&e.source_ref.length>0&&w.source===e.source&&w.source_ref===e.source_ref&&w.date===e.event_date&&cents(w.amount)===-n&&cents(w.base_income)-cents(w.net_income)===-n&&Array.isArray(w.evidence)&&w.evidence.some(v=>typeof v==='string'&&v.trim()));
+   if(payrollProof){withheld.push({description,amount:money(-n),date:e.event_date,evidence:payrollProof.evidence});continue;}
+   // A lender name alone is not evidence that net income already includes its payment.
+
+   const proof=/coopharma|consignado|financiamento|emprestimo|condominio|seguro|iptu|ipva|licenciamento|mensalidade|parcela/.test(c)||e.confidence==='user_flow_editable'||e.confidence==='documented_scheduled';
+   if(String(e.event_date)<asOf||String(e.event_date)===asOf&&!['user_flow_editable','legacy_projection_adjusted','documented_scheduled','documented_expected'].includes(e.confidence))continue;
    const identity=source+':'+e.source_ref+':'+e.event_date;if(seen.has(identity))continue;seen.add(identity);
-   add(String(e.event_date).slice(0,7),e.category,-n,{description,date:e.event_date,kind:'scheduled',contracted:/financiamento|emprestimo|parcela/.test(c)});
+   // Payment date is not service competence. Keep uncertain cash visible but separate.
+   const competence=String(e.competence_month||'').slice(0,7),hasCompetence=proof&&/^\d{4}-(0[1-9]|1[0-2])$/.test(competence)&&Array.isArray(e.competence_evidence)&&e.competence_evidence.length>0&&e.competence_evidence.every(x=>typeof x==='string'&&x.trim());
+   if(!hasCompetence){unallocatedCash.push({description,date:e.event_date,category:e.category,amount:money(-n),source:e.source,source_ref:e.source_ref,reason:'Data de pagamento conhecida; competência do serviço ainda não comprovada.'});continue;}
+   add(competence,e.category,-n,{description,date:e.event_date,competence_month:competence,competence_evidence:e.competence_evidence,kind:'scheduled',contracted:/financiamento|emprestimo|parcela/.test(c)});
+  }
+  function cardCategory(item){
+   const date=item.purchase_date||item.posting_date;
+   if(!item.source_id||!date||!Array.isArray(p.card_category_evidence))return item.category;
+   const labels=new Set(p.card_category_evidence.filter(e=>e.source_ref===item.source_id&&e.purchase_date===date&&e.raw_category===item.category&&cents(e.amount)===cents(item.amount)&&typeof e.category==='string'&&e.category.trim()).map(e=>e.category));
+   return labels.size===1?[...labels][0]:item.category;
   }
   for(const card of cardRows)for(const cycle of card.cycles||[])for(const item of cycle.items||[]){
-   if(!(Number(item.total_installments)>1)||item.is_payment||Number(item.amount)<=0)continue;
+   const installment=Number(item.total_installments)>1;
+   const received=['PENDING','POSTED','DOCUMENTED'].includes(item.provider_status);
+   if((!installment&&!received)||item.is_payment||Number(item.amount)<=0)continue;
    const month=String(item.reference_month||cycle.month||'').slice(0,7),identity=[card.family,month,item.source_id,item.installment_number].join(':');
    if(!item.source_id||seen.has(identity))continue;seen.add(identity);
-   add(month,item.category,cents(item.amount),{description:item.description,date:item.purchase_date||item.posting_date,kind:'installment',installment:item.installment_number,total_installments:item.total_installments,contracted:true});
+   add(month,cardCategory(item),cents(item.amount),{description:item.description,date:item.purchase_date||item.posting_date,kind:installment?'installment':'card_commitment',installment:item.installment_number,total_installments:item.total_installments,contracted:true});
   }
   // Unknown obligations remain explicit. They are never silently converted to zero.
   const extraCategories=[...new Set(unmapped.map(x=>x.category))].filter(c=>!knownKeys.has(c));
   for(const category of extraCategories){knownKeys.add(category);p.rows.push({category,reference_monthly:null,commitments_only:true,months:p.months.map(m=>({month:m.month,actual:0,card_actual:0,pending:0,target:null,target_basis:'history'}))});}
-  for(const x of unmapped){const k=key(x.month,x.category),map=x.kind==='installment'?cardAmounts:amounts;map.set(k,(map.get(k)||0)+cents(x.amount));evidence.set(k,[...(evidence.get(k)||[]),x]);}
+  for(const x of unmapped){const k=key(x.month,x.category),map=['installment','card_commitment'].includes(x.kind)?cardAmounts:amounts;map.set(k,(map.get(k)||0)+cents(x.amount));evidence.set(k,[...(evidence.get(k)||[]),x]);}
   const plans=[];
   for(let i=0;i<12;i++){
    const m=p.months[i],past=m.month<current,rows=[];
@@ -56,26 +70,32 @@
     let proposed=null,reason='',desired=0;
     if(owner){proposed=cents(x.target);reason='Meta aprovada por você; preservada.';}
     else if(past){reason='Sem orçamento aprovado para este mês encerrado.';}
-    else if(type==='fixed'){const loan=/emprestimo|financiamento|compromissos financeiros/.test(norm(r.category));proposed=loan?floor:Math.max(floor,history===null?0:round(history));reason=loan?'Somente compromissos e parcelas identificados; descontos já abatidos do salário não são somados.':'Compromisso previsto ou referência recorrente sujeita a confirmação, preservando parcelas conhecidas.';}
-    else if(type==='essential'){proposed=history===null?(r.commitments_only?floor:null):Math.max(floor,round(history));reason=r.commitments_only?'Somente parcelas identificadas nesta categoria nova; outras necessidades ainda precisam de uma meta.':'Necessidade essencial: referência recente arredondada, preservando obrigações. Rever o detalhe antes de reduzir.';}
-    else if(type==='seasonal'){proposed=floor;reason='Valor previsto no calendário; confirme o que ainda não tem data e valor.';}
-    else{proposed=floor;desired=history===null?0:Math.max(0,Math.min(Math.floor(history*.5),Math.floor((income||0)*.05))-floor);reason='Novos gastos discricionários limitados à sobra após obrigações e essenciais; até 50% da referência recente e 5% da renda nesta categoria.';}
+    else {
+     // A reference is descriptive, not a recommendation. A reviewed proposal
+     // must carry a reason and source evidence, separately from owner approval.
+     const plan=p.planning?.months?.[m.month]?.[r.category];
+     const reviewed=plan&&plan.status==='reviewed_proposal'&&typeof plan.reason==='string'&&plan.reason.trim()&&Array.isArray(plan.evidence)&&plan.evidence.length>0&&plan.evidence.every(e=>typeof e==='string'&&e.trim());
+     if(reviewed&&cents(plan.target)!==null&&cents(plan.target)>=0){
+      proposed=Math.max(floor,cents(plan.target));reason=plan.reason+(cents(plan.target)<floor?' Proposta elevada ao já registrado e aos compromissos conhecidos.':'');
+     }else if(type==='fixed'&&details.length&&history===null){
+      proposed=null;reason='Compromissos identificados são o piso, não prova de cobertura integral da categoria. Falta proposta revisada.';
+     }else{
+      proposed=null;reason='Referência histórica e compromissos disponíveis para planejamento. Falta proposta fundamentada por categoria; nenhum corte ou meta zero foi presumido para fechar a renda.';
+     }
+    }
     rows.push({row:r,value:x,type,owner,floor,proposed,desired,reason,details,history});
    }
-   const essentialTotal=sum(rows.map(r=>r.proposed)),room=income===null||essentialTotal===null?0:Math.max(0,income-essentialTotal),wants=rows.reduce((a,r)=>a+r.desired,0);
-   let remaining=room;
    for(const r of rows){let value=r.proposed;
-    if(!r.owner&&!past&&r.type==='discretionary'&&value!==null&&wants&&remaining){const allocation=Math.min(r.desired,remaining,Math.floor(room*r.desired/wants));value+=allocation;remaining-=allocation;}
     r.value.target=money(value);r.value.target_basis=r.owner?'owner':'proposal';
-    r.value.strategy={type:r.type,reason:r.reason,floor:money(r.floor),history:money(r.history),details:r.details,proposed:!r.owner,needsReview:r.row.commitments_only===true||r.type==='seasonal'&&!r.floor};
+    r.value.strategy={type:r.type,reason:r.reason,floor:money(r.floor),history:money(r.history),details:r.details,proposed:!r.owner,needsReview:!r.owner&&r.proposed===null};
    }
    m.target=money(sum(rows.map(r=>cents(r.value.target))));
    plans.push({month:m.month,fixed:money(rows.reduce((a,r)=>a+r.floor,0)),income:money(income),target:m.target,
     balance:m.target===null||income===null?null:money(income-cents(m.target)),covered:!past||rows.some(r=>r.owner)});
   }
   p.strategy={version:'strategic-v442',proposals:true,pastWithoutPlan:plans.filter(x=>!x.covered).length,regular_income_basis:'net_received_without_bonus_or_thirteenth',months:plans,
-   payroll_withheld_not_added:withheld,unmapped_obligations:unmapped,flow_provision_included:false,
-   alternatives:['Preservar parcelas e compromissos já assumidos.','Suspender novas compras discricionárias quando houver déficit.','Rever gastos essenciais pelo detalhe e renegociar contratos quando possível.','Usar bônus e 13º apenas como cobertura extraordinária, sem incorporá-los ao salário mensal.']};
+   payroll_withheld_not_added:withheld,cash_without_competence:unallocatedCash,unmapped_obligations:unmapped,flow_provision_included:false,
+   alternatives:['Preservar parcelas e compromissos já assumidos.','Comparar alternativas de redução com valores e consequências; não zerar categorias automaticamente.','Rever gastos essenciais pelo detalhe e renegociar contratos quando possível.','Usar bônus e 13º apenas como cobertura extraordinária, sem incorporá-los ao salário mensal.']};
   p.proposed=p.rows.some(r=>r.months.some(m=>m.target_basis==='proposal'&&m.target!==null));return p;
  }
  return Object.freeze({derive,kind});

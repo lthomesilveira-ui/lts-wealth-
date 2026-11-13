@@ -10,7 +10,7 @@ def build(out):
  (out/'app.html').write_text((BASE/'app.html').read_text().replace('V441','V442'))
  source=ROOT/'backend/tools/strategic_budget_v442'
  for name,target in [('budget-ui.js','lts-v441-budget-ui.js'),('budget-model.js','lts-v441-budget-model.js'),('strategy.js','lts-v442-strategy.js'),('income-composition.js','lts-v442-income-composition.js')]:
-  shutil.copyfile(source/name,out/target)
+  shutil.copyfile(source/('review' if name in ('budget-ui.js','budget-model.js','strategy.js') else '')/name,out/target)
  app=(out/'app.html').read_text()
  app=app.replace('<script src="lts-v441-budget-ui.js"></script>','<script src="lts-v442-strategy.js"></script>\n<script src="lts-v441-budget-ui.js"></script>')
  app=app.replace('<script src="lts-v441-flow-summary.js"></script>','<script src="lts-v441-flow-summary.js"></script>\n<script src="lts-v442-income-composition.js"></script>')
