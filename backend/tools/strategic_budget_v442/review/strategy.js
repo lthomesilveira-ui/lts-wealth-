@@ -15,7 +15,7 @@
   const p=structuredClone(input),asOf=p.as_of,current=asOf.slice(0,7),year=p.year,events=flow?.flow?.current_future?.events??flow?.current_future?.events;
   const cf=flow?.flow?.current_future??flow?.current_future,cardRows=cards?.cards;if(!Array.isArray(events)||!Array.isArray(cardRows)||cards.complete===false||!p.income_approvals||!p.category_aliases||Array.isArray(p.category_aliases)||typeof p.category_aliases!=='object')throw Error('commitments or approval metadata unavailable');
   if(year>=Number(asOf.slice(0,4))&&(flow.complete===false||cf.complete===false||!cf.from||cf.from>asOf||!cf.to||cf.to<year+'-12-31'))throw Error('commitment horizon incomplete');
-  const amounts=new Map(),cardAmounts=new Map(),evidence=new Map(),withheld=[],unmapped=[],knownKeys=new Set(p.rows.map(r=>r.category)),seen=new Set(),salary=new Map();
+  const amounts=new Map(),cardAmounts=new Map(),evidence=new Map(),withheld=[],unallocatedCash=[],unmapped=[],knownKeys=new Set(p.rows.map(r=>r.category)),seen=new Set(),salary=new Map();
   const key=(m,c)=>m+'\u0000'+c,categoryFor=c=>{if(knownKeys.has(c))return c;if(knownKeys.has(p.category_aliases[c]))return p.category_aliases[c];
    // Two established Portuguese labels for the same mortgage category. This
    // changes only planning assignment, never the original event or its amount.
@@ -33,9 +33,12 @@
    // A lender name alone is not evidence that net income already includes its payment.
 
    const proof=/coopharma|consignado|financiamento|emprestimo|condominio|seguro|iptu|ipva|licenciamento|mensalidade|parcela/.test(c)||e.confidence==='user_flow_editable'||e.confidence==='documented_scheduled';
-   if(!proof||String(e.event_date)<asOf||String(e.event_date)===asOf&&!['user_flow_editable','legacy_projection_adjusted','documented_scheduled','documented_expected'].includes(e.confidence))continue;
+   if(String(e.event_date)<asOf||String(e.event_date)===asOf&&!['user_flow_editable','legacy_projection_adjusted','documented_scheduled','documented_expected'].includes(e.confidence))continue;
    const identity=source+':'+e.source_ref+':'+e.event_date;if(seen.has(identity))continue;seen.add(identity);
-   add(String(e.event_date).slice(0,7),e.category,-n,{description,date:e.event_date,kind:'scheduled',contracted:/financiamento|emprestimo|parcela/.test(c)});
+   // Payment date is not service competence. Keep uncertain cash visible but separate.
+   const competence=String(e.competence_month||'').slice(0,7),hasCompetence=proof&&/^\d{4}-(0[1-9]|1[0-2])$/.test(competence)&&Array.isArray(e.competence_evidence)&&e.competence_evidence.length>0&&e.competence_evidence.every(x=>typeof x==='string'&&x.trim());
+   if(!hasCompetence){unallocatedCash.push({description,date:e.event_date,category:e.category,amount:money(-n),source:e.source,source_ref:e.source_ref,reason:'Data de pagamento conhecida; competência do serviço ainda não comprovada.'});continue;}
+   add(competence,e.category,-n,{description,date:e.event_date,competence_month:competence,competence_evidence:e.competence_evidence,kind:'scheduled',contracted:/financiamento|emprestimo|parcela/.test(c)});
   }
   for(const card of cardRows)for(const cycle of card.cycles||[])for(const item of cycle.items||[]){
    const installment=Number(item.total_installments)>1;
@@ -85,7 +88,7 @@
     balance:m.target===null||income===null?null:money(income-cents(m.target)),covered:!past||rows.some(r=>r.owner)});
   }
   p.strategy={version:'strategic-v442',proposals:true,pastWithoutPlan:plans.filter(x=>!x.covered).length,regular_income_basis:'net_received_without_bonus_or_thirteenth',months:plans,
-   payroll_withheld_not_added:withheld,unmapped_obligations:unmapped,flow_provision_included:false,
+   payroll_withheld_not_added:withheld,cash_without_competence:unallocatedCash,unmapped_obligations:unmapped,flow_provision_included:false,
    alternatives:['Preservar parcelas e compromissos já assumidos.','Comparar alternativas de redução com valores e consequências; não zerar categorias automaticamente.','Rever gastos essenciais pelo detalhe e renegociar contratos quando possível.','Usar bônus e 13º apenas como cobertura extraordinária, sem incorporá-los ao salário mensal.']};
   p.proposed=p.rows.some(r=>r.months.some(m=>m.target_basis==='proposal'&&m.target!==null));return p;
  }

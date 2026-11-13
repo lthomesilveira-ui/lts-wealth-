@@ -36,6 +36,7 @@ jobs:
           node backend/qa/v442/reviewed-planning.test.mjs
           node backend/tools/strategic_budget_v442/review/strategy.test.cjs
           node backend/tools/strategic_budget_v442/review/reconcile.test.cjs
+          node backend/tools/strategic_budget_v442/review/model-integration.test.cjs
           node .github/scripts/lts_v442_strategy_test.cjs
           npm ci --prefix backend/qa/v441 --ignore-scripts
           node backend/qa/v441/test.mjs
