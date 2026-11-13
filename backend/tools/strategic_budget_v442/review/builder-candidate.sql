@@ -6,7 +6,7 @@ CREATE OR REPLACE FUNCTION lts_budget_private_v441.build(p_user uuid, p_year int
  SET "TimeZone" TO 'America/Sao_Paulo'
 AS $function$
 DECLARE cfg jsonb; rev bigint; first_day date; last_day date; ref_from date;ref_to date;read_from date;read_to date;
- result jsonb;source_epoch bigint;
+ result jsonb;source_epoch bigint;reviewed jsonb;
 BEGIN
  IF p_user IS NULL OR p_today IS NULL OR p_year<greatest(2013,extract(year FROM p_today)::int-1) OR p_year>extract(year FROM p_today)::int+5 THEN
   RAISE EXCEPTION 'Escolha um ano válido para o orçamento.';END IF;
@@ -16,10 +16,11 @@ BEGIN
  SELECT plan,revision INTO cfg,rev FROM lts_budget_private_v441.plans WHERE user_id=p_user AND year=p_year;
  cfg:=coalesce(cfg,'{"targets":{},"months":{},"income_months":{}}');rev:=coalesce(rev,0);
  SELECT epoch INTO source_epoch FROM public.lts_read_cache_epoch_v242 WHERE singleton;
+ reviewed:=lts_budget_private_v441.reviewed_planning_v442(cfg->'reviewed_planning',source_epoch,p_year);
  WITH expense AS MATERIALIZED(
   SELECT r.*,CASE WHEN coverage_mode='card_invoice_aggregate_fallback' THEN 'Cartão — categoria não recuperada'
    WHEN nullif(btrim(category),'') IS NULL OR public.lts_v178_norm(category) IN('a classificar','sem categoria','nao identificado','—') THEN 'Sem classificação'
-   ELSE category END label
+   ELSE lts_budget_private_v441.reviewed_category_v442(to_jsonb(r),reviewed->'source_links') END label
   FROM public.lts_v229_expense_rows(p_user,read_from,read_to)r
  ), income AS MATERIALIZED(
   SELECT x,(x->>'event_date')::date dt,(x->>'signed_amount')::numeric amount,
@@ -90,5 +91,5 @@ BEGIN
   'source_epoch',source_epoch) INTO result;
  IF source_epoch IS DISTINCT FROM(SELECT epoch FROM public.lts_read_cache_epoch_v242 WHERE singleton) THEN
   RAISE EXCEPTION USING ERRCODE='40001',MESSAGE='Os dados foram atualizados. Confira novamente o orçamento.';END IF;
- RETURN result||jsonb_build_object('planning',lts_budget_private_v441.reviewed_planning_v442(cfg->'reviewed_planning',source_epoch,p_year));
+ RETURN result||jsonb_build_object('planning',reviewed);
 END $function$

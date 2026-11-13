@@ -2,7 +2,7 @@ BEGIN;
 -- Separate reviewed proposals from owner-approved targets. No writer or source mutation.
 CREATE OR REPLACE FUNCTION lts_budget_private_v441.reviewed_planning_v442(p_plan jsonb,p_epoch bigint,p_year integer)
 RETURNS jsonb LANGUAGE plpgsql IMMUTABLE SET search_path TO '' AS $fn$
-DECLARE m text;c text;v jsonb;out_months jsonb:='{}';month_rows jsonb;status text;w jsonb;field text;seen text[]:='{}';identity text;payroll jsonb:='[]';
+DECLARE m text;c text;v jsonb;out_months jsonb:='{}';month_rows jsonb;status text;w jsonb;field text;seen text[]:='{}';identity text;payroll jsonb:='[]';links jsonb:='[]';
 BEGIN
  IF p_plan IS NULL OR jsonb_typeof(p_plan) IS DISTINCT FROM 'object' THEN RETURN jsonb_build_object('status','missing','months','{}'::jsonb); END IF;
  IF p_plan->>'source_epoch' IS NULL OR (p_plan->>'source_epoch')!~'^[0-9]+$' OR (p_plan->>'source_epoch')::numeric IS DISTINCT FROM p_epoch::numeric THEN
@@ -40,9 +40,37 @@ BEGIN
  seen:=array_append(seen,identity);payroll:=payroll||jsonb_build_array(w);
  END LOOP;
  END IF;
- RETURN jsonb_build_object('status','current','source_epoch',p_epoch,'months',out_months,'payroll_withholding',payroll);
+ -- Source-scoped label reconciliation; no global category alias and no source writes.
+ seen:='{}';
+ IF p_plan ? 'source_links' THEN
+ IF jsonb_typeof(p_plan->'source_links') IS DISTINCT FROM 'array' THEN RAISE EXCEPTION 'Invalid source links'; END IF;
+ FOR w IN SELECT * FROM jsonb_array_elements(p_plan->'source_links') LOOP
+ IF jsonb_typeof(w) IS DISTINCT FROM 'object' THEN RAISE EXCEPTION 'Invalid source link'; END IF;
+ FOREACH field IN ARRAY ARRAY['source_table','source_ref','event_date','competence_month','from_category','to_category'] LOOP
+ IF jsonb_typeof(w->field) IS DISTINCT FROM 'string' OR length(btrim(w->>field))=0 THEN RAISE EXCEPTION 'Incomplete source link'; END IF;
+ END LOOP;
+ IF length(w->>'to_category')>120 OR (w->>'event_date')!~'^\d{4}-(0[1-9]|1[0-2])-[0-9]{2}$' OR (w->>'competence_month')!~'^\d{4}-(0[1-9]|1[0-2])-01$' THEN RAISE EXCEPTION 'Invalid source-link date or category'; END IF;
+ PERFORM (w->>'event_date')::date;PERFORM (w->>'competence_month')::date;
+ IF jsonb_typeof(w->'amount') IS DISTINCT FROM 'number' OR (w->>'amount')!~'^-?[0-9]+([.][0-9]{1,2})?$' OR abs((w->>'amount')::numeric)>100000000 THEN RAISE EXCEPTION 'Invalid source-link amount'; END IF;
+ IF jsonb_typeof(w->'evidence') IS DISTINCT FROM 'array' THEN RAISE EXCEPTION 'Missing source-link evidence'; END IF;
+ IF jsonb_array_length(w->'evidence')=0 OR EXISTS(SELECT 1 FROM jsonb_array_elements(w->'evidence') e WHERE jsonb_typeof(e) IS DISTINCT FROM 'string' OR length(btrim(e#>>'{}'))=0) THEN RAISE EXCEPTION 'Missing source-link evidence'; END IF;
+ identity:=jsonb_build_array(w->>'source_table',w->>'source_ref',w->>'event_date',w->>'competence_month')::text;
+ IF identity=ANY(seen) THEN RAISE EXCEPTION 'Duplicate source link'; END IF;
+ seen:=array_append(seen,identity);links:=links||jsonb_build_array(w);
+ END LOOP;
+ END IF;
+ RETURN jsonb_build_object('status','current','source_epoch',p_epoch,'months',out_months,'payroll_withholding',payroll,'source_links',links);
 END $fn$;
 REVOKE ALL ON FUNCTION lts_budget_private_v441.reviewed_planning_v442(jsonb,bigint,integer) FROM PUBLIC;
+
+CREATE OR REPLACE FUNCTION lts_budget_private_v441.reviewed_category_v442(p_row jsonb,p_links jsonb)
+RETURNS text LANGUAGE sql IMMUTABLE SET search_path TO '' AS $fn$
+ SELECT coalesce((SELECT l->>'to_category' FROM jsonb_array_elements(coalesce(p_links,'[]'::jsonb)) l
+ WHERE l->>'source_table'=p_row->>'source_table' AND l->>'source_ref'=p_row->>'source_ref'
+ AND l->>'event_date'=p_row->>'event_date' AND l->>'competence_month'=p_row->>'competence_month'
+ AND l->>'from_category'=p_row->>'category' AND (l->>'amount')::numeric=(p_row->>'amount')::numeric),p_row->>'category');
+$fn$;
+REVOKE ALL ON FUNCTION lts_budget_private_v441.reviewed_category_v442(jsonb,jsonb) FROM PUBLIC;
 
 DO $install$ DECLARE old text:=pg_get_functiondef('lts_budget_private_v441.build(uuid,integer,date)'::regprocedure); candidate text:=$candidate$CREATE OR REPLACE FUNCTION lts_budget_private_v441.build(p_user uuid, p_year integer, p_today date)
  RETURNS jsonb
@@ -52,7 +80,7 @@ DO $install$ DECLARE old text:=pg_get_functiondef('lts_budget_private_v441.build
  SET "TimeZone" TO 'America/Sao_Paulo'
 AS $function$
 DECLARE cfg jsonb; rev bigint; first_day date; last_day date; ref_from date;ref_to date;read_from date;read_to date;
- result jsonb;source_epoch bigint;
+ result jsonb;source_epoch bigint;reviewed jsonb;
 BEGIN
  IF p_user IS NULL OR p_today IS NULL OR p_year<greatest(2013,extract(year FROM p_today)::int-1) OR p_year>extract(year FROM p_today)::int+5 THEN
   RAISE EXCEPTION 'Escolha um ano válido para o orçamento.';END IF;
@@ -62,10 +90,11 @@ BEGIN
  SELECT plan,revision INTO cfg,rev FROM lts_budget_private_v441.plans WHERE user_id=p_user AND year=p_year;
  cfg:=coalesce(cfg,'{"targets":{},"months":{},"income_months":{}}');rev:=coalesce(rev,0);
  SELECT epoch INTO source_epoch FROM public.lts_read_cache_epoch_v242 WHERE singleton;
+ reviewed:=lts_budget_private_v441.reviewed_planning_v442(cfg->'reviewed_planning',source_epoch,p_year);
  WITH expense AS MATERIALIZED(
   SELECT r.*,CASE WHEN coverage_mode='card_invoice_aggregate_fallback' THEN 'Cartão — categoria não recuperada'
    WHEN nullif(btrim(category),'') IS NULL OR public.lts_v178_norm(category) IN('a classificar','sem categoria','nao identificado','—') THEN 'Sem classificação'
-   ELSE category END label
+   ELSE lts_budget_private_v441.reviewed_category_v442(to_jsonb(r),reviewed->'source_links') END label
   FROM public.lts_v229_expense_rows(p_user,read_from,read_to)r
  ), income AS MATERIALIZED(
   SELECT x,(x->>'event_date')::date dt,(x->>'signed_amount')::numeric amount,
@@ -136,7 +165,7 @@ BEGIN
   'source_epoch',source_epoch) INTO result;
  IF source_epoch IS DISTINCT FROM(SELECT epoch FROM public.lts_read_cache_epoch_v242 WHERE singleton) THEN
   RAISE EXCEPTION USING ERRCODE='40001',MESSAGE='Os dados foram atualizados. Confira novamente o orçamento.';END IF;
- RETURN result||jsonb_build_object('planning',lts_budget_private_v441.reviewed_planning_v442(cfg->'reviewed_planning',source_epoch,p_year));
+ RETURN result||jsonb_build_object('planning',reviewed);
 END $function$
 $candidate$; BEGIN IF old=candidate THEN RETURN; END IF; IF md5(old)<>'3b046ddad96b3e8c5edce0901d1d49a2' THEN RAISE EXCEPTION 'Unexpected budget builder predecessor'; END IF; EXECUTE candidate; END $install$;
 COMMIT;
