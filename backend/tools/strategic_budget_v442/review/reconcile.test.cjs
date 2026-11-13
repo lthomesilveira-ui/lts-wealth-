@@ -1,0 +1,11 @@
+const assert=require('node:assert/strict'),{reconcile}=require('./reconcile.js');
+const event=(source,ref,n,description='item')=>({event_date:'2026-12-03',source,source_ref:ref,signed_amount:n,description,category:'Educação'});
+const items=[{family:'test',source_id:'one',competence_month:'2026-12-01',amount:100,status:'PROJECTED',category:'Assinatura'}];
+const e=[event('card_invoice','november',-1000),event('planning_projection_v412','history',-50),event('legacy_fix86','class',-80),event('legacy_fix86','salary',200,'Salário líquido'),event('current_event','refund',10,'Reembolso')];
+const r=reconcile(e,items,'2026-12',{'Assinatura':'Assinaturas'});
+assert.deepEqual(r.totals,{scheduledCash:8000,estimatedCash:5000,cardPayments:100000,cardCompetence:10000,regularIncome:20000,otherIncome:1000});
+assert.equal(r.combinedBudgetTotal,null);assert.equal(r.cashSchedule[0].contractVerified,false);assert.equal(r.cardCategories.Assinaturas.projected,10000);
+assert.throws(()=>reconcile([...e,e[0]],items,'2026-12'),/Duplicate/);
+assert.throws(()=>reconcile(e,[...items,items[0]],'2026-12'),/Duplicate/);
+assert.equal(reconcile(e,[{...items[0],competence_month:'2026-11-01'}],'2026-12').totals.cardCompetence,0);
+console.log('PASS reconciliation: source identity, competence, cash estimates, invoices, salary/extra and incomplete total');
