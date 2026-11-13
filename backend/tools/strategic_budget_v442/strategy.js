@@ -13,12 +13,16 @@
  function derive(input,flow,cards){
   if(!input||input.ok!==true||!Array.isArray(input.rows)||!Array.isArray(input.months)||input.months.length!==12)throw Error('budget unavailable');
   const p=structuredClone(input),asOf=p.as_of,current=asOf.slice(0,7),year=p.year,events=flow?.flow?.current_future?.events??flow?.current_future?.events;
-  const cf=flow?.flow?.current_future??flow?.current_future,cardRows=cards?.cards;if(!Array.isArray(events)||!Array.isArray(cardRows)||cards.complete===false||!p.income_approvals)throw Error('commitments or approval metadata unavailable');
-  if(year>=Number(asOf.slice(0,4))&&(cf.complete===false||!cf.from||cf.from>asOf||!cf.to||cf.to<year+'-12-31'))throw Error('commitment horizon incomplete');
+  const cf=flow?.flow?.current_future??flow?.current_future,cardRows=cards?.cards;if(!Array.isArray(events)||!Array.isArray(cardRows)||cards.complete===false||!p.income_approvals||!p.category_aliases||Array.isArray(p.category_aliases)||typeof p.category_aliases!=='object')throw Error('commitments or approval metadata unavailable');
+  if(year>=Number(asOf.slice(0,4))&&(flow.complete===false||cf.complete===false||!cf.from||cf.from>asOf||!cf.to||cf.to<year+'-12-31'))throw Error('commitment horizon incomplete');
   const amounts=new Map(),cardAmounts=new Map(),evidence=new Map(),withheld=[],unmapped=[],knownKeys=new Set(p.rows.map(r=>r.category)),seen=new Set(),salary=new Map();
-  const key=(m,c)=>m+'\u0000'+c;
+  const key=(m,c)=>m+'\u0000'+c,categoryFor=c=>{if(knownKeys.has(c))return c;if(knownKeys.has(p.category_aliases[c]))return p.category_aliases[c];
+   // Two established Portuguese labels for the same mortgage category. This
+   // changes only planning assignment, never the original event or its amount.
+   if(norm(c)==='financiamento imovel'){const same=[...knownKeys].filter(x=>norm(x)==='financiamento imobiliario');if(same.length===1)return same[0];}return c;};
   const add=(month,category,amount,detail)=>{if(!new RegExp('^'+year+'-(0[1-9]|1[0-2])$').test(month)||amount<=0)return;
-   if(!category||!knownKeys.has(category)){unmapped.push({month,category:category||'Compromisso sem categoria',amount:money(amount),description:detail.description});return;}
+   category=categoryFor(category);
+   if(!category||!knownKeys.has(category)){unmapped.push({month,category:category||'Compromisso sem categoria',amount:money(amount),...detail});return;}
    const k=key(month,category),map=detail.kind==='installment'?cardAmounts:amounts;map.set(k,(map.get(k)||0)+amount);const a=evidence.get(k)||[];a.push({...detail,amount:money(amount)});evidence.set(k,a);
   };
   for(const e of events){const n=cents(e.signed_amount),description=e.description||'',c=norm(description+' '+e.category),source=String(e.source||'');
@@ -38,8 +42,8 @@
   }
   // Unknown obligations remain explicit. They are never silently converted to zero.
   const extraCategories=[...new Set(unmapped.map(x=>x.category))].filter(c=>!knownKeys.has(c));
-  for(const category of extraCategories){knownKeys.add(category);p.rows.push({category,reference_monthly:null,months:p.months.map(m=>({month:m.month,actual:0,pending:0,target:null,target_basis:'history'}))});}
-  for(const x of unmapped){const k=key(x.month,x.category);amounts.set(k,(amounts.get(k)||0)+cents(x.amount));evidence.set(k,[...(evidence.get(k)||[]),{description:x.description,amount:x.amount,kind:'scheduled',contracted:false}]);}
+  for(const category of extraCategories){knownKeys.add(category);p.rows.push({category,reference_monthly:null,commitments_only:true,months:p.months.map(m=>({month:m.month,actual:0,card_actual:0,pending:0,target:null,target_basis:'history'}))});}
+  for(const x of unmapped){const k=key(x.month,x.category),map=x.kind==='installment'?cardAmounts:amounts;map.set(k,(map.get(k)||0)+cents(x.amount));evidence.set(k,[...(evidence.get(k)||[]),x]);}
   const plans=[];
   for(let i=0;i<12;i++){
    const m=p.months[i],past=m.month<current,rows=[];
@@ -53,7 +57,7 @@
     if(owner){proposed=cents(x.target);reason='Meta aprovada por você; preservada.';}
     else if(past){reason='Sem orçamento aprovado para este mês encerrado.';}
     else if(type==='fixed'){const loan=/emprestimo|financiamento|compromissos financeiros/.test(norm(r.category));proposed=loan?floor:Math.max(floor,history===null?0:round(history));reason=loan?'Somente compromissos e parcelas identificados; descontos já abatidos do salário não são somados.':'Compromisso previsto ou referência recorrente sujeita a confirmação, preservando parcelas conhecidas.';}
-    else if(type==='essential'){proposed=history===null?null:Math.max(floor,round(history));reason='Necessidade essencial: referência recente arredondada, preservando obrigações. Rever o detalhe antes de reduzir.';}
+    else if(type==='essential'){proposed=history===null?(r.commitments_only?floor:null):Math.max(floor,round(history));reason=r.commitments_only?'Somente parcelas identificadas nesta categoria nova; outras necessidades ainda precisam de uma meta.':'Necessidade essencial: referência recente arredondada, preservando obrigações. Rever o detalhe antes de reduzir.';}
     else if(type==='seasonal'){proposed=floor;reason='Valor previsto no calendário; confirme o que ainda não tem data e valor.';}
     else{proposed=floor;desired=history===null?0:Math.max(0,Math.min(Math.floor(history*.5),Math.floor((income||0)*.05))-floor);reason='Novos gastos discricionários limitados à sobra após obrigações e essenciais; até 50% da referência recente e 5% da renda nesta categoria.';}
     rows.push({row:r,value:x,type,owner,floor,proposed,desired,reason,details,history});
@@ -63,7 +67,7 @@
    for(const r of rows){let value=r.proposed;
     if(!r.owner&&!past&&r.type==='discretionary'&&value!==null&&wants&&remaining){const allocation=Math.min(r.desired,remaining,Math.floor(room*r.desired/wants));value+=allocation;remaining-=allocation;}
     r.value.target=money(value);r.value.target_basis=r.owner?'owner':'proposal';
-    r.value.strategy={type:r.type,reason:r.reason,floor:money(r.floor),history:money(r.history),details:r.details,proposed:!r.owner,needsReview:r.type==='seasonal'&&!r.floor};
+    r.value.strategy={type:r.type,reason:r.reason,floor:money(r.floor),history:money(r.history),details:r.details,proposed:!r.owner,needsReview:r.row.commitments_only===true||r.type==='seasonal'&&!r.floor};
    }
    m.target=money(sum(rows.map(r=>cents(r.value.target))));
    plans.push({month:m.month,fixed:money(rows.reduce((a,r)=>a+r.floor,0)),income:money(income),target:m.target,

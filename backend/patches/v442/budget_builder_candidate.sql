@@ -86,7 +86,7 @@ BEGIN
     WHERE dt BETWEEN first_day AND last_day GROUP BY 1,2)z),'[]'),
   'unclassified_actual',coalesce((SELECT round(sum(amount),2) FROM expense WHERE competence_month BETWEEN first_day AND last_day
    AND label IN('Cartão — categoria não recuperada','Sem classificação')),0),
-  'basis','canonical_consumption_not_card_payment','flow_provision_included',false,
+  'category_aliases',coalesce((SELECT jsonb_object_agg(raw_category,category) FROM(SELECT b.raw_category,min(c.category)category FROM public.lts_category_binding_v290 b JOIN public.lts_category_catalog c USING(user_id,category_key) WHERE b.user_id=p_user GROUP BY b.raw_category HAVING count(DISTINCT b.category_key)=1)d),'{}'::jsonb),'basis','canonical_consumption_not_card_payment','flow_provision_included',false,
   'source_epoch',source_epoch) INTO result;
  IF source_epoch IS DISTINCT FROM(SELECT epoch FROM public.lts_read_cache_epoch_v242 WHERE singleton) THEN
   RAISE EXCEPTION USING ERRCODE='40001',MESSAGE='Os dados foram atualizados. Confira novamente o orçamento.';END IF;

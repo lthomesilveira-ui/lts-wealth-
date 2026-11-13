@@ -38,7 +38,7 @@
    started:selected.some(x=>x.started),complete:selected.every(x=>x.complete),
    rows:m.rows.map(r=>({category:r.category,reference:r.reference,target:sum(indices.map(i=>r.months[i].target)),actual:sum(indices.map(i=>r.months[i].actual)),
     gap:sum(indices.map(i=>r.months[i].target))===null?null:sum(indices.map(i=>r.months[i].target))-sum(indices.map(i=>r.months[i].actual)),
-    type:r.months[indices[0]].strategy?.type||'discretionary',reason:r.months[indices[0]].strategy?.reason||'',minimum:sum(indices.map(i=>cents(r.months[i].strategy?.floor??0))),details:indices.flatMap(i=>r.months[i].strategy?.details||[]),suggested:indices.some(i=>r.months[i].basis==='history'||r.months[i].basis==='proposal')}))};
+    type:r.months[indices[0]].strategy?.type||'discretionary',reason:r.months[indices[0]].strategy?.reason||'',minimum:sum(indices.map(i=>cents(r.months[i].strategy?.floor??0))),details:indices.flatMap(i=>r.months[i].strategy?.details||[]),needsReview:indices.some(i=>r.months[i].strategy?.needsReview===true),suggested:indices.some(i=>r.months[i].basis==='history'||r.months[i].basis==='proposal')}))};
  }
  function flow(p,asOf){
   const days=p?.current_future?.days;if(!Array.isArray(days))return null;

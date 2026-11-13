@@ -1,7 +1,7 @@
 import{PGlite}from'@electric-sql/pglite';import fs from'node:fs';import assert from'node:assert/strict';import{execFileSync}from'node:child_process';
 const db=new PGlite(),u='11111111-1111-4111-8111-111111111111',v='22222222-2222-4222-8222-222222222222',results=[];
 const one=async q=>(await db.query(q)).rows[0];async function test(n,f){await f();results.push(n);console.log('PASS',n);}
-await db.exec(`CREATE ROLE anon;CREATE ROLE authenticated;CREATE SCHEMA qa;CREATE SCHEMA lts_product_refresh_private_v415;
+await db.exec(`SET TimeZone='America/Sao_Paulo';CREATE ROLE anon;CREATE ROLE authenticated;CREATE SCHEMA qa;CREATE SCHEMA lts_product_refresh_private_v415;
  CREATE TABLE public.lts_read_cache_epoch_v242(singleton boolean,epoch bigint);INSERT INTO public.lts_read_cache_epoch_v242 VALUES(true,100);
  CREATE TABLE public.legacy_namespace(usuario_id uuid,chave text,sha256 text,valor_bruto text);INSERT INTO public.legacy_namespace VALUES('${u}','lts_recurring_review_scope_v410','hash','review');
  CREATE TABLE qa.source(card text);INSERT INTO qa.source VALUES('current-card-state');

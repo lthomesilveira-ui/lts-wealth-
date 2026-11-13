@@ -42,7 +42,7 @@ BEGIN
  RETURN jsonb_build_object('macrogroup',macro,'group',g,'category',coalesce(cat,'Categoria não informada'),'is_tax',tax);
 END $function$
 $candidate$;IF a IS DISTINCT FROM(SELECT to_jsonb(p)-'prosrc' FROM pg_proc p WHERE p.oid='public.lts_expense_taxonomy_v353(text,text,text)'::regprocedure) OR md5(pg_get_functiondef('public.lts_expense_taxonomy_v353(text,text,text)'::regprocedure))<>'fdb06094d1a5057c56cfd1d331f2d726' THEN RAISE EXCEPTION 'Loan grouping attributes changed';END IF;END $guard$;
-DO $guard$ DECLARE s text;a jsonb;BEGIN SELECT pg_get_functiondef(p.oid),to_jsonb(p)-'prosrc' INTO STRICT s,a FROM pg_proc p WHERE p.oid='lts_budget_private_v441.build(uuid,integer,date)'::regprocedure;IF md5(s)='7f86141829a633859509f3e9457a23c4' THEN RETURN;END IF;IF md5(s)<>'8041add67e5f514c102754dfaa81cc66' THEN RAISE EXCEPTION 'Budget metadata and thirteenth separation predecessor changed; review before applying';END IF;EXECUTE $candidate$CREATE OR REPLACE FUNCTION lts_budget_private_v441.build(p_user uuid, p_year integer, p_today date)
+DO $guard$ DECLARE s text;a jsonb;BEGIN SELECT pg_get_functiondef(p.oid),to_jsonb(p)-'prosrc' INTO STRICT s,a FROM pg_proc p WHERE p.oid='lts_budget_private_v441.build(uuid,integer,date)'::regprocedure;IF md5(s)='3b046ddad96b3e8c5edce0901d1d49a2' THEN RETURN;END IF;IF md5(s) NOT IN('8041add67e5f514c102754dfaa81cc66','7f86141829a633859509f3e9457a23c4') THEN RAISE EXCEPTION 'Budget metadata and thirteenth separation predecessor changed; review before applying';END IF;EXECUTE $candidate$CREATE OR REPLACE FUNCTION lts_budget_private_v441.build(p_user uuid, p_year integer, p_today date)
  RETURNS jsonb
  LANGUAGE plpgsql
  STABLE
@@ -130,13 +130,13 @@ BEGIN
     WHERE dt BETWEEN first_day AND last_day GROUP BY 1,2)z),'[]'),
   'unclassified_actual',coalesce((SELECT round(sum(amount),2) FROM expense WHERE competence_month BETWEEN first_day AND last_day
    AND label IN('Cartão — categoria não recuperada','Sem classificação')),0),
-  'basis','canonical_consumption_not_card_payment','flow_provision_included',false,
+  'category_aliases',coalesce((SELECT jsonb_object_agg(raw_category,category) FROM(SELECT b.raw_category,min(c.category)category FROM public.lts_category_binding_v290 b JOIN public.lts_category_catalog c USING(user_id,category_key) WHERE b.user_id=p_user GROUP BY b.raw_category HAVING count(DISTINCT b.category_key)=1)d),'{}'::jsonb),'basis','canonical_consumption_not_card_payment','flow_provision_included',false,
   'source_epoch',source_epoch) INTO result;
  IF source_epoch IS DISTINCT FROM(SELECT epoch FROM public.lts_read_cache_epoch_v242 WHERE singleton) THEN
   RAISE EXCEPTION USING ERRCODE='40001',MESSAGE='Os dados foram atualizados. Confira novamente o orçamento.';END IF;
  RETURN result;
 END $function$
-$candidate$;IF a IS DISTINCT FROM(SELECT to_jsonb(p)-'prosrc' FROM pg_proc p WHERE p.oid='lts_budget_private_v441.build(uuid,integer,date)'::regprocedure) OR md5(pg_get_functiondef('lts_budget_private_v441.build(uuid,integer,date)'::regprocedure))<>'7f86141829a633859509f3e9457a23c4' THEN RAISE EXCEPTION 'Budget metadata and thirteenth separation attributes changed';END IF;END $guard$;
+$candidate$;IF a IS DISTINCT FROM(SELECT to_jsonb(p)-'prosrc' FROM pg_proc p WHERE p.oid='lts_budget_private_v441.build(uuid,integer,date)'::regprocedure) OR md5(pg_get_functiondef('lts_budget_private_v441.build(uuid,integer,date)'::regprocedure))<>'3b046ddad96b3e8c5edce0901d1d49a2' THEN RAISE EXCEPTION 'Budget metadata and thirteenth separation attributes changed';END IF;END $guard$;
 DO $guard$ DECLARE s text;a jsonb;BEGIN SELECT pg_get_functiondef(p.oid),to_jsonb(p)-'prosrc' INTO STRICT s,a FROM pg_proc p WHERE p.oid='public.lts_browser_flow_event_editor_v1(text,text,date)'::regprocedure;IF md5(s)='1767c0ac7a1b7bb9b033f723cd03a5dd' THEN RETURN;END IF;IF md5(s)<>'1158891eb0c5605e17e6ed130cf05b99' THEN RAISE EXCEPTION 'Read-only income composition predecessor changed; review before applying';END IF;EXECUTE $candidate$CREATE OR REPLACE FUNCTION public.lts_browser_flow_event_editor_v1(p_source text, p_source_ref text, p_event_date date)
  RETURNS jsonb
  LANGUAGE plpgsql

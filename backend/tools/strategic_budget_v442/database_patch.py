@@ -3,9 +3,10 @@ from pathlib import Path
 import hashlib
 ROOT=Path(__file__).resolve().parents[3];P=ROOT/'backend/patches/v442'
 def md5(s):return hashlib.md5(s.encode()).hexdigest()
-def guarded(name,signature,source,candidate):
+def guarded(name,signature,source,candidate,previous_hash=None):
  h=md5(source);k=md5(candidate)
- return "DO $guard$ DECLARE s text;a jsonb;BEGIN SELECT pg_get_functiondef(p.oid),to_jsonb(p)-'prosrc' INTO STRICT s,a FROM pg_proc p WHERE p.oid='"+signature+"'::regprocedure;IF md5(s)='"+k+"' THEN RETURN;END IF;IF md5(s)<>'"+h+"' THEN RAISE EXCEPTION '"+name+" predecessor changed; review before applying';END IF;EXECUTE $candidate$"+candidate+"$candidate$;IF a IS DISTINCT FROM(SELECT to_jsonb(p)-'prosrc' FROM pg_proc p WHERE p.oid='"+signature+"'::regprocedure) OR md5(pg_get_functiondef('"+signature+"'::regprocedure))<>'"+k+"' THEN RAISE EXCEPTION '"+name+" attributes changed';END IF;END $guard$;\n"
+ allowed="md5(s) NOT IN('"+h+"','"+previous_hash+"')" if previous_hash else "md5(s)<>'"+h+"'"
+ return "DO $guard$ DECLARE s text;a jsonb;BEGIN SELECT pg_get_functiondef(p.oid),to_jsonb(p)-'prosrc' INTO STRICT s,a FROM pg_proc p WHERE p.oid='"+signature+"'::regprocedure;IF md5(s)='"+k+"' THEN RETURN;END IF;IF "+allowed+" THEN RAISE EXCEPTION '"+name+" predecessor changed; review before applying';END IF;EXECUTE $candidate$"+candidate+"$candidate$;IF a IS DISTINCT FROM(SELECT to_jsonb(p)-'prosrc' FROM pg_proc p WHERE p.oid='"+signature+"'::regprocedure) OR md5(pg_get_functiondef('"+signature+"'::regprocedure))<>'"+k+"' THEN RAISE EXCEPTION '"+name+" attributes changed';END IF;END $guard$;\n"
 def build():
  a=(P/'taxonomy_before.sql').read_text();assert md5(a)=='b51d96fe858c67d70c3f1b035b8c0af0'
  old="WHEN c='compromissos financeiros'AND m='emprestimos'THEN";assert a.count(old)==1
@@ -22,7 +23,8 @@ def build():
  ("coalesce(i.bonus,0) income_bonus", "coalesce(i.bonus,0) income_bonus,coalesce(i.thirteenth,0) income_thirteenth"),
  ("i.regular,i.extraordinary,i.bonus", "i.regular,i.extraordinary,i.bonus,i.thirteenth"),
  ("'income_bonus',income_bonus,", "'income_bonus',income_bonus,'income_thirteenth',income_thirteenth,"),
- ("'proposed',rev=0,", "'proposed',rev=0,'income_approvals',jsonb_build_object('year',cfg?'income_year','months',(SELECT coalesce(jsonb_object_agg(key,true),'{}'::jsonb) FROM jsonb_object_keys(coalesce(cfg->'income_months','{}'::jsonb))key)),")]
+ ("'proposed',rev=0,", "'proposed',rev=0,'income_approvals',jsonb_build_object('year',cfg?'income_year','months',(SELECT coalesce(jsonb_object_agg(key,true),'{}'::jsonb) FROM jsonb_object_keys(coalesce(cfg->'income_months','{}'::jsonb))key)),"),
+ ("'basis','canonical_consumption_not_card_payment'", "'category_aliases',coalesce((SELECT jsonb_object_agg(raw_category,category) FROM(SELECT b.raw_category,min(c.category)category FROM public.lts_category_binding_v290 b JOIN public.lts_category_catalog c USING(user_id,category_key) WHERE b.user_id=p_user GROUP BY b.raw_category HAVING count(DISTINCT b.category_key)=1)d),'{}'::jsonb),'basis','canonical_consumption_not_card_payment'")]
  b=a
  for old,new in changes:
   assert b.count(old)==1,old
@@ -31,7 +33,8 @@ def build():
  for old,new in reversed(changes):restored=restored.replace(new,old)
  assert restored==a
  (P/'budget_builder_candidate.sql').write_text(b)
- sql+=guarded('Budget metadata and thirteenth separation','lts_budget_private_v441.build(uuid,integer,date)',a,b)
+ previous=(P/'budget_builder_metadata_v1.sql').read_text();assert md5(previous)=='7f86141829a633859509f3e9457a23c4'
+ sql+=guarded('Budget metadata and thirteenth separation','lts_budget_private_v441.build(uuid,integer,date)',a,b,md5(previous))
  a=(P/'flow_editor_before.sql').read_text()
  old='AS $function$ declare u uuid; begin u:=public.lts_browser_assert_user_v1(); return public.lts_flow_event_editor_v1(u,p_source,p_source_ref,p_event_date); end $function$'
  assert a.count(old)==1
