@@ -11,7 +11,27 @@ def build():
  a=(P/'taxonomy_before.sql').read_text();assert md5(a)=='b51d96fe858c67d70c3f1b035b8c0af0'
  old="WHEN c='compromissos financeiros'AND m='emprestimos'THEN";assert a.count(old)==1
  b=a.replace(old,"WHEN c~'^emprestimos?$'OR m='emprestimos'THEN");assert b.replace("WHEN c~'^emprestimos?$'OR m='emprestimos'THEN",old)==a
- (P/'taxonomy_candidate.sql').write_text(b);sql=guarded('Loan grouping','public.lts_expense_taxonomy_v353(text,text,text)',a,b)
+ loan_hash=md5(b);assert loan_hash=='fdb06094d1a5057c56cfd1d331f2d726'
+ changes=[
+  ("lower(translate(coalesce(p_category,''),'áàâãéêíóôõúç','aaaaeeiooouc'))","translate(lower(coalesce(p_category,'')),'áàâãéêíóôõúç','aaaaeeiooouc')"),
+  ("lower(translate(coalesce(p_component,''),'áàâãéêíóôõúç','aaaaeeiooouc'))","translate(lower(coalesce(p_component,'')),'áàâãéêíóôõúç','aaaaeeiooouc')"),
+  ("lower(translate(coalesce(p_management,''),'áàâãéêíóôõúç','aaaaeeiooouc'))","translate(lower(coalesce(p_management,'')),'áàâãéêíóôõúç','aaaaeeiooouc')"),
+  (" macro text;g text;"," original_c text:=c;\n macro text;g text;"),
+  ("BEGIN\n CASE","BEGIN\n -- Preserve the original category and person dimension; normalize only the routing key.\n c:=btrim(regexp_replace(c,'^(lucas|larissa|benjamin|rafiki|marino)[[:space:]]*[-—–][[:space:]]*','','i'));\n CASE"),
+  ("financiamento imobiliario|consorcio","financiamento[[:space:]]+(de[[:space:]]+)?(imobiliario|imovel)|consorcio"),
+  ("c~'financiamento veiculo'","c~'financiamento[[:space:]]+(de[[:space:]]+)?veiculo'"),
+  ("OR m='emprestimos'","OR m~'^emprestimos?$'"),
+  ("AND c NOT IN('mercado livre')","AND c !~ 'mercado[[:space:]]+livre'"),
+  ("c~'viagem|","c~'viage(m|ns)|"),
+  (" WHEN c~'^(lucas|larissa|benjamin|rafiki|marino)"," WHEN c~'^mercado[[:space:]]+livre$'THEN macro:='Outras despesas';g:='Categorias da origem';\n WHEN original_c~'^(lucas|larissa|benjamin|rafiki|marino)")]
+ for old,new in changes:
+  assert b.count(old)==1,old
+  b=b.replace(old,new)
+ assert md5(b)=='5679e50ce6dc0fe2486977754effccd7'
+ (P/'taxonomy_candidate.sql').write_text(b)
+ sql=guarded('Expense grouping','public.lts_expense_taxonomy_v353(text,text,text)',a,b,loan_hash)
+ # Advance only derived caches, once; the successful-candidate early return is idempotent.
+ sql=sql.replace('END IF;END $guard$;', 'END IF;UPDATE public.lts_read_cache_epoch_v242 SET epoch=epoch+1 WHERE singleton;END $guard$;')
  a=(P/'budget_builder_before.sql').read_text();assert md5(a)=='8041add67e5f514c102754dfaa81cc66'
  changes=[
  ("(bonus|premio|ferias|13o|13º|13°|decimo terceiro)","(bonus|premio|ferias|(^|[^0-9])13([º°o]|[[:space:]])|decimo terceiro)"),
