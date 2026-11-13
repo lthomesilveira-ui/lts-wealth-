@@ -34,6 +34,7 @@ jobs:
           node backend/qa/v442/reporting_test.mjs
           node backend/qa/v442/projection_contract_test.mjs
           node backend/qa/v442/reviewed-planning.test.mjs
+          node backend/qa/v442/proposal-snapshot.test.mjs
           node backend/tools/strategic_budget_v442/review/strategy.test.cjs
           node backend/tools/strategic_budget_v442/review/reconcile.test.cjs
           node backend/tools/strategic_budget_v442/review/model-integration.test.cjs

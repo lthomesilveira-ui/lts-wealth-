@@ -20,7 +20,20 @@
    // Two established Portuguese labels for the same mortgage category. This
    // changes only planning assignment, never the original event or its amount.
    if(norm(c)==='financiamento imovel'){const same=[...knownKeys].filter(x=>norm(x)==='financiamento imobiliario');if(same.length===1)return same[0];}return c;};
-  const add=(month,category,amount,detail)=>{if(!new RegExp('^'+year+'-(0[1-9]|1[0-2])$').test(month)||amount<=0)return;
+  // Carry an existing decision only for the same identified purchase. A person
+  // prefix or a similar merchant is never authority for a global category alias.
+  const cardCategory=item=>{
+   // The backend uses this one explicit unknown bucket. This keeps a received
+   // unclassified item in that bucket without inventing a purpose or person.
+   if(['a classificar','sem categoria','nao identificado','—',''].includes(norm(item.category)))return 'Sem classificação';
+   const matches=(p.card_category_evidence||[]).filter(e=>
+    typeof item.source_id==='string'&&item.source_id&&e.source_ref===item.source_id&&
+    e.raw_category===item.category&&e.purchase_date===(item.purchase_date||item.posting_date)&&
+    cents(e.amount)===cents(item.amount)&&typeof e.category==='string'&&e.category.trim());
+   const categories=[...new Set(matches.map(e=>e.category))];
+   return categories.length===1?categories[0]:item.category;
+  };
+  const add=(month,category,amount,detail)=>{if(!new RegExp('^'+year+'-(0[1-9]|1[0-2])$').test(month)||amount===0||amount<0&&!['installment','card_commitment'].includes(detail.kind))return;
    category=categoryFor(category);
    if(!category||!knownKeys.has(category)){unmapped.push({month,category:category||'Compromisso sem categoria',amount:money(amount),...detail});return;}
    const k=key(month,category),map=['installment','card_commitment'].includes(detail.kind)?cardAmounts:amounts;map.set(k,(map.get(k)||0)+amount);const a=evidence.get(k)||[];a.push({...detail,amount:money(amount)});evidence.set(k,a);
@@ -40,19 +53,14 @@
    if(!hasCompetence){unallocatedCash.push({description,date:e.event_date,category:e.category,amount:money(-n),source:e.source,source_ref:e.source_ref,reason:'Data de pagamento conhecida; competência do serviço ainda não comprovada.'});continue;}
    add(competence,e.category,-n,{description,date:e.event_date,competence_month:competence,competence_evidence:e.competence_evidence,kind:'scheduled',contracted:/financiamento|emprestimo|parcela/.test(c)});
   }
-  function cardCategory(item){
-   const date=item.purchase_date||item.posting_date;
-   if(!item.source_id||!date||!Array.isArray(p.card_category_evidence))return item.category;
-   const labels=new Set(p.card_category_evidence.filter(e=>e.source_ref===item.source_id&&e.purchase_date===date&&e.raw_category===item.category&&cents(e.amount)===cents(item.amount)&&typeof e.category==='string'&&e.category.trim()).map(e=>e.category));
-   return labels.size===1?[...labels][0]:item.category;
-  }
   for(const card of cardRows)for(const cycle of card.cycles||[])for(const item of cycle.items||[]){
    const installment=Number(item.total_installments)>1;
    const received=['PENDING','POSTED','DOCUMENTED'].includes(item.provider_status);
-   if((!installment&&!received)||item.is_payment||Number(item.amount)<=0)continue;
+   if((!installment&&!received)||item.is_payment)continue;
+   const itemAmount=cents(item.amount);if(itemAmount===null)throw Error('card commitment amount unavailable');if(itemAmount===0)continue;
    const month=String(item.reference_month||cycle.month||'').slice(0,7),identity=[card.family,month,item.source_id,item.installment_number].join(':');
    if(!item.source_id||seen.has(identity))continue;seen.add(identity);
-   add(month,cardCategory(item),cents(item.amount),{description:item.description,date:item.purchase_date||item.posting_date,kind:installment?'installment':'card_commitment',installment:item.installment_number,total_installments:item.total_installments,contracted:true});
+   add(month,cardCategory(item),itemAmount,{description:item.description,date:item.purchase_date||item.posting_date,source_ref:item.source_id,kind:installment?'installment':'card_commitment',installment:item.installment_number,total_installments:item.total_installments,contracted:true});
   }
   // Unknown obligations remain explicit. They are never silently converted to zero.
   const extraCategories=[...new Set(unmapped.map(x=>x.category))].filter(c=>!knownKeys.has(c));
@@ -66,7 +74,7 @@
    const income=cents(m.income_target);
    for(const r of p.rows){const x=r.months[i],type=kind(r.category),history=cents(r.reference_monthly),owner=x.target_basis==='owner',scheduled=amounts.get(key(m.month,r.category))||0,card=cardAmounts.get(key(m.month,r.category))||0;
     if(m.month===current&&card>0&&x.card_actual===undefined)throw Error('recorded card coverage unavailable');
-    const floor=m.month===current?Math.max(cents(x.actual)||0,0)+scheduled+Math.max(0,card-Math.max(cents(x.card_actual)||0,0)):scheduled+card,details=evidence.get(key(m.month,r.category))||[];
+    const floor=Math.max(0,m.month===current?(cents(x.actual)||0)+scheduled+Math.max(0,card-(cents(x.card_actual)||0)):scheduled+card),details=evidence.get(key(m.month,r.category))||[];
     let proposed=null,reason='',desired=0;
     if(owner){proposed=cents(x.target);reason='Meta aprovada por você; preservada.';}
     else if(past){reason='Sem orçamento aprovado para este mês encerrado.';}
@@ -95,6 +103,7 @@
   }
   p.strategy={version:'strategic-v442',proposals:true,pastWithoutPlan:plans.filter(x=>!x.covered).length,regular_income_basis:'net_received_without_bonus_or_thirteenth',months:plans,
    payroll_withheld_not_added:withheld,cash_without_competence:unallocatedCash,unmapped_obligations:unmapped,flow_provision_included:false,
+   proposal_review:p.planning?.status||'missing',reviewed_at:p.planning?.reviewed_at||null,
    alternatives:['Preservar parcelas e compromissos já assumidos.','Comparar alternativas de redução com valores e consequências; não zerar categorias automaticamente.','Rever gastos essenciais pelo detalhe e renegociar contratos quando possível.','Usar bônus e 13º apenas como cobertura extraordinária, sem incorporá-los ao salário mensal.']};
   p.proposed=p.rows.some(r=>r.months.some(m=>m.target_basis==='proposal'&&m.target!==null));return p;
  }

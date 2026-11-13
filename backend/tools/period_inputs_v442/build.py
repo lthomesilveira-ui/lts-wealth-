@@ -27,7 +27,9 @@ if __name__=='__main__':
    assert sorted(x.name for x in p.iterdir())==sorted(x.name for x in OUT.iterdir())
    for x in p.iterdir():assert x.read_bytes()==(OUT/x.name).read_bytes(),x.name
   else:
-   assert not subprocess.run(['git','ls-tree','-r','--name-only','HEAD','--','releases/v442'],cwd=ROOT,capture_output=True,text=True,check=True).stdout,'Never rebuild a committed release'
+   ref='refs/remotes/origin/main' if '--update-unpublished' in sys.argv else 'HEAD'
+   subprocess.run(['git','rev-parse','--verify',ref],cwd=ROOT,capture_output=True,text=True,check=True)
+   assert not subprocess.run(['git','ls-tree','-r','--name-only',ref,'--','releases/v442'],cwd=ROOT,capture_output=True,text=True,check=True).stdout,'Never rebuild a published release; an unpublished candidate requires --update-unpublished'
    if OUT.exists():shutil.rmtree(OUT)
    p.rename(OUT)
  print(json.dumps({'pass':True,'release':'v442','assets':n,'v441_preserved':True}))

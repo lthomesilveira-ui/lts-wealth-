@@ -5,3 +5,5 @@ Wired into the prepared V442 release assets. Publication and real authenticated 
 Reconciliation keeps cash schedule, estimated cash, invoice payments and card competence in separate layers. It never certifies a combined budget total. The browser preview uses synthetic fixtures only. It is a visual/semantic harness, not owner-data validation and not a completed individualized budget. Private household data and proposed actual limits remain outside this repository.
 
 Card category labels are resolved only through canonical purchase identity, purchase date, original label and amount. This avoids repeating a recorded purchase as a new commitment under a beneficiary label. Partial proposal subtotals keep missing categories and the complete-plan balance unknown; cash reservations remain separate.
+
+Signed received card credits reduce the matching charge before commitment overlap is calculated. Unclassified received purchases stay in the canonical unknown bucket. Prior proposals remain unapproved after source updates and require an explicit review; stale payroll and label proofs remain suppressed.

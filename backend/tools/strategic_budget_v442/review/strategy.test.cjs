@@ -33,4 +33,19 @@ test('Projected installment reuses exact original purchase category without a ne
  p.card_category_evidence=[{source_ref:it.source_id,purchase_date:it.purchase_date,raw_category:it.category,category:'Restaurantes',amount:80}];
  const q=derive(p,flow,{cards:[{family:'synthetic',cycles:[{month:'2026-12-01',items:[it]}]}]});assert.equal(q.rows[1].months[11].strategy.floor,80);assert(!q.rows.some(r=>r.category===it.category));
 });
-console.log(n+' tests passed; synthetic only; owner validation is separate');
+test('A received charge and its credit cancel without becoming a second commitment',()=>{
+ const cs={cards:[{family:'synthetic',cycles:[{month:'2026-11-01',items:[{source_id:'fee',category:'Restaurantes',amount:75,provider_status:'POSTED'},{source_id:'refund',category:'Restaurantes',amount:-75,provider_status:'POSTED'}]}]}]};
+ const q=derive(original,flow,cs);assert.equal(q.rows[1].months[10].strategy.floor,0);assert.equal(q.rows[1].months[10].actual,0);
+});
+test('Signed recorded card credits are subtracted from overlap before adding distinct purchases',()=>{
+ const p=structuredClone(original);p.rows[1].months[10].actual=-50;p.rows[1].months[10].card_actual=-75;
+ const cs={cards:[{family:'synthetic',cycles:[{month:'2026-11-01',items:[{source_id:'purchase',category:'Restaurantes',amount:100,provider_status:'POSTED'},{source_id:'credit',category:'Restaurantes',amount:-75,provider_status:'POSTED'}]}]}]};
+ const q=derive(p,flow,cs);assert.equal(q.rows[1].months[10].strategy.floor,50);assert.equal(q.rows[1].months[10].actual,-50);
+});
+test('Missing amounts cannot become zero commitments',()=>assert.throws(()=>derive(original,flow,{cards:[{family:'synthetic',cycles:[{month:'2026-12-01',items:[{source_id:'one',category:'Restaurantes',amount:null,provider_status:'PENDING'}]}]}]}),/amount unavailable/));
+test('An unknown received purpose stays in the canonical unknown bucket exactly once',()=>{
+ const p=structuredClone(original);p.rows.push(row('Sem classificação',null));p.rows[3].months[10].actual=25;p.rows[3].months[10].card_actual=25;
+ const q=derive(p,flow,{cards:[{family:'synthetic',cycles:[{month:'2026-11-01',items:[{source_id:'unresolved',category:'A classificar',amount:25,provider_status:'PENDING'}]}]}]});
+ assert(!q.rows.some(r=>r.category==='A classificar'));assert.equal(q.rows[3].months[10].strategy.floor,25);assert.equal(q.rows[3].months[10].actual,25);
+});
+console.log(n+' tests passed; synthetic only; owner-session verification is separate');
