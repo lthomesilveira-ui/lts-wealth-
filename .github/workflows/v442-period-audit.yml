@@ -47,6 +47,7 @@ jobs:
           node .github/scripts/lts_v441_historical_browser.cjs
           node .github/scripts/lts_v442_period_browser.cjs
           node .github/scripts/lts_v442_reviewed_planning_browser.cjs
+          node .github/scripts/lts_v442_review_integrated_browser.cjs
       - name: Complete current deployment gates
         run: python3 backend/tools/report_presentation_v417/read_only_gates.py > qa/v442/current-static-gates.txt
       - uses: actions/upload-artifact@v4

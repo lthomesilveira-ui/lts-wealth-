@@ -1,0 +1,26 @@
+'use strict';process.env.LTS_FLOW_RELEASE='v442';
+const fs=require('node:fs'),assert=require('node:assert/strict'),{chromium,webkit}=require('playwright');
+const fixture=require('./lts_v379_fixtures.cjs'),projection=require('./lts_v412_projection_fixtures.cjs'),original=fixture.response;
+fixture.response=(n,a)=>n==='lts_browser_projection_policy_v412'?projection.policy():original(n,a);
+const{setup,open}=require('./lts_v382_browser.cjs'),out='qa/v442/review-integrated',dir='backend/tools/strategic_budget_v442/review/';
+fs.mkdirSync(out,{recursive:true});const input=JSON.parse(fs.readFileSync('qa/v442/strategy-fixture.json'));
+async function run(browser,engine,width){const h=await setup(browser,width,980,'2026-11-12T15:00:00Z');let f;
+const send=(r,x)=>r.fulfill({status:200,contentType:'application/json',body:JSON.stringify(x)});
+for(const [asset,file]of[['lts-v442-strategy.js','strategy.js'],['lts-v441-budget-model.js','budget-model.js'],['lts-v441-budget-ui.js','budget-ui.js']])await h.ctx.route('**/'+asset+'*',r=>r.fulfill({status:200,contentType:'application/javascript',body:fs.readFileSync(dir+file,'utf8')}));
+await h.ctx.route('**/rest/v1/rpc/lts_browser_budget_read_v441',r=>{const a=JSON.parse(r.request().postData()),p=structuredClone(input.budget);p.year=a.p_year;p.planning={months:{}};p.months.forEach(m=>m.month=a.p_year+m.month.slice(4));p.rows.forEach(row=>row.months.forEach(m=>m.month=a.p_year+m.month.slice(4)));p.planning.months[a.p_year+'-01']={'Restaurantes':{status:'reviewed_proposal',target:350,reason:'Synthetic reviewed alternative; not an approved target.',evidence:['Synthetic only']}};
+return send(r,p)});
+await h.ctx.route('**/rest/v1/rpc/lts_browser_flow_v242',r=>{const a=JSON.parse(r.request().postData()),b=original('lts_browser_flow_v242',a);b.flow.current_future.from=a.p_from;b.flow.current_future.to=a.p_to;b.flow.current_future.events=structuredClone(input.flow.flow.current_future.events.filter(e=>e.event_date>=a.p_from&&e.event_date<=a.p_to));return send(r,b)});
+await h.ctx.route('**/rest/v1/rpc/lts_browser_card_cycles_v229',r=>{const c=fixture.cards();c.complete=true;c.cards[0].cycles.push(structuredClone(input.cards.cards[0].cycles[0]));return send(r,c)});
+try{f=await open(h,'v442',true);assert.equal(await f.locator('#v441Budget').count(),0);
+await f.locator('#nav [data-v="Despesas"]:visible,#dx1MobileNav [data-mobile-route="Despesas"]:visible').click();await f.locator('[data-v168-exp-tab="monthly"]').click();await f.waitForFunction(()=>__LTS_V441_BUDGET?.state.status==='ready');
+assert.equal(await f.locator('.v175-monthly').evaluate(e=>e.nextElementSibling?.id),'v441Budget');
+await f.getByLabel('Mês do orçamento',{exact:true}).fill('2027-01');await f.waitForFunction(()=>__LTS_V441_BUDGET.state.status==='ready'&&__LTS_V441_BUDGET.state.data.year===2027);
+const text=await f.locator('#v441Budget').innerText();assert.match(text,/não tem cobertura completa/);assert.match(text,/350,00/);assert.match(text,/proposta/);
+const data=await f.evaluate(()=>structuredClone(__LTS_V441_BUDGET.state.data));assert.equal(data.months[0].target,null);
+await f.locator('[data-why="Restaurantes"]').click();assert.match(await f.locator('dialog.v441-dialog').innerText(),/não aprovada/);await f.getByRole('button',{name:'Fechar',exact:true}).click();
+await f.locator('#v441Budget').scrollIntoViewIfNeeded();await h.page.screenshot({path:out+'/'+engine+'-'+width+'.png',fullPage:true});
+await f.locator('[data-mode=year]').click();assert.match(await f.locator('#v441Budget').innerText(),/não tem cobertura completa/);
+const geometry=await f.evaluate(()=>({width:innerWidth,scroll:document.documentElement.scrollWidth}));assert(geometry.scroll<=geometry.width+2);
+assert.deepEqual(h.errors,[]);assert.deepEqual(h.writes,[]);console.log('PASS integrated reviewed candidate '+engine+' '+width);
+}catch(e){await h.page.screenshot({path:out+'/'+engine+'-'+width+'-failure.png',fullPage:true}).catch(()=>{});fs.writeFileSync(out+'/'+engine+'-'+width+'-failure.txt',String(e.stack)+'\n'+(f?await f.locator('body').innerText():''));throw e}finally{await h.ctx.close()}}
+(async()=>{for(const[engine,type]of[['chromium',chromium],['webkit',webkit]]){const b=await type.launch({headless:true});try{for(const width of[320,393,1366])await run(b,engine,width)}finally{await b.close()}}})().catch(e=>{console.error(e);process.exit(1)});
