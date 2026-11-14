@@ -1,0 +1,52 @@
+name: V443 dated requirements and reviewed receipts
+on:
+  pull_request:
+    paths: ['backend/patches/v443/**','backend/tools/dated_requirements_v443/**','.github/workflows/v443-dated-requirements.yml']
+permissions:
+  contents: read
+jobs:
+  native-regressions:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: synthetic-test-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: synthetic-test-only
+    steps:
+      - uses: actions/checkout@v4
+      - name: Reproduce the original deadline regression
+        run: |
+          psql -v ON_ERROR_STOP=1 -f backend/tools/account_reminders_v387/fixture.sql
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v387/account_reminder_plan.sql
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v387/account_reminder_delivery.sql
+          if psql -v ON_ERROR_STOP=1 -f backend/tools/dated_requirements_v443/verify.sql > /tmp/v443-before.txt 2>&1; then
+            cat /tmp/v443-before.txt
+            exit 1
+          fi
+          grep -F 'Future trough was anticipated' /tmp/v443-before.txt
+      - name: Validate dated additional requirements and reapplication
+        run: |
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v443/dated_account_requirements.sql
+          psql -v ON_ERROR_STOP=1 -f backend/tools/dated_requirements_v443/verify.sql
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v443/dated_account_requirements.sql
+          psql -v ON_ERROR_STOP=1 -f backend/tools/dated_requirements_v443/verify.sql
+      - name: Validate receipt identity, owner, anchor and original function metadata
+        run: |
+          psql -v ON_ERROR_STOP=1 -f backend/tools/dated_requirements_v443/receipt_fixture.sql
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v443/received_income_evidence.sql
+          psql -v ON_ERROR_STOP=1 -f backend/tools/dated_requirements_v443/receipt_verify.sql
+          psql -v ON_ERROR_STOP=1 -f backend/tools/dated_requirements_v443/build-before.sql
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v443/received_income_slot.sql
+          psql -v ON_ERROR_STOP=1 -f backend/patches/v443/received_income_slot.sql
