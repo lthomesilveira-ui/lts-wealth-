@@ -49,3 +49,7 @@ test('An unknown received purpose stays in the canonical unknown bucket exactly 
  assert(!q.rows.some(r=>r.category==='A classificar'));assert.equal(q.rows[3].months[10].strategy.floor,25);assert.equal(q.rows[3].months[10].actual,25);
 });
 console.log(n+' tests passed; synthetic only; owner-session verification is separate');
+
+
+// Exact malformed-payroll evidence regression; synthetic only.
+require('./payroll-proof-regression.cjs');
