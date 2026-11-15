@@ -1,0 +1,40 @@
+name: V445 aligned opening horizon
+on:
+  pull_request:
+    paths: ['releases/v445/**','backend/tools/opening_horizon_v445/**','.github/scripts/lts_v445*','.github/workflows/v445-opening-horizon.yml','mobile/current.json']
+permissions:
+  contents: read
+jobs:
+  opening:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    container: mcr.microsoft.com/playwright:v1.58.2-noble
+    env:
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+      LTS_MOBILE_RELEASE: v442
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Immutable build, aligned startup and inherited recovery contracts
+        run: |
+          python3 backend/tools/opening_horizon_v445/build.py --check
+          node .github/scripts/lts_v445_release_contract.cjs
+          node --test .github/scripts/lts_v445_opening_test.cjs .github/scripts/lts_v444_transport_test.cjs .github/scripts/lts_v444_refresh_test.cjs
+      - name: Render delayed enabled policy at desktop and mobile sizes
+        run: |
+          npm install --no-save --package-lock=false playwright@1.58.2
+          python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/v445-http.log 2>&1 &
+          node .github/scripts/lts_v309_wait_http.cjs
+          node .github/scripts/lts_v445_browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v445-opening-horizon
+          retention-days: 14
+          path: qa/v445/

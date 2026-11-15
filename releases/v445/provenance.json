@@ -1,0 +1,11 @@
+{
+  "release": "v445",
+  "base_release": "v444",
+  "scope": "Align opening review horizon and avoid restarting already aligned dashboard readers",
+  "financial_readers_changed": false,
+  "financial_writers_changed": false,
+  "authentication_changed": false,
+  "source_guards_changed": false,
+  "query_deadlines_changed": false,
+  "physical_mobile_validated": false
+}
