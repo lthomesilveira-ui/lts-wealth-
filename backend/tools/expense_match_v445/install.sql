@@ -139,9 +139,11 @@ BEGIN
  END IF;
  IF NOT already_installed THEN
   EXECUTE body;
-  -- Change only the derived-read generation; no cache/source rows are removed.
-  UPDATE public.lts_read_cache_epoch_v242 SET epoch=epoch+1 WHERE singleton=true;
-  IF NOT FOUND THEN RAISE EXCEPTION 'Missing derived-read epoch'; END IF;
  END IF;
+ -- Every successful installer run replaces the helper and invalidates derived reads.
+ -- This also covers helper upgrades on an already-integrated baseline.
+ -- No cache/source rows are removed.
+ UPDATE public.lts_read_cache_epoch_v242 SET epoch=epoch+1 WHERE singleton=true;
+ IF NOT FOUND THEN RAISE EXCEPTION 'Missing derived-read epoch'; END IF;
 END $install$;
 COMMIT;
