@@ -87,7 +87,6 @@ WITH anchors AS MATERIALIZED (
  SELECT s.* FROM matched s
  WHERE (SELECT count(*) FROM matched z WHERE z.id=s.id)=1
  AND (SELECT count(*) FROM matched z WHERE z.operational_event->>'source_ref'=s.operational_event->>'source_ref')=1
- AND NOT EXISTS(SELECT 1 FROM public.lts_v229_new_bank_rows(p_user_id,p_from,p_to) n WHERE n.id=s.id)
  AND NOT EXISTS(SELECT 1 FROM public.lts_realized_bank_sources_v238(p_user_id) n WHERE n.staging_id=s.id)
  AND NOT EXISTS(SELECT 1 FROM existing e WHERE e.source_ref IN(s.id::text,s.operational_event->>'source_ref')
    OR EXISTS(SELECT 1 FROM public.financial_events f WHERE f.user_id=p_user_id
@@ -116,7 +115,7 @@ BEGIN
  body:=pg_get_functiondef('public.lts_expense_rows_v230_baseline(uuid,date,date)'::regprocedure);
  already_installed:=position('lts_expense_matched_bank_rows_v445' in body)>0;
  IF NOT already_installed AND md5(body)<>'24c9b55478e02403bdca12003f5f22fe' THEN RAISE EXCEPTION 'Expense baseline changed; rebase without overwriting concurrent work'; END IF;
- needle:=$needle$new_bank_raw as materialized(select * from public.lts_v229_new_bank_rows(p_user_id,p_from,p_to))$needle$; replacement:=$replacement$matched_bank_context AS MATERIALIZED(select * from public.lts_expense_matched_bank_rows_v445(p_user_id,p_from,p_to)), new_bank_raw as materialized(select * from public.lts_v229_new_bank_rows(p_user_id,p_from,p_to) UNION ALL select id,event_date,signed_amount,description,bank,category from matched_bank_context)$replacement$;
+ needle:=$needle$new_bank_raw as materialized(select * from public.lts_v229_new_bank_rows(p_user_id,p_from,p_to))$needle$; replacement:=$replacement$original_bank_context AS MATERIALIZED(select * from public.lts_v229_new_bank_rows(p_user_id,p_from,p_to)), matched_bank_context AS MATERIALIZED(select m.* from public.lts_expense_matched_bank_rows_v445(p_user_id,p_from,p_to) m where not exists(select 1 from original_bank_context n where n.id=m.id)), new_bank_raw as materialized(select * from original_bank_context UNION ALL select id,event_date,signed_amount,description,bank,category from matched_bank_context)$replacement$;
  IF already_installed THEN
   IF length(body)-length(replace(body,replacement,''))<>length(replacement) THEN RAISE EXCEPTION 'Partial prior integration; review before proceeding'; END IF;
  ELSE
