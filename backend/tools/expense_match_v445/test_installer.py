@@ -119,6 +119,7 @@ class InstallerTest(unittest.TestCase):
         return r.stdout
 
     def test_installer_lifecycle(self):
+        staging_before=self.sql("SELECT md5(jsonb_agg(to_jsonb(s) ORDER BY id)::text) FROM public.lts_open_finance_staging s;")
         # A failure after first baseline replacement must roll back all DDL.
         initial=self.sql("SELECT pg_get_functiondef('public.lts_expense_rows_v230_baseline(uuid,date,date)'::regprocedure);")
         self.sql('DELETE FROM public.lts_read_cache_epoch_v242;')
@@ -135,6 +136,18 @@ class InstallerTest(unittest.TestCase):
         self.assertEqual(self.sql("SELECT has_function_privilege('anon','public.lts_expense_matched_bank_rows_v445(uuid,date,date)','EXECUTE') OR has_function_privilege('authenticated','public.lts_expense_matched_bank_rows_v445(uuid,date,date)','EXECUTE');").strip(),'f')
         self.assertEqual(self.sql("SELECT prosecdef FROM pg_proc WHERE oid='public.lts_expense_matched_bank_rows_v445(uuid,date,date)'::regprocedure;").strip(),'f')
         self.sql(f"SET ROLE anon; SELECT * FROM public.lts_expense_matched_bank_rows_v445('{USER}',current_date,current_date);",expect_error='permission denied')
+        # Simulate an original-reader overlap: the integrated baseline must keep
+        # its original row, while standalone matched helper still returns its row.
+        original_newbank=self.sql("SELECT pg_get_functiondef('public.lts_v229_new_bank_rows(uuid,date,date)'::regprocedure);")
+        self.sql("""CREATE OR REPLACE FUNCTION public.lts_v229_new_bank_rows(uuid,date,date)
+         RETURNS TABLE(id uuid,event_date date,signed_amount numeric,description text,bank text,category text)
+         LANGUAGE sql AS $$SELECT s.id,s.posting_date,s.signed_amount,'Original reader winner'::text,
+          'Itaú'::text,'Synthetic category'::text FROM public.lts_open_finance_staging s
+          WHERE s.user_id=$1 AND s.posting_date BETWEEN $2 AND $3$$;""")
+        self.assertEqual(self.sql(f"SELECT count(*) FROM public.lts_expense_matched_bank_rows_v445('{USER}',current_date-1,current_date);").strip(),'1')
+        self.assertEqual(self.sql(f"SELECT jsonb_array_length(public.lts_expense_rows_v230_baseline('{USER}',current_date-1,current_date));").strip(),'1')
+        self.assertEqual(self.sql(f"SELECT public.lts_expense_rows_v230_baseline('{USER}',current_date-1,current_date)->0->>'description';").strip(),'Original reader winner')
+        self.sql(original_newbank)
         baseline=self.sql("SELECT pg_get_functiondef('public.lts_expense_rows_v230_baseline(uuid,date,date)'::regprocedure);")
         self.sql(self.install)
         self.assertEqual(self.sql('SELECT epoch FROM public.lts_read_cache_epoch_v242;').strip(),'12')
@@ -159,5 +172,6 @@ class InstallerTest(unittest.TestCase):
         self.assertEqual(self.sql("SELECT pg_get_functiondef('public.lts_expense_matched_bank_rows_v445(uuid,date,date)'::regprocedure);"),before)
         self.assertEqual(self.sql('SELECT epoch FROM public.lts_read_cache_epoch_v242;').strip(),'12')
         self.assertEqual(self.sql('SELECT count(*) FROM public.lts_open_finance_staging;').strip(),'1')
+        self.assertEqual(self.sql("SELECT md5(jsonb_agg(to_jsonb(s) ORDER BY id)::text) FROM public.lts_open_finance_staging s;"),staging_before)
 
 if __name__=='__main__': unittest.main(verbosity=2)
