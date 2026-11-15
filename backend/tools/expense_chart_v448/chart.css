@@ -1,0 +1,4 @@
+/* Keep monthly labels in one scrollable row, sized to their complete text. */
+.v168-expenses .v168-bars,.v168-expenses .v168-bars.compact{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:minmax(max-content,1fr);gap:12px;overflow-x:auto;overflow-y:hidden;overscroll-behavior-inline:contain;padding-inline:8px;scroll-snap-type:x proximity}
+.v168-expenses .v168-bar{min-width:96px;scroll-snap-align:start}
+.v168-expenses .v168-bar b{font-variant-numeric:tabular-nums}
