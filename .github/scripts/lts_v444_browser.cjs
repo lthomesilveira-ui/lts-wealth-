@@ -18,7 +18,7 @@ async function run(browser,engine,width){
   assert(await f.getByRole('heading',{name:'Dashboard',exact:true}).isVisible());
   assert.match(await f.locator('#ltsRefreshStatusV415').innerText(),/Atualizando seus dados/);
   await h.page.screenshot({path:out+'/'+label+'-pending.png'});
-  await f.getByRole('button',{name:'Tentar novamente',exact:true}).waitFor();
+  await f.locator('#ltsRefreshStatusV415').getByRole('button',{name:'Tentar novamente',exact:true}).waitFor();
   assert.match(await f.locator('#ltsRefreshStatusV415').innerText(),/Não foi possível concluir a atualização/);
   const warning=await f.locator('#ltsRefreshStatusV415').boundingBox();assert(warning.height<160,'Short actionable warning');
   await h.page.screenshot({path:out+'/'+label+'-failed.png'});
