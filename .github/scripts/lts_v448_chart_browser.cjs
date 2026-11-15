@@ -49,6 +49,14 @@ async function run(browser,engine,width){
   await frame.locator('.v168-expenses').waitFor({state:'visible'});
   await h.page.waitForLoadState('networkidle');
   await frame.waitForFunction(()=>window.__LTS_V175_STATE?.expense&&!window.__LTS_V175_STATE.expense.loading);
+  // Product/expense completion schedules deferred renders. Wait for a quiet
+  // report subtree before appending a fixture, rather than racing its replacement.
+  await frame.evaluate(()=>new Promise((resolve,reject)=>{
+   let quiet;const deadline=setTimeout(()=>{observer.disconnect();clearTimeout(quiet);reject(new Error('Expense report did not settle'))},10000);
+   const done=()=>{observer.disconnect();clearTimeout(deadline);resolve()};
+   const restart=()=>{clearTimeout(quiet);quiet=setTimeout(done,1200)};
+   const observer=new MutationObserver(restart);observer.observe(document.getElementById('main')||document.body,{childList:true,subtree:true,characterData:true});restart();
+  }));
   // The original report stays present. Only a labelled synthetic test chart is
   // appended inside its real grid/card ancestor, after all actual styles loaded.
   const initialProduct=await frame.evaluate(()=>JSON.stringify(D));
@@ -77,8 +85,8 @@ async function run(browser,engine,width){
    assert(last.last.left>=last.chart.left-1&&last.last.right<=last.chart.left+last.clientWidth+1,'Last amount fully reachable');
    assert.equal(last.overlap,false);assert.equal(last.verticalClipping,false);assert.equal(last.documentOverflow,false);assert.deepEqual(last.values,expectedText,'Scrolling changes no values');
    await h.page.screenshot({path:path.join(out,key+'-last.png')});
-   await scroller.evaluate(el=>{el.scrollLeft=0});await settle(frame);const returned=await measure(frame);assert(Math.abs(returned.scrollLeft)<=1);assert.deepEqual(returned.values,expectedText);
-   cases.push({count,compact:count>18,text_scale:scale,font_size:first.fontSize,scroll_width:first.scrollWidth,client_width:first.clientWidth,maximum_bar_percent:first.maximumHeight,overlap:false,vertical_clipping:false,document_overflow:false,values_and_dates_unchanged:true,first_and_last_reachable:true});
+   await scroller.evaluate(el=>{el.scrollLeft=0});await settle(frame);const returned=await measure(frame);assert(returned.first.left>=returned.chart.left-1&&returned.first.right<=returned.chart.left+returned.clientWidth+1,'First amount reachable again after scroll-snap: '+JSON.stringify(returned));assert.equal(returned.overlap,false);assert.equal(returned.verticalClipping,false);assert.equal(returned.documentOverflow,false);assert.deepEqual(returned.values,expectedText);
+   cases.push({count,compact:count>18,text_scale:scale,font_size:first.fontSize,scroll_width:first.scrollWidth,client_width:first.clientWidth,maximum_bar_percent:first.maximumHeight,overlap:false,vertical_clipping:false,document_overflow:false,values_and_dates_unchanged:true,first_and_last_reachable:true,returned_scroll_left:returned.scrollLeft,returned_first:returned.first,chart_bounds:returned.chart});
   }
   await frame.locator('#chart-fixture-v448').evaluate(el=>el.remove());
   assert.equal(await frame.locator('.v168-expenses').innerText(),actualSummary,'Original synthetic report untouched');assert.equal(await frame.evaluate(()=>JSON.stringify(D)),initialProduct);
