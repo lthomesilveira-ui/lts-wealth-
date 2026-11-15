@@ -1,0 +1,40 @@
+name: V444 bounded read recovery
+on:
+  pull_request:
+    paths: ['releases/v444/**','backend/tools/read_recovery_v444/**','.github/scripts/lts_v444*','.github/workflows/v444-read-recovery.yml','mobile/current.json']
+permissions:
+  contents: read
+jobs:
+  recovery:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    container: mcr.microsoft.com/playwright:v1.58.2-noble
+    env:
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+      LTS_MOBILE_RELEASE: v442
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Immutable build and bounded cancellation/recovery contracts
+        run: |
+          python3 backend/tools/read_recovery_v444/build.py --check
+          node .github/scripts/lts_v444_release_contract.cjs
+          node --test .github/scripts/lts_v444_transport_test.cjs .github/scripts/lts_v444_refresh_test.cjs
+      - name: Render actual candidate with synthetic complete, stale and failed states
+        run: |
+          npm install --no-save --package-lock=false playwright@1.58.2
+          python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/v444-http.log 2>&1 &
+          node .github/scripts/lts_v309_wait_http.cjs
+          node .github/scripts/lts_v444_browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v444-read-recovery
+          retention-days: 14
+          path: qa/v444/

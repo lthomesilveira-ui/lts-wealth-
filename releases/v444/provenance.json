@@ -1,0 +1,12 @@
+{
+  "release": "v444",
+  "base_release": "v442",
+  "scope": "Cancel superseded reads and recover bounded transient product/status failures",
+  "heavy_read_concurrency": 1,
+  "query_deadlines_changed": false,
+  "financial_readers_changed": false,
+  "financial_writers_changed": false,
+  "authentication_changed": false,
+  "canonical_promotion_requires_real_validation": true,
+  "physical_mobile_validated": false
+}
