@@ -1,8 +1,7 @@
--- Candidate only. Review and rollback-rehearse before installation.
--- No financial-source rows or published release files are changed.
+-- Candidate; no source mutations. Requires independent SQL integration review.
 BEGIN;
 CREATE OR REPLACE FUNCTION public.lts_expense_matched_bank_rows_v445(p_user_id uuid, p_from date, p_to date)
- RETURNS TABLE(id uuid, event_date date, signed_amount numeric, description text, bank text, category text)
+ RETURNS TABLE(id uuid, event_date date, signed_amount numeric, description text, bank text, category text, operational_event jsonb)
  LANGUAGE sql
  SET search_path TO ''
  SET "TimeZone" TO 'America/Sao_Paulo'
@@ -73,6 +72,9 @@ WITH anchors AS MATERIALIZED (
  AND NOT coalesce((e->>'asset_movement')::boolean,false)
  AND NOT coalesce((e->>'excluded_from_spend')::boolean,false)
  AND NOT coalesce((e->>'excluded')::boolean,false)
+ AND NOT coalesce((e->>'non_cash_marker')::boolean,false)
+ AND NOT coalesce((e->>'card_settlement')::boolean,false)
+ AND public.lts_card_settlement_contract_v273(p_user_id,s.id) IS NULL
  AND e->>'category' IS DISTINCT FROM 'Pagamento de fatura'
  AND jsonb_array_length(coalesce(s.normalized_payload#>'{reconciliation,candidates}','[]'))=1
  AND EXISTS(SELECT 1 FROM jsonb_array_elements(s.normalized_payload#>'{reconciliation,candidates}') z
@@ -98,7 +100,7 @@ WITH anchors AS MATERIALIZED (
  AND NOT r.is_internal_transfer AND NOT r.is_asset_movement
  AND r.match_type IN ('exact','prefix') AND EXISTS(SELECT 1 FROM classified WHERE known_category IS NULL)
 )
-SELECT s.id,s.posting_date,s.signed_amount,s.description_raw,s.bank,coalesce(s.known_category,nullif(s.operational_event->>'category',''),rule.category,'A classificar')
+SELECT s.id,s.posting_date AS event_date,s.signed_amount,s.description_raw AS description,s.bank,coalesce(s.known_category,nullif(s.operational_event->>'category',''),rule.category,'A classificar') AS category,s.operational_event
 FROM classified s
 LEFT JOIN LATERAL (
  SELECT CASE WHEN count(DISTINCT r.category)=1 THEN min(r.category) END category
@@ -106,21 +108,23 @@ LEFT JOIN LATERAL (
  AND ((r.match_type='exact' AND r.match_key=s.description_key)
  OR (r.match_type='prefix' AND starts_with(s.description_key,r.match_key)))
 ) rule ON true;
-$function$
-
+$function$;
 REVOKE ALL ON FUNCTION public.lts_expense_matched_bank_rows_v445(uuid,date,date) FROM PUBLIC,anon,authenticated;
 DO $install$
-DECLARE body text; needle text := 'new_bank_raw as materialized(select * from public.lts_v229_new_bank_rows(p_user_id,p_from,p_to))';
+DECLARE body text; needle text; replacement text;
 BEGIN
  body:=pg_get_functiondef('public.lts_expense_rows_v230_baseline(uuid,date,date)'::regprocedure);
  IF position('lts_expense_matched_bank_rows_v445' in body)>0 THEN RETURN; END IF;
- IF md5(body)<>'24c9b55478e02403bdca12003f5f22fe' THEN
-  RAISE EXCEPTION 'Expense baseline changed; rebase this correction without overwriting concurrent work';
- END IF;
- IF length(body)-length(replace(body,needle,''))<>length(needle) THEN
-  RAISE EXCEPTION 'Expected unique expense-only integration point';
- END IF;
- body:=replace(body,needle,'new_bank_raw as materialized(select * from public.lts_v229_new_bank_rows(p_user_id,p_from,p_to) UNION ALL select * from public.lts_expense_matched_bank_rows_v445(p_user_id,p_from,p_to))');
+ IF md5(body)<>'24c9b55478e02403bdca12003f5f22fe' THEN RAISE EXCEPTION 'Expense baseline changed; rebase without overwriting concurrent work'; END IF;
+ needle:=$needle$new_bank_raw as materialized(select * from public.lts_v229_new_bank_rows(p_user_id,p_from,p_to))$needle$; replacement:=$replacement$matched_bank_context AS MATERIALIZED(select * from public.lts_expense_matched_bank_rows_v445(p_user_id,p_from,p_to)), new_bank_raw as materialized(select * from public.lts_v229_new_bank_rows(p_user_id,p_from,p_to) UNION ALL select id,event_date,signed_amount,description,bank,category from matched_bank_context)$replacement$;
+ IF length(body)-length(replace(body,needle,''))<>length(needle) THEN RAISE EXCEPTION 'Expected unique integration point'; END IF;
+ body:=replace(body,needle,replacement);
+ needle:=$needle$select 'lts_open_finance_staging',n.id::text,n.description,n.category,null,null,'{}'::jsonb,1 from new_bank n$needle$; replacement:=$replacement$select 'lts_open_finance_staging',n.id::text,coalesce(mc.operational_event->>'description',n.description),n.category,case when mc.operational_event->>'center_cost' in ('Lucas','Larissa','Benjamin','Rafiki') then mc.operational_event->>'center_cost' end,null,coalesce(mc.operational_event,'{}'::jsonb),1 from new_bank n left join matched_bank_context mc on mc.id=n.id$replacement$;
+ IF length(body)-length(replace(body,needle,''))<>length(needle) THEN RAISE EXCEPTION 'Expected unique integration point'; END IF;
+ body:=replace(body,needle,replacement);
+ needle:=$needle$d.beneficiary person_decision,d.property_code property_decision,d.category_label category_decision$needle$; replacement:=$replacement$d.beneficiary person_decision,coalesce(d.property_code,case when b.source_table='lts_open_finance_staging' then s.meta->>'property_code' end) property_decision,d.category_label category_decision$replacement$;
+ IF length(body)-length(replace(body,needle,''))<>length(needle) THEN RAISE EXCEPTION 'Expected unique integration point'; END IF;
+ body:=replace(body,needle,replacement);
  EXECUTE body;
 END $install$;
 COMMIT;
