@@ -82,7 +82,7 @@ WITH anchors AS MATERIALIZED (
    AND z->>'date'=s.posting_date::text AND (z->>'amount')::numeric=s.signed_amount
    AND (z->>'delta')::numeric=0)
 ), existing AS MATERIALIZED (
- SELECT * FROM public.lts_expense_effective_rows_v176(p_user_id,p_from,p_to)
+ SELECT * FROM public.lts_expense_effective_rows_v176(p_user_id,date '2013-10-10',greatest(p_to,current_date))
 ), unmatched AS MATERIALIZED (
  SELECT s.* FROM matched s
  WHERE (SELECT count(*) FROM matched z WHERE z.id=s.id)=1
@@ -111,20 +111,37 @@ LEFT JOIN LATERAL (
 $function$;
 REVOKE ALL ON FUNCTION public.lts_expense_matched_bank_rows_v445(uuid,date,date) FROM PUBLIC,anon,authenticated;
 DO $install$
-DECLARE body text; needle text; replacement text;
+DECLARE body text; needle text; replacement text; already_installed boolean;
 BEGIN
  body:=pg_get_functiondef('public.lts_expense_rows_v230_baseline(uuid,date,date)'::regprocedure);
- IF position('lts_expense_matched_bank_rows_v445' in body)>0 THEN RETURN; END IF;
- IF md5(body)<>'24c9b55478e02403bdca12003f5f22fe' THEN RAISE EXCEPTION 'Expense baseline changed; rebase without overwriting concurrent work'; END IF;
+ already_installed:=position('lts_expense_matched_bank_rows_v445' in body)>0;
+ IF NOT already_installed AND md5(body)<>'24c9b55478e02403bdca12003f5f22fe' THEN RAISE EXCEPTION 'Expense baseline changed; rebase without overwriting concurrent work'; END IF;
  needle:=$needle$new_bank_raw as materialized(select * from public.lts_v229_new_bank_rows(p_user_id,p_from,p_to))$needle$; replacement:=$replacement$matched_bank_context AS MATERIALIZED(select * from public.lts_expense_matched_bank_rows_v445(p_user_id,p_from,p_to)), new_bank_raw as materialized(select * from public.lts_v229_new_bank_rows(p_user_id,p_from,p_to) UNION ALL select id,event_date,signed_amount,description,bank,category from matched_bank_context)$replacement$;
- IF length(body)-length(replace(body,needle,''))<>length(needle) THEN RAISE EXCEPTION 'Expected unique integration point'; END IF;
- body:=replace(body,needle,replacement);
+ IF already_installed THEN
+  IF length(body)-length(replace(body,replacement,''))<>length(replacement) THEN RAISE EXCEPTION 'Partial prior integration; review before proceeding'; END IF;
+ ELSE
+  IF length(body)-length(replace(body,needle,''))<>length(needle) THEN RAISE EXCEPTION 'Expected unique integration point'; END IF;
+  body:=replace(body,needle,replacement);
+ END IF;
  needle:=$needle$select 'lts_open_finance_staging',n.id::text,n.description,n.category,null,null,'{}'::jsonb,1 from new_bank n$needle$; replacement:=$replacement$select 'lts_open_finance_staging',n.id::text,coalesce(mc.operational_event->>'description',n.description),n.category,case when mc.operational_event->>'center_cost' in ('Lucas','Larissa','Benjamin','Rafiki') then mc.operational_event->>'center_cost' end,null,coalesce(mc.operational_event,'{}'::jsonb),1 from new_bank n left join matched_bank_context mc on mc.id=n.id$replacement$;
- IF length(body)-length(replace(body,needle,''))<>length(needle) THEN RAISE EXCEPTION 'Expected unique integration point'; END IF;
- body:=replace(body,needle,replacement);
+ IF already_installed THEN
+  IF length(body)-length(replace(body,replacement,''))<>length(replacement) THEN RAISE EXCEPTION 'Partial prior integration; review before proceeding'; END IF;
+ ELSE
+  IF length(body)-length(replace(body,needle,''))<>length(needle) THEN RAISE EXCEPTION 'Expected unique integration point'; END IF;
+  body:=replace(body,needle,replacement);
+ END IF;
  needle:=$needle$d.beneficiary person_decision,d.property_code property_decision,d.category_label category_decision$needle$; replacement:=$replacement$d.beneficiary person_decision,coalesce(d.property_code,case when b.source_table='lts_open_finance_staging' then s.meta->>'property_code' end) property_decision,d.category_label category_decision$replacement$;
- IF length(body)-length(replace(body,needle,''))<>length(needle) THEN RAISE EXCEPTION 'Expected unique integration point'; END IF;
- body:=replace(body,needle,replacement);
- EXECUTE body;
+ IF already_installed THEN
+  IF length(body)-length(replace(body,replacement,''))<>length(replacement) THEN RAISE EXCEPTION 'Partial prior integration; review before proceeding'; END IF;
+ ELSE
+  IF length(body)-length(replace(body,needle,''))<>length(needle) THEN RAISE EXCEPTION 'Expected unique integration point'; END IF;
+  body:=replace(body,needle,replacement);
+ END IF;
+ IF NOT already_installed THEN
+  EXECUTE body;
+  -- Change only the derived-read generation; no cache/source rows are removed.
+  UPDATE public.lts_read_cache_epoch_v242 SET epoch=epoch+1 WHERE singleton=true;
+  IF NOT FOUND THEN RAISE EXCEPTION 'Missing derived-read epoch'; END IF;
+ END IF;
 END $install$;
 COMMIT;
