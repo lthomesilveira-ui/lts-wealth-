@@ -98,6 +98,9 @@ class InstallerTest(unittest.TestCase):
             md5=cls.sql("SELECT md5(pg_get_functiondef('public.lts_expense_rows_v230_baseline(uuid,date,date)'::regprocedure));").strip()
             assert re.fullmatch('[0-9a-f]{32}',md5)
             cls.install=original.replace(FROZEN,md5)
+            rollback=(ROOT/'rollback.sql').read_text()
+            assert rollback.count(FROZEN)==1
+            cls.rollback=rollback.replace(FROZEN,md5)
         except BaseException:
             cls.tearDownClass()
             raise
@@ -163,6 +166,7 @@ class InstallerTest(unittest.TestCase):
         self.assertNotEqual(partial,baseline)
         self.sql(partial)
         self.sql(self.install,expect_error='Partial prior integration')
+        self.sql(self.rollback,expect_error='Rollback rejected partial integration or drift')
         self.assertEqual(self.sql('SELECT epoch FROM public.lts_read_cache_epoch_v242;').strip(),'12')
         # Drifted baseline fails frozen hash guard; helper CREATE OR REPLACE is rolled back.
         self.sql("CREATE OR REPLACE FUNCTION public.lts_expense_rows_v230_baseline(p_user_id uuid,p_from date,p_to date) RETURNS jsonb LANGUAGE sql AS $$SELECT '[]'::jsonb$$;")
@@ -171,6 +175,33 @@ class InstallerTest(unittest.TestCase):
         self.sql(self.install,expect_error='Expense baseline changed')
         self.assertEqual(self.sql("SELECT pg_get_functiondef('public.lts_expense_matched_bank_rows_v445(uuid,date,date)'::regprocedure);"),before)
         self.assertEqual(self.sql('SELECT epoch FROM public.lts_read_cache_epoch_v242;').strip(),'12')
+        # Restore valid candidate for rollback tests after negative installer cases.
+        self.sql(initial)
+        self.sql(self.install)
+        self.assertEqual(self.sql('SELECT epoch FROM public.lts_read_cache_epoch_v242;').strip(),'13')
+        installed=self.sql("SELECT pg_get_functiondef('public.lts_expense_rows_v230_baseline(uuid,date,date)'::regprocedure);")
+        # Exact replacement fragments alone must not permit unrelated drift.
+        drifted=installed.replace('WITH ', 'WITH /* synthetic unrelated drift */ ',1)
+        self.assertNotEqual(drifted,installed)
+        self.sql(drifted)
+        self.sql(self.rollback,expect_error='Rollback rejected changed baseline outside integration')
+        self.assertEqual(self.sql("SELECT pg_get_functiondef('public.lts_expense_rows_v230_baseline(uuid,date,date)'::regprocedure);"),drifted)
+        self.assertEqual(self.sql('SELECT epoch FROM public.lts_read_cache_epoch_v242;').strip(),'13')
+        self.sql(installed)
+        self.sql('DELETE FROM public.lts_read_cache_epoch_v242;')
+        self.sql(self.rollback,expect_error='Missing derived-read epoch')
+        self.assertEqual(self.sql("SELECT pg_get_functiondef('public.lts_expense_rows_v230_baseline(uuid,date,date)'::regprocedure);"),installed)
+        self.sql('INSERT INTO public.lts_read_cache_epoch_v242 VALUES(true,13);')
+        self.sql(self.rollback)
+        self.assertEqual(self.sql("SELECT pg_get_functiondef('public.lts_expense_rows_v230_baseline(uuid,date,date)'::regprocedure);"),initial)
+        self.assertEqual(self.sql('SELECT epoch FROM public.lts_read_cache_epoch_v242;').strip(),'14')
+        self.assertEqual(self.sql(f"SELECT jsonb_array_length(public.lts_expense_rows_v230_baseline('{USER}',current_date-1,current_date));").strip(),'0')
+        self.assertEqual(self.sql("SELECT to_regprocedure('public.lts_expense_matched_bank_rows_v445(uuid,date,date)') IS NOT NULL;").strip(),'t')
+        self.assertEqual(self.sql("SELECT has_function_privilege('anon','public.lts_expense_matched_bank_rows_v445(uuid,date,date)','EXECUTE') OR has_function_privilege('authenticated','public.lts_expense_matched_bank_rows_v445(uuid,date,date)','EXECUTE');").strip(),'f')
+        self.sql(f"SET ROLE anon; SELECT * FROM public.lts_expense_matched_bank_rows_v445('{USER}',current_date,current_date);",expect_error='permission denied')
+        self.sql(self.rollback)
+        self.assertEqual(self.sql('SELECT epoch FROM public.lts_read_cache_epoch_v242;').strip(),'14')
+        self.assertEqual(self.sql("SELECT pg_get_functiondef('public.lts_expense_rows_v230_baseline(uuid,date,date)'::regprocedure);"),initial)
         self.assertEqual(self.sql('SELECT count(*) FROM public.lts_open_finance_staging;').strip(),'1')
         self.assertEqual(self.sql("SELECT md5(jsonb_agg(to_jsonb(s) ORDER BY id)::text) FROM public.lts_open_finance_staging s;"),staging_before)
 
