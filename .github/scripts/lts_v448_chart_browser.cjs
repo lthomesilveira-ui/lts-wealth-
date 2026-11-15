@@ -4,7 +4,7 @@
 process.env.LTS_FLOW_RELEASE='v448';
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
 const {chromium,webkit}=require('playwright');
-const {setup,open}=require('./lts_v382_browser.cjs');
+const {setup}=require('./lts_v382_browser.cjs');
 const fixture=require('./lts_v379_fixtures.cjs');
 const release='v448',out=path.resolve('qa/v448');fs.mkdirSync(out,{recursive:true});
 const startup=fs.readFileSync('releases/'+release+'/lts-v384-startup-1.js','utf8');
@@ -38,7 +38,13 @@ async function run(browser,engine,width){
  await h.ctx.route('**/rest/v1/rpc/lts_browser_product_refresh_status_v415',r=>send(r,{ok:true,refresh:ready}));
  await h.ctx.route('**/rest/v1/rpc/lts_browser_budget_read_v441',r=>send(r,require('./lts_v441_fixture.cjs')()));
  try{
-  frame=await open(h,release);
+  // Match the current V447 visible boot contract, not V382's legacy internal
+  // readiness markers. The app and all chart geometry assertions remain real.
+  await h.page.goto((process.env.LTS_BROWSER_BASE||'http://127.0.0.1:8788')+'/releases/'+release+'/app.html',{waitUntil:'domcontentloaded'});
+  await h.page.waitForFunction(()=>document.getElementById('shell')?.contentDocument?.body?.dataset.ltsBootState==='ready');
+  frame=h.page.frames().find(f=>f.url().includes('/releases/'+release+'/index.html'));assert(frame);
+  await frame.getByRole('heading',{name:'Dashboard',exact:true}).waitFor();
+  await h.page.waitForLoadState('networkidle');
   await frame.locator('#nav [data-v="Despesas"]:visible,#dx1MobileNav [data-mobile-route="Despesas"]:visible').click();
   await frame.locator('.v168-expenses').waitFor({state:'visible'});
   await h.page.waitForLoadState('networkidle');
