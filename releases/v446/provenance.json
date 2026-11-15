@@ -1,0 +1,11 @@
+{
+  "release": "v446",
+  "base_release": "v445",
+  "scope": "Resume interrupted classification readers after complete product refresh",
+  "financial_readers_changed": false,
+  "financial_writers_changed": false,
+  "authentication_changed": false,
+  "source_guards_changed": false,
+  "query_deadlines_changed": false,
+  "physical_mobile_validated": false
+}
