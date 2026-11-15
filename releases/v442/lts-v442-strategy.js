@@ -41,7 +41,9 @@
   for(const e of events){const n=cents(e.signed_amount),description=e.description||'',c=norm(description+' '+e.category),source=String(e.source||'');
    if(n!==null&&n>0&&String(e.event_date)>asOf&&/^(salario( liquido)?|adiantamento quinzenal)$/.test(norm(description))&&!/bonus|13[º°o]?|decimo|ferias/.test(c)){const mk=String(e.event_date).slice(0,7);salary.set(mk,(salary.get(mk)||0)+n);}
    if(n===null||n>=0||e.internal_transfer||e.is_asset_movement||e.excluded_from_spend||/card|invoice|budget|historical_spending|projection_policy|planning_projection/.test(source)||/fatura|aeternum|mastercard|personnalite|c6 carbon/.test(c))continue;
-   const payrollProof=(p.planning?.payroll_withholding||[]).find(w=>typeof e.source==='string'&&e.source.length>0&&typeof e.source_ref==='string'&&e.source_ref.length>0&&w.source===e.source&&w.source_ref===e.source_ref&&w.date===e.event_date&&cents(w.amount)===-n&&cents(w.base_income)-cents(w.net_income)===-n&&Array.isArray(w.evidence)&&w.evidence.some(v=>typeof v==='string'&&v.trim()));
+   // Missing, blank, boolean or negative payroll amounts cannot prove a net deduction.
+   const payrollAmount=v=>(typeof v==='number'||typeof v==='string'&&v.trim()!=='')&&cents(v)!==null&&cents(v)>=0;
+   const payrollProof=(p.planning?.payroll_withholding||[]).find(w=>payrollAmount(w.base_income)&&payrollAmount(w.net_income)&&typeof e.source==='string'&&e.source.length>0&&typeof e.source_ref==='string'&&e.source_ref.length>0&&w.source===e.source&&w.source_ref===e.source_ref&&w.date===e.event_date&&cents(w.amount)===-n&&cents(w.base_income)-cents(w.net_income)===-n&&Array.isArray(w.evidence)&&w.evidence.some(v=>typeof v==='string'&&v.trim()));
    if(payrollProof){withheld.push({description,amount:money(-n),date:e.event_date,evidence:payrollProof.evidence});continue;}
    // A lender name alone is not evidence that net income already includes its payment.
 
@@ -109,3 +111,4 @@
  }
  return Object.freeze({derive,kind});
 });
+
