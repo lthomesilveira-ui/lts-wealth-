@@ -1,0 +1,5 @@
+# Candidate only: monthly projection read contract
+
+The monthly reader requires projected_amount for every family, while the cycle producer supplies it only on some overlays. For a missing split with projected item rows, the adapter derives received/projected amounts only after reconciling all nonpayment items against the independent canonical cycle total. Explicit projected amounts are never overwritten; the existing reconciliation guard remains unchanged. Incomplete totals, missing item values, conflicting received amounts and duplicate family/month identities fail closed.
+
+Install month_projection_install.sql only after separate review and authenticated validation. It is transactional, checks the exact predecessor and is idempotent. Source transactions, cycle totals, installments, current release files and browser grants are unchanged. No production installation or authenticated browser verification is claimed by this candidate. Tests use synthetic data only; no private data is included.
