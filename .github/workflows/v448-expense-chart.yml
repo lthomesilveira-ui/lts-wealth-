@@ -1,0 +1,39 @@
+name: V448 expense chart readability
+on:
+  pull_request:
+    paths: ['releases/v448/**','backend/tools/expense_chart_v448/**','.github/scripts/lts_v448*','.github/workflows/v448-expense-chart.yml','mobile/current.json']
+permissions:
+  contents: read
+jobs:
+  chart:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    container: mcr.microsoft.com/playwright:v1.58.2-noble
+    env:
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+      LTS_MOBILE_RELEASE: v442
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Immutable build and unchanged financial code
+        run: |
+          python3 backend/tools/expense_chart_v448/build.py --check
+          node .github/scripts/lts_v448_release_contract.cjs
+      - name: Synthetic mobile and desktop chart geometry
+        run: |
+          npm install --no-save --package-lock=false playwright@1.58.2
+          python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/v448-http.log 2>&1 &
+          node .github/scripts/lts_v309_wait_http.cjs
+          node .github/scripts/lts_v448_chart_browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v448-expense-chart
+          retention-days: 7
+          path: qa/v448/
