@@ -1,0 +1,11 @@
+{
+  "release": "v447",
+  "base_release": "v446",
+  "scope": "Preserve polling and verify a same-version product after temporary cache invalidation",
+  "financial_readers_changed": false,
+  "financial_writers_changed": false,
+  "source_guards_changed": false,
+  "authentication_changed": false,
+  "query_deadlines_changed": false,
+  "physical_mobile_validated": false
+}

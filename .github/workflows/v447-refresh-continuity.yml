@@ -1,0 +1,40 @@
+name: V447 refresh continuity
+on:
+  pull_request:
+    paths: ['releases/v447/**','backend/tools/refresh_continuity_v447/**','.github/scripts/lts_v447*','.github/workflows/v447-refresh-continuity.yml','mobile/current.json']
+permissions:
+  contents: read
+jobs:
+  continuity:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    container: mcr.microsoft.com/playwright:v1.58.2-noble
+    env:
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+      LTS_MOBILE_RELEASE: v442
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Immutable build, reproduced regressions and inherited safety contracts
+        run: |
+          python3 backend/tools/refresh_continuity_v447/build.py --check
+          node .github/scripts/lts_v447_release_contract.cjs
+          node --test .github/scripts/lts_v447_refresh_test.cjs .github/scripts/lts_v444_transport_test.cjs .github/scripts/lts_v445_opening_test.cjs
+      - name: Same-version invalidation to full rendered recovery
+        run: |
+          npm install --no-save --package-lock=false playwright@1.58.2
+          python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/v447-http.log 2>&1 &
+          node .github/scripts/lts_v309_wait_http.cjs
+          node .github/scripts/lts_v447_browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v447-refresh-continuity
+          retention-days: 14
+          path: qa/v447/
