@@ -1,0 +1,11 @@
+{
+  "release": "v448",
+  "base_release": "v447",
+  "scope": "Observe the existing refresh job after a transient deferred projection read failure",
+  "financial_readers_changed": false,
+  "financial_writers_changed": false,
+  "source_guards_changed": false,
+  "authentication_changed": false,
+  "query_deadlines_changed": false,
+  "physical_mobile_validated": false
+}

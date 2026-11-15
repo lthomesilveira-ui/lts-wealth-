@@ -1,0 +1,40 @@
+name: V448 deferred reader recovery
+on:
+  pull_request:
+    paths: ['releases/v448/**','backend/tools/read_failure_recheck_v448/**','.github/scripts/lts_v448*','.github/workflows/v448-deferred-reader-recovery.yml','mobile/current.json']
+permissions:
+  contents: read
+jobs:
+  continuity:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    container: mcr.microsoft.com/playwright:v1.58.2-noble
+    env:
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+      LTS_MOBILE_RELEASE: v442
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Immutable build, reproduced regressions and inherited safety contracts
+        run: |
+          python3 backend/tools/read_failure_recheck_v448/build.py --check
+          node .github/scripts/lts_v448_release_contract.cjs
+          LTS_TEST_REFRESH_RELEASE=v448 node --test .github/scripts/lts_v447_refresh_test.cjs .github/scripts/lts_v448_transport_test.cjs .github/scripts/lts_v445_opening_test.cjs
+      - name: HTTP failure to full rendered recovery
+        run: |
+          npm install --no-save --package-lock=false playwright@1.58.2
+          python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/v447-http.log 2>&1 &
+          node .github/scripts/lts_v309_wait_http.cjs
+          node .github/scripts/lts_v448_browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v448-deferred-reader-recovery
+          retention-days: 14
+          path: qa/v448/
