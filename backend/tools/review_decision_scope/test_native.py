@@ -9,7 +9,7 @@ SCHEMA="""
 CREATE SCHEMA auth;
 CREATE FUNCTION auth.jwt() RETURNS jsonb LANGUAGE sql AS $$SELECT '{"email":"fixture@example.invalid"}'::jsonb$$;
 CREATE FUNCTION public.lts_browser_assert_user_v1() RETURNS uuid LANGUAGE plpgsql AS $$
-DECLARE u uuid:=nullif(current_setting('fixture.user',true),'')::uuid;
+DECLARE u uuid:=nullif(current_setting('fixture.viewer',true),'')::uuid;
 BEGIN IF u IS NULL THEN RAISE EXCEPTION 'Authentication required';END IF;RETURN u;END$$;
 CREATE FUNCTION public.lts_v178_norm(text) RETURNS text LANGUAGE sql AS 'SELECT lower(trim($1))';
 CREATE FUNCTION public.lts_category_name_v290(uuid,text) RETURNS text LANGUAGE sql AS 'SELECT $2';
@@ -79,7 +79,7 @@ class NativeTest(unittest.TestCase):
         INSERT INTO public.fixture_occurrence VALUES('{USER}','lts_open_finance_staging','{TARGET}',current_date-3,true,{str(needs_person).lower()},{str(needs_property).lower()});
         INSERT INTO public.lts_category_catalog VALUES('{USER}','Known active',true),('{USER}','Inactive',false);""")
     def call(self,category='Known active',person='NULL',property='NULL',user=USER,error=None,ref=TARGET):
-        return self.sql(f"SET fixture.user='{user}';SELECT public.lts_browser_expense_review_decision_v229('lts_open_finance_staging','{ref}',{person},{property},'{category}')->>'resolved';",error)
+        return self.sql(f"SET fixture.viewer='{user}';SELECT public.lts_browser_expense_review_decision_v229('lts_open_finance_staging','{ref}',{person},{property},'{category}')->>'resolved';",error)
     def test_actual_function_and_guarded_lifecycle(self):
         original=(ROOT/'original.sql').read_text();self.sql(original)
         original_hash=self.sql("SELECT md5(pg_get_functiondef('public.lts_browser_expense_review_decision_v229(text,text,text,text,text)'::regprocedure));")
@@ -110,7 +110,7 @@ class NativeTest(unittest.TestCase):
             self.seed();self.call(category,person,property,error=error)
             self.assertEqual(self.sql('SELECT count(*) FROM public.lts_v178_review_decision;'),'0')
         self.seed();self.call(user=OTHER,error='pending review item not found')
-        self.sql("SET fixture.user='';SELECT public.lts_browser_expense_review_decision_v229('x','y',NULL,NULL,'Known active');",error='Authentication required')
+        self.sql("SET fixture.viewer='';SELECT public.lts_browser_expense_review_decision_v229('x','y',NULL,NULL,'Known active');",error='Authentication required')
         self.seed(needs_person=True);self.call(error='A decisão não resolveu')
         self.assertEqual(self.sql('SELECT count(*) FROM public.lts_v178_review_decision;'),'0')
         self.assertEqual(self.call(person="'Benjamin'"),'true')
