@@ -16,7 +16,7 @@ async function run(browser,engine,width){
  try{
   await h.page.goto((process.env.LTS_BROWSER_BASE||'http://127.0.0.1:8788')+'/releases/v446/app.html',{waitUntil:'domcontentloaded'});await h.page.waitForFunction(()=>document.getElementById('shell')?.contentDocument?.body?.dataset.ltsBootState==='ready');
   frame=h.page.frames().find(f=>f.url().includes('/releases/v446/index.html'));assert(frame);
-  await frame.waitForFunction(()=>__LTS_V296_CLASSIFICATIONS?.state.loading&&__LTS_V312_CARD_REVIEW?.state.loading);
+  await frame.waitForFunction(()=>window.__LTS_V296_CLASSIFICATIONS?.state.loading&&window.__LTS_V312_CARD_REVIEW?.state.loading);
   const financial=await frame.evaluate(()=>JSON.stringify(D));
   await frame.evaluate(()=>__LTS_V312_CARD_REVIEW.state.drafts.set('fixture:retained',{category:'Saúde',beneficiary:''}));
   await frame.waitForFunction(()=>!__LTS_V415_REFRESH.snapshot().pending&&__LTS_V296_CLASSIFICATIONS.state.data?.row_count===1&&__LTS_V296_CLASSIFICATIONS.state.expense===2&&__LTS_V312_CARD_REVIEW.state.data?.additional_count===3&&!__LTS_V296_CLASSIFICATIONS.state.error&&!__LTS_V312_CARD_REVIEW.state.error&&!__LTS_V296_CLASSIFICATIONS.state.loading&&!__LTS_V312_CARD_REVIEW.state.loading);
