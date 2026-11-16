@@ -1,0 +1,16 @@
+[
+  {
+    "signature": "public.lts_flow_cache_pre_v240(uuid,date,date)",
+    "before": "2bced85c7ee1247102de52cfa0c93ea7",
+    "after": "d21cd4329f634356c675c4a9c8b56f67",
+    "source_writes": false,
+    "security_changed": false
+  },
+  {
+    "signature": "public.lts_browser_flow_pre_v238(date,date)",
+    "before": "10eded9c70b9b7bdaf55702bcf3e72e0",
+    "after": "53c238ec6c35ecee909b7f5cd4efd7eb",
+    "source_writes": false,
+    "security_changed": false
+  }
+]
