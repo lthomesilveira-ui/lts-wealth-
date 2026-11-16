@@ -34,7 +34,7 @@ class DocumentedCycle(base.Native):
                 CREATE TABLE public.card_invoices(id uuid,user_id uuid,card_name text,
                 reference_month date,due_date date,status text,metadata jsonb,amount numeric);
                 CREATE TABLE public.source_documents(id uuid,user_id uuid,document_type text,
-                processing_status text,sha256 text,metadata jsonb);
+                processing_status text,sha256 text,metadata jsonb,institution text DEFAULT 'C6');
                 CREATE FUNCTION public.lts_card_family_v226(text,text) RETURNS text
                 LANGUAGE sql IMMUTABLE AS $$SELECT CASE WHEN lower($1||$2) LIKE '%c6%' THEN 'c6' ELSE 'other' END$$;''')
             for sig,name in [(build.IDENTITY,'identity-original.sql'),(build.PROFILE,'profile-original.sql')]:
@@ -62,7 +62,7 @@ class DocumentedCycle(base.Native):
             INSERT INTO public.card_invoices VALUES('{uid(6)}','{U}','C6 fixture',date_trunc('month',current_date)::date,(date_trunc('month',current_date)+interval '4 days')::date,'closed',
               jsonb_build_object('bank_statement_document_id','{uid(8)}','bank_statement_closed','true','bank_statement_full_composition','true','bank_statement_sha256','fixture-sha'),100),
               ('{uid(7)}','{U}','C6 fixture',(date_trunc('month',current_date)+interval '1 month')::date,(date_trunc('month',current_date)+interval '1 month 6 days')::date,'projected','{{}}',19.9);
-            INSERT INTO public.source_documents VALUES('{uid(8)}','{U}','credit_card_statement','processed','fixture-sha',
+            INSERT INTO public.source_documents(id,user_id,document_type,processing_status,sha256,metadata) VALUES('{uid(8)}','{U}','credit_card_statement','processed','fixture-sha',
               jsonb_build_object('closing_date',(date_trunc('month',current_date)-interval '1 month'+interval '27 days')::date,
               'existing_source_items',jsonb_build_array(jsonb_build_object('source_id','{uid(3)}'),jsonb_build_object('source_id','{uid(40)}')),
               'all_source_lines_matched','true','statement_amount',100,'due_date',(date_trunc('month',current_date)+interval '4 days')::date));''')
@@ -90,7 +90,7 @@ class DocumentedCycle(base.Native):
           'partial document':"UPDATE public.card_invoices SET metadata=jsonb_set(metadata,'{bank_statement_full_composition}','false');",
           'different owner':f"UPDATE public.source_documents SET user_id='{base.OTHER}';",
           'different amount':"UPDATE public.card_invoices SET amount=90 WHERE status='closed';UPDATE public.source_documents SET metadata=jsonb_set(metadata,'{statement_amount}','90');",
-          'conflicting documented amount':f"INSERT INTO public.source_documents SELECT '{uid(10)}',user_id,document_type,processing_status,sha256,jsonb_set(metadata,'{{statement_amount}}','90') FROM public.source_documents;INSERT INTO public.card_invoices SELECT '{uid(11)}',user_id,card_name,reference_month,due_date,status,jsonb_set(metadata,'{{bank_statement_document_id}}','\"{uid(10)}\"'),90 FROM public.card_invoices WHERE status='closed';",
+          'conflicting documented amount':f"INSERT INTO public.source_documents(id,user_id,document_type,processing_status,sha256,metadata) SELECT '{uid(10)}',user_id,document_type,processing_status,sha256,jsonb_set(metadata,'{{statement_amount}}','90') FROM public.source_documents;INSERT INTO public.card_invoices SELECT '{uid(11)}',user_id,card_name,reference_month,due_date,status,jsonb_set(metadata,'{{bank_statement_document_id}}','\"{uid(10)}\"'),90 FROM public.card_invoices WHERE status='closed';",
           'conflicting known forecast':f"UPDATE public.lts_open_finance_staging SET raw_payload=jsonb_set(raw_payload,'{{creditCardMetadata,billForecastDate}}',to_jsonb(to_char(current_date,'YYYY-MM'))) WHERE id='{uid(4)}';",
           'no known forecast':f"UPDATE public.lts_open_finance_staging SET raw_payload='{{\"creditCardMetadata\":{{\"billId\":\"fixture-bill\"}}}}' WHERE id='{uid(3)}';",
           'closing mismatch':"UPDATE public.source_documents SET metadata=jsonb_set(metadata,'{closing_date}',to_jsonb((date_trunc('month',current_date)-interval '1 month'+interval '25 days')::date));",
