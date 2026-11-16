@@ -30,6 +30,7 @@ class LongFlow(base.Native):
       'events',jsonb_build_array(jsonb_build_object('event_date',current_date,'source_ref',p_user_id,'signed_amount',-123.456789)),
       'unknown',NULL,'exact_precision',123.456789);
     END $f$;
+    CREATE FUNCTION public.lts_flow_future_read_slice_v9(uuid,date,date) RETURNS jsonb LANGUAGE sql AS $f$ SELECT public.lts_daily_flow_fix86_v20($1,$2,$3+30) $f$;
     CREATE FUNCTION public.lts_open_finance_current_bank_position_v1(uuid) RETURNS jsonb LANGUAGE sql AS $f$
      SELECT '{{"accounts":[{{"institution_code":"341","balance":100.123456}},{{"institution_code":"237","balance":200}},{{"institution_code":"336","balance":300}}]}}'::jsonb $f$;
     CREATE FUNCTION public.lts_dashboard_cash_ladder_from_flow_v229(uuid,date,date,jsonb)
