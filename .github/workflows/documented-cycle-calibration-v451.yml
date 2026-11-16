@@ -1,0 +1,33 @@
+name: Documented C6 cycle calibration native QA
+on:
+  pull_request:
+    paths: ['backend/tools/documented_cycle_calibration_v451/**','.github/workflows/documented-cycle-calibration-v451.yml']
+permissions:
+  contents: read
+jobs:
+  native-postgres:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Install official native PostgreSQL17
+        run: |
+          set -euo pipefail
+          if [ ! -x /usr/lib/postgresql/17/bin/postgres ]; then
+            sudo install -d /usr/share/postgresql-common/pgdg
+            sudo curl --fail --silent --show-error --connect-timeout 15 --max-time 45 --retry 2 --retry-all-errors -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc https://www.postgresql.org/media/keys/ACCC4CF8.asc
+            echo 'deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt jammy-pgdg main' | sudo tee /etc/apt/sources.list.d/pgdg.list > /dev/null
+            sudo apt-get update
+            sudo apt-get install --yes postgresql-17
+          fi
+          /usr/lib/postgresql/17/bin/postgres --version
+      - name: Full-statement corroboration, conflicts, source preservation and lifecycle
+        env:
+          LTS_INSTALLER_PG_BIN: /usr/lib/postgresql/17/bin
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: |
+          python3 backend/tools/documented_cycle_calibration_v451/build.py
+          git diff --exit-code -- backend/tools/documented_cycle_calibration_v451
+          python3 backend/tools/documented_cycle_calibration_v451/test_native.py
