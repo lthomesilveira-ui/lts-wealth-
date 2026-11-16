@@ -1,0 +1,7 @@
+# One due-day invoice across cash and pending-review lanes
+
+The due-day retention fix exposed the same existing invoice in both the cash-flow events and the pending-review presentation. Their different `unposted_current_projection` metadata correctly triggered the monthly reader's conflicting-identity guard. Keep the exact retained received invoice in the cash lane and remove only its duplicate from the pending lane inside the reconciliation reader. The pending-review source/API, unpaid status, bank position, amount/date, monthly conflict guard and financial sources remain unchanged.
+
+Match source, reference, bank, date and exact amount, and require the official-invoice retention flag already established by the prior fix. Different or ambiguous obligations stay visible. Both browser and worker paths use the same patch. The atomic/idempotent installer and rollback preserve ACL, owner, security mode, search path and timeout and reject concurrent changes.
+
+Native PostgreSQL17 tests execute the exact complete reconciliation block with invented fixture sources, compile both complete definitions, exercise install/rollback/security/concurrency guards, and check source hashes. This is not a full production restoration. Authenticated browser acceptance and a coordinated existing-worker cache refresh follow installation. No payment, notification, new financial event or bank operation is performed.
