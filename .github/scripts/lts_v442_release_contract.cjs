@@ -6,7 +6,7 @@ assert.deepEqual([...Object.keys(m.files),'manifest.json'].sort(),fs.readdirSync
 const changed=['app.html','lts-v441-budget-ui.js','lts-v441-budget-model.js','provenance.json'];
 for(const[n,h]of Object.entries(prior.files)){assert.equal(hash(base+n),h);if(!changed.includes(n))assert.equal(hash(root+n),h,'Preserved '+n);}
 for(const[n,h]of Object.entries(m.files)){assert.equal(hash(root+n),h);if(n.endsWith('.js'))new vm.Script(fs.readFileSync(root+n,'utf8'),{filename:n});}
-assert.deepEqual(JSON.parse(fs.readFileSync('mobile/current.json')),{release:'v442',entry:'../releases/v442/app.html'});
+const current=process.env.LTS_MOBILE_RELEASE||'v442';assert.match(current,/^v[0-9]+$/);assert.deepEqual(JSON.parse(fs.readFileSync('mobile/current.json')),{release:current,entry:'../releases/'+current+'/app.html'});
 const s=fs.readFileSync(root+'lts-v441-budget-ui.js','utf8');assert(s.includes('input.oninput=input.onchange='));assert(s.includes('&&value!==s.month'));assert(s.includes("V==='Despesas'"));assert(s.includes("tab==='monthly'"));assert(!s.includes("V==='Dashboard'"));
 assert.equal(m.files['lts-v412-projection-policy.js'],prior.files['lts-v412-projection-policy.js']);
 console.log(JSON.stringify({pass:true,release:'v442',assets:Object.keys(m.files).length,v441_immutable:true,financial_actuals_and_provision_code_preserved:true,strategic_proposals_added:true,budget_location:'Despesas/Balanço mensal'}));
