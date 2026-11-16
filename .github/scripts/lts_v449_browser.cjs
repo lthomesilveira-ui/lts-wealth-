@@ -10,8 +10,10 @@ async function run(browser,engine,width,canonical=false){
  await h.ctx.route('**/rest/v1/rpc/lts_browser_recurring_future_gap_audit_v5',route=>{if(failNextAudit){failNextAudit=false;return route.fulfill({status:500,contentType:'application/json',body:JSON.stringify({code:'57014',message:'synthetic timeout'})})}return route.fallback()});
  await h.ctx.route('**/rest/v1/rpc/lts_browser_budget_read_v441',route=>send(route,require('./lts_v441_fixture.cjs')()));
  try{
+  const selected=canonical?JSON.parse(fs.readFileSync('mobile/current.json','utf8')).release:'v449';
+  if(canonical)assert.equal(selected,process.env.LTS_MOBILE_RELEASE||selected,'Canonical fixture matches the configured entry');
   await h.page.goto((process.env.LTS_BROWSER_BASE||'http://127.0.0.1:8788')+(canonical?'/mobile/?source=home-screen':'/releases/v449/app.html'),{waitUntil:'domcontentloaded'});await h.page.waitForFunction(canonical?()=>document.getElementById('wealth')?.contentDocument?.getElementById('shell')?.contentDocument?.body?.dataset.ltsBootState==='ready':()=>document.getElementById('shell')?.contentDocument?.body?.dataset.ltsBootState==='ready');
-  frame=h.page.frames().find(f=>f.url().includes('/releases/v449/index.html'));assert(frame);await frame.getByRole('heading',{name:'Dashboard',exact:true}).waitFor();await h.page.waitForLoadState('networkidle');
+  frame=h.page.frames().find(f=>f.url().includes('/releases/'+selected+'/index.html'));assert(frame);await frame.getByRole('heading',{name:'Dashboard',exact:true}).waitFor();await h.page.waitForLoadState('networkidle');
   const financial=await frame.evaluate(()=>JSON.stringify(D));await frame.evaluate(()=>window.__LTS_V227_TRANSPORT.invalidate(false));failNextAudit=true;const failure=await frame.evaluate(()=>S.rpc('lts_browser_recurring_future_gap_audit_v5',{p_as_of:'2026-11-15',p_horizon_end:'2031-12-31'}));assert(failure.error,'Actual transport received the 5xx response');
   await frame.locator('#ltsRefreshStatusV415').getByText('Atualizando seus dados',{exact:true}).waitFor();await h.page.screenshot({path:out+'/'+label+'-invalidated.png'});
   await frame.waitForFunction(()=>__LTS_V415_REFRESH.snapshot().pending===false);await h.page.waitForLoadState('networkidle');
