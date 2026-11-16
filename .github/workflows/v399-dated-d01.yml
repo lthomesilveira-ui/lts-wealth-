@@ -53,7 +53,6 @@ jobs:
     container: mcr.microsoft.com/playwright:v1.58.2-noble
     env:
       LTS_MOBILE_RELEASE: v449
-      LTS_FLOW_RELEASE: v442
       LTS_BROWSER_FIXTURE_RELEASE: v442
       LTS_FLOW_RELEASE: v415
       PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
