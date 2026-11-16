@@ -1,0 +1,23 @@
+[
+  {
+    "signature": "public.lts_card_cycle_settlement_v351(jsonb,jsonb)",
+    "before": "da9b36277e5d9a1b6c465ee48cf23b8c",
+    "after": "e38bfe13754a3a8b5696db120b1004d5",
+    "security_changed": false,
+    "source_writes": false
+  },
+  {
+    "signature": "public.lts_card_payment_refresh_annotation_v273(uuid,jsonb,jsonb,jsonb,jsonb,date)",
+    "before": "77b372ac5c0dafdcc7ee179a2ee7b822",
+    "after": "45974b44368efcd4fa7080851a2125e1",
+    "security_changed": false,
+    "source_writes": false
+  },
+  {
+    "signature": "lts_product_refresh_private_v415.review_profile_v450()",
+    "before": "c3703786d91a8b4ddb1223347e64da25",
+    "after": "0fcbac491409a16786dc784f914a5179",
+    "security_changed": false,
+    "source_writes": false
+  }
+]
