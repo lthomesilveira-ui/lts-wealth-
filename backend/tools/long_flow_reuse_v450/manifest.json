@@ -1,0 +1,16 @@
+[
+  {
+    "signature": "public.lts_current_flow_v229(uuid,date,date)",
+    "before": "87e67d199a57d9c947c792faac147ad7",
+    "after": "6c28fec1d35a2b172b36bcdeebc5bfbe",
+    "security_changed": false,
+    "source_writes": false
+  },
+  {
+    "signature": "lts_product_refresh_private_v415.run_claimed()",
+    "before": "dc6ada84c13393bffdabeba767614a17",
+    "after": "71fd4b4ec3ec34a33df0a605c0e1a76b",
+    "security_changed": false,
+    "source_writes": false
+  }
+]
