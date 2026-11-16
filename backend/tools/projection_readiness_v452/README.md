@@ -1,0 +1,7 @@
+# Complete projection readiness
+
+A card reader can populate current card completeness after receipt-only metadata changes, while the complete projection summary still belongs to the previous card revision. The original cache status certifies the product from the card cache alone. This leaves deferred readers failing until a later complete-product read happens to request the existing job.
+
+The new private predicate reproduces every guard used by the installed projection-policy reader. It only adds a readiness requirement. Source guards, receipt provenance and the policy reader remain unchanged. A disabled owner policy preserves its original path. The public status wrapper joins the standard `enqueue(owner, cache_read, false)` only when required work has no outstanding version. The existing queue row lock coalesces simultaneous status calls. It never creates or runs another worker, forces an in-progress job, or writes a financial fact.
+
+The exact predecessor definitions and ACL/configuration guards make install and rollback compare-and-swap protected and idempotent. Native PostgreSQL17 tests reproduce false readiness, concurrent requests, source/policy/reference/version/owner invalidation, pending/running coalescing, disabled-policy behavior, access controls, source preservation and rollback. Public fixtures are invented; no real identity is created. This does not certify first-load performance or the physical device.
