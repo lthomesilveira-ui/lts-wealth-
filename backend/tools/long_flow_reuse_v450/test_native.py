@@ -82,6 +82,6 @@ class LongFlow(base.Native):
   self.assertIn('No extra job',worker);self.assertIn("WHEN SQLSTATE 'P0415'",worker)
   self.sql((ROOT/'rollback.sql').read_text());self.assertEqual(oldmeta,self.sql(metadata))
   self.sql((ROOT/'install.sql').read_text())
-  self.sql(build.flow().replace('DECLARE','-- concurrent edit\nDECLARE',1))
+  edited=build.flow().replace('  raw jsonb;','  -- concurrent edit\n  raw jsonb;',1);self.assertNotEqual(edited,build.flow());self.sql(edited)
   self.sql((ROOT/'install.sql').read_text(),error='long flow reader changed concurrently')
 if __name__=='__main__':unittest.main(verbosity=2)
