@@ -35,10 +35,15 @@ async function open(h,release,launcher=false){
  // A historical suite can exercise today's launcher while retaining its direct
  // predecessor control. Do not search for the historical frame after opening
  // a different, explicitly configured mobile entry.
- const selected=launcher?(process.env.LTS_MOBILE_RELEASE||release):release;
- if(launcher){const pointer=JSON.parse(fs.readFileSync('mobile/current.json','utf8'));assert.deepEqual(pointer,{release:selected,entry:'../releases/'+selected+'/app.html'},'launcher release must match the explicitly configured entry');}
- await h.page.goto(base+(launcher?'/mobile/?source=home-screen':'/releases/'+release+'/app.html'),{waitUntil:'domcontentloaded'});
- await h.page.waitForFunction(launcher?()=>document.getElementById('wealth')?.contentDocument?.getElementById('shell')?.contentDocument?.body?.dataset.ltsBootState==='ready':()=>document.getElementById('shell')?.contentDocument?.body?.dataset.ltsBootState==='ready');
+ const canonical=process.env.LTS_MOBILE_RELEASE||release;
+ const fixtureRelease=launcher?process.env.LTS_BROWSER_FIXTURE_RELEASE:null;
+ const selected=launcher?(fixtureRelease||canonical):release;
+ // Historical mocks retain their original runtime. Current canonical loading
+ // is exercised separately by the dedicated release suite, with current mocks.
+ if(launcher){const pointer=JSON.parse(fs.readFileSync('mobile/current.json','utf8'));assert.deepEqual(pointer,{release:canonical,entry:'../releases/'+canonical+'/app.html'},'launcher release must match the explicitly configured entry');}
+ const useLauncher=launcher&&!fixtureRelease;
+ await h.page.goto(base+(useLauncher?'/mobile/?source=home-screen':'/releases/'+selected+'/app.html'),{waitUntil:'domcontentloaded'});
+ await h.page.waitForFunction(useLauncher?()=>document.getElementById('wealth')?.contentDocument?.getElementById('shell')?.contentDocument?.body?.dataset.ltsBootState==='ready':()=>document.getElementById('shell')?.contentDocument?.body?.dataset.ltsBootState==='ready');
  const frame=await ready(h.page,selected,launcher||release===target);await h.page.waitForLoadState('networkidle');return frame;
 }
 async function flow(frame){

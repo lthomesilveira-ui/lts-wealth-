@@ -1,5 +1,5 @@
 'use strict';
-const target=process.env.LTS_MOBILE_RELEASE||'v398';process.env.LTS_FLOW_RELEASE=target;
+const target=process.env.LTS_BROWSER_FIXTURE_RELEASE||process.env.LTS_MOBILE_RELEASE||'v398';process.env.LTS_FLOW_RELEASE=target;
 const fixture=require('./lts_v379_fixtures.cjs'),baseResponse=fixture.response;
 const {setup,open}=require('./lts_v382_browser.cjs'),{chromium,webkit}=require('playwright');
 const fs=require('node:fs'),assert=require('node:assert/strict'),crypto=require('node:crypto');
