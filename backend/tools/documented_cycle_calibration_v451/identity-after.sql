@@ -83,6 +83,8 @@ WITH source_rows_v292 AS MATERIALIZED (
    AND EXISTS(SELECT 1 FROM documented doc
     WHERE doc.reference_month=d.reference_month AND doc.due_date=d.due_date
      AND doc.documentary_amount=p.invoice_amount AND abs(doc.closing_date-p.closing_date)<=1)
+   AND NOT EXISTS(SELECT 1 FROM documented doc WHERE doc.reference_month=d.reference_month
+    AND doc.documentary_amount IS DISTINCT FROM p.invoice_amount)
    AND EXISTS(SELECT 1 FROM provider_rows r WHERE r.provider_account_ref=p.provider_account_ref
     AND r.reference_month=p.reference_month AND r.forecast=d.forecast)
    AND NOT EXISTS(SELECT 1 FROM provider_rows r WHERE r.provider_account_ref=p.provider_account_ref

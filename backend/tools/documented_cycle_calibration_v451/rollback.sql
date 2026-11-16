@@ -3,13 +3,13 @@ SET LOCAL lock_timeout='2s';
 DO $check$ DECLARE p regprocedure;h text;acl text;cfg text[];definer boolean;owner text;BEGIN
 p:='public.lts_c6_cycle_identity_v269(uuid)'::regprocedure;
  SELECT md5(pg_get_functiondef(p)),proacl::text,proconfig,prosecdef,pg_get_userbyid(proowner) INTO h,acl,cfg,definer,owner FROM pg_proc WHERE oid=p;
- IF h NOT IN('915d1427c4151726ed8918b090eaf7b3','8bb5a959015e5351c28820a39e987ca7') OR acl IS DISTINCT FROM '{postgres=X/postgres,service_role=X/postgres}' OR cfg IS DISTINCT FROM ARRAY['search_path=""','TimeZone=America/Sao_Paulo'] OR definer OR owner<>'postgres' THEN RAISE EXCEPTION 'Documented C6 cycle changed concurrently: %',p;END IF;
+ IF h NOT IN('3869ff49b557837aecbc11b8528fca6a','8bb5a959015e5351c28820a39e987ca7') OR acl IS DISTINCT FROM '{postgres=X/postgres,service_role=X/postgres}' OR cfg IS DISTINCT FROM ARRAY['search_path=""','TimeZone=America/Sao_Paulo'] OR definer OR owner<>'postgres' THEN RAISE EXCEPTION 'Documented C6 cycle changed concurrently: %',p;END IF;
 p:='lts_product_refresh_private_v415.review_profile_v450()'::regprocedure;
  SELECT md5(pg_get_functiondef(p)),proacl::text,proconfig,prosecdef,pg_get_userbyid(proowner) INTO h,acl,cfg,definer,owner FROM pg_proc WHERE oid=p;
- IF h NOT IN('b65ee92360d5df3347bd9af5ae160870','0fcbac491409a16786dc784f914a5179') OR acl IS DISTINCT FROM '{postgres=X/postgres,service_role=X/postgres}' OR cfg IS DISTINCT FROM ARRAY['search_path=""'] OR definer OR owner<>'postgres' THEN RAISE EXCEPTION 'Documented C6 cycle changed concurrently: %',p;END IF;
+ IF h NOT IN('ed1586c39b1bd046b29303920a95a032','0fcbac491409a16786dc784f914a5179') OR acl IS DISTINCT FROM '{postgres=X/postgres,service_role=X/postgres}' OR cfg IS DISTINCT FROM ARRAY['search_path=""'] OR definer OR owner<>'postgres' THEN RAISE EXCEPTION 'Documented C6 cycle changed concurrently: %',p;END IF;
 END $check$;
 DO $install$ BEGIN
-IF md5(pg_get_functiondef('public.lts_c6_cycle_identity_v269(uuid)'::regprocedure))='915d1427c4151726ed8918b090eaf7b3' THEN EXECUTE $replacement$CREATE OR REPLACE FUNCTION public.lts_c6_cycle_identity_v269(p_user_id uuid)
+IF md5(pg_get_functiondef('public.lts_c6_cycle_identity_v269(uuid)'::regprocedure))='3869ff49b557837aecbc11b8528fca6a' THEN EXECUTE $replacement$CREATE OR REPLACE FUNCTION public.lts_c6_cycle_identity_v269(p_user_id uuid)
  RETURNS TABLE(source_id uuid, reference_month date, due_date date, cycle_basis text)
  LANGUAGE sql
  STABLE
@@ -150,7 +150,7 @@ SELECT s.id source_id,NULL::date reference_month,NULL::date due_date,'unresolved
 $function$
 $replacement$;END IF;
 IF md5(pg_get_functiondef('public.lts_c6_cycle_identity_v269(uuid)'::regprocedure))<>'8bb5a959015e5351c28820a39e987ca7' THEN RAISE EXCEPTION 'Documented C6 cycle reconstruction differs';END IF;
-IF md5(pg_get_functiondef('lts_product_refresh_private_v415.review_profile_v450()'::regprocedure))='b65ee92360d5df3347bd9af5ae160870' THEN EXECUTE $replacement$CREATE OR REPLACE FUNCTION lts_product_refresh_private_v415.review_profile_v450()
+IF md5(pg_get_functiondef('lts_product_refresh_private_v415.review_profile_v450()'::regprocedure))='ed1586c39b1bd046b29303920a95a032' THEN EXECUTE $replacement$CREATE OR REPLACE FUNCTION lts_product_refresh_private_v415.review_profile_v450()
  RETURNS jsonb
  LANGUAGE sql
  IMMUTABLE

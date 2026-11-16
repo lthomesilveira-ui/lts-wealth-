@@ -3,10 +3,10 @@ SET LOCAL lock_timeout='2s';
 DO $check$ DECLARE p regprocedure;h text;acl text;cfg text[];definer boolean;owner text;BEGIN
 p:='public.lts_c6_cycle_identity_v269(uuid)'::regprocedure;
  SELECT md5(pg_get_functiondef(p)),proacl::text,proconfig,prosecdef,pg_get_userbyid(proowner) INTO h,acl,cfg,definer,owner FROM pg_proc WHERE oid=p;
- IF h NOT IN('8bb5a959015e5351c28820a39e987ca7','915d1427c4151726ed8918b090eaf7b3') OR acl IS DISTINCT FROM '{postgres=X/postgres,service_role=X/postgres}' OR cfg IS DISTINCT FROM ARRAY['search_path=""','TimeZone=America/Sao_Paulo'] OR definer OR owner<>'postgres' THEN RAISE EXCEPTION 'Documented C6 cycle changed concurrently: %',p;END IF;
+ IF h NOT IN('8bb5a959015e5351c28820a39e987ca7','3869ff49b557837aecbc11b8528fca6a') OR acl IS DISTINCT FROM '{postgres=X/postgres,service_role=X/postgres}' OR cfg IS DISTINCT FROM ARRAY['search_path=""','TimeZone=America/Sao_Paulo'] OR definer OR owner<>'postgres' THEN RAISE EXCEPTION 'Documented C6 cycle changed concurrently: %',p;END IF;
 p:='lts_product_refresh_private_v415.review_profile_v450()'::regprocedure;
  SELECT md5(pg_get_functiondef(p)),proacl::text,proconfig,prosecdef,pg_get_userbyid(proowner) INTO h,acl,cfg,definer,owner FROM pg_proc WHERE oid=p;
- IF h NOT IN('0fcbac491409a16786dc784f914a5179','b65ee92360d5df3347bd9af5ae160870') OR acl IS DISTINCT FROM '{postgres=X/postgres,service_role=X/postgres}' OR cfg IS DISTINCT FROM ARRAY['search_path=""'] OR definer OR owner<>'postgres' THEN RAISE EXCEPTION 'Documented C6 cycle changed concurrently: %',p;END IF;
+ IF h NOT IN('0fcbac491409a16786dc784f914a5179','ed1586c39b1bd046b29303920a95a032') OR acl IS DISTINCT FROM '{postgres=X/postgres,service_role=X/postgres}' OR cfg IS DISTINCT FROM ARRAY['search_path=""'] OR definer OR owner<>'postgres' THEN RAISE EXCEPTION 'Documented C6 cycle changed concurrently: %',p;END IF;
 END $check$;
 DO $install$ BEGIN
 IF md5(pg_get_functiondef('public.lts_c6_cycle_identity_v269(uuid)'::regprocedure))='8bb5a959015e5351c28820a39e987ca7' THEN EXECUTE $replacement$CREATE OR REPLACE FUNCTION public.lts_c6_cycle_identity_v269(p_user_id uuid)
@@ -94,6 +94,8 @@ WITH source_rows_v292 AS MATERIALIZED (
    AND EXISTS(SELECT 1 FROM documented doc
     WHERE doc.reference_month=d.reference_month AND doc.due_date=d.due_date
      AND doc.documentary_amount=p.invoice_amount AND abs(doc.closing_date-p.closing_date)<=1)
+   AND NOT EXISTS(SELECT 1 FROM documented doc WHERE doc.reference_month=d.reference_month
+    AND doc.documentary_amount IS DISTINCT FROM p.invoice_amount)
    AND EXISTS(SELECT 1 FROM provider_rows r WHERE r.provider_account_ref=p.provider_account_ref
     AND r.reference_month=p.reference_month AND r.forecast=d.forecast)
    AND NOT EXISTS(SELECT 1 FROM provider_rows r WHERE r.provider_account_ref=p.provider_account_ref
@@ -168,7 +170,7 @@ SELECT s.id source_id,NULL::date reference_month,NULL::date due_date,'unresolved
  OR public.lts_v178_norm(s.description_raw) ~ '^(inclusao de pagamento ciclo corrente|pagamento recebido|pagto fatura)');
 $function$
 $replacement$;END IF;
-IF md5(pg_get_functiondef('public.lts_c6_cycle_identity_v269(uuid)'::regprocedure))<>'915d1427c4151726ed8918b090eaf7b3' THEN RAISE EXCEPTION 'Documented C6 cycle reconstruction differs';END IF;
+IF md5(pg_get_functiondef('public.lts_c6_cycle_identity_v269(uuid)'::regprocedure))<>'3869ff49b557837aecbc11b8528fca6a' THEN RAISE EXCEPTION 'Documented C6 cycle reconstruction differs';END IF;
 IF md5(pg_get_functiondef('lts_product_refresh_private_v415.review_profile_v450()'::regprocedure))='0fcbac491409a16786dc784f914a5179' THEN EXECUTE $replacement$CREATE OR REPLACE FUNCTION lts_product_refresh_private_v415.review_profile_v450()
  RETURNS jsonb
  LANGUAGE sql
@@ -449,7 +451,7 @@ AS $function$ SELECT $manifest${
       "signature": "public.lts_expense_effective_rows_pre_v268(uuid,date,date)"
     },
     {
-      "md5": "915d1427c4151726ed8918b090eaf7b3",
+      "md5": "3869ff49b557837aecbc11b8528fca6a",
       "signature": "public.lts_c6_cycle_identity_v269(uuid)"
     },
     {
@@ -1031,6 +1033,6 @@ AS $function$ SELECT $manifest${
 }
 $manifest$::jsonb $function$
 $replacement$;END IF;
-IF md5(pg_get_functiondef('lts_product_refresh_private_v415.review_profile_v450()'::regprocedure))<>'b65ee92360d5df3347bd9af5ae160870' THEN RAISE EXCEPTION 'Documented C6 cycle reconstruction differs';END IF;
+IF md5(pg_get_functiondef('lts_product_refresh_private_v415.review_profile_v450()'::regprocedure))<>'ed1586c39b1bd046b29303920a95a032' THEN RAISE EXCEPTION 'Documented C6 cycle reconstruction differs';END IF;
 END $install$;
 COMMIT;

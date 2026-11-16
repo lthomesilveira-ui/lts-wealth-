@@ -90,6 +90,7 @@ class DocumentedCycle(base.Native):
           'partial document':"UPDATE public.card_invoices SET metadata=jsonb_set(metadata,'{bank_statement_full_composition}','false');",
           'different owner':f"UPDATE public.source_documents SET user_id='{base.OTHER}';",
           'different amount':"UPDATE public.card_invoices SET amount=90 WHERE status='closed';UPDATE public.source_documents SET metadata=jsonb_set(metadata,'{statement_amount}','90');",
+          'conflicting documented amount':f"INSERT INTO public.source_documents SELECT '{uid(10)}',user_id,document_type,processing_status,sha256,jsonb_set(metadata,'{{statement_amount}}','90') FROM public.source_documents;INSERT INTO public.card_invoices SELECT '{uid(11)}',user_id,card_name,reference_month,due_date,status,jsonb_set(metadata,'{{bank_statement_document_id}}','\"{uid(10)}\"'),90 FROM public.card_invoices WHERE status='closed';",
           'conflicting known forecast':f"UPDATE public.lts_open_finance_staging SET raw_payload=jsonb_set(raw_payload,'{{creditCardMetadata,billForecastDate}}',to_jsonb(to_char(current_date,'YYYY-MM'))) WHERE id='{uid(4)}';",
           'no known forecast':f"UPDATE public.lts_open_finance_staging SET raw_payload='{{\"creditCardMetadata\":{{\"billId\":\"fixture-bill\"}}}}' WHERE id='{uid(3)}';",
           'closing mismatch':"UPDATE public.source_documents SET metadata=jsonb_set(metadata,'{closing_date}',to_jsonb((date_trunc('month',current_date)-interval '1 month'+interval '25 days')::date));",

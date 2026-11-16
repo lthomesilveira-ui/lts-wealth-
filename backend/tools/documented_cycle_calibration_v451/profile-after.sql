@@ -278,7 +278,7 @@ AS $function$ SELECT $manifest${
       "signature": "public.lts_expense_effective_rows_pre_v268(uuid,date,date)"
     },
     {
-      "md5": "915d1427c4151726ed8918b090eaf7b3",
+      "md5": "3869ff49b557837aecbc11b8528fca6a",
       "signature": "public.lts_c6_cycle_identity_v269(uuid)"
     },
     {
