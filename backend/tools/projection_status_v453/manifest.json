@@ -1,0 +1,12 @@
+{
+  "scope": "Projection readiness and the existing queue only",
+  "financial_sources_changed": false,
+  "new_worker_created": false,
+  "definitions": {
+    "public.lts_browser_product_refresh_status_v415()": {
+      "before": "487de700484d692455c9d6997a19caca",
+      "after": "15e2c30dcd35410e94e91fdf7b2bad13"
+    }
+  },
+  "helper": "8198f3bf2ec0b733b286eeee4b046736"
+}
