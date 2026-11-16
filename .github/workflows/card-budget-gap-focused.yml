@@ -1,0 +1,25 @@
+name: Ended card-budget audit focused QA
+on:
+  pull_request:
+    paths: ['supabase/migrations/20261112020933_respect_card_budget_gap_terms.sql','rollback/card_budget_gap_terms.sql','tests/card-budget-gap.test.mjs','tests/card-gap-actions-consumer.cjs','tests/fixtures/card-budget-gap-setup.sql','.github/workflows/card-budget-gap-focused.yml']
+permissions:
+  contents: read
+jobs:
+  focused-contracts:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned fixture-only PostgreSQL runtime
+        run: npm install --no-save --no-package-lock --ignore-scripts --no-audit --no-fund @electric-sql/pglite@0.5.16
+      - name: Check ended-budget helper with invented sources
+        run: node tests/card-budget-gap.test.mjs
+      - name: Check the current published Actions consumer
+        env:
+          ACTIONS_MODEL_FILE: releases/v442/lts-v333-actions-model.js
+        run: node tests/card-gap-actions-consumer.cjs
