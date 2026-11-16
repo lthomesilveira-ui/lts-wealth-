@@ -1,0 +1,16 @@
+{
+  "release": "v450",
+  "base_release": "v449",
+  "scope": "Preserve eligible queue wait during bounded collection holds; match the cockpit database deadline",
+  "v448_chart_css_unchanged": true,
+  "financial_readers_changed": false,
+  "financial_writers_changed": false,
+  "source_guards_changed": false,
+  "authentication_changed": false,
+  "one_heavy_read_preserved": true,
+  "cockpit_transport_budget_ms": 48000,
+  "database_ceiling_unchanged": true,
+  "eligible_admission_budget_ms": 60000,
+  "collection_hold_ceiling_ms": 90000,
+  "physical_mobile_validated": false
+}
