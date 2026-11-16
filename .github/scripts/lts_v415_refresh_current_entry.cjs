@@ -7,9 +7,10 @@ const filename=path.join(__dirname,'lts_v415_refresh_browser.cjs');
 let source=fs.readFileSync(filename,'utf8');
 const bytes=Buffer.from(source),sha=crypto.createHash('sha1').update(Buffer.concat([Buffer.from('blob '+bytes.length+'\0'),bytes])).digest('hex');
 assert.equal(sha,'4682bdde860386f8d6453e6ad082e5bf08aa2509','review the adapter when the original suite changes');
-const release=process.env.LTS_MOBILE_RELEASE||'v415';assert.match(release,/^v[0-9]+$/);
+const canonical=process.env.LTS_MOBILE_RELEASE||'v415';
+const release=process.env.LTS_BROWSER_FIXTURE_RELEASE||canonical;assert.match(release,/^v[0-9]+$/);
 const pointer=JSON.parse(fs.readFileSync(path.join(__dirname,'../../mobile/current.json'),'utf8'));
-assert.deepEqual(pointer,{release,entry:'../releases/'+release+'/app.html'});
+assert.deepEqual(pointer,{release:canonical,entry:'../releases/'+canonical+'/app.html'});
 const previous='/releases/v415/index.html';assert.equal(source.split(previous).length,2,'exactly one initializing-frame target');
 source=source.replace(previous,'/releases/'+release+'/index.html');
 if(['v421','v423','v425','v433','v436','v439','v440','v441','v442'].includes(release)){
