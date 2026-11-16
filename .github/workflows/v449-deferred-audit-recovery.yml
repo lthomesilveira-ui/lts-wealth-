@@ -1,0 +1,40 @@
+name: V449 deferred audit recovery
+on:
+  pull_request:
+    paths: ['releases/v449/**','backend/tools/deferred_audit_recovery_v449/**','.github/scripts/lts_v449*','.github/workflows/v449-deferred-audit-recovery.yml','mobile/current.json']
+permissions:
+  contents: read
+jobs:
+  recovery:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    container: mcr.microsoft.com/playwright:v1.58.2-noble
+    env:
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+      LTS_MOBILE_RELEASE: v442
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Immutable V448 chart and bounded read recovery
+        run: |
+          python3 backend/tools/deferred_audit_recovery_v449/build.py --check
+          node .github/scripts/lts_v449_release_contract.cjs
+          node --test .github/scripts/lts_v449_refresh_test.cjs .github/scripts/lts_v449_transport_test.cjs
+      - name: Authenticated-flow fixtures in mobile and desktop Chromium and WebKit
+        run: |
+          npm install --no-save --package-lock=false playwright@1.58.2
+          python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/v449-http.log 2>&1 &
+          node .github/scripts/lts_v309_wait_http.cjs
+          node .github/scripts/lts_v449_browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v449-deferred-audit-recovery
+          retention-days: 14
+          path: qa/v449/
