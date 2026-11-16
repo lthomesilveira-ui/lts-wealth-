@@ -1,5 +1,5 @@
 'use strict';
-process.env.LTS_FLOW_RELEASE=process.env.LTS_MOBILE_RELEASE||'v404';
+process.env.LTS_FLOW_RELEASE=process.env.LTS_BROWSER_FIXTURE_RELEASE||process.env.LTS_MOBILE_RELEASE||'v404';
 const fixture=require('./lts_v379_fixtures.cjs'),base=fixture.response;
 fixture.response=function(name,args){const j=base(name,args);if(/wealth_detail/.test(name))j.fgts_position={version:'fgts-position-evidence-v386',status:'position_after_withdrawal_unavailable',balance_brl:null};return j};
 const {setup,open}=require('./lts_v382_browser.cjs'),{chromium,webkit}=require('playwright'),fs=require('node:fs'),assert=require('node:assert/strict');
