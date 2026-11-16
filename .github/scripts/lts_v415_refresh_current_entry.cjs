@@ -13,6 +13,14 @@ const pointer=JSON.parse(fs.readFileSync(path.join(__dirname,'../../mobile/curre
 assert.deepEqual(pointer,{release:canonical,entry:'../releases/'+canonical+'/app.html'});
 const previous='/releases/v415/index.html';assert.equal(source.split(previous).length,2,'exactly one initializing-frame target');
 source=source.replace(previous,'/releases/'+release+'/index.html');
+if(process.env.LTS_BROWSER_FIXTURE_RELEASE){
+ const oldEntry="await h.page.goto(base + '/mobile/?source=home-screen', { waitUntil: 'domcontentloaded' });";
+ const oldPreparing="() => document.getElementById('wealth')?.contentDocument?.getElementById('shell')?.contentDocument?.body?.dataset.ltsBootState === 'preparing'";
+ assert.equal(source.split(oldEntry).length,2,'one historical initializing navigation');
+ assert.equal(source.split(oldPreparing).length,2,'one historical initializing frame wait');
+ source=source.replace(oldEntry,"await h.page.goto(base + '/releases/"+release+"/app.html', { waitUntil: 'domcontentloaded' });");
+ source=source.replace(oldPreparing,"() => document.getElementById('shell')?.contentDocument?.body?.dataset.ltsBootState === 'preparing'");
+}
 if(['v421','v423','v425','v433','v436','v439','v440','v441','v442'].includes(release)){
  const old="assert.deepEqual({ from: before.current_future.from, to: before.current_future.to }, { from: '2026-10-31', to: '2031-12-31' }, 'Explicit preserved legacy source coverage');";
  const replacement="assert.deepEqual({ from: before.current_future.from, to: before.current_future.to }, { from: '2027-01-01', to: '2027-01-31' }, 'Cached slice declares the same explicit period as its validated daily rows');";
