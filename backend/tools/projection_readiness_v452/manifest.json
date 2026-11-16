@@ -1,0 +1,16 @@
+{
+  "scope": "Projection readiness and the existing queue only",
+  "financial_sources_changed": false,
+  "new_worker_created": false,
+  "definitions": {
+    "lts_product_refresh_private_v415.cache_info(uuid)": {
+      "before": "35a000166f41a2a1dda8a6f1a93d1cd5",
+      "after": "6e11e7bef80d4f09e7e2d8adf285fa8c"
+    },
+    "public.lts_browser_product_refresh_status_v415()": {
+      "before": "487de700484d692455c9d6997a19caca",
+      "after": "cdc801a8f4ce6218bac9f2eab70b168c"
+    }
+  },
+  "helper": "8198f3bf2ec0b733b286eeee4b046736"
+}
