@@ -8,6 +8,7 @@ jobs:
   synthetic:
     env:
       LTS_MOBILE_RELEASE: v449
+      LTS_FLOW_RELEASE: v442
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
