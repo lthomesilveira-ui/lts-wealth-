@@ -105,7 +105,12 @@
     if(!active&&!pumpTimer)pumpTimer=setTimeout(pump,30);
    });
   }
-  const publish=entry=>{events.push(entry);if(events.length>30)events.shift();document.documentElement.setAttribute('data-lts-v227-reads',JSON.stringify(events));};
+  const publish=entry=>{events.push(entry);if(events.length>30)events.shift();document.documentElement.setAttribute('data-lts-v227-reads',JSON.stringify(events));
+   // A late source change can withdraw the audit snapshot after initial boot.
+   // Observe the existing job; never request a job or replay a financial write.
+   if(entry.name==='lts_browser_recurring_future_gap_audit_v5'&&entry.status>=500&&entry.status<=504)
+    window.dispatchEvent(new Event('lts:deferred-read-failed'));
+  };
   window.fetch=async function(input,init){
    const url=typeof input==='string'?input:input?.url||'',name=url.split('/').pop();
    if(!url.includes('/rest/v1/rpc/'))return native(input,init);

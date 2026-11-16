@@ -18,6 +18,7 @@ def build(target):
     path = target / 'app.html'
     path.write_text(path.read_text().replace('V448', 'V449'))
     path = target / 'lts-v227-read-transport.js'
+    original_transport = path.read_text()
     replace_once(path,
         "document.documentElement.setAttribute('data-lts-v227-reads',JSON.stringify(events));};",
         """document.documentElement.setAttribute('data-lts-v227-reads',JSON.stringify(events));
@@ -26,6 +27,8 @@ def build(target):
    if(entry.name==='lts_browser_recurring_future_gap_audit_v5'&&entry.status>=500&&entry.status<=504)
     window.dispatchEvent(new Event('lts:deferred-read-failed'));
   };""")
+    bundle = target / 'lts-v384-startup-1.js'
+    replace_once(bundle, original_transport, path.read_text())
     path = target / 'lts-v415-product-refresh.js'
     replace_once(path, 'let transientFailures = 0;',
         'let transientFailures = 0, deferredRecoveries = 0, deferredFlight = null;')
