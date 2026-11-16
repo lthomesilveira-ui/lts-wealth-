@@ -1,0 +1,13 @@
+{
+  "release": "v451",
+  "base_release": "v450",
+  "scope": "Recover cancelled or transiently unavailable dependent readers after the existing refresh job completes",
+  "financial_math_changed": false,
+  "financial_writers_changed": false,
+  "source_guards_changed": false,
+  "authentication_changed": false,
+  "single_heavy_read_preserved": true,
+  "existing_job_only": true,
+  "automatic_recovery_limit_per_request_version": 2,
+  "physical_mobile_validated": false
+}
