@@ -30,7 +30,7 @@ class C6Mode(base.Native):
  def setUpClass(cls):
   super().setUpClass()
   try:
-   cls.sql("CREATE FUNCTION public.lts_card_cycle_settlement_v301(jsonb,jsonb) RETURNS jsonb LANGUAGE sql IMMUTABLE AS $$SELECT NULL::jsonb$$;")
+   cls.sql("CREATE FUNCTION public.lts_card_cycle_settlement_v301(jsonb,jsonb) RETURNS jsonb LANGUAGE sql IMMUTABLE AS $$SELECT NULL::jsonb$$; CREATE FUNCTION public.lts_invoice_payment_order_equal_v442(jsonb,jsonb) RETURNS boolean LANGUAGE sql IMMUTABLE AS $$SELECT false$$;")
    for sig,name in [(build.CYCLE,'cycle-original.sql'),(build.ANNOTATION,'annotation-original.sql'),(build.PROFILE,'profile-original.sql')]:
     cls.sql(build.original(name));cls.sql(f'ALTER FUNCTION {sig} OWNER TO postgres;REVOKE ALL ON FUNCTION {sig} FROM PUBLIC,anon,authenticated,service_role;GRANT EXECUTE ON FUNCTION {sig} TO service_role;')
    cls.sql(build.original('later-original.sql'))
