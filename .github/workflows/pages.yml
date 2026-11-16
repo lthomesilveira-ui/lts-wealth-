@@ -134,13 +134,13 @@ jobs:
           LTS_MOBILE_RELEASE=v449 node .github/scripts/lts_v439_release_contract.cjs
           LTS_MOBILE_RELEASE=v449 node .github/scripts/lts_v440_release_contract.cjs
           LTS_MOBILE_RELEASE=v449 node .github/scripts/lts_v441_release_contract.cjs
-          node .github/scripts/lts_v442_release_contract.cjs
-          node .github/scripts/lts_v444_release_contract.cjs
-          node .github/scripts/lts_v445_release_contract.cjs
-          node .github/scripts/lts_v446_release_contract.cjs
-          node .github/scripts/lts_v447_release_contract.cjs
-          node .github/scripts/lts_v448_release_contract.cjs
-          node .github/scripts/lts_v449_release_contract.cjs
+          LTS_MOBILE_RELEASE=v449 node .github/scripts/lts_v442_release_contract.cjs
+          LTS_MOBILE_RELEASE=v449 node .github/scripts/lts_v444_release_contract.cjs
+          LTS_MOBILE_RELEASE=v449 node .github/scripts/lts_v445_release_contract.cjs
+          LTS_MOBILE_RELEASE=v449 node .github/scripts/lts_v446_release_contract.cjs
+          LTS_MOBILE_RELEASE=v449 node .github/scripts/lts_v447_release_contract.cjs
+          LTS_MOBILE_RELEASE=v449 node .github/scripts/lts_v448_release_contract.cjs
+          LTS_MOBILE_RELEASE=v449 node .github/scripts/lts_v449_release_contract.cjs
       - name: Configure Pages
         uses: actions/configure-pages@v5
         with:
