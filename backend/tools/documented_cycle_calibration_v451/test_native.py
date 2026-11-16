@@ -108,7 +108,7 @@ class DocumentedCycle(base.Native):
         # Complete issuer metadata follows the exact previous path.
         self.sql(f"UPDATE public.lts_open_finance_staging SET raw_payload=jsonb_set(raw_payload,'{{creditCardMetadata,billForecastDate}}',to_jsonb(to_char(current_date-interval '1 month','YYYY-MM'))) WHERE id='{uid(4)}';")
         complete_before=self.rows();self.sql((ROOT/'install.sql').read_text());self.assertEqual(self.rows(),complete_before)
-        self.sql(build.identity().replace('STABLE','STABLE\n-- concurrent producer change',1))
+        self.sql(build.identity().replace('WITH source_rows_v292','WITH /* concurrent producer change */ source_rows_v292',1))
         self.sql((ROOT/'install.sql').read_text(),error='Documented C6 cycle changed concurrently')
 
 if __name__=='__main__':unittest.main(verbosity=2)
