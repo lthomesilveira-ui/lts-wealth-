@@ -70,7 +70,9 @@ class NativeTest(unittest.TestCase):
             raise RuntimeError('PostgreSQL17 required')
         cls.tmp=tempfile.TemporaryDirectory(prefix='lts-review-decision-');cls.root=Path(cls.tmp.name)
         cls.data=cls.root/'data';cls.sock=cls.root/'socket';cls.sock.mkdir()
-        cls.env={k:v for k,v in os.environ.items() if not k.startswith('PG')};cls.env.update({'LC_ALL':'C','LANG':'C'})
+        cls.env={k:v for k,v in os.environ.items() if not k.startswith('PG')}
+        # Match the actual function's civil-day boundary, including midnight UTC.
+        cls.env.update({'LC_ALL':'C','LANG':'C','PGTZ':'America/Sao_Paulo'})
         subprocess.run([str(cls.bin/'initdb'),'-D',str(cls.data),'-A','trust','--no-locale','-U','fixture_admin'],check=True,env=cls.env,capture_output=True)
         cls.started=False
         try:
