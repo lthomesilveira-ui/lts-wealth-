@@ -14,7 +14,7 @@ p:=to_regprocedure('lts_product_refresh_private_v415.review_profile_v450()');IF 
     IF actual_hash<>'6633f2355b50927e3124adcf9e3aea0f' OR actual_acl IS DISTINCT FROM '{postgres=X/postgres,service_role=X/postgres}' OR actual_config IS DISTINCT FROM ARRAY['search_path=""'] OR actual_definer OR actual_owner<>'postgres' THEN RAISE EXCEPTION 'review helper changed concurrently: %',p;END IF;END IF;
 p:=to_regprocedure('lts_product_refresh_private_v415.review_guard_v450(uuid)');IF p IS NOT NULL THEN
     SELECT md5(prosrc),proacl::text,proconfig,prosecdef,pg_get_userbyid(proowner) INTO actual_hash,actual_acl,actual_config,actual_definer,actual_owner FROM pg_proc WHERE oid=p;
-    IF actual_hash<>'c88a3a9d3bc664be69c05daef9e1f6f1' OR actual_acl IS DISTINCT FROM '{postgres=X/postgres,service_role=X/postgres}' OR actual_config IS DISTINCT FROM ARRAY['search_path=""','TimeZone=America/Sao_Paulo'] OR actual_definer OR actual_owner<>'postgres' THEN RAISE EXCEPTION 'review helper changed concurrently: %',p;END IF;END IF;
+    IF actual_hash<>'7d851bc0c102d9ba431c81efec216297' OR actual_acl IS DISTINCT FROM '{postgres=X/postgres,service_role=X/postgres}' OR actual_config IS DISTINCT FROM ARRAY['search_path=""','TimeZone=America/Sao_Paulo'] OR actual_definer OR actual_owner<>'postgres' THEN RAISE EXCEPTION 'review helper changed concurrently: %',p;END IF;END IF;
 p:=to_regprocedure('lts_product_refresh_private_v415.expense_review_pending_v450(uuid,date,date)');IF p IS NOT NULL THEN
     SELECT md5(prosrc),proacl::text,proconfig,prosecdef,pg_get_userbyid(proowner) INTO actual_hash,actual_acl,actual_config,actual_definer,actual_owner FROM pg_proc WHERE oid=p;
     IF actual_hash<>'f68b26e4066db516b4c87aadf1b8d2c1' OR actual_acl IS DISTINCT FROM '{postgres=X/postgres,service_role=X/postgres}' OR actual_config IS DISTINCT FROM ARRAY['search_path=""','TimeZone=America/Sao_Paulo'] OR actual_definer OR actual_owner<>'postgres' THEN RAISE EXCEPTION 'review helper changed concurrently: %',p;END IF;END IF;
@@ -891,7 +891,7 @@ BEGIN
   -- Relations and owner-column names come only from the pinned private profile.
   rel:=to_regclass(format('%I.%I',item->>'schema',item->>'name'));owner_column:=item->>'owner';
   IF rel IS NULL THEN RETURN NULL;END IF;
-  EXECUTE format('SELECT md5(coalesce(string_agg(to_jsonb(s)::text,'''' ORDER BY to_jsonb(s)::text),'''')) FROM %s s%s',
+  EXECUTE format('WITH row_hashes AS MATERIALIZED (SELECT md5(to_jsonb(s)::text) h FROM %s s%s) SELECT md5(coalesce(string_agg(h,'''' ORDER BY h),'''')) FROM row_hashes',
    rel,CASE WHEN owner_column IS NULL THEN '' ELSE format(' WHERE %I=$1',owner_column) END) INTO actual USING p_user_id;
   primary_hashes:=primary_hashes||jsonb_build_object(item->>'schema'||'.'||(item->>'name'),actual);
  END LOOP;

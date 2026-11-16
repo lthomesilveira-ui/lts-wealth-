@@ -47,7 +47,7 @@ BEGIN
   -- Relations and owner-column names come only from the pinned private profile.
   rel:=to_regclass(format('%I.%I',item->>'schema',item->>'name'));owner_column:=item->>'owner';
   IF rel IS NULL THEN RETURN NULL;END IF;
-  EXECUTE format('SELECT md5(coalesce(string_agg(to_jsonb(s)::text,'''' ORDER BY to_jsonb(s)::text),'''')) FROM %s s%s',
+  EXECUTE format('WITH row_hashes AS MATERIALIZED (SELECT md5(to_jsonb(s)::text) h FROM %s s%s) SELECT md5(coalesce(string_agg(h,'''' ORDER BY h),'''')) FROM row_hashes',
    rel,CASE WHEN owner_column IS NULL THEN '' ELSE format(' WHERE %I=$1',owner_column) END) INTO actual USING p_user_id;
   primary_hashes:=primary_hashes||jsonb_build_object(item->>'schema'||'.'||(item->>'name'),actual);
  END LOOP;

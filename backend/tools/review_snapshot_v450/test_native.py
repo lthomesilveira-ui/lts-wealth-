@@ -41,6 +41,10 @@ class Native(unittest.TestCase):
      ('{OWNER}','known',current_date,current_date,700,'Fixture category','Known fixture','fixture','known','identified',NULL,'Fixture group'),
      ('{OTHER}','other',current_date,current_date,999,'Fixture category','Other owner','fixture','other','pending',NULL,'Fixture group');
     INSERT INTO public.fixture_rows SELECT * FROM public.fixture_rows WHERE row_key='two';
+    CREATE TABLE public.fixture_epoch_input(value integer);INSERT INTO public.fixture_epoch_input VALUES(1);
+    CREATE FUNCTION public.fixture_invalidate() RETURNS trigger LANGUAGE plpgsql AS $$BEGIN UPDATE public.lts_read_cache_epoch_v242 SET epoch=epoch+1;RETURN NEW;END$$;
+    CREATE TRIGGER fixture_epoch AFTER UPDATE ON public.fixture_epoch_input FOR EACH ROW EXECUTE FUNCTION public.fixture_invalidate();
+    CREATE VIEW public.fixture_view AS SELECT value FROM public.fixture_epoch_input;
     SET fixture.owner='{OWNER}';""")
    for signature,file in [(build.QUEUE,'queue-original.sql'),(build.WORKER,'worker-original.sql')]:
     cls.sql(build.get_original(file));cls.sql(f'ALTER FUNCTION {signature} OWNER TO postgres;REVOKE ALL ON FUNCTION {signature} FROM PUBLIC,anon,authenticated,service_role;GRANT EXECUTE ON FUNCTION {signature} TO service_role;')
@@ -63,7 +67,10 @@ class Native(unittest.TestCase):
  def profile(self):
   # Only fixture providers differ: the production guard and pending reader are exact.
   deps=json.loads(self.sql("SET search_path='';SELECT jsonb_agg(jsonb_build_object('signature',s,'md5',md5(pg_get_functiondef(s::regprocedure)))) FROM unnest(ARRAY['public.lts_v229_review_rows(uuid,date,date)'])s;"))
-  p={'producers':deps,'views':[],'epoch_tables':[],'tables':[{'schema':'public','name':'fixture_rows','owner':'user_id'}]}
+  view_hash=self.sql("SET search_path='';SELECT md5(pg_get_viewdef('public.fixture_view'::regclass,true));")
+  trigger_hash=self.sql("SET search_path='';SELECT md5(string_agg(tgname::text||tgenabled::text||pg_get_triggerdef(oid),'|' ORDER BY tgname)) FROM pg_trigger WHERE tgrelid='public.fixture_epoch_input'::regclass AND NOT tgisinternal;")
+  p={'producers':deps,'views':[{'signature':'public.fixture_view','md5':view_hash}],
+   'epoch_tables':[{'signature':'public.fixture_epoch_input','md5':trigger_hash}],'tables':[{'schema':'public','name':'fixture_rows','owner':'user_id'}]}
   self.sql(f"CREATE OR REPLACE FUNCTION {NS}.review_profile_v450() RETURNS jsonb LANGUAGE sql IMMUTABLE SET search_path='' AS $$SELECT '{json.dumps(p)}'::jsonb$$;")
  def pending(self,owner=OWNER):
   return self.sql(f"SELECT count(*) FROM {NS}.expense_review_pending_v450('{owner}','2013-10-10',current_date);")
@@ -75,9 +82,12 @@ class Native(unittest.TestCase):
   self.sql('SET ROLE postgres;'+(ROOT/'install.sql').read_text());self.sql('SET ROLE postgres;'+(ROOT/'install.sql').read_text());self.assertEqual(oldmeta,self.sql(metadata))
   self.sql('SET ROLE postgres;'+(ROOT/'helpers.sql').read_text())
   self.profile();self.sql('UPDATE public.fixture_calls SET n=0;')
+  source_hash=self.sql('SELECT md5(jsonb_agg(to_jsonb(r) ORDER BY row_key)::text) FROM public.fixture_rows r;')
   for v,expected in zip(variants,before):self.assertEqual(self.queue(*v),expected)
+  self.assertEqual(source_hash,self.sql('SELECT md5(jsonb_agg(to_jsonb(r) ORDER BY row_key)::text) FROM public.fixture_rows r;'))
   self.assertEqual(self.sql('SELECT n FROM public.fixture_calls;'),'2','Once per owner, independent of query and paging')
   self.assertEqual(self.pending(),'3');self.assertEqual(self.sql('SELECT n FROM public.fixture_calls;'),'2')
+  self.assertEqual(self.sql(f"BEGIN READ ONLY;SELECT count(*) FROM {NS}.expense_review_pending_v450('{OWNER}','2013-10-10',current_date);ROLLBACK;"),'3')
   self.sql("UPDATE public.lts_v229_read_cache SET payload=jsonb_set(payload,'{rows}','[]') WHERE user_id='"+OWNER+"';")
   self.assertEqual(self.pending(),'3');self.assertEqual(self.sql('SELECT n FROM public.fixture_calls;'),'3','Invalid digest rebuilds original rows')
   self.sql("UPDATE public.fixture_rows SET amount=amount+1 WHERE row_key='one';")
@@ -93,7 +103,12 @@ class Native(unittest.TestCase):
   original=self.sql("SELECT pg_get_functiondef('public.lts_v229_review_rows(uuid,date,date)'::regprocedure);")
   self.sql(original.replace('UPDATE public.fixture_calls','-- changed producer\n     UPDATE public.fixture_calls'))
   self.assertEqual(self.pending(),'3');self.assertEqual(self.pending(),'3')
-  self.sql(original);self.sql('SET ROLE postgres;'+(ROOT/'helpers.sql').read_text())
+  self.sql(original)
+  self.sql('ALTER TABLE public.fixture_epoch_input DISABLE TRIGGER fixture_epoch;')
+  self.assertEqual(self.sql(f"SELECT {NS}.review_guard_v450('{OWNER}') IS NULL;"),'t')
+  self.sql('ALTER TABLE public.fixture_epoch_input ENABLE TRIGGER fixture_epoch;CREATE OR REPLACE VIEW public.fixture_view AS SELECT value+1 AS value FROM public.fixture_epoch_input;')
+  self.assertEqual(self.sql(f"SELECT {NS}.review_guard_v450('{OWNER}') IS NULL;"),'t')
+  self.sql('SET ROLE postgres;'+(ROOT/'helpers.sql').read_text())
   self.sql((ROOT/'rollback.sql').read_text());self.assertEqual(oldmeta,self.sql(metadata));self.sql((ROOT/'install.sql').read_text())
   self.sql("CREATE OR REPLACE FUNCTION "+NS+".review_profile_v450() RETURNS jsonb LANGUAGE sql IMMUTABLE SET search_path='' AS $$SELECT '{}'::jsonb$$;")
   self.sql((ROOT/'install.sql').read_text(),error='review helper changed concurrently')
