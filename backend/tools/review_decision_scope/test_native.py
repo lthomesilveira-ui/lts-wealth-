@@ -30,11 +30,10 @@ CREATE TABLE public.fixture_occurrence(user_id uuid,source_table text,source_ref
 CREATE TABLE public.fixture_calls(kind text,from_day date,to_day date);
 CREATE FUNCTION public.lts_browser_card_category_options_v226() RETURNS jsonb LANGUAGE plpgsql AS $$
 BEGIN INSERT INTO public.fixture_calls(kind) VALUES('options');RETURN '{"categories":["Historical allowed"]}'::jsonb;END$$;
-CREATE FUNCTION public.lts_v229_review_rows(u uuid,f date,t date)
+CREATE FUNCTION public.lts_fixture_expense_component(u uuid,f date,t date)
 RETURNS TABLE(source_table text,source_ref text,event_date date,identity_status text,
  category text,management_group text,management_subgroup text) LANGUAGE plpgsql AS $$
 BEGIN
- INSERT INTO public.fixture_calls VALUES('rows',f,t);
  RETURN QUERY SELECT o.source_table,o.source_ref,o.event_date,
  CASE WHEN (o.category_needed AND d.category_label IS NULL) OR (o.person_needed AND d.beneficiary IS NULL)
  OR(o.property_needed AND d.property_code IS NULL) THEN 'pending' ELSE 'resolved' END,
@@ -42,6 +41,23 @@ BEGIN
  FROM public.fixture_occurrence o LEFT JOIN public.lts_v178_review_decision d
  ON d.user_id=o.user_id AND d.source_table=o.source_table AND d.source_ref=o.source_ref
  WHERE o.user_id=u AND o.event_date BETWEEN f AND t;
+END$$;
+CREATE FUNCTION public.lts_v229_expense_rows(u uuid,f date,t date)
+RETURNS TABLE(source_table text,source_ref text,event_date date,identity_status text,
+ category text,management_group text,management_subgroup text) LANGUAGE plpgsql AS $$
+BEGIN
+ INSERT INTO public.fixture_calls VALUES('expense',f,t);
+ RETURN QUERY SELECT * FROM public.lts_fixture_expense_component(u,f,t);
+END$$;
+CREATE FUNCTION public.lts_v229_review_rows(u uuid,f date,t date)
+RETURNS TABLE(source_table text,source_ref text,event_date date,identity_status text,
+ category text,management_group text,management_subgroup text) LANGUAGE plpgsql AS $$
+BEGIN
+ INSERT INTO public.fixture_calls VALUES('review_with_cards',f,t);
+ IF current_setting('fixture.forbid_cards',true)='yes' THEN
+  RAISE EXCEPTION 'Unrelated card rebuild reached';
+ END IF;
+ RETURN QUERY SELECT * FROM public.lts_fixture_expense_component(u,f,t);
 END$$;
 """
 
@@ -54,7 +70,9 @@ class NativeTest(unittest.TestCase):
             raise RuntimeError('PostgreSQL17 required')
         cls.tmp=tempfile.TemporaryDirectory(prefix='lts-review-decision-');cls.root=Path(cls.tmp.name)
         cls.data=cls.root/'data';cls.sock=cls.root/'socket';cls.sock.mkdir()
-        cls.env={k:v for k,v in os.environ.items() if not k.startswith('PG')};cls.env.update({'LC_ALL':'C','LANG':'C'})
+        cls.env={k:v for k,v in os.environ.items() if not k.startswith('PG')}
+        # Match the actual function's civil-day boundary, including midnight UTC.
+        cls.env.update({'LC_ALL':'C','LANG':'C','PGTZ':'America/Sao_Paulo'})
         subprocess.run([str(cls.bin/'initdb'),'-D',str(cls.data),'-A','trust','--no-locale','-U','fixture_admin'],check=True,env=cls.env,capture_output=True)
         cls.started=False
         try:
@@ -78,8 +96,8 @@ class NativeTest(unittest.TestCase):
         '{{"account_type":"CHECKING_ACCOUNT","status":"{status}"}}','{{}}',current_date-3);
         INSERT INTO public.fixture_occurrence VALUES('{USER}','lts_open_finance_staging','{TARGET}',current_date-3,true,{str(needs_person).lower()},{str(needs_property).lower()});
         INSERT INTO public.lts_category_catalog VALUES('{USER}','Known active',true),('{USER}','Inactive',false);""")
-    def call(self,category='Known active',person='NULL',property='NULL',user=USER,error=None,ref=TARGET):
-        return self.sql(f"SET fixture.viewer='{user}';SELECT public.lts_browser_expense_review_decision_v229('lts_open_finance_staging','{ref}',{person},{property},'{category}')->>'resolved';",error)
+    def call(self,category='Known active',person='NULL',property='NULL',user=USER,error=None,ref=TARGET,forbid_cards=False):
+        return self.sql(f"SET fixture.viewer='{user}';SET fixture.forbid_cards='{'yes' if forbid_cards else 'no'}';SELECT public.lts_browser_expense_review_decision_v229('lts_open_finance_staging','{ref}',{person},{property},'{category}')->>'resolved';",error)
     def test_actual_function_and_guarded_lifecycle(self):
         original=(ROOT/'original.sql').read_text();self.sql(original)
         original_hash=self.sql("SELECT md5(pg_get_functiondef('public.lts_browser_expense_review_decision_v229(text,text,text,text,text)'::regprocedure));")
@@ -87,22 +105,33 @@ class NativeTest(unittest.TestCase):
         # The original body demonstrably reads the whole month and options.
         self.seed();self.assertEqual(self.call(),'true')
         self.assertEqual(self.sql("SELECT count(*)>0 FROM public.fixture_calls WHERE kind='options';"),'t')
+        spec=importlib.util.spec_from_file_location('review_builder',ROOT/'build.py')
+        builder=importlib.util.module_from_spec(spec);spec.loader.exec_module(builder)
+        day_scope=builder.patch(original);self.sql(day_scope)
+        self.assertEqual(self.sql("SELECT md5(pg_get_functiondef('public.lts_browser_expense_review_decision_v229(text,text,text,text,text)'::regprocedure));"),builder.DAY_SCOPE_HASH)
         self.sql((ROOT/'install.sql').read_text())
         installed=self.sql("SELECT pg_get_functiondef('public.lts_browser_expense_review_decision_v229(text,text,text,text,text)'::regprocedure);")
         self.sql((ROOT/'install.sql').read_text())
         self.assertEqual(self.sql("SELECT pg_get_functiondef('public.lts_browser_expense_review_decision_v229(text,text,text,text,text)'::regprocedure);"),installed)
         self.seed();source=self.sql('SELECT md5(jsonb_agg(to_jsonb(s) ORDER BY id)::text) FROM public.lts_open_finance_staging s;')
         self.assertEqual(self.call(),'true')
-        self.assertEqual(self.sql("SELECT count(*) FROM public.fixture_calls WHERE kind='rows' AND from_day=current_date-3 AND to_day=current_date-3;"),'2')
+        self.assertEqual(self.sql("SELECT count(*) FROM public.fixture_calls WHERE kind='expense' AND from_day=current_date-3 AND to_day=current_date-3;"),'2')
+        self.assertEqual(self.sql("SELECT count(*) FROM public.fixture_calls WHERE kind='review_with_cards';"),'0')
         self.assertEqual(self.sql("SELECT count(*) FROM public.fixture_calls WHERE kind='options';"),'0')
         self.assertEqual(self.sql('SELECT count(*) FROM public.lts_access_audit;'),'1')
         self.assertEqual(self.sql('SELECT md5(jsonb_agg(to_jsonb(s) ORDER BY id)::text) FROM public.lts_open_finance_staging s;'),source)
         self.call(error='pending review item not found')
         self.assertEqual(self.sql('SELECT count(*) FROM public.lts_v178_review_decision;'),'1')
+        # A real post-save source invalidation may make the unrelated card union
+        # expensive or fail. Posted bank decisions must complete without it.
+        self.seed();self.assertEqual(self.call(forbid_cards=True),'true')
+        self.seed(resource='card_transaction')
+        self.call(forbid_cards=True,error='Unrelated card rebuild reached')
+        self.assertEqual(self.sql('SELECT count(*) FROM public.lts_v178_review_decision;'),'0')
         # Original broader scope and legacy allowlist alternatives remain valid.
         for resource,status,deleted in [('card_transaction','POSTED',False),('transaction','PENDING',False),('transaction','POSTED',True)]:
             self.seed(resource,status,deleted);self.assertEqual(self.call(),'true')
-            self.assertEqual(self.sql("SELECT count(*) FROM public.fixture_calls WHERE kind='rows' AND from_day=date_trunc('month',current_date-3)::date AND to_day=current_date;"),'2')
+            self.assertEqual(self.sql("SELECT count(*) FROM public.fixture_calls WHERE kind='review_with_cards' AND from_day=date_trunc('month',current_date-3)::date AND to_day=current_date;"),'2')
         self.seed();self.assertEqual(self.call('Historical allowed'),'true')
         self.seed();self.sql(f"INSERT INTO public.lts_product_read_cache VALUES('{USER}','{{\"card_classification_review\":{{\"category_options\":[\"Cached allowed\"]}}}}');")
         self.assertEqual(self.call('Cached allowed'),'true')
@@ -117,7 +146,7 @@ class NativeTest(unittest.TestCase):
         self.seed(needs_property=True);self.call(error='A decisão não resolveu')
         self.assertEqual(self.call(property="'cipo396'"),'true')
         self.sql((ROOT/'rollback.sql').read_text())
-        self.assertEqual(self.sql("SELECT md5(pg_get_functiondef('public.lts_browser_expense_review_decision_v229(text,text,text,text,text)'::regprocedure));"),original_hash)
+        self.assertEqual(self.sql("SELECT md5(pg_get_functiondef('public.lts_browser_expense_review_decision_v229(text,text,text,text,text)'::regprocedure));"),builder.DAY_SCOPE_HASH)
         self.sql((ROOT/'install.sql').read_text())
         self.sql("COMMENT ON FUNCTION public.lts_browser_expense_review_decision_v229(text,text,text,text,text) IS 'fixture';")
         # A concurrent body edit must block both installation and rollback.

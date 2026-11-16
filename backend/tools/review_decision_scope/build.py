@@ -4,6 +4,7 @@ import hashlib
 ROOT=Path(__file__).resolve().parent
 SIGNATURE='public.lts_browser_expense_review_decision_v229(text,text,text,text,text)'
 BASE_HASH='56e9806983eab4effd105fdf5ee302e8'
+DAY_SCOPE_HASH='2dafdd9285b9e5ed7252c2ec3e3d9cc3'
 def patch(s):
     def once(a,b):
         nonlocal s
@@ -48,6 +49,39 @@ def patch(s):
   )"""
     once(old,new)
     return s
+def bank_reader_patch(s):
+    before="""  select * into v_target
+  from public.lts_v229_review_rows(v_uid,v_scope_from,v_scope_to) r
+  where r.source_table=v_source_table and r.source_ref=v_source_ref and r.identity_status='pending'
+  order by r.event_date desc
+  limit 1;"""
+    after="""  -- Posted checking-account facts cannot originate in the future-card union.
+  -- Read the same expense component directly so a decision's cache invalidation
+  -- does not rebuild unrelated card history during the atomic resolution check.
+  IF coalesce(v_posted_bank,false) THEN
+    select * into v_target
+    from public.lts_v229_expense_rows(v_uid,v_scope_from,v_scope_to) r
+    where r.source_table=v_source_table and r.source_ref=v_source_ref and r.identity_status='pending'
+    order by r.event_date desc limit 1;
+  ELSE
+"""+before+"""
+  END IF;"""
+    assert s.count(before)==1
+    s=s.replace(before,after)
+    before="""  select not exists(
+    select 1 from public.lts_v229_review_rows(v_uid,v_scope_from,v_scope_to) r
+    where r.source_table=v_source_table and r.source_ref=v_source_ref and r.identity_status='pending'
+  ) into v_resolved;"""
+    after="""  IF coalesce(v_posted_bank,false) THEN
+    select not exists(
+      select 1 from public.lts_v229_expense_rows(v_uid,v_scope_from,v_scope_to) r
+      where r.source_table=v_source_table and r.source_ref=v_source_ref and r.identity_status='pending'
+    ) into v_resolved;
+  ELSE
+"""+before+"""
+  END IF;"""
+    assert s.count(before)==1
+    return s.replace(before,after)
 def installer(original,new,expected):
     return f"""-- Guarded function-only correction. No financial source or release-pointer writes.
 BEGIN;
@@ -64,9 +98,11 @@ COMMIT;
 def build():
     original=(ROOT/'original.sql').read_text()
     assert hashlib.md5(original.encode()).hexdigest()==BASE_HASH
-    new=patch(original)
-    (ROOT/'install.sql').write_text(installer(original,new,BASE_HASH))
-    rollback=installer(new,original,hashlib.md5(new.encode()).hexdigest()).replace('installation stopped','rollback stopped')
+    day_scope=patch(original)
+    assert hashlib.md5(day_scope.encode()).hexdigest()==DAY_SCOPE_HASH
+    new=bank_reader_patch(day_scope)
+    (ROOT/'install.sql').write_text(installer(day_scope,new,DAY_SCOPE_HASH))
+    rollback=installer(new,day_scope,hashlib.md5(new.encode()).hexdigest()).replace('installation stopped','rollback stopped')
     (ROOT/'rollback.sql').write_text(rollback)
     return new
 if __name__=='__main__':

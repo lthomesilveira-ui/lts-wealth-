@@ -3,7 +3,7 @@ BEGIN;
 DO $guard$
 DECLARE actual text:=md5(pg_get_functiondef('public.lts_browser_expense_review_decision_v229(text,text,text,text,text)'::regprocedure));
 BEGIN
- IF actual NOT IN ('56e9806983eab4effd105fdf5ee302e8','2dafdd9285b9e5ed7252c2ec3e3d9cc3') THEN
+ IF actual NOT IN ('2dafdd9285b9e5ed7252c2ec3e3d9cc3','2f072b68540498cf5828f5481c8eba6a') THEN
   RAISE EXCEPTION 'Review decision changed concurrently; installation stopped';
  END IF;
  EXECUTE $definition$CREATE OR REPLACE FUNCTION public.lts_browser_expense_review_decision_v229(p_source_table text, p_source_ref text, p_beneficiary text DEFAULT NULL::text, p_property_code text DEFAULT NULL::text, p_category_label text DEFAULT NULL::text)
@@ -62,11 +62,21 @@ begin
     v_scope_to:=least(current_date,v_source_date);
   END IF;
 
+  -- Posted checking-account facts cannot originate in the future-card union.
+  -- Read the same expense component directly so a decision's cache invalidation
+  -- does not rebuild unrelated card history during the atomic resolution check.
+  IF coalesce(v_posted_bank,false) THEN
+    select * into v_target
+    from public.lts_v229_expense_rows(v_uid,v_scope_from,v_scope_to) r
+    where r.source_table=v_source_table and r.source_ref=v_source_ref and r.identity_status='pending'
+    order by r.event_date desc limit 1;
+  ELSE
   select * into v_target
   from public.lts_v229_review_rows(v_uid,v_scope_from,v_scope_to) r
   where r.source_table=v_source_table and r.source_ref=v_source_ref and r.identity_status='pending'
   order by r.event_date desc
   limit 1;
+  END IF;
   if not found then raise exception 'pending review item not found'; end if;
 
   if v_category is not null and not exists (
@@ -100,10 +110,17 @@ begin
     decision_basis=excluded.decision_basis,
     decided_at=excluded.decided_at;
 
+  IF coalesce(v_posted_bank,false) THEN
+    select not exists(
+      select 1 from public.lts_v229_expense_rows(v_uid,v_scope_from,v_scope_to) r
+      where r.source_table=v_source_table and r.source_ref=v_source_ref and r.identity_status='pending'
+    ) into v_resolved;
+  ELSE
   select not exists(
     select 1 from public.lts_v229_review_rows(v_uid,v_scope_from,v_scope_to) r
     where r.source_table=v_source_table and r.source_ref=v_source_ref and r.identity_status='pending'
   ) into v_resolved;
+  END IF;
   if not v_resolved then raise exception 'A decisão não resolveu a pendência; nenhuma alteração foi mantida.'; end if;
 
   insert into public.lts_access_audit(user_id,email,action,meta)

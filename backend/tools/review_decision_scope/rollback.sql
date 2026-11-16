@@ -3,7 +3,7 @@ BEGIN;
 DO $guard$
 DECLARE actual text:=md5(pg_get_functiondef('public.lts_browser_expense_review_decision_v229(text,text,text,text,text)'::regprocedure));
 BEGIN
- IF actual NOT IN ('2dafdd9285b9e5ed7252c2ec3e3d9cc3','56e9806983eab4effd105fdf5ee302e8') THEN
+ IF actual NOT IN ('2f072b68540498cf5828f5481c8eba6a','2dafdd9285b9e5ed7252c2ec3e3d9cc3') THEN
   RAISE EXCEPTION 'Review decision changed concurrently; rollback stopped';
  END IF;
  EXECUTE $definition$CREATE OR REPLACE FUNCTION public.lts_browser_expense_review_decision_v229(p_source_table text, p_source_ref text, p_beneficiary text DEFAULT NULL::text, p_property_code text DEFAULT NULL::text, p_category_label text DEFAULT NULL::text)
@@ -24,7 +24,7 @@ declare
   v_before jsonb;
   v_target record;
   v_resolved boolean;
-  v_scope_from date:=date '2013-10-10'; v_source_date date;
+  v_scope_from date:=date '2013-10-10'; v_scope_to date:=current_date; v_source_date date; v_posted_bank boolean:=false;
 begin
   if v_source_table is null or v_source_ref is null then raise exception 'source required'; end if;
   if v_beneficiary is null and v_property is null and v_category is null then raise exception 'decision required'; end if;
@@ -39,7 +39,10 @@ begin
   IF v_source_table='lts_open_finance_staging' THEN
     SELECT least(s.posting_date,CASE WHEN left(s.raw_payload#>>'{creditCardMetadata,purchaseDate}',10) ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}$'
       THEN left(s.raw_payload#>>'{creditCardMetadata,purchaseDate}',10)::date ELSE s.posting_date END)
-    INTO v_source_date FROM public.lts_open_finance_staging s WHERE s.user_id=v_uid AND s.id::text=v_source_ref;
+    ,s.resource_type='transaction' AND s.provider_deleted_at IS NULL
+      AND s.normalized_payload->>'account_type'='CHECKING_ACCOUNT'
+      AND s.normalized_payload->>'status'='POSTED'
+    INTO v_source_date,v_posted_bank FROM public.lts_open_finance_staging s WHERE s.user_id=v_uid AND s.id::text=v_source_ref;
   ELSIF v_source_table='lts_card_document_supplement_v234' THEN
     SELECT d.purchase_date INTO v_source_date FROM public.lts_card_document_supplement_v234 d
     WHERE d.user_id=v_uid AND d.id::text=v_source_ref;
@@ -51,26 +54,33 @@ begin
     SELECT e.invoice_due_date INTO v_source_date FROM public.lts_card_purchase_detail e WHERE e.user_id=v_uid AND (e.line_key=v_source_ref OR e.purchase_key=v_source_ref) LIMIT 1;
   END IF;
   IF v_source_date IS NOT NULL THEN v_scope_from:=greatest(date '2013-10-10',date_trunc('month',v_source_date)::date); END IF;
+  -- A posted bank occurrence has an exact civil date. Validate both the pending
+  -- occurrence and its resolution in that same day; retain the original month
+  -- scope for card, monthly, legacy and incomplete provider observations.
+  IF coalesce(v_posted_bank,false) AND v_source_date IS NOT NULL THEN
+    v_scope_from:=greatest(date '2013-10-10',v_source_date);
+    v_scope_to:=least(current_date,v_source_date);
+  END IF;
 
   select * into v_target
-  from public.lts_v229_review_rows(v_uid,v_scope_from,current_date) r
+  from public.lts_v229_review_rows(v_uid,v_scope_from,v_scope_to) r
   where r.source_table=v_source_table and r.source_ref=v_source_ref and r.identity_status='pending'
   order by r.event_date desc
   limit 1;
   if not found then raise exception 'pending review item not found'; end if;
 
   if v_category is not null and not exists (
-    select 1 from jsonb_array_elements_text(coalesce(public.lts_browser_card_category_options_v226()->'categories','[]'::jsonb)) option_category(value)
-    where option_category.value=v_category
+    select 1 from public.lts_category_catalog allowed_category
+    where allowed_category.user_id=v_uid and allowed_category.active and allowed_category.category=v_category
   ) and not exists (
     select 1 from public.lts_product_read_cache c
     cross join lateral jsonb_array_elements_text(coalesce(c.payload#>'{card_classification_review,category_options}','[]'::jsonb)) x(value)
     where c.user_id=v_uid and x.value=v_category
   ) and not exists (
-    select 1 from public.lts_category_catalog allowed_category
-    where allowed_category.user_id=v_uid and allowed_category.active and allowed_category.category=v_category
+    select 1 from jsonb_array_elements_text(coalesce(public.lts_browser_card_category_options_v226()->'categories','[]'::jsonb)) option_category(value)
+    where option_category.value=v_category
   ) and not exists (
-    select 1 from public.lts_v229_review_rows(v_uid,v_scope_from,current_date) r
+    select 1 from public.lts_v229_review_rows(v_uid,v_scope_from,v_scope_to) r
     where r.category=v_category or r.management_group=v_category or r.management_subgroup=v_category
   ) then raise exception 'unknown category'; end if;
 
@@ -91,7 +101,7 @@ begin
     decided_at=excluded.decided_at;
 
   select not exists(
-    select 1 from public.lts_v229_review_rows(v_uid,v_scope_from,current_date) r
+    select 1 from public.lts_v229_review_rows(v_uid,v_scope_from,v_scope_to) r
     where r.source_table=v_source_table and r.source_ref=v_source_ref and r.identity_status='pending'
   ) into v_resolved;
   if not v_resolved then raise exception 'A decisão não resolveu a pendência; nenhuma alteração foi mantida.'; end if;
