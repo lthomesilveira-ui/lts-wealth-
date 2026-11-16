@@ -1,0 +1,33 @@
+name: Exact long flow reuse native QA
+on:
+  pull_request:
+    paths: ['backend/tools/long_flow_reuse_v450/**','.github/workflows/long-flow-reuse-v450.yml']
+permissions:
+  contents: read
+jobs:
+  native-postgres:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Install official native PostgreSQL17
+        run: |
+          set -euo pipefail
+          if [ ! -x /usr/lib/postgresql/17/bin/postgres ]; then
+            sudo install -d /usr/share/postgresql-common/pgdg
+            sudo curl --fail --silent --show-error -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc https://www.postgresql.org/media/keys/ACCC4CF8.asc
+            echo 'deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt jammy-pgdg main' | sudo tee /etc/apt/sources.list.d/pgdg.list > /dev/null
+            sudo apt-get update
+            sudo apt-get install --yes postgresql-17
+          fi
+          /usr/lib/postgresql/17/bin/postgres --version
+      - name: Exact raw and full flow parity and lifecycle
+        env:
+          LTS_INSTALLER_PG_BIN: /usr/lib/postgresql/17/bin
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: |
+          python3 backend/tools/long_flow_reuse_v450/build.py
+          git diff --exit-code -- backend/tools/long_flow_reuse_v450/install.sql backend/tools/long_flow_reuse_v450/rollback.sql backend/tools/long_flow_reuse_v450/guard.sql backend/tools/long_flow_reuse_v450/raw.sql backend/tools/long_flow_reuse_v450/flow-after.sql backend/tools/long_flow_reuse_v450/worker-after.sql backend/tools/long_flow_reuse_v450/manifest.json
+          python3 backend/tools/long_flow_reuse_v450/test_native.py
