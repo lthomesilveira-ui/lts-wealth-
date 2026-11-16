@@ -1,0 +1,12 @@
+{
+  "release": "v449",
+  "base_release": "v448",
+  "scope": "Bounded recovery of a failed deferred audit after verifying the existing server snapshot",
+  "v448_chart_css_unchanged": true,
+  "financial_readers_changed": false,
+  "financial_writers_changed": false,
+  "source_guards_changed": false,
+  "authentication_changed": false,
+  "query_deadlines_changed": false,
+  "physical_mobile_validated": false
+}
