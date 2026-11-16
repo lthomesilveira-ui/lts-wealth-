@@ -1,0 +1,18 @@
+[
+  {
+    "signature": "public.lts_flow_cache_pre_v240(uuid,date,date)",
+    "before": "271550df3c19df4f3e04ea04cf37c4b8",
+    "after": "2bced85c7ee1247102de52cfa0c93ea7",
+    "source_writes": false,
+    "security_changed": false,
+    "array_assembly_aligned_with_existing_browser": true
+  },
+  {
+    "signature": "public.lts_browser_flow_pre_v238(date,date)",
+    "before": "4caa05ad348ad817df9491b451dc87ea",
+    "after": "10eded9c70b9b7bdaf55702bcf3e72e0",
+    "source_writes": false,
+    "security_changed": false,
+    "array_assembly_aligned_with_existing_browser": false
+  }
+]

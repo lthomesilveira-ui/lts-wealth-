@@ -1,0 +1,33 @@
+name: Due-today invoice and read assembly isolated QA
+on:
+  pull_request:
+    paths: ['backend/tools/due_today_invoice/**','.github/workflows/due-today-invoice.yml']
+permissions:
+  contents: read
+jobs:
+  native-postgres:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Install official native PostgreSQL17
+        run: |
+          set -euo pipefail
+          if [ ! -x /usr/lib/postgresql/17/bin/postgres ]; then
+            sudo install -d /usr/share/postgresql-common/pgdg
+            sudo curl --fail --silent --show-error -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc https://www.postgresql.org/media/keys/ACCC4CF8.asc
+            echo 'deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt jammy-pgdg main' | sudo tee /etc/apt/sources.list.d/pgdg.list > /dev/null
+            sudo apt-get update
+            sudo apt-get install --yes postgresql-17
+          fi
+          /usr/lib/postgresql/17/bin/postgres --version
+      - name: Exact live SQL blocks, source guards, lifecycle and array parity
+        env:
+          LTS_INSTALLER_PG_BIN: /usr/lib/postgresql/17/bin
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: |
+          python3 backend/tools/due_today_invoice/build.py
+          git diff --exit-code -- backend/tools/due_today_invoice/install.sql backend/tools/due_today_invoice/rollback.sql backend/tools/due_today_invoice/manifest.json
+          python3 backend/tools/due_today_invoice/test_native.py
