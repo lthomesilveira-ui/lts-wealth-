@@ -45,6 +45,8 @@ def build():
          " IF md5(pg_get_functiondef('public.lts_documentary_contract_payments_v310(uuid,date)'::regprocedure))<>'"+PROOF+"' THEN RAISE EXCEPTION 'V459_PROOF_READER_CHANGED';END IF;\n",
          " IF EXISTS(SELECT 1 FROM lts_product_refresh_private_v415.queue WHERE state='running') THEN RAISE EXCEPTION 'V459_WORKER_ACTIVE';END IF;\n",
          " FOR u IN SELECT user_id FROM lts_product_refresh_private_v415.queue LOOP IF NOT pg_try_advisory_xact_lock(hashtextextended(u::text,415)) THEN RAISE EXCEPTION 'V459_WORKER_LOCK_BUSY';END IF;END LOOP;\n"]
+        if reverse:
+            parts.append(" IF EXISTS(SELECT 1 FROM public.financial_events f JOIN public.lts_realized_bank_event_v238 r ON r.user_id=f.user_id AND r.financial_event_id=f.id WHERE f.metadata->>'contract_ref'='volvo_financing_2026' AND NOT f.is_projection AND NOT f.is_suppressed) THEN RAISE EXCEPTION 'V459_STABLE_SERIES_REALIZATION_REQUIRES_DATA_REVIEW';END IF;\n")
         for signature,old,new in targets:
             if reverse:old,new=new,old
             parts.append(f""" target:='{signature}'::regprocedure;

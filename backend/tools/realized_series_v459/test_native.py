@@ -75,9 +75,12 @@ class RealizedSeries(unittest.TestCase):
         self.assertEqual(json.loads(sql('SELECT lts_product_refresh_private_v415.review_profile_v450();')),expected)
 
     def test_07_install_rollback_and_reapplication(self):
-        sql((ROOT/'install.sql').read_text());sql((ROOT/'rollback.sql').read_text())
+        sql((ROOT/'install.sql').read_text())
+        sql((ROOT/'rollback.sql').read_text(),error='V459_STABLE_SERIES_REALIZATION_REQUIRES_DATA_REVIEW')
+        sql(f"UPDATE financial_events SET is_projection=true WHERE id='{F}';")
+        sql((ROOT/'rollback.sql').read_text())
         self.assertEqual(rows(),self.old);self.assertEqual(json.loads(sql('SELECT lts_product_refresh_private_v415.review_profile_v450();')),self.profile)
-        sql((ROOT/'install.sql').read_text());self.assertEqual(rows(),self.expected)
+        sql((ROOT/'install.sql').read_text());sql(f"UPDATE financial_events SET is_projection=false WHERE id='{F}';");self.assertEqual(rows(),self.expected)
 
     def test_08_active_worker_and_dependency_drift_refused(self):
         sql("UPDATE lts_product_refresh_private_v415.queue SET state='running';")

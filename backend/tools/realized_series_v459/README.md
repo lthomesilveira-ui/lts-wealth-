@@ -12,6 +12,8 @@ installment and raw hash to match too. Every previous outer guard and existing
 numeric-contract/partial-payment branch remains. Re-pin only this function in
 the frozen review profile; refuse dependency drift, active work or metadata
 changes. Neither this installer nor its rollback writes financial rows.
+Rollback refuses to remove support while a realized stable-series record uses
+it; review or reverse that data through its recorded evidence first.
 
 Native PostgreSQL tests use the actual V310 proof reader with synthetic tables
 and an independently confirmed anchor. They cover exact rows, missing/ambiguous

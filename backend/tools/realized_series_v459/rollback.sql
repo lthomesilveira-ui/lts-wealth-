@@ -7,6 +7,7 @@ BEGIN
  IF md5(pg_get_functiondef('public.lts_documentary_contract_payments_v310(uuid,date)'::regprocedure))<>'f80d94725ee68e46300b5fbcd4f387fd' THEN RAISE EXCEPTION 'V459_PROOF_READER_CHANGED';END IF;
  IF EXISTS(SELECT 1 FROM lts_product_refresh_private_v415.queue WHERE state='running') THEN RAISE EXCEPTION 'V459_WORKER_ACTIVE';END IF;
  FOR u IN SELECT user_id FROM lts_product_refresh_private_v415.queue LOOP IF NOT pg_try_advisory_xact_lock(hashtextextended(u::text,415)) THEN RAISE EXCEPTION 'V459_WORKER_LOCK_BUSY';END IF;END LOOP;
+ IF EXISTS(SELECT 1 FROM public.financial_events f JOIN public.lts_realized_bank_event_v238 r ON r.user_id=f.user_id AND r.financial_event_id=f.id WHERE f.metadata->>'contract_ref'='volvo_financing_2026' AND NOT f.is_projection AND NOT f.is_suppressed) THEN RAISE EXCEPTION 'V459_STABLE_SERIES_REALIZATION_REQUIRES_DATA_REVIEW';END IF;
  target:='public.lts_realized_bank_sources_v238(uuid)'::regprocedure;
  SELECT pg_get_functiondef(p.oid),to_jsonb(p)-'prosrc' INTO d,attrs FROM pg_proc p WHERE p.oid=target;
  IF md5(d)='c0a390f6b415cde4fc47225bed44ffdf' THEN EXECUTE $definition$CREATE OR REPLACE FUNCTION public.lts_realized_bank_sources_v238(p_user_id uuid)
