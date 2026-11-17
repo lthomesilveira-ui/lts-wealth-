@@ -29,7 +29,14 @@ def build(target):
     index.write_text(text)
     style = target / 'lts-v463-customer.css'
     style.write_text(style.read_text() + '.fx89-detail-desc>small{display:block;margin-top:4px;line-height:1.4;white-space:normal}\n')
-    provenance = {'release': 'v466', 'base_release': 'v463', 'scope': 'Concise Flow movement labels and readable material notes; V463 financial controls retained', 'financial_source_writes': False, 'authentication_changed': False, 'timeouts_changed': False, 'published_base_immutable': True, 'physical_mobile_validated': False}
+    for name in ['lts-v275-overdue-visibility.js', 'lts-v384-startup-2.js']:
+        asset = target / name
+        content = asset.read_text().replace('os pagamentos vencidos.', 'os lançamentos vencidos.').replace('Alguns pagamentos não puderam ser conferidos.', 'Alguns lançamentos não puderam ser conferidos.')
+        content = replace_once(content, '      const count = view.rows.length;', "      const count = view.rows.length, subject = view.rows.every(row => row.amount > 0) ? 'recebimento' : view.rows.every(row => row.amount < 0) ? 'pagamento' : 'lançamento';")
+        content = replace_once(content, "count + (count === 1 ? ' pagamento vencido a conferir' : ' pagamentos vencidos a conferir')", "count + ' ' + subject + (count === 1 ? ' vencido a conferir' : 's vencidos a conferir')")
+        content = content.replace('Previsões vencidas ainda sem conciliação', 'Lançamentos vencidos a conferir')
+        asset.write_text(content)
+    provenance = {'release': 'v466', 'base_release': 'v463', 'scope': 'Concise Flow movement labels, readable notes and accurate pending receipt labels; V463 financial controls retained', 'financial_source_writes': False, 'authentication_changed': False, 'timeouts_changed': False, 'published_base_immutable': True, 'physical_mobile_validated': False}
     (target / 'provenance.json').write_text(json.dumps(provenance, indent=2) + '\n')
     manifest = json.loads((BASE / 'manifest.json').read_text())
     manifest.update(release='v466', version='v466', base_release='v463', protected_manifest={'path': 'releases/v463/manifest.json', 'sha256': digest(BASE / 'manifest.json')})
@@ -45,7 +52,9 @@ if __name__ == '__main__':
         build(generated)
         actual = ROOT / 'releases/v466'
         if args.check:
-            assert {p.name: p.read_bytes() for p in actual.iterdir()} == {p.name: p.read_bytes() for p in generated.iterdir()}
+            before = {p.name: p.read_bytes() for p in actual.iterdir()}
+            after = {p.name: p.read_bytes() for p in generated.iterdir()}
+            assert before == after, [name for name in sorted(before.keys() | after.keys()) if before.get(name) != after.get(name)]
         else:
             assert not actual.exists(), 'Never overwrite a published release'
             shutil.copytree(generated, actual)

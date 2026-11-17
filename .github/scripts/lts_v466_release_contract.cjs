@@ -6,7 +6,7 @@ assert.equal(manifest.release,'v466');assert.equal(manifest.version,'v466');asse
 assert.deepEqual(manifest.protected_manifest,{path:'releases/v463/manifest.json',sha256:hash(read(path.join(base,'manifest.json')))});
 assert.deepEqual(Object.keys(manifest.files).sort(),Object.keys(prior.files).sort());
 assert.deepEqual(fs.readdirSync(target).sort(),[...Object.keys(manifest.files),'manifest.json'].sort());
-const changed=['app.html','index.html','lts-v463-customer.css','provenance.json'];
+const changed=['app.html','index.html','lts-v463-customer.css','lts-v275-overdue-visibility.js','lts-v384-startup-2.js','provenance.json'];
 for(const [name,digest] of Object.entries(manifest.files)){assert.equal(hash(read(path.join(target,name))),digest,name);if(!changed.includes(name))assert.equal(digest,prior.files[name],name+' remains byte-identical');}
 assert.equal(Object.keys(manifest.files).length,109);
 console.log(JSON.stringify({pass:true,release:'v466',assets:110,protected:'v463',changed,financial_writes:0}));

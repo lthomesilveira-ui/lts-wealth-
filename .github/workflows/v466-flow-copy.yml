@@ -24,6 +24,7 @@ jobs:
         run: |
           python3 backend/tools/flow_copy_v466/build.py --check
           node .github/scripts/lts_v466_release_contract.cjs
+          node .github/scripts/lts_v466_pending_test.cjs
           node .github/scripts/lts_v463_model_test.cjs
       - name: Full mobile and desktop Chromium and WebKit
         env:

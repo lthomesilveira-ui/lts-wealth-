@@ -1,7 +1,7 @@
 {
   "release": "v466",
   "base_release": "v463",
-  "scope": "Concise Flow movement labels and readable material notes; V463 financial controls retained",
+  "scope": "Concise Flow movement labels, readable notes and accurate pending receipt labels; V463 financial controls retained",
   "financial_source_writes": false,
   "authentication_changed": false,
   "timeouts_changed": false,

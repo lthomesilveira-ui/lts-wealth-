@@ -1045,19 +1045,19 @@ function documentaryPaymentNote(cycle, esc, formatDate, mode = 'note', sourcePre
     }
     function markup(view, expanded) {
       const unavailable = {
-        range_mismatch:'Atualize o fluxo para conferir os pagamentos vencidos.',
-        source_missing:'Não foi possível conferir os pagamentos vencidos. Atualize o fluxo.',
-        invalid_source:'Não foi possível conferir os pagamentos vencidos. Atualize o fluxo.',
-        undated:'Atualize o fluxo para conferir os pagamentos vencidos.',
-        stale:'Atualize o fluxo para conferir os pagamentos vencidos.',
-        unavailable:'Não foi possível conferir os pagamentos vencidos. Atualize o fluxo.'
+        range_mismatch:'Atualize o fluxo para conferir os lançamentos vencidos.',
+        source_missing:'Não foi possível conferir os lançamentos vencidos. Atualize o fluxo.',
+        invalid_source:'Não foi possível conferir os lançamentos vencidos. Atualize o fluxo.',
+        undated:'Atualize o fluxo para conferir os lançamentos vencidos.',
+        stale:'Atualize o fluxo para conferir os lançamentos vencidos.',
+        unavailable:'Não foi possível conferir os lançamentos vencidos. Atualize o fluxo.'
       };
       if (view.status === 'loading') return '';
       if (unavailable[view.status]) return '<p role="status">' + escape(unavailable[view.status]) + '</p>';
-      const caution = view.status === 'partial' ? '<p role="status">Alguns pagamentos não puderam ser conferidos. Atualize o fluxo.</p>' : '';
+      const caution = view.status === 'partial' ? '<p role="status">Alguns lançamentos não puderam ser conferidos. Atualize o fluxo.</p>' : '';
       if (!view.rows.length) return caution;
-      const count = view.rows.length;
-      return caution + '<details' + (expanded ? ' open' : '') + '><summary>' + count + (count === 1 ? ' pagamento vencido a conferir' : ' pagamentos vencidos a conferir') + '</summary><ul>' +
+      const count = view.rows.length, subject = view.rows.every(row => row.amount > 0) ? 'recebimento' : view.rows.every(row => row.amount < 0) ? 'pagamento' : 'lançamento';
+      return caution + '<details' + (expanded ? ' open' : '') + '><summary>' + count + ' ' + subject + (count === 1 ? ' vencido a conferir' : 's vencidos a conferir') + '</summary><ul>' +
         view.rows.map(row => '<li><span><b>' + escape(row.description) + '</b><small>' + escape(row.account) + ' · Vencimento ' + escape(row.dueDate.split('-').reverse().join('/')) + ' · ' + escape(row.confirmation) + '</small></span><strong>' + escape(money(row.amount)) + '</strong></li>').join('') + '</ul></details>';
     }
     return {day, businessDay, model, markup};
@@ -1094,7 +1094,7 @@ function documentaryPaymentNote(cycle, esc, formatDate, mode = 'note', sourcePre
       if (!html) { if (panel) panel.remove(); return; }
       if (!panel) {
         panel = document.createElement('section'); panel.id = id; panel.className = 'v168-note lts-overdue-forecasts';
-        panel.setAttribute('aria-label', 'Previsões vencidas ainda sem conciliação'); host.insertAdjacentElement('afterend', panel);
+        panel.setAttribute('aria-label', 'Lançamentos vencidos a conferir'); host.insertAdjacentElement('afterend', panel);
       }
       if (panel.__ltsMarkup !== html || panel.__ltsAccount !== account) {
         panel.hidden = !html;
