@@ -6,7 +6,7 @@ const now='2026-11-17T17:00:00Z',base=process.env.LTS_BROWSER_BASE||'http://127.
 const status=(phase='ready',v='2')=>({state:phase,required:phase!=='ready',cached_available:true,request_version:v,completed_version:phase==='ready'?v:'2',cached_refreshed_at:'2026-11-17T16:59:00Z'});
 const banks=time=>({connections:['341','237','336'].map(code=>({id:'fixture-'+code,provider:'fixture',institution_code:code,last_success_at:time,last_attempt_at:time,last_error_code:null}))});
 async function go(frame,view){await frame.locator('#nav [data-v="'+view+'"]:visible,#dx1MobileNav [data-mobile-route="'+view+'"]:visible').click();await frame.waitForFunction(v=>V===v,view)}
-async function ready(frame){await frame.waitForFunction(()=>['wealth','forecast','awards','dashboardReport'].every(k=>__LTS_V178_STATE[k].status==='ready')&&!['idle','loading'].includes(__LTS_V178_STATE.cash.status))}
+async function ready(frame){await frame.waitForFunction(()=>window.__LTS_V178_STATE&&['wealth','forecast','awards','dashboardReport'].every(k=>__LTS_V178_STATE[k].status==='ready')&&!['idle','loading'].includes(__LTS_V178_STATE.cash.status))}
 async function readers(frame){return frame.evaluate(()=>Object.fromEntries(['cash','wealth','forecast','awards','dashboardReport'].map(k=>[k,{status:__LTS_V178_STATE[k].status,date:__LTS_V178_STATE[k].date,data:__LTS_V178_STATE[k].data}])))}
 async function run(browser,engine,width){
  const h=await setup(browser,width,980,now),label=engine+'-'+width;let frame,ingested=false,job=status(),products=0,statuses=0,bankRequests=0,productRequests=0;
