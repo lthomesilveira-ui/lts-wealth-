@@ -145,7 +145,7 @@ class Anchor(unittest.TestCase):
         sql((ROOT/'rollback.sql').read_text())
         self.assertEqual(call(),self.expected_hit)
         sql((ROOT/'install.sql').read_text())
-        sql(build.definition('anchor-original.sql').replace('DECLARE c record;','DECLARE c record; -- divergent'))
+        sql(build.definition('anchor-original.sql').replace('DECLARE c record;','DECLARE c record; /* divergent */'))
         sql((ROOT/'install.sql').read_text(),error='V456_PREDECESSOR_CHANGED')
         sql((ROOT/'rollback.sql').read_text(),error='V456_PREDECESSOR_CHANGED')
         sql((ROOT/'anchor-original.sql').read_text())
