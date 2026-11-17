@@ -1,5 +1,11 @@
 # Current execution sources
 
+The stable entry is selected by `mobile/current.json`. V467 completes the
+pending receipt language correction in the Actions card and priority list,
+while retaining V466 financial behavior. Verify the live route and the current
+private audit; backend V465, the prepared frontend and published entry remain
+separate evidence. Earlier dated headings are historical.
+
 The stable entry is selected by `mobile/current.json`. V466 is the current
 activation candidate, retaining the V463 customer controls and correcting
 expanded Flow copy and pending receipt labels. Backend V465 is tracked
