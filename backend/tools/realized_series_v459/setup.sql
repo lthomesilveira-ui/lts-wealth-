@@ -1,0 +1,9 @@
+CREATE SCHEMA lts_product_refresh_private_v415;
+CREATE TABLE lts_product_refresh_private_v415.queue(user_id uuid PRIMARY KEY,state text);
+CREATE TABLE public.accounts(id uuid PRIMARY KEY,user_id uuid,institution text);
+CREATE TABLE public.financial_events(id uuid PRIMARY KEY,user_id uuid,account_id uuid,legacy_id text,event_date date,amount numeric,nature text,status text,category text,description_raw text,metadata jsonb,is_projection boolean,is_suppressed boolean,is_internal_transfer boolean);
+CREATE TABLE public.lts_open_finance_staging(id uuid PRIMARY KEY,user_id uuid,resource_type text,institution_code text,currency text,posting_date date,occurred_at timestamptz,signed_amount numeric,description_raw text,raw_hash text,normalized_payload jsonb,provider_deleted_at timestamptz);
+CREATE TABLE public.lts_realized_bank_event_v238(user_id uuid,financial_event_id uuid,staging_id uuid,bank text,expected_date date,expected_amount numeric,category text,beneficiary text,property_code text,management_group text,management_subgroup text,property_component text,evidence jsonb,PRIMARY KEY(user_id,financial_event_id));
+CREATE TABLE public.lts_v229_documentary_match(user_id uuid,source_ref text,staging_id uuid,bank text,signed_amount numeric,canonical_date date,evidence jsonb);
+CREATE FUNCTION public.lts_bank_posted_rows_v231(uuid) RETURNS SETOF public.lts_open_finance_staging LANGUAGE sql STABLE SET search_path='' AS $$ SELECT * FROM public.lts_open_finance_staging WHERE user_id=$1 AND resource_type='transaction' AND provider_deleted_at IS NULL AND normalized_payload->>'status'='POSTED' AND normalized_payload->>'account_type'='CHECKING_ACCOUNT' $$;
+CREATE FUNCTION public.lts_partial_obligation_settlement_valid_v302(jsonb,jsonb,jsonb,jsonb) RETURNS boolean LANGUAGE sql STABLE AS $$ SELECT coalesce(($4->>'fixture_partial')::boolean,false) $$;
