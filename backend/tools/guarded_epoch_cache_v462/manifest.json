@@ -1,0 +1,29 @@
+{
+  "functions": {
+    "lts_product_refresh_private_v415.card_source_key(uuid)": {
+      "before": "634d70ed1d1a21967b9358ffc2bd6e6e",
+      "after": "314505cd40f7d4cbaea7c625a2f4f446"
+    },
+    "public.lts_c6_completeness_state_v269(uuid)": {
+      "before": "64ba10c612e4641199ee10de7490ffba",
+      "after": "1c875f3a1e0165ac1f87740119f88894"
+    },
+    "lts_product_refresh_private_v415.review_profile_v450()": {
+      "before": "43ff6694dea1f02138fe570eaff6aaec",
+      "after": "25952f79bf0f8216a651aff7ce239923"
+    }
+  },
+  "excluded_bookkeeping_fields": [
+    "sync_run_id",
+    "last_seen_at",
+    "updated_at"
+  ],
+  "profile_pins_updated": 2,
+  "epoch_trigger_md5": "99f49c4f11e130d6cab4196173f41ec0",
+  "staging_triggers_md5": "3a4e2f69a3c7ae6d2564028a67121893",
+  "unknown_trigger_contract": "full_semantic_row_fallback",
+  "other_profile_changes": false,
+  "financial_writes": false,
+  "permissions_changed": false,
+  "timeouts_changed": false
+}
