@@ -12,7 +12,9 @@ S='00000000-0000-4000-8000-000000000002'
 P='00000000-0000-4000-8000-000000000003'
 
 def sql(q,error=None):
-    p=subprocess.run(['psql','-XAtq','-v','ON_ERROR_STOP=1','-d',DB],input=q,text=True,capture_output=True)
+    # Each isolated psql connection must defer validation of the preserved old
+    # branches whose unrelated payroll/card dependencies are outside this fixture.
+    p=subprocess.run(['psql','-XAtq','-v','ON_ERROR_STOP=1','-d',DB],input='SET check_function_bodies=off;'+q,text=True,capture_output=True)
     if error:
         assert p.returncode and error in p.stderr,(error,p.stderr)
         return p.stderr
