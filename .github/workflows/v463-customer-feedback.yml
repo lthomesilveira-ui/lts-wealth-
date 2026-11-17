@@ -23,6 +23,7 @@ jobs:
       - name: Immutable build, financial channels and dated loan model
         run: |
           python3 backend/tools/product_feedback_v463/build.py --check
+          node .github/scripts/lts_v463_release_contract.cjs
           node .github/scripts/lts_v463_model_test.cjs
       - name: Full mobile and desktop Chromium and WebKit
         env:
