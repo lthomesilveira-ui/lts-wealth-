@@ -60,7 +60,7 @@ x=calc(plan(apple),[period(items=[charge('8.25',merchant_key='devicebill')])]);a
 base={'version':'projection-policy-v412','schema_version':1,'enabled':True,'as_of':'2026-11-17','horizon_end':'2031-12-31','next_review_on':'2027-01-01','history_window':{'from':'2025-01-01','to':'2025-12-31'},'series':[],'warnings':[],'events':[{'source_ref':'original-obligation','signed_amount':-44.21}],'replacement_refs':['original-source'],'card_method':'total_budget_floor','outliers_excluded':False,'missing_months_assumed_zero':False,'financial_sources_modified':False}
 sql("INSERT INTO public.legacy_namespace SELECT '"+U+"','lts_owner_card_subscriptions_v468',"+lit(plan())+"::text,encode(sha256(convert_to("+lit(plan())+"::text,'UTF8')),'hex');")
 x=json.loads(sql("SELECT lts_subscription_private_v468.append_result('"+V+"','2026-11-17',"+lit(base)+",NULL,'[]');"));assert x==base;ok('other_owner_result_exactly_preserved')
-cards={'cards':[{'family':'itau_mastercard','cycles':[]}]}
+cards={'complete':True,'cards':[{'family':'itau_mastercard','complete':True,'cycles':[]}]}
 x=json.loads(sql("SELECT lts_subscription_private_v468.append_result('"+U+"','2026-11-17',"+lit(base)+","+lit(cards)+",'[]');"))
 assert x['events'][0]==base['events'][0] and x['replacement_refs']==base['replacement_refs']
 assert len(x['events'])==62 and x['financial_sources_modified'] is False

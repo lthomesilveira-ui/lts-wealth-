@@ -22,8 +22,8 @@ BEGIN
   IF jsonb_typeof(r) IS DISTINCT FROM 'object' OR coalesce(k,'')!~'^[a-z][a-z0-9_]{2,70}$' OR k=ANY(seen)
   OR nullif(btrim(r->>'description'),'') IS NULL
   OR coalesce(r->>'family','') NOT IN('c6','itau_mastercard','itau_visa','aeternum','bradesco_prime')
-  OR r->>'account' IS DISTINCT FROM CASE WHEN r->>'family'='c6' THEN 'C6'
-    WHEN r->>'family' IN('itau_mastercard','itau_visa') THEN 'Itaú' ELSE 'Bradesco' END
+  OR r->>'account' IS DISTINCT FROM (CASE WHEN r->>'family'='c6' THEN 'C6'
+    WHEN r->>'family' IN('itau_mastercard','itau_visa') THEN 'Itaú' ELSE 'Bradesco' END)
   OR coalesce(r->>'last4','')!~'^[0-9]{4}$'
   OR coalesce(r->>'amount_brl','')!~'^[0-9]+([.][0-9]{1,2})?$'
   OR (r->>'amount_brl')::numeric<=0 OR (r->>'amount_brl')::numeric>1000000
