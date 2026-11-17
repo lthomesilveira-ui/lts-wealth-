@@ -7,11 +7,16 @@ ROOT=Path(__file__).resolve().parent
 TARGET='lts_product_refresh_private_v415.expense_review_pending_v450(uuid,date,date)'
 BEFORE='2d41fa5eab16fe79d727c184de79021d'
 NEEDLE=' source_guard:=lts_product_refresh_private_v415.review_guard_v450(p_user_id);'
-REPLACEMENT=""" -- The existing worker warms this snapshot after marking its own request ready.
+REPLACEMENT=""" -- The worker also reads this queue before publication through an indirect caller.
+ -- Only its exact current private claim may retain that original running path.
  -- Do not compete with that worker or certify an old/empty review meanwhile.
  IF EXISTS(SELECT 1 FROM lts_product_refresh_private_v415.queue q
+  CROSS JOIN LATERAL(SELECT nullif(current_setting('lts.product_refresh_claim',true),'')::jsonb ctx) claim
   WHERE q.user_id=p_user_id AND q.state IN('pending','running')
-  AND q.request_version>q.completed_version) THEN
+  AND q.request_version>q.completed_version
+  AND NOT coalesce(q.state='running' AND q.claim_token IS NOT NULL
+   AND claim.ctx->>'user_id'=p_user_id::text AND claim.ctx->>'token'=q.claim_token::text
+   AND claim.ctx->>'version'=q.claimed_version::text AND claim.ctx->>'epoch'=q.claimed_epoch::text,false)) THEN
   RAISE EXCEPTION USING ERRCODE='55000',MESSAGE='Expense review is waiting for the existing product refresh';
  END IF;
 """+NEEDLE
@@ -57,7 +62,7 @@ COMMIT;
     (ROOT/'manifest.json').write_text(json.dumps({
         'target':TARGET,'predecessor_md5':BEFORE,'installed_md5':after_hash,
         'financial_source_writes':False,'new_jobs':False,'frontend_changes':False,
-        'not_ready_sqlstate':'55000',
+        'not_ready_sqlstate':'55000','worker_exception':'exact owner/token/claimed-version/claimed-epoch match',
         'preserved':['every source guard and digest','complete reader when ready',
                      'row values, nulls and duplicates','owner/day/range isolation',
                      'worker warm after its ready update','permissions and function configuration']

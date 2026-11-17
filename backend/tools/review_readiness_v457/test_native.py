@@ -29,7 +29,7 @@ def rows(owner=OWNER,prefix=''):
 
 
 def phase(state,request=2,complete=1,owner=OWNER):
-    sql(f"UPDATE lts_product_refresh_private_v415.queue SET state='{state}',request_version={request},completed_version={complete} WHERE user_id='{owner}';")
+    sql(f"UPDATE lts_product_refresh_private_v415.queue SET state='{state}',request_version={request},completed_version={complete},claim_token=NULL,claimed_version=NULL,claimed_epoch=NULL WHERE user_id='{owner}';")
 
 
 class Review(unittest.TestCase):
@@ -41,8 +41,8 @@ class Review(unittest.TestCase):
         sql(f"""
         CREATE SCHEMA lts_product_refresh_private_v415;
         CREATE TABLE public.lts_v229_read_cache(user_id uuid,kind text,as_of date,from_date date,to_date date,payload jsonb,refreshed_at timestamptz,source_fingerprint text,PRIMARY KEY(user_id,kind,as_of,from_date,to_date));
-        CREATE TABLE lts_product_refresh_private_v415.queue(user_id uuid PRIMARY KEY,state text,request_version bigint,completed_version bigint);
-        INSERT INTO lts_product_refresh_private_v415.queue VALUES('{OWNER}','ready',1,1),('{OTHER}','ready',1,1);
+        CREATE TABLE lts_product_refresh_private_v415.queue(user_id uuid PRIMARY KEY,state text,request_version bigint,completed_version bigint,claim_token uuid,claimed_version bigint,claimed_epoch bigint);
+        INSERT INTO lts_product_refresh_private_v415.queue(user_id,state,request_version,completed_version) VALUES('{OWNER}','ready',1,1),('{OTHER}','ready',1,1);
         CREATE TABLE public.fixture_rows(user_id uuid,{COLS});
         INSERT INTO public.fixture_rows(user_id,row_key,event_date,amount,category,identity_status,source_ref)
         VALUES('{OWNER}','one',current_date,123.456789,'fixture','pending','one'),
@@ -107,6 +107,14 @@ class Review(unittest.TestCase):
 
     def test_04_worker_ready_update_warms_in_same_transaction(self):
         phase('running')
+        token='00000000-0000-4000-8000-000000000055'
+        sql(f"UPDATE lts_product_refresh_private_v415.queue SET claim_token='{token}',claimed_version=2,claimed_epoch=17 WHERE user_id='{OWNER}';")
+        claim=json.dumps({'user_id':OWNER,'token':token,'version':2,'epoch':17})
+        # The operational refresh invokes the browser review reader indirectly
+        # before its final ready update. Preserve that exact claimed-worker path.
+        self.assertEqual(rows(prefix=f"SET lts.product_refresh_claim='{claim}';"),self.expected)
+        self.assertEqual(sql('SELECT n FROM fixture_calls;'),'1')
+        sql('TRUNCATE lts_v229_read_cache;UPDATE fixture_calls SET n=0;')
         output=rows(prefix=f"BEGIN;UPDATE lts_product_refresh_private_v415.queue SET state='ready',completed_version=request_version WHERE user_id='{OWNER}';")
         self.assertEqual(output,self.expected)
         # The test connection closes without COMMIT; its warm was allowed using
@@ -128,7 +136,7 @@ class Review(unittest.TestCase):
         self.assertEqual(rows(),self.expected)
         sql(f"DELETE FROM lts_product_refresh_private_v415.queue WHERE user_id='{OWNER}';")
         self.assertEqual(rows(),self.expected)
-        sql(f"INSERT INTO lts_product_refresh_private_v415.queue VALUES('{OWNER}','ready',1,1);")
+        sql(f"INSERT INTO lts_product_refresh_private_v415.queue(user_id,state,request_version,completed_version) VALUES('{OWNER}','ready',1,1);")
 
     def test_07_private_access_read_only_and_guard_fallback(self):
         for role in ['anon','authenticated']:
@@ -156,6 +164,16 @@ class Review(unittest.TestCase):
         sql((ROOT/'rollback.sql').read_text(),error='V457_PREDECESSOR_CHANGED')
         sql((ROOT/'review-original.sql').read_text())
         sql((ROOT/'install.sql').read_text())
+
+    def test_10_wrong_or_stale_claim_does_not_bypass_wait(self):
+        phase('running')
+        token='00000000-0000-4000-8000-000000000055'
+        sql(f"UPDATE lts_product_refresh_private_v415.queue SET claim_token='{token}',claimed_version=2,claimed_epoch=17 WHERE user_id='{OWNER}';")
+        correct={'user_id':OWNER,'token':token,'version':2,'epoch':17}
+        for field,value in [('user_id',OTHER),('token',OTHER),('version',1),('epoch',16)]:
+            claim=json.dumps(correct|{field:value})
+            sql(f"SET lts.product_refresh_claim='{claim}';SELECT * FROM lts_product_refresh_private_v415.expense_review_pending_v450('{OWNER}','2013-10-10',current_date);",error='Expense review is waiting')
+        self.assertEqual(sql('SELECT n FROM fixture_calls;'),'0')
 
 
 if __name__=='__main__':

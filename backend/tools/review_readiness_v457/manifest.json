@@ -1,11 +1,12 @@
 {
   "target": "lts_product_refresh_private_v415.expense_review_pending_v450(uuid,date,date)",
   "predecessor_md5": "2d41fa5eab16fe79d727c184de79021d",
-  "installed_md5": "8ddd6be945a034ea209d2e5fcfe4af6c",
+  "installed_md5": "3099bb8354d02fd9341ac7906e3efaa4",
   "financial_source_writes": false,
   "new_jobs": false,
   "frontend_changes": false,
   "not_ready_sqlstate": "55000",
+  "worker_exception": "exact owner/token/claimed-version/claimed-epoch match",
   "preserved": [
     "every source guard and digest",
     "complete reader when ready",

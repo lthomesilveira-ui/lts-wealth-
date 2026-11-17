@@ -6,28 +6,43 @@ DO $patch$
 DECLARE target regprocedure:='lts_product_refresh_private_v415.expense_review_pending_v450(uuid,date,date)'::regprocedure; d text; attrs jsonb;
 BEGIN
  SELECT pg_get_functiondef(p.oid),to_jsonb(p)-'prosrc' INTO d,attrs FROM pg_proc p WHERE p.oid=target;
- IF md5(d)='8ddd6be945a034ea209d2e5fcfe4af6c' THEN
-  IF (length(d)-length(replace(d,$needle$ -- The existing worker warms this snapshot after marking its own request ready.
+ IF md5(d)='3099bb8354d02fd9341ac7906e3efaa4' THEN
+  IF (length(d)-length(replace(d,$needle$ -- The worker also reads this queue before publication through an indirect caller.
+ -- Only its exact current private claim may retain that original running path.
  -- Do not compete with that worker or certify an old/empty review meanwhile.
  IF EXISTS(SELECT 1 FROM lts_product_refresh_private_v415.queue q
+  CROSS JOIN LATERAL(SELECT nullif(current_setting('lts.product_refresh_claim',true),'')::jsonb ctx) claim
   WHERE q.user_id=p_user_id AND q.state IN('pending','running')
-  AND q.request_version>q.completed_version) THEN
+  AND q.request_version>q.completed_version
+  AND NOT coalesce(q.state='running' AND q.claim_token IS NOT NULL
+   AND claim.ctx->>'user_id'=p_user_id::text AND claim.ctx->>'token'=q.claim_token::text
+   AND claim.ctx->>'version'=q.claimed_version::text AND claim.ctx->>'epoch'=q.claimed_epoch::text,false)) THEN
   RAISE EXCEPTION USING ERRCODE='55000',MESSAGE='Expense review is waiting for the existing product refresh';
  END IF;
- source_guard:=lts_product_refresh_private_v415.review_guard_v450(p_user_id);$needle$,'')))/length($needle$ -- The existing worker warms this snapshot after marking its own request ready.
+ source_guard:=lts_product_refresh_private_v415.review_guard_v450(p_user_id);$needle$,'')))/length($needle$ -- The worker also reads this queue before publication through an indirect caller.
+ -- Only its exact current private claim may retain that original running path.
  -- Do not compete with that worker or certify an old/empty review meanwhile.
  IF EXISTS(SELECT 1 FROM lts_product_refresh_private_v415.queue q
+  CROSS JOIN LATERAL(SELECT nullif(current_setting('lts.product_refresh_claim',true),'')::jsonb ctx) claim
   WHERE q.user_id=p_user_id AND q.state IN('pending','running')
-  AND q.request_version>q.completed_version) THEN
+  AND q.request_version>q.completed_version
+  AND NOT coalesce(q.state='running' AND q.claim_token IS NOT NULL
+   AND claim.ctx->>'user_id'=p_user_id::text AND claim.ctx->>'token'=q.claim_token::text
+   AND claim.ctx->>'version'=q.claimed_version::text AND claim.ctx->>'epoch'=q.claimed_epoch::text,false)) THEN
   RAISE EXCEPTION USING ERRCODE='55000',MESSAGE='Expense review is waiting for the existing product refresh';
  END IF;
  source_guard:=lts_product_refresh_private_v415.review_guard_v450(p_user_id);$needle$)<>1
   THEN RAISE EXCEPTION 'V457_REVIEW_READ_SHAPE_CHANGED'; END IF;
-  EXECUTE replace(d,$needle$ -- The existing worker warms this snapshot after marking its own request ready.
+  EXECUTE replace(d,$needle$ -- The worker also reads this queue before publication through an indirect caller.
+ -- Only its exact current private claim may retain that original running path.
  -- Do not compete with that worker or certify an old/empty review meanwhile.
  IF EXISTS(SELECT 1 FROM lts_product_refresh_private_v415.queue q
+  CROSS JOIN LATERAL(SELECT nullif(current_setting('lts.product_refresh_claim',true),'')::jsonb ctx) claim
   WHERE q.user_id=p_user_id AND q.state IN('pending','running')
-  AND q.request_version>q.completed_version) THEN
+  AND q.request_version>q.completed_version
+  AND NOT coalesce(q.state='running' AND q.claim_token IS NOT NULL
+   AND claim.ctx->>'user_id'=p_user_id::text AND claim.ctx->>'token'=q.claim_token::text
+   AND claim.ctx->>'version'=q.claimed_version::text AND claim.ctx->>'epoch'=q.claimed_epoch::text,false)) THEN
   RAISE EXCEPTION USING ERRCODE='55000',MESSAGE='Expense review is waiting for the existing product refresh';
  END IF;
  source_guard:=lts_product_refresh_private_v415.review_guard_v450(p_user_id);$needle$,$replacement$ source_guard:=lts_product_refresh_private_v415.review_guard_v450(p_user_id);$replacement$);

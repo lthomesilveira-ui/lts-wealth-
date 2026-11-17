@@ -7,11 +7,16 @@ AS $function$
 DECLARE source_guard jsonb; final_guard jsonb; fingerprint text; stored jsonb; result jsonb; old_lock text;
 BEGIN
  IF p_user_id IS NULL OR p_from IS NULL OR p_to IS NULL OR p_from>p_to OR p_from<date '2013-10-10' OR p_to>current_date THEN RAISE EXCEPTION 'invalid review range';END IF;
- -- The existing worker warms this snapshot after marking its own request ready.
+ -- The worker also reads this queue before publication through an indirect caller.
+ -- Only its exact current private claim may retain that original running path.
  -- Do not compete with that worker or certify an old/empty review meanwhile.
  IF EXISTS(SELECT 1 FROM lts_product_refresh_private_v415.queue q
+  CROSS JOIN LATERAL(SELECT nullif(current_setting('lts.product_refresh_claim',true),'')::jsonb ctx) claim
   WHERE q.user_id=p_user_id AND q.state IN('pending','running')
-  AND q.request_version>q.completed_version) THEN
+  AND q.request_version>q.completed_version
+  AND NOT coalesce(q.state='running' AND q.claim_token IS NOT NULL
+   AND claim.ctx->>'user_id'=p_user_id::text AND claim.ctx->>'token'=q.claim_token::text
+   AND claim.ctx->>'version'=q.claimed_version::text AND claim.ctx->>'epoch'=q.claimed_epoch::text,false)) THEN
   RAISE EXCEPTION USING ERRCODE='55000',MESSAGE='Expense review is waiting for the existing product refresh';
  END IF;
  source_guard:=lts_product_refresh_private_v415.review_guard_v450(p_user_id);
