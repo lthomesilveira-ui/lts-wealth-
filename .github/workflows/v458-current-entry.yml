@@ -1,0 +1,40 @@
+name: V458 authenticated current-entry recovery
+on:
+  pull_request:
+    paths: ['releases/v458/**','mobile/current.json','.github/scripts/lts_v458_current_entry.cjs','.github/workflows/v458-current-entry.yml']
+permissions:
+  contents: read
+jobs:
+  recovery:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    container: mcr.microsoft.com/playwright:v1.58.2-noble
+    env:
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+      LTS_MOBILE_RELEASE: v458
+      LTS_FLOW_RELEASE: v442
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Immutable accepted candidate and canonical pointer
+        run: |
+          python3 backend/tools/bank_handoff_v458/build.py --check
+          node .github/scripts/lts_v458_release_contract.cjs
+      - name: Authenticated-flow fixtures in mobile and desktop Chromium and WebKit
+        run: |
+          npm install --no-save --package-lock=false playwright@1.58.2
+          python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/v458-current-http.log 2>&1 &
+          node .github/scripts/lts_v309_wait_http.cjs
+          node .github/scripts/lts_v458_current_entry.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v458-current-entry
+          retention-days: 14
+          path: qa/v458/

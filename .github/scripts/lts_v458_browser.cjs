@@ -17,12 +17,14 @@ async function run(browser,engine,width){
  await h.ctx.route('**/rest/v1/rpc/lts_browser_open_finance_status_v1',r=>send(r,banks(ingested?now:'2026-11-17T16:50:00Z')));
  await h.ctx.route('**/rest/v1/rpc/lts_browser_open_finance_refresh_v1',r=>{bankRequests++;ingested=true;job=status('running','3');return send(r,{ok:true,requested_at:now})});
  await h.ctx.route('**/rest/v1/rpc/lts_browser_budget_read_v441',r=>send(r,require('./lts_v441_fixture.cjs')()));
+ await h.ctx.route('**/rest/v1/rpc/lts_browser_cash_today_v242',r=>send(r,require('./lts_v458_cash_fixture.cjs')(now)));
  try{
   await h.page.goto(base+'/releases/v458/app.html',{waitUntil:'domcontentloaded'});
   await h.page.waitForFunction(()=>document.getElementById('shell')?.contentDocument?.body?.dataset.ltsBootState==='ready');
   frame=h.page.frames().find(f=>f.url().includes('/releases/v458/index.html'));assert(frame);
   await ready(frame);await h.page.waitForLoadState('networkidle');
   const financial=await frame.evaluate(()=>JSON.stringify(D)),before=await readers(frame);
+  assert.equal(before.cash.status,'ready');assert.equal(before.cash.data.cash,1000);assert.equal(before.cash.data.available_total,1500);
   const revision=await frame.evaluate(()=>__LTS_V227_TRANSPORT.revision);
   await h.page.screenshot({path:out+'/'+label+'-dashboard-before.png',fullPage:true});
   await frame.getByRole('button',{name:'Atualizar contas',exact:true}).click();
@@ -49,6 +51,7 @@ async function run(browser,engine,width){
   const origin=frame.locator('#v337Overview details').first();await origin.locator('summary').click();
   await h.page.screenshot({path:out+'/'+label+'-dashboard-origin.png',fullPage:true});await origin.locator('summary').click();
   await go(frame,'Fluxo Diário');await frame.waitForFunction(()=>!FLOWLOADING&&FLOWQ&&__LTS_V441_FLOW);
+  await frame.evaluate(()=>window.scrollTo(0,0));
   const flow=await frame.evaluate(()=>JSON.stringify(FLOWQ));assert.equal(await frame.locator('#v441FlowPremises').isVisible(),false);
   await h.page.screenshot({path:out+'/'+label+'-flow-closed.png',fullPage:true});
   await frame.getByLabel('Opções do Fluxo').click();
