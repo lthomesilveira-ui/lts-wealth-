@@ -458,7 +458,7 @@ BEGIN
   'digest',encode(sha256(convert_to(projection_result_v418::text,'UTF8')),'hex'))::text,true);
  RETURN projection_result_v418;
 END $function$
-
+;
 CREATE OR REPLACE FUNCTION public.lts_flow_classification_decision_v1(p_user_id uuid, p_event jsonb)
  RETURNS jsonb
  LANGUAGE sql

@@ -15,7 +15,7 @@ classified=cl.replace('SELECT coalesce((', 'SELECT coalesce(lts_recurring_privat
 (p/'build-after.sql').write_text(after)
 (p/'classifier-after.sql').write_text(classified)
 guard="\nDO $guard$ BEGIN\n IF md5(pg_get_functiondef('lts_projection_private_v412.build(uuid,date)'::regprocedure))<>'1656f562eed0cb8936252ec8ca9381cc' OR md5(pg_get_functiondef('public.lts_flow_classification_decision_v1(uuid,jsonb)'::regprocedure))<>'4bc0f47babbba8bf30fced74161cf19a' THEN RAISE EXCEPTION 'Predecessor changed; reconcile before applying';END IF;\nEND $guard$;\n"
-(p/'install.sql').write_text((p/'functions.sql').read_text()+guard+after+'\n'+classified)
+(p/'install.sql').write_text((p/'functions.sql').read_text()+guard+after+';\n'+classified)
 manifest={'version':'v469','original_build_md5':hashlib.md5(before.encode()).hexdigest(),'installed_build_md5':hashlib.md5(after.encode()).hexdigest(),'original_classifier_md5':hashlib.md5(cl.encode()).hexdigest(),'installed_classifier_md5':hashlib.md5(classified.encode()).hexdigest(),'files':{}}
 for f in ['functions.sql','build-after.sql','classifier-before.sql','classifier-after.sql','install.sql']:
  manifest['files'][f]=hashlib.sha256((p/f).read_bytes()).hexdigest()

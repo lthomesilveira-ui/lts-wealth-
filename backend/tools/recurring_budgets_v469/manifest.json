@@ -9,6 +9,6 @@
     "build-after.sql": "172242ee02924c8958aa15533f33ca48b11af75a02e2804135e2a8dc4f9f84fa",
     "classifier-before.sql": "b8a25a274b1bc2f61e95d9f76742cd156263962b7655819fdb115d784ea5b687",
     "classifier-after.sql": "7940e716ddc4d51778c0491665bbda9d10f0d980474d822d1b7b4e7d203329c7",
-    "install.sql": "6b3f3a5caab16cc009b7abc4bfc02132a412b9aa5ef92cd02d36cbd6a9f19228"
+    "install.sql": "57ebc9d664847a945ff2caa5a09869aa3c7bc1979558781783c2c18b4a2815d4"
   }
 }
