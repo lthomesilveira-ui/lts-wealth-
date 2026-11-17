@@ -1,0 +1,19 @@
+{
+  "target": "public.lts_flow_read_source_key_v247(uuid)",
+  "predecessor_md5": "b65080ab49a211a349b5125aa4c1e48a",
+  "installed_md5": "210c2fa4addef8668aed479e86892975",
+  "helper": "lts_read_private_v430.try_cache_put(uuid,text,date,date,date,jsonb,text)",
+  "helper_md5": "9c0d1ac15cb98696ef8fc98aca9ef6b6",
+  "financial_source_writes": false,
+  "frontend_changes": false,
+  "preserved": [
+    "return value",
+    "five-minute TTL",
+    "owner/day/range cache key",
+    "source epoch fence",
+    "bank freshness",
+    "scheduled-transfer revision",
+    "source errors",
+    "function metadata and ACL"
+  ]
+}
