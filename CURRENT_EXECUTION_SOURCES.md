@@ -1,13 +1,19 @@
 # Current execution sources
 
-Updated 8 November 2026. This index corrects navigation to current evidence; it
-does not certify that the product or all historical requests are complete.
+Updated 17 November 2026. This index locates current evidence; it does not
+certify that the product or all historical requests are complete. The private
+`Auditoria_Wealth_2026-11-14.json` retains dated continuations, the original
+backlog, owner decisions, observed regressions and the seven feedback items from
+17 November. Read its latest saved version before continuing. Preserve prior
+valid evidence and source-specific decisions; never reset the backlog from a
+conversation excerpt or an old version header.
 
 1. Read `AGENTS.md`, `UX_ACCEPTANCE.md` and, for Flow, `UX_FLOW_OPTIONS.md`.
 2. Read `mobile/current.json` for the published entry. Verify the live entry;
    repository head, a prepared release and an applied backend migration are
-   distinct states. At this audit the live UI is V425 and installed backend V428. Verify the current repository publication separately
-   from the installed migration and the live frontend; they can advance independently.
+   distinct states. Verify the current repository publication separately from
+   installed definitions and the authenticated live frontend; these advance
+   independently. The current entry is selected by `mobile/current.json`.
 3. Reconcile the current private `LTS_CONTINUAR.md`,
    `LTS_PENDENCIAS_ATUAIS_2026-10-27.csv`,
    `LTS_MAPA_ATUAL_DAS_15_PENDENCIAS_2026-11-07.md` and
