@@ -35,7 +35,7 @@ BEGIN
   'epoch',(SELECT epoch FROM public.lts_read_cache_epoch_v242 WHERE singleton=true),
   'card_source_key',lts_product_refresh_private_v415.card_source_key(p_user_id),'primary_hashes',primary_hashes,'profile',md5(profile::text));
 END $function$
-
+;
 DROP TRIGGER lts_review_input_v465_8a9422ecbf5b ON public.audit_log;
 DROP TRIGGER lts_review_input_v465_2b29f94c35c7 ON public.lts_product_read_cache;
 DROP TRIGGER lts_review_input_v465_9fad0bc3b99b ON public.lts_category_catalog;

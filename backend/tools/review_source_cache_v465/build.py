@@ -142,8 +142,8 @@ END $check$;
   statements.append(f'CREATE TRIGGER {name} AFTER INSERT OR UPDATE OR DELETE OR TRUNCATE ON {relation} FOR EACH STATEMENT EXECUTE FUNCTION {SCHEMA}.review_input_changed_v465();')
   statements.append(f'ALTER TABLE {relation} ENABLE ALWAYS TRIGGER {name};')
   statements.append(f"DO $capture$DECLARE target_oid oid:='{relation}'::regclass; actual text;BEGIN {shape} INTO actual;INSERT INTO {SCHEMA}.review_input_contract_v465 VALUES('{t['schema']}','{t['name']}',target_oid,actual,'{name}',(SELECT md5(oid::text||':'||xmin::text||':'||pg_get_triggerdef(oid)) FROM pg_trigger WHERE tgrelid=target_oid AND tgname='{name}'));END $capture$;")
- install=install_start+setup+trigger+'\n'+'\n'.join(statements)+'\n'+contract+'\n'+after+'\nCOMMIT;\n'
- rollback="BEGIN;\nSET LOCAL search_path TO '';\n"+original+'\n'
+ install=install_start+setup+trigger+'\n'+'\n'.join(statements)+'\n'+contract+'\n'+after+';\nCOMMIT;\n'
+ rollback="BEGIN;\nSET LOCAL search_path TO '';\n"+original+';\n'
  for t in TABLES:rollback+=f"DROP TRIGGER {trigger_name(t)} ON {t['schema']}.{t['name']};\n"
  rollback+=f"DROP FUNCTION {SCHEMA}.review_input_contract_ok_v465(jsonb);\nDROP FUNCTION {SCHEMA}.review_input_changed_v465();\nDROP TABLE {SCHEMA}.review_input_hash_cache_v465,{SCHEMA}.review_input_contract_v465,{SCHEMA}.review_input_epoch_v465;\nCOMMIT;\n"
  files={'guard-after.sql':after,'trigger.sql':trigger,'contract.sql':contract,'setup-cache.sql':setup,'install.sql':install,'rollback.sql':rollback}

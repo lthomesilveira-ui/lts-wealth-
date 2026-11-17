@@ -267,5 +267,5 @@ BEGIN
   'epoch',(SELECT epoch FROM public.lts_read_cache_epoch_v242 WHERE singleton=true),
   'card_source_key',lts_product_refresh_private_v415.card_source_key(p_user_id),'primary_hashes',primary_hashes,'profile',md5(profile::text));
 END $function$
-
+;
 COMMIT;
