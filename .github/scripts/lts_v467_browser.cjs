@@ -1,4 +1,4 @@
-+'use strict';process.env.LTS_FLOW_RELEASE='v467';
+'use strict';process.env.LTS_FLOW_RELEASE='v467';
 const {chromium,webkit}=require('playwright'),fs=require('node:fs'),assert=require('node:assert/strict'),crypto=require('node:crypto');
 const {setup}=require('./lts_v382_browser.cjs'),fixture=require('./lts_v463_fixture.cjs'),baseFixture=require('./lts_v379_fixtures.cjs');
 const base=process.env.LTS_BROWSER_BASE||'http://127.0.0.1:8788',out='qa/v467',now='2026-11-17T17:00:00Z';fs.mkdirSync(out,{recursive:true});

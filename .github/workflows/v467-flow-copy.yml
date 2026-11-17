@@ -1,4 +1,4 @@
-+name: V467 consistent pending receipt copy
+name: V467 consistent pending receipt copy
 on:
   pull_request:
     paths: ['releases/v467/**','backend/tools/flow_copy_v467/**','.github/scripts/lts_v467*','.github/workflows/v467-flow-copy.yml','mobile/current.json']
