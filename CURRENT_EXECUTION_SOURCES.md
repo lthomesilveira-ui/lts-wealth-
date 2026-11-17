@@ -1,5 +1,12 @@
 # Current execution sources
 
+The stable entry is selected by `mobile/current.json`. V466 is the current
+activation candidate, retaining the V463 customer controls and correcting
+expanded Flow copy and pending receipt labels. Backend V465 is tracked
+separately from frontend publication. Read the current private dated audit
+and observe the live entry before declaring acceptance; older headers are
+historical evidence.
+
 Updated 17 November 2026. This index locates current evidence; it does not
 certify that the product or all historical requests are complete. The private
 `Auditoria_Wealth_2026-11-14.json` retains dated continuations, the original
