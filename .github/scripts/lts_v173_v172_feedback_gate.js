@@ -77,6 +77,10 @@ async function run(browser,viewport,label){
   const version=await frame.evaluate(()=>window.__LTS_V173_V172_FEEDBACK);if(!version?.category_select||version?.base_version!=='v172')throw Error(label+': V173 contract missing');
 
   await route('Atualizações').click();
+  // The async update readers replace the form when they finish. Exercise the
+  // existing input only after that observed loading state has completed.
+  await frame.waitForFunction(()=>window.__LTS_V168_STATE?.updates?.loading===false&&window.__LTS_V168_STATE?.updates?.recurring&&window.__LTS_V168_STATE?.updates?.openFinance);
+  await page.waitForLoadState('networkidle');
   await frame.locator('#v168NlPhrase').fill('registrar entrada conta corrente Itaú 420,00 classificado como Família em 17/09/2030');
   await frame.locator('#v168NlPreview').click();
   const category=frame.locator('select#v168NlCategory');await category.waitFor({state:'visible'});
