@@ -1,0 +1,39 @@
+name: V458 bank product handoff
+on:
+  pull_request:
+    paths: ['releases/v458/**','backend/tools/bank_handoff_v458/**','.github/scripts/lts_v458*','.github/workflows/v458-bank-product-handoff.yml','mobile/current.json']
+permissions:
+  contents: read
+jobs:
+  handoff:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    container: mcr.microsoft.com/playwright:v1.58.2-noble
+    env:
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Immutable financial content and bounded handoff
+        run: |
+          python3 backend/tools/bank_handoff_v458/build.py --check
+          node .github/scripts/lts_v458_release_contract.cjs
+          node --test .github/scripts/lts_v458_refresh_test.cjs .github/scripts/lts_v458_bank_test.cjs .github/scripts/lts_v451_clock_test.cjs .github/scripts/lts_v458_transport_test.cjs
+      - name: Mobile and desktop Chromium and WebKit
+        run: |
+          npm install --no-save --package-lock=false playwright@1.58.2
+          python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/v458-http.log 2>&1 &
+          node .github/scripts/lts_v309_wait_http.cjs
+          node .github/scripts/lts_v458_browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v458-bank-product-handoff
+          retention-days: 14
+          path: qa/v458/
