@@ -45,7 +45,18 @@ def build(target):
         content = once(p.read_text(), "data.transaction_count+' compras · '", "data.transaction_count+(Number(data.transaction_count)===1?' compra · ':' compras · ')")
         content = once(content, "(data.unclassified_count??0)+' compras precisam de categoria.</span>", "(data.unclassified_count??0)+(Number(data.unclassified_count??0)===1?' compra precisa de categoria.':' compras precisam de categoria.')+'</span>")
         p.write_text(content)
-    provenance = {'release': 'v467', 'base_release': 'v466', 'scope': 'Consistent pending receipt copy across Actions; unchanged financial amounts, sources and confirmation states', 'financial_source_writes': False, 'authentication_changed': False, 'timeouts_changed': False, 'published_base_immutable': True, 'physical_mobile_validated': False}
+    recurring_copy = {' pagamento(s) a confirmar': ' a confirmar', 'Com pagamento a confirmar': 'Com movimentação a confirmar', 'Confira os meses sem previsão e os pagamentos ainda não identificados.': 'Confira as previsões e as movimentações a confirmar.', "awaiting:'Pagamento a confirmar'": "awaiting:'A confirmar'"}
+    counts = {old: 0 for old in recurring_copy}
+    for p in target.iterdir():
+        if p.suffix not in ['.js', '.html']:
+            continue
+        content = p.read_text()
+        for old, new in recurring_copy.items():
+            counts[old] += content.count(old)
+            content = content.replace(old, new)
+        p.write_text(content)
+    assert all(value >= 2 for value in counts.values()), counts
+    provenance = {'release': 'v467', 'base_release': 'v466', 'scope': 'Consistent pending receipt and recurring confirmation copy across Actions; unchanged financial amounts, sources and confirmation states', 'financial_source_writes': False, 'authentication_changed': False, 'timeouts_changed': False, 'published_base_immutable': True, 'physical_mobile_validated': False}
     (target / 'provenance.json').write_text(json.dumps(provenance, indent=2) + '\n')
     manifest = json.loads((BASE / 'manifest.json').read_text())
     manifest.update(release='v467', version='v467', base_release='v466', protected_manifest={'path': 'releases/v466/manifest.json', 'sha256': digest(BASE / 'manifest.json')})

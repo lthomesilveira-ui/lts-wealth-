@@ -20,7 +20,7 @@
    const toolbar=document.createElement('div');toolbar.className='lts-coverage-toolbar';
    const label=document.createElement('label');label.textContent='Mostrar ';
    const select=document.createElement('select');select.className='v168-btn';select.setAttribute('aria-label','Filtrar séries de projeção');
-   for(const [value,text] of [['issues','Pendências do ano'],['all','Todas as séries'],['gap','Com meses sem previsão'],['awaiting','Com pagamento a confirmar']]){
+   for(const [value,text] of [['issues','Pendências do ano'],['all','Todas as séries'],['gap','Com meses sem previsão'],['awaiting','Com movimentação a confirmar']]){
     const option=document.createElement('option');option.value=value;option.textContent=text;select.appendChild(option);
    }
    select.value=filters.get(year)||'issues';label.appendChild(select);toolbar.appendChild(label);

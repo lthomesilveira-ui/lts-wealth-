@@ -1,7 +1,7 @@
 {
   "release": "v467",
   "base_release": "v466",
-  "scope": "Consistent pending receipt copy across Actions; unchanged financial amounts, sources and confirmation states",
+  "scope": "Consistent pending receipt and recurring confirmation copy across Actions; unchanged financial amounts, sources and confirmation states",
   "financial_source_writes": false,
   "authentication_changed": false,
   "timeouts_changed": false,
