@@ -56,8 +56,13 @@ def build(target):
   old="}catch(e){if(token===sequence)d.error=d.scope?'Não foi possível carregar os lançamentos. Tente novamente.':String(e.message||e)}"
   assert part.count(old)==1
   part=part.replace(old,"}catch(e){if(token===sequence){d.deferred=String(e?.code)==='55000';d.error='Não foi possível carregar os lançamentos. Tente novamente.';}}")
-  listener="  window.addEventListener('lts:product-refresh-ready',()=>{\n   const d=state.detail;if(!d?.deferred||d.loading||d.deferredRetries>=1||d.route!==V||!D||N.classList.contains('hidden'))return;\n   openDetail(d.group,d.subgroup,d.range,d.expected,{query:d.query,scope:d.scope,visibleRows:d.visibleRows,deferredRetries:d.deferredRetries+1});\n  });\n"
-  p.write_text(s[:a]+part+listener+s[b:])
+  listener="  window.addEventListener('lts:product-refresh-ready',()=>{\n   const d=state.detail?.deferred?state.detail:deferredDetailRecovery;deferredDetailRecovery=null;\n   if(!d||d.loading||d.deferredRetries>=1||d.route!==V||!D||N.classList.contains('hidden')||d.recoverySession!==undefined&&(d.recoverySession!==cashGeneration()||d.recoveryAuth!==cashAuthEpoch||d.recoveryDay!==day()))return;\n   openDetail(d.group,d.subgroup,d.range,d.expected,{query:d.query,scope:d.scope,visibleRows:d.visibleRows,deferredRetries:d.deferredRetries+1});\n  });\n"
+  s=s[:a]+part+listener+s[b:]
+  s=s.replace('let dashboardFlight=null,dashboardSerial=0;','let dashboardFlight=null,dashboardSerial=0,deferredDetailRecovery=null;')
+  s=s.replace('function closeDetail(){sequence++;','function closeDetail(){deferredDetailRecovery=null;sequence++;')
+  s=s.replace("   if(state.detail)closeDetail();\n   cache.clear();dashboardSerial++;", "   const recovery=state.detail?.deferred&&!state.detail.loading&&state.detail.deferredRetries<1?{...state.detail,rows:[],recoverySession:cashGeneration(),recoveryAuth:cashAuthEpoch,recoveryDay:day()}:null;\n   if(state.detail)closeDetail();deferredDetailRecovery=recovery;\n   cache.clear();dashboardSerial++;")
+  s=s.replace('render=function(){if(cipoModal', 'render=function(){if(deferredDetailRecovery&&deferredDetailRecovery.route!==V)deferredDetailRecovery=null;if(cipoModal')
+  p.write_text(s)
  copies(target,"r.source_audit?.file||r.source_identity?.sheet||r.source_table||'Fonte registrada'", "r.source_audit?.file||r.source_identity?.sheet||'Extrato ou registro anterior'",2)
  copies(target,"+'<br>Referência: '+escape(r.source_ref||'—')", "",2)
  # Reuse the private uploader while preserving the exact financing task context.

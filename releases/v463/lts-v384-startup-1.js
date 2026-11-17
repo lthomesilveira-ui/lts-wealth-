@@ -3988,7 +3988,7 @@
   const previousRender=render,previousNav=renderNav,previousDashboard=dashboard,previousExpenses=despesas;
   const rawFetch=window.fetch.bind(window),inflight=new Map(),cache=new Map();
   const state=window.__LTS_V178_STATE={cash:{status:'idle'},planningUI:{status:'idle'},wealth:{status:'idle'},forecast:{status:'idle'},awards:{status:'idle'},dashboardReport:{status:'idle'},detail:null,errors:[],diagnostics:[],date:null};
-  let dashboardFlight=null,dashboardSerial=0;
+  let dashboardFlight=null,dashboardSerial=0,deferredDetailRecovery=null;
   let cashFlight=null,cashActive=null,cashDemand=null,cashRevision=0,cashAuthEpoch=0;
   const cashGeneration=()=>typeof BOOT!=='undefined'?BOOT.generation:(typeof D!=='undefined'?D:null);
   let cashSessionGeneration=cashGeneration(),cashSessionEpoch=cashAuthEpoch,cashCalendarDay=null;
@@ -4331,7 +4331,7 @@
   let sequence=0,lastFocus=null,cipoModal=null,cipoReturn=null;
   const detailHistory=[];
   const apartment='Apartamento · CIPÓ 396';
-  function closeDetail(){sequence++;detailHistory.length=0;state.detail=null;cipoReturn=null;document.getElementById('v178Drawer')?.remove();if(lastFocus?.isConnected)lastFocus.focus();lastFocus=null}
+  function closeDetail(){deferredDetailRecovery=null;sequence++;detailHistory.length=0;state.detail=null;cipoReturn=null;document.getElementById('v178Drawer')?.remove();if(lastFocus?.isConnected)lastFocus.focus();lastFocus=null}
   function closeCipo(){const current=cipoModal;cipoModal=null;current?.host.remove();if(current?.badge)current.badge.hidden=current.badgeHidden;if(current?.focus?.isConnected)current.focus.focus()}
   function cipoCurrent(c){return c===cipoModal&&c.host.isConnected&&c.route===V&&c.session===cashGeneration()&&c.epoch===cashAuthEpoch&&c.day===day()&&!!D&&!N.classList.contains('hidden')}
   async function openCipoReconciliation(wealth,force=false){
@@ -4477,7 +4477,8 @@
    finally{if(token===sequence){d.loading=false;drawRows();drawKnownSubgroups()}}
   }
   window.addEventListener('lts:product-refresh-ready',()=>{
-   const d=state.detail;if(!d?.deferred||d.loading||d.deferredRetries>=1||d.route!==V||!D||N.classList.contains('hidden'))return;
+   const d=state.detail?.deferred?state.detail:deferredDetailRecovery;deferredDetailRecovery=null;
+   if(!d||d.loading||d.deferredRetries>=1||d.route!==V||!D||N.classList.contains('hidden')||d.recoverySession!==undefined&&(d.recoverySession!==cashGeneration()||d.recoveryAuth!==cashAuthEpoch||d.recoveryDay!==day()))return;
    openDetail(d.group,d.subgroup,d.range,d.expected,{query:d.query,scope:d.scope,visibleRows:d.visibleRows,deferredRetries:d.deferredRetries+1});
   });
   function compositionOrigin(r){
@@ -4592,7 +4593,7 @@
   v175.expense.token=(v175.expense.token||0)+1;v175.expense.data=null;v175.expense.key='';v175.expense.loading=false;
   v175.monthly.token=(v175.monthly.token||0)+1;v175.monthly.data=null;v175.monthly.key='';v175.monthly.loading=false;
   dashboard=dashboard178;despesas=expenses178;
-  render=function(){if(cipoModal&&!cipoCurrent(cipoModal))closeCipo();if(state.detail&&state.detail.route!==V)closeDetail();const out=previousRender();after();return out};
+  render=function(){if(deferredDetailRecovery&&deferredDetailRecovery.route!==V)deferredDetailRecovery=null;if(cipoModal&&!cipoCurrent(cipoModal))closeCipo();if(state.detail&&state.detail.route!==V)closeDetail();const out=previousRender();after();return out};
   renderNav=function(){const out=previousNav();return out};
   document.addEventListener('visibilitychange',()=>{if(!document.hidden&&V==='Dashboard'&&state.date!==day())startDashboard(true)});
   S.auth.onAuthStateChange?.((event)=>{if(event==='SIGNED_IN'||event==='SIGNED_OUT'){closeCipo();state.hierarchyScope={};state.hierarchyExpanded=new Set();state.hierarchyFiltersOpen=false;}if(event==='SIGNED_IN'){closeDetail();cashAuthEpoch++;syncCashContext()}if(event==='SIGNED_OUT'){
@@ -4607,7 +4608,8 @@
   }});
   window.addEventListener('lts:data-invalidated',()=>{
    closeCipo();
-   if(state.detail)closeDetail();
+   const recovery=state.detail?.deferred&&!state.detail.loading&&state.detail.deferredRetries<1?{...state.detail,rows:[],recoverySession:cashGeneration(),recoveryAuth:cashAuthEpoch,recoveryDay:day()}:null;
+   if(state.detail)closeDetail();deferredDetailRecovery=recovery;
    cache.clear();dashboardSerial++;cashRevision++;cashDemand=null;
    for(const k of ['cash','wealth','forecast','planningUI','dashboardReport']){state[k].token=(state[k].token||0)+1;state[k].status='idle';state[k].data=null;state[k].parts=[]}
    // Invalidation may follow a successful HTTP response whose payload is unusable.
