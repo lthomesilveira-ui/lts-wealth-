@@ -1,0 +1,14 @@
+{
+  "version": "v469",
+  "original_build_md5": "1656f562eed0cb8936252ec8ca9381cc",
+  "installed_build_md5": "c73dc489c3771e5b8861569a2001f5b6",
+  "original_classifier_md5": "4bc0f47babbba8bf30fced74161cf19a",
+  "installed_classifier_md5": "9ccfe7ffb6974f7dfc61333da8b1c535",
+  "files": {
+    "functions.sql": "86cd2185ea038a57c2103437468fc8d93a6a6d00c50c317148d363a85f903f2f",
+    "build-after.sql": "172242ee02924c8958aa15533f33ca48b11af75a02e2804135e2a8dc4f9f84fa",
+    "classifier-before.sql": "b8a25a274b1bc2f61e95d9f76742cd156263962b7655819fdb115d784ea5b687",
+    "classifier-after.sql": "7940e716ddc4d51778c0491665bbda9d10f0d980474d822d1b7b4e7d203329c7",
+    "install.sql": "6b3f3a5caab16cc009b7abc4bfc02132a412b9aa5ef92cd02d36cbd6a9f19228"
+  }
+}
