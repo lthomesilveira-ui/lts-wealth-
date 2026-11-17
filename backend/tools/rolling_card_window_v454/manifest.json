@@ -1,0 +1,17 @@
+[
+  {
+    "signature": "lts_projection_private_v412.card_new_spend_provision(jsonb,date)",
+    "before": "671c515db478612f8f317c1559ad20db",
+    "after": "4755895d26b059d2cbf969b200d9ecb9"
+  },
+  {
+    "signature": "lts_projection_private_v412.calculate(jsonb,jsonb,jsonb,date)",
+    "before": "0b72f85595e0085bf61dbea8b9356ff4",
+    "after": "36e88d8f2482bd86bd24e3c129efb668"
+  },
+  {
+    "signature": "lts_product_refresh_private_v415.review_profile_v450()",
+    "before": "ed1586c39b1bd046b29303920a95a032",
+    "after": "61ffab594e8c04fc1c3dbb217afc2f26"
+  }
+]
