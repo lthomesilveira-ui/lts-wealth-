@@ -59,7 +59,7 @@ class PaymentScope(unittest.TestCase):
   first=detail({'payment':'card'},limit=2);second=detail({'payment':'card'},offset=2,limit=2)
   self.assertEqual(first['next_offset'],2);self.assertIsNone(second['next_offset'])
   self.assertEqual(len({r['key'] for r in first['rows']+second['rows']}),4)
-  self.assertEqual(detail(prefix="SET lts_test.user='00000000-0000-4000-8000-000000000099';")['total'],999)
+  self.assertEqual(detail(prefix="SET \"lts_test.user\"='00000000-0000-4000-8000-000000000099';")['total'],999)
  def test_06_old_cached_presentation_is_not_reused(self):
   sql(f"INSERT INTO lts_v229_read_cache VALUES('{U}','expenses_v251',current_date,'{FROM}','{TO}','{{\"old_presentation\":true}}',now(),'expenses-v353:1:'||current_date::text);")
   self.assertNotIn('old_presentation',report())
