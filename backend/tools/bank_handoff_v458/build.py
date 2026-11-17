@@ -50,6 +50,8 @@ RECOVERY_AFTER = """      if (!canRun()) return Promise.resolve();
       }
       if (deferredRecoveries >= MAX_TRANSIENT_RETRIES) return Promise.resolve();
       const token = generation;"""
+TRANSPORT_BEFORE = "const mutation=name!=='lts_browser_budget_save_v441'&&"
+TRANSPORT_AFTER = "const mutation=name!=='lts_browser_budget_save_v441'&&name!=='lts_browser_open_finance_refresh_v1'&&"
 
 
 def build(target):
@@ -57,15 +59,21 @@ def build(target):
     app = target / 'app.html'
     assert app.read_text().count('V454') == 5
     app.write_text(app.read_text().replace('V454', 'V458'))
-    changed = ['lts-v225-open-finance.js', 'lts-v415-product-refresh.js']
+    changed = ['lts-v225-open-finance.js', 'lts-v415-product-refresh.js',
+               'lts-v227-read-transport.js']
     replace_once(target / changed[0], BANK_BEFORE, BANK_AFTER)
     replace_once(target / changed[1], RECOVERY_BEFORE, RECOVERY_AFTER)
+    # This endpoint enqueues collection; it does not install a verified product.
+    # It remains a native, uncached and unreplayed write. Its product handoff
+    # above owns subsequent report invalidation, not enqueue acceptance.
+    replace_once(target / changed[2], TRANSPORT_BEFORE, TRANSPORT_AFTER)
     # The controller loads directly; the bank module loads in exactly one bundle.
-    original = (BASE / changed[0]).read_text()
-    bundles = [target / name for name in ['lts-v384-startup-1.js', 'lts-v384-startup-2.js']
-               if original in (target / name).read_text()]
-    assert len(bundles) == 1
-    replace_once(bundles[0], original, (target / changed[0]).read_text())
+    for component in [changed[0], changed[2]]:
+        original = (BASE / component).read_text()
+        bundles = [target / name for name in ['lts-v384-startup-1.js', 'lts-v384-startup-2.js']
+                   if original in (target / name).read_text()]
+        assert len(bundles) == 1
+        replace_once(bundles[0], original, (target / component).read_text())
     (target / 'provenance.json').write_text(json.dumps({
         'release': 'v458', 'base_release': 'v454',
         'scope': 'Coalesce bank collection with the existing complete-product refresh',

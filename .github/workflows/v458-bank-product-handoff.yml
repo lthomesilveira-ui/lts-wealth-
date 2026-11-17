@@ -24,7 +24,7 @@ jobs:
         run: |
           python3 backend/tools/bank_handoff_v458/build.py --check
           node .github/scripts/lts_v458_release_contract.cjs
-          node --test .github/scripts/lts_v458_refresh_test.cjs .github/scripts/lts_v458_bank_test.cjs .github/scripts/lts_v451_clock_test.cjs .github/scripts/lts_v451_transport_test.cjs
+          node --test .github/scripts/lts_v458_refresh_test.cjs .github/scripts/lts_v458_bank_test.cjs .github/scripts/lts_v451_clock_test.cjs .github/scripts/lts_v458_transport_test.cjs
       - name: Mobile and desktop Chromium and WebKit
         run: |
           npm install --no-save --package-lock=false playwright@1.58.2

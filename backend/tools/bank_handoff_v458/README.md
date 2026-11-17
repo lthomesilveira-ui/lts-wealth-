@@ -13,6 +13,10 @@ ready-version retry limit, authentication handling and failed-job action remain.
 No writer is replayed. Financial functions, source checks, HTTP/SQL deadlines,
 authorization and the single-heavy-reader transport are unchanged.
 
+The exact bank-collection enqueue RPC remains a native, uncached, unreplayed
+write. Enqueue acceptance no longer clears verified reports; completion joins
+the product controller above. Other mutations retain their invalidation rules.
+
 Build using `python3 backend/tools/bank_handoff_v458/build.py`; verify with
 `--check`. The public tests use invented data only. Native-device acceptance,
 real session observations and source documents are recorded privately.

@@ -120,7 +120,7 @@
   window.fetch=async function(input,init){
    const url=typeof input==='string'?input:input?.url||'',name=url.split('/').pop();
    if(!url.includes('/rest/v1/rpc/'))return native(input,init);
-   if(!readName.test(name)){const mutation=name!=='lts_browser_budget_save_v441'&&/_decision_|_update_|_save_|_apply_|_delete_|_refresh_|_confirm_|_upload_|_mutate_|_classify_|_classification_|_create_/.test(name);if(mutation)invalidate(false);const response=await native(input,init);if(mutation&&response.ok)invalidate();return response}
+   if(!readName.test(name)){const mutation=name!=='lts_browser_budget_save_v441'&&name!=='lts_browser_open_finance_refresh_v1'&&/_decision_|_update_|_save_|_apply_|_delete_|_refresh_|_confirm_|_upload_|_mutate_|_classify_|_classification_|_create_/.test(name);if(mutation)invalidate(false);const response=await native(input,init);if(mutation&&response.ok)invalidate();return response}
    const headers=new Headers(init?.headers||input?.headers),key=name+'|'+headers.get('Authorization')+'|'+String(init?.body||'');
    const cacheable=name!=='lts_browser_budget_read_v441'&&name!=='lts_browser_product_refresh_status_v415'&&!/open_finance_status_/.test(name);
    const saved=cacheable?completed.get(key):null;if(saved&&performance.now()-saved.at<ttl)return saved.response.clone();

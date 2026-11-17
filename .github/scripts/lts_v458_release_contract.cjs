@@ -6,7 +6,7 @@ const prior=JSON.parse(fs.readFileSync(base+'manifest.json')),manifest=JSON.pars
 assert.equal(manifest.release,'v458');assert.equal(manifest.base_release,'v454');
 assert.equal(manifest.protected_manifest.sha256,hash(base+'manifest.json'));
 assert.deepEqual([...Object.keys(manifest.files),'manifest.json'].sort(),fs.readdirSync(root).sort());
-const components=['lts-v225-open-finance.js','lts-v415-product-refresh.js'];
+const components=['lts-v225-open-finance.js','lts-v415-product-refresh.js','lts-v227-read-transport.js'];
 const changed=new Set(['app.html',...components,'lts-v384-startup-1.js','lts-v384-startup-2.js','provenance.json']);
 for(const[name,expected]of Object.entries(prior.files)){
  assert.equal(hash(base+name),expected,'Protected predecessor '+name);
