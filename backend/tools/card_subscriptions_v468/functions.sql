@@ -211,7 +211,7 @@ BEGIN
    coalesce(known.amount,0) baseline_amount,
    coalesce((cy.cycle->>'due_date')::date,
     public.lts_card_projection_date_v370(p_user_id,f.family,m.cash_month,
-     m.cash_month+least(f.due_day,extract(day FROM m.cash_month+interval '1 month-1 day')::int)-1,NULL)) proposed_due
+     m.cash_month+least(f.due_day,extract(day FROM m.cash_month+interval '1 month -1 day')::int)-1,NULL)) proposed_due
   FROM families f CROSS JOIN months m
   CROSS JOIN LATERAL(SELECT min(x::text)::jsonb card,count(*) card_count
    FROM jsonb_array_elements(cards->'cards')x WHERE x->>'family'=f.family)c
@@ -221,7 +221,7 @@ BEGIN
    AND date_trunc('month',(x->>'due_date')::date)::date=m.cash_month)cy
   CROSS JOIN LATERAL(SELECT sum(abs((b->>'signed_amount')::numeric)) amount
    FROM jsonb_array_elements(p_baseline)b
-   WHERE (b->>'event_date')::date BETWEEN m.cash_month AND (m.cash_month+interval '1 month-1 day')::date
+   WHERE (b->>'event_date')::date BETWEEN m.cash_month AND (m.cash_month+interval '1 month -1 day')::date
     AND (b->>'signed_amount')::numeric<0
     AND public.lts_card_family_v226(b->>'description',b->>'account')=f.family)known
  ), inputs AS(
