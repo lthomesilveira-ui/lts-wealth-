@@ -1,0 +1,10 @@
+SET check_function_bodies=off;
+DO $roles$ BEGIN IF NOT EXISTS(SELECT 1 FROM pg_roles WHERE rolname='anon') THEN CREATE ROLE anon;END IF;
+IF NOT EXISTS(SELECT 1 FROM pg_roles WHERE rolname='authenticated') THEN CREATE ROLE authenticated;END IF;END $roles$;
+CREATE SCHEMA lts_product_refresh_private_v415;
+CREATE TABLE lts_product_refresh_private_v415.queue(user_id uuid,state text);
+CREATE TABLE public.projecao_op(id bigint GENERATED ALWAYS AS IDENTITY,usuario_id uuid,dados jsonb);
+CREATE TABLE public.evento_base(usuario_id uuid,idx integer,dados jsonb);
+CREATE TABLE public.lts_open_finance_staging(id uuid PRIMARY KEY,user_id uuid,resource_type text,currency text,institution_code text,description_raw text,posting_date date,signed_amount numeric,occurred_at timestamptz,provider_deleted_at timestamptz,raw_hash text,normalized_payload jsonb,raw_payload jsonb);
+CREATE TABLE public.lts_v178_review_decision(user_id uuid,source_table text,source_ref text,category_label text,property_code text,decision_basis text);
+CREATE FUNCTION public.lts_forecast_series_key_v1(text) RETURNS text LANGUAGE sql IMMUTABLE SET search_path='' AS $$SELECT lower(trim($1))$$;
