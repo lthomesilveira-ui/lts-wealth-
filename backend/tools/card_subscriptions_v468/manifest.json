@@ -1,0 +1,12 @@
+{
+  "version": "v468",
+  "scope": "specific owner-approved card subscriptions",
+  "original_build_md5": "b5c214f5a8e1f54c7a82038bedbc03a1",
+  "installed_build_md5": "1656f562eed0cb8936252ec8ca9381cc",
+  "files": {
+    "functions.sql": "634106f6cedbf0baede6febcd79cbad990138105406ac08d154503e95bf40160",
+    "build-before.sql": "896759dafe04ac1fb2b705773ec372bb1014a7ae3d765409415bfd80827af59b",
+    "build-after.sql": "e98b64574faf05a4ff79c1c4e645abae278d1e5394cb02c30a6cdb7821fde495",
+    "install.sql": "821bb64fa953f24cf38a2c9b3e97e77dd7456820bfcc2643adacde615e743dc5"
+  }
+}
