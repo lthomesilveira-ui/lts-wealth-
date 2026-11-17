@@ -1,0 +1,15 @@
+{
+  "source": "public.lts_recurring_receipt_identities_v303(uuid,date)",
+  "source_before_md5": "fbb5db9c22d8b9e8de6137ea3ebd37d1",
+  "source_after_md5": "e9e929e7dfe951dc6f19dd032a2f91f0",
+  "profile_before_md5": "219dba6201aa21e8603b9959b7c7c32d",
+  "profile_after_md5": "307c43cfe2b9ecc89f60eb95b6c77c45",
+  "helper": "lts_receipt_private_v460.utility_receipts(uuid,date)",
+  "helper_md5": "854d3166b48e309d9216ca83423fe2ee",
+  "existing_profile_entries_changed": 0,
+  "new_closed_profile_producers": 2,
+  "financial_writes": false,
+  "new_public_permissions": false,
+  "timeouts_changed": false,
+  "helper_security": "invoker/private/read-only"
+}
