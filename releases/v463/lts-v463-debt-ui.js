@@ -22,7 +22,7 @@
     if(vehicle){const market=Number(j.wealth.assets.volvo_xc40.market_central);if(Number.isFinite(market))vehicle.querySelector('strong').textContent=money(market-x.balance);const fact=[...vehicle.querySelectorAll('.v168-fact')].find(a=>/Financiamento na contratação|Saldo para quitação/.test(a.querySelector('span')?.textContent||''));if(fact){fact.querySelector('span').textContent='Saldo devedor estimado';fact.querySelector('b').textContent=money(x.balance);}vehicle.querySelectorAll('.v463-debt-basis').forEach(a=>a.remove());vehicle.append(basis(x));}
    }
    if(V==='Atualizações'){
-    const task=document.getElementById('v365WealthTasks');if(task){const h=task.querySelector('h2'),p=task.querySelector('p'),button=task.querySelector('button');h.textContent='Atualizar extrato do financiamento da Volvo';p.textContent='Usamos a base anterior e '+x.paidCount+' parcelas pagas para estimar o saldo. Envie uma posição recente quando estiver disponível.';if(button){button.textContent='Enviar extrato atualizado';button.onclick=()=>document.querySelector('.v168-updates [data-v168-upload]')?.click();}}
+    const task=document.getElementById('v365WealthTasks');if(task){const h=task.querySelector('h2'),p=task.querySelector('p'),button=task.querySelector('button');h.textContent='Atualizar extrato do financiamento da Volvo';p.textContent='Usamos a base anterior e '+x.paidCount+' parcelas pagas para estimar o saldo. Envie uma posição recente quando estiver disponível.';if(button){button.textContent='Enviar extrato atualizado';button.onclick=()=>window.__LTS_V168_COMPLETE_REVIEW.openVolvoStatement();}}
    }
   }
   render=function(){const result=previous.apply(this,arguments);paint();return result;};window.__LTS_V463_DEBT={installed:true,paint};paint();

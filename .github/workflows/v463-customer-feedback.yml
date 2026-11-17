@@ -2,6 +2,9 @@ name: V463 customer feedback acceptance
 on:
   pull_request:
     paths: ['releases/v463/**','backend/tools/product_feedback_v463/**','.github/scripts/lts_v463*','.github/workflows/v463-customer-feedback.yml','mobile/current.json']
+concurrency:
+  group: v463-customer-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
 permissions:
   contents: read
 jobs:

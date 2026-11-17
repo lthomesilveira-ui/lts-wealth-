@@ -60,6 +60,17 @@ def build(target):
   p.write_text(s[:a]+part+listener+s[b:])
  copies(target,"r.source_audit?.file||r.source_identity?.sheet||r.source_table||'Fonte registrada'", "r.source_audit?.file||r.source_identity?.sheet||'Extrato ou registro anterior'",2)
  copies(target,"+'<br>Referência: '+escape(r.source_ref||'—')", "",2)
+ # Reuse the private uploader while preserving the exact financing task context.
+ copies(target,"function openUpload(bank){const bg=modal('Enviar extrato bancário','O arquivo fica privado e entra na trilha de conciliação.',", "function openUpload(bank,loan=false){const bg=modal(loan?'Atualizar financiamento da Volvo':'Enviar extrato bancário','O arquivo será recebido para revisão.',",2)
+ copies(target,"'<div class=\"v168-upload\"><label>Banco<select id=\"v168UpBank\">'+['Bradesco','Itaú','C6'].map(x=>'<option '+(x===bank?'selected':'')+'>'+x+'</option>').join('')+'</select></label><label>Data de referência", "'<div class=\"v168-upload\">'+(loan?'<label>Banco ou financeira (opcional)<input id=\"v168UpBank\" type=\"text\" maxlength=\"120\"></label>':'<label>Banco<select id=\"v168UpBank\">'+['Bradesco','Itaú','C6'].map(x=>'<option '+(x===bank?'selected':'')+'>'+x+'</option>').join('')+'</select></label>')+'<label>Data de referência",2)
+ copies(target,"true);bg.querySelector('#v168UpSend').onclick=()=>uploadStatement(bg)}", "true);bg.dataset.volvoStatement=loan?'true':'false';bg.querySelector('#v168UpSend').onclick=()=>uploadStatement(bg)}\n    window.__LTS_V168_COMPLETE_REVIEW.openVolvoStatement=()=>openUpload(null,true);",2)
+ copies(target,"const bank=bg.querySelector('#v168UpBank')?.value,ref=bg.querySelector('#v168UpDate')?.value;", "const bank=bg.querySelector('#v168UpBank')?.value?.trim().slice(0,120),ref=bg.querySelector('#v168UpDate')?.value,isLoan=bg.dataset.volvoStatement==='true';",2)
+ copies(target,"if(!['Bradesco','Itaú','C6'].includes(bank))return modalMsg", "if(!isLoan&&!['Bradesco','Itaú','C6'].includes(bank))return modalMsg",2)
+ copies(target,"p_task_context:{source:'v183_guided_bank_statement',document_type:'bank_statement',institution:bank,reference_date:ref,requested_action:'ingest_reconcile',uploaded_at:new Date().toISOString()}", "p_task_context:{source:isLoan?'v463_volvo_statement':'v183_guided_bank_statement',document_type:isLoan?'financing_statement':'bank_statement',...(isLoan?{commitment_id:'volvo'}:{}),institution:bank||null,reference_date:ref,requested_action:isLoan?'review_debt_position':'ingest_reconcile',uploaded_at:new Date().toISOString()}",2)
+ copies(target,"Extrato recebido para revisão · protocolo '+reg.inbox_id+'. Nenhum lançamento financeiro foi criado.", "Documento recebido. A atualização será conferida antes de alterar o saldo.",2)
+ copies(target,"Extrato recebido · protocolo '+reg.inbox_id+'. O arquivo foi preservado; atualize a tela para conferir a fila de revisão.", "Documento recebido. Consulte o andamento em Ações.",2)
+ copies(target,'Reconciliadas: ','Gastos confirmados: ')
+ copies(target,' · Com provisórias: ',' · Incluindo valores a conferir: ')
  # Plain language for received history and genuinely unconfirmed payments.
  labels={
  'Faturas com documento, ainda sem conciliação operacional':'Faturas com pagamento a conferir',

@@ -400,14 +400,15 @@
 
     function modal(title,subtitle,body,small){document.getElementById('v168Modal')?.remove();const bg=document.createElement('div');bg.className='v168-modal-bg';bg.id='v168Modal';bg.innerHTML='<div class="v168-modal '+(small?'small':'')+'" role="dialog" aria-modal="true"><h2>'+esc(title)+'</h2><p>'+esc(subtitle||'')+'</p>'+body+'<div id="v168ModalMsg"></div><div class="v168-modal-actions"><button class="v168-btn" data-v168-close>Fechar</button></div></div>';document.body.appendChild(bg);const close=()=>bg.remove();bg.onclick=x=>{if(x.target===bg)close()};bg.querySelector('[data-v168-close]').onclick=close;return bg}
     function modalMsg(bg,msg,ok){const x=bg.querySelector('#v168ModalMsg');x.className=ok?'v168-modal-ok':'v168-modal-error';x.textContent=msg}
-    function openUpload(bank){const bg=modal('Enviar extrato bancário','O arquivo fica privado e entra na trilha de conciliação.','<div class="v168-upload"><label>Banco<select id="v168UpBank">'+['Bradesco','Itaú','C6'].map(x=>'<option '+(x===bank?'selected':'')+'>'+x+'</option>').join('')+'</select></label><label>Data de referência<input id="v168UpDate" type="date" value="'+today()+'"></label><label>Arquivo<input id="v168UpFile" type="file" accept=".pdf,.png,.jpg,.jpeg,.csv,.txt,.tsv,.xlsx,.xls,application/pdf,image/*,text/*"></label><button class="v168-btn primary" id="v168UpSend">Enviar com segurança</button></div>',true);bg.querySelector('#v168UpSend').onclick=()=>uploadStatement(bg)}
+    function openUpload(bank,loan=false){const bg=modal(loan?'Atualizar financiamento da Volvo':'Enviar extrato bancário','O arquivo será recebido para revisão.','<div class="v168-upload">'+(loan?'<label>Banco ou financeira (opcional)<input id="v168UpBank" type="text" maxlength="120"></label>':'<label>Banco<select id="v168UpBank">'+['Bradesco','Itaú','C6'].map(x=>'<option '+(x===bank?'selected':'')+'>'+x+'</option>').join('')+'</select></label>')+'<label>Data de referência<input id="v168UpDate" type="date" value="'+today()+'"></label><label>Arquivo<input id="v168UpFile" type="file" accept=".pdf,.png,.jpg,.jpeg,.csv,.txt,.tsv,.xlsx,.xls,application/pdf,image/*,text/*"></label><button class="v168-btn primary" id="v168UpSend">Enviar com segurança</button></div>',true);bg.dataset.volvoStatement=loan?'true':'false';bg.querySelector('#v168UpSend').onclick=()=>uploadStatement(bg)}
+    window.__LTS_V168_COMPLETE_REVIEW.openVolvoStatement=()=>openUpload(null,true);
     async function uploadStatement(bg){
       const file=bg.querySelector('#v168UpFile')?.files?.[0],button=bg.querySelector('#v168UpSend');
       if(!button||button.dataset.uploadState==='busy'||button.dataset.uploadState==='registered'||button.dataset.uploadState==='uncertain')return;
-      const bank=bg.querySelector('#v168UpBank')?.value,ref=bg.querySelector('#v168UpDate')?.value;
+      const bank=bg.querySelector('#v168UpBank')?.value?.trim().slice(0,120),ref=bg.querySelector('#v168UpDate')?.value,isLoan=bg.dataset.volvoStatement==='true';
       if(!file)return modalMsg(bg,'Escolha um arquivo.',false);
       if(!Number.isFinite(file.size)||file.size<=0||file.size>52428800)return modalMsg(bg,'Escolha um arquivo de até 50 MB, com conteúdo.',false);
-      if(!['Bradesco','Itaú','C6'].includes(bank))return modalMsg(bg,'Escolha o banco deste documento.',false);
+      if(!isLoan&&!['Bradesco','Itaú','C6'].includes(bank))return modalMsg(bg,'Escolha o banco deste documento.',false);
       if(!/^\d{4}-\d\d-\d\d$/.test(ref||'')||Number.isNaN(Date.parse(ref+'T12:00:00Z'))||new Date(ref+'T12:00:00Z').toISOString().slice(0,10)!==ref)return modalMsg(bg,'Informe uma data de referência válida para o documento.',false);
       const fields=['#v168UpFile','#v168UpBank','#v168UpDate'].map(id=>bg.querySelector(id)).filter(Boolean);
       button.dataset.uploadState='busy';button.disabled=true;button.textContent='Enviando…';fields.forEach(x=>x.disabled=true);
@@ -421,13 +422,13 @@
         if(se)throw Error(se.message);
         uploaded=true;registrationStarted=true;
         const inputType=file.type==='application/pdf'||/\.pdf$/i.test(file.name)?'pdf':file.type?.startsWith('image/')?'photo':'file';
-        const {data:reg,error:re}=await S.rpc('lts_browser_register_document_v2',{p_storage_path:path,p_original_name:file.name,p_mime_type:file.type||'application/octet-stream',p_size_bytes:file.size,p_input_type:inputType,p_task_context:{source:'v183_guided_bank_statement',document_type:'bank_statement',institution:bank,reference_date:ref,requested_action:'ingest_reconcile',uploaded_at:new Date().toISOString()}});
+        const {data:reg,error:re}=await S.rpc('lts_browser_register_document_v2',{p_storage_path:path,p_original_name:file.name,p_mime_type:file.type||'application/octet-stream',p_size_bytes:file.size,p_input_type:inputType,p_task_context:{source:isLoan?'v463_volvo_statement':'v183_guided_bank_statement',document_type:isLoan?'financing_statement':'bank_statement',...(isLoan?{commitment_id:'volvo'}:{}),institution:bank||null,reference_date:ref,requested_action:isLoan?'review_debt_position':'ingest_reconcile',uploaded_at:new Date().toISOString()}});
         if(re||reg?.ok!==true||!reg.inbox_id)throw Error(re?.message||'O registro não devolveu confirmação.');
         registered=true;button.dataset.uploadState='registered';
-        modalMsg(bg,'Extrato recebido para revisão · protocolo '+reg.inbox_id+'. Nenhum lançamento financeiro foi criado.',true);
+        modalMsg(bg,'Documento recebido. A atualização será conferida antes de alterar o saldo.',true);
         button.remove();st.updates.recurring=null;
         try{await ensureUpdates(true)}catch{
-          modalMsg(bg,'Extrato recebido · protocolo '+reg.inbox_id+'. O arquivo foi preservado; atualize a tela para conferir a fila de revisão.',true);
+          modalMsg(bg,'Documento recebido. Consulte o andamento em Ações.',true);
         }
       }catch(error){
         // A timeout can occur after a committed registration. Never delete the
