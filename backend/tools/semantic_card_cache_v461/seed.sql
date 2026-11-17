@@ -1,0 +1,4 @@
+TRUNCATE public.lts_open_finance_staging,public.card_invoices,public.lts_card_document_supplement_v234,public.lts_card_documentary_payment_link_v272,public.lts_card_settlement_expense_contract_v273,public.lts_v229_read_cache,lts_product_refresh_private_v415.queue;
+UPDATE public.lts_read_cache_epoch_v242 SET epoch=1;
+INSERT INTO lts_product_refresh_private_v415.queue VALUES('00000000-0000-4000-8000-000000000001','ready');
+INSERT INTO public.lts_open_finance_staging VALUES('00000000-0000-4000-8000-000000000002','00000000-0000-4000-8000-000000000001','00000000-0000-4000-8000-000000000003','2026-11-17T10:00:00Z','2026-11-17T10:00:00Z','synthetic-hash','{"payment":{"status":"POSTED","amount":123.45}}','{"status":"POSTED","payments":[123.45]}',-123.45,'2026-11-17','BRL',null,'card_transaction','synthetic','{"future":1}');

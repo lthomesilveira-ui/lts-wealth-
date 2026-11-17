@@ -1,0 +1,26 @@
+{
+  "functions": {
+    "lts_product_refresh_private_v415.card_source_key(uuid)": {
+      "before": "5fc273e25705711595caa96fee9f691d",
+      "after": "634d70ed1d1a21967b9358ffc2bd6e6e"
+    },
+    "public.lts_c6_completeness_state_v269(uuid)": {
+      "before": "d0e199988d394dd3e875f8c059933fe7",
+      "after": "64ba10c612e4641199ee10de7490ffba"
+    },
+    "lts_product_refresh_private_v415.review_profile_v450()": {
+      "before": "307c43cfe2b9ecc89f60eb95b6c77c45",
+      "after": "43ff6694dea1f02138fe570eaff6aaec"
+    }
+  },
+  "excluded_bookkeeping_fields": [
+    "sync_run_id",
+    "last_seen_at",
+    "updated_at"
+  ],
+  "profile_pins_updated": 2,
+  "other_profile_changes": false,
+  "financial_writes": false,
+  "permissions_changed": false,
+  "timeouts_changed": false
+}
