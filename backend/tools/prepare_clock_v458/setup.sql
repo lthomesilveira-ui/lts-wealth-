@@ -1,0 +1,10 @@
+create schema auth; create schema lts_product_refresh_private_v415; create schema lts_projection_private_v412;
+create table auth.users(id uuid primary key); insert into auth.users values ('00000000-0000-0000-0000-000000000001');
+create table public.lts_read_cache_epoch_v242(singleton boolean,epoch bigint); insert into public.lts_read_cache_epoch_v242 values(true,1);
+create table lts_product_refresh_private_v415.queue(user_id uuid primary key, request_version bigint default 1, completed_version bigint default 0,state text default 'pending',attempts int default 0,requested_at timestamptz default clock_timestamp(), next_attempt_at timestamptz, started_at timestamptz,lease_expires_at timestamptz,last_error_code text, claim_token uuid,claimed_version bigint,claimed_epoch bigint);
+create function lts_product_refresh_private_v415.allowed_owner(uuid) returns boolean language sql as 'select true';
+create function lts_product_refresh_private_v415.cache_info(uuid) returns jsonb language sql as 'select ''{"current":false}''::jsonb';
+create function lts_projection_private_v412.owner_policy(uuid) returns jsonb language sql as 'select null::jsonb';
+create function lts_projection_private_v412.reference_state(uuid) returns jsonb language sql as 'select null::jsonb';
+create function lts_projection_private_v412.read_build_cache_v438(uuid,date,jsonb) returns jsonb language sql as 'select null::jsonb';
+create function lts_product_refresh_private_v415.enqueue(uuid,text,boolean) returns jsonb language plpgsql as $$ begin perform pg_sleep(0.01); insert into lts_product_refresh_private_v415.queue(user_id,next_attempt_at) values($1,clock_timestamp()) on conflict do nothing; return '{}'::jsonb; end $$;
