@@ -1,0 +1,11 @@
+{
+  "release": "v463",
+  "base_release": "v458",
+  "scope": "Customer Flow, meaningful categories, card/account scopes and accurate detail failure states",
+  "backend_reader_dependency": "expense_payment_scope_v464",
+  "financial_source_writes": false,
+  "authentication_changed": false,
+  "timeouts_changed": false,
+  "published_base_immutable": true,
+  "physical_mobile_validated": false
+}
