@@ -24,6 +24,7 @@ jobs:
       PGPORT: '5432'
       PGUSER: postgres
       PGPASSWORD: synthetic-test-only
+      PGTZ: America/Sao_Paulo
       PYTHONDONTWRITEBYTECODE: '1'
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262

@@ -43,7 +43,10 @@ def hold(sql):
 
 def finish(proc):
     proc.wait(timeout=5)
-    assert proc.returncode == 0, proc.stderr.read()
+    error = proc.stderr.read()
+    proc.stdout.close()
+    proc.stderr.close()
+    assert proc.returncode == 0, error
 
 
 class FlowMemo(unittest.TestCase):
@@ -51,6 +54,7 @@ class FlowMemo(unittest.TestCase):
     def setUpClass(cls):
         build.build()
         subprocess.run(['createdb', DATABASE], check=True, capture_output=True)
+        assert command('SHOW TimeZone;') == 'America/Sao_Paulo', 'Fixture must use the product calendar'
         setup = (ROOT / 'setup.sql').read_text()
         # CI's service may already have the fixture-only roles from another job.
         for role in ['service_role', 'anon', 'authenticated']:
