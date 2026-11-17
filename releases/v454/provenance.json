@@ -1,0 +1,8 @@
+{
+  "release": "v454",
+  "base_release": "v451",
+  "scope": "Rolling card new-spend window; existing obligations retained",
+  "raw_financial_writers_changed": false,
+  "authentication_changed": false,
+  "physical_device_validated": false
+}
