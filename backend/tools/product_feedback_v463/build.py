@@ -76,6 +76,14 @@ def build(target):
  copies(target,"Extrato recebido · protocolo '+reg.inbox_id+'. O arquivo foi preservado; atualize a tela para conferir a fila de revisão.", "Documento recebido. Consulte o andamento em Ações.",2)
  copies(target,'Reconciliadas: ','Gastos confirmados: ')
  copies(target,' · Com provisórias: ',' · Incluindo valores a conferir: ')
+ # Source identities stay in the canonical row and private audit, never in report copy.
+ copies(target,"    if(row.source_ref){const reference=document.createElement('details');reference.className='v231-record-reference';const label=document.createElement('summary');label.textContent='Referência do registro';const value=document.createElement('small');value.textContent='Identificador: '+row.source_ref;reference.append(label,value);cell?.appendChild(reference)}",'',2)
+ copies(target,'<p class="v386-debt-basis">Parcelas futuras e valores financiados na contratação não são somados aos saldos devedores.</p>','')
+ copies(target,'Análise por período, categoria, contexto, cartões e lançamentos.','Consulte seus gastos por período, categoria e forma de pagamento.')
+ copies(target,'Despesas por pessoa/contexto ou natureza','Despesas por categoria e pessoa',2)
+ copies(target,'Por pessoa/contexto','Por pessoa')
+ copies(target,'Por natureza','Por categoria')
+ copies(target,'As duas visões reorganizam os mesmos lançamentos; elas não são blocos a somar entre si. A organização usa os nomes dos grupos do resumo; eles não confirmam, por si só, a pessoa de cada lançamento.','Toque em uma categoria ou pessoa para ver os lançamentos.',2)
  # Plain language for received history and genuinely unconfirmed payments.
  labels={
  'Faturas com documento, ainda sem conciliação operacional':'Faturas com pagamento a conferir',
