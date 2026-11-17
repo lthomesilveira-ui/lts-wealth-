@@ -1,0 +1,12 @@
+{
+  "source": "public.lts_realized_bank_sources_v238(uuid)",
+  "source_before_md5": "02696060487b81ddf0592be23a2e044f",
+  "source_after_md5": "c0a390f6b415cde4fc47225bed44ffdf",
+  "profile_before_md5": "61ffab594e8c04fc1c3dbb217afc2f26",
+  "profile_after_md5": "219dba6201aa21e8603b9959b7c7c32d",
+  "proof_dependency_md5": "f80d94725ee68e46300b5fbcd4f387fd",
+  "profile_pin_changes": 1,
+  "financial_source_writes": false,
+  "existing_contract_proof_required": true,
+  "timeouts_and_permissions_preserved": true
+}
