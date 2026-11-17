@@ -53,7 +53,7 @@ CREATE OR REPLACE FUNCTION lts_recurring_private_v469.calculate(plan jsonb,base 
 RETURNS jsonb LANGUAGE plpgsql IMMUTABLE SET search_path=''
 AS $f$
 DECLARE horizon date:=(base->>'horizon_end')::date; ev jsonb:='[]'; rr jsonb:=coalesce(base->'replacement_refs','[]');
- series jsonb:=base->'series'; warnings jsonb:=base->'warnings'; e jsonb;s jsonb;r jsonb;c jsonb;x jsonb;
+ series jsonb:=base->'series'; warnings jsonb:=base->'warnings'; e jsonb;r jsonb;c jsonb;
  m date;due date; target numeric;known numeric;extra numeric;periods jsonb;annual jsonb;cnt int;bad int;ident text;
 BEGIN
  IF plan IS NULL THEN RETURN base;END IF;
@@ -131,14 +131,14 @@ END $f$;
 CREATE OR REPLACE FUNCTION lts_recurring_private_v469.append_result(u uuid,asof date,base jsonb,cards jsonb,baseline jsonb)
 RETURNS jsonb LANGUAGE plpgsql STABLE SET search_path='' SET TimeZone='America/Sao_Paulo'
 AS $f$
-DECLARE plan jsonb:=lts_recurring_private_v469.owner_plan(u); calendar jsonb;paid jsonb;r jsonb;horizon date:=(base->>'horizon_end')::date;
+DECLARE plan jsonb:=lts_recurring_private_v469.owner_plan(u); calendar jsonb;paid jsonb;school_source jsonb;horizon date:=(base->>'horizon_end')::date;
 BEGIN
  IF plan IS NULL THEN RETURN base;END IF;
  IF cards IS NULL THEN cards:=public.lts_card_cycles_v226(u);END IF;
  -- Reject a changed future school source instead of overwriting a user edit.
- FOR r IN SELECT value FROM jsonb_array_elements(plan->'school_sources') WHERE (value->>'event_date')::date>asof LOOP
-  IF NOT EXISTS(SELECT 1 FROM jsonb_array_elements(baseline)b WHERE b->>'source_ref'=r->>'source_ref'
-   AND b->>'event_date'=r->>'event_date' AND b->>'account'=plan->>'school_account'
+ FOR school_source IN SELECT value FROM jsonb_array_elements(plan->'school_sources') WHERE (value->>'event_date')::date>asof LOOP
+  IF NOT EXISTS(SELECT 1 FROM jsonb_array_elements(baseline)b WHERE b->>'source_ref'=school_source->>'source_ref'
+   AND b->>'event_date'=school_source->>'event_date' AND b->>'account'=plan->>'school_account'
    AND (b->>'signed_amount')::numeric=-(plan->>'school_total_brl')::numeric AND b->>'description'=plan->>'school_original_description')
   THEN RAISE EXCEPTION 'Uma previsão da escola foi alterada. Confira as datas e os valores.';END IF;
  END LOOP;
