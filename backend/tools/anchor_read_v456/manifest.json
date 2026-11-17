@@ -1,0 +1,15 @@
+{
+  "target": "public.lts_apply_current_liquidity_anchor_v1(uuid)",
+  "predecessor_md5": "9c49edc420a9661d2dfe5bef45db9371",
+  "installed_md5": "4452a275c50044bb89ac5ab8514a90aa",
+  "financial_source_writes": false,
+  "frontend_changes": false,
+  "preserved": [
+    "source and payload fingerprints",
+    "complete rebuild on a miss",
+    "write lock and post-lock recheck on a miss",
+    "return values",
+    "unavailable-source errors",
+    "permissions and function configuration"
+  ]
+}

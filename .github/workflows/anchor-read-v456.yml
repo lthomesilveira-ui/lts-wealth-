@@ -1,0 +1,38 @@
+name: Canonical anchor read contention QA
+on:
+  pull_request:
+    paths: ['backend/tools/anchor_read_v456/**','.github/workflows/anchor-read-v456.yml']
+permissions:
+  contents: read
+jobs:
+  native-postgres:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: synthetic-test-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: synthetic-test-only
+      PGTZ: America/Sao_Paulo
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Verify reproducible guarded patch
+        run: |
+          python3 backend/tools/anchor_read_v456/build.py
+          git diff --exit-code -- backend/tools/anchor_read_v456
+      - name: Verify exact hit and miss behavior with real locks
+        run: python3 backend/tools/anchor_read_v456/test_native.py
