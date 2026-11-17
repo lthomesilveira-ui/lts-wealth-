@@ -3,6 +3,7 @@ import runpy,json
 p=Path(__file__).resolve().parent
 prior=runpy.run_path(str(p.parent/'recurring_budgets_v469/test_native.py'))
 sql=prior['sql'];lit=prior['lit'];U=prior['U'];base=prior['base'];oldplan=prior['plan'];cards=prior['cards'];baseline=prior['baseline']
+sql("CREATE OR REPLACE FUNCTION public.lts_card_family_v226(text,text)RETURNS text LANGUAGE sql IMMUTABLE AS $f$ SELECT CASE WHEN $1 ILIKE '%Mastercard%' AND $2='Itaú' THEN 'itau_mastercard' ELSE NULL END $f$;")
 before=sql("SELECT proacl::text FROM pg_proc WHERE oid='lts_projection_private_v412.build(uuid,date)'::regprocedure")
 sql((p/'install.sql').read_text())
 manifest=json.loads((p/'manifest.json').read_text())
