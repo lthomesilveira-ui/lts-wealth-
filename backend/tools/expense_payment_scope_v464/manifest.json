@@ -1,0 +1,36 @@
+{
+  "functions": {
+    "public.lts_expense_scope_v353(jsonb,jsonb,text,jsonb)": {
+      "before": "fa7b6cb4a3173bbe927ceece060002ad",
+      "after": "c35227076488ff258cc19a9c5f34dea2"
+    },
+    "public.lts_expense_presentation_v353(uuid,date,date,jsonb)": {
+      "before": "ac2b6ab32167cce65809b20e0550cbf0",
+      "after": "9edede9a68a7a50f1d3cef18dd1ee2b0"
+    },
+    "public.lts_browser_expense_detail_v353(date,date,jsonb,integer,integer,text)": {
+      "before": "50c40fde481733d256566166dff4d7cb",
+      "after": "d7a5222e9b6da4c58e83b362900d013c"
+    },
+    "public.lts_expense_taxonomy_v353(text,text,text)": {
+      "before": "5679e50ce6dc0fe2486977754effccd7",
+      "after": "0c56f411fe56800f28348a544f9ff6d7"
+    },
+    "public.lts_browser_expenses_v229(date,date)": {
+      "before": "20cdbb632667f9393ba7a782fcf93dcc",
+      "after": "f36b21764272fabd0fb8a08073d1aa3e"
+    },
+    "lts_product_refresh_private_v415.review_profile_v450()": {
+      "before": "25952f79bf0f8216a651aff7ce239923",
+      "after": "21e3ec09d2322aeb876d1136f9bbe2e2"
+    }
+  },
+  "new_profile_producers": 5,
+  "existing_profile_entries_changed": 0,
+  "financial_writes": false,
+  "permissions_changed": false,
+  "timeouts_changed": false,
+  "classification_source_rows_changed": false,
+  "payment_definition": "same source_table/coverage_mode predicate as the existing expense summary",
+  "old_report_cache_reused": false
+}

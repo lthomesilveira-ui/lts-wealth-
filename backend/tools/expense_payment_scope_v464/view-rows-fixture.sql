@@ -1,0 +1,1 @@
+CREATE FUNCTION public.lts_expense_view_rows_v353(p_user_id uuid,p_from date,p_to date) RETURNS TABLE(row_payload jsonb,taxonomy jsonb,center_cost text) LANGUAGE sql STABLE AS $$SELECT to_jsonb(r),public.lts_expense_taxonomy_v353(r.category,r.property_component,r.management_group),null::text FROM public.lts_v229_expense_rows(p_user_id,p_from,p_to)r$$;
