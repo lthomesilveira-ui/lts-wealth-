@@ -1,0 +1,17 @@
+{
+  "target": "lts_product_refresh_private_v415.expense_review_pending_v450(uuid,date,date)",
+  "predecessor_md5": "2d41fa5eab16fe79d727c184de79021d",
+  "installed_md5": "8ddd6be945a034ea209d2e5fcfe4af6c",
+  "financial_source_writes": false,
+  "new_jobs": false,
+  "frontend_changes": false,
+  "not_ready_sqlstate": "55000",
+  "preserved": [
+    "every source guard and digest",
+    "complete reader when ready",
+    "row values, nulls and duplicates",
+    "owner/day/range isolation",
+    "worker warm after its ready update",
+    "permissions and function configuration"
+  ]
+}
