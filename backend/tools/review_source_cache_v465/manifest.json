@@ -1,0 +1,20 @@
+{
+  "version": "v465",
+  "profile_json_md5": "3344fae485b34b6cf29a939801ab492e",
+  "original_guard_md5": "47af1960816e108d7fa90e3c8917de44",
+  "primary_source_tables": 19,
+  "source_hash_algorithm_unchanged": true,
+  "owner_bound": true,
+  "financial_source_writes": false,
+  "authentication_changed": false,
+  "timeouts_changed": false,
+  "fallback_on_unknown_contract": true,
+  "files": {
+    "guard-after.sql": "f0155096b6e34524dad800e028f5430a1ca4cf01889c23daa99960384bdbbb90",
+    "trigger.sql": "08903afc03012a30a2a24caec499a9121167c3b7033eb1f994249fb1437b7e77",
+    "contract.sql": "1668ce8fc6738b44831a1e803e3a463b393d4392b5c8f675ce391df24164f437",
+    "setup-cache.sql": "e8023e9e47a80155dcac2618a2e10ce06504a59004e2f5d25142693e12ed1d75",
+    "install.sql": "8ffdc2b8fed5398c56b347a124177d3ff0b6fd4da8e503452666831bf1ca065c",
+    "rollback.sql": "1378c316f6b7768fe847165940f7e2431586b0bcac109871d36614d956388a40"
+  }
+}
