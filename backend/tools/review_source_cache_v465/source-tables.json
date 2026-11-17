@@ -1,0 +1,135 @@
+[
+  {
+    "kind": "r",
+    "name": "audit_log",
+    "epoch": false,
+    "owner": "user_id",
+    "schema": "public"
+  },
+  {
+    "kind": "r",
+    "name": "lts_product_read_cache",
+    "epoch": false,
+    "owner": "user_id",
+    "schema": "public"
+  },
+  {
+    "kind": "r",
+    "name": "lts_category_catalog",
+    "epoch": false,
+    "owner": "user_id",
+    "schema": "public"
+  },
+  {
+    "kind": "r",
+    "name": "lts_external_reference_fact",
+    "epoch": false,
+    "owner": null,
+    "schema": "public"
+  },
+  {
+    "kind": "r",
+    "name": "lts_open_finance_sync_run",
+    "epoch": false,
+    "owner": "user_id",
+    "schema": "public"
+  },
+  {
+    "kind": "r",
+    "name": "lts_expense_effective_read_cache",
+    "epoch": false,
+    "owner": "user_id",
+    "schema": "public"
+  },
+  {
+    "kind": "r",
+    "name": "lts_open_finance_resource_map",
+    "epoch": false,
+    "owner": "user_id",
+    "schema": "public"
+  },
+  {
+    "kind": "r",
+    "name": "lts_v229_documentary_match",
+    "epoch": false,
+    "owner": "user_id",
+    "schema": "public"
+  },
+  {
+    "kind": "r",
+    "name": "lts_workbook_identity_evidence_v232",
+    "epoch": false,
+    "owner": "user_id",
+    "schema": "public"
+  },
+  {
+    "kind": "r",
+    "name": "lts_card_formula_resolution_v237",
+    "epoch": false,
+    "owner": "user_id",
+    "schema": "public"
+  },
+  {
+    "kind": "r",
+    "name": "lts_card_documentary_payment_link_v272",
+    "epoch": false,
+    "owner": "user_id",
+    "schema": "public"
+  },
+  {
+    "kind": "r",
+    "name": "lts_card_settlement_expense_contract_v273",
+    "epoch": false,
+    "owner": "user_id",
+    "schema": "public"
+  },
+  {
+    "kind": "r",
+    "name": "lts_category_binding_v290",
+    "epoch": false,
+    "owner": "user_id",
+    "schema": "public"
+  },
+  {
+    "kind": "r",
+    "name": "lts_card_due_rule_v290",
+    "epoch": false,
+    "owner": "user_id",
+    "schema": "public"
+  },
+  {
+    "kind": "r",
+    "name": "lts_recurring_plan_v366",
+    "epoch": false,
+    "owner": "user_id",
+    "schema": "public"
+  },
+  {
+    "kind": "r",
+    "name": "lts_card_due_transition_v370",
+    "epoch": false,
+    "owner": "user_id",
+    "schema": "public"
+  },
+  {
+    "kind": "r",
+    "name": "lts_card_due_estimate_v391",
+    "epoch": false,
+    "owner": "user_id",
+    "schema": "public"
+  },
+  {
+    "kind": "r",
+    "name": "queue",
+    "epoch": false,
+    "owner": "user_id",
+    "schema": "lts_product_refresh_private_v415"
+  },
+  {
+    "kind": "r",
+    "name": "received_income_evidence_v443",
+    "epoch": false,
+    "owner": "user_id",
+    "schema": "lts_projection_private_v412"
+  }
+]
