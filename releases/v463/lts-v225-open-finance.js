@@ -339,7 +339,7 @@
         '<button type="button" data-pending-detail>'+esc(brl(data.net_expense))+' em processamento no banco</button><span>'+data.transaction_count+' lançamentos · '+(data.unclassified_count??0)+' com finalidade a identificar. Créditos já abatidos.</span>';
       const report=V==='Dashboard'?window.__LTS_V178_STATE?.dashboardReport.data:V==='Despesas'&&window.__LTS_V175_STATE?.expense.key===key?window.__LTS_V175_STATE.expense.data:null;
       const reconciled=report?.summary?.selected_total;
-      const combined=data?.transaction_count&&reconciled!=null&&Number.isFinite(Number(reconciled))?'<span>Reconciliadas: '+esc(brl(reconciled))+' · Com provisórias: '+esc(brl(Number(reconciled)+Number(data.net_expense)))+'</span>':'';
+      const combined=data?.transaction_count&&reconciled!=null&&Number.isFinite(Number(reconciled))?'<span>Gastos confirmados: '+esc(brl(reconciled))+' · Incluindo valores a conferir: '+esc(brl(Number(reconciled)+Number(data.net_expense)))+'</span>':'';
       const updateBody=p.loading?'Consultando compras dos cartões…':p.error?esc(p.error):!data?.transaction_count?'':
         '<b>Compras aguardando confirmação</b><span>'+data.transaction_count+' compras · '+esc(brl(data.net_expense))+'. O banco ainda pode atualizar esses valores.</span><span>'+ (data.unclassified_count??0)+' compras precisam de categoria.</span><button type="button" data-pending-detail>Conferir compras</button>';
       box.innerHTML=V==='Atualizações'?updateBody:body+combined;box.hidden=!body;box.querySelector('[data-pending-detail]')?.addEventListener('click',pendingDetails);
