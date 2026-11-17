@@ -1,0 +1,37 @@
+name: Flow key optional memo native QA
+on:
+  pull_request:
+    paths: ['backend/tools/flow_memo_v455/**','.github/workflows/flow-memo-v455.yml']
+permissions:
+  contents: read
+jobs:
+  native-postgres:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: synthetic-test-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: synthetic-test-only
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Check deterministic guarded patch
+        run: |
+          python3 backend/tools/flow_memo_v455/build.py
+          git diff --exit-code -- backend/tools/flow_memo_v455
+      - name: Verify exact output and real concurrent transactions
+        run: python3 backend/tools/flow_memo_v455/test_native.py
