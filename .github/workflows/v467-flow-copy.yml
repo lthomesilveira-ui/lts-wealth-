@@ -1,0 +1,44 @@
++name: V467 consistent pending receipt copy
+on:
+  pull_request:
+    paths: ['releases/v467/**','backend/tools/flow_copy_v467/**','.github/scripts/lts_v467*','.github/workflows/v467-flow-copy.yml','mobile/current.json']
+concurrency:
+  group: v467-flow-copy-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+permissions:
+  contents: read
+jobs:
+  customer-acceptance:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    container: mcr.microsoft.com/playwright:v1.58.2-noble
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Immutable build, financial channels and dated loan model
+        run: |
+          python3 backend/tools/flow_copy_v467/build.py --check
+          node .github/scripts/lts_v467_release_contract.cjs
+          node .github/scripts/lts_v467_pending_test.cjs
+          node .github/scripts/lts_v463_model_test.cjs
+      - name: Full mobile and desktop Chromium and WebKit
+        env:
+          PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+        run: |
+          npm install --no-save --package-lock=false playwright@1.58.2
+          python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/v467-http.log 2>&1 &
+          node .github/scripts/lts_v309_wait_http.cjs
+          node .github/scripts/lts_v467_browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v467-flow-copy-synthetic
+          retention-days: 7
+          path: qa/v467/
+

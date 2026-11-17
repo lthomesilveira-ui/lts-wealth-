@@ -1,0 +1,10 @@
+{
+  "release": "v467",
+  "base_release": "v466",
+  "scope": "Consistent pending receipt copy across Actions; unchanged financial amounts, sources and confirmation states",
+  "financial_source_writes": false,
+  "authentication_changed": false,
+  "timeouts_changed": false,
+  "published_base_immutable": true,
+  "physical_mobile_validated": false
+}
