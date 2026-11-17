@@ -18,7 +18,7 @@ concurrency:
 jobs:
   deploy:
     env:
-      LTS_MOBILE_RELEASE: v454
+      LTS_MOBILE_RELEASE: v458
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
