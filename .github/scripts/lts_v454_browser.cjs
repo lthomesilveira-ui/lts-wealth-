@@ -1,6 +1,6 @@
 'use strict';process.env.LTS_FLOW_RELEASE='v454';
 const {chromium,webkit}=require('playwright'),fs=require('node:fs'),assert=require('node:assert/strict');
-const {setup,open}=require('./lts_v382_browser.cjs'),fixture=require('./lts_v379_fixtures.cjs');
+const {setup}=require('./lts_v382_browser.cjs'),fixture=require('./lts_v379_fixtures.cjs');
 const out='qa/v454';fs.mkdirSync(out,{recursive:true});
 async function run(browser,engine,width,month){
  const now=month==='november'?'2026-11-16T17:00:00Z':'2026-12-01T17:00:00Z';
@@ -12,7 +12,10 @@ async function run(browser,engine,width,month){
  await h.ctx.route('**/rest/v1/rpc/lts_browser_projection_policy_v412',r=>send(r,reply));
  let frame;
  try{
-  frame=await open(h,'v454');
+  await h.page.goto((process.env.LTS_BROWSER_BASE||'http://127.0.0.1:8788')+'/releases/v454/app.html',{waitUntil:'domcontentloaded'});
+  await h.page.waitForFunction(()=>document.getElementById('shell')?.contentDocument?.body?.dataset.ltsBootState==='ready');
+  frame=h.page.frames().find(f=>f.url().includes('/releases/v454/index.html'));assert(frame);
+  await frame.getByRole('heading',{name:'Dashboard',exact:true}).waitFor();await h.page.waitForLoadState('networkidle');
   await frame.waitForFunction(()=>__LTS_V412_PROJECTION.status==='ready');
   const model=await frame.evaluate(()=>__LTS_V412_PROJECTION.model);
   assert(model.series.find(r=>r.key==='card_aeternum').newSpendProvision.rolling);
@@ -45,7 +48,7 @@ async function run(browser,engine,width,month){
   await h.page.screenshot({path:out+'/'+engine+'-'+width+'-'+month+'-rule.png'});
   assert.deepEqual(h.errors,[]);assert.deepEqual(h.writes,[]);
   return {engine,width,month,pass:true,synthetic:true,real_owner:false,physical_device:false,options_closed_by_default:true,rolling_copy:true,financial_payload_unchanged:true};
- }catch(e){fs.writeFileSync(out+'/'+engine+'-'+width+'-'+month+'-failure.json',JSON.stringify({error:e.stack,body:frame?await frame.locator('body').innerText():null,errors:h.errors,reads:h.reads},null,2));throw e}
+ }catch(e){await h.page.screenshot({path:out+'/'+engine+'-'+width+'-'+month+'-failure.png'}).catch(()=>{});fs.writeFileSync(out+'/'+engine+'-'+width+'-'+month+'-failure.json',JSON.stringify({error:e.stack,message:e.message,body:frame?await frame.locator('body').innerText():null,errors:h.errors,reads:h.reads},null,2));throw e}
  finally{await h.ctx.close()}
 }
 (async()=>{const results=[];for(const [engine,type]of[['chromium',chromium],['webkit',webkit]]){if(process.env.LTS_BROWSER_ENGINES&&!process.env.LTS_BROWSER_ENGINES.split(',').includes(engine))continue;const b=await type.launch({headless:true,...(engine==='chromium'&&process.env.LTS_SYSTEM_CHROMIUM?{executablePath:process.env.LTS_SYSTEM_CHROMIUM}:{})});try{for(const width of [393,1366])for(const month of ['november','december']){const r=await run(b,engine,width,month);results.push(r);console.log(JSON.stringify(r));}}finally{await b.close()}}fs.writeFileSync(out+'/browser-result.json',JSON.stringify({pass:true,results},null,2));})().catch(e=>{console.error(e);process.exitCode=1});
