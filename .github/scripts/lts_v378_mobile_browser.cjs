@@ -39,7 +39,7 @@ const session={access_token:'synthetic-only-access',refresh_token:'synthetic-onl
      screens.push({view,...metrics});
     }
     const app=page.frames().find(f=>f.url().includes('/releases/'+current.release+'/app.html'));assert(app);
-    if(width<=900){const badge=await app.locator('#release-badge-v183').boundingBox(),nav=await frame.locator('#dx1MobileNav').boundingBox();assert(badge&&nav);assert(badge.y+badge.height<=nav.y||badge.y>=nav.y+nav.height||badge.x+badge.width<=nav.x||badge.x>=nav.x+nav.width,'version must not overlap mobile navigation');}
+    if(width<=900){const badgeNode=app.locator('#release-badge-v183'),badge=await badgeNode.boundingBox(),navNode=frame.locator('#dx1MobileNav'),nav=await navNode.boundingBox();assert(nav&&await navNode.isVisible(),'Mobile navigation must remain visible');assert(nav.y>=0&&nav.y+nav.height<=height+2,'Mobile navigation fits the viewport');if(badge){assert(badge.y+badge.height<=nav.y||badge.y>=nav.y+nav.height||badge.x+badge.width<=nav.x||badge.x>=nav.x+nav.width,'visible version must not overlap mobile navigation');}else{assert.equal(await badgeNode.count(),1);assert.equal(await badgeNode.isVisible(),false,'A deliberately hidden internal version cannot overlap navigation');}}
     const outer=await page.evaluate(()=>({width:innerWidth,height:innerHeight,frame:document.getElementById('wealth').getBoundingClientRect().toJSON()}));
     assert.deepEqual(errors,[]);assert.deepEqual(writes,[]);
     await page.addStyleTag({content:':root{--wealth-safe-top:47px;--wealth-safe-right:0px;--wealth-safe-bottom:34px;--wealth-safe-left:0px}'});
