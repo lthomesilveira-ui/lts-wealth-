@@ -610,14 +610,17 @@
   const p=validate(input),scope={view:requested.view||'type'};
   if(!['type','property','tax'].includes(scope.view))throw Error('Perspectiva inválida');
   for(const k of dims)if(requested[k])scope[k]=String(requested[k]);
-  const cells=p.cells.filter(c=>dims.every(k=>!scope[k]||c[k]===scope[k])&&(scope.view!=='tax'||c.is_tax===true));
+  const paymentAvailable=p.cells.every(c=>['card','account'].includes(c.payment));
+  if(requested.payment){if(!['card','account'].includes(requested.payment)||!paymentAvailable)throw Error('A separação por forma de pagamento ainda não está disponível.');scope.payment=requested.payment;}
+  const cells=p.cells.filter(c=>(!scope.payment||c.payment===scope.payment)&&dims.every(k=>!scope[k]||c[k]===scope[k])&&(scope.view!=='tax'||c.is_tax===true));
   const summary={gross:0,compensations:0,net:0,rows:0},tree=new Map();
   const labels=new Map((p.dimensions?.property||[]).map(x=>[x.key,x.label]));
   const add=(s,c)=>{for(const k of ['gross','compensations','net'])s[k]+=Number(c[k]);s.rows+=c.rows;};
   for(const c of cells){
    add(summary,c);let map=tree,path={...scope};
    const steps=scope.view==='property'?[['property',c.property,labels.get(c.property)||'Bem informado na origem']]:[];
-   steps.push(['macrogroup',c.macrogroup,c.macrogroup],['group',c.group_name,c.group_name],['category',c.category,c.category]);
+   steps.push(['macrogroup',c.macrogroup,c.macrogroup]);
+   if(c.category!==c.macrogroup)steps.push(['category',c.category,c.category]);
    for(const[k,key,name]of steps){
     path={...path,[k]:key};let n=map.get(key);
     if(!n){n={name,scope:{...path},gross:0,compensations:0,net:0,rows:0,children:new Map()};map.set(key,n)}
@@ -625,7 +628,7 @@
    }
   }
   const array=map=>[...map.values()].sort((a,b)=>b.net-a.net||a.name.localeCompare(b.name,'pt-BR')).map(n=>({...n,children:array(n.children)}));
-  return{version:p.version,period:p.period,scope,summary,nodes:array(tree),dimensions:p.dimensions};
+  return{version:p.version,period:p.period,scope,summary,nodes:array(tree),dimensions:p.dimensions,paymentAvailable};
  }
  const api={validate,build};if(typeof module!=='undefined'&&module.exports)module.exports=api;else root.LTSExpensePresentation=api;
 })(typeof window==='undefined'?{}:window);

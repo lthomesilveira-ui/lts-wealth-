@@ -35,6 +35,10 @@ def build(target):
  once(model,"const cells=p.cells.filter(c=>dims.every", "const cells=p.cells.filter(c=>(!scope.payment||c.payment===scope.payment)&&dims.every")
  once(model,"steps.push(['macrogroup',c.macrogroup,c.macrogroup],['group',c.group_name,c.group_name],['category',c.category,c.category]);", "steps.push(['macrogroup',c.macrogroup,c.macrogroup]);\n   if(c.category!==c.macrogroup)steps.push(['category',c.category,c.category]);")
  once(model,"scope,summary,nodes:array(tree),dimensions:p.dimensions", "scope,summary,nodes:array(tree),dimensions:p.dimensions,paymentAvailable")
+ for bundle in ['lts-v384-startup-1.js','lts-v384-startup-2.js']:
+  p=target/bundle;before=(BASE/'lts-expense-presentation-model.js').read_text();bundled=p.read_text()
+  if before in bundled:
+   assert bundled.count(before)==1;p.write_text(bundled.replace(before,model.read_text()))
  old="'<div class=\"v353-presentation\"><div class=\"v353-metrics\">'"
  new="'<div class=\"v353-presentation\"><label class=\"v463-payment\">Mostrar gastos de<select data-v353-filter=\"payment\" aria-label=\"Forma de pagamento\"'+(model.paymentAvailable?'':' disabled')+'>'+[['','Todos os gastos'],['card','Todos os cartões'],['account','Contas correntes']].map(([key,label])=>'<option value=\"'+key+'\"'+((scope.payment||'')===key?' selected':'')+'>'+label+'</option>').join('')+'</select></label><div class=\"v353-metrics\">'"
  copies(target,old,new,2)
