@@ -28,7 +28,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Verify release assets and protected history
         run: |
-          python3 backend/tools/rolling_card_window_v454/build.py --check
+          node .github/scripts/lts_v454_release_contract.cjs
           node .github/scripts/lts_v225_static_gate.js
           LTS_RELEASE=v225-1 node .github/scripts/lts_v225_static_gate.js
           LTS_RELEASE=v226 node .github/scripts/lts_v225_static_gate.js
