@@ -1,0 +1,38 @@
+name: Guarded epoch card cache native QA
+on:
+  pull_request:
+    paths: ['backend/tools/guarded_epoch_cache_v462/**','.github/workflows/guarded-epoch-cache-v462.yml']
+permissions:
+  contents: read
+jobs:
+  native-postgres:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: synthetic-test-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: synthetic-test-only
+      PGTZ: America/Sao_Paulo
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Verify deterministic paired fingerprints and unchanged closed profile
+        run: |
+          python3 backend/tools/guarded_epoch_cache_v462/build.py
+          git diff --exit-code -- backend/tools/guarded_epoch_cache_v462
+      - name: Verify cache correctness on native PostgreSQL
+        run: python3 backend/tools/guarded_epoch_cache_v462/test_native.py
