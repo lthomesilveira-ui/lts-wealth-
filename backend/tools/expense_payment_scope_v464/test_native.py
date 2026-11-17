@@ -23,7 +23,7 @@ class PaymentScope(unittest.TestCase):
  @classmethod
  def setUpClass(cls):
   build.build();subprocess.run(['createdb',DB],check=True,capture_output=True)
-  sql((ROOT/'setup.sql').read_text())
+  sql((ROOT/'setup.sql').read_text());sql((ROOT/'node-fixture.sql').read_text())
   for k in build.SPECS:sql((ROOT/(k+'-original.sql')).read_text())
   sql((ROOT/'view-rows-fixture.sql').read_text());sql((ROOT/'seed.sql').read_text())
   cls.old_report=report();cls.old_profile=json.loads(sql('SELECT lts_product_refresh_private_v415.review_profile_v450();'))
