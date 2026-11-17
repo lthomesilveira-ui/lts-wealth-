@@ -9,6 +9,8 @@ permissions:
   contents: read
 jobs:
   customer-acceptance:
+    env:
+      LTS_MOBILE_RELEASE: v466
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     container: mcr.microsoft.com/playwright:v1.58.2-noble

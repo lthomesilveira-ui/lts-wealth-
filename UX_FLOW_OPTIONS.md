@@ -2,7 +2,7 @@
 
 This supplements AGENTS.md and UX_ACCEPTANCE.md. It is a product requirement, not a statement that a release has already passed.
 
-The default Flow screen prioritizes account selection, period, dated balances and movements. Calculation assumptions, projection-update controls, source timestamps and the applications breakdown belong inside the existing **Opções** control. A stack of separate collapsed disclosures still consumes the main report; merely collapsing or shortening them is insufficient. Do not add new standalone premises panels to this screen in future versions.
+The default Flow screen prioritizes account selection, period, dated balances and movements. The default screen contains the dated cash flow only. Do not insert standalone transfer, reconciliation, budget or scenario tables above or inside the daily movements; related records remain available through their proper views and existing Options controls. Calculation assumptions, projection-update controls, source timestamps and the applications breakdown belong inside the existing **Opções** control. A stack of separate collapsed disclosures still consumes the main report; merely collapsing or shortening them is insufficient. Do not add new standalone premises panels to this screen in future versions.
 
 Keep the original useful controls and their handlers available through Options. The menu starts closed and closes on navigation to another screen. It must support keyboard interaction and Escape, fit small mobile viewports, scroll its own long content and avoid horizontal overflow. Do not duplicate controls after refresh or ordinary rerendering. The visible period already communicates the selected horizon; do not repeat it in a standalone projection card.
 

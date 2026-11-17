@@ -7,7 +7,7 @@ permissions:
 jobs:
   synthetic:
     env:
-      LTS_MOBILE_RELEASE: v458
+      LTS_MOBILE_RELEASE: v466
       LTS_FLOW_RELEASE: v442
       LTS_BROWSER_FIXTURE_RELEASE: v442
     runs-on: ubuntu-latest
