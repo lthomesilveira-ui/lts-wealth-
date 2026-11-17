@@ -1,0 +1,38 @@
+name: V463 customer feedback acceptance
+on:
+  pull_request:
+    paths: ['releases/v463/**','backend/tools/product_feedback_v463/**','.github/scripts/lts_v463*','.github/workflows/v463-customer-feedback.yml','mobile/current.json']
+permissions:
+  contents: read
+jobs:
+  customer-acceptance:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    container: mcr.microsoft.com/playwright:v1.58.2-noble
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Immutable build, financial channels and dated loan model
+        run: |
+          python3 backend/tools/product_feedback_v463/build.py --check
+          node .github/scripts/lts_v463_model_test.cjs
+      - name: Full mobile and desktop Chromium and WebKit
+        env:
+          PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+        run: |
+          npm install --no-save --package-lock=false playwright@1.58.2
+          python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/v463-http.log 2>&1 &
+          node .github/scripts/lts_v309_wait_http.cjs
+          node .github/scripts/lts_v463_browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v463-customer-feedback-synthetic
+          retention-days: 7
+          path: qa/v463/
