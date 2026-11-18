@@ -1,5 +1,7 @@
 # Current execution sources
 
+V474 shows the loaded release beside the app name and retries an interrupted classification read once while the same screen request is current. The published entry uses the V473 backend.
+
 V471 reads both approved fixed budgets and averages over the recorded historical window. The normal mobile entry uses this reader with the V470 projection backend. The calculation and transaction records are unchanged.
 
 The stable entry is selected by `mobile/current.json`. V467 completes the
