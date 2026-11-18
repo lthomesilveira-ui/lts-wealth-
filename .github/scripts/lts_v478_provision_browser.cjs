@@ -10,6 +10,30 @@ const {product} = require('./lts_v379_fixtures.cjs');
 const {response} = require('./lts_boot_recovery_fixtures.cjs');
 const day = '2026-11-23', openDay = '2026-11-20';
 const outDir = 'qa/v478-provision';
+const policy = {
+  version:'projection-policy-v412', enabled:true, schema_version:1, as_of:'2026-11-18',
+  horizon_end:'2031-12-31', next_review_on:'2027-01-01',
+  history_window:{from:'2025-11-01',to:'2026-10-31'}, warnings:[],
+  card_method:'total_budget_floor', outliers_excluded:false, missing_months_assumed_zero:false,
+  financial_sources_modified:false, current_year_partial:true,
+  series:[{
+    series_key:'owner_food',description:'Mercado',method:'fixed',direction:'expense',account:'Bradesco',
+    uses_history:false,reference_stale:false,expected_months:12,reference_amount_brl:10,
+    reference_window:null,coverage_months:null,warnings:[],
+    coverage:[
+      {event_date:openDay,trusted:true,status:'open_cycle_known_only',budget_total_brl:2.50,known_brl:2.50,additional_brl:0},
+      {event_date:day,trusted:true,budget_total_brl:10,known_brl:3.35,additional_brl:6.65}
+    ],annual_totals:[{year:2026,budget_total_brl:12.50,additional_brl:6.65,partial_year:true}]
+  }]
+};
+const projectionModel = require('../../releases/'+release+'/lts-v412-projection-policy.js');
+assert.ok(projectionModel.build(policy));
+for (const invalid of [{additional_brl:1},{known_brl:null},{budget_total_brl:10},{trusted:false}]) {
+  const broken=structuredClone(policy);
+  Object.assign(broken.series[0].coverage[0],invalid);
+  assert.throws(()=>projectionModel.build(broken));
+}
+
 function event(date, account, key, description, signed_amount, source='planning_projection_v412') {
   return {event_date:date, account, source_ref:key+':'+date, description, signed_amount, source};
 }
@@ -26,6 +50,7 @@ async function test(browser, engine, width) {
   try {
     await s.ctx.route('**/rpc/lts_browser_product_v1', r=>r.fulfill({json:{ok:true,mvp:product(),refresh}}));
     await s.ctx.route('**/rpc/lts_browser_product_refresh_status_v415', r=>r.fulfill({json:{ok:true,refresh}}));
+    await s.ctx.route('**/rpc/lts_browser_projection_policy_v412', r=>r.fulfill({json:policy}));
     await s.ctx.route(/\/rpc\/lts_browser_flow_v\d+$/, r=>{
       const args=r.request().postDataJSON();
       const payload=response('lts_browser_flow_v242', args);
@@ -44,6 +69,7 @@ async function test(browser, engine, width) {
     const frame=s.page.frames().find(f=>new URL(f.url()).pathname.endsWith('/releases/'+release+'/index.html'));
     assert.ok(frame);
     await frame.locator('#nav [data-v="Fluxo Diário"]:visible,#dx1MobileNav [data-mobile-route="Fluxo Diário"]:visible').click();
+    await frame.waitForFunction(()=>window.__LTS_V412_PROJECTION?.status==='ready');
     await frame.evaluate(()=>loadFlowRange('2026-11-18','2026-12-01'));
     await frame.locator('.exp[data-d="'+openDay+'"]').click();
     const current=frame.locator('#d-'+openDay+'+.fx89-details');

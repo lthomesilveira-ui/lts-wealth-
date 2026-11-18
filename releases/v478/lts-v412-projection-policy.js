@@ -53,10 +53,15 @@
       let previousDate = asOf;
       for (const period of row.coverage) {
         const due = day(period.event_date);
-        if (due <= previousDate || due > horizon || typeof period.trusted !== 'boolean'
-          || cents(period.budget_total_brl) !== amount) return invalid();
+        if (due <= previousDate || due > horizon || typeof period.trusted !== 'boolean') return invalid();
         previousDate = due;
         const known = cents(period.known_brl, true), additional = cents(period.additional_brl, true);
+        const budget = cents(period.budget_total_brl);
+        if (period.status === 'open_cycle_known_only') {
+          if (row.account !== 'Bradesco' || !period.trusted || known === null || budget !== known || additional !== 0) return invalid();
+          continue;
+        }
+        if (budget !== amount) return invalid();
         if (period.trusted ? known === null || additional !== Math.max(amount - known, 0)
           : known !== null || additional !== null || !row.warnings.includes('unreconciled_periods')) return invalid();
       }
