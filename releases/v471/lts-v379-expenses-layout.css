@@ -1,0 +1,35 @@
+/* Keep the expense controls and financial content inside their own panels. */
+.v168-expenses,.v168-expenses .v168-head,.v168-expenses .v168-headmeta,
+.v168-expenses .v168-expense-controls,.v168-expenses .v175-monthly,
+.v168-expenses .v175-section,.v168-expenses .v168-card{min-width:0;max-width:100%;box-sizing:border-box}
+.v168-expenses .v168-custom-range{min-width:0;max-width:100%}
+.v168-expenses .v168-custom-range label{min-width:0}
+.v168-expenses .v168-custom-range input{min-width:0;max-width:100%;box-sizing:border-box}
+.v168-expenses .v168-kpi strong{max-width:100%;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+.v168-expenses .v175-tablewrap{min-width:0;max-width:100%;overflow-x:auto;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
+.v168-expenses .v175-table th:first-child{min-width:150px;max-width:200px;white-space:normal;overflow-wrap:anywhere}
+.v168-expenses .v175-table th:first-child button{white-space:normal;overflow-wrap:anywhere}
+.v168-expenses .v226-card-line>div,.v168-expenses .v181-category-group>header>div{min-width:0}
+.v168-expenses .v226-card-line .v226-link,.v168-expenses .v181-category-group h3{overflow-wrap:anywhere}
+.v379-period-head{margin:16px 0 12px}.v379-period-head h2{font-size:18px;margin:0 0 5px}.v379-period-head p{font-size:12px;color:#526174;margin:0;line-height:1.5}
+@media(max-width:900px){
+ .v168-expenses .v168-head{grid-template-columns:minmax(0,1fr);gap:16px}
+ .v168-expenses .v168-headmeta,.v168-expenses .v168-expense-controls{width:100%;justify-content:flex-start}
+ .v168-expenses .v168-periods{display:flex;flex-wrap:wrap;overflow:visible;gap:7px;max-width:100%}
+ .v168-expenses .v168-periods button{flex:0 1 auto;white-space:normal;min-height:40px}
+ .v168-expenses .v168-tabs{flex-wrap:wrap;overflow:visible;max-width:100%;gap:7px}
+ .v168-expenses .v168-tabs button{white-space:normal;min-height:44px}
+ .v168-expenses .v168-custom-range{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%;gap:10px}
+ .v168-expenses .v168-custom-range input{width:100%;min-height:44px}
+ .v168-expenses .v168-custom-range .v168-btn,.v168-expenses .v168-custom-range [role=alert]{grid-column:1/-1;min-height:44px}
+}
+@media(max-width:600px){
+ .v168-expenses .v168-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+ .v168-expenses .v168-tabs button{width:100%;padding:10px 7px}
+ .v168-expenses .v168-tabs button:last-child:nth-child(odd){grid-column:1/-1}
+ .v168-expenses .v226-card-line{display:grid;grid-template-columns:minmax(0,1fr);gap:8px}
+ .v168-expenses .v226-card-line>div:last-child{text-align:left}
+ .v168-expenses .v226-totals{grid-template-columns:minmax(0,1fr)}
+ .v168-expenses .v175-table th:first-child{min-width:130px;max-width:155px}
+ .v168-expenses .v181-category-group>header{flex-wrap:wrap;gap:9px}
+}

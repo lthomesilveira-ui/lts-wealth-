@@ -1,0 +1,30 @@
+name: V471 projection budgets
+on:
+  pull_request:
+    paths: ['releases/v471/**','.github/scripts/lts_v471*','.github/workflows/v471-projection-budgets.yml','mobile/current.json']
+permissions:
+  contents: read
+jobs:
+  projection-reader:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    container: mcr.microsoft.com/playwright:v1.58.2-noble
+    env:
+      LTS_MOBILE_RELEASE: v471
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node .github/scripts/lts_v471_projection_test.cjs
+      - name: Verify the canonical entry on Chromium and WebKit
+        run: |
+          npm install --no-save --package-lock=false playwright@1.58.2
+          python3 -m http.server 8788 --bind 127.0.0.1 >/tmp/v471-http.log 2>&1 &
+          node .github/scripts/lts_v309_wait_http.cjs
+          node .github/scripts/lts_v471_projection_browser.cjs
