@@ -14,6 +14,15 @@ async function verify(browser, width) {
   const objectPath = '00000000-0000-4000-8000-000000000001/documents/' + digest;
   let uploads = 0, receipts = 0, fileExists = false, interrupt = true;
   try {
+    await session.ctx.addInitScript(()=>{
+      const original=window.fetch;
+      window.fetch=async function(resource,init) {
+        if(init?.method==='POST' && String(resource).includes('/storage/v1/object/lts-documents/')){
+          window.testSubmittedDocument=Array.from(new Uint8Array(await init.body.arrayBuffer()));
+        }
+        return original.apply(this,arguments);
+      };
+    });
     const refresh={state:'ready',required:false,cached_available:true,request_version:'2',completed_version:'2'};
     await session.ctx.route('**/rpc/lts_browser_product_v1',route=>route.fulfill({json:{ok:true,mvp:product(),refresh}}));
     await session.ctx.route('**/rpc/lts_browser_product_refresh_status_v415',route=>route.fulfill({json:{ok:true,refresh}}));
@@ -30,7 +39,6 @@ async function verify(browser, width) {
     await session.ctx.route('**/storage/v1/object/lts-documents/**', async route => {
       assert.equal(route.request().method(), 'POST');
       assert.equal(route.request().headers()['x-upsert'], 'false');
-      assert.deepEqual(route.request().postDataBuffer(), sample);
       assert.equal(new URL(route.request().url()).pathname, '/storage/v1/object/lts-documents/'+objectPath);
       uploads++; fileExists = true;
       return route.fulfill({json:{Key:objectPath}});
@@ -63,6 +71,7 @@ async function verify(browser, width) {
     await submit.click();
     await form.getByText('Este arquivo já foi recebido.',{exact:true}).waitFor();
     assert.deepEqual([uploads,receipts],[1,1]);
+    assert.deepEqual(await frame.evaluate(()=>window.testSubmittedDocument),Array.from(sample));
     assert.equal(await form.evaluate(el => Array.from(el.querySelectorAll('input,select,button')).every(control => {
       const rect = control.getBoundingClientRect();
       return rect.width > 0 && rect.left >= 0 && rect.right <= innerWidth+1;
