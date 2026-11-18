@@ -1,0 +1,37 @@
+name: V277 flow rendering diagnosis
+on:
+  pull_request:
+    paths: ['.github/scripts/lts_flow_observer_profile.js', '.github/scripts/lts_flow_observer_cycles.cjs', '.github/scripts/lts_flow_observer_compare.cjs', '.github/workflows/flow-profile.yml', '.github/fixtures/flow-observer-candidate/**']
+permissions:
+  contents: read
+jobs:
+  profile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      LTS_RELEASE: v277
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install --no-save --package-lock=false playwright@1.58.2
+      - run: npx playwright install --with-deps chromium
+      - run: python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/lts-flow-profile-http.log 2>&1 &
+      - name: Isolated browser observer reproduction
+        run: node .github/scripts/lts_flow_observer_cycles.cjs
+      - name: Full-stack synthetic profile
+        if: success() || failure()
+        run: timeout 240s node .github/scripts/lts_flow_observer_profile.js
+      - name: Full-stack candidate control
+        if: success() || failure()
+        run: PROFILE_MODE=candidate timeout 240s node .github/scripts/lts_flow_observer_profile.js
+      - name: Assert financial parity and settled observers
+        run: node .github/scripts/lts_flow_observer_compare.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v277-flow-profile
+          path: qa/
