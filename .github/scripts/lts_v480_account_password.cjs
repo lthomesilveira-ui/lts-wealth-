@@ -2,7 +2,8 @@
 
 const assert = require('node:assert/strict');
 const { chromium, webkit } = require('playwright');
-process.env.LTS_FLOW_RELEASE = 'v480';
+const release = process.env.LTS_FLOW_RELEASE || 'v480';
+process.env.LTS_FLOW_RELEASE = release;
 const { setup } = require('./lts_v382_browser.cjs');
 const { product } = require('./lts_v379_fixtures.cjs');
 const base = process.env.LTS_BROWSER_BASE || 'http://127.0.0.1:8788';
@@ -40,7 +41,7 @@ async function verify(browser, width) {
     });
     await page.goto(base + '/mobile/?source=home-screen', {waitUntil:'domcontentloaded'});
     await page.waitForFunction(() => document.querySelector('#wealth')?.contentDocument?.querySelector('#shell')?.contentDocument?.body?.dataset.ltsBootState === 'ready');
-    const frame = page.frames().find(f => new URL(f.url()).pathname.endsWith('/releases/v480/index.html'));
+    const frame = page.frames().find(f => new URL(f.url()).pathname.endsWith('/releases/' + release + '/index.html'));
     assert(frame);
     const open = frame.getByRole('button', {name:'Alterar senha', exact:true});
     const dialog = frame.getByRole('dialog', {name:'Alterar senha'});
