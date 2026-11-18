@@ -1,7 +1,7 @@
 name: V476 document review upload
 on:
   pull_request:
-    paths: ['releases/v476/**','backend/tools/review_documents_v476/**','.github/scripts/lts_v476*','.github/workflows/v476-document-upload.yml','mobile/current.json']
+    paths: ['releases/v477/**','releases/v476/**','backend/tools/review_documents_v476/**','.github/scripts/lts_v476*','.github/scripts/lts_v477_document_continuity.cjs','.github/workflows/v476-document-upload.yml','mobile/current.json']
 permissions:
   contents: read
 jobs:
@@ -24,7 +24,7 @@ jobs:
     timeout-minutes: 15
     container: mcr.microsoft.com/playwright:v1.58.2-noble
     env:
-      LTS_MOBILE_RELEASE: v476
+      LTS_MOBILE_RELEASE: v477
       PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
     steps:
@@ -41,3 +41,9 @@ jobs:
           python3 -m http.server 8788 --bind 127.0.0.1 >/tmp/v476-http.log 2>&1 &
           node .github/scripts/lts_v309_wait_http.cjs
           node .github/scripts/lts_v476_document_upload.cjs
+          node .github/scripts/lts_v477_document_continuity.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: document-review-continuity
+          path: qa/v477-document-continuity/
