@@ -1,5 +1,7 @@
 # Current execution sources
 
+V478 groups projected card spending by due date in the daily cash flow. The open statement uses known charges and installments when the owner's planning rule is enabled.
+
 V477 keeps a document and its download link open when the Actions screen redraws. Upload and review follow the V476 flow.
 
 V476 restores review-only receipt upload in the Actions document section. The dated private register tracks production acceptance separately.
