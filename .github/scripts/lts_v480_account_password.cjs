@@ -45,6 +45,12 @@ async function verify(browser, width) {
     const open = frame.getByRole('button', {name:'Alterar senha', exact:true});
     const dialog = frame.getByRole('dialog', {name:'Alterar senha'});
     assert(await open.isVisible());
+    assert(await open.evaluate(el => {
+      const box = el.getBoundingClientRect();
+      const target = document.elementFromPoint(box.left + box.width / 2, box.top + box.height / 2);
+      return target === el || el.contains(target);
+    }), 'the account action has a clear pointer target');
+
     if (width === 360) {
       await frame.evaluate(() => {
         const key = 'lts_supabase_session_v1';
