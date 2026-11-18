@@ -21,6 +21,7 @@ async function verify(browser, width) {
     await ctx.route('**/rpc/lts_browser_product_refresh_status_v415', route => route.fulfill({ json: {ok:true, refresh} }));
     await ctx.route('**/auth/v1/user', async route => {
       const req = route.request();
+      if (req.method() === 'GET') return route.fulfill({ json:{id:ownerId} });
       const data = req.postDataJSON();
       requests.push({
         method: req.method(),
@@ -33,8 +34,7 @@ async function verify(browser, width) {
       if (outcome === 'rejected') return route.fulfill({ status:422, json:{error_code:'weak_password'} });
       return route.fulfill({ json: {id:ownerId} });
     });
-    await page.goto(base + '/mobile/', {waitUntil:'domcontentloaded'});
-    await page.getByRole('button',{name:'Abrir Wealth'}).click();
+    await page.goto(base + '/mobile/?source=home-screen', {waitUntil:'domcontentloaded'});
     await page.waitForFunction(() => document.querySelector('#wealth')?.contentDocument?.querySelector('#shell')?.contentDocument?.body?.dataset.ltsBootState === 'ready');
     const frame = page.frames().find(f => new URL(f.url()).pathname.endsWith('/releases/v480/index.html'));
     assert(frame);
@@ -58,11 +58,11 @@ async function verify(browser, width) {
     assert.equal(requests.length, 0);
     await repeat.fill(exampleNew);
     await save.click();
-    await status.getByText('Escolha uma senha mais forte e tente novamente.').waitFor();
+    await status.filter({hasText:'Escolha uma senha mais forte e tente novamente.'}).waitFor();
 
     outcome = 'failed';
     await save.click();
-    await status.getByText(/A conexão foi interrompida/).waitFor();
+    await status.filter({hasText:/A conexão foi interrompida/}).waitFor();
     await dialog.getByRole('button',{name:'Fechar'}).click();
     await open.click();
     assert.equal(await current.inputValue(), '');
@@ -71,7 +71,7 @@ async function verify(browser, width) {
     outcome = 'confirmed';
     await fill(exampleNew);
     await save.click();
-    await status.getByText('Senha alterada. Use a nova senha no próximo acesso.').waitFor();
+    await status.filter({hasText:'Senha alterada. Use a nova senha no próximo acesso.'}).waitFor();
     assert.equal(await current.inputValue(), '');
     assert.equal(await next.inputValue(), '');
     assert.equal(await repeat.inputValue(), '');
