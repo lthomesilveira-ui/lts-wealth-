@@ -1,0 +1,43 @@
+name: V476 document review upload
+on:
+  pull_request:
+    paths: ['releases/v476/**','backend/tools/review_documents_v476/**','.github/scripts/lts_v476*','.github/workflows/v476-document-upload.yml','mobile/current.json']
+permissions:
+  contents: read
+jobs:
+  receipt-registration:
+    runs-on: ubuntu-24.04
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: local-test
+        ports: ['5432:5432']
+        options: --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - run: psql -h localhost -U postgres -d postgres -f backend/tools/review_documents_v476/test.sql
+        env:
+          PGPASSWORD: local-test
+  document-upload:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    container: mcr.microsoft.com/playwright:v1.58.2-noble
+    env:
+      LTS_MOBILE_RELEASE: v476
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify the canonical entry on Chromium and WebKit
+        run: |
+          npm install --no-save --package-lock=false playwright@1.58.2
+          python3 -m http.server 8788 --bind 127.0.0.1 >/tmp/v476-http.log 2>&1 &
+          node .github/scripts/lts_v309_wait_http.cjs
+          node .github/scripts/lts_v476_document_upload.cjs
