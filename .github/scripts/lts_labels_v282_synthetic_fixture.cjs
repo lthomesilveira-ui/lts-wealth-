@@ -1,0 +1,36 @@
+'use strict';
+const fixture=(()=>{
+// Entirely synthetic data. No account exports, real balances, names or document IDs.
+const AS_OF='2026-10-16';
+function day(date){return {date,historical:false,summary:{events:0,Consolidado:{entries:0,exits:0}},Consolidado:{bank_balance:1000,economic_net:0},Itaú:{net:0,balance:1000},Bradesco:{net:0,balance:0},C6:{net:0,balance:0},fix86_columns:{saldo_anterior:1000,entradas:0,saidas:0,saldo_final:1000,liq_d0_1_recurso:200,rsus_vested:300,fgts:500,saldo_apos_d0_1:1200,saldo_apos_rsu:1500,saldo_apos_fgts:2000}};}
+const cockpit={as_of:AS_OF,liquidity:{bank_cash:1000,d0:200,through_d3:1500,d3_vested:300,fgts_d30:500,accounts:[{institution:'Banco de teste',balance:1000}]},planning_audited:{first_negative_date:null,first_uncovered_gap_date:null,worst_before_brl:1000,worst_after_brl:1500,covers_horizon:true},horizons:[],expenses:{current_month:{spend:100,top_categories:[{category:'Categoria de teste',amount:100}]},previous_month:{spend:100}},cards:{open_cycles_total:100,closed_or_due_total:0,next_due:{due_date:'2026-10-25',amount:100,card_name:'Cartão de teste'}},work:{actionable_count:0,top_actions:[]}};
+const wealth={version:'synthetic-boot-wealth',as_of:AS_OF,wealth:{as_of:AS_OF,summary:{net_worth_central:2000,net_worth_low:2000,net_worth_high:2000,assets_central:2000,known_debt_total:0,liquidity_through_d3:1500,restricted_contingency:500,future_awards_excluded:0},liquidity:{bank_cash:1000,d0:200,d3:300,fgts_contingency:500},assets:{}},rsu:{vested_positions:[],future_schedule:[],future_schedule_count:0},employment_awards:{retention:{gross_total_brl:0,installments:[]},retention_projected_events:[]},volvo_financing:{remaining_installments:0,future_schedule_total:0},documentary_commitments:{items:[]},pensions:{positions:[],total_gross_brl:0},current_liquidity:{brokerage_available:300}};
+function product(revision=1){return {__bootFixtureRevision:revision,dashboard_cockpit:cockpit,dashboard:{position:{bank_cash:1000,liquid_d0_assets:200,liquid_d1_d3_assets:300,restricted_assets:500},horizons:[],risk_layers:{}},planning_executive:{summary:{gap_episode_count:0,fgts_covers_horizon:true},gap_episodes:[]},wealth_executive:wealth.wealth,updates:{items:[],maintenance_checks:[],freshness:{position_as_of:AS_OF}},semantic_review:{pending_groups:0,items:[]},card_classification_review:{pending_groups:0,pending_lines:0,pending_value:0,category_options:[],items:[]},expense_universe_qa:{bank_documented_through:AS_OF},card_operating:{as_of:AS_OF,closed_or_due_total:0,closed_or_due:[],open_cycles_total:100,open_cycles:[],next_due:cockpit.cards.next_due,contracted_installment_floor_total:0,contracted_installment_floor_months:[],detail_coverage:{reconciled_invoices:0,detail_lines:0,zero_delta_invoices:0},classification_review:{pending_lines:0,pending_value:0,safe_suggestion_groups:0}},card_history:{monthly:[]},expense_drilldown:{rows:[]},wealth:{asset_layers:{derived_future_schedule:[]}},flow:{days:[day(AS_OF)],events:[]},expenses:{},commitments:{commitments:[]},documentary_commitments:{items:[]}};}
+function flow(from=AS_OF,to=AS_OF){const days=[];for(let d=new Date(from+'T12:00:00Z');d.toISOString().slice(0,10)<=to;d.setUTCDate(d.getUTCDate()+1)){if(days.length>12000)throw Error('Synthetic range unexpectedly large');days.push(day(d.toISOString().slice(0,10)));}return {ok:true,flow:{from,to,available_year_from:2013,available_year_to:2041,historical_balance_truth_contract:{consolidated_first_complete_opening:'2026-01-01',itau_first_documentary_opening:'2026-01-01',bradesco_first_documentary_opening:'2026-01-01',c6_first_documentary_opening:'2026-01-01'},historical:{days:[],events:[]},current_future:{from,to,complete:true,days,events:[]}}};}
+function report(from='2026-01-01',to=AS_OF){return {version:'expense-executive-v20-v178-review',as_of:to,period:{from,to,last_available:to,months_in_selection:1},summary:{selected_total:100,card_total:100,account_total:0,monthly_average:100,rows:1,pending_identification:0},management_groups:[{name:'Categoria de teste',total:100,rows:1,subgroups:[]}],monthly_detail:[{month:to.slice(0,7)+'-01',total:100}],coverage_disclosure:{total:0,rows:0}};}
+function response(name,a={}){
+ if(name==='lts_browser_dashboard_cockpit_v1')return cockpit;
+ if(/^lts_browser_flow_v/.test(name))return flow(a.p_from,a.p_to);
+ if(/^lts_browser_cash_today_/.test(name))return {version:'cash-today-v179-current-canonical',status:'complete',as_of:AS_OF,cash:1000,d0:200,brokerage_available:300,available_total:1500,fgts:500,day:day(AS_OF)};
+ if(/^lts_browser_expenses_|^lts_browser_expense_executive_/.test(name))return report(a.p_from,a.p_to);
+ if(/^lts_browser_expense_detail_/.test(name))return {version:'synthetic-detail',from:a.p_from,to:a.p_to,group:a.p_group,subgroup:null,total:100,row_count:1,matched_count:1,offset:0,next_offset:null,revision:'synthetic-1',rows:[{key:'synthetic-expense-1',date:AS_OF,date_kind:'day',description:'Despesa fictícia',account_source:'Conta de teste',amount:100,category:'Categoria de teste'}],components:[]};
+ if(/^lts_browser_wealth_detail_/.test(name))return wealth;
+ if(/^lts_browser_awards_/.test(name))return {version:'synthetic-awards',as_of:AS_OF,vested_shares:300,brokerage_cash:0,brokerage_available:300,events:[]};
+ if(/^lts_browser_planning_ui_contract_/.test(name))return {version:'planning-ui-contract-v2',period_to:'2027-12-31',fgts_covers_horizon:true,fgts_first_negative:null,labels:{d01:'Cobertura de teste',rsu:'Cobertura de teste',fgts:'Cobertura de teste'}};
+ if(/^lts_browser_card_cycles_/.test(name))return {version:'card-cycles-v226',as_of:AS_OF,active_billing_accounts:1,cards:[{bank:'Itaú',family:'itau_mastercard',name:'Cartão de teste',last4:'0000',status:'ACTIVE',cycles:[{month:'2026-10-01',due_date:'2026-10-25',amount:100,basis:'open_finance_composition',payment_status:'payment_not_reported',items:[{source_id:'synthetic-purchase-1',description:'Compra fictícia',amount:100,last4:'0000',purchase_date:'2026-10-01',category:'Categoria de teste',category_basis:'user_decision'}]}]}]};
+ if(/^lts_browser_card_detail_/.test(name))return {invoice_amount:100,detail_total:100,items:[{source_id:'synthetic-purchase-1',description:'Compra fictícia',amount:100,last4:'0000',purchase_date:'2026-10-01',category:'Categoria de teste'}]};
+ if(/^lts_browser_card_history_/.test(name))return {version:'card-history-v226',invoices:[]};
+ if(/^lts_browser_card_flow_schedule_/.test(name))return {inventory:{cards:[]},months:[],summary:{}};
+ if(/^lts_browser_open_finance_status_/.test(name))return {connections:[]};
+ if(/^lts_browser_open_finance_pending_/.test(name))return {version:'pending-expense-v225',transaction_count:0,net_expense:0,rows:[]};
+ if(/^lts_browser_expense_review_queue_/.test(name))return {row_count:0,matched_count:0,offset:0,next_offset:null,category_options:[],beneficiary_options:[],rows:[]};
+ if(/expense_context/.test(name))return {contexts:[],natures:[],summary:{}};
+ if(/invoice_documentary_only|legacy_invoice_gap/.test(name))return {financial_effect:'none',invoices:[]};
+ if(/recurring_future_gap/.test(name))return {horizon_checks:[],items:[]};
+ return {ok:true,items:[],rows:[],total:0,summary:{}};
+}
+return {AS_OF,product,response};
+
+})();
+
+module.exports=fixture;

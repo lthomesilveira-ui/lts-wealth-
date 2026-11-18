@@ -1,0 +1,63 @@
+name: V282 label presentation overlay
+on:
+  pull_request:
+    paths:
+      - '.github/fixtures/labels-v282/**'
+      - '.github/scripts/lts_labels_v282*'
+      - '.github/workflows/labels-v282.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  synthetic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      LTS_RELEASE: v282
+      LTS_LEDGER_QA_DIR: qa/labels-ledger
+      LTS_BOOT_QA_DIR: qa/labels-boot
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify immutable published base and eight-asset overlay
+        run: |
+          mkdir -p qa/labels-static
+          node .github/scripts/lts_labels_v282_overlay.cjs > qa/labels-static/overlay.json
+          node .github/scripts/lts_labels_v282_scenarios.cjs > qa/labels-static/scenarios.json
+          node .github/scripts/lts_labels_v282_ledger_fullstack.cjs --static-check > qa/labels-static/ledger.json
+      - name: Preserve 198 candidate unit assertions
+        run: node .github/fixtures/labels-v282/run.cjs
+      - name: Preserve inherited projection and observer contracts
+        run: |
+          node .github/scripts/lts_v282_p12_contract.cjs
+          node .github/scripts/lts_v282_observer_contract.cjs
+      - run: npm install --no-save --package-lock=false playwright@1.58.2
+      - run: npx playwright install --with-deps chromium
+      - name: Serve only local immutable repository assets
+        run: python3 -m http.server 8788 --bind 127.0.0.1 > /tmp/labels-v282-http.log 2>&1 &
+      - name: Diagnose natural-input geometry against unchanged V282
+        env:
+          LTS_LEDGER_QA_DIR: qa/labels-natural-geometry
+        run: node .github/scripts/lts_labels_v282_ledger_fullstack.cjs --natural-geometry-probe
+      - name: Canonical ledger plus label interactions in three viewports
+        run: node .github/scripts/lts_labels_v282_ledger_fullstack.cjs
+      - name: Complete inherited functional matrix with candidate overlay
+        if: success() || failure()
+        run: node .github/scripts/lts_labels_v282_payment_fullstack.js
+      - name: Complete inherited boot matrix with candidate overlay
+        if: success() || failure()
+        run: node .github/scripts/lts_labels_v282_boot_browser.js
+      - name: Collect synthetic unit receipts
+        if: always()
+        run: |
+          mkdir -p qa/labels-unit
+          find .github/fixtures/labels-v282 -maxdepth 1 -type f -name "*results.json" -exec cp {} qa/labels-unit/ \;
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: labels-v282-synthetic-evidence
+          path: qa/

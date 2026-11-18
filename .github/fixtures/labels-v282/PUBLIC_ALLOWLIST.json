@@ -1,0 +1,53 @@
+{
+  "scope": "Exact public source inputs; exclude generated test receipts and all parent audit files.",
+  "files": [
+    {
+      "path": "README.md",
+      "sha256": "b0a9b7d7df045c3a96df3a2839cfcaacdca318d2b9f2cd9f6cb75c2dda5965f2"
+    },
+    {
+      "path": "canonical-harness.cjs",
+      "sha256": "ed7d811e5204062092fb52ad223557ee7e429ad40612d4fc3877cecf1d0b4d02"
+    },
+    {
+      "path": "manifest.json",
+      "sha256": "21f798cb754ff4d583cec544c9658d6afb02f508a63d3eb6bdf2172b4caf4174"
+    },
+    {
+      "path": "playwright-label-assertions.cjs",
+      "sha256": "eee3a566611fae2a93d6218ff8d3e0c2ff7f0a487ee1b69dc10c91423b9ae818"
+    },
+    {
+      "path": "public-v282-baseline-hashes.json",
+      "sha256": "1b2fb8cf3249e8d632e4a6d8a27a133eed9e0fcf92497706156d8be59847d60e"
+    },
+    {
+      "path": "run.cjs",
+      "sha256": "41d350e41c67a1967e5d605a23c28ea342480559ffd47ba82f3bf0b28b800f00"
+    },
+    {
+      "path": "test-canonical.cjs",
+      "sha256": "69a1d526a631e7b302a1c8b65c384e0645a65db5cbebc7dd7d92601de015bc16"
+    },
+    {
+      "path": "test_labels.cjs",
+      "sha256": "39756e85b1fce9330531c045afd221cdb312d2fc5144a6b4f1f44ad46a67a518"
+    },
+    {
+      "path": "test_legacy_drilldown.cjs",
+      "sha256": "13ddb92c792d8c08f850c114b8a33208461dcd58919bb4dee3b20e3f17ff60b3"
+    },
+    {
+      "path": "test_monthly_collision.cjs",
+      "sha256": "c028133bbaba5bbb2dc738877b38540c8527df014c777e6260b8f4c462c865ac"
+    },
+    {
+      "path": "test_natural_input.cjs",
+      "sha256": "f80651f9917b66433d5143386235a3fe126c67f921dcf4645206b26c8329c713"
+    },
+    {
+      "path": "test_v282_roundtrip.cjs",
+      "sha256": "5cef460b295191c8906c700b6fbfee7e0b273ce0fa17c66284364b6fbed6958b"
+    }
+  ]
+}
