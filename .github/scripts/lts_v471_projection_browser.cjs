@@ -1,5 +1,6 @@
 'use strict';
-process.env.LTS_FLOW_RELEASE = 'v471';
+const release = process.env.LTS_MOBILE_RELEASE || 'v471';
+process.env.LTS_FLOW_RELEASE = release;
 const assert = require('node:assert/strict');
 const {chromium, webkit} = require('playwright');
 const {setup} = require('./lts_v382_browser.cjs');
@@ -19,7 +20,7 @@ async function run(browser, width, malformed) {
     await session.page.goto('http://127.0.0.1:8788/mobile/?source=home-screen', {waitUntil:'domcontentloaded'});
     await session.page.waitForFunction(() => document.getElementById('wealth')?.contentDocument
       ?.getElementById('shell')?.contentDocument?.body?.dataset.ltsBootState === 'ready');
-    const frame = session.page.frames().find(f => new URL(f.url()).pathname.endsWith('/releases/v471/index.html'));
+    const frame = session.page.frames().find(f => new URL(f.url()).pathname.endsWith('/releases/'+release+'/index.html'));
     assert(frame, 'canonical entry loaded the intended projection reader');
     await frame.waitForFunction(status => window.__LTS_V412_PROJECTION?.status === status, malformed ? 'error' : 'ready');
     await frame.locator('#nav [data-v="Fluxo Diário"]:visible,#dx1MobileNav [data-mobile-route="Fluxo Diário"]:visible').click();

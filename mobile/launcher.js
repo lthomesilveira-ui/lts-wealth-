@@ -3,19 +3,32 @@
  const panel=document.getElementById('install'),frame=document.getElementById('wealth');
  const viewport=document.getElementById('appViewport');
  const button=document.getElementById('open'),error=document.getElementById('error'),offline=document.getElementById('offline');
+ const version=document.getElementById('installVersion');
  let started=false,busy=false;
- function connection(){offline.hidden=navigator.onLine!==false;if(started&&navigator.onLine!==false)open();}
- async function open(){
-  if(busy||navigator.onLine===false){connectionOnly();return;}
-  if(started){viewport.hidden=false;frame.hidden=false;return;}
-  busy=true;button.disabled=true;error.hidden=true;
-  try{
+ let lookup=null;
+ async function currentRelease(){
+  if(lookup)return lookup;
+  lookup=(async()=>{
    const response=await fetch('current.json',{cache:'no-store',credentials:'same-origin'});
    if(!response.ok)throw Error('Unavailable');
    const current=await response.json(),target=new URL(current.entry,location.href);
    const root=new URL('../',location.href).pathname;
    if(target.origin!==location.origin||!/^v[0-9]+$/.test(current.release)||
       target.pathname!==root+'releases/'+current.release+'/app.html'||target.search||target.hash)throw Error('Invalid release');
+   const label=current.release.toUpperCase();
+   if(version)version.textContent=label;
+   return {target,label};
+  })();
+  try{return await lookup;}finally{lookup=null;}
+ }
+ function connection(){offline.hidden=navigator.onLine!==false;if(started&&navigator.onLine!==false)open();}
+ async function open(){
+  if(busy||navigator.onLine===false){connectionOnly();return;}
+  if(started){viewport.hidden=false;frame.hidden=false;return;}
+  busy=true;button.disabled=true;error.hidden=true;
+  try{
+   const {target,label}=await currentRelease();
+   frame.title='LTS Wealth · '+label;document.title=frame.title;
    frame.src=target.href;viewport.hidden=false;frame.hidden=false;panel.hidden=true;
    document.documentElement.classList.add('wealth-open');document.body.classList.add('wealth-open');started=true;
   }catch(_){panel.hidden=false;viewport.hidden=true;frame.hidden=true;error.hidden=false;}
@@ -26,4 +39,5 @@
  window.addEventListener('offline',connectionOnly);window.addEventListener('online',connection);
  connectionOnly();
  if(window.matchMedia('(display-mode: standalone)').matches||navigator.standalone===true)open();
+ else if(navigator.onLine!==false)currentRelease().catch(()=>{});
 })();
