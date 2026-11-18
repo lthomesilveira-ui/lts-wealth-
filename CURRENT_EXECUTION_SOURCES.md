@@ -1,5 +1,7 @@
 # Current execution sources
 
+V477 keeps a document and its download link open when the Actions screen redraws. Upload and review follow the V476 flow.
+
 V476 restores review-only receipt upload in the Actions document section. The dated private register tracks production acceptance separately.
 
 V474 shows the loaded release beside the app name and retries an interrupted classification read once while the same screen request is current. The published entry uses the V473 backend.
