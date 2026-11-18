@@ -2,7 +2,7 @@
 process.env.LTS_FLOW_RELEASE = 'v471';
 const assert = require('node:assert/strict');
 const {chromium, webkit} = require('playwright');
-const {setup, open} = require('./lts_v382_browser.cjs');
+const {setup} = require('./lts_v382_browser.cjs');
 const {fixture} = require('./lts_v471_projection_test.cjs');
 const {product} = require('./lts_v379_fixtures.cjs');
 
@@ -16,7 +16,11 @@ async function run(browser, width, malformed) {
     await session.ctx.route('**/rpc/lts_browser_product_v1', reply({ok: true, mvp: product(), refresh}));
     await session.ctx.route('**/rpc/lts_browser_product_refresh_status_v415', reply({ok: true, refresh}));
     await session.ctx.route('**/rpc/lts_browser_projection_policy_v412', reply(input));
-    const frame = await open(session, 'v471', true);
+    await session.page.goto('http://127.0.0.1:8788/mobile/?source=home-screen', {waitUntil:'domcontentloaded'});
+    await session.page.waitForFunction(() => document.getElementById('wealth')?.contentDocument
+      ?.getElementById('shell')?.contentDocument?.body?.dataset.ltsBootState === 'ready');
+    const frame = session.page.frames().find(f => new URL(f.url()).pathname.endsWith('/releases/v471/index.html'));
+    assert(frame, 'canonical entry loaded the intended projection reader');
     await frame.waitForFunction(status => window.__LTS_V412_PROJECTION?.status === status, malformed ? 'error' : 'ready');
     await frame.locator('#nav [data-v="Fluxo Diário"]:visible,#dx1MobileNav [data-mobile-route="Fluxo Diário"]:visible').click();
     const panel = frame.locator('[data-v412-policy="flow"]');
