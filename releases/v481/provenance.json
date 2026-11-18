@@ -1,0 +1,9 @@
+{
+  "release": "v481",
+  "base_release": "v480",
+  "scope": "Keep signed-in account settings available before the first financial snapshot and during financial refreshes.",
+  "financial_source_writes": false,
+  "authentication_changed": false,
+  "timeouts_changed": false,
+  "published_base_immutable": true
+}
