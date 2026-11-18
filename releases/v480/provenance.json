@@ -1,9 +1,9 @@
 {
-  "release": "v474",
-  "base_release": "v471",
-  "scope": "Visible active release on launch and in the application header; bounded recovery of interrupted classification reads",
+  "release": "v480",
+  "base_release": "v478",
+  "scope": "Signed-in users may change their own password from the Wealth header.",
   "financial_source_writes": false,
-  "authentication_changed": false,
+  "authentication_changed": true,
   "timeouts_changed": false,
   "published_base_immutable": true
 }

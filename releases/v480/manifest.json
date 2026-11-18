@@ -1,15 +1,17 @@
 {
-  "release": "v478",
-  "version": "v478",
-  "base_release": "v477",
+  "release": "v480",
+  "version": "v480",
+  "base_release": "v478",
   "entry": "app.html",
   "protected_manifest": {
-    "path": "releases/v477/manifest.json",
-    "sha256": "d192cf957456240cb65f912b574f72bf59bb0023f58ab03dca6148e15a931494"
+    "path": "releases/v478/manifest.json",
+    "sha256": "6d1ab3418f3de4167771360374d7ddff91063e5fa3691042eebbb5f998746097"
   },
   "files": {
-    "app.html": "932374c426ae12c202e44402dda87ece05893ad221f4385724eb6fa52df6d6c7",
-    "index.html": "2db462a1e5059d779557fc20dcedef6866de5998fe1ed60a30334afa4c6ae881",
+    "account-password.css": "04309dabc2d56bd82f8ccc0c57c7ad958c007ca8e880c10a9e5b5615cf7b5501",
+    "account-password.js": "4b68d38d8e1b3a3343e4706a3bfb5f792db3ba9587c6f1f3674ff23d89960583",
+    "app.html": "34e26b1d8ba52a496c7c41c92c2a94f3f8b744796e788b38a43a437f4864f61f",
+    "index.html": "5b8ee3b4cf5d97beabb2e7b23586effa0cd7bd623956d7118d1f4b3db79a65fb",
     "lts-category-display.js": "8b26d86f23a4be83da5f6dafdb1b0a58847181bf6f3482e6445d98456e72918f",
     "lts-category-registry.js": "bef89cbfac538b18c28c2d3a080d5710e232c9bef012b962a1d3fcc356433253",
     "lts-dashboard-executive-v1.js": "527f93e991abf083d109a495603d664db7a3b1b48aea7f6b9713f84f12615121",
@@ -117,7 +119,7 @@
     "lts-v463-debt-model.js": "d79aa50d58d4ccad21a02cef81090029ff089197522e30992e3514bb441e3c2b",
     "lts-v463-debt-ui.js": "d53fe7ee6d7a1de6112cc9f44f79ce8c4b932511be5d8835f392dd1e7f22cb46",
     "lts-v478-invoice.js": "293afbebed132b60b38ab17e656836bfbaf8162df18fb6cb695f5f4a9f95aa6e",
-    "provenance.json": "7b732de887575b85490eb092c1f14a1f7ec8bad842e5efb3c89f3da79b2da4b8",
+    "provenance.json": "a63adb3f9cc5b8e156ff40ad14a9c627c7e42cd9b50189ebed83daa4d69a3e77",
     "wip35-v162-flow-recovery.js": "9a519b23052c2f807aeb5a2f20582710bc0466d6f5931db4edd70606ea4a9350"
   }
 }
