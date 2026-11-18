@@ -1,5 +1,7 @@
 # Current execution sources
 
+V480 adds a signed-in password change to the existing Wealth header. The V479 backend remains the source for confirmed monthly commitments.
+
 V479 updates the backend rules for confirmed monthly commitments. The V478 mobile entry continues to show the open statement and future grouped provisions.
 
 V478 groups projected card spending by due date in the daily cash flow. The open statement uses known charges and installments when the owner's planning rule is enabled.
