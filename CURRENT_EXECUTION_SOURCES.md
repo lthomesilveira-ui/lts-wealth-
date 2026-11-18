@@ -1,5 +1,7 @@
 # Current execution sources
 
+V481 keeps account settings available before a signed-in profile has financial data. The V479 financial backend remains in service.
+
 V480 adds a signed-in password change to the existing Wealth header. The V479 backend remains the source for confirmed monthly commitments.
 
 V479 updates the backend rules for confirmed monthly commitments. The V478 mobile entry continues to show the open statement and future grouped provisions.
