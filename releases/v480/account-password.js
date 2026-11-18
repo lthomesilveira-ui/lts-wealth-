@@ -1,7 +1,6 @@
 (() => {
   'use strict';
   const byId = id => document.getElementById(id);
-  const openButton = byId('accountPasswordOpen');
   const dialog = byId('accountPasswordDialog');
   const form = byId('accountPasswordForm');
   const fields = byId('accountPasswordFields');
@@ -11,7 +10,7 @@
   const status = byId('accountPasswordStatus');
   const save = byId('accountPasswordSave');
   const close = byId('accountPasswordClose');
-  let accountId;
+  let openedIdentity;
   let operation;
 
   function clearFields() {
@@ -23,18 +22,27 @@
   function closeDialog() {
     if (operation) operation.abort();
     operation = undefined;
-    accountId = undefined;
+    openedIdentity = undefined;
     clearFields();
     if (dialog.open) dialog.close();
   }
 
-  async function openDialog() {
-    // The account action also works while a new member's financial data is loading.
-    if (dialog.open) return;
-    const { data } = await S.auth.getSession();
-    if (!data?.session?.user?.id || byId('logout').classList.contains('hidden')) return;
+  async function ownUserId(session, signal) {
+    if (!session?.access_token) return null;
+    if (session.user?.id) return session.user.id;
+    const result = await fetch(U + '/auth/v1/user', {
+      method: 'GET', cache: 'no-store', credentials: 'omit', redirect: 'error',
+      headers: { apikey: K, Authorization: 'Bearer ' + session.access_token },
+      signal
+    });
+    if (!result.ok) return null;
+    const user = await result.json();
+    return user?.id || null;
+  }
+
+  function openDialog() {
+    if (dialog.open || byId('logout').classList.contains('hidden')) return;
     clearFields();
-    accountId = data.session.user.id;
     fields.hidden = false;
     save.hidden = false;
     save.disabled = false;
@@ -42,6 +50,9 @@
     status.textContent = '';
     dialog.showModal();
     current.focus();
+    // A legacy session can carry a valid access token without a stored user.
+    openedIdentity = Promise.resolve().then(() => S.auth.getSession())
+      .then(({data}) => ownUserId(data?.session)).catch(() => null);
   }
 
   function showProviderError(code, httpStatus) {
@@ -57,7 +68,7 @@
 
   form.addEventListener('submit', async event => {
     event.preventDefault();
-    if (operation || !accountId || !dialog.open || fields.hidden) return;
+    if (operation || !openedIdentity || !dialog.open || fields.hidden) return;
     repeat.setCustomValidity(repeat.value === next.value ? '' : 'As duas senhas precisam coincidir.');
     next.setCustomValidity(next.value === current.value ? 'Escolha uma senha diferente da atual.' : '');
     if (!form.reportValidity()) return;
@@ -70,8 +81,9 @@
     try {
       const { data } = await S.auth.getSession();
       const session = data?.session;
+      const [accountId, activeId] = await Promise.all([openedIdentity, ownUserId(session, request.signal)]);
       if (operation !== request) return;
-      if (!session?.access_token || session.user?.id !== accountId) {
+      if (!accountId || !activeId || activeId !== accountId) {
         clearFields();
         status.textContent = 'Entre novamente no Wealth para alterar a senha.';
         return;
@@ -112,7 +124,9 @@
     next.setCustomValidity('');
     repeat.setCustomValidity('');
   });
-  openButton.addEventListener('click', openDialog);
+  document.addEventListener('click', event => {
+    if (event.target.closest?.('#accountPasswordOpen')) openDialog();
+  });
   close.addEventListener('click', closeDialog);
   dialog.addEventListener('cancel', event => { event.preventDefault(); closeDialog(); });
   byId('logout').addEventListener('click', closeDialog);

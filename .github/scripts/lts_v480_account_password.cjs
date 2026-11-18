@@ -14,6 +14,7 @@ async function verify(browser, width) {
   const exampleNew = 'sample-new-only';
   let outcome = 'rejected';
   const requests = [];
+  let identityReads = 0;
   try {
     const refresh = { state: 'ready', required: false, cached_available: true,
       request_version: '2', completed_version: '2' };
@@ -21,7 +22,10 @@ async function verify(browser, width) {
     await ctx.route('**/rpc/lts_browser_product_refresh_status_v415', route => route.fulfill({ json: {ok:true, refresh} }));
     await ctx.route('**/auth/v1/user', async route => {
       const req = route.request();
-      if (req.method() === 'GET') return route.fulfill({ json:{id:ownerId} });
+      if (req.method() === 'GET') {
+        identityReads++;
+        return route.fulfill({ json:{id:ownerId} });
+      }
       const data = req.postDataJSON();
       requests.push({
         method: req.method(),
@@ -41,6 +45,14 @@ async function verify(browser, width) {
     const open = frame.getByRole('button', {name:'Alterar senha', exact:true});
     const dialog = frame.getByRole('dialog', {name:'Alterar senha'});
     assert(await open.isVisible());
+    if (width === 360) {
+      await frame.evaluate(() => {
+        const key = 'lts_supabase_session_v1';
+        const olderSession = JSON.parse(localStorage.getItem(key));
+        delete olderSession.user;
+        localStorage.setItem(key, JSON.stringify(olderSession));
+      });
+    }
     await open.click();
     const current = dialog.getByLabel('Senha atual', {exact:true});
     const next = dialog.getByLabel('Nova senha', {exact:true});
@@ -77,6 +89,7 @@ async function verify(browser, width) {
     assert.equal(await repeat.inputValue(), '');
     assert.equal(await save.isVisible(),false);
     assert.equal(requests.length,3);
+    if (width === 360) assert(identityReads > 0, 'older session verified by the provider');
     for (const req of requests) assert.deepEqual(req,{method:'PUT',identity:true,previous:true,newValue:true,onlyPassword:true});
     assert.deepEqual(writes, []);
     await dialog.getByRole('button',{name:'Fechar'}).click();
