@@ -1,0 +1,9 @@
+{
+  "release": "v480",
+  "base_release": "v478",
+  "scope": "Signed-in users may change their own password from the Wealth header.",
+  "financial_source_writes": false,
+  "authentication_changed": true,
+  "timeouts_changed": false,
+  "published_base_immutable": true
+}
