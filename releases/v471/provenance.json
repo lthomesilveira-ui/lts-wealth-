@@ -1,0 +1,9 @@
+{
+  "release": "v471",
+  "base_release": "v467",
+  "scope": "Read approved monthly budgets and their actual historical windows",
+  "financial_source_writes": false,
+  "authentication_changed": false,
+  "timeouts_changed": false,
+  "published_base_immutable": true
+}
