@@ -1,0 +1,21 @@
+name: V479 confirmed monthly expenses
+on:
+  pull_request:
+    paths: ['backend/tools/recurring_obligations_v479/**','.github/workflows/v479-recurring-obligations.yml']
+permissions:
+  contents: read
+jobs:
+  recurring-expenses:
+    runs-on: ubuntu-24.04
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: local-test
+        ports: ['5432:5432']
+        options: --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - run: psql -X -h localhost -U postgres -d postgres -f backend/tools/recurring_obligations_v479/test.sql
+        env:
+          PGPASSWORD: local-test
