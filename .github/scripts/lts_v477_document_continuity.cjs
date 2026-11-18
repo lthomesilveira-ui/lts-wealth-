@@ -7,7 +7,7 @@ const {chromium, webkit} = require('playwright');
 
 const release = process.env.LTS_MOBILE_RELEASE || 'v477';
 process.env.LTS_FLOW_RELEASE = release;
-const {setup, open} = require('./lts_v382_browser.cjs');
+const {setup} = require('./lts_v382_browser.cjs');
 const {product} = require('./lts_v379_fixtures.cjs');
 const output = path.resolve('qa/v477-document-continuity');
 
@@ -49,7 +49,13 @@ async function verify(browser, engine, width) {
       await route.fulfill({contentType:'application/pdf', body:bytes});
     });
 
-    const frame = await open(session, release, true);
+    await session.page.goto('http://127.0.0.1:8788/mobile/?source=home-screen', {waitUntil:'domcontentloaded'});
+    await session.page.waitForFunction(() => document.querySelector('#wealth')?.contentDocument
+      ?.querySelector('#shell')?.contentDocument?.body?.dataset.ltsBootState === 'ready');
+    const frame = session.page.frames().find(candidate =>
+      new URL(candidate.url()).pathname.endsWith('/releases/'+release+'/index.html'));
+    assert.ok(frame, 'normal entry reached the selected release');
+    await frame.waitForFunction(() => window.__LTS_V407_DOCUMENTS?.installed);
     await frame.locator('#nav [data-v="Atualizações"]:visible,#dx1MobileNav [data-mobile-route="Atualizações"]:visible').click();
     const panel = frame.locator('#v407Documents');
     await panel.waitFor({state:'visible'});
