@@ -4,7 +4,8 @@ const crypto = require('node:crypto');
 const {chromium, webkit} = require('playwright');
 const release = process.env.LTS_MOBILE_RELEASE || 'v476';
 process.env.LTS_FLOW_RELEASE = release;
-const {setup, open} = require('./lts_v382_browser.cjs');
+const {setup} = require('./lts_v382_browser.cjs');
+const {product} = require('./lts_v379_fixtures.cjs');
 
 async function verify(browser, width) {
   const session = await setup(browser, width, 820, '2026-11-18T11:00:00Z');
@@ -13,6 +14,9 @@ async function verify(browser, width) {
   const objectPath = '00000000-0000-4000-8000-000000000001/documents/' + digest;
   let uploads = 0, receipts = 0, fileExists = false, interrupt = true;
   try {
+    const refresh={state:'ready',required:false,cached_available:true,request_version:'2',completed_version:'2'};
+    await session.ctx.route('**/rpc/lts_browser_product_v1',route=>route.fulfill({json:{ok:true,mvp:product(),refresh}}));
+    await session.ctx.route('**/rpc/lts_browser_product_refresh_status_v415',route=>route.fulfill({json:{ok:true,refresh}}));
     await session.ctx.route('**/rpc/lts_browser_review_document_file_v476', async route => {
       const args = route.request().postDataJSON();
       assert.equal(args.p_sha256, digest);
@@ -35,7 +39,11 @@ async function verify(browser, width) {
       route.fulfill({json:{contract:'v149-evidence-review-readonly-canonical-v1',queue_documents:receipts,
         items:receipts?[{inbox_id:'sample-receipt',original_name:'Example.pdf',phase:'received'}]:[],
         write_allowed:false,financial_writer_called:false}}));
-    const frame = await open(session, release);
+    await session.page.goto('http://127.0.0.1:8788/mobile/?source=home-screen',{waitUntil:'domcontentloaded'});
+    await session.page.waitForFunction(()=>document.querySelector('#wealth')?.contentDocument
+      ?.querySelector('#shell')?.contentDocument?.body?.dataset.ltsBootState==='ready');
+    const frame=session.page.frames().find(f=>new URL(f.url()).pathname.endsWith('/releases/'+release+'/index.html'));
+    assert(frame,'published route reached the candidate');
     await frame.locator('#nav [data-v="Atualizações"]:visible,#dx1MobileNav [data-mobile-route="Atualizações"]:visible').click();
     const disclosure = frame.getByText('Enviar e consultar documentos',{exact:true});
     const form = frame.locator('.v476-upload');
