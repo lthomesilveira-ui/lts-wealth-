@@ -3,6 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<script>
+if(navigator.onLine!==false)window.ltsEntryRequest=fetch('current.json',{cache:'no-store',credentials:'same-origin'}).catch(()=>null);
+</script>
 <meta name="robots" content="noindex,nofollow">
 <meta name="theme-color" content="#10263f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -38,6 +41,6 @@ iframe{display:block;width:100%;max-width:100%;min-width:0;height:100%;border:0;
 </main>
 <div id="appViewport" hidden><iframe id="wealth" title="LTS Wealth" hidden></iframe></div>
 <section id="offline" role="status" hidden><h1>Conecte-se à internet</h1><p>Reconecte o celular para consultar seu Wealth.</p></section>
-<script src="launcher.js?v=474"></script>
+<script src="launcher.js?v=483"></script>
 </body>
 </html>
