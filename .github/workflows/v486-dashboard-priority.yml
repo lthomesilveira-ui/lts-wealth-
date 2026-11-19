@@ -32,3 +32,4 @@ jobs:
           node .github/scripts/lts_v482_opening.cjs
           node .github/scripts/lts_v478_provision_browser.cjs
           node .github/scripts/lts_v484_dashboard_opening.cjs
+          LTS_OPENING_COMPARE_RELEASE=v486 node .github/scripts/lts_v483_mobile_opening.cjs
