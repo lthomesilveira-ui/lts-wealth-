@@ -1,6 +1,6 @@
 # Current execution sources
 
-V491 requests the automatic bank update after confirmed cash and current expense groups, before the five-year projection and other secondary reports. Displayed balance dates and the three-bank confirmation keep their existing meaning. The V490 candidate exposed the cold projection delay during authenticated acceptance.
+V492 recovers a forecast policy read interrupted by the bank update. V491 requests the automatic bank update after confirmed cash and current expense groups, before the five-year projection and other secondary reports. Displayed balance dates and the three-bank confirmation keep their existing meaning. The V490 candidate exposed the cold projection delay during authenticated acceptance.
 
 V489 preserves the mobile navigation target during dashboard redraws. The V487 and V488 backend updates cover opening during a refresh and preparing the current calendar year before the first dashboard read. Authenticated results are recorded in the private acceptance audit.
 

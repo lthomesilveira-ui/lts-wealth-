@@ -1,0 +1,7 @@
+{
+  "release": "v492",
+  "base_release": "v491",
+  "scope": "Keep the early bank collection and recover a projection-policy read invalidated during reconciliation. Never replay recalculation.",
+  "financial_source_writes": false,
+  "published_base_immutable": true
+}
