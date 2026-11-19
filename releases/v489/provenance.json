@@ -1,0 +1,7 @@
+{
+  "release": "v489",
+  "base_release": "v486",
+  "scope": "Preserve mobile navigation buttons when independent dashboard reads render during a touch.",
+  "financial_source_writes": false,
+  "published_base_immutable": true
+}
