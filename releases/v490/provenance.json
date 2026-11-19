@@ -1,0 +1,7 @@
+{
+  "release": "v490",
+  "base_release": "v489",
+  "scope": "Start bank collection after balances, annual expenses and the opening forecast. Secondary summaries keep their original transport protections.",
+  "financial_source_writes": false,
+  "published_base_immutable": true
+}
