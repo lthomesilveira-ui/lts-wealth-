@@ -1,0 +1,7 @@
+{
+  "release": "v486",
+  "base_release": "v484",
+  "scope": "Start the current expense report alongside the independent balance read and give it precedence over background Dashboard reports.",
+  "financial_source_writes": false,
+  "published_base_immutable": true
+}
