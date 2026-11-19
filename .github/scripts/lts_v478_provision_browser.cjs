@@ -8,6 +8,8 @@ process.env.LTS_FLOW_RELEASE = release;
 const {setup} = require('./lts_v382_browser.cjs');
 const {product} = require('./lts_v379_fixtures.cjs');
 const {response} = require('./lts_boot_recovery_fixtures.cjs');
+const groupedItau = Number(release.slice(1)) >= 482;
+const base = process.env.LTS_BROWSER_BASE || 'http://127.0.0.1:8788';
 const day = '2026-11-23', openDay = '2026-11-20';
 const outDir = 'qa/v478-provision';
 const policy = {
@@ -44,6 +46,11 @@ const entries = [
   event(day,'Bradesco','projection:v469:sub_example','Serviço de exemplo · assinatura prevista · Visa Aeternum',-3.35),
   event(day,'Bradesco','example:purchase','Compra identificada',-2.68,'documented')
 ];
+if (groupedItau) entries.push(
+  event(day,'Itaú','projection:v468:apple_monthly_19_90','Apple · assinatura prevista',-19.90),
+  event(day,'Itaú','projection:v468:google_ai_plus','Google AI Plus · assinatura prevista',-4.10),
+  event(day,'Itaú','statement','Fatura de teste',-18,'card_invoice')
+);
 async function test(browser, engine, width) {
   const s = await setup(browser,width,820,'2026-11-18T11:00:00Z');
   const refresh = {state:'ready',required:false,cached_available:true,request_version:'2',completed_version:'2'};
@@ -64,7 +71,8 @@ async function test(browser, engine, width) {
       }
       return r.fulfill({json:payload});
     });
-    await s.page.goto('http://127.0.0.1:8788/mobile/?source=home-screen',{waitUntil:'domcontentloaded'});
+    if (process.env.LTS_BROWSER_FIXTURE_RELEASE) await s.ctx.route('**/mobile/current.json', route=>route.fulfill({json:{release,entry:'../releases/'+release+'/app.html'}}));
+    await s.page.goto(base+'/mobile/?source=home-screen',{waitUntil:'domcontentloaded'});
     await s.page.waitForFunction(()=>document.querySelector('#wealth')?.contentDocument?.querySelector('#shell')?.contentDocument?.body?.dataset.ltsBootState==='ready');
     const frame=s.page.frames().find(f=>new URL(f.url()).pathname.endsWith('/releases/'+release+'/index.html'));
     assert.ok(frame);
@@ -77,12 +85,21 @@ async function test(browser, engine, width) {
     assert.equal(await current.locator('.v478-invoice').count(),0);
     await frame.locator('.exp[data-d="'+day+'"]').click();
     const detail=frame.locator('#d-'+day+'+.fx89-details');
-    const invoice=detail.locator('.v478-invoice');
+    const invoice=detail.locator('.v478-invoice').filter({hasText:'Provisão Visa Aeternum'});
     await invoice.locator('summary').waitFor();
     assert.equal(await invoice.count(),1);
     assert.equal(await invoice.evaluate(e=>e.open),false);
     assert.match(await invoice.locator('summary').innerText(),/10,00/);
-    assert.equal(await detail.locator('.fx89-detail-row:visible').count(),2);
+    assert.equal(await detail.locator('.fx89-detail-row:visible').count(),groupedItau ? 3 : 2);
+    if (groupedItau) {
+      const itau=detail.locator('.v478-invoice').filter({hasText:'Provisão cartão Itaú'});
+      await itau.locator('summary').click();
+      assert.match(await itau.locator('summary').innerText(),/24,00/);
+      await itau.getByText('Google AI Plus',{exact:true}).waitFor();
+      await detail.getByText('Fatura de teste',{exact:true}).waitFor();
+      assert.equal(await itau.locator('li').count(),2);
+      assert.equal(await invoice.evaluate(e=>e.open),false);
+    }
     await detail.getByText('Provisão Netflix',{exact:true}).waitFor();
     await detail.getByText('Compra identificada',{exact:true}).waitFor();
     assert.doesNotMatch(await detail.innerText(),/source_ref|planning_projection|payload/);
@@ -95,12 +112,21 @@ async function test(browser, engine, width) {
     await invoice.getByText('Serviço de exemplo',{exact:true}).waitFor();
     assert.ok(await invoice.evaluate(e=>e.open && e.scrollWidth<=e.clientWidth+2));
     await invoice.screenshot({path:outDir+'/'+engine+'-'+width+'-open.png'});
+    if (groupedItau) {
+      await frame.locator('[data-a="Itaú"]:visible').first().click();
+      const expand=frame.locator('.exp[data-d="'+day+'"]');
+      if (!(await detail.isVisible())) await expand.click();
+      const itau=detail.locator('.v478-invoice');
+      assert.equal(await itau.count(),1);
+      assert.match(await itau.locator('summary').innerText(),/Provisão cartão Itaú[\s\S]+24,00/);
+      await detail.getByText('Provisão Netflix',{exact:true}).waitFor();
+    }
     assert.deepEqual(s.writes,[]);
   } finally { await s.ctx.close(); }
 }
 (async()=>{
   for (const [engine,type] of [['chromium',chromium],['webkit',webkit]]) {
-    const browser=await type.launch();
+    const browser=await type.launch({executablePath:engine==='chromium'?process.env.LTS_TEST_CHROMIUM:undefined});
     try { for (const width of [360,1366]) await test(browser,engine,width); }
     finally { await browser.close(); }
   }
