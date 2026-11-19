@@ -1,0 +1,7 @@
+{
+  "release": "v486",
+  "base_release": "v484",
+  "scope": "Prioritize expenses on Dashboard and the selected daily Flow. Use the verified five-year horizon from the first navigation while preserving explicit periods.",
+  "financial_source_writes": false,
+  "published_base_immutable": true
+}
