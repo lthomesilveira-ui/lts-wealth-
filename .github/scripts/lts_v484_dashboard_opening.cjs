@@ -56,15 +56,33 @@ async function run(engine, scenario) {
     }
     await title.waitFor();
     assert.match(await boot.innerText(),/100,00/);
+    if (scenario === 'first-flow') {
+      await frame.locator('body').evaluate(el => {
+        const doc=el.ownerDocument;
+        const events=[];
+        doc.defaultView.__openingTouchEvents=events;
+        for(const type of ['pointerdown','touchstart','pointerup','touchend','click']){
+          doc.addEventListener(type,e=>{
+            const button=e.target.closest?.('button');
+            const pt=e.changedTouches?.[0]||e;
+            const row={type,tag:e.target.tagName,id:e.target.id,route:button?.dataset.mobileRoute||button?.dataset.v,
+              text:button?.textContent?.trim()?.slice(0,45),x:pt.clientX,y:pt.clientY,
+              phase:doc.body.dataset.ltsBootState,view:V,width:innerWidth,visualWidth:visualViewport?.width};
+            events.push(row);queueMicrotask(()=>{row.after=V});
+          },true);
+        }
+      });
+    }
     product.open();
     if (scenario === 'first-flow') {
-      await frame.locator('#nav [data-v="Fluxo Diário"]:visible,#dx1MobileNav [data-mobile-route="Fluxo Diário"]:visible').tap();
+      const target=frame.locator('#dx1MobileNav [data-mobile-route="Fluxo Diário"]');
+      await target.tap();
       try {
         await frame.locator('.v382-period').filter({hasText:'31/12/2031'}).waitFor();
       } catch (error) {
         const state = await frame.locator('body').evaluate(el => ({
           heading: el.querySelector('main h1')?.textContent, period: el.querySelector('.v382-period')?.textContent,
-          route: V, from: FLOWFROM, to: FLOWTO, defaultOpened: window.__LTS_V172_STATE?.flowNavigationOpened
+          route: V, from: FLOWFROM, to: FLOWTO, events:window.__openingTouchEvents, navBox:el.querySelector('#dx1MobileNav [data-mobile-route="Fluxo Diário"]')?.getBoundingClientRect().toJSON(), defaultOpened: window.__LTS_V172_STATE?.flowNavigationOpened
         }));
         throw Error('Initial mobile Flow: '+JSON.stringify({state,flowRanges}),{cause:error});
       }
@@ -91,7 +109,7 @@ async function run(engine, scenario) {
 (async()=>{
   for(const type of [chromium,webkit]){
     const b=await type.launch({executablePath:type===chromium?process.env.LTS_TEST_CHROMIUM:undefined});
-    try {for (const scenario of (release==='v484'?['complete','stale','mismatch']:['groups-before-cash','first-flow','stale','mismatch'])) {await run(b,scenario);console.log(type.name(),scenario,'passed');}}
+    try {for (const scenario of (release==='v484'?['complete','stale','mismatch']:['groups-before-cash','first-flow','stale','mismatch'])) {const samples=scenario==='first-flow'&&type===webkit?Number(process.env.LTS_FIRST_TOUCH_SAMPLES||1):1;for(let i=0;i<samples;i++)await run(b,scenario);console.log(type.name(),scenario,'passed',samples);}}
     finally {await b.close();}
   }
 })().catch(e=>{console.error(e);process.exitCode=1;});

@@ -1,5 +1,11 @@
 # Current execution sources
 
+V489 preserves the mobile navigation target during dashboard redraws. The V487 and V488 backend updates cover opening during a refresh and preparing the current calendar year before the first dashboard read. Authenticated results are recorded in the private acceptance audit.
+
+V486 gives the opening expense report priority, preserves the selected Flow period and uses the five-year horizon on the first navigation. The V485 backend reuses verified calculations for its unchanged sources. The private dated audit tracks the authenticated acceptance.
+
+V484 shows the verified available total during startup and loads current expense groups before the multi-year dashboard projection.
+
 V483 starts the authenticated mobile read before the bulk interface transfer. The opt-in compact response uses the same financial snapshot and omits four internal build and audit objects. The default reader and the V482 entry remain available.
 
 V482 opens with verified bank balances while the rest of the Dashboard loads. The cash flow groups Itaú card projections by due date. The V479 financial backend remains in service.

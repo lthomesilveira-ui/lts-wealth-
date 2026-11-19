@@ -10,6 +10,7 @@ jobs:
     timeout-minutes: 12
     container: mcr.microsoft.com/playwright:v1.58.2-noble
     env:
+      LTS_FIRST_TOUCH_SAMPLES: '4'
       LTS_OPENING_TEST_RELEASE: v489
       LTS_FLOW_RELEASE: v489
       LTS_MOBILE_RELEASE: v489
