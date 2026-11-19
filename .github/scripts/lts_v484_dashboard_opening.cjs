@@ -58,8 +58,8 @@ async function run(engine, scenario) {
     assert.match(await boot.innerText(),/100,00/);
     product.open();
     if (scenario === 'first-flow') {
-      await frame.getByRole('button',{name:'Fluxo de caixa',exact:true}).click();
-      await frame.getByText('25/10/2026 – 31/12/2031',{exact:true}).waitFor();
+      await frame.locator('#nav [data-v="Fluxo Diário"]:visible,#dx1MobileNav [data-mobile-route="Fluxo Diário"]:visible').click();
+      await frame.locator('.v382-period').filter({hasText:'31/12/2031'}).waitFor();
       await Promise.race([firstFlow.pending,new Promise((_,reject)=>{const t=setTimeout(()=>reject(Error('canonical Flow was never requested')),12000);t.unref();})]);
       assert.ok(flowRanges.some(q => q.p_from === '2026-10-25' && q.p_to === '2031-12-31'));
       assert.ok(!flowRanges.some(q => q.p_from === '2026-10-25' && q.p_to === '2030-12-31'));

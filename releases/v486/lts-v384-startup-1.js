@@ -2897,8 +2897,8 @@
     function defaultRange(){const current=today();return{from:shift(current,-5),to:window.parent.LTSV421Scenario.horizon(current,window.__LTS_V412_PROJECTION?.model)}}
     function isLegacyDefault(from,to){
       if(window.__LTS_V382_FLOW_LAYOUT?.explicit_period_action)return false;
-      const current=today(),previousEnd=(Number(current.slice(0,4))+4)+'-12-31';
-      return from===shift(current,-5)&&(to===previousEnd||to===shift(current,30));
+      const current=today();
+      return from===shift(current,-5)&&to===shift(current,30);
     }
     function uniqueRows(rows,dateKey,extraKey){const seen=new Map();for(const row of rows){const key=String(row?.[dateKey]||'')+'|'+String(row?.[extraKey]||'')+'|'+String(row?.source_ref||'');seen.set(key,row)}return[...seen.values()].sort((a,b)=>String(a?.[dateKey]).localeCompare(String(b?.[dateKey])))}
     function mergeFlows(parts,from,to){
