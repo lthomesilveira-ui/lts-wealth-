@@ -1,0 +1,7 @@
+{
+  "release": "v491",
+  "base_release": "v490",
+  "scope": "Start bank collection after confirmed balances and current expense groups. Keep the multi-year forecast and secondary summaries outside the prerequisite for bank collection.",
+  "financial_source_writes": false,
+  "published_base_immutable": true
+}

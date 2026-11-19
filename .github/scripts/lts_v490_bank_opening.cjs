@@ -43,10 +43,15 @@ async function verify(browser, width) {
     await frame.getByRole('button',{name:'Consultando bancos…',exact:true}).waitFor();
     assert.deepEqual(order,['collection'],'bank reconciliation must precede optional summary reads');
     assert.equal(await frame.locator('.lts-update-details').count()>0,true,'dated position details remain available');
+    // Listen from the page while the hold is still active. A product refresh can
+    // replace the inner document as soon as all three receipts arrive.
+    const resumed = Promise.all(['lts_browser_wealth_detail_v242','lts_browser_awards_v178'].map(name =>
+      page.waitForResponse(response => new URL(response.url()).pathname.endsWith('/rpc/'+name) && response.request().method()==='POST')
+    ));
     confirmed = true;
     await frame.getByText('Consulta concluída. Confira em Atualização a data de cada saldo.',{exact:true}).waitFor();
-    await frame.locator('body').evaluate(() => window.__LTS_V178_REVIEW.ready());
-    assert.ok(order.includes('lts_browser_wealth_detail_v242') && order.includes('lts_browser_awards_v178'),'optional readers resume');
+    const reports = await resumed;
+    assert.ok(reports.every(response=>response.ok()),'both secondary reports return successfully after confirmation');
     assert.equal(order.filter(x=>x==='collection').length,1);
   } finally {
     releaseForecast();
