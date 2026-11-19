@@ -4222,7 +4222,7 @@
      ()=>loadState('awards','lts_browser_awards_v178',{},force),
      ()=>loadState('dashboardReport','lts_browser_expenses_v229',{p_from:r.from,p_to:r.to},force)
     ];
-    for(const section of sections){if(serial!==dashboardSerial)return;await section();}
+    for(const section of sections){if(serial!==dashboardSerial||V!=='Dashboard')return;await section();}
    })().catch(error=>logError('dashboard_orchestration',error));
    dashboardFlight=job;job.finally(()=>{if(dashboardFlight===job)dashboardFlight=null});return job;
   }

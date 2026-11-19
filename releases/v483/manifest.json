@@ -10,8 +10,10 @@
   "files": {
     "account-password.css": "3b0dff59020617a9d1a02156b18c46d7eb152cfef50603d168b6c3d4e48d5c48",
     "account-password.js": "0f02f1b3c515be28d31fb8aa9ad12ec7719d5ab543d4df94ba70ca6fc0a2b38b",
-    "app.html": "c9cbeecddf941f2fbe92a6f142257b71ba4811dc3bf6168b2f80f1ae147469eb",
-    "index.html": "d66e42a24a9dcb905af4c75058d99ca9e94af98291983970242c217fe777aa9c",
+    "app-base.js": "51865a0f663fc2845fb347f379df540ae94a34bf3f3fb821a2d796d8d8e94c9f",
+    "app-sections.js": "7d562ed16c75e91c4babf10979e7fe224dcca57258cad590e8c3c057921cd5fd",
+    "app.html": "203ec81bd09d2c5c787c2836731d5d9964859377f423912eae32c0fedfa54efe",
+    "index.html": "ac716801767b807038824333f7e027d2b491eb016ed4ba81c98a4a8c81bfebcd",
     "lts-category-display.js": "8b26d86f23a4be83da5f6dafdb1b0a58847181bf6f3482e6445d98456e72918f",
     "lts-category-registry.js": "bef89cbfac538b18c28c2d3a080d5710e232c9bef012b962a1d3fcc356433253",
     "lts-dashboard-executive-v1.js": "527f93e991abf083d109a495603d664db7a3b1b48aea7f6b9713f84f12615121",
@@ -94,7 +96,7 @@
     "lts-v382-flow-layout.css": "8303cf96739c30bd775de3751bae22aadd8a96e641cc89aaf8fae6cfdb1cbe33",
     "lts-v382-flow-layout.js": "1e62c9034050cec39dcac16abc4f2dbcc814e8078c84fe39a93e5b9ee03a9a92",
     "lts-v384-read-priority.js": "5e6a4720addbb0afeebc6cd153b74f1c25fff70aedc461514c455d456b7bad09",
-    "lts-v384-startup-1.js": "762c8f1e290f32228039798fc8bfb816ebf12d080bbfc68dda56a5971dcaff39",
+    "lts-v384-startup-1.js": "7bf3556f53f6357271fdbedf38a40f5f32d25ebbdb1072c1f996572893b111c1",
     "lts-v384-startup-2.js": "3a28a700f3ec479ee8aa39574dfd7b8959ffceca562522e15579e6c41a23fabd",
     "lts-v398-family-loan.js": "8bbc15552403cba780fd17fb689297460b9d1097c80f68ba6f1b8b1bd90008d8",
     "lts-v399-d01-composition.js": "26610dbf231b9fce33aa9d7e8ce08682259b9fcfc6111164b7babe4b1f5b9f92",
@@ -120,7 +122,6 @@
     "lts-v463-debt-ui.js": "d53fe7ee6d7a1de6112cc9f44f79ce8c4b932511be5d8835f392dd1e7f22cb46",
     "lts-v478-invoice.js": "bfe3e4adb342de06f9c9c9471ee65b317100334eadbbb0c5d27c09900a3ed670",
     "provenance.json": "06539bd4608412d388d83ffc16defb6c6ed2b84fd42f2fbc8a21f90cdce2f0fb",
-    "screen-modules.js": "fa7b462a5b9d07602760a90a9613a38194e7349b6aae4532b9b4df67fde5a92d",
     "wip35-v162-flow-recovery.js": "9a519b23052c2f807aeb5a2f20582710bc0466d6f5931db4edd70606ea4a9350"
   }
 }

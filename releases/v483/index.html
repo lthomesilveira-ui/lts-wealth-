@@ -1,4 +1,29 @@
-<!doctype html><html lang="pt-BR"><head><script src="lts-v269-client-contract.js"></script><script>(function(){const STORE='lts_supabase_session_v1';function now(){return Math.floor(Date.now()/1000)}function read(){try{return JSON.parse(localStorage.getItem(STORE)||'null')}catch{return null}}function write(s){if(s)localStorage.setItem(STORE,JSON.stringify(s));else localStorage.removeItem(STORE)}function errObj(e){return {message:(e&&e.message)||String(e||'erro'),status:e?.status,code:e?.code}}async function req(url,opt){const r=await fetch(url,opt);let j=null;try{j=window.__LTS_V269_PRESENTATION?.takeProduct?.(r)??await r.json()}catch{}if(!r.ok){const e=new Error((j&&(j.msg||j.message||j.error_description||j.error))||('HTTP '+r.status));e.status=r.status;throw e}return j}function createClient(U,K){async function refresh(s){if(!s||!s.refresh_token)return null;try{const j=await req(U+'/auth/v1/token?grant_type=refresh_token',{method:'POST',headers:{apikey:K,'Content-Type':'application/json'},body:JSON.stringify({refresh_token:s.refresh_token})});const n={access_token:j.access_token,refresh_token:j.refresh_token||s.refresh_token,token_type:j.token_type||'bearer',expires_in:j.expires_in||3600,expires_at:now()+(j.expires_in||3600),user:j.user||s.user};write(n);return n}catch{write(null);return null}}async function session(){let s=read();if(s&&s.expires_at&&s.expires_at<now()+60)s=await refresh(s);return s}return {auth:{async signInWithPassword({email,password}){try{const j=await req(U+'/auth/v1/token?grant_type=password',{method:'POST',headers:{apikey:K,'Content-Type':'application/json'},body:JSON.stringify({email,password})});const s={access_token:j.access_token,refresh_token:j.refresh_token,token_type:j.token_type||'bearer',expires_in:j.expires_in||3600,expires_at:now()+(j.expires_in||3600),user:j.user};write(s);return {data:{session:s,user:j.user},error:null}}catch(e){return {data:{session:null,user:null},error:errObj(e)}}},async getSession(){const s=await session();return {data:{session:s},error:null}},async signOut(){const s=read();try{if(s&&s.access_token)await fetch(U+'/auth/v1/logout',{method:'POST',headers:{apikey:K,Authorization:'Bearer '+s.access_token}})}catch{}write(null);return {error:null}}},async rpc(fn,args={},options={}){try{const s=await session();if(!s)throw new Error('Sessão expirada');const data=await req(U+'/rest/v1/rpc/'+encodeURIComponent(fn),{method:'POST',headers:{apikey:K,Authorization:'Bearer '+s.access_token,'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify(fn==='lts_browser_product_v1'?{...args,p_mobile_version:483}:args||{}),signal:options.signal,ltsOnReadStart:options.onReadStart});return {data,error:null}}catch(e){return {data:null,error:errObj(e)}}}}}window.supabase={createClient};})();</script><script>
+<!doctype html><html lang="pt-BR"><head><script>/* Presentation negotiation only. Existing authentication and ownership checks are unchanged. */
+(function(root){
+ 'use strict';
+ const previous=root.fetch.bind(root),origin='https://tadhkamnwtsbdozwkyut.supabase.co',capability='lts-wealth-v269-c6-completeness';
+ const prepared=new Set(['lts_browser_month_overview_v393','lts_browser_flow_v242','lts_browser_card_cycles_v226','lts_browser_card_cycles_v229','lts_browser_card_detail_v226','lts_browser_product_v1']);
+ const parsedProducts=new WeakMap();
+ let stateKnown=false,incomplete=false,sequence=0,accepted=0,acceptedEpoch=-1,acceptedRevision=null;
+ root.__LTS_V269_COMPLETENESS=()=>({known:stateKnown,incomplete});
+ root.fetch=async function(input,init){
+  let url;try{url=new URL(typeof input==='string'?input:input?.url||String(input),root.location?.href);}catch{return previous(input,init);}
+  if(url.origin!==origin||!url.pathname.startsWith('/rest/v1/rpc/'))return previous(input,init);
+  let reader=url.pathname.split('/').pop();
+  if(['lts_browser_flow_v3','lts_browser_flow_v4','lts_browser_flow_v241'].includes(reader)){reader='lts_browser_flow_v242';url.pathname='/rest/v1/rpc/'+reader;}
+  if(!prepared.has(reader))return previous(input,init);
+  const headers=new Headers(input instanceof Request?input.headers:undefined);
+  new Headers(init?.headers).forEach((v,k)=>headers.set(k,v));headers.set('x-client-info',capability);
+  const target=input instanceof Request?new Request(url.href,input):url.href;
+  const issued=++sequence,response=await previous(target,{...init,headers});
+  if(response.ok){
+   try{const data=await response.clone().json();if(reader==='lts_browser_product_v1')parsedProducts.set(response,data);const uncertain=data.complete===false||data.mvp?.complete===false;const globalRead=['lts_browser_product_v1','lts_browser_flow_v242'].includes(reader);const epoch=Number.isFinite(data.source_epoch)?data.source_epoch:null;const canRecover=!incomplete||(data.source_complete===true&&typeof data.source_revision==='string'&&epoch!==null&&epoch>=acceptedEpoch);if(uncertain||(globalRead&&issued>=accepted&&canRecover)){accepted=Math.max(accepted,issued);if(epoch!==null)acceptedEpoch=Math.max(acceptedEpoch,epoch);const changed=uncertain&&(!incomplete||(data.source_revision&&data.source_revision!==acceptedRevision));if(data.source_revision)acceptedRevision=data.source_revision;stateKnown=true;incomplete=uncertain;if(changed)root.document?.querySelectorAll('dialog[open],#v178Drawer').forEach(x=>{if(x.close)x.close();else x.remove()});root.__LTS_V269_RECHECK?.();}}catch{}
+  }
+  return response;
+ };
+ root.__LTS_V269_PRESENTATION={installed:true,capability,takeProduct(response){const value=parsedProducts.get(response);parsedProducts.delete(response);return value;},prepared:[...prepared],authentication_changed:false};
+})(window);
+</script><script>(function(){const STORE='lts_supabase_session_v1';function now(){return Math.floor(Date.now()/1000)}function read(){try{return JSON.parse(localStorage.getItem(STORE)||'null')}catch{return null}}function write(s){if(s)localStorage.setItem(STORE,JSON.stringify(s));else localStorage.removeItem(STORE)}function errObj(e){return {message:(e&&e.message)||String(e||'erro'),status:e?.status,code:e?.code}}async function req(url,opt){const r=await fetch(url,opt);let j=null;try{j=window.__LTS_V269_PRESENTATION?.takeProduct?.(r)??await r.json()}catch{}if(!r.ok){const e=new Error((j&&(j.msg||j.message||j.error_description||j.error))||('HTTP '+r.status));e.status=r.status;throw e}return j}function createClient(U,K){async function refresh(s){if(!s||!s.refresh_token)return null;try{const j=await req(U+'/auth/v1/token?grant_type=refresh_token',{method:'POST',headers:{apikey:K,'Content-Type':'application/json'},body:JSON.stringify({refresh_token:s.refresh_token})});const n={access_token:j.access_token,refresh_token:j.refresh_token||s.refresh_token,token_type:j.token_type||'bearer',expires_in:j.expires_in||3600,expires_at:now()+(j.expires_in||3600),user:j.user||s.user};write(n);return n}catch{write(null);return null}}async function session(){let s=read();if(s&&s.expires_at&&s.expires_at<now()+60)s=await refresh(s);return s}return {auth:{async signInWithPassword({email,password}){try{const j=await req(U+'/auth/v1/token?grant_type=password',{method:'POST',headers:{apikey:K,'Content-Type':'application/json'},body:JSON.stringify({email,password})});const s={access_token:j.access_token,refresh_token:j.refresh_token,token_type:j.token_type||'bearer',expires_in:j.expires_in||3600,expires_at:now()+(j.expires_in||3600),user:j.user};write(s);return {data:{session:s,user:j.user},error:null}}catch(e){return {data:{session:null,user:null},error:errObj(e)}}},async getSession(){const s=await session();return {data:{session:s},error:null}},async signOut(){const s=read();try{if(s&&s.access_token)await fetch(U+'/auth/v1/logout',{method:'POST',headers:{apikey:K,Authorization:'Bearer '+s.access_token}})}catch{}write(null);return {error:null}}},async rpc(fn,args={},options={}){try{const s=await session();if(!s)throw new Error('Sessão expirada');const data=await req(U+'/rest/v1/rpc/'+encodeURIComponent(fn),{method:'POST',headers:{apikey:K,Authorization:'Bearer '+s.access_token,'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify(fn==='lts_browser_product_v1'?{...args,p_mobile_version:483}:args||{}),signal:options.signal,ltsOnReadStart:options.onReadStart});return {data,error:null}}catch(e){return {data:null,error:errObj(e)}}}}}window.supabase={createClient};})();</script><script>
 window.LTSOpening483 = (() => {
   const client = supabase.createClient('https://tadhkamnwtsbdozwkyut.supabase.co', 'sb_publishable__p3SAbpThUIKtDr7A4llPw_AVkOaNkm');
   let sessionAtStart;
@@ -6,8 +31,10 @@ window.LTSOpening483 = (() => {
   const names = ['lts_browser_product_v1', 'lts_browser_cash_today_v242'];
   const sessionReady = client.auth.getSession().then(({data}) => {
     sessionAtStart = data?.session;
-    if (!sessionAtStart) return;
-    for (const name of names) pending.set(name, client.rpc(name));
+    if (sessionAtStart) {
+      for (const name of names) pending.set(name, client.rpc(name));
+    }
+    if (parent !== window) parent.dispatchEvent(new Event('lts:opening-reads-issued'));
   }).catch(() => {});
   async function take(name, session) {
     await sessionReady;
@@ -280,6 +307,7 @@ async function bootShowPosition(run,session){
   if(total!==Math.round(Number(data.cash)*100))return;
   const rows=accounts.map(bank=>'<li><span>'+esc(bank.institution)+'</span><b>'+brl(bank.balance)+'</b></li>').join('');
   bootPanel().innerHTML='<div class="boot-card opening-position"><h1>Contas correntes</h1><strong>'+brl(data.cash)+'</strong><p>Posição de '+esc(fmt(data.as_of))+'</p><details open><summary>Saldos por banco</summary><ul>'+rows+'</ul></details><small role="status">Carregando o restante do painel…</small></div>';
+  if(parent!==window)parent.dispatchEvent(new Event('lts:opening-position-visible'));
  }catch{/* The full product handles session and data errors. */}
 }
 function bootAuthError(error){
