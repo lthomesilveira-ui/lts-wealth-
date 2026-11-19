@@ -1,0 +1,8 @@
+{
+  "release": "v482",
+  "base_release": "v481",
+  "scope": "Show authenticated bank balances while the Dashboard loads and group projected Ita\u00fa card charges by invoice date.",
+  "financial_source_writes": false,
+  "authentication_changed": false,
+  "published_base_immutable": true
+}
