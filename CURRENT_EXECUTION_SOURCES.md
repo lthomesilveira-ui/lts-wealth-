@@ -1,5 +1,7 @@
 # Current execution sources
 
+V483 starts the authenticated mobile read before the bulk interface transfer. The opt-in compact response uses the same financial snapshot and omits four internal build and audit objects. The default reader and the V482 entry remain available.
+
 V482 opens with verified bank balances while the rest of the Dashboard loads. The cash flow groups Itaú card projections by due date. The V479 financial backend remains in service.
 
 V481 keeps account settings available before a signed-in profile has financial data. The V479 financial backend remains in service.
