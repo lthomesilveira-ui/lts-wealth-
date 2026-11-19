@@ -1,7 +1,7 @@
 name: V484 dashboard expense opening
 on:
   pull_request:
-    paths: ['releases/v484/**','.github/scripts/lts_v484_dashboard_opening.cjs','mobile/launcher.js','mobile/index.html','.github/scripts/lts_v482_opening.cjs','.github/workflows/v484-dashboard-opening.yml','mobile/current.json']
+    paths: ['releases/v484/**','.github/scripts/lts_v484_dashboard_opening.cjs','.github/scripts/lts_v483_mobile_opening.cjs','mobile/launcher.js','mobile/index.html','.github/scripts/lts_v482_opening.cjs','.github/workflows/v484-dashboard-opening.yml','mobile/current.json']
 permissions:
   contents: read
 jobs:
@@ -11,7 +11,7 @@ jobs:
     container: mcr.microsoft.com/playwright:v1.58.2-noble
     env:
       LTS_FLOW_RELEASE: v484
-      LTS_MOBILE_RELEASE: v484
+      LTS_MOBILE_RELEASE: v489
       LTS_BROWSER_FIXTURE_RELEASE: v484
       PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
@@ -31,3 +31,4 @@ jobs:
           node .github/scripts/lts_v482_opening.cjs
           node .github/scripts/lts_v478_provision_browser.cjs
           node .github/scripts/lts_v484_dashboard_opening.cjs
+          LTS_OPENING_COMPARE_RELEASE=v484 node .github/scripts/lts_v483_mobile_opening.cjs
