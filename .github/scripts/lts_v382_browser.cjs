@@ -3,9 +3,9 @@ const {chromium,webkit}=require('playwright'),fs=require('node:fs'),assert=requi
 const fixture=require('./lts_v379_fixtures.cjs'),base=process.env.LTS_BROWSER_BASE||'http://127.0.0.1:8788',target=process.env.LTS_FLOW_RELEASE||'v382',out='qa/'+target;fs.mkdirSync(out,{recursive:true});
 const hash=x=>crypto.createHash('sha256').update(JSON.stringify(x)).digest('hex');
 const session={access_token:'synthetic-only-access',refresh_token:'synthetic-only-refresh',expires_at:4102444800,user:{id:'00000000-0000-4000-8000-000000000001',email:'viewer@example.invalid'}};
-async function setup(browser,width,height,now='2026-10-30T15:00:00Z'){
+async function setup(browser,width,height,now='2026-10-30T15:00:00Z',refreshDueAtOpen=false){
  const ctx=await browser.newContext({viewport:{width,height},isMobile:width<1000,hasTouch:width<1000,locale:'pt-BR',timezoneId:'America/Sao_Paulo',serviceWorkers:'block'});
- await ctx.addInitScript(({s,now})=>{const NativeDate=Date;window.Date=class extends NativeDate{constructor(...a){super(...(a.length?a:[now]));}static now(){return NativeDate.parse(now);}};localStorage.setItem('lts_supabase_session_v1',JSON.stringify(s));sessionStorage.setItem('lts_of_open_refresh_at',String(Date.now()));Object.defineProperty(navigator,'standalone',{get:()=>true});},{s:session,now});
+ await ctx.addInitScript(({s,now,refreshDueAtOpen})=>{const NativeDate=Date;window.Date=class extends NativeDate{constructor(...a){super(...(a.length?a:[now]));}static now(){return NativeDate.parse(now);}};localStorage.setItem('lts_supabase_session_v1',JSON.stringify(s));sessionStorage.setItem('lts_of_open_refresh_at',refreshDueAtOpen?'0':String(Date.now()));Object.defineProperty(navigator,'standalone',{get:()=>true});},{s:session,now,refreshDueAtOpen});
  const page=await ctx.newPage(),errors=[],writes=[],reads=[];page.setDefaultTimeout(25000);page.on('pageerror',e=>errors.push(String(e)));
  await ctx.route('**/*',async route=>{
   const req=route.request(),url=new URL(req.url());if(url.origin===base)return route.continue();if(url.origin!=='https://tadhkamnwtsbdozwkyut.supabase.co')return route.abort();

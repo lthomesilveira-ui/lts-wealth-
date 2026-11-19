@@ -13,7 +13,7 @@ jobs:
     timeout-minutes: 20
     container: mcr.microsoft.com/playwright:v1.58.2-noble
     env:
-      LTS_MOBILE_RELEASE: v490
+      LTS_MOBILE_RELEASE: v491
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
