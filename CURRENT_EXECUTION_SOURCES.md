@@ -1,5 +1,7 @@
 # Current execution sources
 
+V482 opens with verified bank balances while the rest of the Dashboard loads. The cash flow groups Itaú card projections by due date. The V479 financial backend remains in service.
+
 V481 keeps account settings available before a signed-in profile has financial data. The V479 financial backend remains in service.
 
 V480 adds a signed-in password change to the existing Wealth header. The V479 backend remains the source for confirmed monthly commitments.
