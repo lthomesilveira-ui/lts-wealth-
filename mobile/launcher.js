@@ -5,11 +5,14 @@
  const button=document.getElementById('open'),error=document.getElementById('error'),offline=document.getElementById('offline');
  const version=document.getElementById('installVersion');
  let started=false,busy=false;
- let lookup=null;
+ let lookup=null, lastRelease=null, checkedAt=0;
  async function currentRelease(){
+  if(lastRelease && performance.now()-checkedAt<15000)return lastRelease;
   if(lookup)return lookup;
   lookup=(async()=>{
-   const response=await fetch('current.json',{cache:'no-store',credentials:'same-origin'});
+   const initial=window.ltsEntryRequest;
+   delete window.ltsEntryRequest;
+   const response=(initial && await initial) || await fetch('current.json',{cache:'no-store',credentials:'same-origin'});
    if(!response.ok)throw Error('Unavailable');
    const current=await response.json(),target=new URL(current.entry,location.href);
    const root=new URL('../',location.href).pathname;
@@ -17,7 +20,7 @@
       target.pathname!==root+'releases/'+current.release+'/app.html'||target.search||target.hash)throw Error('Invalid release');
    const label=current.release.toUpperCase();
    if(version)version.textContent=label;
-   return {target,label};
+   lastRelease={target,label};checkedAt=performance.now();return lastRelease;
   })();
   try{return await lookup;}finally{lookup=null;}
  }

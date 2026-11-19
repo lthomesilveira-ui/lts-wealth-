@@ -1,0 +1,7 @@
+{
+  "release": "v483",
+  "base_release": "v482",
+  "scope": "Overlap authenticated opening reads with application loading, reuse the validated product parse and omit internal audit/build sections from the opt-in mobile response.",
+  "financial_source_writes": false,
+  "published_base_immutable": true
+}
