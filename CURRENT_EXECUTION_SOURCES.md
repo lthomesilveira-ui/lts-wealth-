@@ -1,5 +1,7 @@
 # Current execution sources
 
+V490 starts the bank collection after the main dashboard reads and before optional wealth and award summaries. The balance dates and the confirmation from all three connections remain visible under their original rules.
+
 V489 preserves the mobile navigation target during dashboard redraws. The V487 and V488 backend updates cover opening during a refresh and preparing the current calendar year before the first dashboard read. Authenticated results are recorded in the private acceptance audit.
 
 V486 gives the opening expense report priority, preserves the selected Flow period and uses the five-year horizon on the first navigation. The V485 backend reuses verified calculations for its unchanged sources. The private dated audit tracks the authenticated acceptance.
