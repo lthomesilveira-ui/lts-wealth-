@@ -1,0 +1,7 @@
+{
+  "release": "v484",
+  "base_release": "v483",
+  "scope": "Show the verified current-day available total in the opening balance view and load current expense groups before the multi-year forecast.",
+  "financial_source_writes": false,
+  "published_base_immutable": true
+}

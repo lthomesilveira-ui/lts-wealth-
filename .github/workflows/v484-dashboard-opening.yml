@@ -1,0 +1,33 @@
+name: V484 dashboard expense opening
+on:
+  pull_request:
+    paths: ['releases/v484/**','.github/scripts/lts_v484_dashboard_opening.cjs','mobile/launcher.js','mobile/index.html','.github/scripts/lts_v482_opening.cjs','.github/workflows/v484-dashboard-opening.yml','mobile/current.json']
+permissions:
+  contents: read
+jobs:
+  browser:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    container: mcr.microsoft.com/playwright:v1.58.2-noble
+    env:
+      LTS_FLOW_RELEASE: v484
+      LTS_MOBILE_RELEASE: v484
+      LTS_BROWSER_FIXTURE_RELEASE: v484
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check progressive opening and card groups in Chromium and WebKit
+        run: |
+          npm install --no-save --package-lock=false playwright@1.58.2
+          python3 -m http.server 8788 --bind 127.0.0.1 >/tmp/v482-http.log 2>&1 &
+          node .github/scripts/lts_v309_wait_http.cjs
+          node .github/scripts/lts_v482_opening.cjs
+          node .github/scripts/lts_v478_provision_browser.cjs
+          node .github/scripts/lts_v484_dashboard_opening.cjs
