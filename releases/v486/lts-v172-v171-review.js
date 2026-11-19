@@ -182,8 +182,12 @@
       return t.innerHTML;
     }
 
-    function defaultRange(){const current=today();return{from:shift(current,-5),to:String(Number(current.slice(0,4))+4)+'-12-31'}}
-    function isLegacyDefault(from,to){const current=today(),nextYear=String(Number(current.slice(0,4))+4)+'-12-31';return from===shift(current,-5)&&(to===String(Number(current.slice(0,4))+4)+'-12-31'||to===shift(current,30))}
+    function defaultRange(){const current=today();return{from:shift(current,-5),to:window.parent.LTSV421Scenario.horizon(current,window.__LTS_V412_PROJECTION?.model)}}
+    function isLegacyDefault(from,to){
+      if(window.__LTS_V382_FLOW_LAYOUT?.explicit_period_action)return false;
+      const current=today(),previousEnd=(Number(current.slice(0,4))+4)+'-12-31';
+      return from===shift(current,-5)&&(to===previousEnd||to===shift(current,30));
+    }
     function uniqueRows(rows,dateKey,extraKey){const seen=new Map();for(const row of rows){const key=String(row?.[dateKey]||'')+'|'+String(row?.[extraKey]||'')+'|'+String(row?.source_ref||'');seen.set(key,row)}return[...seen.values()].sort((a,b)=>String(a?.[dateKey]).localeCompare(String(b?.[dateKey])))}
     function mergeFlows(parts,from,to){
       const flows=parts.map(part=>part?.data?.flow).filter(Boolean),base=flows.reduce((out,flow)=>({...out,...flow}),{}),historicalDays=uniqueRows(flows.flatMap(flow=>arr(flow.historical?.days)),'date',''),historicalEvents=uniqueRows(flows.flatMap(flow=>arr(flow.historical?.events)),'event_date','description'),futureDays=uniqueRows(flows.flatMap(flow=>arr(flow.current_future?.days)),'date',''),futureEvents=uniqueRows(flows.flatMap(flow=>arr(flow.current_future?.events)),'event_date','description');
@@ -191,7 +195,7 @@
     }
     async function flowPart(name,from,to){const shared=await window.__LTS_V178_REVIEW?.cachedFlow?.(from,to);if(shared)return{data:shared,error:null};const response=await directRpc(name,{p_from:from,p_to:to});if(response?.error||!response?.data?.flow){const error=Error(response?.error?.message||'Fluxo indisponível');error.retryable=!!response?.error?.retryable||['57014','40001'].includes(response?.error?.code)||[408,429,500,502,503,504].includes(response?.error?.status);throw error}return response}
     async function performFlowRange(from,to){
-      const current=today(),seq=++state.flowSequence,yesterday=shift(current,-1),calls=[];state.flowWarning='';FLOWLOADING=true;FLOWFROM=from;FLOWTO=to;FLOWPRESET=from===shift(current,-5)&&to===String(Number(current.slice(0,4))+4)+'-12-31'?'5 anteriores + fim de '+current.slice(0,4):FLOWPRESET;if(V==='Fluxo Diário')render();
+      const current=today(),seq=++state.flowSequence,yesterday=shift(current,-1),calls=[];state.flowWarning='';FLOWLOADING=true;FLOWFROM=from;FLOWTO=to;FLOWPRESET=from===shift(current,-5)&&to===defaultRange().to?'5 anteriores + fim de '+to.slice(0,4):FLOWPRESET;if(V==='Fluxo Diário')render();
       calls.push({kind:'complete',from,to});
       // Avoid competing historical/future scans while bank ingestion is active.
       // Retry transient read failures once, after the other part has finished.

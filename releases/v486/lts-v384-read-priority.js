@@ -8,6 +8,7 @@
  const legacy=name=>/income_review_queue_|card_review_queue_|expense_review_queue_|expense_detail_|expense_composition_|card_detail_/.test(name)?0:/card_cycles_|flow_v/.test(name)?1:/recurring_future_gap_/.test(name)?3:2;
  function forRoute(name,route){
   if(name==='lts_browser_product_v1')return -3;
+  if(route==='Fluxo Diário'&&name==='lts_browser_flow_v242')return -2;
   if(route!=='Dashboard')return legacy(name);
   if(name==='lts_browser_expenses_v229')return -3;
   if(/dashboard_cockpit_/.test(name))return -2;

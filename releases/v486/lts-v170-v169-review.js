@@ -98,7 +98,7 @@
       catch(e){state.globalAward={saving:false,message:'',error:'Falha ao atualizar todos: '+String(e?.message||e)};render()}
     }
 
-    function defaultRange(){const t=today();return{from:shift(t,-5),to:String(Number(t.slice(0,4))+4)+'-12-31'}}
+    function defaultRange(){const t=today();return{from:shift(t,-5),to:window.parent.LTSV421Scenario.horizon(t,window.__LTS_V412_PROJECTION?.model)}}
     function oldDefaultRange(){const t=today();return{from:shift(t,-5),to:shift(t,30)}}
     function isOldDefault(from,to){const r=oldDefaultRange();return from===r.from&&to===r.to}
     loadFlowRange=async function(from,to){if(isOldDefault(from,to)){const r=defaultRange();from=r.from;to=r.to}const s=window.__LTS_V162_FLOW_RECOVERY_STATUS;if(s){s.default_range_applied=true;s.default_range_contract='previous-5-through-next-year-end-v170';s.default_range=defaultRange()}return baseLoadFlowRange(from,to)};

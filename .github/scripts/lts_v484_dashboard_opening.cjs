@@ -17,6 +17,8 @@ async function run(engine, scenario) {
   const product = gate();
   const secondCash = gate();
   let cashReads = 0;
+  const flowRanges = [];
+  const firstFlow = gate();
   const forecast = gate();
   const forecastStarted = gate();
   try {
@@ -33,9 +35,14 @@ async function run(engine, scenario) {
       if (++cashReads > 1 && scenario === 'groups-before-cash') await secondCash.pending;
       return route.fulfill({json:cash});
     });
+    if (scenario === 'first-flow') {
+      await ctx.route('**/rpc/lts_browser_projection_policy_v412', route => route.fulfill({status:503,json:{message:'Fixture unavailable'}}));
+    }
     await ctx.route('**/rpc/lts_browser_flow_v242', async route => {
       const args = route.request().postDataJSON();
-      if (args.p_to > '2027-12-31') { forecastStarted.open(); await forecast.pending; }
+      flowRanges.push(args);
+      if (args.p_from === '2026-10-25' && args.p_to === '2031-12-31') firstFlow.open();
+      if (scenario !== 'first-flow' && args.p_to > '2027-12-31') { forecastStarted.open(); await forecast.pending; }
       return route.fallback();
     });
     await page.goto(base+'/mobile/?source=home-screen',{waitUntil:'commit'});
@@ -50,6 +57,14 @@ async function run(engine, scenario) {
     await title.waitFor();
     assert.match(await boot.innerText(),/100,00/);
     product.open();
+    if (scenario === 'first-flow') {
+      await frame.getByRole('button',{name:'Fluxo de caixa',exact:true}).click();
+      await frame.getByText('25/10/2026 – 31/12/2031',{exact:true}).waitFor();
+      await Promise.race([firstFlow.pending,new Promise((_,reject)=>{const t=setTimeout(()=>reject(Error('canonical Flow was never requested')),12000);t.unref();})]);
+      assert.ok(flowRanges.some(q => q.p_from === '2026-10-25' && q.p_to === '2031-12-31'));
+      assert.ok(!flowRanges.some(q => q.p_from === '2026-10-25' && q.p_to === '2030-12-31'));
+      return;
+    }
     const groups = frame.locator('[data-v178-scope="dashboard"]');
     await groups.getByRole('button',{name:'Categoria de teste',exact:true}).waitFor();
     assert.match(await groups.innerText(),/100,00/);
@@ -68,7 +83,7 @@ async function run(engine, scenario) {
 (async()=>{
   for(const type of [chromium,webkit]){
     const b=await type.launch({executablePath:type===chromium?process.env.LTS_TEST_CHROMIUM:undefined});
-    try {for (const scenario of (release==='v484'?['complete','stale','mismatch']:['groups-before-cash','stale','mismatch'])) {await run(b,scenario);console.log(type.name(),scenario,'passed');}}
+    try {for (const scenario of (release==='v484'?['complete','stale','mismatch']:['groups-before-cash','first-flow','stale','mismatch'])) {await run(b,scenario);console.log(type.name(),scenario,'passed');}}
     finally {await b.close();}
   }
 })().catch(e=>{console.error(e);process.exitCode=1;});
