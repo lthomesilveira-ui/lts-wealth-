@@ -21,7 +21,7 @@ async function run(browser, width, scenario) {
     });
     await ctx.route('**/rpc/lts_browser_product_v1', async route => {
       await productGate;
-      await route.fulfill({json:{ok:true,mvp:product(),refresh:{state:'ready',required:false,cached_available:true}}});
+      await route.fulfill({json:{ok:true,mvp:product(),refresh:{state:'ready',required:false,cached_available:true,request_version:'2',completed_version:'2'}}});
     });
     await page.goto(base+'/mobile/?source=home-screen',{waitUntil:'domcontentloaded'});
     const frame=page.frameLocator('#wealth').frameLocator('#shell');
@@ -36,7 +36,8 @@ async function run(browser, width, scenario) {
       assert.equal(await panel.isVisible(),false);
     }
     finishProduct();
-    await frame.getByRole('heading',{name:'Dashboard',exact:true}).waitFor();
+    try { await frame.locator('body[data-lts-boot-state="ready"] #app').waitFor(); }
+    catch (err) { err.message += ' Rendered: '+(await frame.locator('body').innerText()).slice(0,420); throw err; }
     finishCash();
     assert.equal(await panel.isVisible(),false);
     assert.equal(await frame.getByRole('button',{name:'Alterar senha',exact:true}).count(),1);

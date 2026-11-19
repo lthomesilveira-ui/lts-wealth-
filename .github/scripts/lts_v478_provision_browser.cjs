@@ -105,7 +105,10 @@ async function test(browser, engine, width) {
     assert.doesNotMatch(await detail.innerText(),/source_ref|planning_projection|payload/);
     fs.mkdirSync(outDir,{recursive:true});
     await invoice.screenshot({path:outDir+'/'+engine+'-'+width+'-closed.png'});
-    await invoice.locator('summary').click();
+    await Promise.all([
+      invoice.evaluate(el=>new Promise(resolve=>el.addEventListener('toggle',resolve,{once:true}))),
+      invoice.locator('summary').click()
+    ]);
     await invoice.getByText('Mercado',{exact:true}).waitFor();
     assert.deepEqual(await invoice.locator('li b').allTextContents().then(values=>values.map(v=>v.replace(/\s/g,''))), ['R$6,65','R$3,35']);
     await frame.evaluate(()=>render());

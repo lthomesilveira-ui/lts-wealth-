@@ -15,6 +15,11 @@
   }
 
   function groupFor(events) {
+    // A render may replace an open disclosure before its queued toggle event fires.
+    for (const node of document.querySelectorAll('details[data-v478-invoice]')) {
+      if (node.open) openDates.add(node.dataset.v478Invoice);
+      else openDates.delete(node.dataset.v478Invoice);
+    }
     const groups = new Map();
     const byEvent = new Map();
     for (const event of events) {
