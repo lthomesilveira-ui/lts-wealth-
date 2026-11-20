@@ -24,17 +24,55 @@
   })();
   try{return await lookup;}finally{lookup=null;}
  }
+ const status=document.getElementById('openingStatus'),label=document.getElementById('openingLabel');
+ const elapsed=document.getElementById('elapsed'),retry=document.getElementById('retryOpening');
+ let clock=null;
+ function stopClock(){
+  clearInterval(clock);clock=null;status.hidden=true;
+  document.documentElement.classList.add('opening-finished');
+ }
+ function markOlderBalances(doc){
+  if(!doc?.head||doc.getElementById('mobileBalanceDates'))return;
+  const style=doc.createElement('style');style.id='mobileBalanceDates';
+  style.textContent=['341','237','336'].map(code=>{
+   const row='.v337-bank:has(.bank-'+code+') > strong::after';
+   return ['previous-day','aged'].map(level=>
+    'body:has(.v225-freshness-bank[data-bank="'+code+'"][data-freshness="'+level+'"]) '+row+
+    '{content:"'+(level==='aged'?'Saldo com 24 h ou mais':'Saldo de dia anterior')+'";display:block;font:600 12px/1.4 system-ui;color:#784711}'
+   ).join('\n');
+  }).join('\n');doc.head.append(style);
+ }
+ function startClock(){
+  if(clock!==null)return;
+  const start=performance.now();status.hidden=false;
+  function tick(){
+   const seconds=Math.floor((performance.now()-start)/1000);
+   const shell=frame.contentDocument?.getElementById('shell');
+   const doc=shell?.contentDocument;
+   if(shell&&!shell.dataset.mobileBalanceListener){
+    shell.dataset.mobileBalanceListener='1';shell.addEventListener('load',()=>markOlderBalances(shell.contentDocument));
+   }
+   markOlderBalances(doc);
+   const phase=doc?.body?.dataset.ltsBootState;
+   if(phase && !['checking','loading','preparing'].includes(phase)){stopClock();return;}
+   const message=navigator.onLine===false?'Sem conexão':phase==='checking'?'Verificando acesso…':phase==='loading'||phase==='preparing'?'Carregando dados…':'Abrindo Wealth…';
+   if(label.textContent!==message)label.textContent=message;
+   elapsed.textContent=seconds+' s';retry.hidden=seconds<20;
+  }
+  tick();clock=setInterval(tick,500);
+ }
+ retry.addEventListener('click',()=>location.reload());
  function connection(){offline.hidden=navigator.onLine!==false;if(started&&navigator.onLine!==false)open();}
  async function open(){
   if(busy||navigator.onLine===false){connectionOnly();return;}
   if(started){viewport.hidden=false;frame.hidden=false;return;}
-  busy=true;button.disabled=true;error.hidden=true;
+  startClock();busy=true;button.disabled=true;error.hidden=true;
   try{
    const {target,label}=await currentRelease();
    frame.title='LTS Wealth · '+label;document.title=frame.title;
    frame.src=target.href;viewport.hidden=false;frame.hidden=false;panel.hidden=true;
    document.documentElement.classList.add('wealth-open');document.body.classList.add('wealth-open');started=true;
-  }catch(_){panel.hidden=false;viewport.hidden=true;frame.hidden=true;error.hidden=false;}
+  }catch(_){stopClock();panel.hidden=false;viewport.hidden=true;frame.hidden=true;error.hidden=false;}
   finally{busy=false;button.disabled=false;}
  }
  function connectionOnly(){offline.hidden=navigator.onLine!==false;}
