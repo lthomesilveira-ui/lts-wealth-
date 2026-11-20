@@ -1,0 +1,33 @@
+name: Mobile opening clock and bank dates
+on:
+  pull_request:
+    paths: ['mobile/**','.github/scripts/mobile-opening-clock.cjs','.github/workflows/mobile-opening-clock.yml']
+permissions:
+  contents: read
+jobs:
+  browser:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    container: mcr.microsoft.com/playwright:v1.58.2-noble
+    env:
+      LTS_FIRST_TOUCH_SAMPLES: '4'
+      LTS_OPENING_TEST_RELEASE: v492
+      LTS_FLOW_RELEASE: v492
+      LTS_MOBILE_RELEASE: v492
+      LTS_BROWSER_FIXTURE_RELEASE: v492
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check progressive opening and card groups in Chromium and WebKit
+        run: |
+          npm install --no-save --package-lock=false playwright@1.58.2
+          python3 -m http.server 8788 --bind 127.0.0.1 >/tmp/v482-http.log 2>&1 &
+          node .github/scripts/lts_v309_wait_http.cjs
+          node .github/scripts/mobile-opening-clock.cjs
