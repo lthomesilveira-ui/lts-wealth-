@@ -40,7 +40,15 @@
     'body:has(.v225-freshness-bank[data-bank="'+code+'"][data-freshness="'+level+'"]) '+row+
     '{content:"'+(level==='aged'?'Saldo com 24 h ou mais':'Saldo de dia anterior')+'";display:block;font:600 12px/1.4 system-ui;color:#784711}'
    ).join('\n');
-  }).join('\n');doc.head.append(style);
+  }).join('\n')+' [data-v225-refresh][data-wait]::after{content:" · " attr(data-wait)}';
+  doc.head.append(style);
+  let collectionStart=null;
+  doc.defaultView.setInterval(()=>{
+   const control=doc.querySelector('[data-v225-refresh]');
+   if(!control?.disabled){collectionStart=null;control?.removeAttribute('data-wait');return;}
+   if(collectionStart===null)collectionStart=performance.now();
+   control.dataset.wait=Math.floor((performance.now()-collectionStart)/1000)+' s';
+  },1000);
  }
  function startClock(){
   if(clock!==null)return;

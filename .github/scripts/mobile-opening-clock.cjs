@@ -14,7 +14,7 @@ async function run(engine) {
     });
     await page.route('**/releases/v492/app.html', route => route.fulfill({
       contentType:'text/html',
-      body:'<iframe id="shell" srcdoc="<body data-lts-boot-state=loading><div class=v225-freshness-bank data-bank=341 data-freshness=previous-day></div><div class=v337-bank><i class=bank-341></i><strong>100</strong></div>"></iframe>'
+      body:'<iframe id="shell" srcdoc="<body data-lts-boot-state=loading><button data-v225-refresh disabled>Consultando bancos…</button><div class=v225-freshness-bank data-bank=341 data-freshness=previous-day></div><div class=v337-bank><i class=bank-341></i><strong>100</strong></div>"></iframe>'
     }));
     await page.goto('http://127.0.0.1:8788/mobile/');
     await page.getByRole('button',{name:'Abrir Wealth'}).click();
@@ -24,6 +24,7 @@ async function run(engine) {
     await page.getByText('Carregando dados…',{exact:true}).waitFor();
     const body=page.frameLocator('#wealth').frameLocator('#shell').locator('body');
     assert.match(await body.evaluate(el=>getComputedStyle(el.querySelector('strong'),'::after').content),/Saldo de dia anterior/);
+    await body.locator('[data-v225-refresh][data-wait]').waitFor();
     await body.evaluate(el=>{el.dataset.ltsBootState='data-error'});
     await page.locator('#openingStatus').waitFor({state:'hidden'});
     console.log(engine.name(),'mobile elapsed time, recovery, bank date and error handover passed');
