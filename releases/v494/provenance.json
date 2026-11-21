@@ -1,0 +1,7 @@
+{
+  "release": "v494",
+  "base_release": "v492",
+  "scope": "Let the selected daily cash flow read the requested dates during automatic bank collection. Remove three blocking startup downloads. Reuse date and currency formatters and table headings throughout the five-year report. Include opening styles with the shell.",
+  "financial_source_writes": false,
+  "published_base_immutable": true
+}
