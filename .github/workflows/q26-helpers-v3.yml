@@ -1,0 +1,56 @@
+name: Q26 v3 synthetic helpers and roles
+on:
+  pull_request:
+    paths: ['tests/q26_helpers_v3/**', '.github/workflows/q26-helpers-v3.yml']
+permissions:
+  contents: read
+jobs:
+  postgres17:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: wealth_synthetic_q26_helpers
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: synthetic-ci-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres -d wealth_synthetic_q26_helpers"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      PGHOST: 127.0.0.1
+      PGPORT: 5432
+      PGUSER: postgres
+      PGDATABASE: wealth_synthetic_q26_helpers
+      PGPASSWORD: synthetic-ci-only
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Verify reviewed synthetic bytes
+        run: echo 'f4d61957f0df010942bb18f518a27d43ab433e35602153d1f2e0b4e01c7a2357  tests/q26_helpers_v3/pg17_helpers_roles.sql' | sha256sum -c -
+      - name: Execute isolated PostgreSQL17 gate
+        run: |
+          mkdir -p qa
+          psql -X -v ON_ERROR_STOP=1 -At -f tests/q26_helpers_v3/pg17_helpers_roles.sql > qa/pg17.log 2> qa/pg17.stderr
+          python3 - <<'PYTEST'
+          import json,pathlib
+          p=pathlib.Path('qa')
+          rows=[json.loads(x) for x in (p/'pg17.log').read_text().splitlines() if x.startswith('{') and 'synthetic_checks_passed' in x]
+          assert len(rows)==1,rows
+          r=rows[0]
+          assert r['synthetic_checks_passed']==156,r
+          assert len(r['labels'])==len(set(r['labels']))==156
+          (p/'result.json').write_text(json.dumps(r,indent=2)+'\n')
+          print('156 synthetic checks passed; complete deployment envelope not covered')
+          PYTEST
+          test "$(psql -X -Atc "select count(*) from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname='public' and c.relkind in ('r','v','m','p','f')")" = 0
+          psql -X -Atc 'select version()' > qa/postgres-version.txt
+          sha256sum tests/q26_helpers_v3/pg17_helpers_roles.sql > qa/source.sha256
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: q26-v3-helpers-roles-evidence
+          path: qa/

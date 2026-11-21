@@ -1,0 +1,20 @@
+{
+  "synthetic_only": true,
+  "production_validated": false,
+  "database_tests_executed": false,
+  "source_sha256": {
+    "apply": "f9e9f6c6bb80e83d8d87de19b1d16c3544efd33a37c335e92b3880140e4782be",
+    "rollback": "32f897c01354bf950aec09357abe2613a8ba3189d9a1b9fe9e496540778c0d65"
+  },
+  "files": {
+    "apply-synthetic.sql": "6d7d230f4fa08274bed0837211dd77202422915b44dc554caed5073ad92a5175",
+    "rollback-synthetic.sql": "51ac2577057ac9d74a2a0cd5fa1bcfc735a3168f770132cdcf9ca827321b8822",
+    "bootstrap-synthetic.sql": "7f6f77d46dd26ba04cbd7594c134019d374df25f0c31e82b44bf569e2870df6c",
+    "reset-synthetic.sql": "8d985a1c1db1389224dcffe8b94844e9f9afe3bc3cb17fb6a2134f5c9bea048c",
+    "fixtures-synthetic.json": "80b8f6d726e0057ab73a8e2df4245fe8f52cca6dad774116082769e450492c52"
+  },
+  "limits": [
+    "Synthetic stand-in reader, key function and cache trigger. Not integration of productive consumer chain.",
+    "Release gates true only in entirely invented fixture. Productive gates remain false."
+  ]
+}

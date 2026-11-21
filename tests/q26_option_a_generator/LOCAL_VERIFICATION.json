@@ -1,0 +1,13 @@
+{
+  "status": "local corrected reconstruction verified; previous PG run failed compilation; corrected PostgreSQL not executed",
+  "isolated_reconstructions": 2,
+  "all_14_output_files_byte_identical": true,
+  "expected_sql_sha256": "3317e1c1001e04a9c7aaf1f6496e5b322d4754e395f1ebe868323f1a616eaba7",
+  "expected_unique_results": 339,
+  "local_checks_passed": 54,
+  "source_tamper_rejected": true,
+  "semantic_tamper_rejected_by_output_hash": true,
+  "privacy_scan_clean": true,
+  "network_or_upload": false,
+  "nonempty_output_rejected_unchanged": true
+}

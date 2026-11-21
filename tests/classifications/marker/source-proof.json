@@ -1,0 +1,68 @@
+{
+  "proof_version": 1,
+  "state": "local_extraction_verified_database_not_run_by_builder",
+  "private_inputs_included": false,
+  "original_baseline_sha256": "3cba3ce6b36644627c74d2a32b9a44cd1df612c4118db4527e4d797f57b0a0f2",
+  "candidate_baseline_sha256": "5dea9970c52b42e33781ec2dab000a51ac807ddd405c2522da78ef1b90b225f2",
+  "baseline_diff_is_exact_single_marker_replacement": true,
+  "old_expression": "(kind in ('Saúde','Educação','Vestuário') and person_final is null)",
+  "new_expression": "(kind='Educação' and person_final is null)",
+  "return_column_count": 20,
+  "non_marker_columns_compared": 19,
+  "p05_block_byte_identical": true,
+  "p05_block_sha256": "08a382ea4b245ff5c06c3dcc8628847a24a73fae7ff11feecd398ed3f0248055",
+  "p05_execution_tested": false,
+  "sanitization": {
+    "original": {
+      "private_projection_sha256": "aba4a62cfaa52f417de52a08da8f12ae02c2e4ffc96ac55d7cefee04dddde6ba",
+      "public_projection_sha256": "d593aca0fcf5b3c81ed81bf2339611481dc9d9c646f68f3bf827eb54268f00d2",
+      "literal_substitutions": [
+        {
+          "purpose": "property_code_literal",
+          "occurrences": 2,
+          "synthetic_literal": "'synthetic-property-matched'"
+        },
+        {
+          "purpose": "property_display_literal",
+          "occurrences": 1,
+          "synthetic_literal": "'Synthetic property display'"
+        }
+      ],
+      "reverse_substitution_byte_identical": true,
+      "identity_expression_byte_identical": true
+    },
+    "candidate": {
+      "private_projection_sha256": "2ae27a08c6048c38eb309ea0f83cad7e1267b024c71f67c3ebb1ea7a36e773ca",
+      "public_projection_sha256": "8cc6b8b6131b4aee31046e521b278988d90aa82723512c695d34c23df2a461e6",
+      "literal_substitutions": [
+        {
+          "purpose": "property_code_literal",
+          "occurrences": 2,
+          "synthetic_literal": "'synthetic-property-matched'"
+        },
+        {
+          "purpose": "property_display_literal",
+          "occurrences": 1,
+          "synthetic_literal": "'Synthetic property display'"
+        }
+      ],
+      "reverse_substitution_byte_identical": true,
+      "identity_expression_byte_identical": true
+    }
+  },
+  "artifact_sha256": {
+    "projection-original.sql": "d593aca0fcf5b3c81ed81bf2339611481dc9d9c646f68f3bf827eb54268f00d2",
+    "identity-original.sql": "c3ef47990e25ff1e708b6bc275c6fc4e5852b78eba068bf17dd1ee527b17d5d7",
+    "p05-original.sql": "08a382ea4b245ff5c06c3dcc8628847a24a73fae7ff11feecd398ed3f0248055",
+    "projection-candidate.sql": "8cc6b8b6131b4aee31046e521b278988d90aa82723512c695d34c23df2a461e6",
+    "identity-candidate.sql": "d00525523f556240441e9bbc24e81280c180dca8b4e5cd6ba6fadbce6e7c2e2b",
+    "p05-candidate.sql": "08a382ea4b245ff5c06c3dcc8628847a24a73fae7ff11feecd398ed3f0248055",
+    "return-columns.sql": "0cef043266b3c6fe1d99c587a74a380de7383ccdca1be5890a7678876c10dee1"
+  },
+  "limits": [
+    "Only the final SELECT projection is executed over synthetic labeled rows.",
+    "Upstream enrichment, external classifiers, live data and P05 behavior are not executed.",
+    "The only projection dependency is replaced by a declared synthetic subgroup stub.",
+    "Private source equality is an authoring-time check; public CI verifies the exported artifacts and their exact diff."
+  ]
+}

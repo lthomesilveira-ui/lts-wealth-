@@ -1,0 +1,97 @@
+name: Temporal overlay synthetic PG17
+on:
+  pull_request:
+    paths: ['tests/temporal_overlay/**', '.github/workflows/temporal-overlay.yml']
+permissions:
+  contents: read
+jobs:
+  postgres17:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Reconstruct exact frozen package
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p qa
+          echo '0a642fa1f6a38f78f0c46c1cc42d771c1aafc6481002c0c93e6a4a33d11c42b0  tests/temporal_overlay/transport/TRANSPORT_MANIFEST.json' | sha256sum -c -
+          PYTHONDONTWRITEBYTECODE=1 python3 tests/temporal_overlay/transport/reconstruct.py \
+            --expected-transport-manifest-sha256 0a642fa1f6a38f78f0c46c1cc42d771c1aafc6481002c0c93e6a4a33d11c42b0 \
+            --output "$RUNNER_TEMP/temporal-overlay-reconstructed" > qa/reconstruction.log 2> qa/reconstruction.stderr
+          echo "b96a934778a7cbe8d38f71b0067c074a30d85918b94f4fb513165ca2bc8cc831  $RUNNER_TEMP/temporal-overlay-reconstructed/PACKAGE_MANIFEST.json" | sha256sum -c -
+      - name: Execute isolated Unix socket gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p qa
+          socket="$(mktemp -d /tmp/overlay-pg17-socket.XXXXXX)"
+          chmod 777 "$socket"
+          container="overlay-pg17-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          cleanup() {
+            original=$?
+            trap - EXIT
+            set +e
+            docker logs "$container" > qa/container.log 2>&1
+            docker rm -f "$container" > qa/container-cleanup.log 2>&1
+            removed=$?
+            docker ps -a --filter "name=^/${container}$" --format '{{.Names}}' > qa/container-readback.txt 2> qa/container-readback.stderr
+            observed=$?
+            cleanup_ok=false
+            if test "$removed" = 0 && test "$observed" = 0 && test ! -s qa/container-readback.txt; then
+              cleanup_ok=true
+              echo cleanup_verified > qa/cleanup_verified.txt
+            fi
+            rm -rf "$socket"
+            if test "$original" != 0; then exit "$original"; fi
+            if test "$cleanup_ok" != true; then exit 1; fi
+            exit 0
+          }
+          trap cleanup EXIT
+          docker run -d --name "$container" --network none \
+            -e POSTGRES_DB=overlay_pg17_ci -e POSTGRES_HOST_AUTH_METHOD=trust \
+            -v "$socket:/tmp/pgsocket" postgres:17 \
+            -c listen_addresses='' -c unix_socket_directories=/var/run/postgresql,/tmp/pgsocket -c port=55432
+          ready=false
+          for attempt in $(seq 1 30); do
+            if docker logs "$container" 2>&1 | grep -Fq 'PostgreSQL init process complete; ready for start up.'; then
+              if docker exec "$container" psql -X -qAt -w -v ON_ERROR_STOP=1 -h /tmp/pgsocket -p 55432 -U postgres -d overlay_pg17_ci -c "select current_database() = 'overlay_pg17_ci' and inet_server_addr() is null" | grep -qx t; then
+                ready=true; break
+              fi
+            fi
+            sleep 1
+          done
+          test "$ready" = true
+          cp tests/temporal_overlay/diagnostics/psql_diagnostic.py qa/psql_diagnostic.py
+          chmod +x qa/psql_diagnostic.py
+          python3 "$RUNNER_TEMP/temporal-overlay-reconstructed/run_pg17.py" \
+            --execute-local-pg17 --ack-disposable \
+            --expected-manifest-sha256 b96a934778a7cbe8d38f71b0067c074a30d85918b94f4fb513165ca2bc8cc831 \
+            --socket-dir "$socket" --port 55432 --database overlay_pg17_ci --user postgres \
+            --psql "$PWD/qa/psql_diagnostic.py" --result-dir "$PWD/qa/result" > qa/runner.log 2> qa/runner.stderr
+          python3 - <<'CHECK'
+          import json,pathlib
+          r=json.loads(pathlib.Path('qa/result/receipt.json').read_text())
+          assert r['pg_executed'] is True and r['verification']['cases']==85
+          assert r['pg_meta']['socket_only'] is True and r['pg_meta']['read_only'] is True
+          assert 170000 <= r['pg_meta']['server_version_num'] < 180000
+          assert r['manifest_sha256']=='b96a934778a7cbe8d38f71b0067c074a30d85918b94f4fb513165ca2bc8cc831'
+          CHECK
+      - name: Preserve frozen sources
+        if: always()
+        run: |
+          mkdir -p qa/sources
+          cp -R tests/temporal_overlay/transport qa/sources/transport
+          cp tests/temporal_overlay/diagnostics/psql_diagnostic.py qa/sources/
+          find tests/temporal_overlay/transport -type f -print0 | sort -z | xargs -0 sha256sum > qa/source.sha256
+          if test -d "$RUNNER_TEMP/temporal-overlay-reconstructed"; then
+            cp -R "$RUNNER_TEMP/temporal-overlay-reconstructed" qa/reconstructed
+            sha256sum "$RUNNER_TEMP/temporal-overlay-reconstructed"/* > qa/reconstructed.sha256
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: temporal-overlay-evidence
+          path: qa/

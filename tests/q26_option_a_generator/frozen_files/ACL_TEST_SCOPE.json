@@ -1,0 +1,38 @@
+{
+  "production_contracts_reproduced": [
+    {
+      "object": "public.lts_v229_expense_rows(uuid,date,date)",
+      "execute_roles": ["fixture_owner", "service_role"],
+      "owner_mapping": "database owner represented by NOSUPERUSER fixture_owner",
+      "security": "INVOKER"
+    },
+    {
+      "object": "public.lts_browser_card_detail_v226(text,date)",
+      "execute_roles": ["fixture_owner", "service_role", "authenticated"],
+      "security": "DEFINER",
+      "auth_guard": "original body; disposable auth identity providers only"
+    },
+    {
+      "object": "public.lts_reconciliation_evidence",
+      "all_table_privilege_roles": ["fixture_owner", "service_role"],
+      "public_anon_authenticated_privileges": [],
+      "rls": true,
+      "force_rls": false,
+      "policies": [],
+      "assertions": ["exact ACL edges", "SELECT authorization", "actual authenticated/anon denial"]
+    }
+  ],
+  "synthetic_plumbing_not_production_proof": [
+    "SELECT on synthetic ancestor input tables for service_role",
+    "INSERT on fixture_test_log for test roles",
+    "PUBLIC EXECUTE defaults of fixture assertion and ancestor stub functions",
+    "fixture owner CREATE/USAGE for disposable public/auth schemas",
+    "session identity through local fixture GUCs"
+  ],
+  "limits": [
+    "Full service-role consumer execution is demonstrated only under the declared synthetic dependencies.",
+    "No reproduction or expansion of production ancestor ACLs is claimed.",
+    "No live permission, namespace or role is changed by preparation.",
+    "All test roles and objects must disappear at ROLLBACK."
+  ]
+}

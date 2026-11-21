@@ -1,0 +1,29 @@
+{
+  "purpose": "Review-only publication allowlist; not permission to publish",
+  "files": [
+    "README.md",
+    "PUBLIC_FILES.json",
+    "validate_static.py",
+    "run_postgres17.py",
+    "postgres17.proposed.yml",
+    "generated/apply-synthetic.sql",
+    "generated/bootstrap-synthetic.sql",
+    "generated/fixtures-synthetic.json",
+    "generated/manifest.json",
+    "generated/reset-synthetic.sql",
+    "generated/rollback-synthetic.sql",
+    "marker/README.md",
+    "marker/identity-candidate.sql",
+    "marker/identity-original.sql",
+    "marker/marker-gate.sql",
+    "marker/marker_runner.py",
+    "marker/p05-candidate.sql",
+    "marker/p05-original.sql",
+    "marker/projection-candidate.sql",
+    "marker/projection-original.sql",
+    "marker/return-columns.sql",
+    "marker/source-proof.json",
+    "STATIC_VALIDATION.json",
+    "marker/local-static-checks.json"
+  ]
+}

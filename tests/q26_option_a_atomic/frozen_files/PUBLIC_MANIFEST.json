@@ -1,0 +1,67 @@
+{
+  "version": "atomic-gate-0539-deterministic-label-collation",
+  "status": "frozen for independent review only",
+  "sql_executed": false,
+  "expected_functional": 175,
+  "expected_concurrency": 10,
+  "files": [
+    {
+      "name": "ALLOWED_TRANSFORMATIONS.json",
+      "bytes": 1638,
+      "sha256": "1ce54b63857a9d556bdb893066f13932d180fa10c30f0d3cc1d7afbfcd1d89d7"
+    },
+    {
+      "name": "EXPECTED_RESULTS.json",
+      "bytes": 9200,
+      "sha256": "e6008cade23d83bf5ec93da87e4fe476e7608ceac215a2d9d3f3375691931bd4"
+    },
+    {
+      "name": "PREPARATION_CHECKS.json",
+      "bytes": 3741,
+      "sha256": "dc555ea66e04dbd009f0842f7966b64850e116e6b73e6070583aa711dbe5a175"
+    },
+    {
+      "name": "README.md",
+      "bytes": 6816,
+      "sha256": "40636ab9c1173574d8fe64b4ad374987274994f524d5fcbb09758c7e879f974a"
+    },
+    {
+      "name": "apply_control_synthetic.sql",
+      "bytes": 24564,
+      "sha256": "4f83f0919429e0bf5cb608971d3a9442497a7815c9eb40d379574d9340d659f8"
+    },
+    {
+      "name": "atomic_functional.sql",
+      "bytes": 31929,
+      "sha256": "0a7fb2f60afc56b3e48bded95c02a7ee73fdd128bf55611df4e526725c6cd611"
+    },
+    {
+      "name": "atomic_setup.sql",
+      "bytes": 581334,
+      "sha256": "204d3e5b936be00797af049fabfd8a3efeaaf7ace18507dac6d185c0cdeee2db"
+    },
+    {
+      "name": "empty_instance_guard.sql",
+      "bytes": 967,
+      "sha256": "d10cf1fab7c79623c24eb8162c05e0d209ef1ff0e438bcaaffd5b3f446aa2f53"
+    },
+    {
+      "name": "rollback_control_synthetic.sql",
+      "bytes": 23984,
+      "sha256": "a3cc7f70252be5e7cb8324cb83fe6bbac734122555d50795cc278f38622e6ad3"
+    },
+    {
+      "name": "run_disposable.py",
+      "bytes": 14168,
+      "sha256": "116e10db937a3f67740c4f52070110130b020949f43cf688265dd04f3303a552"
+    }
+  ],
+  "excluded": [
+    "private maps",
+    "production held controls and scope",
+    "production inputs",
+    "financial source receipts",
+    "authorization context",
+    "results not yet produced"
+  ]
+}

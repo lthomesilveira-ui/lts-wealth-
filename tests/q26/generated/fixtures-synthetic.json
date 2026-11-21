@@ -1,0 +1,234 @@
+{
+  "owner": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+  "operation": "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+  "target": "11111111-1111-4111-8111-000000000001",
+  "pending": "11111111-1111-4111-8111-000000000002",
+  "first": "11111111-1111-4111-8111-000000000003",
+  "targets": [
+    {
+      "source_ref": "11111111-1111-4111-8111-000000000001",
+      "source_expected": {
+        "source_id": "11111111-1111-4111-8111-000000000001",
+        "raw_hash": "fixture-hash-1",
+        "resource_type": "card_transaction",
+        "provider_record_id": "fixture-record-1",
+        "provider_account_ref": "fixture-account",
+        "institution_code": "SYNTHETIC",
+        "description": "SYNTHETIC MARKETPLACE",
+        "signed_amount": -10,
+        "currency": "BRL",
+        "posting_date": "2001-02-01",
+        "status": "POSTED",
+        "provider_deleted_at": null,
+        "card_metadata": {
+          "synthetic_key": "fixture-key-1",
+          "cardNumber": "1234",
+          "purchaseDate": "2001-01-01T12:00:00.000Z",
+          "installmentNumber": 2,
+          "totalInstallments": 3
+        },
+        "normalized_payload": {
+          "status": "POSTED",
+          "synthetic_only": true
+        },
+        "raw_description": "SYNTHETIC MARKETPLACE",
+        "raw_id": "fixture-provider-1",
+        "raw_status": "POSTED",
+        "raw_category": "Shopping"
+      },
+      "decision_before": null,
+      "category": "Synthetic Marketplace",
+      "beneficiary": "Synthetic Person",
+      "property_code": null,
+      "origin_decision": {
+        "user_id": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+        "source_table": "lts_open_finance_staging",
+        "source_ref": "11111111-1111-4111-8111-000000000002",
+        "beneficiary": "Synthetic Person",
+        "property_code": null,
+        "category_label": "Synthetic Marketplace",
+        "decision_basis": "SYNTHETIC PRIOR DECISION",
+        "decided_at": "2000-07-01T00:00:00-03:00"
+      },
+      "final_before": {
+        "amount": 10,
+        "row_key": "synthetic:11111111-1111-4111-8111-000000000001",
+        "category": "A classificar",
+        "event_date": "2001-02-01",
+        "source_ref": "11111111-1111-4111-8111-000000000001",
+        "beneficiary": null,
+        "description": "SYNTHETIC MARKETPLACE",
+        "raw_category": "A classificar",
+        "source_table": "lts_open_finance_staging",
+        "coverage_mode": "synthetic",
+        "property_code": null,
+        "purchase_date": "2001-01-01",
+        "raw_reference": "SYNTHETIC MARKETPLACE",
+        "account_source": "SYNTHETIC CARD",
+        "identity_status": "pending",
+        "competence_month": "2001-02-01",
+        "management_group": "A classificar",
+        "transaction_date": "2001-02-01",
+        "property_component": null,
+        "management_subgroup": "A classificar"
+      },
+      "evidence": "SYNTHETIC",
+      "installment_key_expected": "fixture-key-1",
+      "key_source_ids_expected": [
+        "11111111-1111-4111-8111-000000000001"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "source_id": "11111111-1111-4111-8111-000000000001",
+      "raw_hash": "fixture-hash-1",
+      "resource_type": "card_transaction",
+      "provider_record_id": "fixture-record-1",
+      "provider_account_ref": "fixture-account",
+      "institution_code": "SYNTHETIC",
+      "description": "SYNTHETIC MARKETPLACE",
+      "signed_amount": -10,
+      "currency": "BRL",
+      "posting_date": "2001-02-01",
+      "status": "POSTED",
+      "provider_deleted_at": null,
+      "card_metadata": {
+        "synthetic_key": "fixture-key-1",
+        "cardNumber": "1234",
+        "purchaseDate": "2001-01-01T12:00:00.000Z",
+        "installmentNumber": 2,
+        "totalInstallments": 3
+      },
+      "normalized_payload": {
+        "status": "POSTED",
+        "synthetic_only": true
+      },
+      "raw_description": "SYNTHETIC MARKETPLACE",
+      "raw_id": "fixture-provider-1",
+      "raw_status": "POSTED",
+      "raw_category": "Shopping"
+    },
+    {
+      "source_id": "11111111-1111-4111-8111-000000000002",
+      "raw_hash": "fixture-hash-2",
+      "resource_type": "card_transaction",
+      "provider_record_id": "fixture-record-2",
+      "provider_account_ref": "fixture-account",
+      "institution_code": "SYNTHETIC",
+      "description": "SYNTHETIC MARKETPLACE",
+      "signed_amount": -10,
+      "currency": "BRL",
+      "posting_date": "2001-02-01",
+      "status": "PENDING",
+      "provider_deleted_at": null,
+      "card_metadata": {
+        "synthetic_key": "fixture-key-2",
+        "cardNumber": "1234",
+        "purchaseDate": "2001-01-01T12:00:00.001Z",
+        "installmentNumber": 2,
+        "totalInstallments": 3
+      },
+      "normalized_payload": {
+        "status": "PENDING",
+        "synthetic_only": true
+      },
+      "raw_description": "SYNTHETIC MARKETPLACE",
+      "raw_id": "fixture-provider-2",
+      "raw_status": "PENDING",
+      "raw_category": "Shopping"
+    },
+    {
+      "source_id": "11111111-1111-4111-8111-000000000003",
+      "raw_hash": "fixture-hash-3",
+      "resource_type": "card_transaction",
+      "provider_record_id": "fixture-record-3",
+      "provider_account_ref": "fixture-account",
+      "institution_code": "SYNTHETIC",
+      "description": "SYNTHETIC MARKETPLACE",
+      "signed_amount": -10,
+      "currency": "BRL",
+      "posting_date": "2001-02-01",
+      "status": "POSTED",
+      "provider_deleted_at": null,
+      "card_metadata": {
+        "synthetic_key": "fixture-key-3",
+        "cardNumber": "1234",
+        "purchaseDate": "2001-01-01T11:00:00.000Z",
+        "installmentNumber": 1,
+        "totalInstallments": 3
+      },
+      "normalized_payload": {
+        "status": "POSTED",
+        "synthetic_only": true
+      },
+      "raw_description": "SYNTHETIC MARKETPLACE",
+      "raw_id": "fixture-provider-3",
+      "raw_status": "POSTED",
+      "raw_category": "Shopping"
+    }
+  ],
+  "origins": [
+    {
+      "user_id": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      "source_table": "lts_open_finance_staging",
+      "source_ref": "11111111-1111-4111-8111-000000000002",
+      "beneficiary": "Synthetic Person",
+      "property_code": null,
+      "category_label": "Synthetic Marketplace",
+      "decision_basis": "SYNTHETIC PRIOR DECISION",
+      "decided_at": "2000-07-01T00:00:00-03:00"
+    },
+    {
+      "user_id": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      "source_table": "lts_open_finance_staging",
+      "source_ref": "11111111-1111-4111-8111-000000000003",
+      "beneficiary": "Synthetic Person",
+      "property_code": null,
+      "category_label": "Synthetic Marketplace",
+      "decision_basis": "SYNTHETIC PRIOR DECISION",
+      "decided_at": "2000-07-01T00:00:00-03:00"
+    },
+    {
+      "user_id": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      "source_table": "card_purchase_detail",
+      "source_ref": "synthetic-document-line",
+      "beneficiary": "Synthetic Person",
+      "property_code": null,
+      "category_label": "Synthetic Marketplace",
+      "decision_basis": "SYNTHETIC PRIOR DECISION",
+      "decided_at": "2000-07-01T00:00:00-03:00"
+    }
+  ],
+  "audits": [
+    {
+      "id": -1,
+      "user_id": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      "action": "SYNTHETIC PRIOR AUDIT",
+      "created_at": "2000-07-01T00:00:00-03:00",
+      "meta": {
+        "source_ref": "11111111-1111-4111-8111-000000000002",
+        "synthetic_only": true
+      }
+    },
+    {
+      "id": -2,
+      "user_id": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      "action": "SYNTHETIC PRIOR AUDIT",
+      "created_at": "2000-07-01T00:00:00-03:00",
+      "meta": {
+        "source_ref": "11111111-1111-4111-8111-000000000003",
+        "synthetic_only": true
+      }
+    }
+  ],
+  "leases": {
+    "lts_bank_known_classification_v231(uuid,uuid)": "f0000000000000000000000000000001",
+    "lts_card_installment_key_v231(lts_open_finance_staging)": "f0000000000000000000000000000002",
+    "lts_card_source_rows_pre_v262(uuid)": "f0000000000000000000000000000003",
+    "lts_expense_rows_v230_baseline(uuid,date,date)": "f0000000000000000000000000000004",
+    "lts_v229_expense_rows(uuid,date,date)": "f0000000000000000000000000000005",
+    "lts_open_finance_pilot_owner_v1()": "f0000000000000000000000000000006",
+    "lts_v246_invalidate_finance_cache()": "f0000000000000000000000000000007"
+  }
+}

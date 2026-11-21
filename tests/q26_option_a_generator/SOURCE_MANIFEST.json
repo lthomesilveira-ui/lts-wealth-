@@ -1,0 +1,107 @@
+{
+  "version": "readable-generator-0441-precedence-fix",
+  "files": [
+    {
+      "name": "LOCAL_VERIFICATION.json",
+      "bytes": 555,
+      "sha256": "a1d803099dac7810ef11c1ca0fd95929aa9bbf1cd303d8edb4b9daa74c1d2a32"
+    },
+    {
+      "name": "OUTPUT_CONTRACT.json",
+      "bytes": 2186,
+      "sha256": "a5f463b5abaa58251e8b866d708705a186327f830be430ca4d64ce206173bac1"
+    },
+    {
+      "name": "README_GENERATOR.md",
+      "bytes": 3016,
+      "sha256": "c6be249f77b0570e1a1e99cf53ac43eb7a4ffcc20ce5664eccebcd6ed46d480c"
+    },
+    {
+      "name": "consumer_suite.template.sql",
+      "bytes": 136840,
+      "sha256": "2c69b35001f244e206295679758f10172a4571a96817d2e56efa5ecf1efbe44b"
+    },
+    {
+      "name": "fixtures/base_rows.json",
+      "bytes": 14916,
+      "sha256": "70f17ddc7b27a07c3420b2198427fc334307bd6ad316c01872e607be3a0cdb4c"
+    },
+    {
+      "name": "fixtures/document_case.json",
+      "bytes": 543,
+      "sha256": "1aa9e4e8ea128fac459cebd95988462d96abde793cf7f433ddd770611bb339f7"
+    },
+    {
+      "name": "frozen_files/ACL_TEST_SCOPE.json",
+      "bytes": 1607,
+      "sha256": "30cc00448acc69297e3a9ee9db02ffe0789acaa6bc7c8804d5ef02f52a60b39a"
+    },
+    {
+      "name": "frozen_files/ALLOWED_TRANSFORMATIONS.json",
+      "bytes": 1653,
+      "sha256": "857b200cc376f9054876d7949ac97f080f1a3043c3c2ad561a9315f5afb49634"
+    },
+    {
+      "name": "frozen_files/DEPENDENCY_STUBS.json",
+      "bytes": 22965,
+      "sha256": "3e49b42c77ecfac9de589c75add4f10e7d91fce99c0301c4bdd65f6de6a13787"
+    },
+    {
+      "name": "frozen_files/EXPECTED_RESULTS.json",
+      "bytes": 17037,
+      "sha256": "b1d9f9280bbf34e8e7c9a61888d4bdded2b24b06d16a2bbb43f2a0394661a1de"
+    },
+    {
+      "name": "frozen_files/PREPARATION_CHECKS.json",
+      "bytes": 846,
+      "sha256": "18e990c61feb38dd0d4620b5103fdde356de616e34ece9a115ec76fb724fe3c6"
+    },
+    {
+      "name": "frozen_files/PUBLIC_MANIFEST.json",
+      "bytes": 2731,
+      "sha256": "67a947fea0facbc39cdc3e00198d63afb563662f14331ea111b9c90a60e31752"
+    },
+    {
+      "name": "frozen_files/README.md",
+      "bytes": 5341,
+      "sha256": "b23a712d78b7de9a0a9626c04326a3fd29287888e082cc30b19289c0d43e5291"
+    },
+    {
+      "name": "frozen_files/card_detail_candidate.sql",
+      "bytes": 40172,
+      "sha256": "2c5ca1b074e5592d3428ce3cef84af5daac6520f54c9ad84155f44d046dbe02f"
+    },
+    {
+      "name": "frozen_files/card_detail_original.sql",
+      "bytes": 8708,
+      "sha256": "1c9cf438cd246a1a8bd18d45aa04673070188e5663c7d00081a18ef7750946cc"
+    },
+    {
+      "name": "frozen_files/expense_rows_candidate.sql",
+      "bytes": 38804,
+      "sha256": "c74f3c0554da635f9ed22b2147a2086331aa23d25d4cfad209e88bc70f8a5c37"
+    },
+    {
+      "name": "frozen_files/expense_rows_original.sql",
+      "bytes": 10099,
+      "sha256": "f3b93095db9d7a2b7fd57ca0bcb77eb0b2a802d402f4aa6121d60c4226635982"
+    },
+    {
+      "name": "frozen_files/run_disposable.sh",
+      "bytes": 1603,
+      "sha256": "865a20c36db9c00232241feb863971597151b35bdd4906b87f96cdd5bb94c7ed"
+    },
+    {
+      "name": "frozen_files/verify_results.py",
+      "bytes": 3983,
+      "sha256": "6e670827cfb1633c7b8752ab4cf2e05ab616f2e54a8a95c7f1c1e318c5cae461"
+    },
+    {
+      "name": "generate.py",
+      "bytes": 7143,
+      "sha256": "bfa57aa1e06be025aec7ad8bf88c0076ed5509d625cfc4b94d66b1aecbf93f77"
+    }
+  ],
+  "sql_executed": false,
+  "upload_authorized_by_this_file": false
+}
