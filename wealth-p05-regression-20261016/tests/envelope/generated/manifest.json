@@ -1,0 +1,29 @@
+{
+  "database_leases": "PLACEHOLDERS_DO_NOT_RUN",
+  "database_tests_executed": false,
+  "files": {
+    "apply-synthetic.sql": "d6c27c83f7748b74eea0981a2895e0e0e7d950161fe0577bbe09a55c0e3ef8ca",
+    "bootstrap-synthetic.sql": "08eef3ee4b8019fc13ae40dab71672095b7ffff2fb2511b93a3de5749b3bf3d5",
+    "fixtures-synthetic.json": "30db45f8320b0de450229e81e2810d6cdadde435c7cda9891a0877fb71d76b2e",
+    "guard-candidate-synthetic.sql": "0dd2da428617bedb65af8871446fa516928f03ccb15e92c473a31a48c4833c80",
+    "guard-original-synthetic.sql": "527e6d520db281be9a2b484a1e34a9d94fa02aac7df7af9c7fcaaf8b98598807",
+    "rollback-synthetic.sql": "20d1af8cd51219bdb52b306edd202f03f35640b8128e06464aba46086da97be1"
+  },
+  "guard_implementation": "exact baseline and candidate definitions; semantic assertions covered separately",
+  "guard_source_sha256": {
+    "candidate": "43a0cef198366d790e5c4950e045ecef47f76619b4e8398719ae1530c11070cf",
+    "original": "f73e88b1f6091d26e5896ccdb22140999d51f43c8298212484707488cd8198b9"
+  },
+  "parameterized_builder_sha256": "3ab35b167488057742cb6f1dc402a1434cff19fcd138f5af1090c4116798cf5a",
+  "parameterized_literals": [
+    "reader v176 MD5",
+    "reader pre_v268 MD5",
+    "scoped consumer expected count and net"
+  ],
+  "schema_version": 1,
+  "source_builder_sha256": "2a65db7fbf6cd3250b3ab17ce10dd2722031b87de3a5ba27d3ca70e678737d8b",
+  "synthetic_only": true,
+  "tests_executed": [
+    "python builder generation only"
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "scope": "Presentation-only confirmation of issuer FULL_PAYMENT and posted bank debit. No assertion of expense coverage or economic deduplication.",
+  "source_entry": "Existing authenticated lts_browser_card_cycles_v229 RPC; unchanged",
+  "source_policy": "Exact installed invoice predicate, including raw_except_updatedAt_v1, legacy hash fallback, and unknown-policy rejection",
+  "schema": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["status", "basis", "payment_date", "bank_posting_date", "bank_posting_status", "issuer_payment_date", "issuer_payment_type", "amount", "currency", "cash_effect"],
+    "properties": {
+      "status": {"const": "identified_in_statement"},
+      "basis": {"const": "reviewed_original_link_and_exact_issuer_refresh"},
+      "payment_date": {"type": "string", "format": "date", "description": "Legacy-compatible bank posting date; not the issuer payment date"},
+      "bank_posting_date": {"type": "string", "format": "date"},
+      "bank_posting_status": {"const": "POSTED"},
+      "issuer_payment_date": {"type": "string", "format": "date", "description": "Source calendar day; no timezone shift"},
+      "issuer_payment_type": {"const": "FULL_PAYMENT"},
+      "amount": {"type": "number", "exclusiveMinimum": 0},
+      "currency": {"const": "BRL"},
+      "cash_effect": {"const": "none"}
+    }
+  },
+  "preserved": ["Original P05 link and documentary evidence", "Source payment_status", "Due date", "Cycle/month", "Amounts", "Items", "All non-annotation JSON fields", "V280 generation guards", "Existing economic guard and coverage semantics"],
+  "excluded_output": ["Manifest", "Canonical invoice payload", "Timestamp review payload", "Owner or payment IDs", "Raw hashes", "Private document references", "Expense coverage claim"]
+}

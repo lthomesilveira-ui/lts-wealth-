@@ -1,0 +1,17 @@
+{
+  "files": [
+    "PUBLIC_FILES.json",
+    "README.md",
+    "run_envelope_postgres17.py",
+    "validate_static.py",
+    "postgres17-envelope.proposed.yml",
+    "generated/manifest.json",
+    "generated/fixtures-synthetic.json",
+    "generated/apply-synthetic.sql",
+    "generated/rollback-synthetic.sql",
+    "generated/bootstrap-synthetic.sql",
+    "generated/guard-original-synthetic.sql",
+    "generated/guard-candidate-synthetic.sql",
+    "STATIC_VALIDATION.json"
+  ]
+}

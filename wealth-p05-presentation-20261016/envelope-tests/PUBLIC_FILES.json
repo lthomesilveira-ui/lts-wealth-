@@ -1,0 +1,12 @@
+{
+  "files": [
+    ".gitignore",
+    "README.md",
+    "PUBLIC_FILES.json",
+    "build_read.py",
+    "build_envelope.py",
+    "run_postgres17.py",
+    "validate_static.py",
+    "postgres17-envelope.proposed.yml"
+  ]
+}

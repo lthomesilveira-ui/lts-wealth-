@@ -1,0 +1,14 @@
+{
+  "status": "static-passed",
+  "sql_execution": false,
+  "postgresql_parser_used": false,
+  "scope": [
+    "Python AST",
+    "SQL delimiter and parentheses balance",
+    "artifact hashes",
+    "envelope ordering",
+    "synthetic UUID allowlist",
+    "runner refuses without opt-in"
+  ],
+  "source_builder_sha256": "2a65db7fbf6cd3250b3ab17ce10dd2722031b87de3a5ba27d3ca70e678737d8b"
+}

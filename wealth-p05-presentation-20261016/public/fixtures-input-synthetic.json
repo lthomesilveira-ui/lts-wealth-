@@ -1,0 +1,249 @@
+{
+  "base": [
+    "11111111-1111-4111-8111-111111111111",
+    "22222222-2222-4222-8222-222222222222",
+    {
+      "user_id": "11111111-1111-4111-8111-111111111111",
+      "active": true,
+      "payment_source_id": "22222222-2222-4222-8222-222222222222",
+      "invoice_source_id": "33333333-3333-4333-8333-333333333333",
+      "institution_code": "341",
+      "provider_item_id": "item",
+      "invoice_account_ref": "credit",
+      "payment_account_ref": "checking",
+      "expected_amount": 100,
+      "expected_due_date": "2026-10-12",
+      "expected_closing_date": "2026-10-05",
+      "expected_payment_date": "2026-10-14",
+      "invoice_raw_hash": "invoicehash",
+      "payment_raw_hash": "paymenthash",
+      "documentary_sources": [
+        {},
+        {}
+      ]
+    },
+    {
+      "user_id": "11111111-1111-4111-8111-111111111111",
+      "id": "33333333-3333-4333-8333-333333333333",
+      "resource_type": "invoice",
+      "provider_deleted_at": null,
+      "institution_code": "341",
+      "provider_record_id": "item:invoice",
+      "provider_account_ref": "credit",
+      "currency": "BRL",
+      "signed_amount": 100,
+      "raw_hash": "invoicehash",
+      "normalized_payload": {
+        "due_date": "2026-10-12",
+        "closing_date": "2026-10-05",
+        "provider_id": "bill"
+      },
+      "raw_payload": {
+        "payments": [
+          {
+            "id": "issuer-payment",
+            "amount": 100,
+            "valueType": "FULL_PAYMENT",
+            "paymentMode": "DEBIT_ACCOUNT",
+            "currencyCode": "BRL",
+            "paymentDate": "2026-10-12T00:00:00Z"
+          }
+        ]
+      }
+    },
+    {
+      "user_id": "11111111-1111-4111-8111-111111111111",
+      "id": "22222222-2222-4222-8222-222222222222",
+      "resource_type": "transaction",
+      "provider_deleted_at": null,
+      "institution_code": "341",
+      "provider_record_id": "item:payment",
+      "provider_account_ref": "checking",
+      "currency": "BRL",
+      "signed_amount": -100,
+      "posting_date": "2026-10-14",
+      "raw_hash": "paymenthash",
+      "normalized_payload": {
+        "status": "POSTED",
+        "account_type": "CHECKING_ACCOUNT"
+      },
+      "raw_payload": {
+        "status": "POSTED"
+      }
+    },
+    [
+      {
+        "user_id": "11111111-1111-4111-8111-111111111111",
+        "id": "item1",
+        "resource_type": "card_transaction",
+        "provider_deleted_at": null,
+        "institution_code": "341",
+        "provider_account_ref": "credit",
+        "currency": "BRL",
+        "signed_amount": -60,
+        "raw_payload": {
+          "creditCardMetadata": {
+            "billId": "bill"
+          },
+          "status": "POSTED",
+          "operationType": "COMPRA"
+        },
+        "raw_hash": "hash-item1",
+        "normalized_payload": {
+          "status": "POSTED"
+        }
+      },
+      {
+        "user_id": "11111111-1111-4111-8111-111111111111",
+        "id": "item2",
+        "resource_type": "card_transaction",
+        "provider_deleted_at": null,
+        "institution_code": "341",
+        "provider_account_ref": "credit",
+        "currency": "BRL",
+        "signed_amount": -40,
+        "raw_payload": {
+          "creditCardMetadata": {
+            "billId": "bill"
+          },
+          "status": "POSTED",
+          "operationType": "COMPRA"
+        },
+        "raw_hash": "hash-item2",
+        "normalized_payload": {
+          "status": "POSTED"
+        }
+      },
+      {
+        "user_id": "11111111-1111-4111-8111-111111111111",
+        "id": "item3",
+        "resource_type": "card_transaction",
+        "provider_deleted_at": null,
+        "institution_code": "341",
+        "provider_account_ref": "credit",
+        "currency": "BRL",
+        "signed_amount": 100,
+        "raw_payload": {
+          "creditCardMetadata": {
+            "billId": "bill"
+          },
+          "status": "POSTED",
+          "operationType": "PAGAMENTO_FATURA"
+        },
+        "raw_hash": "hash-item3",
+        "normalized_payload": {
+          "status": "POSTED"
+        }
+      }
+    ],
+    "2026-10-15"
+  ],
+  "contract": {
+    "active": true,
+    "user_id": "11111111-1111-4111-8111-111111111111",
+    "payment_id": "22222222-2222-4222-8222-222222222222",
+    "invoice_id": "33333333-3333-4333-8333-333333333333",
+    "amount": 100,
+    "competence_month": "2026-10-01",
+    "manifest": [
+      {
+        "id": "item1",
+        "raw_hash": "hash-item1",
+        "signed_amount": -60,
+        "status": "POSTED",
+        "raw_status": "POSTED",
+        "operation_type": "COMPRA"
+      },
+      {
+        "id": "item2",
+        "raw_hash": "hash-item2",
+        "signed_amount": -40,
+        "status": "POSTED",
+        "raw_status": "POSTED",
+        "operation_type": "COMPRA"
+      },
+      {
+        "id": "item3",
+        "raw_hash": "hash-item3",
+        "signed_amount": 100,
+        "status": "POSTED",
+        "raw_status": "POSTED",
+        "operation_type": "PAGAMENTO_FATURA"
+      }
+    ],
+    "coverage_mode": "card_bank_closed_complete",
+    "link_contract": {
+      "user_id": "11111111-1111-4111-8111-111111111111",
+      "active": true,
+      "payment_source_id": "22222222-2222-4222-8222-222222222222",
+      "invoice_source_id": "33333333-3333-4333-8333-333333333333",
+      "institution_code": "341",
+      "provider_item_id": "item",
+      "invoice_account_ref": "credit",
+      "payment_account_ref": "checking",
+      "expected_amount": 100,
+      "expected_due_date": "2026-10-12",
+      "expected_closing_date": "2026-10-05",
+      "expected_payment_date": "2026-10-14",
+      "invoice_raw_hash": "invoicehash",
+      "payment_raw_hash": "paymenthash",
+      "documentary_sources": [
+        {},
+        {}
+      ]
+    },
+    "consumption_manifest": [
+      {
+        "id": "item1",
+        "raw_hash": "hash-item1",
+        "signed_amount": -60,
+        "status": "POSTED",
+        "raw_status": "POSTED",
+        "operation_type": "COMPRA"
+      },
+      {
+        "id": "item2",
+        "raw_hash": "hash-item2",
+        "signed_amount": -40,
+        "status": "POSTED",
+        "raw_status": "POSTED",
+        "operation_type": "COMPRA"
+      }
+    ],
+    "settlement_manifest": [
+      {
+        "id": "item3",
+        "raw_hash": "hash-item3",
+        "signed_amount": 100,
+        "status": "POSTED",
+        "raw_status": "POSTED",
+        "operation_type": "PAGAMENTO_FATURA"
+      }
+    ],
+    "invoice_current_hash": "invoicehash",
+    "issuer_payments": [
+      {
+        "id": "issuer-payment",
+        "amount": 100,
+        "valueType": "FULL_PAYMENT",
+        "paymentMode": "DEBIT_ACCOUNT",
+        "currencyCode": "BRL",
+        "paymentDate": "2026-10-12T00:00:00Z"
+      }
+    ]
+  },
+  "coverage": [
+    {
+      "source_ref": "item1",
+      "amount": 60,
+      "competence_month": "2026-10-01",
+      "coverage_mode": "card_bank_closed_complete"
+    },
+    {
+      "source_ref": "item2",
+      "amount": 40,
+      "competence_month": "2026-10-01",
+      "coverage_mode": "card_bank_closed_complete"
+    }
+  ]
+}
