@@ -54,7 +54,10 @@ async function verify(browser, width, engine) {
     assert(metrics.overflow <= 2 && metrics.controlsHeight > 0, 'collapsed controls fit the screen');
     await app.locator('.v382-period summary').click();
     await app.locator('#flowFrom').waitFor({ state: 'visible' });
-    await app.locator('.v382-period summary').click();
+    await app.getByLabel('Data inicial do Fluxo', { exact: true }).fill('2026-12-01');
+    await app.getByLabel('Data final do Fluxo', { exact: true }).fill('2026-12-31');
+    await app.locator('#flowApply').click();
+    await inner.waitForFunction(() => !FLOWLOADING && FLOWQ?.from === '2026-12-01' && FLOWQ?.to === '2026-12-31');
     await app.locator('[data-d]').first().click();
     await app.locator('.fx89-details').first().waitFor({ state: 'visible' });
     assert.deepEqual(h.errors, []);
