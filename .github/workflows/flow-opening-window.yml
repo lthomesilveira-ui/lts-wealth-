@@ -2,6 +2,8 @@ name: Default Flow opening
 on:
   pull_request:
     paths:
+      - 'releases/v494/**'
+      - 'mobile/current.json'
       - 'supabase/migrations/*_prepare_default_flow_opening.sql'
       - '.github/scripts/flow-opening-window.cjs'
       - '.github/workflows/flow-opening-window.yml'
@@ -13,6 +15,7 @@ jobs:
     timeout-minutes: 8
     container: mcr.microsoft.com/playwright:v1.58.2-noble
     env:
+      LTS_FLOW_OPENING_RELEASE: v494
       PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
     steps:
