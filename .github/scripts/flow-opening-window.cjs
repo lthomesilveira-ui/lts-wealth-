@@ -17,8 +17,14 @@ async function verify(browser, width, engine) {
       const result = fixture.response('lts_browser_flow_v242', args);
       const { days, events } = result.flow.current_future;
       for (let i = 0; i < days.length; i += 4) {
-        events.push({ source: 'current_event', source_ref: 'fixture-' + i, event_date: days[i].date,
-          description: 'Movimento de teste', signed_amount: -10, account: 'Itaú', category: 'Teste' });
+        const day = days[i];
+        day.fix86_columns.entradas = 10;
+        day.fix86_columns.saidas = 10;
+        day.summary = { events: 2, Consolidado: { entries: 10, exits: 10 } };
+        for (const amount of [-10, 10]) {
+          events.push({ source: 'current_event', source_ref: ['fixture', i, amount].join('/'), event_date: day.date,
+            description: 'Movimento de teste', signed_amount: amount, account: 'Itaú', category: 'Teste' });
+        }
       }
       return route.fulfill({ json: result });
     });
@@ -42,6 +48,7 @@ async function verify(browser, width, engine) {
       overflow: document.documentElement.scrollWidth - innerWidth,
       controlsHeight: Math.round(document.querySelector('.flow-sticky-controls').getBoundingClientRect().height)
     }));
+    console.log(JSON.stringify({ engine, width, clickToFlowMs: elapsed, ...metrics }));
     assert.equal(metrics.from, '2026-11-16');
     assert(metrics.days >= 1867 && metrics.rows > 300, 'full calendar and material movements are navigable');
     assert(metrics.overflow <= 2 && metrics.controlsHeight > 0, 'collapsed controls fit the screen');
@@ -51,7 +58,6 @@ async function verify(browser, width, engine) {
     await app.locator('[data-d]').first().click();
     await app.locator('.fx89-details').first().waitFor({ state: 'visible' });
     assert.deepEqual(h.errors, []);
-    console.log(JSON.stringify({ engine, width, clickToFlowMs: elapsed, ...metrics }));
   } finally {
     await h.ctx.close();
   }
