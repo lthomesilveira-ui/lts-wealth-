@@ -12,7 +12,7 @@ jobs:
     env:
       PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
-      LTS_MOBILE_RELEASE: v492
+      LTS_MOBILE_RELEASE: v494
       LTS_FLOW_RELEASE: v442
     steps:
       - uses: actions/checkout@v4

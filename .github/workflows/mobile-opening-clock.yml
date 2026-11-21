@@ -11,10 +11,10 @@ jobs:
     container: mcr.microsoft.com/playwright:v1.58.2-noble
     env:
       LTS_FIRST_TOUCH_SAMPLES: '4'
-      LTS_OPENING_TEST_RELEASE: v492
-      LTS_FLOW_RELEASE: v492
-      LTS_MOBILE_RELEASE: v492
-      LTS_BROWSER_FIXTURE_RELEASE: v492
+      LTS_OPENING_TEST_RELEASE: v494
+      LTS_FLOW_RELEASE: v494
+      LTS_MOBILE_RELEASE: v494
+      LTS_BROWSER_FIXTURE_RELEASE: v494
       PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
     steps:
