@@ -1,4 +1,5 @@
 'use strict';
+const release = process.env.LTS_FLOW_OPENING_RELEASE || require('../../mobile/current.json').release;
 const assert = require('node:assert/strict');
 const { chromium, webkit } = require('playwright');
 const { setup } = require('./lts_v382_browser.cjs');
@@ -7,8 +8,25 @@ const projection = require('./lts_v412_projection_fixtures.cjs');
 
 async function verify(browser, width, engine) {
   const height = width === 390 ? 844 : 900;
-  const h = await setup(browser, width, height, '2026-11-21T18:00:00Z');
+  const h = await setup(browser, width, height, '2026-11-21T18:00:00Z', true);
   try {
+    await h.ctx.route('**/mobile/current.json', route => route.fulfill({
+      json:{release, entry:'../releases/'+release+'/app.html'}
+    }));
+    let bankConfirmed = false;
+    let refreshCount = 0;
+    await h.ctx.route('**/rpc/lts_browser_open_finance_refresh_v1', route => {
+      refreshCount++;
+      return route.fulfill({json:{ok:true,requested_at:'2026-11-21T18:00:00Z'}});
+    });
+    await h.ctx.route('**/rpc/lts_browser_open_finance_status_v1', route => {
+      const stamp = bankConfirmed ? '2026-11-21T18:00:00Z' : '2026-11-21T17:00:00Z';
+      const connections = ['341','237','336'].map(code => ({
+        id:'test-'+code, provider:'fixture', institution_code:code,
+        last_success_at:stamp, provider_item_updated_at:stamp
+      }));
+      return route.fulfill({json:{ok:true,connections}});
+    });
     const policy = projection.policy();
     policy.as_of = '2026-11-21';
     await h.ctx.route('**/rpc/lts_browser_projection_policy_v412', route => route.fulfill({ json: policy }));
@@ -33,10 +51,11 @@ async function verify(browser, width, engine) {
     const app = h.page.frameLocator('#wealth').frameLocator('#shell');
     const nav = app.locator('#nav [data-v="Fluxo Diário"]:visible,#dx1MobileNav [data-mobile-route="Fluxo Diário"]:visible');
     await nav.waitFor();
-    const inner = h.page.frames().find(frame => new URL(frame.url()).pathname.endsWith('/v492/index.html'));
-    assert(inner, 'V492 application frame');
+    const inner = h.page.frames().find(frame => new URL(frame.url()).pathname.endsWith('/'+release+'/index.html'));
+    assert(inner, 'published application frame');
     await inner.waitForFunction(() => V === 'Dashboard' && D && window.__LTS_V382_FLOW_LAYOUT?.installed);
     await app.getByText('Total disponível hoje', { exact: true }).first().waitFor();
+    await app.getByRole('button',{name:/Consultando bancos/}).waitFor();
     const started = performance.now();
     await nav.click();
     await inner.waitForFunction(() => V === 'Fluxo Diário' && !FLOWLOADING && FLOWQ?.to === '2031-12-31'
@@ -49,6 +68,9 @@ async function verify(browser, width, engine) {
       controlsHeight: Math.round(document.querySelector('.flow-sticky-controls').getBoundingClientRect().height)
     }));
     console.log(JSON.stringify({ engine, width, clickToFlowMs: elapsed, ...metrics }));
+    assert.equal(refreshCount,1);
+    assert.equal(bankConfirmed,false);
+    bankConfirmed = true;
     assert.equal(metrics.from, '2026-11-16');
     assert(metrics.days >= 1867 && metrics.rows > 300, 'full calendar and material movements are navigable');
     assert(metrics.overflow <= 2 && metrics.controlsHeight > 0, 'collapsed controls fit the screen');
@@ -68,7 +90,7 @@ async function verify(browser, width, engine) {
 
 (async () => {
   for (const [name, type] of Object.entries({ chromium, webkit })) {
-    const browser = await type.launch();
+    const browser = await type.launch({executablePath:type===chromium?process.env.LTS_TEST_CHROMIUM:undefined});
     try {
       for (const width of [390, 1366]) await verify(browser, width, name);
     } finally {
