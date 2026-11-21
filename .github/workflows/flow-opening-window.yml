@@ -2,7 +2,9 @@ name: Default Flow opening
 on:
   pull_request:
     paths:
+      - 'releases/v495/**'
       - 'releases/v494/**'
+      - '.github/scripts/historical-consolidated-cash.cjs'
       - 'mobile/current.json'
       - 'supabase/migrations/*_prepare_default_flow_opening.sql'
       - '.github/scripts/flow-opening-window.cjs'
@@ -15,7 +17,7 @@ jobs:
     timeout-minutes: 8
     container: mcr.microsoft.com/playwright:v1.58.2-noble
     env:
-      LTS_FLOW_OPENING_RELEASE: v494
+      LTS_FLOW_OPENING_RELEASE: v495
       PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
     steps:
@@ -30,4 +32,5 @@ jobs:
           npm install --no-save --package-lock=false playwright@1.58.2
           python3 -m http.server 8788 --bind 127.0.0.1 >/tmp/flow-opening-http.log 2>&1 &
           node .github/scripts/lts_v309_wait_http.cjs
+          node .github/scripts/historical-consolidated-cash.cjs
           node .github/scripts/flow-opening-window.cjs

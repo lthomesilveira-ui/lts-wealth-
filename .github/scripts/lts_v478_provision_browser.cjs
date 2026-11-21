@@ -76,9 +76,22 @@ async function test(browser, engine, width) {
     await s.page.waitForFunction(()=>document.querySelector('#wealth')?.contentDocument?.querySelector('#shell')?.contentDocument?.body?.dataset.ltsBootState==='ready');
     const frame=s.page.frames().find(f=>new URL(f.url()).pathname.endsWith('/releases/'+release+'/index.html'));
     assert.ok(frame);
+    await frame.waitForFunction(()=>V==='Dashboard' && D && window.__LTS_V382_FLOW_LAYOUT?.installed);
+    await frame.getByText('Total disponível hoje',{exact:true}).first().waitFor();
     await frame.locator('#nav [data-v="Fluxo Diário"]:visible,#dx1MobileNav [data-mobile-route="Fluxo Diário"]:visible').click();
     await frame.waitForFunction(()=>window.__LTS_V412_PROJECTION?.status==='ready');
-    await frame.evaluate(()=>loadFlowRange('2026-11-18','2026-12-01'));
+    await frame.locator('.v382-period summary').click();
+    await frame.getByLabel('Data inicial do Fluxo',{exact:true}).fill('2026-11-18');
+    await frame.getByLabel('Data final do Fluxo',{exact:true}).fill('2026-12-01');
+    await frame.locator('#flowApply').click();
+    await frame.waitForFunction(()=>!FLOWLOADING && FLOWQ?.from==='2026-11-18' && FLOWQ?.to==='2026-12-01');
+    assert.ok(await frame.locator('#d-'+openDay).count(),
+      JSON.stringify({errors:s.errors,report:await frame.evaluate(()=>({
+        rows:document.querySelectorAll('.fx87-row[id]').length, drawn:document.querySelector('.fx87-row[id]')?.id,
+        days:FLOWQ.current_future.days.length, events:FLOWQ.current_future.events.length,
+        target:FLOWQ.current_future.days.find(x=>x.date==='2026-11-20')?.summary,
+        selectedRange:[FLOWFROM,FLOWTO], view:V
+      }))}));
     await frame.locator('.exp[data-d="'+openDay+'"]').click();
     const current=frame.locator('#d-'+openDay+'+.fx89-details');
     await current.getByText('Fatura identificada',{exact:true}).waitFor();
