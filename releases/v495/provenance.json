@@ -1,7 +1,7 @@
 {
   "release": "v495",
   "base_release": "v494",
-  "scope": "Use reconciled consolidated historical cash totals in the daily flow and export, retaining both bank legs and settlement details.",
+  "scope": "Use reconciled consolidated historical cash totals in the daily flow and export, retaining both bank legs and settlement details. Allow optional same-day bank position comparison on unreconciled historical balances.",
   "financial_source_writes": false,
   "published_base_immutable": true
 }

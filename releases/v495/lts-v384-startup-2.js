@@ -794,6 +794,34 @@ function documentaryPaymentNote(cycle, esc, formatDate, mode = 'note', sourcePre
    if(ACC==='Consolidado'&&e.internal_transfer&&(e.own_transfer_counterparty_id||e.source==='internal_transfer'))return 'Entre contas do consolidado';
    return e.internal_transfer?'':previousMeta(e);
   };
+  function offerBankObservation(detail,day,bank){
+   const row=day[bank];
+   if(row?.balance_basis!=='observed_bank_position_and_recent_movements'||row.balance_certified!==false||
+      !Number.isFinite(Number(row.balance))||row.balance==null||!(Math.abs(Number(row.reconciliation_gap))>=.005))return;
+   let section=detail.querySelector('[data-history-bank="'+bank+'"]');
+   if(section)return;
+   section=document.createElement('details');section.dataset.historyBank=bank;
+   const summary=document.createElement('summary'),body=document.createElement('p');
+   summary.textContent='Saldo informado pelo '+bank;body.setAttribute('role','status');
+   section.append(summary,body);detail.appendChild(section);
+   section.ontoggle=async()=>{
+    if(!section.open||section.dataset.loading==='yes'||section.dataset.ready==='yes')return;
+    section.dataset.loading='yes';body.textContent='Consultando…';
+    try{
+     const {data,error}=await S.rpc('lts_browser_flow_bank_observation_v495',{p_date:day.date,p_bank:bank});
+     if(error)throw error;
+     if(!data){body.textContent='Sem posição bancária identificada para este dia.';return;}
+     if(data.date!==day.date||data.bank!==bank||data.balance==null||!Number.isFinite(Number(data.balance))||
+        !Number.isFinite(Date.parse(data.source_at)))throw Error('Invalid observation');
+     const stamp=new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Sao_Paulo',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}).format(new Date(data.source_at));
+     const difference=(Math.round(Number(data.balance)*100)-Math.round(Number(row.balance)*100))/100;
+     body.textContent='Informado em '+stamp+' · '+brl(data.balance)+'. Os lançamentos indicam '+brl(row.balance)+'. A diferença é '+brl(difference)+'.';
+     if(data.automatically_invested!=null&&Number(data.automatically_invested)===Number(data.balance))body.textContent+=' O banco informa que esse saldo está aplicado automaticamente.';
+     section.dataset.ready='yes';
+    }catch{body.textContent='Não foi possível consultar. Feche e abra este detalhe para tentar de novo.';}
+    finally{delete section.dataset.loading;}
+   };
+  }
   function after(){
    const localToday=typeof today==="function"?today():null;
    if(V==='Fluxo Diário'&&typeof FLOWQ!=='undefined'&&FLOWQ?.observed_bank_movements){const label=document.getElementById('ltsBankEvidence');if(label)label.textContent='';}
@@ -829,6 +857,8 @@ function documentaryPaymentNote(cycle, esc, formatDate, mode = 'note', sourcePre
    }else position?.remove();
    if(V==='Fluxo Diário')for(const row of document.querySelectorAll('.fx87-row[id^="d-"]')){
     const detail=row.nextElementSibling;if(!detail?.classList.contains('fx89-details'))continue;
+    const date=row.id.slice(2), day=typeof FLOWQ!=='undefined'&&FLOWQ?.historical?.days?.find(item=>item.date===date);
+    if(day?.historical)for(const bank of (ACC==='Consolidado'?['Itaú','Bradesco','C6']:[ACC]))offerBankObservation(detail,day,bank);
     const events=dayEvents(row.id.slice(2));detail.querySelectorAll('.fx89-detail-row').forEach((entry,i)=>{const e=events[i];if(e?.internal_transfer){const label=entry.querySelector('.fx89-detail-desc>span');if(label)label.textContent=(e.account||'Conta')+' · '+(e.asset_movement?'Resgate':'Transferência')}});
    }
    if(V!=='Atualizações')return;

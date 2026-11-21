@@ -13,7 +13,7 @@ const bank = (opening_balance, cash_entries, cash_exits) => ({
 });
 const example = {
   date, historical:true, movements_complete:true,
-  'Itaú': bank(100, 125, 0), C6:bank(300, 180, 132), Bradesco:bank(0,0,0),
+  'Itaú': bank(100, 125, 0), C6:bank(300, 180, 132), Bradesco:{...bank(0,0,0), balance_certified:false,reconciliation_gap:0.07},
   Consolidado:{documentary_reconstruction:true, bank_balance:573, balance_basis:'sum_of_documented_account_positions'},
   summary:{events:4, entries:180, exits:7, Consolidado:{entries:180,exits:7}},
   v170_cash_arithmetic:{version:'account-positions-plus-effective-cash-v237', balanced:true},
@@ -47,6 +47,12 @@ assert.deepEqual(exported.text.split('\n')[1].split('\t').slice(1,5).map(cents),
 async function verify(browser,width){
   const h=await setup(browser,width,width===390?844:900,'2026-11-21T18:00:00Z');
   try {
+    let observationReads=0;
+    await h.ctx.route('**/rpc/lts_browser_flow_bank_observation_v495',route=>{
+      assert.deepEqual(route.request().postDataJSON(),{p_date:date,p_bank:'Bradesco'});
+      observationReads++;
+      return route.fulfill({json:{date,bank:'Bradesco',source_at:date+'T18:00:00Z',balance:.07,automatically_invested:.07}});
+    });
     await h.ctx.route('**/rpc/lts_browser_flow_v242',route=>{
       const args=route.request().postDataJSON();
       const payload=fixtures.response('lts_browser_flow_v242',args);
@@ -77,6 +83,12 @@ async function verify(browser,width){
     const details=app.locator('#d-'+date+' + .fx89-details');
     await details.getByText('Retorno da Conta Global',{exact:true}).waitFor();
     assert.equal(await details.getByText('Entre contas do consolidado',{exact:true}).count(),2);
+    const evidence=details.locator('[data-history-bank="Bradesco"]');
+    assert.equal(observationReads,0);
+    await evidence.locator('summary').click();
+    await evidence.getByText(/A diferença é R\$\s*0,07/).waitFor();
+    assert.equal(observationReads,1);
+    assert.deepEqual(await amounts(),[40000,18000,700,57300]);
     for(const [account,expected] of [['Itaú',[10000,12500,0,22500]],['C6',[30000,18000,13200,34800]]]){
       await app.locator('[data-a="'+account+'"]:visible').first().click();
       assert.deepEqual(await amounts(),expected);
