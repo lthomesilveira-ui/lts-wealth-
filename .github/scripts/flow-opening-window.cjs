@@ -47,7 +47,8 @@ async function verify(browser, width, engine) {
       return route.fulfill({ json: result });
     });
     const base = process.env.LTS_BROWSER_BASE || 'http://127.0.0.1:8788';
-    await h.page.goto(base + '/mobile/?source=home-screen');
+    const launchStarted = performance.now();
+    await h.page.goto(base + '/mobile/?source=home-screen', {waitUntil:'commit'});
     const app = h.page.frameLocator('#wealth').frameLocator('#shell');
     const nav = app.locator('#nav [data-v="Fluxo Diário"]:visible,#dx1MobileNav [data-mobile-route="Fluxo Diário"]:visible');
     await nav.waitFor();
@@ -56,6 +57,7 @@ async function verify(browser, width, engine) {
     await inner.waitForFunction(() => V === 'Dashboard' && D && window.__LTS_V382_FLOW_LAYOUT?.installed);
     await app.getByText('Total disponível hoje', { exact: true }).first().waitFor();
     await app.getByRole('button',{name:/Consultando bancos/}).waitFor();
+    const dashboardMs = Math.round(performance.now() - launchStarted);
     const started = performance.now();
     await nav.click();
     await inner.waitForFunction(() => V === 'Fluxo Diário' && !FLOWLOADING && FLOWQ?.to === '2031-12-31'
@@ -67,7 +69,7 @@ async function verify(browser, width, engine) {
       overflow: document.documentElement.scrollWidth - innerWidth,
       controlsHeight: Math.round(document.querySelector('.flow-sticky-controls').getBoundingClientRect().height)
     }));
-    console.log(JSON.stringify({ engine, width, clickToFlowMs: elapsed, ...metrics }));
+    console.log(JSON.stringify({ engine, width, dashboardMs, launchToFlowMs: Math.round(performance.now() - launchStarted), clickToFlowMs: elapsed, ...metrics }));
     assert.equal(refreshCount,1);
     assert.equal(bankConfirmed,false);
     bankConfirmed = true;

@@ -31,10 +31,18 @@
    if(V!=='Fluxo Diário')return;
    const bar=document.querySelector('.flowbar .chips');
    if(bar&&!bar.querySelector('[data-v365-updates]'))bar.insertAdjacentHTML('beforeend',action());
+   const headers=[...document.querySelectorAll('.fx87-head>div')].map(cell=>cell.textContent.trim());
+   const obligationsByDay=new Map();
+   for(const entry of pending()){
+    const items=obligationsByDay.get(entry.event_date)||[];
+    items.push(entry);obligationsByDay.set(entry.event_date,items);
+   }
    for(const day of mergedFlowDays()){
     const row=document.getElementById('d-'+day.date);if(!row)continue;
-    const headers=[...document.querySelectorAll('.fx87-head>div')].map(x=>x.textContent.trim());[...row.children].forEach((cell,index)=>{if(index>0)cell.dataset.v365Label=headers[index]||'';});
-    const obligations=pending().filter(e=>e.event_date===day.date),html=bridge(day);
+    [...row.children].forEach((cell,index)=>{
+     if(index>0 && cell.dataset.v365Label!==(headers[index]||''))cell.dataset.v365Label=headers[index]||'';
+    });
+    const obligations=obligationsByDay.get(day.date)||[],html=bridge(day);
     if(html){
      row.classList.add('v365-unreconciled');const cell=row.children[4];
      if(cell&&!cell.querySelector('.v365-balance-status'))cell.insertAdjacentHTML('beforeend','<small class="v365-balance-status">Saldo a conferir</small>');
