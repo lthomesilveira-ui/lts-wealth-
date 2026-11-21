@@ -302,7 +302,29 @@
  }
  // The bank totals include both legs of transfers. The operational columns
  // describe the cash crossing the boundary of the consolidated accounts.
- function historicalConsolidatedCash(row){
+ function pairedTransferCents(date,events){
+  const banks=['Itaú','Bradesco','C6'];
+  const legs=(events||[]).filter(e=>e.event_date===date && banks.includes(e.account) && e.bank_confirmed===true &&
+   e.internal_transfer===true && e.open_finance_id && Number.isFinite(Number(e.signed_amount)));
+  const amount=e=>Math.round(Number(e.signed_amount)*100);
+  function matches(debit,credit){
+   if(debit.account===credit.account || debit.open_finance_id===credit.open_finance_id || amount(debit)!==-amount(credit))return false;
+   if(debit.own_transfer_counterparty_id || credit.own_transfer_counterparty_id)return debit.classification_confirmed===true &&
+    credit.classification_confirmed===true && debit.own_transfer_counterparty_id===credit.open_finance_id &&
+    credit.own_transfer_counterparty_id===debit.open_finance_id;
+   const route='Transferência entre contas — '+debit.account+' → '+credit.account;
+   return [debit,credit].every(e=>e.source==='internal_transfer' && e.confidence==='documented_current_internal_transfer' &&
+    e.counterparty==='Própria' && e.description===route);
+  }
+  const debits=legs.filter(e=>amount(e)<0),credits=legs.filter(e=>amount(e)>0);
+  let paired=0;
+  for(const debit of debits){
+   const peers=credits.filter(credit=>matches(debit,credit));
+   if(peers.length===1 && debits.filter(other=>matches(other,peers[0])).length===1)paired+=amount(peers[0]);
+  }
+  return paired;
+ }
+ function historicalConsolidatedCash(row,events){
   const c=row.fix86_columns||{}, gross={entries:number(c.entradas),exits:number(c.saidas)};
   const proof=row.v170_cash_arithmetic, summary=row.summary?.Consolidado;
   if(!row.historical || row.movements_complete===false || row.Consolidado?.documentary_reconstruction!==true ||
@@ -314,6 +336,10 @@
   const cents=value=>Math.round(value*100);
   if(cents(entries)!==cents(summaryIn) || cents(exits)!==cents(summaryOut) ||
      cents(opening)+cents(entries)-cents(exits)!==cents(closing))return gross;
+  if(gross.entries===null || gross.exits===null)return gross;
+  const discount=cents(gross.entries)-cents(entries);
+  if(discount===0 && cents(gross.exits)===cents(exits))return {entries,exits};
+  if(discount<=0 || discount!==cents(gross.exits)-cents(exits) || discount!==pairedTransferCents(row.date,events))return gross;
   return {entries,exits};
  }
  function consolidatedTsv(input){
@@ -324,8 +350,10 @@
   const rows=days.filter(x=>x&&x.date>=from&&x.date<=to).slice().sort((a,b)=>a.date.localeCompare(b.date));
   const expected=Math.round((Date.parse(to+'T12:00:00Z')-Date.parse(from+'T12:00:00Z'))/86400000)+1;
   if(!rows.length||rows.length!==expected||new Set(rows.map(x=>x.date)).size!==expected||rows.some(x=>!validDate(x.date)))return {ok:false,message:'Há dias ausentes no período. Recarregue antes de copiar.'};
-  const cash=new Map();
-  for(const e of events){if(e.internal_transfer||e.source==='economic_withholding'||isNonCashAwardEvent(e))continue;const date=e.event_date||e.date,n=number(e.signed_amount),tot=cash.get(date)||{entries:0,exits:0,valid:true};if(n==null)tot.valid=false;else if(n>0)tot.entries+=n;else tot.exits-=n;cash.set(date,tot);}
+  const cash=new Map(),transfers=new Map();
+  for(const e of events){
+   if(e.internal_transfer){const day=transfers.get(e.event_date)||[];day.push(e);transfers.set(e.event_date,day);continue;}
+   if(e.source==='economic_withholding'||isNonCashAwardEvent(e))continue;const date=e.event_date||e.date,n=number(e.signed_amount),tot=cash.get(date)||{entries:0,exits:0,valid:true};if(n==null)tot.valid=false;else if(n>0)tot.entries+=n;else tot.exits-=n;cash.set(date,tot);}
   const text=['Data\tSaldo anterior\tEntradas\tSaídas\tSaldo final\tD+0/1\tSaldo após D+0/1\tRSU vested\tSaldo após RSU\tFGTS\tSaldo após FGTS\tBase do saldo'];
   let invalidArithmetic=false;
   rows.forEach((row,i)=>{
@@ -339,7 +367,7 @@
     documented=!row.relative_balance_display&&z.balance_basis!=='relative_tracked_bank_ledger'&&(source||reconciled);
     basis=documented?(source?'Posição reconstruída de fonte identificada':'Intervalo conciliado'):'Saldo histórico sem comprovação';
     if(documented&&closing!=null&&opening==null){const previous=rows[i-1];opening=number(previous?.fix86_columns?.saldo_final_operacional??previous?.Consolidado?.bank_balance);if(opening==null&&number(z.economic_net??z.net)!=null)opening=closing-number(z.economic_net??z.net);}
-    const amounts=source?historicalConsolidatedCash(row):null;
+    const amounts=source?historicalConsolidatedCash(row,transfers.get(row.date)):null;
     entries=amounts?.entries??null;exits=amounts?.exits??null;
    }
    if(entries==null)entries=tot.valid?tot.entries:null;if(exits==null)exits=tot.valid?tot.exits:null;

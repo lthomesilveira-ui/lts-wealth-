@@ -767,7 +767,7 @@ function documentaryPaymentNote(cycle, esc, formatDate, mode = 'note', sourcePre
      &&(consolidated?x.v170_cash_arithmetic?.balanced===true:!!(p.workbook_evidence_ref||p.documentary_anchor_ref));
     if(documented){
      value.prev=consolidated?(c.saldo_anterior_operacional??c.saldo_anterior??null):(p.opening_balance??null);
-     const amounts=consolidated?window.parent.LTSV268ReadTools.historicalConsolidatedCash(x):null;
+     const amounts=consolidated?window.parent.LTSV268ReadTools.historicalConsolidatedCash(x,dayEvents(x.date)):null;
      value.en=consolidated?amounts.entries:(p.cash_entries??null);
      value.ex=consolidated?amounts.exits:(p.cash_exits??null);
      value.fin=consolidated?(c.saldo_final_operacional??p.bank_balance??null):(p.balance??null);

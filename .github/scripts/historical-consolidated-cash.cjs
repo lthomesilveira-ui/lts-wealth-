@@ -31,15 +31,22 @@ const events=[
   event('receipt','C6','RETORNO CONTA GLOBAL',180,true),
   event('fee','C6','Tarifa',-7,false)
 ];
-assert.deepEqual(historicalConsolidatedCash(example),{entries:180,exits:7});
+assert.deepEqual(historicalConsolidatedCash(example,events),{entries:180,exits:7});
 const old=structuredClone(example);delete old.fix86_columns.entradas_operacionais;
-assert.deepEqual(historicalConsolidatedCash(old),{entries:305,exits:132});
+assert.deepEqual(historicalConsolidatedCash(old,events),{entries:305,exits:132});
 const partial=structuredClone(example);partial.summary.Consolidado.entries=10;
-assert.deepEqual(historicalConsolidatedCash(partial),{entries:305,exits:132});
+assert.deepEqual(historicalConsolidatedCash(partial,events),{entries:305,exits:132});
 const zero=structuredClone(example);
-Object.assign(zero.fix86_columns,{entradas_operacionais:0,saidas_operacionais:0,saldo_final_operacional:400});
+Object.assign(zero.fix86_columns,{entradas:125,saidas:125,entradas_operacionais:0,saidas_operacionais:0,saldo_final_operacional:400});
 zero.summary.Consolidado={entries:0,exits:0};
-assert.deepEqual(historicalConsolidatedCash(zero),{entries:0,exits:0});
+assert.deepEqual(historicalConsolidatedCash(zero,events),{entries:0,exits:0});
+const unrelated=structuredClone(events);
+delete unrelated[0].own_transfer_counterparty_id;
+delete unrelated[1].own_transfer_counterparty_id;
+assert.deepEqual(historicalConsolidatedCash(example,unrelated),{entries:305,exits:132});
+assert.deepEqual(historicalConsolidatedCash(example,events.slice(1)),{entries:305,exits:132});
+const duplicate=[...events,events[0]];
+assert.deepEqual(historicalConsolidatedCash(example,duplicate),{entries:305,exits:132});
 const exported=consolidatedTsv({from:date,to:date,days:[example],events});
 assert.equal(exported.ok,true);
 function cents(text){return Math.round(Number(text.replace(/[^\d,.-]/g,'').replace(/\./g,'').replace(',','.'))*100);}
