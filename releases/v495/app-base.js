@@ -491,7 +491,14 @@
     const amounts=source?historicalConsolidatedCash(row,transfers.get(row.date)):null;
     entries=amounts?.entries??null;exits=amounts?.exits??null;
    }
-   if(entries==null)entries=tot.valid?tot.entries:null;if(exits==null)exits=tot.valid?tot.exits:null;
+   const observedUnreconciled=row.movements_complete===false &&
+    row.cash_position_guard?.version==='observed-position-not-reconciled-ledger-v1';
+   if(observedUnreconciled){
+    entries=null;exits=null;basis='Posição bancária informada · movimentação não conciliada';
+   }else{
+    if(entries==null)entries=tot.valid?tot.entries:null;
+    if(exits==null)exits=tot.valid?tot.exits:null;
+   }
    if(!documented){opening=null;closing=null;}
    if([opening,entries,exits,closing].every(x=>x!==null)&&Math.abs(opening+entries-exits-closing)>0.021)invalidArithmetic=true;
    const values=[opening,entries,exits,closing,number(c.liq_d0_1_recurso),documented?number(c.saldo_apos_d0_1):null,number(c.rsus_vested),documented?number(c.saldo_apos_rsu):null,number(c.fgts),documented?number(c.saldo_apos_fgts):null];

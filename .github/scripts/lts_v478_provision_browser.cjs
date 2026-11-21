@@ -76,9 +76,10 @@ async function test(browser, engine, width) {
     await s.page.waitForFunction(()=>document.querySelector('#wealth')?.contentDocument?.querySelector('#shell')?.contentDocument?.body?.dataset.ltsBootState==='ready');
     const frame=s.page.frames().find(f=>new URL(f.url()).pathname.endsWith('/releases/'+release+'/index.html'));
     assert.ok(frame);
+    await frame.waitForFunction(()=>V==='Dashboard' && D && window.__LTS_V382_FLOW_LAYOUT?.installed);
+    await frame.getByText('Total disponível hoje',{exact:true}).first().waitFor();
     await frame.locator('#nav [data-v="Fluxo Diário"]:visible,#dx1MobileNav [data-mobile-route="Fluxo Diário"]:visible').click();
     await frame.waitForFunction(()=>window.__LTS_V412_PROJECTION?.status==='ready');
-    await frame.waitForFunction(()=>!FLOWLOADING && !!FLOWQ?.current_future);
     await frame.locator('.v382-period summary').click();
     await frame.getByLabel('Data inicial do Fluxo',{exact:true}).fill('2026-11-18');
     await frame.getByLabel('Data final do Fluxo',{exact:true}).fill('2026-12-01');

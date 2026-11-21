@@ -51,6 +51,15 @@ const exported=consolidatedTsv({from:date,to:date,days:[example],events});
 assert.equal(exported.ok,true);
 function cents(text){return Math.round(Number(text.replace(/[^\d,.-]/g,'').replace(/\./g,'').replace(',','.'))*100);}
 assert.deepEqual(exported.text.split('\n')[1].split('\t').slice(1,5).map(cents),[40000,18000,700,57300]);
+const nextDate='2026-10-13';
+const next={date:nextDate,movements_complete:false,cash_position_guard:{version:'observed-position-not-reconciled-ledger-v1'},
+  fix86_columns:{saldo_anterior_operacional:573,saldo_final_operacional:573.07,entradas:null,saidas:null}};
+const mixed=consolidatedTsv({from:date,to:nextDate,days:[example,next],events});
+assert.equal(mixed.ok,true);
+assert.deepEqual(mixed.text.split('\n')[2].split('\t').slice(1,5),['573,00','Não comprovado','Não comprovado','573,07']);
+assert.match(mixed.text,/movimentação não conciliada/);
+const inconsistent={...next,movements_complete:true,cash_position_guard:null};
+assert.equal(consolidatedTsv({from:nextDate,to:nextDate,days:[inconsistent],events:[]}).ok,false);
 async function verify(browser,width){
   const h=await setup(browser,width,width===390?844:900,'2026-11-21T18:00:00Z');
   try {
