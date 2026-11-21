@@ -1,5 +1,7 @@
 # Current execution sources
 
+V495 displays reconciled historical consolidated inflows and outflows in both the daily screen and its export. Bank views retain the individual movements.
+
 V494 lets the visible daily cash flow request its selected range while automatic bank collection is pending. Its opening document carries the three small startup dependencies inline.
 
 V492 recovers a forecast policy read interrupted by the bank update. V491 requests the automatic bank update after confirmed cash and current expense groups, before the five-year projection and other secondary reports. Displayed balance dates and the three-bank confirmation keep their existing meaning. The V490 candidate exposed the cold projection delay during authenticated acceptance.
