@@ -58,7 +58,7 @@ async function measure(browser,release) {
     const frame=page.frameLocator('#wealth').frameLocator('#shell');
     await frame.locator('.opening-position').getByText('Banco de teste',{exact:true}).waitFor({timeout:20000});
     const bankMs=Math.round(performance.now()-start);
-    if (release==='v484'||release==='v486'||release==='v489'||release==='v490'||release==='v491'||release==='v492'||release==='v494'||release==='v495') {
+    if (release==='v484'||release==='v486'||release==='v489'||release==='v490'||release==='v491'||release==='v492'||release==='v494'||release==='v495'||release==='v496') {
       const position=frame.locator('.opening-position');
       assert.ok(await position.getByRole('heading',{name:'Total disponível hoje',exact:true}).isVisible());
       assert.match(await position.innerText(),/200,00/);

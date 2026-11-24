@@ -50,7 +50,9 @@ async function run(browser,width,scenario){
   }
   fresh=true;releaseProduct();
   await frame.locator('body[data-lts-boot-state="ready"] #app').waitFor();
-  await frame.getByRole('button',{name:'Fluxo de caixa',exact:true}).waitFor();
+  const flow=frame.locator('#nav [data-v="Fluxo Diário"]:visible,#dx1MobileNav [data-mobile-route="Fluxo Diário"]:visible').first();
+  await flow.click();
+  await frame.locator('[data-a="Itaú"]:visible').first().waitFor();
   assert.equal(await panel.isVisible(),false);
  }finally{releaseProduct();releaseCash();await ctx.close()}
 }
