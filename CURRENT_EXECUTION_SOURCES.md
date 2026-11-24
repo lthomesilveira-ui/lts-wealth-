@@ -1,5 +1,7 @@
 # Current execution sources
 
+V496 preserves the authenticated bank position while the dashboard is being prepared. The private audit records real opening times separately.
+
 V495 displays reconciled historical consolidated inflows and outflows in both the daily screen and its export. Bank views retain the individual movements.
 
 V494 lets the visible daily cash flow request its selected range while automatic bank collection is pending. Its opening document carries the three small startup dependencies inline.

@@ -1,7 +1,7 @@
 name: V483 cold mobile opening
 on:
   pull_request:
-    paths: ['releases/v483/**','.github/scripts/lts_v483_mobile_opening.cjs','mobile/launcher.js','mobile/index.html','.github/scripts/lts_v482_opening.cjs','.github/workflows/v483-mobile-opening.yml','mobile/current.json']
+    paths: ['releases/v483/**','releases/v496/**','.github/scripts/opening-while-preparing.cjs','.github/scripts/lts_v483_mobile_opening.cjs','mobile/launcher.js','mobile/index.html','.github/scripts/lts_v482_opening.cjs','.github/workflows/v483-mobile-opening.yml','mobile/current.json']
 permissions:
   contents: read
 jobs:
@@ -10,9 +10,9 @@ jobs:
     timeout-minutes: 12
     container: mcr.microsoft.com/playwright:v1.58.2-noble
     env:
-      LTS_OPENING_COMPARE_RELEASE: v495
-      LTS_FLOW_RELEASE: v495
-      LTS_MOBILE_RELEASE: v495
+      LTS_OPENING_COMPARE_RELEASE: v496
+      LTS_FLOW_RELEASE: v496
+      LTS_MOBILE_RELEASE: v496
       LTS_BROWSER_FIXTURE_RELEASE: v483
       PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
@@ -29,6 +29,7 @@ jobs:
           npm install --no-save --package-lock=false playwright@1.58.2
           python3 -m http.server 8788 --bind 127.0.0.1 >/tmp/v482-http.log 2>&1 &
           node .github/scripts/lts_v309_wait_http.cjs
+          node .github/scripts/opening-while-preparing.cjs
           node .github/scripts/lts_v482_opening.cjs
           node .github/scripts/lts_v478_provision_browser.cjs
           node .github/scripts/lts_v483_mobile_opening.cjs

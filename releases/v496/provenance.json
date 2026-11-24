@@ -1,0 +1,7 @@
+{
+  "release": "v496",
+  "base_release": "v495",
+  "scope": "Keep verified bank balances available during initial dashboard preparation, including late results and status refreshes.",
+  "financial_source_writes": false,
+  "published_base_immutable": true
+}
