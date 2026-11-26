@@ -7,7 +7,7 @@ const {setup} = require('./lts_v382_browser.cjs');
 const {product} = require('./lts_v379_fixtures.cjs');
 const base = process.env.LTS_BROWSER_BASE || 'http://127.0.0.1:8788';
 const candidate = process.env.LTS_OPENING_COMPARE_RELEASE || 'v483';
-assert.ok(['v483','v484','v486','v489','v490','v491','v492','v494','v495','v496','v498','v499'].includes(candidate));
+assert.ok(['v483','v484','v486','v489','v490','v491','v492','v494','v495','v496','v498','v499','v500'].includes(candidate));
 const wait = ms => new Promise(done=>setTimeout(done,ms));
 const cash = {status:'complete',as_of:'2026-10-30',version:'cash-today-v179-current-canonical',cash:150,d0:25,brokerage_available:25,available_total:200,bank_positions:[{institution:'Banco de teste',balance:150}]};
 const fields = ['projection_build_v438','financial_audit','recurring_audit_v442','projection_summary_v418'];
@@ -58,7 +58,7 @@ async function measure(browser,release) {
     const frame=page.frameLocator('#wealth').frameLocator('#shell');
     await frame.locator('.opening-position').getByText('Banco de teste',{exact:true}).waitFor({timeout:20000});
     const bankMs=Math.round(performance.now()-start);
-    if (release==='v484'||release==='v486'||release==='v489'||release==='v490'||release==='v491'||release==='v492'||release==='v494'||release==='v495'||release==='v496'||release==='v498'||release==='v499') {
+    if (release==='v484'||release==='v486'||release==='v489'||release==='v490'||release==='v491'||release==='v492'||release==='v494'||release==='v495'||release==='v496'||release==='v498'||release==='v499'||release==='v500') {
       const position=frame.locator('.opening-position');
       assert.ok(await position.getByRole('heading',{name:'Total disponível hoje',exact:true}).isVisible());
       assert.match(await position.innerText(),/200,00/);
