@@ -1,5 +1,7 @@
 # Current execution sources
 
+V499 opens the expense ledger from monthly balance totals and each month. The expense header identifies the date of the latest transaction, and the selected amount stays visible while the detail is loading.
+
 V498 opens the selected report while bank updates run in the background. The mobile entry provides recovery during a slow opening. Expense periods, monthly comparisons and bank-confirmed invoice details open from their displayed values.
 
 V496 preserves the authenticated bank position while the dashboard is being prepared. The private audit records real opening times separately.

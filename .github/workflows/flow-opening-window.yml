@@ -17,7 +17,7 @@ jobs:
     timeout-minutes: 8
     container: mcr.microsoft.com/playwright:v1.58.2-noble
     env:
-      LTS_FLOW_OPENING_RELEASE: v498
+      LTS_FLOW_OPENING_RELEASE: v499
       PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
     steps:
