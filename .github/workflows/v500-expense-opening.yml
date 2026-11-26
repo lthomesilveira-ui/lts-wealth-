@@ -1,0 +1,33 @@
+name: V500 expense opening
+on:
+  pull_request:
+    paths:
+      - 'releases/v500/**'
+      - 'mobile/current.json'
+      - '.github/scripts/lts_v497_expense_navigation.cjs'
+      - '.github/scripts/lts_v500_expense_opening.cjs'
+      - '.github/workflows/v500-expense-opening.yml'
+permissions:
+  contents: read
+jobs:
+  navigation:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    container: mcr.microsoft.com/playwright:v1.58.2-noble
+    env:
+      LTS_EXPENSE_NAV_RELEASE: v500
+      LTS_FLOW_RELEASE: v500
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: |
+          npm install --no-save --package-lock=false playwright@1.58.2
+          python3 -m http.server 8788 --bind 127.0.0.1 >/tmp/lts-v500-http.log 2>&1 &
+          node .github/scripts/lts_v500_expense_opening.cjs
+      - run: node .github/scripts/lts_v497_expense_navigation.cjs

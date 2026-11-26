@@ -1,0 +1,7 @@
+{
+  "release": "v500",
+  "base_release": "v499",
+  "scope": "Show verified expense totals when the selected report arrives while additional context loads separately.",
+  "financial_source_writes": false,
+  "published_base_immutable": true
+}
