@@ -1,0 +1,7 @@
+{
+  "release": "v499",
+  "base_release": "v498",
+  "scope": "Open the expense ledger from balance totals and months, show the selected amount during loading and distinguish the latest transaction date.",
+  "financial_source_writes": false,
+  "published_base_immutable": true
+}
