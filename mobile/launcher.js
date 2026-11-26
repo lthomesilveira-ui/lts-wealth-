@@ -12,9 +12,9 @@
   lookup=(async()=>{
    const initial=window.ltsEntryRequest;
    delete window.ltsEntryRequest;
-   const response=(initial && await initial) || await fetch('current.json',{cache:'no-store',credentials:'same-origin'});
-   if(!response.ok)throw Error('Unavailable');
-   const current=await response.json(),target=new URL(current.entry,location.href);
+   const current=await (initial || window.ltsReadRelease());
+   if(!current)throw Error('Unavailable');
+   const target=new URL(current.entry,location.href);
    const root=new URL('../',location.href).pathname;
    if(target.origin!==location.origin||!/^v[0-9]+$/.test(current.release)||
       target.pathname!==root+'releases/'+current.release+'/app.html'||target.search||target.hash)throw Error('Invalid release');

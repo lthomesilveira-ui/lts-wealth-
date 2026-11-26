@@ -4,8 +4,18 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <script>
-if(navigator.onLine!==false)window.ltsEntryRequest=fetch('current.json',{cache:'no-store',credentials:'same-origin'}).catch(()=>null);
+window.ltsReadRelease=async function(){
+ const controller=new AbortController();
+ const timer=setTimeout(()=>controller.abort(),8000);
+ try{
+  const response=await fetch('current.json',{cache:'no-store',credentials:'same-origin',signal:controller.signal});
+  if(!response.ok)throw Error('Release unavailable');
+  return await response.json();
+ }finally{clearTimeout(timer);}
+};
+if(navigator.onLine!==false)window.ltsEntryRequest=window.ltsReadRelease().catch(()=>null);
 </script>
+<link rel="preload" href="launcher.js?v=497" as="script">
 <meta name="robots" content="noindex,nofollow">
 <link rel="preconnect" href="https://tadhkamnwtsbdozwkyut.supabase.co" crossorigin>
 <meta name="theme-color" content="#10263f">
@@ -46,6 +56,6 @@ iframe{display:block;width:100%;max-width:100%;min-width:0;height:100%;border:0;
 </main>
 <div id="appViewport" hidden><iframe id="wealth" title="LTS Wealth" hidden></iframe></div>
 <section id="offline" role="status" hidden><h1>Conecte-se à internet</h1><p>Reconecte o celular para consultar seu Wealth.</p></section>
-<script src="launcher.js?v=493"></script>
+<script src="launcher.js?v=497"></script>
 </body>
 </html>
