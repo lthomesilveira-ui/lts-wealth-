@@ -95,7 +95,10 @@
       let button=N.querySelector('[data-v="Dashboard"]');
       if(!button){button=document.createElement('button');button.type='button';button.dataset.v='Dashboard';button.textContent='Dashboard';N.prepend(button)}
       button.classList.toggle('active',V==='Dashboard');button.onclick=()=>go('Dashboard');button.style.display='';
-      const order=['Dashboard','Fluxo Diário','Despesas','Cartões','Patrimônio','Atualizações','Planejamento'];order.forEach(route=>{const item=N.querySelector('[data-v="'+route+'"]');if(item)N.appendChild(item)});
+      const order=['Dashboard','Fluxo Diário','Despesas','Cartões','Patrimônio','Atualizações','Planejamento'];if(N.dataset.desktopLayout!=='executive'){
+       const items=order.map(route=>N.querySelector('[data-v="'+route+'"]')).filter(Boolean);
+       items.forEach((item,i)=>{if(N.children[i]!==item)N.insertBefore(item,N.children[i]||null)});
+      }
     };
     async function loadDashboard(force){
       if(state.loading)return;state.rpcRequested=true;state.loading=true;state.error=null;status.loading=true;status.calls+=1;const sequence=++state.sequence;if(V==='Dashboard')render();

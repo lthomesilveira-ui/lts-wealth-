@@ -1482,7 +1482,10 @@
       let button=N.querySelector('[data-v="Dashboard"]');
       if(!button){button=document.createElement('button');button.type='button';button.dataset.v='Dashboard';button.textContent='Dashboard';N.prepend(button)}
       button.classList.toggle('active',V==='Dashboard');button.onclick=()=>go('Dashboard');button.style.display='';
-      const order=['Dashboard','Fluxo Diário','Despesas','Cartões','Patrimônio','Atualizações','Planejamento'];order.forEach(route=>{const item=N.querySelector('[data-v="'+route+'"]');if(item)N.appendChild(item)});
+      const order=['Dashboard','Fluxo Diário','Despesas','Cartões','Patrimônio','Atualizações','Planejamento'];if(N.dataset.desktopLayout!=='executive'){
+       const items=order.map(route=>N.querySelector('[data-v="'+route+'"]')).filter(Boolean);
+       items.forEach((item,i)=>{if(N.children[i]!==item)N.insertBefore(item,N.children[i]||null)});
+      }
     };
     async function loadDashboard(force){
       if(state.loading)return;state.rpcRequested=true;state.loading=true;state.error=null;status.loading=true;status.calls+=1;const sequence=++state.sequence;if(V==='Dashboard')render();
@@ -1832,7 +1835,17 @@
 
     function decorateNav(){
       const order=['Dashboard','Fluxo Diário','Despesas','Patrimônio','Atualizações'],labels={'Dashboard':'Dashboard','Fluxo Diário':'Fluxo de caixa','Despesas':'Despesas','Patrimônio':'Patrimônio','Atualizações':'Atualizações'};
-      order.forEach(route=>{let button=N.querySelector('[data-v="'+route+'"]');if(!button){button=document.createElement('button');button.dataset.v=route}button.classList.toggle('active',V===route);button.innerHTML=icon(route)+'<span>'+labels[route]+'</span>';button.setAttribute('aria-label',labels[route]);button.onclick=()=>go(route);N.appendChild(button)});
+      N.dataset.desktopLayout='executive';
+      order.forEach((route,index)=>{
+        let button=N.querySelector('[data-v="'+route+'"]');
+        if(!button){button=document.createElement('button');button.type='button';button.dataset.v=route}
+        if(!button.dataset.executiveRoute){
+          button.innerHTML=icon(route)+'<span>'+labels[route]+'</span>';
+          button.setAttribute('aria-label',labels[route]);button.dataset.executiveRoute=route;
+        }
+        button.classList.toggle('active',V===route);button.onclick=()=>go(route);
+        if(N.children[index]!==button)N.insertBefore(button,N.children[index]||null);
+      });
       N.querySelectorAll('[data-v]').forEach(button=>{if(!order.includes(button.dataset.v))button.remove()});
     }
 

@@ -781,7 +781,17 @@ async function bootLogout(){
  catch{if(generation!==BOOT.generation||!BOOT.logout)return;BOOT.reloadRequired=true;bootScreen('logout-error','Não foi possível confirmar a saída','Recarregue a página para verificar sua sessão.',true);}
  finally{clearTimeout(timer);}
 }
-function renderNav(){const main=['Atualizações','Fluxo Diário','Despesas','Cartões','Patrimônio','Planejamento'];N.innerHTML=main.map(x=>`<button data-v="${x}" class="${V===x?'active':''}">${x}</button>`).join('');N.querySelectorAll('[data-v]').forEach(b=>b.onclick=()=>{V=b.dataset.v;renderNav();render()})}
+function renderNav(){
+ const main=['Atualizações','Fluxo Diário','Despesas','Cartões','Patrimônio','Planejamento'];
+ if(N.dataset.desktopLayout!=='executive'){
+  for(const route of main){
+   if(N.querySelector('[data-v="'+route+'"]'))continue;
+   const button=document.createElement('button');button.type='button';button.dataset.v=route;
+   button.textContent=route;button.onclick=()=>{V=route;renderNav();render()};N.appendChild(button);
+  }
+ }
+ for(const button of N.querySelectorAll('[data-v]'))button.classList.toggle('active',button.dataset.v===V);
+}
 function kpi(rot,val,sub,forte=''){const z=val==null||Number.isNaN(Number(val))?'—':brl(val);return `<div class="kp ${forte}"><span>${rot}</span><strong>${z}</strong><em>${sub}</em></div>`}
 
 

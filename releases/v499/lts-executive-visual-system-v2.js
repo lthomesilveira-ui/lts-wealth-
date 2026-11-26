@@ -310,7 +310,17 @@
 
     function decorateNav(){
       const order=['Dashboard','Fluxo Diário','Despesas','Patrimônio','Atualizações'],labels={'Dashboard':'Dashboard','Fluxo Diário':'Fluxo de caixa','Despesas':'Despesas','Patrimônio':'Patrimônio','Atualizações':'Atualizações'};
-      order.forEach(route=>{let button=N.querySelector('[data-v="'+route+'"]');if(!button){button=document.createElement('button');button.dataset.v=route}button.classList.toggle('active',V===route);button.innerHTML=icon(route)+'<span>'+labels[route]+'</span>';button.setAttribute('aria-label',labels[route]);button.onclick=()=>go(route);N.appendChild(button)});
+      N.dataset.desktopLayout='executive';
+      order.forEach((route,index)=>{
+        let button=N.querySelector('[data-v="'+route+'"]');
+        if(!button){button=document.createElement('button');button.type='button';button.dataset.v=route}
+        if(!button.dataset.executiveRoute){
+          button.innerHTML=icon(route)+'<span>'+labels[route]+'</span>';
+          button.setAttribute('aria-label',labels[route]);button.dataset.executiveRoute=route;
+        }
+        button.classList.toggle('active',V===route);button.onclick=()=>go(route);
+        if(N.children[index]!==button)N.insertBefore(button,N.children[index]||null);
+      });
       N.querySelectorAll('[data-v]').forEach(button=>{if(!order.includes(button.dataset.v))button.remove()});
     }
 
