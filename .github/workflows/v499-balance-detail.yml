@@ -29,5 +29,5 @@ jobs:
       - run: |
           npm install --no-save --package-lock=false playwright@1.58.2
           python3 -m http.server 8788 --bind 127.0.0.1 >/tmp/lts-v499-http.log 2>&1 &
-          node .github/scripts/lts_v497_expense_navigation.cjs
           node .github/scripts/lts_v499_balance_detail.cjs
+      - run: node .github/scripts/lts_v497_expense_navigation.cjs
