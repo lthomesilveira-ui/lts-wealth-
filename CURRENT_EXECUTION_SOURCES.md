@@ -1,5 +1,7 @@
 # Current execution sources
 
+V498 opens the selected report while bank updates run in the background. The mobile entry provides recovery during a slow opening. Expense periods, monthly comparisons and bank-confirmed invoice details open from their displayed values.
+
 V496 preserves the authenticated bank position while the dashboard is being prepared. The private audit records real opening times separately.
 
 V495 displays reconciled historical consolidated inflows and outflows in both the daily screen and its export. Bank views retain the individual movements.
