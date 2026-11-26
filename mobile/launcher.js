@@ -52,6 +52,7 @@
  }
  function startClock(){
   if(clock!==null)return;
+  document.documentElement.classList.remove('opening-finished');
   const start=performance.now();status.hidden=false;
   function tick(){
    const seconds=Math.floor((performance.now()-start)/1000);
@@ -65,7 +66,7 @@
    if(phase && !['checking','loading','preparing'].includes(phase)){stopClock();return;}
    const message=navigator.onLine===false?'Sem conexão':phase==='checking'?'Verificando acesso…':phase==='loading'||phase==='preparing'?'Carregando dados…':'Abrindo Wealth…';
    if(label.textContent!==message)label.textContent=message;
-   elapsed.textContent=seconds+' s';retry.hidden=seconds<20;
+   elapsed.textContent=seconds+' s';retry.hidden=seconds<3;
   }
   tick();clock=setInterval(tick,500);
  }
@@ -80,7 +81,7 @@
    frame.title='LTS Wealth · '+label;document.title=frame.title;
    frame.src=target.href;viewport.hidden=false;frame.hidden=false;panel.hidden=true;
    document.documentElement.classList.add('wealth-open');document.body.classList.add('wealth-open');started=true;
-  }catch(_){stopClock();panel.hidden=false;viewport.hidden=true;frame.hidden=true;error.hidden=false;}
+  }catch(_){stopClock();panel.hidden=false;viewport.hidden=true;frame.hidden=true;button.textContent='Tentar novamente';error.hidden=false;}
   finally{busy=false;button.disabled=false;}
  }
  function connectionOnly(){offline.hidden=navigator.onLine!==false;}
