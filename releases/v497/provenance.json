@@ -1,0 +1,7 @@
+{
+  "release": "v497",
+  "base_release": "v496",
+  "scope": "Expense detail periods and immediate invoice opening",
+  "financial_source_writes": false,
+  "published_base_immutable": true
+}
