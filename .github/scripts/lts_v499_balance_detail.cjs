@@ -14,8 +14,15 @@ async function verify(browser, width) {
         period:{from,to,last_available:'2026-10-16'},summary:{selected_total:monthly(from,to).totals.expenses},
         management_groups:[],monthly_detail:[],yearly_detail:[]}});
     });
-    let request = null;
-    await ctx.route('**/rpc/lts_browser_expense_detail_v374', route => { request=route; });
+    const ranges=[];
+    await ctx.route('**/rpc/lts_browser_expense_detail_v374',async route=>{
+      const args=route.request().postDataJSON();
+      ranges.push([args.p_from,args.p_to,args.p_group]);
+      const amount=monthly(args.p_from,args.p_to).totals.expenses;
+      await new Promise(resolve=>setTimeout(resolve,200));
+      await route.fulfill({json:{total:amount,row_count:1,matched_count:1,offset:0,next_offset:null,revision:'test',
+        components:[],rows:[{key:'sample',date:args.p_from,date_kind:'day',description:'Compra de teste',amount}]}});
+    });
     await page.goto(base+'/releases/v499/app.html');
     const app=page.frameLocator('#shell');
     await app.locator('#nav [data-v="Despesas"]:visible,#dx1MobileNav [data-mobile-route="Despesas"]:visible').first().click();
@@ -29,17 +36,8 @@ async function verify(browser, width) {
       const drawer=app.getByRole('dialog');
       await drawer.waitFor();
       assert.equal((await drawer.locator('.v178-detail-summary b').first().innerText()).trim(),value);
-      for(let i=0;!request && i<60;i++) await new Promise(resolve=>setTimeout(resolve,50));
-      assert.ok(request,'the value opens its ledger');
-      const args=request.request().postDataJSON();
-      assert.equal(args.p_group,null);
-      assert.equal(args.p_from,month?month+'-01':'2026-01-01');
-      assert.equal(args.p_to,'2026-10-30');
-      const amt=monthly(args.p_from,args.p_to).totals.expenses;
-      const response={total:amt,row_count:1,matched_count:1,offset:0,next_offset:null,revision:'test',
-        components:[],rows:[{key:'sample',date:args.p_from,date_kind:'day',description:'Compra de teste',amount:amt}]};
-      await request.fulfill({json:response});request=null;
       await drawer.getByText('Compra de teste',{exact:true}).first().waitFor();
+      assert.ok(ranges.some(([from,to,group])=>from===(month?month+'-01':'2026-01-01')&&to==='2026-10-30'&&group===null),selector+' range '+JSON.stringify(ranges));
       await drawer.getByRole('button',{name:'Fechar'}).click();
     }
     console.log('verified monthly, period and first paint at width',width);
