@@ -6,12 +6,15 @@ const {setup} = require('./lts_v382_browser.cjs');
 const fixture = require('./lts_v379_fixtures.cjs');
 const base = process.env.LTS_BROWSER_BASE || 'http://127.0.0.1:8788';
 
+const release = process.env.LTS_EXPENSE_NAV_RELEASE || 'v497';
+assert.match(release, /^v[0-9]+$/);
+
 async function run(browser, width) {
   const {ctx, page} = await setup(browser, width, 860);
   try {
-    await ctx.route(base + '/releases/v497/**', async route => {
+    await ctx.route(base + '/releases/'+release+'/**', async route => {
       const file = path.basename(new URL(route.request().url()).pathname);
-      await route.fulfill({path: path.join('releases/v497', file)});
+      await route.fulfill({path: path.join('releases', release, file)});
     });
     await ctx.route('**/rpc/lts_browser_card_cycles_v229', route => {
       const packet = fixture.cards();
@@ -25,7 +28,7 @@ async function run(browser, width) {
       return route.fulfill({json:{family:args.p_family,month:args.p_month,due_date:'2026-12-03',invoice_amount:2299.31,items}});
     });
     const start = Date.now();
-    await page.goto(base + '/releases/v497/app.html');
+    await page.goto(base + '/releases/'+release+'/app.html');
     const frame = page.frames().find(f => f.url().includes('/index.html'));
     const nav = name => frame.locator('#nav [data-v="'+name+'"]:visible,#dx1MobileNav [data-mobile-route="'+name+'"]:visible').first();
     await nav('Despesas').waitFor();

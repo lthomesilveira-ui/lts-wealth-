@@ -1,0 +1,7 @@
+{
+  "release": "v498",
+  "base_release": "v497",
+  "scope": "Foreground navigation during automatic bank collection and period comparison details",
+  "financial_source_writes": false,
+  "published_base_immutable": true
+}
